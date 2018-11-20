@@ -20,11 +20,14 @@
 -remove_duplicate_regs 1
 -max_fanout 10000
 -fsm_encoding_style Auto
--use_io_insertion 0
 -use_io_reg auto
 -resolve_mixed_drivers 0
 -RWCheckOnRam 0
 -fix_gated_clocks 1
+
+# when this is set to '1', the bitstream generates
+# when this is set to '0', uart_prim.v doesn't have IO buffers
+-use_io_insertion 1
 
 -ver "src/uart.v"
 -p "/home/cmonster/workspaces/IceStorm/iCEcube2/uart"
