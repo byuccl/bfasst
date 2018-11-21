@@ -27,7 +27,6 @@
 
 # when this is set to '1', the bitstream generates successfully
 # when this is set to '0', uart_prim.v doesn't have extra IO buffers
->>>>>>> ugh
 -use_io_insertion 1
 
 -ver "src/uart.v"
