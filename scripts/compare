@@ -1,0 +1,47 @@
+#! /usr/bin/env bash
+
+# capture arguments
+BITSTREM=$1
+RTL=$2
+CONTSTRAINTS=$3
+WKDIR='result'
+LSE=
+TCL=
+
+# make new directory for iCEcube2
+mkdir $WKDIR
+
+# copy arguments into directory
+mv $BITSTREAM $WKDIR
+mv $RTL $WKDIR
+mv $CONSTRAINTS $WKDIR
+
+# curl down boilerplate
+curl
+
+# parameterize boilerplate
+tee
+
+# set up project (LSE) 
+lse -f $LSE
+
+# run TCL flow 
+tclsh $TCL
+
+# create IceStorm directory
+mkdir $WKDIR/icestorm
+
+# copy bitstream into IceStorm directory
+cp
+
+# unpack ASCII 
+iceunpack
+
+# unpack Verilog netlist
+icebox_vlog
+
+# run LEC on CAEDM
+# TODO figure out how to make conformal stop after running a job
+ssh caedm 'source .system && cd research && lec -Dofile flow.do -NOGui' > test.txt
+
+# parse results and look for 'Equivalent' or 'Non-equivalent'
