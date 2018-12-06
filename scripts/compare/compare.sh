@@ -1,10 +1,10 @@
 #! /usr/bin/env bash
 
-numArgs=6
+numArgs=5
 
 if [ "$#" -ne $numArgs ]; then
 	
-	echo "Usage: bitstream rtl constraints lse tcl wkdir"
+	echo "Usage: bitstream rtl constraints tcl wkdir"
 	exit
 fi
 
@@ -12,15 +12,18 @@ fi
 bitstream=$1 # bitstream in question
 rtl=$2 # RTL code in question
 constraints=$3 # design constraints file
-lse=$4 # iCEcube2 project settings
-tcl=$5 # iCEcube2 project flow
-wkdir=$6 # where the user wants the results
+tcl=$4 # iCEcube2 project flow
+wkdir=$5 # where the user wants the results
 
 # create subdirectory for results
 mkdir $wkdir
 
-# store name of golden netlist
+# extract project settings file name
 filename=$(basename -- "$rtl")
+lse="${filename%.*}"
+lse="${lse}_lse.prj"
+
+# extract golden netlist file name
 golden="${filename%.*}"
 golden="${golden}_prim.v"
 
@@ -29,13 +32,17 @@ mkdir "${wkdir}/rtl"
 mv $rtl "${wkdir}/rtl/"
 rtl="rtl/${rtl}"
 
+# make project settings file
+
+sed "s:<RTL>:${rtl}:" template.prj > $lse
+
 # move bitstream into place
 icedir='icestorm'
 mkdir "${wkdir}/${icedir}"
 mv $bitstream "${wkdir}/${icedir}/"
 bitstream="${icedir}/${bitstream}"
 
-# move project project file and tcl flow into place
+# move project project file, tcl flow, into place
 dofileTemplate="template.do"
 mv $lse $tcl $constraints $dofileTemplate $wkdir
 
