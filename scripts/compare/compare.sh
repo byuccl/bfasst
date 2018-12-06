@@ -1,75 +1,88 @@
-#! /usr/bin/env bash
+# /usr/bin/env bash
 
-numArgs=5
+numArgs=2
 
 if [ "$#" -ne $numArgs ]; then
 	
-	echo "Usage: bitstream rtl constraints tcl wkdir"
+	echo "usage: rtl constraints (top module must match rtl file name"
 	exit
 fi
 
 # capture arguments
-bitstream=$1 # bitstream in question
-rtl=$2 # RTL code in question
-constraints=$3 # design constraints file
-tcl=$4 # iCEcube2 project flow
-wkdir=$5 # where the user wants the results
+rtl=$1 # RTL code in question
+constraints=$2 # design constraints file
 
 # create subdirectory for results
-mkdir $wkdir
+designName=$(basename -- "$rtl")
+designName="${designName%.*}"
 
-# extract project settings file name
-filename=$(basename -- "$rtl")
-lse="${filename%.*}"
-lse="${lse}_lse.prj"
+if [ -d "$designName" ]; then
 
-# extract golden netlist file name
-golden="${filename%.*}"
-golden="${golden}_prim.v"
+	echo "${designName} directory already exists"
+	exit -1
+fi
+
+mkdir $designName
+
+# extract project settings and netlist file names
+lse="${designName}_lse.prj"
+golden="${designName}_prim.v"
 
 # move rtl into place
-mkdir "${wkdir}/rtl"
-mv $rtl "${wkdir}/rtl/"
-rtl="rtl/${rtl}"
+mkdir "${designName}/rtl"
+cp $rtl "${designName}/rtl/"
 
-# make project settings file
+# make project settings file and move into directory
+projectRtl="rtl/${rtl}"
+projectDir="$(pwd)/${designName}"
+lseOutDir="lse"
+sed "s:<RTL>:${projectRtl}:; s:<WKDIR>:${projectDir}:; s:<EDIF>:${lseOutDir}/${designName}.edf:; s:<LOG>:${lseOutDir}/${designName}.log:;" template.prj > $lse
+mv $lse $designName
 
-sed "s:<RTL>:${rtl}:" template.prj > $lse
+# move tcl flow and constraints into place
+tcl="flow.tcl"
+if [ ! -f "$tcl" ]; then
+	
+	echo "missing ${tcl}"
+	exit -1
+fi
 
-# move bitstream into place
-icedir='icestorm'
-mkdir "${wkdir}/${icedir}"
-mv $bitstream "${wkdir}/${icedir}/"
-bitstream="${icedir}/${bitstream}"
+cp $tcl $constraints $designName
 
-# move project project file, tcl flow, into place
-dofileTemplate="template.do"
-mv $lse $tcl $constraints $dofileTemplate $wkdir
+# set up iCEcube2 project
+cd $designName
+lse -f $lse
 
 # run iCEcube2 flow
-cd $wkdir
-lse -f $lse
-tclsh $tcl
+toolOptions=":edifparser -y ${constraints}"
+tclsh $tcl $designName $lseOutDir $toolOptions
+	
+# make dofile
+
+# make directory for icestorm and copy bitstream
+icedir="icestorm"
+bitstream="${designName}_bitmap.bin"
+mkdir $icedir
+cp "${lseOutDir}/sbt/outputs/bitmap/${bitstream}" $icedir
 
 # unset LD_LIBRARY_PATH ...ugh
 unset LD_LIBRARY_PATH
 
 # unpack bitstream
 asciiRep="${icedir}/unpacked_bitstream.asc"
-iceunpack $bitstream > $asciiRep
+iceunpack "${icedir}/${bitstream}" > $asciiRep
 
 # extract netlist
 netlistName="verilog_netlist.v"
 netlist="${icedir}/${netlistName}"
 icebox_vlog -p $constraints -s $asciiRep > $netlist
 
-# prepare do file TODO make this cleaner
+# prepare do file
 dofile="flow.do"
-sed "s/<GOLDEN>/${golden}/" $dofileTemplate > meta
-sed "s/<REVISED>/${netlistName}/" meta > $dofile 
-rm meta
+golden="${designName}_prim.v"
+sed "s:<GOLDEN>:${golden}:; s:<REVISED>:${netlistName}:;" "../template.do" > $dofile
 
-# move files to caedm
+## move files to caedm
 remote="caedm:~"
 path="research/automation"
 scp $dofile "${remote}/${path}"
@@ -87,6 +100,6 @@ if [[ $result == *"Equivalent"* ]]; then
 else
 	echo "not equivalent"
 fi
-
-
-
+#
+#
+#

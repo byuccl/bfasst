@@ -27,9 +27,10 @@
 -fix_gated_clocks 1
 
 -ver "<RTL>"
+-p "<WKDIR>"
 
 #set result format/file last
--output_edif rev_1/uart.edf
+-output_edif <EDIF>
 
 #set log file
--logfile rev_1/uart.log
+-logfile <LOG>

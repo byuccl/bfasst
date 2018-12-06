@@ -1,20 +1,16 @@
-#!/usr/bin/env tclsh
+#!usr/bin/tclsh8.4
 
-# require 7 arguments, 5 from user and 2 from system
-if { $argc != 7 } {
-
-	puts "expected 3 arguments, got $argc"
-	exit -1
-}
-
-puts "hello from cMonster"
+# Sample flow script for iCEcube2
+##############################################
+#User Configurable section
+##############################################
 
 set device iCE40HX1K-TQ144
-set top_module [lindex $argv 0]
+set top_module uart
 set proj_dir [pwd]
-set output_dir [lindex $argv 1]
-set edif_file [lindex $argv 2]
-set tool_options [lindex $argv 3]
+set output_dir "lse"
+set edif_file "uart"
+set tool_options ":edifparser -y uart.pcf"
 
 #############################################
 #Tool Interface
