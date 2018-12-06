@@ -1,144 +1,0 @@
-                          CONFORMAL (R)
-                   Version 15.20-p100 (29-Oct-2015) (64 bit executable)
-   Copyright (c) Cadence Design Systems, Inc., 1997-2015. All Rights Reserved
-
-
-This program is proprietary and confidential information belonging to
-Cadence Design Systems, Inc., and may be used and disclosed only as authorized
-in a license agreement controlling such use and disclosure.
-
-// Warning: You can download the latest version from http://downloads.cadence.com.
-
-// Check out Conformal_Asic 15.2 license
-// Check out conformal_lec 4.0 license
-// Check out conformal_ldd 4.0 license
-// Check out conformal_vlg 4.0 license
-// Check out conformal_vhd 4.0 license
-// Command: read library -Golden -Replace -sensitive -Verilog /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v -nooptimize
-// Parsing file /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v ...
-// Warning: (VLG6.6) Event object is unsupported
-// Warning: 'event triggering' statement is not supported on line 1462 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
-// Warning: SB_RAM4K is blackboxed on line 1462 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
-// Warning: (VLG6.6) Event object is unsupported
-// Warning: 'event triggering' statement is not supported on line 3499 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
-// Warning: SB_RAM256x16 is blackboxed on line 3499 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
-// Warning: (VLG6.6) Event object is unsupported
-// Warning: 'event triggering' statement is not supported on line 4927 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
-// Warning: SB_RAM512x8 is blackboxed on line 4927 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
-// Warning: (VLG6.6) Event object is unsupported
-// Warning: 'event triggering' statement is not supported on line 5965 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
-// Warning: SB_RAM1024x4 is blackboxed on line 5965 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
-// Warning: (VLG6.6) Event object is unsupported
-// Warning: 'event triggering' statement is not supported on line 6960 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
-// Warning: SB_RAM2048x2 is blackboxed on line 6960 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
-// Warning: (VLG6.6) Event object is unsupported
-// Warning: 'event triggering' statement is not supported on line 17400 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
-// Warning: SB_RAM1024x16 is blackboxed on line 17400 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
-// Warning: (VLG6.6) Event object is unsupported
-// Warning: 'event triggering' statement is not supported on line 19211 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
-// Warning: SB_RAM2048x8 is blackboxed on line 19211 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
-// Warning: (VLG6.6) Event object is unsupported
-// Warning: 'event triggering' statement is not supported on line 20631 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
-// Warning: SB_RAM4096x4 is blackboxed on line 20631 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
-// Warning: (VLG6.6) Event object is unsupported
-// Warning: 'event triggering' statement is not supported on line 22006 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
-// Warning: SB_RAM8192x2 is blackboxed on line 22006 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
-// Warning: (VLG6.6) Event object is unsupported
-// Warning: 'event triggering' statement is not supported on line 23382 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
-// Warning: SB_RAM16K is blackboxed on line 23382 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
-// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:10832 Module 'X105DSI_RX' is referenced but not defined.
-// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:25993 Module 'SB_HSOSC_CORE' is referenced but not defined.
-// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:26015 Module 'SB_LSOSC_CORE' is referenced but not defined.
-// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:26038 Module 'SB_LFOSC_CORE' is referenced but not defined.
-// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:26174 Module 'ledd_ip' is referenced but not defined.
-// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:26471 Module 'SB_RGBA_DRV_CORE' is referenced but not defined.
-// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:26515 Module 'SB_BARCODE_DRV_CORE' is referenced but not defined.
-// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:26550 Module 'SB_IR400_DRV_CORE' is referenced but not defined.
-// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:26587 Module 'SB_IR500_DRV_CORE' is referenced but not defined.
-// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:26649 Module 'SB_IR_IP_CORE' is referenced but not defined.
-// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:27037 Module 'ledd_ip' is referenced but not defined.
-// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:27146 Module 'LED_control' is referenced but not defined.
-// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:27188 Module 'sadslspk4s1p16384x16m16b4w1c0p1d0t0' is referenced but not defined.
-// Warning: (RTL1.3) Variable/signal is assigned by both blocking and non-blocking assignments (occurrence:4)
-// Warning: (RTL1.6) Blocking assignment is in sequential always block (occurrence:4)
-// Warning: (RTL1.7) Non-blocking assignment is in combinational always block (occurrence:1)
-// Warning: (RTL2.13) Undriven pin is detected (occurrence:2)
-// Warning: (RTL7.2) Gate or transistor primitive is using weak attributes (occurrence:229)
-// Warning: (RTL7.5) Input signal is assigned by logic values (occurrence:228)
-// Note: (RTL8.1) Multiple multipliers/dividers are in module/entity (occurrence:1)
-// Warning: (RTL10) Both posedge and negedge are used in different always/process (occurrence:6)
-// Warning: (RTL14) Signal has input but it has no output (occurrence:12)
-// Warning: (RTL14.1) Fanout load of the signal is removed (occurrence:11)
-// Warning: (VLG1.2) Case equality operators are treated as equality operators (occurrence:11)
-// Warning: (VLG6.3) Unsupported system function call (converted to 1'b1) (occurrence:25)
-// Warning: (VLG6.6) Event object is unsupported (occurrence:10)
-// Note: (VLG9.2) The `define macro is used (occurrence:2)
-// Warning: (DIR6.1) Ignored compiler directive is detected (occurrence:143)
-// Warning: (DIR6.2) Supported compiler directive is detected (occurrence:174)
-// Warning: (IGN1.1) Initial assignment is ignored (occurrence:101)
-// Warning: (IGN2.1) Delay value(s) are ignored (occurrence:84)
-// Warning: (IGN2.2) Invalid defparam statement(s) are ignored (occurrence:144)
-// Warning: (HRC1.4) Module/entity is empty (blackboxed) (occurrence:1)
-// Warning: (HRC3.7) Boundary port direction might not be correct (occurrence:10)
-// Warning: (HRC3.10a) An input port is declared, but it is not completely used in the module (occurrence:3)
-// Warning: (HRC3.16) A wire is declared, but not used in the module (occurrence:3)
-// Note: Read VERILOG library successfully
-// Command: read design uart_prim.v -Verilog -Golden -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply
-// Parsing file uart_prim.v ...
-// Golden root module is set to 'uart'
-// Warning: (RTL2.13) Undriven pin is detected (occurrence:156)
-// Warning: (RTL14) Signal has input but it has no output (occurrence:3)
-// Warning: (HRC3.5a) Open input/inout port connection is detected (occurrence:28)
-// Note: (HRC3.5b) Open output port connection is detected (occurrence:28)
-// Warning: There are 3 undriven nets in Golden
-// Warning: There are 156 undriven pins in Golden
-// Note: Read VERILOG design successfully
-// Command: read design verilog_netlist.v -Verilog -Revised -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply
-// Parsing file verilog_netlist.v ...
-// Revised root module is set to 'chip'
-// Warning: (RTL14) Signal has input but it has no output (occurrence:21)
-// Warning: (IGN1.1) Initial assignment is ignored (occurrence:79)
-// Warning: (HRC3.16) A wire is declared, but not used in the module (occurrence:21)
-// Note: Read VERILOG design successfully
-// Command: set system mode lec
-// Processing Golden ...
-//   1% completed//   2% completed//   3% completed//   4% completed//   5% completed//   6% completed//   7% completed//   8% completed//   9% completed//  10% completed//  11% completed//  12% completed//  13% completed//  14% completed//  15% completed//  16% completed//  17% completed//  18% completed//  19% completed//  20% completed//  21% completed//  22% completed//  23% completed//  24% completed//  25% completed//  26% completed//  27% completed//  28% completed//  29% completed//  30% completed//  31% completed//  32% completed//  33% completed//  34% completed//  35% completed//  36% completed//  37% completed//  38% completed//  39% completed//  40% completed//  41% completed//  42% completed//  43% completed//  44% completed//  45% completed//  46% completed//  47% completed//  48% completed//  49% completed//  50% completed//  51% completed//  52% completed//  53% completed//  54% completed//  55% completed//  56% completed//  57% completed//  58% completed//  59% completed//  60% completed//  61% completed//  62% completed//  63% completed//  64% completed//  65% completed//  66% completed// 100% completed// Modeling Golden ...
-//   0% completed//   1% completed//   2% completed//   3% completed//   4% completed//   5% completed// Warning: (F34) Converted 979 X assignment(s) as don't care(s)
-//   7% completed//   8% completed//   9% completed//  10% completed//  11% completed//  12% completed//  14% completed//  15% completed//  16% completed//  17% completed//  18% completed//  20% completed//  21% completed//  22% completed//  23% completed//  24% completed//  25% completed//  27% completed//  28% completed//  29% completed//  30% completed//  31% completed//  32% completed//  34% completed//  35% completed//  36% completed//  37% completed//  38% completed//  40% completed//  41% completed//  42% completed//  43% completed//  44% completed//  45% completed//  47% completed//  48% completed//  49% completed//  50% completed//  51% completed//  52% completed//  54% completed//  55% completed//  56% completed//  57% completed//  58% completed//  60% completed//  61% completed//  62% completed//  63% completed//  64% completed//  65% completed//  67% completed//  68% completed//  69% completed//  70% completed//  71% completed//  72% completed//  74% completed//  75% completed//  76% completed//  77% completed//  78% completed//  80% completed//  81% completed//  82% completed//  83% completed//  84% completed//  85% completed//  87% completed//  88% completed//  89% completed//  90% completed//  91% completed//  92% completed//  94% completed//  95% completed//  96% completed//  97% completed//  98% completed// 100% completed// (F32) Created 97 Z gate(s) for floating net(s) and floating pin(s)
-// (F27) Converted 110 internal input port(s) to inout port(s)
-// (F28) Converted 4 internal output port(s) to inout port(s)
-// (F30) Ignored 77 weak device(s) due to the existence of strong device(s)
-// Processing Revised ...
-//   1% completed// 100% completed// Modeling Revised ...
-//   0% completed//   1% completed//   2% completed//   3% completed//   4% completed//   5% completed//   7% completed//   8% completed//   9% completed//  10% completed//  11% completed//  12% completed//  14% completed//  15% completed//  16% completed//  17% completed//  18% completed//  20% completed//  21% completed//  22% completed//  23% completed//  24% completed//  25% completed//  27% completed//  28% completed//  29% completed//  30% completed//  31% completed//  32% completed//  34% completed//  35% completed//  36% completed//  37% completed//  38% completed//  40% completed//  41% completed//  42% completed//  43% completed//  44% completed//  45% completed//  47% completed//  48% completed//  49% completed//  50% completed//  51% completed//  52% completed//  54% completed//  55% completed//  56% completed//  57% completed//  58% completed//  60% completed//  61% completed//  62% completed//  63% completed//  64% completed//  65% completed//  67% completed//  68% completed//  69% completed//  70% completed//  71% completed//  72% completed//  74% completed//  75% completed//  76% completed//  77% completed//  78% completed//  80% completed//  81% completed//  82% completed//  83% completed//  84% completed//  85% completed//  87% completed//  88% completed//  89% completed//  90% completed//  91% completed//  92% completed//  94% completed//  95% completed//  96% completed//  97% completed//  98% completed// 100% completed// Warning: Golden and Revised have different numbers of key points:
-// Golden  key points = 428
-// Revised key points = 107
-// Mapping key points ...
-//   1% completed//   2% completed//   3% completed//   4% completed//   5% completed//   6% completed//  81% completed// Warning: More than 1/3 of the key points have mis-matched names
-// Warning: Please use renaming rules if automatic mapping fails to finish
-//  82% completed//  83% completed//  84% completed//  85% completed//  86% completed//  87% completed//  88% completed//  89% completed//  90% completed//  91% completed//  92% completed//  93% completed//  94% completed//  95% completed//  96% completed//  97% completed//  98% completed//  99% completed// 100% completed================================================================================
-Mapped points: SYSTEM class
---------------------------------------------------------------------------------
-Mapped points     PI     PO     DFF       Total   
---------------------------------------------------------------------------------
-Golden            13     15     79        107     
---------------------------------------------------------------------------------
-Revised           13     15     79        107     
-================================================================================
-Unmapped points:
-================================================================================
-Golden:
---------------------------------------------------------------------------------
-Unmapped points   DFF    DLAT   Z         Total   
---------------------------------------------------------------------------------
-Unreachable       168    56     97        321     
-================================================================================
-// Command: add compared points -all
-// 94 compared points added to compare list
-// Command: compare
-//   0% Comparing 0 out of 94 points, 0 Non-equivalent//   1% Comparing 1 out of 94 points, 0 Non-equivalent//   2% Comparing 2 out of 94 points, 0 Non-equivalent//   3% Comparing 3 out of 94 points, 0 Non-equivalent//   4% Comparing 4 out of 94 points, 0 Non-equivalent//   5% Comparing 5 out of 94 points, 0 Non-equivalent//   6% Comparing 6 out of 94 points, 0 Non-equivalent//   7% Comparing 7 out of 94 points, 0 Non-equivalent//   8% Comparing 8 out of 94 points, 0 Non-equivalent//   9% Comparing 9 out of 94 points, 0 Non-equivalent//  10% Comparing 10 out of 94 points, 0 Non-equivalent//  11% Comparing 11 out of 94 points, 0 Non-equivalent//  12% Comparing 12 out of 94 points, 0 Non-equivalent//  13% Comparing 13 out of 94 points, 0 Non-equivalent//  14% Comparing 14 out of 94 points, 0 Non-equivalent//  15% Comparing 15 out of 94 points, 0 Non-equivalent//  75% Comparing 71 out of 94 points, 0 Non-equivalent// 100% Comparing 94 out of 94 points, 0 Non-equivalent================================================================================
-Compared points      PO     DFF       Total   
---------------------------------------------------------------------------------
-Equivalent           15     79        94      
-================================================================================
-// Command: exit -Force
