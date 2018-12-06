@@ -1,0 +1,67 @@
+# Generic iCEstick placement constraints file
+
+# Red LEDs
+#set_io LED0 99
+#set_io LED1 98
+#set_io LED2 97
+#set_io LED3 96
+
+# Green LED
+set_io rx_frame_error 95
+
+# IrDA port
+set_io rxd 106
+set_io txd 105
+#set_io SD 107
+
+# Pmod connector
+set_io input_axis_tdata[0] 78 # Pin 1
+set_io input_axis_tdata[1] 79 # Pin 2
+set_io input_axis_tdata[2] 80 # Pin 3
+set_io input_axis_tdata[3] 81 # Pin 4
+set_io input_axis_tdata[4] 87 # Pin 7
+set_io input_axis_tdata[5] 88 # Pin 8
+set_io input_axis_tdata[6] 90 # Pin 9
+set_io input_axis_tdata[7] 91 # Pin 10
+
+# Connector J1
+set_io output_axis_tdata[0] 112 # Pin 3
+set_io output_axis_tdata[1] 113 # Pin 4
+set_io output_axis_tdata[2] 114 # Pin 5
+set_io output_axis_tdata[3] 115 # Pin 6
+set_io output_axis_tdata[4] 116 # Pin 7
+set_io output_axis_tdata[5] 117 # Pin 8
+set_io output_axis_tdata[6] 118 # Pin 9
+set_io output_axis_tdata[7] 119 # Pin 10
+
+# Connector J3
+set_io rst 62 # Pin 3
+set_io input_axis_tvalid 61 # Pin 4
+set_io input_axis_tready 60 # Pin 5
+set_io output_axis_tvalid 56 # Pin 6
+set_io output_axis_tready 48 # Pin 7
+set_io tx_busy 47 # Pin 8
+set_io rx_busy 45 # Pin 9
+set_io rx_overrun_error 44 # Pin 10
+
+# FTDI Port B UART
+#set_io DCDn 1
+#set_io DSRn 2
+#set_io DTRn 3
+#set_io CTSn 4
+#set_io RTSn 7
+#set_io RS232_Tx_TTL 8
+#set_io RS232_Rx_TTL 9
+
+# SPI
+#set_io SPI_SCK 70
+#set_io SPI_SI 68
+#set_io SPI_SO 67
+#set_io SPI_SS_B 71
+
+# Configuration pins
+#set_io CDONE 65
+#set_io CRESET_B 66
+
+# 12 MHz clock
+set_io clk 21
