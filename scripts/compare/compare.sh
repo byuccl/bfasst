@@ -27,19 +27,13 @@ lse="${lse}_lse.prj"
 golden="${filename%.*}"
 golden="${golden}_prim.v"
 
-# prepare do file 
-netlistName="verilog_netlist.v" #TODO refactor
-dofile="flow.do"
-sed "s:<GOLDEN>:${golden}:" 'template.do' > meta
-sed "s:<REVISED>:${netlistName}:" meta > $dofile 
-rm meta
-
 # move rtl into place
 mkdir "${wkdir}/rtl"
 mv $rtl "${wkdir}/rtl/"
 rtl="rtl/${rtl}"
 
 # make project settings file
+
 sed "s:<RTL>:${rtl}:" template.prj > $lse
 
 # move bitstream into place
@@ -49,10 +43,11 @@ mv $bitstream "${wkdir}/${icedir}/"
 bitstream="${icedir}/${bitstream}"
 
 # move project project file, tcl flow, into place
-mv $lse $tcl $constraints $dofile $wkdir
-cd $wkdir
+dofileTemplate="template.do"
+mv $lse $tcl $constraints $dofileTemplate $wkdir
 
 # run iCEcube2 flow
+cd $wkdir
 lse -f $lse
 tclsh $tcl
 
@@ -64,8 +59,15 @@ asciiRep="${icedir}/unpacked_bitstream.asc"
 iceunpack $bitstream > $asciiRep
 
 # extract netlist
+netlistName="verilog_netlist.v"
 netlist="${icedir}/${netlistName}"
 icebox_vlog -p $constraints -s $asciiRep > $netlist
+
+# prepare do file TODO make this cleaner
+dofile="flow.do"
+sed "s/<GOLDEN>/${golden}/" $dofileTemplate > meta
+sed "s/<REVISED>/${netlistName}/" meta > $dofile 
+rm meta
 
 # move files to caedm
 remote="caedm:~"

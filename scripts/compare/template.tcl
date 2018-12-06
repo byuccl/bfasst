@@ -1,11 +1,10 @@
 #!/usr/bin/env tclsh
 
-
-# require 5 arguments
-if { $argc != 3 } {
+# require 7 arguments, 5 from user and 2 from system
+if { $argc != 7 } {
 
 	puts "expected 3 arguments, got $argc"
-	exit
+	exit -1
 }
 
 puts "hello from cMonster"
