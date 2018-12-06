@@ -1,10 +1,10 @@
 #! /usr/bin/env bash
 
-numArgs=7
+numArgs=6
 
 if [ "$#" -ne $numArgs ]; then
 	
-	echo "Usage: bitstream rtl constraints lse tcl wkdir dofile"
+	echo "Usage: bitstream rtl constraints lse tcl wkdir"
 	exit
 fi
 
@@ -14,8 +14,7 @@ rtl=$2 # RTL code in question
 constraints=$3 # design constraints file
 lse=$4 # iCEcube2 project settings
 tcl=$5 # iCEcube2 project flow
-dofile=$6 # file for conformal comparison
-wkdir=$7 # where the user wants the results
+wkdir=$6 # where the user wants the results
 
 # create subdirectory for results
 mkdir $wkdir
@@ -37,7 +36,8 @@ mv $bitstream "${wkdir}/${icedir}/"
 bitstream="${icedir}/${bitstream}"
 
 # move project project file and tcl flow into place
-mv $lse $tcl $constraints $dofile $wkdir
+dofileTemplate="template.do"
+mv $lse $tcl $constraints $dofileTemplate $wkdir
 
 # run iCEcube2 flow
 cd $wkdir
@@ -52,18 +52,26 @@ asciiRep="${icedir}/unpacked_bitstream.asc"
 iceunpack $bitstream > $asciiRep
 
 # extract netlist
-netlist="${icedir}/verilog_netlist.v"
+netlistName="verilog_netlist.v"
+netlist="${icedir}/${netlistName}"
 icebox_vlog -p $constraints -s $asciiRep > $netlist
 
+# prepare do file TODO make this cleaner
+dofile="flow.do"
+sed "s/<GOLDEN>/${golden}/" $dofileTemplate > meta
+sed "s/<REVISED>/${netlistName}/" meta > $dofile 
+rm meta
+
 # move files to caedm
-location="research/automation"
-scp $dofile "caedm:~/${location}"
-scp $netlist "caedm:~/${location}"
-scp $golden "caedm:~/${location}"
+remote="caedm:~"
+path="research/automation"
+scp $dofile "${remote}/${path}"
+scp $netlist "${remote}/${path}"
+scp $golden "${remote}/${path}"
 
 # run the comparison
 comparison="comparison.log"
-ssh caedm "source .system && cd ${location} && lec -Dofile ${dofile} -LOGfile ${comparison} -NOGui" &> $comparison # this needs to change ...ugh
+ssh caedm "source .system && cd ${path} && lec -Dofile ${dofile} -LOGfile ${comparison} -NOGui" &> $comparison # this needs to change ...ugh
 
 # look for the word "Equivalent"
 result=$(tail -3 $comparison) 
