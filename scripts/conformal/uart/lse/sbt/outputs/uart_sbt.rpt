@@ -1,0 +1,121 @@
+* ******************************************************************************
+
+* iCEcube Report
+
+* Version:            2017.08.27940
+
+* Build Date:         Sep 12 2017 08:02:28
+
+* File Generated:     Dec 6 2018 15:12:19
+
+* Purpose:            General info of design implementation
+
+* Copyright (C) 2006-2010 by Lattice Semiconductor Corp. All rights reserved.
+
+* ******************************************************************************
+
+Synthesis/Placement Summary:
+----------------------------
+    Status:  Successful
+    Runtime: 1 seconds
+
+Device Info:
+------------
+    Device Family: iCE40
+    Device:        iCE40HX1K
+    Package:       TQ144
+
+Design statistics:
+------------------
+    FFs:                  79
+    LUTs:                 238
+    RAMs:                 0
+    IOBs:                 28
+    GBs:                  1
+    PLLs:                 0
+    Warm Boots:           0
+
+Logic Resource Utilization:
+---------------------------
+    Total Logic Cells: 238/1280
+        Combinational Logic Cells: 159      out of   1280      12.4219%
+        Sequential Logic Cells:    79       out of   1280      6.17188%
+        Logic Tiles:               53       out of   160       33.125%
+    Registers: 
+        Logic Registers:           79       out of   1280      6.17188%
+        IO Registers:              0        out of   560       0
+    Block RAMs:                    0        out of   16        0%
+    Warm Boots:                    0        out of   1         0%
+    Pins:
+        Input Pins:                13       out of   96        13.5417%
+        Output Pins:               15       out of   96        15.625%
+        InOut Pins:                0        out of   96        0%
+    Global Buffers:                1        out of   8         12.5%
+    PLLs:                          0        out of   1         0%
+
+IO Bank Utilization:
+--------------------
+    Bank 3: 1        out of   24        4.16667%
+    Bank 1: 11       out of   25        44%
+    Bank 0: 8        out of   23        34.7826%
+    Bank 2: 8        out of   24        33.3333%
+
+Detailed I/O Info:
+------------------
+    Input Pins: 
+    Pin Number  Direction  IO Standard  Pull Up  IO Bank  IO Function    Signal Name           
+    ----------  ---------  -----------  -------  -------  -----------    -----------           
+    21          Input      SB_LVCMOS    No       3        Simple Input   clk                   
+    48          Input      SB_LVCMOS    No       2        Simple Input   output_axis_tready    
+    61          Input      SB_LVCMOS    No       2        Simple Input   input_axis_tvalid     
+    62          Input      SB_LVCMOS    No       2        Simple Input   rst                   
+    78          Input      SB_LVCMOS    No       1        Simple Input   input_axis_tdata[0]   
+    79          Input      SB_LVCMOS    No       1        Simple Input   input_axis_tdata[1]   
+    80          Input      SB_LVCMOS    No       1        Simple Input   input_axis_tdata[2]   
+    81          Input      SB_LVCMOS    No       1        Simple Input   input_axis_tdata[3]   
+    87          Input      SB_LVCMOS    No       1        Simple Input   input_axis_tdata[4]   
+    88          Input      SB_LVCMOS    No       1        Simple Input   input_axis_tdata[5]   
+    90          Input      SB_LVCMOS    No       1        Simple Input   input_axis_tdata[6]   
+    91          Input      SB_LVCMOS    No       1        Simple Input   input_axis_tdata[7]   
+    106         Input      SB_LVCMOS    No       1        Simple Input   rxd                   
+
+    Output Pins: 
+    Pin Number  Direction  IO Standard  Pull Up  IO Bank  IO Function    Signal Name           
+    ----------  ---------  -----------  -------  -------  -----------    -----------           
+    44          Output     SB_LVCMOS    No       2        Simple Output  rx_overrun_error      
+    45          Output     SB_LVCMOS    No       2        Simple Output  rx_busy               
+    47          Output     SB_LVCMOS    No       2        Simple Output  tx_busy               
+    56          Output     SB_LVCMOS    No       2        Simple Output  output_axis_tvalid    
+    60          Output     SB_LVCMOS    No       2        Simple Output  input_axis_tready     
+    95          Output     SB_LVCMOS    No       1        Simple Output  rx_frame_error        
+    105         Output     SB_LVCMOS    No       1        Simple Output  txd                   
+    112         Output     SB_LVCMOS    No       0        Simple Output  output_axis_tdata[0]  
+    113         Output     SB_LVCMOS    No       0        Simple Output  output_axis_tdata[1]  
+    114         Output     SB_LVCMOS    No       0        Simple Output  output_axis_tdata[2]  
+    115         Output     SB_LVCMOS    No       0        Simple Output  output_axis_tdata[3]  
+    116         Output     SB_LVCMOS    No       0        Simple Output  output_axis_tdata[4]  
+    117         Output     SB_LVCMOS    No       0        Simple Output  output_axis_tdata[5]  
+    118         Output     SB_LVCMOS    No       0        Simple Output  output_axis_tdata[6]  
+    119         Output     SB_LVCMOS    No       0        Simple Output  output_axis_tdata[7]  
+
+Detailed Global Buffer Info:
+----------------------------
+    Buffer Number  IO Bank  Driven By  Fanout  Signal Name
+    -------------  -------  ---------  ------  -----------
+    1              3        IO         79      clk_c  
+
+
+Router Summary:
+---------------
+    Status:  Successful
+    Runtime: 3 seconds
+
+Routing Resource Utilization:
+-----------------------------
+              Local line of tile     1792 out of  28666      6.25131%
+                          Span 4      360 out of   6944      5.18433%
+                         Span 12       41 out of   1440      2.84722%
+                  Global network        1 out of      8      12.5%
+      Vertical Inter-LUT Connect       36 out of   1120      3.21429%
+
+

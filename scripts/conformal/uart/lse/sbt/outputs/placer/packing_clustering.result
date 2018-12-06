@@ -1,0 +1,276 @@
+ble_pack uart_rx_inst.add_144_2_lut_LC_22 {uart_rx_inst.add_144_2, uart_rx_inst.add_144_2_lut}
+ble_pack uart_rx_inst.add_144_3_lut_LC_23 {uart_rx_inst.add_144_3, uart_rx_inst.add_144_3_lut}
+ble_pack uart_rx_inst.add_144_4_lut_LC_24 {uart_rx_inst.add_144_4, uart_rx_inst.add_144_4_lut}
+ble_pack uart_rx_inst.add_144_5_lut_LC_25 {uart_rx_inst.add_144_5, uart_rx_inst.add_144_5_lut}
+ble_pack uart_rx_inst.add_144_6_lut_LC_26 {uart_rx_inst.add_144_6, uart_rx_inst.add_144_6_lut}
+ble_pack uart_rx_inst.add_144_7_lut_LC_27 {uart_rx_inst.add_144_7, uart_rx_inst.add_144_7_lut}
+ble_pack uart_rx_inst.add_144_8_lut_LC_28 {uart_rx_inst.add_144_8, uart_rx_inst.add_144_8_lut}
+ble_pack uart_rx_inst.add_144_9_lut_LC_29 {uart_rx_inst.add_144_9, uart_rx_inst.add_144_9_lut}
+clb_pack PLB_0 {uart_rx_inst.add_144_2_lut_LC_22, uart_rx_inst.add_144_3_lut_LC_23, uart_rx_inst.add_144_4_lut_LC_24, uart_rx_inst.add_144_5_lut_LC_25, uart_rx_inst.add_144_6_lut_LC_26, uart_rx_inst.add_144_7_lut_LC_27, uart_rx_inst.add_144_8_lut_LC_28, uart_rx_inst.add_144_9_lut_LC_29}
+ble_pack uart_rx_inst.add_144_10_lut_LC_13 {uart_rx_inst.add_144_10, uart_rx_inst.add_144_10_lut}
+ble_pack uart_rx_inst.add_144_11_lut_LC_14 {uart_rx_inst.add_144_11, uart_rx_inst.add_144_11_lut}
+ble_pack uart_rx_inst.add_144_12_lut_LC_15 {uart_rx_inst.add_144_12, uart_rx_inst.add_144_12_lut}
+ble_pack uart_rx_inst.add_144_13_lut_LC_16 {uart_rx_inst.add_144_13, uart_rx_inst.add_144_13_lut}
+ble_pack uart_rx_inst.add_144_14_lut_LC_17 {uart_rx_inst.add_144_14, uart_rx_inst.add_144_14_lut}
+ble_pack uart_rx_inst.add_144_15_lut_LC_18 {uart_rx_inst.add_144_15, uart_rx_inst.add_144_15_lut}
+ble_pack uart_rx_inst.add_144_16_lut_LC_19 {uart_rx_inst.add_144_16, uart_rx_inst.add_144_16_lut}
+ble_pack uart_rx_inst.add_144_17_lut_LC_20 {uart_rx_inst.add_144_17, uart_rx_inst.add_144_17_lut}
+clb_pack PLB_1 {uart_rx_inst.add_144_10_lut_LC_13, uart_rx_inst.add_144_11_lut_LC_14, uart_rx_inst.add_144_12_lut_LC_15, uart_rx_inst.add_144_13_lut_LC_16, uart_rx_inst.add_144_14_lut_LC_17, uart_rx_inst.add_144_15_lut_LC_18, uart_rx_inst.add_144_16_lut_LC_19, uart_rx_inst.add_144_17_lut_LC_20}
+ble_pack uart_rx_inst.add_144_18_lut_LC_21 {uart_rx_inst.add_144_18_lut}
+clb_pack PLB_2 {uart_rx_inst.add_144_18_lut_LC_21}
+ble_pack uart_rx_inst.prescale_reg__i0_LC_110 {uart_rx_inst.prescale_reg__i0, uart_rx_inst.sub_10_add_2_2, uart_rx_inst.sub_10_add_2_2_lut}
+ble_pack uart_rx_inst.sub_10_add_2_3_lut_LC_111 {uart_rx_inst.sub_10_add_2_3, uart_rx_inst.sub_10_add_2_3_lut}
+ble_pack uart_rx_inst.sub_10_add_2_4_lut_LC_112 {uart_rx_inst.sub_10_add_2_4, uart_rx_inst.sub_10_add_2_4_lut}
+ble_pack uart_rx_inst.sub_10_add_2_5_lut_LC_113 {uart_rx_inst.sub_10_add_2_5, uart_rx_inst.sub_10_add_2_5_lut}
+ble_pack uart_rx_inst.sub_10_add_2_6_lut_LC_114 {uart_rx_inst.sub_10_add_2_6, uart_rx_inst.sub_10_add_2_6_lut}
+ble_pack uart_rx_inst.sub_10_add_2_7_lut_LC_115 {uart_rx_inst.sub_10_add_2_7, uart_rx_inst.sub_10_add_2_7_lut}
+ble_pack uart_rx_inst.sub_10_add_2_8_lut_LC_116 {uart_rx_inst.sub_10_add_2_8, uart_rx_inst.sub_10_add_2_8_lut}
+ble_pack uart_rx_inst.sub_10_add_2_9_lut_LC_117 {uart_rx_inst.sub_10_add_2_9, uart_rx_inst.sub_10_add_2_9_lut}
+clb_pack PLB_3 {uart_rx_inst.prescale_reg__i0_LC_110, uart_rx_inst.sub_10_add_2_3_lut_LC_111, uart_rx_inst.sub_10_add_2_4_lut_LC_112, uart_rx_inst.sub_10_add_2_5_lut_LC_113, uart_rx_inst.sub_10_add_2_6_lut_LC_114, uart_rx_inst.sub_10_add_2_7_lut_LC_115, uart_rx_inst.sub_10_add_2_8_lut_LC_116, uart_rx_inst.sub_10_add_2_9_lut_LC_117}
+ble_pack uart_rx_inst.sub_10_add_2_10_lut_LC_99 {uart_rx_inst.sub_10_add_2_10, uart_rx_inst.sub_10_add_2_10_lut}
+ble_pack uart_rx_inst.sub_10_add_2_11_lut_LC_100 {uart_rx_inst.sub_10_add_2_11, uart_rx_inst.sub_10_add_2_11_lut}
+ble_pack uart_rx_inst.sub_10_add_2_12_lut_LC_101 {uart_rx_inst.sub_10_add_2_12, uart_rx_inst.sub_10_add_2_12_lut}
+ble_pack uart_rx_inst.sub_10_add_2_13_lut_LC_102 {uart_rx_inst.sub_10_add_2_13, uart_rx_inst.sub_10_add_2_13_lut}
+ble_pack uart_rx_inst.sub_10_add_2_14_lut_LC_103 {uart_rx_inst.sub_10_add_2_14, uart_rx_inst.sub_10_add_2_14_lut}
+ble_pack uart_rx_inst.sub_10_add_2_15_lut_LC_104 {uart_rx_inst.sub_10_add_2_15, uart_rx_inst.sub_10_add_2_15_lut}
+ble_pack uart_rx_inst.sub_10_add_2_16_lut_LC_105 {uart_rx_inst.sub_10_add_2_16, uart_rx_inst.sub_10_add_2_16_lut}
+ble_pack uart_rx_inst.sub_10_add_2_17_lut_LC_106 {uart_rx_inst.sub_10_add_2_17, uart_rx_inst.sub_10_add_2_17_lut}
+clb_pack PLB_4 {uart_rx_inst.sub_10_add_2_10_lut_LC_99, uart_rx_inst.sub_10_add_2_11_lut_LC_100, uart_rx_inst.sub_10_add_2_12_lut_LC_101, uart_rx_inst.sub_10_add_2_13_lut_LC_102, uart_rx_inst.sub_10_add_2_14_lut_LC_103, uart_rx_inst.sub_10_add_2_15_lut_LC_104, uart_rx_inst.sub_10_add_2_16_lut_LC_105, uart_rx_inst.sub_10_add_2_17_lut_LC_106}
+ble_pack uart_rx_inst.sub_10_add_2_18_lut_LC_107 {uart_rx_inst.sub_10_add_2_18, uart_rx_inst.sub_10_add_2_18_lut}
+ble_pack uart_rx_inst.sub_10_add_2_19_lut_LC_108 {uart_rx_inst.sub_10_add_2_19, uart_rx_inst.sub_10_add_2_19_lut}
+ble_pack uart_rx_inst.sub_10_add_2_20_lut_LC_109 {uart_rx_inst.sub_10_add_2_20_lut}
+clb_pack PLB_5 {uart_rx_inst.sub_10_add_2_18_lut_LC_107, uart_rx_inst.sub_10_add_2_19_lut_LC_108, uart_rx_inst.sub_10_add_2_20_lut_LC_109}
+ble_pack uart_tx_inst.prescale_reg__i0_LC_201 {uart_tx_inst.prescale_reg__i0, uart_tx_inst.sub_5_add_2_2, uart_tx_inst.sub_5_add_2_2_lut}
+ble_pack uart_tx_inst.prescale_reg__i1_LC_202 {uart_tx_inst.prescale_reg__i1, uart_tx_inst.sub_5_add_2_3, uart_tx_inst.sub_5_add_2_3_lut}
+ble_pack uart_tx_inst.prescale_reg__i2_LC_203 {uart_tx_inst.prescale_reg__i2, uart_tx_inst.sub_5_add_2_4, uart_tx_inst.sub_5_add_2_4_lut}
+ble_pack uart_tx_inst.sub_5_add_2_5_lut_LC_204 {uart_tx_inst.sub_5_add_2_5, uart_tx_inst.sub_5_add_2_5_lut}
+ble_pack uart_tx_inst.sub_5_add_2_6_lut_LC_205 {uart_tx_inst.sub_5_add_2_6, uart_tx_inst.sub_5_add_2_6_lut}
+ble_pack uart_tx_inst.sub_5_add_2_7_lut_LC_206 {uart_tx_inst.sub_5_add_2_7, uart_tx_inst.sub_5_add_2_7_lut}
+ble_pack uart_tx_inst.sub_5_add_2_8_lut_LC_207 {uart_tx_inst.sub_5_add_2_8, uart_tx_inst.sub_5_add_2_8_lut}
+ble_pack uart_tx_inst.sub_5_add_2_9_lut_LC_208 {uart_tx_inst.sub_5_add_2_9, uart_tx_inst.sub_5_add_2_9_lut}
+clb_pack PLB_6 {uart_tx_inst.prescale_reg__i0_LC_201, uart_tx_inst.prescale_reg__i1_LC_202, uart_tx_inst.prescale_reg__i2_LC_203, uart_tx_inst.sub_5_add_2_5_lut_LC_204, uart_tx_inst.sub_5_add_2_6_lut_LC_205, uart_tx_inst.sub_5_add_2_7_lut_LC_206, uart_tx_inst.sub_5_add_2_8_lut_LC_207, uart_tx_inst.sub_5_add_2_9_lut_LC_208}
+ble_pack uart_tx_inst.sub_5_add_2_10_lut_LC_190 {uart_tx_inst.sub_5_add_2_10, uart_tx_inst.sub_5_add_2_10_lut}
+ble_pack uart_tx_inst.sub_5_add_2_11_lut_LC_191 {uart_tx_inst.sub_5_add_2_11, uart_tx_inst.sub_5_add_2_11_lut}
+ble_pack uart_tx_inst.sub_5_add_2_12_lut_LC_192 {uart_tx_inst.sub_5_add_2_12, uart_tx_inst.sub_5_add_2_12_lut}
+ble_pack uart_tx_inst.sub_5_add_2_13_lut_LC_193 {uart_tx_inst.sub_5_add_2_13, uart_tx_inst.sub_5_add_2_13_lut}
+ble_pack uart_tx_inst.sub_5_add_2_14_lut_LC_194 {uart_tx_inst.sub_5_add_2_14, uart_tx_inst.sub_5_add_2_14_lut}
+ble_pack uart_tx_inst.sub_5_add_2_15_lut_LC_195 {uart_tx_inst.sub_5_add_2_15, uart_tx_inst.sub_5_add_2_15_lut}
+ble_pack uart_tx_inst.sub_5_add_2_16_lut_LC_196 {uart_tx_inst.sub_5_add_2_16, uart_tx_inst.sub_5_add_2_16_lut}
+ble_pack uart_tx_inst.sub_5_add_2_17_lut_LC_197 {uart_tx_inst.sub_5_add_2_17, uart_tx_inst.sub_5_add_2_17_lut}
+clb_pack PLB_7 {uart_tx_inst.sub_5_add_2_10_lut_LC_190, uart_tx_inst.sub_5_add_2_11_lut_LC_191, uart_tx_inst.sub_5_add_2_12_lut_LC_192, uart_tx_inst.sub_5_add_2_13_lut_LC_193, uart_tx_inst.sub_5_add_2_14_lut_LC_194, uart_tx_inst.sub_5_add_2_15_lut_LC_195, uart_tx_inst.sub_5_add_2_16_lut_LC_196, uart_tx_inst.sub_5_add_2_17_lut_LC_197}
+ble_pack uart_tx_inst.sub_5_add_2_18_lut_LC_198 {uart_tx_inst.sub_5_add_2_18, uart_tx_inst.sub_5_add_2_18_lut}
+ble_pack uart_tx_inst.sub_5_add_2_19_lut_LC_199 {uart_tx_inst.sub_5_add_2_19, uart_tx_inst.sub_5_add_2_19_lut}
+ble_pack uart_tx_inst.sub_5_add_2_20_lut_LC_200 {uart_tx_inst.sub_5_add_2_20_lut}
+clb_pack PLB_8 {uart_tx_inst.sub_5_add_2_18_lut_LC_198, uart_tx_inst.sub_5_add_2_19_lut_LC_199, uart_tx_inst.sub_5_add_2_20_lut_LC_200}
+ble_pack uart_tx_inst.sub_8_add_2_2_lut_LC_217 {uart_tx_inst.sub_8_add_2_2, uart_tx_inst.sub_8_add_2_2_lut}
+ble_pack uart_tx_inst.sub_8_add_2_3_lut_LC_218 {uart_tx_inst.sub_8_add_2_3, uart_tx_inst.sub_8_add_2_3_lut}
+ble_pack uart_tx_inst.sub_8_add_2_4_lut_LC_219 {uart_tx_inst.sub_8_add_2_4, uart_tx_inst.sub_8_add_2_4_lut}
+ble_pack uart_tx_inst.sub_8_add_2_5_lut_LC_220 {uart_tx_inst.sub_8_add_2_5, uart_tx_inst.sub_8_add_2_5_lut}
+ble_pack uart_tx_inst.sub_8_add_2_6_lut_LC_221 {uart_tx_inst.sub_8_add_2_6, uart_tx_inst.sub_8_add_2_6_lut}
+ble_pack uart_tx_inst.sub_8_add_2_7_lut_LC_222 {uart_tx_inst.sub_8_add_2_7, uart_tx_inst.sub_8_add_2_7_lut}
+ble_pack uart_tx_inst.sub_8_add_2_8_lut_LC_223 {uart_tx_inst.sub_8_add_2_8, uart_tx_inst.sub_8_add_2_8_lut}
+ble_pack uart_tx_inst.sub_8_add_2_9_lut_LC_224 {uart_tx_inst.sub_8_add_2_9, uart_tx_inst.sub_8_add_2_9_lut}
+clb_pack PLB_9 {uart_tx_inst.sub_8_add_2_2_lut_LC_217, uart_tx_inst.sub_8_add_2_3_lut_LC_218, uart_tx_inst.sub_8_add_2_4_lut_LC_219, uart_tx_inst.sub_8_add_2_5_lut_LC_220, uart_tx_inst.sub_8_add_2_6_lut_LC_221, uart_tx_inst.sub_8_add_2_7_lut_LC_222, uart_tx_inst.sub_8_add_2_8_lut_LC_223, uart_tx_inst.sub_8_add_2_9_lut_LC_224}
+ble_pack uart_tx_inst.sub_8_add_2_10_lut_LC_209 {uart_tx_inst.sub_8_add_2_10, uart_tx_inst.sub_8_add_2_10_lut}
+ble_pack uart_tx_inst.sub_8_add_2_11_lut_LC_210 {uart_tx_inst.sub_8_add_2_11, uart_tx_inst.sub_8_add_2_11_lut}
+ble_pack uart_tx_inst.sub_8_add_2_12_lut_LC_211 {uart_tx_inst.sub_8_add_2_12, uart_tx_inst.sub_8_add_2_12_lut}
+ble_pack uart_tx_inst.sub_8_add_2_13_lut_LC_212 {uart_tx_inst.sub_8_add_2_13, uart_tx_inst.sub_8_add_2_13_lut}
+ble_pack uart_tx_inst.sub_8_add_2_14_lut_LC_213 {uart_tx_inst.sub_8_add_2_14, uart_tx_inst.sub_8_add_2_14_lut}
+ble_pack uart_tx_inst.sub_8_add_2_15_lut_LC_214 {uart_tx_inst.sub_8_add_2_15, uart_tx_inst.sub_8_add_2_15_lut}
+ble_pack uart_tx_inst.sub_8_add_2_16_lut_LC_215 {uart_tx_inst.sub_8_add_2_16, uart_tx_inst.sub_8_add_2_16_lut}
+ble_pack uart_tx_inst.sub_8_add_2_17_lut_LC_216 {uart_tx_inst.sub_8_add_2_17_lut}
+clb_pack PLB_10 {uart_tx_inst.sub_8_add_2_10_lut_LC_209, uart_tx_inst.sub_8_add_2_11_lut_LC_210, uart_tx_inst.sub_8_add_2_12_lut_LC_211, uart_tx_inst.sub_8_add_2_13_lut_LC_212, uart_tx_inst.sub_8_add_2_14_lut_LC_213, uart_tx_inst.sub_8_add_2_15_lut_LC_214, uart_tx_inst.sub_8_add_2_16_lut_LC_215, uart_tx_inst.sub_8_add_2_17_lut_LC_216}
+ble_pack i1_4_lut_LC_12 {i1_4_lut}
+ble_pack uart_tx_inst.i1035_4_lut_LC_118 {uart_tx_inst.i1035_4_lut}
+ble_pack uart_tx_inst.bit_cnt__i2_LC_7 {uart_tx_inst.bit_cnt__i2, i1088_4_lut}
+ble_pack uart_tx_inst.i18_4_lut_LC_132 {uart_tx_inst.i18_4_lut}
+ble_pack uart_tx_inst.i15_4_lut_LC_131 {uart_tx_inst.i15_4_lut}
+ble_pack uart_tx_inst.i11_4_lut_LC_120 {uart_tx_inst.i11_4_lut}
+clb_pack PLB_11 {i1_4_lut_LC_12, uart_tx_inst.i1035_4_lut_LC_118, uart_tx_inst.bit_cnt__i2_LC_7, uart_tx_inst.i18_4_lut_LC_132, uart_tx_inst.i15_4_lut_LC_131, uart_tx_inst.i11_4_lut_LC_120}
+ble_pack uart_rx_inst.i1037_4_lut_LC_31 {uart_rx_inst.i1037_4_lut}
+ble_pack uart_rx_inst.bit_cnt__i0_LC_9 {uart_rx_inst.bit_cnt__i0, i1094_3_lut}
+ble_pack uart_rx_inst.i362_3_lut_4_lut_LC_75 {uart_rx_inst.i362_3_lut_4_lut}
+ble_pack uart_rx_inst.i584_1_lut_LC_76 {uart_rx_inst.i584_1_lut}
+ble_pack uart_rx_inst.i18_4_lut_LC_64 {uart_rx_inst.i18_4_lut}
+ble_pack uart_rx_inst.i15_4_lut_LC_63 {uart_rx_inst.i15_4_lut}
+ble_pack uart_rx_inst.i11_4_lut_LC_32 {uart_rx_inst.i11_4_lut}
+clb_pack PLB_12 {uart_rx_inst.i1037_4_lut_LC_31, uart_rx_inst.bit_cnt__i0_LC_9, uart_rx_inst.i362_3_lut_4_lut_LC_75, uart_rx_inst.i584_1_lut_LC_76, uart_rx_inst.i18_4_lut_LC_64, uart_rx_inst.i15_4_lut_LC_63, uart_rx_inst.i11_4_lut_LC_32}
+ble_pack uart_rx_inst.i12_4_lut_LC_33 {uart_rx_inst.i12_4_lut}
+ble_pack uart_rx_inst.prescale_reg__i13_LC_82 {uart_rx_inst.prescale_reg__i13, uart_rx_inst.i633_3_lut}
+ble_pack uart_rx_inst.prescale_reg__i15_LC_80 {uart_rx_inst.prescale_reg__i15, uart_rx_inst.i623_3_lut}
+ble_pack uart_rx_inst.prescale_reg__i17_LC_78 {uart_rx_inst.prescale_reg__i17, uart_rx_inst.i613_3_lut}
+ble_pack uart_rx_inst.prescale_reg__i16_LC_79 {uart_rx_inst.prescale_reg__i16, uart_rx_inst.i618_3_lut}
+ble_pack uart_rx_inst.prescale_reg__i1_LC_38 {uart_rx_inst.prescale_reg__i1, uart_rx_inst.i1378_2_lut}
+ble_pack uart_rx_inst.i14_4_lut_LC_42 {uart_rx_inst.i14_4_lut}
+ble_pack uart_rx_inst.prescale_reg__i12_LC_83 {uart_rx_inst.prescale_reg__i12, uart_rx_inst.i638_3_lut}
+clb_pack PLB_13 {uart_rx_inst.i12_4_lut_LC_33, uart_rx_inst.prescale_reg__i13_LC_82, uart_rx_inst.prescale_reg__i15_LC_80, uart_rx_inst.prescale_reg__i17_LC_78, uart_rx_inst.prescale_reg__i16_LC_79, uart_rx_inst.prescale_reg__i1_LC_38, uart_rx_inst.i14_4_lut_LC_42, uart_rx_inst.prescale_reg__i12_LC_83}
+ble_pack uart_rx_inst.i1384_3_lut_4_lut_LC_39 {uart_rx_inst.i1384_3_lut_4_lut}
+ble_pack uart_rx_inst.data_reg__i0_LC_8 {uart_rx_inst.data_reg__i0, i1091_4_lut}
+ble_pack uart_rx_inst.data_reg__i1_LC_6 {uart_rx_inst.data_reg__i1, i1085_4_lut}
+ble_pack uart_rx_inst.data_reg__i2_LC_5 {uart_rx_inst.data_reg__i2, i1082_4_lut}
+ble_pack uart_rx_inst.data_reg__i3_LC_4 {uart_rx_inst.data_reg__i3, i1079_4_lut}
+ble_pack uart_rx_inst.data_reg__i4_LC_3 {uart_rx_inst.data_reg__i4, i1076_4_lut}
+ble_pack uart_rx_inst.data_reg__i5_LC_2 {uart_rx_inst.data_reg__i5, i1073_4_lut}
+ble_pack uart_rx_inst.data_reg__i6_LC_1 {uart_rx_inst.data_reg__i6, i1070_4_lut}
+clb_pack PLB_14 {uart_rx_inst.i1384_3_lut_4_lut_LC_39, uart_rx_inst.data_reg__i0_LC_8, uart_rx_inst.data_reg__i1_LC_6, uart_rx_inst.data_reg__i2_LC_5, uart_rx_inst.data_reg__i3_LC_4, uart_rx_inst.data_reg__i4_LC_3, uart_rx_inst.data_reg__i5_LC_2, uart_rx_inst.data_reg__i6_LC_1}
+ble_pack uart_rx_inst.i13_4_lut_LC_40 {uart_rx_inst.i13_4_lut}
+ble_pack uart_rx_inst.prescale_reg__i5_LC_90 {uart_rx_inst.prescale_reg__i5, uart_rx_inst.i673_3_lut}
+ble_pack uart_rx_inst.prescale_reg__i4_LC_91 {uart_rx_inst.prescale_reg__i4, uart_rx_inst.i678_3_lut}
+ble_pack uart_rx_inst.prescale_reg__i8_LC_87 {uart_rx_inst.prescale_reg__i8, uart_rx_inst.i658_3_lut}
+ble_pack uart_rx_inst.i854_2_lut_LC_95 {uart_rx_inst.i854_2_lut}
+ble_pack uart_rx_inst.i1596_4_lut_4_lut_LC_62 {uart_rx_inst.i1596_4_lut_4_lut}
+ble_pack uart_rx_inst.i1585_4_lut_LC_60 {uart_rx_inst.i1585_4_lut}
+ble_pack uart_rx_inst.i1011_2_lut_4_lut_LC_30 {uart_rx_inst.i1011_2_lut_4_lut}
+clb_pack PLB_15 {uart_rx_inst.i13_4_lut_LC_40, uart_rx_inst.prescale_reg__i5_LC_90, uart_rx_inst.prescale_reg__i4_LC_91, uart_rx_inst.prescale_reg__i8_LC_87, uart_rx_inst.i854_2_lut_LC_95, uart_rx_inst.i1596_4_lut_4_lut_LC_62, uart_rx_inst.i1585_4_lut_LC_60, uart_rx_inst.i1011_2_lut_4_lut_LC_30}
+ble_pack uart_rx_inst.i1516_4_lut_LC_43 {uart_rx_inst.i1516_4_lut}
+ble_pack uart_rx_inst.i1374_2_lut_LC_36 {uart_rx_inst.i1374_2_lut}
+ble_pack uart_rx_inst.data_reg__i7_LC_0 {uart_rx_inst.data_reg__i7, i1067_4_lut}
+ble_pack uart_rx_inst.i78_2_lut_LC_94 {uart_rx_inst.i78_2_lut}
+ble_pack uart_rx_inst.i149_3_lut_LC_41 {uart_rx_inst.i149_3_lut}
+ble_pack uart_rx_inst.i1340_3_lut_LC_34 {uart_rx_inst.i1340_3_lut}
+ble_pack uart_rx_inst.i1_4_lut_4_lut_LC_69 {uart_rx_inst.i1_4_lut_4_lut}
+ble_pack i1_3_lut_LC_11 {i1_3_lut}
+clb_pack PLB_16 {uart_rx_inst.i1516_4_lut_LC_43, uart_rx_inst.i1374_2_lut_LC_36, uart_rx_inst.data_reg__i7_LC_0, uart_rx_inst.i78_2_lut_LC_94, uart_rx_inst.i149_3_lut_LC_41, uart_rx_inst.i1340_3_lut_LC_34, uart_rx_inst.i1_4_lut_4_lut_LC_69, i1_3_lut_LC_11}
+ble_pack uart_rx_inst.i1_3_lut_4_lut_LC_68 {uart_rx_inst.i1_3_lut_4_lut}
+ble_pack uart_rx_inst.bit_cnt__i3_LC_97 {uart_rx_inst.bit_cnt__i3, uart_rx_inst.mux_46_i4_4_lut}
+ble_pack uart_rx_inst.i2_3_lut_adj_22_LC_73 {uart_rx_inst.i2_3_lut_adj_22}
+ble_pack uart_rx_inst.bit_cnt__i1_LC_96 {uart_rx_inst.bit_cnt__i1, uart_rx_inst.mux_46_i2_4_lut}
+ble_pack uart_rx_inst.i1_2_lut_LC_65 {uart_rx_inst.i1_2_lut}
+ble_pack uart_rx_inst.i208_2_lut_3_lut_LC_70 {uart_rx_inst.i208_2_lut_3_lut}
+ble_pack uart_rx_inst.i209_2_lut_3_lut_LC_71 {uart_rx_inst.i209_2_lut_3_lut}
+ble_pack uart_rx_inst.i2_4_lut_LC_74 {uart_rx_inst.i2_4_lut}
+clb_pack PLB_17 {uart_rx_inst.i1_3_lut_4_lut_LC_68, uart_rx_inst.bit_cnt__i3_LC_97, uart_rx_inst.i2_3_lut_adj_22_LC_73, uart_rx_inst.bit_cnt__i1_LC_96, uart_rx_inst.i1_2_lut_LC_65, uart_rx_inst.i208_2_lut_3_lut_LC_70, uart_rx_inst.i209_2_lut_3_lut_LC_71, uart_rx_inst.i2_4_lut_LC_74}
+ble_pack uart_tx_inst.i12_4_lut_LC_121 {uart_tx_inst.i12_4_lut}
+ble_pack uart_tx_inst.prescale_reg__i13_LC_169 {uart_tx_inst.prescale_reg__i13, uart_tx_inst.i784_3_lut_4_lut}
+ble_pack uart_tx_inst.i782_3_lut_LC_168 {uart_tx_inst.i782_3_lut}
+ble_pack uart_tx_inst.prescale_reg__i15_LC_173 {uart_tx_inst.prescale_reg__i15, uart_tx_inst.i794_3_lut_4_lut}
+ble_pack uart_tx_inst.i792_3_lut_LC_172 {uart_tx_inst.i792_3_lut}
+ble_pack uart_tx_inst.prescale_reg__i17_LC_177 {uart_tx_inst.prescale_reg__i17, uart_tx_inst.i804_3_lut_4_lut}
+ble_pack uart_tx_inst.i802_3_lut_LC_176 {uart_tx_inst.i802_3_lut}
+ble_pack uart_tx_inst.i2_3_lut_4_lut_LC_145 {uart_tx_inst.i2_3_lut_4_lut}
+clb_pack PLB_18 {uart_tx_inst.i12_4_lut_LC_121, uart_tx_inst.prescale_reg__i13_LC_169, uart_tx_inst.i782_3_lut_LC_168, uart_tx_inst.prescale_reg__i15_LC_173, uart_tx_inst.i792_3_lut_LC_172, uart_tx_inst.prescale_reg__i17_LC_177, uart_tx_inst.i802_3_lut_LC_176, uart_tx_inst.i2_3_lut_4_lut_LC_145}
+ble_pack uart_tx_inst.i13_4_lut_LC_124 {uart_tx_inst.i13_4_lut}
+ble_pack uart_tx_inst.prescale_reg__i5_LC_153 {uart_tx_inst.prescale_reg__i5, uart_tx_inst.i744_3_lut_4_lut}
+ble_pack uart_tx_inst.prescale_reg__i4_LC_151 {uart_tx_inst.prescale_reg__i4, uart_tx_inst.i739_3_lut_4_lut}
+ble_pack uart_tx_inst.prescale_reg__i8_LC_159 {uart_tx_inst.prescale_reg__i8, uart_tx_inst.i759_3_lut_4_lut}
+ble_pack uart_tx_inst.i742_3_lut_LC_152 {uart_tx_inst.i742_3_lut}
+ble_pack uart_tx_inst.i737_3_lut_LC_150 {uart_tx_inst.i737_3_lut}
+ble_pack uart_tx_inst.i757_3_lut_LC_158 {uart_tx_inst.i757_3_lut}
+ble_pack uart_tx_inst.i319_4_lut_LC_146 {uart_tx_inst.i319_4_lut}
+clb_pack PLB_19 {uart_tx_inst.i13_4_lut_LC_124, uart_tx_inst.prescale_reg__i5_LC_153, uart_tx_inst.prescale_reg__i4_LC_151, uart_tx_inst.prescale_reg__i8_LC_159, uart_tx_inst.i742_3_lut_LC_152, uart_tx_inst.i737_3_lut_LC_150, uart_tx_inst.i757_3_lut_LC_158, uart_tx_inst.i319_4_lut_LC_146}
+ble_pack uart_tx_inst.i14_4_lut_LC_126 {uart_tx_inst.i14_4_lut}
+ble_pack uart_tx_inst.prescale_reg__i12_LC_167 {uart_tx_inst.prescale_reg__i12, uart_tx_inst.i779_3_lut_4_lut}
+ble_pack uart_tx_inst.i777_3_lut_LC_166 {uart_tx_inst.i777_3_lut}
+ble_pack uart_tx_inst.prescale_reg__i9_LC_161 {uart_tx_inst.prescale_reg__i9, uart_tx_inst.i764_3_lut_4_lut}
+ble_pack uart_tx_inst.i762_3_lut_LC_160 {uart_tx_inst.i762_3_lut}
+ble_pack uart_tx_inst.i1524_3_lut_4_lut_LC_127 {uart_tx_inst.i1524_3_lut_4_lut}
+ble_pack uart_tx_inst.prescale_reg__i3_LC_149 {uart_tx_inst.prescale_reg__i3, uart_tx_inst.i734_3_lut_4_lut}
+ble_pack uart_tx_inst.i732_3_lut_LC_148 {uart_tx_inst.i732_3_lut}
+clb_pack PLB_20 {uart_tx_inst.i14_4_lut_LC_126, uart_tx_inst.prescale_reg__i12_LC_167, uart_tx_inst.i777_3_lut_LC_166, uart_tx_inst.prescale_reg__i9_LC_161, uart_tx_inst.i762_3_lut_LC_160, uart_tx_inst.i1524_3_lut_4_lut_LC_127, uart_tx_inst.prescale_reg__i3_LC_149, uart_tx_inst.i732_3_lut_LC_148}
+ble_pack uart_tx_inst.i1_2_lut_4_lut_LC_135 {uart_tx_inst.i1_2_lut_4_lut}
+ble_pack uart_tx_inst.bit_cnt__i1_LC_133 {uart_tx_inst.bit_cnt__i1, uart_tx_inst.i1_2_lut}
+ble_pack uart_tx_inst.i1_2_lut_4_lut_adj_24_LC_136 {uart_tx_inst.i1_2_lut_4_lut_adj_24}
+ble_pack uart_tx_inst.i1_4_lut_LC_140 {uart_tx_inst.i1_4_lut}
+ble_pack uart_tx_inst.i146_3_lut_LC_125 {uart_tx_inst.i146_3_lut}
+ble_pack uart_tx_inst.i1343_2_lut_LC_123 {uart_tx_inst.i1343_2_lut}
+ble_pack uart_tx_inst.i2_2_lut_4_lut_LC_143 {uart_tx_inst.i2_2_lut_4_lut}
+ble_pack uart_tx_inst.i29_4_lut_LC_142 {uart_tx_inst.i29_4_lut}
+clb_pack PLB_21 {uart_tx_inst.i1_2_lut_4_lut_LC_135, uart_tx_inst.bit_cnt__i1_LC_133, uart_tx_inst.i1_2_lut_4_lut_adj_24_LC_136, uart_tx_inst.i1_4_lut_LC_140, uart_tx_inst.i146_3_lut_LC_125, uart_tx_inst.i1343_2_lut_LC_123, uart_tx_inst.i2_2_lut_4_lut_LC_143, uart_tx_inst.i29_4_lut_LC_142}
+ble_pack uart_tx_inst.i1_3_lut_4_lut_LC_138 {uart_tx_inst.i1_3_lut_4_lut}
+ble_pack uart_tx_inst.bit_cnt__i3_LC_181 {uart_tx_inst.bit_cnt__i3, uart_tx_inst.mux_27_i4_4_lut}
+ble_pack uart_tx_inst.i1527_2_lut_LC_128 {uart_tx_inst.i1527_2_lut}
+ble_pack uart_tx_inst.bit_cnt__i0_LC_180 {uart_tx_inst.bit_cnt__i0, uart_tx_inst.mux_27_i1_4_lut}
+ble_pack uart_tx_inst.i266_2_lut_LC_141 {uart_tx_inst.i266_2_lut}
+ble_pack uart_tx_inst.i1_2_lut_3_lut_LC_134 {uart_tx_inst.i1_2_lut_3_lut}
+ble_pack uart_tx_inst.i1_3_lut_adj_25_LC_139 {uart_tx_inst.i1_3_lut_adj_25}
+ble_pack uart_tx_inst.i407_2_lut_LC_147 {uart_tx_inst.i407_2_lut}
+clb_pack PLB_22 {uart_tx_inst.i1_3_lut_4_lut_LC_138, uart_tx_inst.bit_cnt__i3_LC_181, uart_tx_inst.i1527_2_lut_LC_128, uart_tx_inst.bit_cnt__i0_LC_180, uart_tx_inst.i266_2_lut_LC_141, uart_tx_inst.i1_2_lut_3_lut_LC_134, uart_tx_inst.i1_3_lut_adj_25_LC_139, uart_tx_inst.i407_2_lut_LC_147}
+ble_pack uart_tx_inst.prescale_reg__i6_LC_155 {uart_tx_inst.prescale_reg__i6, uart_tx_inst.i749_3_lut_4_lut}
+ble_pack uart_tx_inst.i747_3_lut_LC_154 {uart_tx_inst.i747_3_lut}
+ble_pack uart_tx_inst.prescale_reg__i14_LC_171 {uart_tx_inst.prescale_reg__i14, uart_tx_inst.i789_3_lut_4_lut}
+ble_pack uart_tx_inst.i787_3_lut_LC_170 {uart_tx_inst.i787_3_lut}
+ble_pack uart_tx_inst.prescale_reg__i7_LC_157 {uart_tx_inst.prescale_reg__i7, uart_tx_inst.i754_3_lut_4_lut}
+ble_pack uart_tx_inst.i752_3_lut_LC_156 {uart_tx_inst.i752_3_lut}
+ble_pack uart_tx_inst.prescale_reg__i10_LC_163 {uart_tx_inst.prescale_reg__i10, uart_tx_inst.i769_3_lut_4_lut}
+ble_pack uart_tx_inst.i767_3_lut_LC_162 {uart_tx_inst.i767_3_lut}
+clb_pack PLB_23 {uart_tx_inst.prescale_reg__i6_LC_155, uart_tx_inst.i747_3_lut_LC_154, uart_tx_inst.prescale_reg__i14_LC_171, uart_tx_inst.i787_3_lut_LC_170, uart_tx_inst.prescale_reg__i7_LC_157, uart_tx_inst.i752_3_lut_LC_156, uart_tx_inst.prescale_reg__i10_LC_163, uart_tx_inst.i767_3_lut_LC_162}
+ble_pack uart_tx_inst.prescale_reg__i11_LC_165 {uart_tx_inst.prescale_reg__i11, uart_tx_inst.i774_3_lut_4_lut}
+ble_pack uart_tx_inst.i772_3_lut_LC_164 {uart_tx_inst.i772_3_lut}
+ble_pack uart_tx_inst.prescale_reg__i16_LC_175 {uart_tx_inst.prescale_reg__i16, uart_tx_inst.i799_3_lut_4_lut}
+ble_pack uart_tx_inst.i797_3_lut_LC_174 {uart_tx_inst.i797_3_lut}
+ble_pack uart_tx_inst.prescale_reg__i18_LC_179 {uart_tx_inst.prescale_reg__i18, uart_tx_inst.i809_3_lut_4_lut}
+ble_pack uart_tx_inst.i807_3_lut_LC_178 {uart_tx_inst.i807_3_lut}
+ble_pack uart_tx_inst.i2_3_lut_LC_144 {uart_tx_inst.i2_3_lut}
+ble_pack uart_tx_inst.i1_3_lut_LC_137 {uart_tx_inst.i1_3_lut}
+clb_pack PLB_24 {uart_tx_inst.prescale_reg__i11_LC_165, uart_tx_inst.i772_3_lut_LC_164, uart_tx_inst.prescale_reg__i16_LC_175, uart_tx_inst.i797_3_lut_LC_174, uart_tx_inst.prescale_reg__i18_LC_179, uart_tx_inst.i807_3_lut_LC_178, uart_tx_inst.i2_3_lut_LC_144, uart_tx_inst.i1_3_lut_LC_137}
+ble_pack uart_tx_inst.data_reg_i0_i0_LC_182 {uart_tx_inst.data_reg_i0_i0, uart_tx_inst.mux_42_i1_3_lut_4_lut}
+ble_pack uart_tx_inst.data_reg_i0_i1_LC_183 {uart_tx_inst.data_reg_i0_i1, uart_tx_inst.mux_42_i2_3_lut_4_lut}
+ble_pack uart_tx_inst.data_reg_i0_i2_LC_184 {uart_tx_inst.data_reg_i0_i2, uart_tx_inst.mux_42_i3_3_lut_4_lut}
+ble_pack uart_tx_inst.data_reg_i0_i3_LC_185 {uart_tx_inst.data_reg_i0_i3, uart_tx_inst.mux_42_i4_3_lut_4_lut}
+ble_pack uart_tx_inst.data_reg_i0_i4_LC_186 {uart_tx_inst.data_reg_i0_i4, uart_tx_inst.mux_42_i5_3_lut_4_lut}
+ble_pack uart_tx_inst.data_reg_i0_i5_LC_187 {uart_tx_inst.data_reg_i0_i5, uart_tx_inst.mux_42_i6_3_lut_4_lut}
+ble_pack uart_tx_inst.data_reg_i0_i6_LC_188 {uart_tx_inst.data_reg_i0_i6, uart_tx_inst.mux_42_i7_3_lut_4_lut}
+ble_pack uart_tx_inst.data_reg_i0_i7_LC_189 {uart_tx_inst.data_reg_i0_i7, uart_tx_inst.mux_42_i8_3_lut_4_lut}
+clb_pack PLB_25 {uart_tx_inst.data_reg_i0_i0_LC_182, uart_tx_inst.data_reg_i0_i1_LC_183, uart_tx_inst.data_reg_i0_i2_LC_184, uart_tx_inst.data_reg_i0_i3_LC_185, uart_tx_inst.data_reg_i0_i4_LC_186, uart_tx_inst.data_reg_i0_i5_LC_187, uart_tx_inst.data_reg_i0_i6_LC_188, uart_tx_inst.data_reg_i0_i7_LC_189}
+ble_pack uart_rx_inst.i1351_2_lut_3_lut_LC_35 {uart_rx_inst.i1351_2_lut_3_lut}
+ble_pack uart_rx_inst.prescale_reg__i18_LC_77 {uart_rx_inst.prescale_reg__i18, uart_rx_inst.i603_3_lut}
+ble_pack uart_rx_inst.prescale_reg__i14_LC_81 {uart_rx_inst.prescale_reg__i14, uart_rx_inst.i628_3_lut}
+ble_pack uart_rx_inst.prescale_reg__i11_LC_84 {uart_rx_inst.prescale_reg__i11, uart_rx_inst.i643_3_lut}
+ble_pack uart_rx_inst.prescale_reg__i10_LC_85 {uart_rx_inst.prescale_reg__i10, uart_rx_inst.i648_3_lut}
+ble_pack uart_rx_inst.prescale_reg__i9_LC_86 {uart_rx_inst.prescale_reg__i9, uart_rx_inst.i653_3_lut}
+ble_pack uart_rx_inst.prescale_reg__i7_LC_88 {uart_rx_inst.prescale_reg__i7, uart_rx_inst.i663_3_lut}
+ble_pack uart_rx_inst.prescale_reg__i6_LC_89 {uart_rx_inst.prescale_reg__i6, uart_rx_inst.i668_3_lut}
+clb_pack PLB_26 {uart_rx_inst.i1351_2_lut_3_lut_LC_35, uart_rx_inst.prescale_reg__i18_LC_77, uart_rx_inst.prescale_reg__i14_LC_81, uart_rx_inst.prescale_reg__i11_LC_84, uart_rx_inst.prescale_reg__i10_LC_85, uart_rx_inst.prescale_reg__i9_LC_86, uart_rx_inst.prescale_reg__i7_LC_88, uart_rx_inst.prescale_reg__i6_LC_89}
+ble_pack uart_rx_inst.i2_3_lut_LC_72 {uart_rx_inst.i2_3_lut}
+ble_pack uart_rx_inst.i1587_2_lut_LC_61 {uart_rx_inst.i1587_2_lut}
+ble_pack i1_2_lut_LC_10 {i1_2_lut}
+ble_pack uart_rx_inst.output_axis_tvalid_reg_82_LC_37 {uart_rx_inst.output_axis_tvalid_reg_82, uart_rx_inst.i1376_3_lut}
+ble_pack uart_tx_inst.i1589_2_lut_3_lut_LC_129 {uart_tx_inst.i1589_2_lut_3_lut}
+ble_pack uart_rx_inst.rxd_reg_83_LC_236 {uart_rx_inst.rxd_reg_83, uart_rx_inst.rxd_reg_83_THRU_LUT4_0}
+ble_pack uart_rx_inst.i1563_2_lut_LC_44 {uart_rx_inst.i1563_2_lut}
+ble_pack uart_rx_inst.i1565_2_lut_LC_45 {uart_rx_inst.i1565_2_lut}
+clb_pack PLB_27 {uart_rx_inst.i2_3_lut_LC_72, uart_rx_inst.i1587_2_lut_LC_61, i1_2_lut_LC_10, uart_rx_inst.output_axis_tvalid_reg_82_LC_37, uart_tx_inst.i1589_2_lut_3_lut_LC_129, uart_rx_inst.rxd_reg_83_LC_236, uart_rx_inst.i1563_2_lut_LC_44, uart_rx_inst.i1565_2_lut_LC_45}
+ble_pack uart_rx_inst.prescale_reg__i3_LC_92 {uart_rx_inst.prescale_reg__i3, uart_rx_inst.i683_3_lut}
+ble_pack uart_rx_inst.prescale_reg__i2_LC_93 {uart_rx_inst.prescale_reg__i2, uart_rx_inst.i688_3_lut}
+ble_pack uart_rx_inst.i1566_2_lut_LC_46 {uart_rx_inst.i1566_2_lut}
+ble_pack uart_rx_inst.i1567_2_lut_LC_47 {uart_rx_inst.i1567_2_lut}
+ble_pack uart_rx_inst.i1568_2_lut_LC_48 {uart_rx_inst.i1568_2_lut}
+ble_pack uart_rx_inst.i1569_2_lut_LC_49 {uart_rx_inst.i1569_2_lut}
+ble_pack uart_rx_inst.i1570_2_lut_LC_50 {uart_rx_inst.i1570_2_lut}
+ble_pack uart_rx_inst.i1571_2_lut_LC_51 {uart_rx_inst.i1571_2_lut}
+clb_pack PLB_28 {uart_rx_inst.prescale_reg__i3_LC_92, uart_rx_inst.prescale_reg__i2_LC_93, uart_rx_inst.i1566_2_lut_LC_46, uart_rx_inst.i1567_2_lut_LC_47, uart_rx_inst.i1568_2_lut_LC_48, uart_rx_inst.i1569_2_lut_LC_49, uart_rx_inst.i1570_2_lut_LC_50, uart_rx_inst.i1571_2_lut_LC_51}
+ble_pack uart_tx_inst.data_reg_i0_i8_LC_119 {uart_tx_inst.data_reg_i0_i8, uart_tx_inst.i1064_3_lut_4_lut}
+ble_pack uart_rx_inst.i1572_2_lut_LC_52 {uart_rx_inst.i1572_2_lut}
+ble_pack uart_rx_inst.i1573_2_lut_LC_53 {uart_rx_inst.i1573_2_lut}
+ble_pack uart_rx_inst.i1574_2_lut_LC_54 {uart_rx_inst.i1574_2_lut}
+ble_pack uart_rx_inst.i1576_2_lut_LC_55 {uart_rx_inst.i1576_2_lut}
+ble_pack uart_rx_inst.i1577_2_lut_LC_56 {uart_rx_inst.i1577_2_lut}
+ble_pack uart_rx_inst.i1578_2_lut_LC_57 {uart_rx_inst.i1578_2_lut}
+ble_pack uart_rx_inst.i1580_2_lut_LC_58 {uart_rx_inst.i1580_2_lut}
+clb_pack PLB_29 {uart_tx_inst.data_reg_i0_i8_LC_119, uart_rx_inst.i1572_2_lut_LC_52, uart_rx_inst.i1573_2_lut_LC_53, uart_rx_inst.i1574_2_lut_LC_54, uart_rx_inst.i1576_2_lut_LC_55, uart_rx_inst.i1577_2_lut_LC_56, uart_rx_inst.i1578_2_lut_LC_57, uart_rx_inst.i1580_2_lut_LC_58}
+ble_pack uart_tx_inst.txd_reg_50_LC_122 {uart_tx_inst.txd_reg_50, uart_tx_inst.i1342_3_lut}
+ble_pack uart_rx_inst.i1581_2_lut_LC_59 {uart_rx_inst.i1581_2_lut}
+ble_pack uart_rx_inst.i1_2_lut_adj_23_LC_67 {uart_rx_inst.i1_2_lut_adj_23}
+ble_pack LC_237 {CONSTANT_ONE_LUT4}
+clb_pack PLB_30 {uart_tx_inst.txd_reg_50_LC_122, uart_rx_inst.i1581_2_lut_LC_59, uart_rx_inst.i1_2_lut_adj_23_LC_67, LC_237}
+ble_pack uart_rx_inst.bit_cnt__i2_LC_66 {uart_rx_inst.bit_cnt__i2, uart_rx_inst.i1_2_lut_3_lut}
+clb_pack PLB_31 {uart_rx_inst.bit_cnt__i2_LC_66}
+ble_pack uart_rx_inst.frame_error_reg_88_LC_98 {uart_rx_inst.frame_error_reg_88, uart_rx_inst.rxd_reg_I_0_1_lut}
+clb_pack PLB_32 {uart_rx_inst.frame_error_reg_88_LC_98}
+ble_pack uart_tx_inst.input_axis_tready_reg_49_LC_130 {uart_tx_inst.input_axis_tready_reg_49, uart_tx_inst.i1594_2_lut}
+clb_pack PLB_33 {uart_tx_inst.input_axis_tready_reg_49_LC_130}
+ble_pack uart_rx_inst.output_axis_tdata_reg__i1_LC_225 {uart_rx_inst.output_axis_tdata_reg__i1, uart_rx_inst.output_axis_tdata_reg__i1_THRU_LUT4_0}
+ble_pack uart_rx_inst.output_axis_tdata_reg__i2_LC_226 {uart_rx_inst.output_axis_tdata_reg__i2, uart_rx_inst.output_axis_tdata_reg__i2_THRU_LUT4_0}
+ble_pack uart_rx_inst.output_axis_tdata_reg__i3_LC_227 {uart_rx_inst.output_axis_tdata_reg__i3, uart_rx_inst.output_axis_tdata_reg__i3_THRU_LUT4_0}
+ble_pack uart_rx_inst.output_axis_tdata_reg__i4_LC_228 {uart_rx_inst.output_axis_tdata_reg__i4, uart_rx_inst.output_axis_tdata_reg__i4_THRU_LUT4_0}
+ble_pack uart_rx_inst.output_axis_tdata_reg__i5_LC_229 {uart_rx_inst.output_axis_tdata_reg__i5, uart_rx_inst.output_axis_tdata_reg__i5_THRU_LUT4_0}
+ble_pack uart_rx_inst.output_axis_tdata_reg__i6_LC_230 {uart_rx_inst.output_axis_tdata_reg__i6, uart_rx_inst.output_axis_tdata_reg__i6_THRU_LUT4_0}
+ble_pack uart_rx_inst.output_axis_tdata_reg__i7_LC_231 {uart_rx_inst.output_axis_tdata_reg__i7, uart_rx_inst.output_axis_tdata_reg__i7_THRU_LUT4_0}
+ble_pack uart_rx_inst.output_axis_tdata_reg__i8_LC_232 {uart_rx_inst.output_axis_tdata_reg__i8, uart_rx_inst.output_axis_tdata_reg__i8_THRU_LUT4_0}
+clb_pack PLB_34 {uart_rx_inst.output_axis_tdata_reg__i1_LC_225, uart_rx_inst.output_axis_tdata_reg__i2_LC_226, uart_rx_inst.output_axis_tdata_reg__i3_LC_227, uart_rx_inst.output_axis_tdata_reg__i4_LC_228, uart_rx_inst.output_axis_tdata_reg__i5_LC_229, uart_rx_inst.output_axis_tdata_reg__i6_LC_230, uart_rx_inst.output_axis_tdata_reg__i7_LC_231, uart_rx_inst.output_axis_tdata_reg__i8_LC_232}
+ble_pack uart_rx_inst.busy_reg_86_LC_233 {uart_rx_inst.busy_reg_86, uart_rx_inst.rxd_reg_I_0_1_lut_uart_rx_inst.busy_reg_86_REP_LUT4_0}
+clb_pack PLB_35 {uart_rx_inst.busy_reg_86_LC_233}
+ble_pack uart_tx_inst.busy_reg_53_LC_234 {uart_tx_inst.busy_reg_53, uart_tx_inst.busy_reg_53_THRU_LUT4_0}
+clb_pack PLB_36 {uart_tx_inst.busy_reg_53_LC_234}
+ble_pack uart_rx_inst.overrun_error_reg_87_LC_235 {uart_rx_inst.overrun_error_reg_87, uart_rx_inst.overrun_error_reg_87_THRU_LUT4_0}
+clb_pack PLB_37 {uart_rx_inst.overrun_error_reg_87_LC_235}

@@ -1,0 +1,170 @@
+Copyright (c) 1991-1994 by NeoCAD Inc. All rights reserved.
+Copyright (c) 1995 AT&T Corp.   All rights reserved.
+Copyright (c) 1995-2001 Lucent Technologies Inc.  All rights reserved.
+Copyright (c) 2001 Agere Systems   All rights reserved.
+Copyright (c) 2002-2015 Lattice Semiconductor Corporation,  All rights reserved.
+Thu Dec  6 15:11:31 2018
+
+
+Command Line:  /opt/lattice/LSE/bin/lin64/synthesis -f uart_lse.prj 
+
+Synthesis options:
+The -a option is SBTiCE40.
+The -t option is TQ144.
+The -d option is iCE40HX1K.
+                                                          
+
+##########################################################
+
+### Lattice Family : SBTiCE40
+
+### Device  : iCE40HX1K
+
+### Package : TQ144
+
+### Number of Logic Cells: 1280
+
+### Number of RAM4k Blocks: 16
+
+### Number of DSP Blocks: 0
+
+### Number of PLLs: 1
+
+### Number of IO Pins: 95
+
+##########################################################
+
+                                                          
+
+Optimization goal = Area
+The -top option is not used.
+Target frequency = 200.000000 MHz.
+Maximum fanout = 10000.
+Timing path count = 3
+RWCheckOnRam = 0
+
+BRAM utilization = 100.000000 %
+DSP usage = true (default)
+DSP utilization = 100 % (default)
+fsm_encoding_style = auto
+resolve_mixed_drivers = 0
+fix_gated_clocks = 1
+
+Mux style = auto (Default)
+Use Carry Chain = true
+carry_chain_length = 0
+Use IO Insertion = TRUE
+Use IO Reg = AUTO
+
+Resource Sharing = TRUE
+Propagate Constants = TRUE
+Remove Duplicate Registers = TRUE
+Output EDIF file name = lse/uart.edf.
+WARNING - synthesis: Option -force_gsr will be set to false when option -output_edif/-ngo are set
+ROM style = auto
+RAM style = auto
+The -comp option is FALSE.
+The -syn option is FALSE.
+-p /home/cmonster/workspaces/IceStorm/icemachine/scripts/compare/uart (searchpath added)
+Verilog design file = rtl/uart.v
+-sdc option: SDC file input not used.
+WARNING - synthesis: Setting uart as the top-level module. To specify the top-level module explicitly, use the -top option.
+Technology check ok...
+
+Analyzing Verilog file /opt/lattice/LSE/userware/unix/SYNTHESIS_HEADERS/machxo2.v. VERI-1482
+Analyzing Verilog file /opt/lattice/LSE/userware/unix/SYNTHESIS_HEADERS/sb_ice40.v. VERI-1482
+Compile design.
+Compile Design Begin
+Analyzing Verilog file rtl/uart.v. VERI-1482
+Analyzing Verilog file /opt/lattice/LSE/userware/unix/SYNTHESIS_HEADERS/sb_ice40.v. VERI-1482
+WARNING - synthesis: /opt/lattice/LSE/userware/unix/SYNTHESIS_HEADERS/sb_ice40.v(79): assignment to input EVERI-1214
+WARNING - synthesis: /opt/lattice/LSE/userware/unix/SYNTHESIS_HEADERS/sb_ice40.v(88): assignment to input EVERI-1214
+WARNING - synthesis: /opt/lattice/LSE/userware/unix/SYNTHESIS_HEADERS/sb_ice40.v(98): assignment to input EVERI-1214
+WARNING - synthesis: /opt/lattice/LSE/userware/unix/SYNTHESIS_HEADERS/sb_ice40.v(108): assignment to input EVERI-1214
+WARNING - synthesis: /opt/lattice/LSE/userware/unix/SYNTHESIS_HEADERS/sb_ice40.v(118): assignment to input EVERI-1214
+WARNING - synthesis: /opt/lattice/LSE/userware/unix/SYNTHESIS_HEADERS/sb_ice40.v(170): assignment to input EVERI-1214
+WARNING - synthesis: /opt/lattice/LSE/userware/unix/SYNTHESIS_HEADERS/sb_ice40.v(179): assignment to input EVERI-1214
+WARNING - synthesis: /opt/lattice/LSE/userware/unix/SYNTHESIS_HEADERS/sb_ice40.v(189): assignment to input EVERI-1214
+WARNING - synthesis: /opt/lattice/LSE/userware/unix/SYNTHESIS_HEADERS/sb_ice40.v(199): assignment to input EVERI-1214
+WARNING - synthesis: /opt/lattice/LSE/userware/unix/SYNTHESIS_HEADERS/sb_ice40.v(209): assignment to input EVERI-1214
+WARNING - synthesis: /opt/lattice/LSE/userware/unix/SYNTHESIS_HEADERS/sb_ice40.v(3725): empty port in module declaration. VERI-1294
+Top module name (Verilog): uart
+INFO - synthesis: rtl/uart.v(27): compiling module uart. VERI-1018
+INFO - synthesis: rtl/uart.v(283): compiling module uart_tx. VERI-1018
+WARNING - synthesis: rtl/uart.v(339): expression size 32 truncated to fit in target size 19. VERI-1209
+WARNING - synthesis: rtl/uart.v(346): expression size 32 truncated to fit in target size 19. VERI-1209
+WARNING - synthesis: rtl/uart.v(354): expression size 32 truncated to fit in target size 4. VERI-1209
+WARNING - synthesis: rtl/uart.v(355): expression size 32 truncated to fit in target size 19. VERI-1209
+INFO - synthesis: rtl/uart.v(143): compiling module uart_rx. VERI-1018
+WARNING - synthesis: rtl/uart.v(217): expression size 32 truncated to fit in target size 19. VERI-1209
+WARNING - synthesis: rtl/uart.v(221): expression size 32 truncated to fit in target size 4. VERI-1209
+WARNING - synthesis: rtl/uart.v(222): expression size 32 truncated to fit in target size 19. VERI-1209
+WARNING - synthesis: rtl/uart.v(228): expression size 32 truncated to fit in target size 4. VERI-1209
+WARNING - synthesis: rtl/uart.v(229): expression size 32 truncated to fit in target size 19. VERI-1209
+WARNING - synthesis: rtl/uart.v(244): expression size 32 truncated to fit in target size 19. VERI-1209
+Loading NGL library '/opt/lattice/LSE/xo2c00/data/xo2clib.ngl'...
+Loading NGL library '/opt/lattice/LSE/or5g00/data/orc5glib.ngl'...
+Top-level module name = uart.
+
+
+
+Applying 200.000000 MHz constraint to all clocks
+
+Writing scf file : lse/uart.scf
+
+Results of NGD DRC are available in uart_drc.log.
+
+################### Begin Area Report (uart)######################
+Number of register bits => 79 of 1280 (6 % )
+SB_CARRY => 67
+SB_DFF => 1
+SB_DFFE => 18
+SB_DFFESR => 57
+SB_DFFESS => 2
+SB_DFFSR => 1
+SB_GB_IO => 1
+SB_IO => 27
+SB_LUT4 => 225
+################### End Area Report ##################
+
+################### Begin Clock Report ######################
+Clock Nets
+Number of Clocks: 1
+  Net : clk_c, loads : 79
+Clock Enable Nets
+Number of Clock Enables: 0
+Top 0 highest fanout Clock Enables:
+Highest fanout non-clock nets
+Top 10 highest fanout non-clock nets:
+  Net : rst_c, loads : 70
+  Net : uart_rx_inst/n712, loads : 35
+  Net : uart_tx_inst/input_axis_tready_N_72, loads : 24
+  Net : uart_rx_inst/n232, loads : 23
+  Net : uart_rx_inst/n1479, loads : 22
+  Net : uart_tx_inst/n485, loads : 21
+  Net : uart_tx_inst/n165, loads : 20
+  Net : uart_tx_inst/n873, loads : 19
+  Net : uart_tx_inst/n7, loads : 18
+  Net : uart_rx_inst/n1045, loads : 18
+################### End Clock Report ##################
+
+Timing Report Summary
+--------------
+--------------------------------------------------------------------------------
+Constraint                              |   Constraint|       Actual|Levels
+--------------------------------------------------------------------------------
+                                        |             |             |
+create_clock -period 5.000000 -name     |             |             |
+clk0 [get_nets clk_c]                   |  200.000 MHz|   25.160 MHz|    25 *
+                                        |             |             |
+--------------------------------------------------------------------------------
+
+
+1 constraints not met.
+
+
+Peak Memory Usage: 161.211  MB
+
+--------------------------------------------------------------
+Elapsed CPU time for LSE flow : 0.739  secs
+--------------------------------------------------------------
