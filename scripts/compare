@@ -1,47 +1,77 @@
 #! /usr/bin/env bash
 
+numArgs=7
+
+if [ "$#" -ne $numArgs ]; then
+	
+	echo "Usage: bitstream rtl constraints lse tcl wkdir dofile"
+	exit
+fi
+
 # capture arguments
-BITSTREM=$1
-RTL=$2
-CONTSTRAINTS=$3
-WKDIR='result'
-LSE=
-TCL=
+bitstream=$1 # bitstream in question
+rtl=$2 # RTL code in question
+constraints=$3 # design constraints file
+lse=$4 # iCEcube2 project settings
+tcl=$5 # iCEcube2 project flow
+dofile=$6 # file for conformal comparison
+wkdir=$7 # where the user wants the results
 
-# make new directory for iCEcube2
-mkdir $WKDIR
+# create subdirectory for results
+mkdir $wkdir
 
-# copy arguments into directory
-mv $BITSTREAM $WKDIR
-mv $RTL $WKDIR
-mv $CONSTRAINTS $WKDIR
+# store name of golden netlist
+filename=$(basename -- "$rtl")
+golden="${filename%.*}"
+golden="${golden}_prim.v"
 
-# curl down boilerplate
-curl
+# move rtl into place
+mkdir "${wkdir}/rtl"
+mv $rtl "${wkdir}/rtl/"
+rtl="rtl/${rtl}"
 
-# parameterize boilerplate
-tee
+# move bitstream into place
+icedir='icestorm'
+mkdir "${wkdir}/${icedir}"
+mv $bitstream "${wkdir}/${icedir}/"
+bitstream="${icedir}/${bitstream}"
 
-# set up project (LSE) 
-lse -f $LSE
+# move project project file and tcl flow into place
+mv $lse $tcl $constraints $dofile $wkdir
 
-# run TCL flow 
-tclsh $TCL
+# run iCEcube2 flow
+cd $wkdir
+lse -f $lse
+tclsh $tcl
 
-# create IceStorm directory
-mkdir $WKDIR/icestorm
+# unset LD_LIBRARY_PATH ...ugh
+unset LD_LIBRARY_PATH
 
-# copy bitstream into IceStorm directory
-cp
+# unpack bitstream
+asciiRep="${icedir}/unpacked_bitstream.asc"
+iceunpack $bitstream > $asciiRep
 
-# unpack ASCII 
-iceunpack
+# extract netlist
+netlist="${icedir}/verilog_netlist.v"
+icebox_vlog -p $constraints -s $asciiRep > $netlist
 
-# unpack Verilog netlist
-icebox_vlog
+# move files to caedm
+location="research/automation"
+scp $dofile "caedm:~/${location}"
+scp $netlist "caedm:~/${location}"
+scp $golden "caedm:~/${location}"
 
-# run LEC on CAEDM
-# TODO figure out how to make conformal stop after running a job
-ssh caedm 'source .system && cd research && lec -Dofile flow.do -NOGui' > test.txt
+# run the comparison
+comparison="comparison.log"
+ssh caedm "source .system && cd ${location} && lec -Dofile ${dofile} -LOGfile ${comparison} -NOGui" &> $comparison # this needs to change ...ugh
 
-# parse results and look for 'Equivalent' or 'Non-equivalent'
+# look for the word "Equivalent"
+result=$(tail -3 $comparison) 
+if [[ $result == *"Equivalent"* ]]; then
+	echo equivalent
+else
+	echo "not equivalent"
+fi
+
+
+
