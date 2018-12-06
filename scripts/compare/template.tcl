@@ -9,12 +9,12 @@ if { $argc != 7 } {
 
 puts "hello from cMonster"
 
-set device [lindex $argv 0]
-set top_module [lindex $argv 1]
+set device iCE40HX1K-TQ144
+set top_module [lindex $argv 0]
 set proj_dir [pwd]
-set output_dir [lindex $argv 2]
-set edif_file [lindex $argv 3]
-set tool_options [lindex $argv 4]
+set output_dir [lindex $argv 1]
+set edif_file [lindex $argv 2]
+set tool_options [lindex $argv 3]
 
 #############################################
 #Tool Interface
