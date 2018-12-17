@@ -1,0 +1,834 @@
+#-----------------------------------------------------------
+# Vivado v2016.2 (64-bit)
+# SW Build 1577090 on Thu Jun  2 16:32:35 MDT 2016
+# IP Build 1577682 on Fri Jun  3 12:00:54 MDT 2016
+# Start of session at: Sat Jan 13 13:58:55 2018
+# Process ID: 14497
+# Current directory: /home/sean/vivado_workspace/neo430_simple/neo430_simple.runs/impl_1
+# Command line: vivado -log top.vdi -applog -messageDb vivado.pb -mode batch -source top.tcl -notrace
+# Log file: /home/sean/vivado_workspace/neo430_simple/neo430_simple.runs/impl_1/top.vdi
+# Journal file: /home/sean/vivado_workspace/neo430_simple/neo430_simple.runs/impl_1/vivado.jou
+#-----------------------------------------------------------
+source top.tcl -notrace
+Design is defaulting to srcset: sources_1
+Design is defaulting to constrset: constrs_1
+INFO: [Netlist 29-17] Analyzing 1145 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+WARNING: [Netlist 29-101] Netlist 'top' is not ideal for floorplanning, since the cellview 'top' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.
+INFO: [Project 1-479] Netlist was created with Vivado 2016.2
+INFO: [Device 21-403] Loading part xc7a100tcsg324-3
+INFO: [Project 1-570] Preparing netlist for logic optimization
+Parsing XDC File [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc]
+WARNING: [Vivado 12-584] No ports matched 'sw[8]'. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:41]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:41]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[8]'. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:42]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:42]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[9]'. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:44]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:44]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[9]'. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:45]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:45]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[10]'. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:47]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:47]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[10]'. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:48]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:48]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[11]'. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:50]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:50]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[11]'. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:51]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:51]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[12]'. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:53]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:53]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[12]'. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:54]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:54]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[13]'. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:56]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:56]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[13]'. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:57]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:57]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[14]'. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:59]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:59]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[14]'. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:60]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:60]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[15]'. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:62]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:62]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[15]'. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:63]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:63]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+Finished Parsing XDC File [/home/sean/vivado_workspace/neo430_simple/neo430_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc]
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 52 instances were transformed.
+  RAM16X1S => RAM32X1S (RAMS32): 32 instances
+  RAM32M => RAM32M (RAMD32, RAMD32, RAMD32, RAMD32, RAMD32, RAMD32, RAMS32, RAMS32): 2 instances
+  RAM64M => RAM64M (RAMD64E, RAMD64E, RAMD64E, RAMD64E): 18 instances
+
+INFO: [Vivado_Tcl 4-424] Cannot write hardware definition file as there are no IPI block design hardware handoff files present
+Command: opt_design
+Attempting to get a license for feature 'Implementation' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xc7a100t'
+Running DRC as a precondition to command opt_design
+
+Starting DRC Task
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Project 1-461] DRC finished with 0 Errors
+INFO: [Project 1-462] Please refer to the DRC report (report_drc) for more information.
+
+Time (s): cpu = 00:00:00.17 ; elapsed = 00:00:00.13 . Memory (MB): peak = 1413.980 ; gain = 66.031 ; free physical = 4603 ; free virtual = 118637
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+
+Starting Logic Optimization Task
+Implement Debug Cores | Checksum: e4f35a23
+
+Phase 1 Retarget
+INFO: [Opt 31-138] Pushed 2 inverter(s) to 49 load pin(s).
+INFO: [Opt 31-49] Retargeted 0 cell(s).
+Phase 1 Retarget | Checksum: 12b48d21f
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:01 . Memory (MB): peak = 1830.410 ; gain = 0.000 ; free physical = 4248 ; free virtual = 118282
+
+Phase 2 Constant Propagation
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Opt 31-10] Eliminated 0 cells.
+Phase 2 Constant Propagation | Checksum: 12b48d21f
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:02 . Memory (MB): peak = 1830.410 ; gain = 0.000 ; free physical = 4242 ; free virtual = 118276
+
+Phase 3 Sweep
+INFO: [Opt 31-12] Eliminated 2649 unconnected nets.
+INFO: [Opt 31-11] Eliminated 11 unconnected cells.
+Phase 3 Sweep | Checksum: 10a08704d
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:02 . Memory (MB): peak = 1830.410 ; gain = 0.000 ; free physical = 4242 ; free virtual = 118276
+
+Starting Connectivity Check Task
+
+Time (s): cpu = 00:00:00.03 ; elapsed = 00:00:00.02 . Memory (MB): peak = 1830.410 ; gain = 0.000 ; free physical = 4242 ; free virtual = 118276
+Ending Logic Optimization Task | Checksum: 10a08704d
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:03 . Memory (MB): peak = 1830.410 ; gain = 0.000 ; free physical = 4242 ; free virtual = 118276
+
+Starting Power Optimization Task
+INFO: [Pwropt 34-132] Skipping clock gating for clocks with a period < 2.00 ns.
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+INFO: [Pwropt 34-9] Applying IDT optimizations ...
+INFO: [Pwropt 34-10] Applying ODC optimizations ...
+Running Vector-less Activity Propagation...
+
+Finished Running Vector-less Activity Propagation
+
+
+Starting PowerOpt Patch Enables Task
+INFO: [Pwropt 34-162] WRITE_MODE attribute of 0 BRAM(s) out of a total of 27 has been updated to save power. Run report_power_opt to get a complete listing of the BRAMs updated.
+INFO: [Pwropt 34-201] Structural ODC has moved 0 WE to EN ports
+Number of BRAM Ports augmented: 4 newly gated: 2 Total Ports: 54
+Ending PowerOpt Patch Enables Task | Checksum: 6eac9800
+
+Time (s): cpu = 00:00:00.04 ; elapsed = 00:00:00.04 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3963 ; free virtual = 117997
+Ending Power Optimization Task | Checksum: 6eac9800
+
+Time (s): cpu = 00:00:07 ; elapsed = 00:00:04 . Memory (MB): peak = 2258.629 ; gain = 428.219 ; free physical = 3963 ; free virtual = 117997
+INFO: [Common 17-83] Releasing license: Implementation
+26 Infos, 17 Warnings, 16 Critical Warnings and 0 Errors encountered.
+opt_design completed successfully
+opt_design: Time (s): cpu = 00:00:15 ; elapsed = 00:00:11 . Memory (MB): peak = 2258.629 ; gain = 910.680 ; free physical = 3963 ; free virtual = 117997
+Writing placer database...
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Write XDEF Complete: Time (s): cpu = 00:00:00.02 ; elapsed = 00:00:00 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3962 ; free virtual = 117997
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Coretcl 2-168] The results of DRC are in file /home/sean/vivado_workspace/neo430_simple/neo430_simple.runs/impl_1/top_drc_opted.rpt.
+INFO: [Chipscope 16-241] No debug cores found in the current design.
+Before running the implement_debug_core command, either use the Set Up Debug wizard (GUI mode)
+or use the create_debug_core and connect_debug_core Tcl commands to insert debug cores into the design.
+Command: place_design
+Attempting to get a license for feature 'Implementation' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xc7a100t'
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+Running DRC as a precondition to command place_design
+INFO: [DRC 23-27] Running DRC with 8 threads
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/bwd_reader/reader_dta_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/bwd_reader/reader_dta_fifo/xfifo_sc/ram_reg/ENARDEN (net: mpeg2fpga_0/bwd_reader/reader_dta_fifo/xfifo_sc/ram_reg_ENARDEN_cooolgate_en_sig_3) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/rff1_reg[3]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/bwd_reader/reader_dta_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/bwd_reader/reader_dta_fifo/xfifo_sc/ram_reg/ENARDEN (net: mpeg2fpga_0/bwd_reader/reader_dta_fifo/xfifo_sc/ram_reg_ENARDEN_cooolgate_en_sig_3) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/bwd_reader/reader_dta_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/bwd_reader/reader_dta_fifo/xfifo_sc/ram_reg/RSTRAMARSTRAM (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/bwd_reader/reader_dta_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/bwd_reader/reader_dta_fifo/xfifo_sc/ram_reg/RSTRAMB (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/disp_reader/reader_dta_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/disp_reader/reader_dta_fifo/xfifo_sc/ram_reg/ENARDEN (net: ram_reg_i_1__3_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/disp_reader/reader_dta_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/disp_reader/reader_dta_fifo/xfifo_sc/ram_reg/RSTRAMARSTRAM (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/disp_reader/reader_dta_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/disp_reader/reader_dta_fifo/xfifo_sc/ram_reg/RSTRAMB (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/fwd_reader/reader_dta_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/fwd_reader/reader_dta_fifo/xfifo_sc/ram_reg/ENARDEN (net: mpeg2fpga_0/fwd_reader/reader_dta_fifo/xfifo_sc/ram_reg_ENARDEN_cooolgate_en_sig_4) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/rff1_reg[3]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/fwd_reader/reader_dta_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/fwd_reader/reader_dta_fifo/xfifo_sc/ram_reg/ENARDEN (net: mpeg2fpga_0/fwd_reader/reader_dta_fifo/xfifo_sc/ram_reg_ENARDEN_cooolgate_en_sig_4) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/fwd_reader/reader_dta_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/fwd_reader/reader_dta_fifo/xfifo_sc/ram_reg/RSTRAMARSTRAM (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/fwd_reader/reader_dta_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/fwd_reader/reader_dta_fifo/xfifo_sc/ram_reg/RSTRAMB (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/idct_fifo/predict_err_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/idct_fifo/predict_err_fifo/xfifo_sc/ram_reg/ENARDEN (net: ram_reg_i_1__12_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/idct_fifo/predict_err_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/idct_fifo/predict_err_fifo/xfifo_sc/ram_reg/RSTRAMARSTRAM (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/idct_fifo/predict_err_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/idct_fifo/predict_err_fifo/xfifo_sc/ram_reg/RSTRAMB (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/motcomp/motcomp_dcttype/frame_idct_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/motcomp/motcomp_dcttype/frame_idct_fifo/xfifo_sc/ram_reg/ENARDEN (net: ram_reg_i_1__1_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/motcomp/motcomp_dcttype/frame_idct_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/motcomp/motcomp_dcttype/frame_idct_fifo/xfifo_sc/ram_reg/RSTRAMARSTRAM (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/motcomp/motcomp_dcttype/frame_idct_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/motcomp/motcomp_dcttype/frame_idct_fifo/xfifo_sc/ram_reg/RSTRAMB (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/motcomp/motcomp_dcttype/idct_dta_ram/ram_reg has an input control pin mpeg2fpga_0/motcomp/motcomp_dcttype/idct_dta_ram/ram_reg/ENARDEN (net: ram_reg_i_1_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/motcomp/motcomp_dcttype/idct_dta_ram/ram_reg has an input control pin mpeg2fpga_0/motcomp/motcomp_dcttype/idct_dta_ram/ram_reg/RSTRAMARSTRAM (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/motcomp/motcomp_dcttype/idct_dta_ram/ram_reg has an input control pin mpeg2fpga_0/motcomp/motcomp_dcttype/idct_dta_ram/ram_reg/RSTRAMB (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/motcomp/mvec_fifo/xfifo_sc/ram_reg_0 has an input control pin mpeg2fpga_0/motcomp/mvec_fifo/xfifo_sc/ram_reg_0/ENARDEN (net: ram_reg_0_i_1_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/motcomp/mvec_fifo/xfifo_sc/ram_reg_0 has an input control pin mpeg2fpga_0/motcomp/mvec_fifo/xfifo_sc/ram_reg_0/RSTRAMARSTRAM (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/motcomp/mvec_fifo/xfifo_sc/ram_reg_0 has an input control pin mpeg2fpga_0/motcomp/mvec_fifo/xfifo_sc/ram_reg_0/RSTRAMB (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/motcomp/mvec_fifo/xfifo_sc/ram_reg_1 has an input control pin mpeg2fpga_0/motcomp/mvec_fifo/xfifo_sc/ram_reg_1/ENARDEN (net: ram_reg_0_i_1_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/motcomp/mvec_fifo/xfifo_sc/ram_reg_1 has an input control pin mpeg2fpga_0/motcomp/mvec_fifo/xfifo_sc/ram_reg_1/RSTRAMARSTRAM (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/motcomp/mvec_fifo/xfifo_sc/ram_reg_1 has an input control pin mpeg2fpga_0/motcomp/mvec_fifo/xfifo_sc/ram_reg_1/RSTRAMB (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/motcomp/mvec_fifo/xfifo_sc/ram_reg_2 has an input control pin mpeg2fpga_0/motcomp/mvec_fifo/xfifo_sc/ram_reg_2/ENARDEN (net: ram_reg_0_i_1_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/motcomp/mvec_fifo/xfifo_sc/ram_reg_2 has an input control pin mpeg2fpga_0/motcomp/mvec_fifo/xfifo_sc/ram_reg_2/RSTRAMARSTRAM (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/motcomp/mvec_fifo/xfifo_sc/ram_reg_2 has an input control pin mpeg2fpga_0/motcomp/mvec_fifo/xfifo_sc/ram_reg_2/RSTRAMB (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/osd_writer/writer_fifo/xfifo_sc/ram_reg_0 has an input control pin mpeg2fpga_0/osd_writer/writer_fifo/xfifo_sc/ram_reg_0/ENARDEN (net: ram_reg_0_i_1__0_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/osd_writer/writer_fifo/xfifo_sc/ram_reg_0 has an input control pin mpeg2fpga_0/osd_writer/writer_fifo/xfifo_sc/ram_reg_0/RSTRAMARSTRAM (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/osd_writer/writer_fifo/xfifo_sc/ram_reg_0 has an input control pin mpeg2fpga_0/osd_writer/writer_fifo/xfifo_sc/ram_reg_0/RSTRAMB (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/recon_writer/writer_fifo/xfifo_sc/ram_reg_0 has an input control pin mpeg2fpga_0/recon_writer/writer_fifo/xfifo_sc/ram_reg_0/ENARDEN (net: ram_reg_0_i_1__1_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/recon_writer/writer_fifo/xfifo_sc/ram_reg_0 has an input control pin mpeg2fpga_0/recon_writer/writer_fifo/xfifo_sc/ram_reg_0/RSTRAMARSTRAM (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/recon_writer/writer_fifo/xfifo_sc/ram_reg_0 has an input control pin mpeg2fpga_0/recon_writer/writer_fifo/xfifo_sc/ram_reg_0/RSTRAMB (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/vbuf_read_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/vbuf_read_fifo/xfifo_sc/ram_reg/ENARDEN (net: ram_reg_i_1__8_n_0) which is driven by a register (mpeg2fpga_0/sync_vbuf_reset/syncrst_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/vbuf_read_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/vbuf_read_fifo/xfifo_sc/ram_reg/RSTRAMARSTRAM (net: mpeg2fpga_0/vbuf_rst) which is driven by a register (mpeg2fpga_0/sync_vbuf_reset/syncrst_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/vbuf_read_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/vbuf_read_fifo/xfifo_sc/ram_reg/RSTRAMB (net: mpeg2fpga_0/vbuf_rst) which is driven by a register (mpeg2fpga_0/sync_vbuf_reset/syncrst_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/vbuf_write_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/vbuf_write_fifo/xfifo_sc/ram_reg/ENARDEN (net: ram_reg_i_1__13_n_0) which is driven by a register (mpeg2fpga_0/sync_vbuf_reset/syncrst_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/vbuf_write_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/vbuf_write_fifo/xfifo_sc/ram_reg/RSTRAMARSTRAM (net: mpeg2fpga_0/vbuf_rst) which is driven by a register (mpeg2fpga_0/sync_vbuf_reset/syncrst_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 mpeg2fpga_0/vbuf_write_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/vbuf_write_fifo/xfifo_sc/ram_reg/RSTRAMB (net: mpeg2fpga_0/vbuf_rst) which is driven by a register (mpeg2fpga_0/sync_vbuf_reset/syncrst_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 natalius_8bit_risc/video_mem/ram_video_reg has an input control pin natalius_8bit_risc/video_mem/ram_video_reg/ADDRBWRADDR[10] (net: natalius_8bit_risc/addr_read[8]) which is driven by a register (natalius_8bit_risc/video_cntrl/vcnt_reg[4]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 natalius_8bit_risc/video_mem/ram_video_reg has an input control pin natalius_8bit_risc/video_mem/ram_video_reg/ADDRBWRADDR[11] (net: natalius_8bit_risc/addr_read[9]) which is driven by a register (natalius_8bit_risc/video_cntrl/vcnt_reg[5]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 natalius_8bit_risc/video_mem/ram_video_reg has an input control pin natalius_8bit_risc/video_mem/ram_video_reg/ADDRBWRADDR[12] (net: natalius_8bit_risc/addr_read[10]) which is driven by a register (natalius_8bit_risc/video_cntrl/vcnt_reg[6]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 natalius_8bit_risc/video_mem/ram_video_reg has an input control pin natalius_8bit_risc/video_mem/ram_video_reg/ADDRBWRADDR[13] (net: natalius_8bit_risc/addr_read[11]) which is driven by a register (natalius_8bit_risc/video_cntrl/vcnt_reg[7]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 natalius_8bit_risc/video_mem/ram_video_reg has an input control pin natalius_8bit_risc/video_mem/ram_video_reg/ADDRBWRADDR[14] (net: natalius_8bit_risc/addr_read[12]) which is driven by a register (natalius_8bit_risc/video_cntrl/vcnt_reg[8]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 natalius_8bit_risc/video_mem/ram_video_reg has an input control pin natalius_8bit_risc/video_mem/ram_video_reg/ADDRBWRADDR[2] (net: natalius_8bit_risc/addr_read[0]) which is driven by a register (natalius_8bit_risc/video_cntrl/hcnt_reg[3]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 natalius_8bit_risc/video_mem/ram_video_reg has an input control pin natalius_8bit_risc/video_mem/ram_video_reg/ADDRBWRADDR[3] (net: natalius_8bit_risc/addr_read[1]) which is driven by a register (natalius_8bit_risc/video_cntrl/hcnt_reg[4]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 natalius_8bit_risc/video_mem/ram_video_reg has an input control pin natalius_8bit_risc/video_mem/ram_video_reg/ADDRBWRADDR[4] (net: natalius_8bit_risc/addr_read[2]) which is driven by a register (natalius_8bit_risc/video_cntrl/hcnt_reg[5]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 natalius_8bit_risc/video_mem/ram_video_reg has an input control pin natalius_8bit_risc/video_mem/ram_video_reg/ADDRBWRADDR[5] (net: natalius_8bit_risc/addr_read[3]) which is driven by a register (natalius_8bit_risc/video_cntrl/hcnt_reg[6]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 natalius_8bit_risc/video_mem/ram_video_reg has an input control pin natalius_8bit_risc/video_mem/ram_video_reg/ADDRBWRADDR[6] (net: natalius_8bit_risc/addr_read[4]) which is driven by a register (natalius_8bit_risc/video_cntrl/hcnt_reg[7]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 natalius_8bit_risc/video_mem/ram_video_reg has an input control pin natalius_8bit_risc/video_mem/ram_video_reg/ADDRBWRADDR[7] (net: natalius_8bit_risc/addr_read[5]) which is driven by a register (natalius_8bit_risc/video_cntrl/hcnt_reg[8]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 natalius_8bit_risc/video_mem/ram_video_reg has an input control pin natalius_8bit_risc/video_mem/ram_video_reg/ADDRBWRADDR[8] (net: natalius_8bit_risc/addr_read[6]) which is driven by a register (natalius_8bit_risc/video_cntrl/hcnt_reg[9]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 natalius_8bit_risc/video_mem/ram_video_reg has an input control pin natalius_8bit_risc/video_mem/ram_video_reg/ADDRBWRADDR[9] (net: natalius_8bit_risc/addr_read[7]) which is driven by a register (natalius_8bit_risc/video_cntrl/vcnt_reg[3]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/bwd_reader/reader_addr_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/bwd_reader/reader_addr_fifo/xfifo_sc/ram_reg/ENARDEN (net: ram_reg_i_1__4_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/bwd_reader/reader_addr_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/bwd_reader/reader_addr_fifo/xfifo_sc/ram_reg/RSTRAMARSTRAM (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/bwd_reader/reader_addr_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/bwd_reader/reader_addr_fifo/xfifo_sc/ram_reg/RSTRAMB (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/disp_reader/reader_addr_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/disp_reader/reader_addr_fifo/xfifo_sc/ram_reg/ENARDEN (net: ram_reg_i_1__2_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/disp_reader/reader_addr_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/disp_reader/reader_addr_fifo/xfifo_sc/ram_reg/RSTRAMARSTRAM (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/disp_reader/reader_addr_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/disp_reader/reader_addr_fifo/xfifo_sc/ram_reg/RSTRAMB (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/fwd_reader/reader_addr_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/fwd_reader/reader_addr_fifo/xfifo_sc/ram_reg/ENARDEN (net: ram_reg_i_1__6_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/fwd_reader/reader_addr_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/fwd_reader/reader_addr_fifo/xfifo_sc/ram_reg/RSTRAMARSTRAM (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/fwd_reader/reader_addr_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/fwd_reader/reader_addr_fifo/xfifo_sc/ram_reg/RSTRAMB (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/idct/col2row/ram0/ram_reg has an input control pin mpeg2fpga_0/idct/col2row/ram0/ram_reg/ENBWREN (net: ram_reg_i_1__10_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/idct/col2row/ram0/ram_reg has an input control pin mpeg2fpga_0/idct/col2row/ram0/ram_reg/RSTRAMB (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/idct/col2row/ram0/ram_reg has an input control pin mpeg2fpga_0/idct/col2row/ram0/ram_reg/RSTREGB (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/idct/row2col/ram0/ram_reg has an input control pin mpeg2fpga_0/idct/row2col/ram0/ram_reg/ENARDEN (net: ram_reg_i_1__9_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/idct/row2col/ram0/ram_reg has an input control pin mpeg2fpga_0/idct/row2col/ram0/ram_reg/RSTRAMARSTRAM (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/idct/row2col/ram0/ram_reg has an input control pin mpeg2fpga_0/idct/row2col/ram0/ram_reg/RSTRAMB (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/idct/row2col/ram0/ram_reg has an input control pin mpeg2fpga_0/idct/row2col/ram0/ram_reg/RSTREGARSTREG (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/motcomp/dst_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/motcomp/dst_fifo/xfifo_sc/ram_reg/ENARDEN (net: mpeg2fpga_0/motcomp/dst_fifo/xfifo_sc/ram_reg_ENARDEN_cooolgate_en_sig_2) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/rff1_reg[3]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/motcomp/dst_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/motcomp/dst_fifo/xfifo_sc/ram_reg/ENARDEN (net: mpeg2fpga_0/motcomp/dst_fifo/xfifo_sc/ram_reg_ENARDEN_cooolgate_en_sig_2) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/motcomp/dst_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/motcomp/dst_fifo/xfifo_sc/ram_reg/RSTRAMARSTRAM (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/motcomp/dst_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/motcomp/dst_fifo/xfifo_sc/ram_reg/RSTRAMB (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/osd_writer/writer_fifo/xfifo_sc/ram_reg_1 has an input control pin mpeg2fpga_0/osd_writer/writer_fifo/xfifo_sc/ram_reg_1/ENARDEN (net: ram_reg_0_i_1__0_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/osd_writer/writer_fifo/xfifo_sc/ram_reg_1 has an input control pin mpeg2fpga_0/osd_writer/writer_fifo/xfifo_sc/ram_reg_1/RSTRAMARSTRAM (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/osd_writer/writer_fifo/xfifo_sc/ram_reg_1 has an input control pin mpeg2fpga_0/osd_writer/writer_fifo/xfifo_sc/ram_reg_1/RSTRAMB (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/recon_writer/writer_fifo/xfifo_sc/ram_reg_1 has an input control pin mpeg2fpga_0/recon_writer/writer_fifo/xfifo_sc/ram_reg_1/ENARDEN (net: ram_reg_0_i_1__1_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/recon_writer/writer_fifo/xfifo_sc/ram_reg_1 has an input control pin mpeg2fpga_0/recon_writer/writer_fifo/xfifo_sc/ram_reg_1/RSTRAMARSTRAM (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/recon_writer/writer_fifo/xfifo_sc/ram_reg_1 has an input control pin mpeg2fpga_0/recon_writer/writer_fifo/xfifo_sc/ram_reg_1/RSTRAMB (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/rld_fifo/rld_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/rld_fifo/rld_fifo/xfifo_sc/ram_reg/ENARDEN (net: ram_reg_i_1__11_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/rld_fifo/rld_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/rld_fifo/rld_fifo/xfifo_sc/ram_reg/RSTRAMARSTRAM (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 mpeg2fpga_0/rld_fifo/rld_fifo/xfifo_sc/ram_reg has an input control pin mpeg2fpga_0/rld_fifo/rld_fifo/xfifo_sc/ram_reg/RSTRAMB (net: mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep_n_0) which is driven by a register (mpeg2fpga_0/reset/clk_sreset_2/syncrst_reg_rep) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 neo430_0/neo430_boot_rom_inst_true.neo430_boot_rom_inst/rdata_reg has an input control pin neo430_0/neo430_boot_rom_inst_true.neo430_boot_rom_inst/rdata_reg/ADDRARDADDR[11] (net: neo430_0/cpu_bus[addr][8]) which is driven by a register (neo430_0/neo430_cpu_inst/neo430_reg_file_inst/v_flag_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 neo430_0/neo430_boot_rom_inst_true.neo430_boot_rom_inst/rdata_reg has an input control pin neo430_0/neo430_boot_rom_inst_true.neo430_boot_rom_inst/rdata_reg/ADDRARDADDR[4] (net: neo430_0/cpu_bus[addr][1]) which is driven by a register (neo430_0/neo430_cpu_inst/neo430_control_inst/irq_vec_reg[0]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 neo430_0/neo430_boot_rom_inst_true.neo430_boot_rom_inst/rdata_reg has an input control pin neo430_0/neo430_boot_rom_inst_true.neo430_boot_rom_inst/rdata_reg/ADDRARDADDR[4] (net: neo430_0/cpu_bus[addr][1]) which is driven by a register (neo430_0/neo430_cpu_inst/neo430_reg_file_inst/z_flag_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 neo430_0/neo430_boot_rom_inst_true.neo430_boot_rom_inst/rdata_reg has an input control pin neo430_0/neo430_boot_rom_inst_true.neo430_boot_rom_inst/rdata_reg/ADDRARDADDR[5] (net: neo430_0/cpu_bus[addr][2]) which is driven by a register (neo430_0/neo430_cpu_inst/neo430_control_inst/irq_vec_reg[1]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 neo430_0/neo430_boot_rom_inst_true.neo430_boot_rom_inst/rdata_reg has an input control pin neo430_0/neo430_boot_rom_inst_true.neo430_boot_rom_inst/rdata_reg/ADDRARDADDR[5] (net: neo430_0/cpu_bus[addr][2]) which is driven by a register (neo430_0/neo430_cpu_inst/neo430_reg_file_inst/n_flag_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 neo430_0/neo430_boot_rom_inst_true.neo430_boot_rom_inst/rdata_reg has an input control pin neo430_0/neo430_boot_rom_inst_true.neo430_boot_rom_inst/rdata_reg/ADDRARDADDR[6] (net: neo430_0/cpu_bus[addr][3]) which is driven by a register (neo430_0/neo430_cpu_inst/neo430_reg_file_inst/i_flag_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 neo430_0/neo430_boot_rom_inst_true.neo430_boot_rom_inst/rdata_reg has an input control pin neo430_0/neo430_boot_rom_inst_true.neo430_boot_rom_inst/rdata_reg/ADDRARDADDR[7] (net: neo430_0/cpu_bus[addr][4]) which is driven by a register (neo430_0/neo430_cpu_inst/neo430_reg_file_inst/s_flag_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 neo430_0/neo430_dmem_inst/dmem_file_reg has an input control pin neo430_0/neo430_dmem_inst/dmem_file_reg/ADDRARDADDR[11] (net: neo430_0/cpu_bus[addr][8]) which is driven by a register (neo430_0/neo430_cpu_inst/neo430_reg_file_inst/v_flag_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 neo430_0/neo430_dmem_inst/dmem_file_reg has an input control pin neo430_0/neo430_dmem_inst/dmem_file_reg/ADDRARDADDR[4] (net: neo430_0/cpu_bus[addr][1]) which is driven by a register (neo430_0/neo430_cpu_inst/neo430_control_inst/irq_vec_reg[0]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 neo430_0/neo430_dmem_inst/dmem_file_reg has an input control pin neo430_0/neo430_dmem_inst/dmem_file_reg/ADDRARDADDR[4] (net: neo430_0/cpu_bus[addr][1]) which is driven by a register (neo430_0/neo430_cpu_inst/neo430_reg_file_inst/z_flag_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 neo430_0/neo430_dmem_inst/dmem_file_reg has an input control pin neo430_0/neo430_dmem_inst/dmem_file_reg/ADDRARDADDR[5] (net: neo430_0/cpu_bus[addr][2]) which is driven by a register (neo430_0/neo430_cpu_inst/neo430_control_inst/irq_vec_reg[1]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 neo430_0/neo430_dmem_inst/dmem_file_reg has an input control pin neo430_0/neo430_dmem_inst/dmem_file_reg/ADDRARDADDR[5] (net: neo430_0/cpu_bus[addr][2]) which is driven by a register (neo430_0/neo430_cpu_inst/neo430_reg_file_inst/n_flag_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 neo430_0/neo430_dmem_inst/dmem_file_reg has an input control pin neo430_0/neo430_dmem_inst/dmem_file_reg/ADDRARDADDR[6] (net: neo430_0/cpu_bus[addr][3]) which is driven by a register (neo430_0/neo430_cpu_inst/neo430_reg_file_inst/i_flag_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 neo430_0/neo430_dmem_inst/dmem_file_reg has an input control pin neo430_0/neo430_dmem_inst/dmem_file_reg/ADDRARDADDR[7] (net: neo430_0/cpu_bus[addr][4]) which is driven by a register (neo430_0/neo430_cpu_inst/neo430_reg_file_inst/s_flag_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 neo430_0/neo430_dmem_inst/dmem_file_reg has an input control pin neo430_0/neo430_dmem_inst/dmem_file_reg/ADDRBWRADDR[11] (net: neo430_0/cpu_bus[addr][8]) which is driven by a register (neo430_0/neo430_cpu_inst/neo430_reg_file_inst/v_flag_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 neo430_0/neo430_dmem_inst/dmem_file_reg has an input control pin neo430_0/neo430_dmem_inst/dmem_file_reg/ADDRBWRADDR[4] (net: neo430_0/cpu_bus[addr][1]) which is driven by a register (neo430_0/neo430_cpu_inst/neo430_control_inst/irq_vec_reg[0]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 neo430_0/neo430_dmem_inst/dmem_file_reg has an input control pin neo430_0/neo430_dmem_inst/dmem_file_reg/ADDRBWRADDR[4] (net: neo430_0/cpu_bus[addr][1]) which is driven by a register (neo430_0/neo430_cpu_inst/neo430_reg_file_inst/z_flag_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+INFO: [Common 17-14] Message 'DRC 23-20' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors, 129 Warnings
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+
+Starting Placer Task
+INFO: [Place 30-611] Multithreading enabled for place_design using a maximum of 8 CPUs
+
+Phase 1 Placer Initialization
+Netlist sorting complete. Time (s): cpu = 00:00:00.05 ; elapsed = 00:00:00.05 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3957 ; free virtual = 117994
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00.03 ; elapsed = 00:00:00.03 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3957 ; free virtual = 117994
+
+Phase 1.1 IO Placement/ Clock Placement/ Build Placer Device
+
+Phase 1.1.1 ParallelPlaceIOClockAndInitTop
+
+Phase 1.1.1.1 Pre-Place Cells
+Phase 1.1.1.1 Pre-Place Cells | Checksum: 53544e53
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.89 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3957 ; free virtual = 117994
+
+Phase 1.1.1.2 Constructing HAPIClkRuleMgr
+Phase 1.1.1.2 Constructing HAPIClkRuleMgr | Checksum: 53544e53
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:01 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3957 ; free virtual = 117994
+
+Phase 1.1.1.4 IOBufferPlacementChecker
+
+Phase 1.1.1.3 DSPChecker
+
+Phase 1.1.1.5 ClockRegionPlacementChecker
+
+Phase 1.1.1.6 IOLockPlacementChecker
+Phase 1.1.1.3 DSPChecker | Checksum: 53544e53
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3956 ; free virtual = 117994
+
+Phase 1.1.1.7 V7IOVoltageChecker
+Phase 1.1.1.7 V7IOVoltageChecker | Checksum: 53544e53
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3956 ; free virtual = 117994
+
+Phase 1.1.1.8 OverlappingPBlocksChecker
+Phase 1.1.1.8 OverlappingPBlocksChecker | Checksum: 53544e53
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3956 ; free virtual = 117994
+Phase 1.1.1.6 IOLockPlacementChecker | Checksum: 53544e53
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3956 ; free virtual = 117994
+
+Phase 1.1.1.9 CheckerForMandatoryPrePlacedCells
+Phase 1.1.1.9 CheckerForMandatoryPrePlacedCells | Checksum: 53544e53
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3956 ; free virtual = 117994
+
+Phase 1.1.1.10 CascadeElementConstraintsChecker
+Phase 1.1.1.4 IOBufferPlacementChecker | Checksum: 53544e53
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3956 ; free virtual = 117994
+
+Phase 1.1.1.11 DisallowedInsts
+Phase 1.1.1.10 CascadeElementConstraintsChecker | Checksum: 53544e53
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3956 ; free virtual = 117994
+
+Phase 1.1.1.12 HdioRelatedChecker
+Phase 1.1.1.11 DisallowedInsts | Checksum: 53544e53
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3956 ; free virtual = 117994
+
+Phase 1.1.1.13 Laguna PBlock Checker
+Phase 1.1.1.13 Laguna PBlock Checker | Checksum: 53544e53
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3956 ; free virtual = 117994
+
+Phase 1.1.1.14 ShapePlacementValidityChecker
+Phase 1.1.1.12 HdioRelatedChecker | Checksum: 53544e53
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3956 ; free virtual = 117994
+Phase 1.1.1.5 ClockRegionPlacementChecker | Checksum: 53544e53
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3956 ; free virtual = 117994
+
+Phase 1.1.1.15 CheckerForUnsupportedConstraints
+Phase 1.1.1.15 CheckerForUnsupportedConstraints | Checksum: 53544e53
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3956 ; free virtual = 117994
+
+Phase 1.1.1.16 ShapesExcludeCompatibilityChecker
+Phase 1.1.1.16 ShapesExcludeCompatibilityChecker | Checksum: 53544e53
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3956 ; free virtual = 117994
+
+Phase 1.1.1.17 IOStdCompatabilityChecker
+Phase 1.1.1.17 IOStdCompatabilityChecker | Checksum: 53544e53
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3956 ; free virtual = 117994
+Phase 1.1.1.14 ShapePlacementValidityChecker | Checksum: 53544e53
+
+Time (s): cpu = 00:00:05 ; elapsed = 00:00:03 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3956 ; free virtual = 117994
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+
+Phase 1.1.1.18 IO and Clk Clean Up
+
+Phase 1.1.1.18.1 Constructing HAPIClkRuleMgr
+Phase 1.1.1.18.1 Constructing HAPIClkRuleMgr | Checksum: 53544e53
+
+Time (s): cpu = 00:00:06 ; elapsed = 00:00:03 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3956 ; free virtual = 117994
+Phase 1.1.1.18 IO and Clk Clean Up | Checksum: 53544e53
+
+Time (s): cpu = 00:00:06 ; elapsed = 00:00:03 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3956 ; free virtual = 117994
+
+Phase 1.1.1.19 Implementation Feasibility check On IDelay
+Phase 1.1.1.19 Implementation Feasibility check On IDelay | Checksum: 53544e53
+
+Time (s): cpu = 00:00:06 ; elapsed = 00:00:03 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3956 ; free virtual = 117994
+
+Phase 1.1.1.20 Commit IO Placement
+Phase 1.1.1.20 Commit IO Placement | Checksum: 8c381212
+
+Time (s): cpu = 00:00:06 ; elapsed = 00:00:03 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3956 ; free virtual = 117994
+Phase 1.1.1 ParallelPlaceIOClockAndInitTop | Checksum: 8c381212
+
+Time (s): cpu = 00:00:06 ; elapsed = 00:00:03 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3956 ; free virtual = 117994
+Phase 1.1 IO Placement/ Clock Placement/ Build Placer Device | Checksum: ddee2bd8
+
+Time (s): cpu = 00:00:06 ; elapsed = 00:00:03 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3956 ; free virtual = 117994
+
+Phase 1.2 Build Placer Netlist Model
+
+Phase 1.2.1 Place Init Design
+
+Phase 1.2.1.1 Make Others
+Phase 1.2.1.1 Make Others | Checksum: f623a137
+
+Time (s): cpu = 00:00:07 ; elapsed = 00:00:04 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3956 ; free virtual = 117994
+
+Phase 1.2.1.2 Init Lut Pin Assignment
+Phase 1.2.1.2 Init Lut Pin Assignment | Checksum: f623a137
+
+Time (s): cpu = 00:00:07 ; elapsed = 00:00:04 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3956 ; free virtual = 117994
+Phase 1.2.1 Place Init Design | Checksum: 1a71dbb85
+
+Time (s): cpu = 00:00:12 ; elapsed = 00:00:06 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3942 ; free virtual = 117980
+Phase 1.2 Build Placer Netlist Model | Checksum: 1a71dbb85
+
+Time (s): cpu = 00:00:12 ; elapsed = 00:00:06 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3942 ; free virtual = 117980
+
+Phase 1.3 Constrain Clocks/Macros
+Phase 1.3 Constrain Clocks/Macros | Checksum: 1a71dbb85
+
+Time (s): cpu = 00:00:12 ; elapsed = 00:00:06 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3942 ; free virtual = 117980
+Phase 1 Placer Initialization | Checksum: 1a71dbb85
+
+Time (s): cpu = 00:00:13 ; elapsed = 00:00:06 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3942 ; free virtual = 117980
+
+Phase 2 Global Placement
+Phase 2 Global Placement | Checksum: e0848a24
+
+Time (s): cpu = 00:00:38 ; elapsed = 00:00:16 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3940 ; free virtual = 117977
+
+Phase 3 Detail Placement
+
+Phase 3.1 Commit Multi Column Macros
+Phase 3.1 Commit Multi Column Macros | Checksum: e0848a24
+
+Time (s): cpu = 00:00:39 ; elapsed = 00:00:16 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3940 ; free virtual = 117977
+
+Phase 3.2 Commit Most Macros & LUTRAMs
+Phase 3.2 Commit Most Macros & LUTRAMs | Checksum: 9fe4a11d
+
+Time (s): cpu = 00:00:44 ; elapsed = 00:00:19 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3940 ; free virtual = 117977
+
+Phase 3.3 Area Swap Optimization
+Phase 3.3 Area Swap Optimization | Checksum: c9b693fa
+
+Time (s): cpu = 00:00:45 ; elapsed = 00:00:19 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3940 ; free virtual = 117977
+
+Phase 3.4 updateClock Trees: DP
+Phase 3.4 updateClock Trees: DP | Checksum: c9b693fa
+
+Time (s): cpu = 00:00:45 ; elapsed = 00:00:19 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3940 ; free virtual = 117977
+
+Phase 3.5 Timing Path Optimizer
+Phase 3.5 Timing Path Optimizer | Checksum: 6b1455db
+
+Time (s): cpu = 00:00:46 ; elapsed = 00:00:19 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3940 ; free virtual = 117977
+
+Phase 3.6 Fast Optimization
+Phase 3.6 Fast Optimization | Checksum: 6611855e
+
+Time (s): cpu = 00:00:47 ; elapsed = 00:00:20 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3940 ; free virtual = 117977
+
+Phase 3.7 Small Shape Detail Placement
+Phase 3.7 Small Shape Detail Placement | Checksum: 13e919a2e
+
+Time (s): cpu = 00:00:52 ; elapsed = 00:00:24 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3939 ; free virtual = 117977
+
+Phase 3.8 Re-assign LUT pins
+Phase 3.8 Re-assign LUT pins | Checksum: 1c1cacda6
+
+Time (s): cpu = 00:00:52 ; elapsed = 00:00:24 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3939 ; free virtual = 117977
+
+Phase 3.9 Pipeline Register Optimization
+Phase 3.9 Pipeline Register Optimization | Checksum: 1678765c9
+
+Time (s): cpu = 00:00:52 ; elapsed = 00:00:25 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3939 ; free virtual = 117977
+
+Phase 3.10 Fast Optimization
+Phase 3.10 Fast Optimization | Checksum: 9d54a492
+
+Time (s): cpu = 00:00:56 ; elapsed = 00:00:26 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3938 ; free virtual = 117976
+Phase 3 Detail Placement | Checksum: 9d54a492
+
+Time (s): cpu = 00:00:56 ; elapsed = 00:00:27 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3938 ; free virtual = 117975
+
+Phase 4 Post Placement Optimization and Clean-Up
+
+Phase 4.1 Post Commit Optimization
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+
+Phase 4.1.1 updateClock Trees: PCOPT
+Phase 4.1.1 updateClock Trees: PCOPT | Checksum: 1248b09ad
+
+Time (s): cpu = 00:01:02 ; elapsed = 00:00:28 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3936 ; free virtual = 117973
+
+Phase 4.1.2 Post Placement Optimization
+INFO: [Place 30-746] Post Placement Timing Summary WNS=-0.563. For the most accurate timing information please run report_timing.
+Phase 4.1.2 Post Placement Optimization | Checksum: 199785aaf
+
+Time (s): cpu = 00:01:06 ; elapsed = 00:00:33 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3936 ; free virtual = 117973
+Phase 4.1 Post Commit Optimization | Checksum: 199785aaf
+
+Time (s): cpu = 00:01:06 ; elapsed = 00:00:33 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3936 ; free virtual = 117973
+
+Phase 4.2 Sweep Clock Roots: Post-Placement
+Phase 4.2 Sweep Clock Roots: Post-Placement | Checksum: 199785aaf
+
+Time (s): cpu = 00:01:07 ; elapsed = 00:00:33 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3936 ; free virtual = 117973
+
+Phase 4.3 Uram Pipeline Register Optimization
+Phase 4.3 Uram Pipeline Register Optimization | Checksum: 199785aaf
+
+Time (s): cpu = 00:01:07 ; elapsed = 00:00:33 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3936 ; free virtual = 117973
+
+Phase 4.4 Post Placement Cleanup
+Phase 4.4 Post Placement Cleanup | Checksum: 199785aaf
+
+Time (s): cpu = 00:01:07 ; elapsed = 00:00:33 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3936 ; free virtual = 117973
+
+Phase 4.5 Placer Reporting
+Phase 4.5 Placer Reporting | Checksum: 199785aaf
+
+Time (s): cpu = 00:01:07 ; elapsed = 00:00:33 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3936 ; free virtual = 117973
+
+Phase 4.6 Final Placement Cleanup
+Phase 4.6 Final Placement Cleanup | Checksum: 1dc43bb4b
+
+Time (s): cpu = 00:01:07 ; elapsed = 00:00:33 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3936 ; free virtual = 117973
+Phase 4 Post Placement Optimization and Clean-Up | Checksum: 1dc43bb4b
+
+Time (s): cpu = 00:01:07 ; elapsed = 00:00:33 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3936 ; free virtual = 117973
+Ending Placer Task | Checksum: 14c9a46b8
+
+Time (s): cpu = 00:01:07 ; elapsed = 00:00:33 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3936 ; free virtual = 117973
+INFO: [Common 17-83] Releasing license: Implementation
+44 Infos, 117 Warnings, 16 Critical Warnings and 0 Errors encountered.
+place_design completed successfully
+place_design: Time (s): cpu = 00:01:09 ; elapsed = 00:00:34 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3936 ; free virtual = 117973
+Writing placer database...
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Write XDEF Complete: Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.80 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3911 ; free virtual = 117973
+report_io: Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.09 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3930 ; free virtual = 117973
+report_utilization: Time (s): cpu = 00:00:00.14 ; elapsed = 00:00:00.17 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3930 ; free virtual = 117973
+report_control_sets: Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.09 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3930 ; free virtual = 117973
+Command: route_design
+Attempting to get a license for feature 'Implementation' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xc7a100t'
+Running DRC as a precondition to command route_design
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+
+
+Starting Routing Task
+INFO: [Route 35-254] Multithreading enabled for route_design using a maximum of 8 CPUs
+Checksum: PlaceDB: 6db5cbcc ConstDB: 0 ShapeSum: dee47aec RouteDB: 0
+
+Phase 1 Build RT Design
+Phase 1 Build RT Design | Checksum: 8e705a72
+
+Time (s): cpu = 00:00:15 ; elapsed = 00:00:11 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3916 ; free virtual = 117959
+
+Phase 2 Router Initialization
+
+Phase 2.1 Create Timer
+Phase 2.1 Create Timer | Checksum: 8e705a72
+
+Time (s): cpu = 00:00:16 ; elapsed = 00:00:12 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3912 ; free virtual = 117955
+
+Phase 2.2 Fix Topology Constraints
+Phase 2.2 Fix Topology Constraints | Checksum: 8e705a72
+
+Time (s): cpu = 00:00:16 ; elapsed = 00:00:12 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3906 ; free virtual = 117949
+
+Phase 2.3 Pre Route Cleanup
+Phase 2.3 Pre Route Cleanup | Checksum: 8e705a72
+
+Time (s): cpu = 00:00:16 ; elapsed = 00:00:12 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3906 ; free virtual = 117949
+ Number of Nodes with overlaps = 0
+
+Phase 2.4 Update Timing
+Phase 2.4 Update Timing | Checksum: 230fe55ea
+
+Time (s): cpu = 00:00:24 ; elapsed = 00:00:14 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3901 ; free virtual = 117944
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-0.167 | TNS=-0.441 | WHS=-0.356 | THS=-879.962|
+
+Phase 2 Router Initialization | Checksum: 19aa683c3
+
+Time (s): cpu = 00:00:28 ; elapsed = 00:00:15 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3900 ; free virtual = 117943
+
+Phase 3 Initial Routing
+Phase 3 Initial Routing | Checksum: 123487fe2
+
+Time (s): cpu = 00:00:36 ; elapsed = 00:00:17 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117921
+
+Phase 4 Rip-up And Reroute
+
+Phase 4.1 Global Iteration 0
+ Number of Nodes with overlaps = 2745
+ Number of Nodes with overlaps = 521
+ Number of Nodes with overlaps = 180
+ Number of Nodes with overlaps = 41
+ Number of Nodes with overlaps = 22
+ Number of Nodes with overlaps = 4
+ Number of Nodes with overlaps = 5
+ Number of Nodes with overlaps = 1
+ Number of Nodes with overlaps = 0
+
+Phase 4.1.1 Update Timing
+Phase 4.1.1 Update Timing | Checksum: 137144e42
+
+Time (s): cpu = 00:01:19 ; elapsed = 00:00:25 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117921
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-1.626 | TNS=-181.025| WHS=N/A    | THS=N/A    |
+
+
+Phase 4.1.2 GlobIterForTiming
+
+Phase 4.1.2.1 Update Timing
+Phase 4.1.2.1 Update Timing | Checksum: ddf069fc
+
+Time (s): cpu = 00:01:20 ; elapsed = 00:00:25 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117921
+
+Phase 4.1.2.2 Fast Budgeting
+Phase 4.1.2.2 Fast Budgeting | Checksum: 1133f5641
+
+Time (s): cpu = 00:01:20 ; elapsed = 00:00:26 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117921
+Phase 4.1.2 GlobIterForTiming | Checksum: 100fe3912
+
+Time (s): cpu = 00:01:21 ; elapsed = 00:00:26 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117921
+Phase 4.1 Global Iteration 0 | Checksum: 100fe3912
+
+Time (s): cpu = 00:01:21 ; elapsed = 00:00:26 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117921
+
+Phase 4.2 Global Iteration 1
+ Number of Nodes with overlaps = 675
+ Number of Nodes with overlaps = 187
+ Number of Nodes with overlaps = 42
+ Number of Nodes with overlaps = 29
+ Number of Nodes with overlaps = 1
+ Number of Nodes with overlaps = 3
+ Number of Nodes with overlaps = 2
+ Number of Nodes with overlaps = 0
+
+Phase 4.2.1 Update Timing
+Phase 4.2.1 Update Timing | Checksum: 1f7f578ba
+
+Time (s): cpu = 00:01:50 ; elapsed = 00:00:34 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117921
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-1.337 | TNS=-133.938| WHS=N/A    | THS=N/A    |
+
+
+Phase 4.2.2 GlobIterForTiming
+
+Phase 4.2.2.1 Update Timing
+Phase 4.2.2.1 Update Timing | Checksum: 1d3e1a4c5
+
+Time (s): cpu = 00:01:51 ; elapsed = 00:00:34 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117921
+
+Phase 4.2.2.2 Fast Budgeting
+Phase 4.2.2.2 Fast Budgeting | Checksum: 189040853
+
+Time (s): cpu = 00:01:51 ; elapsed = 00:00:34 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117921
+Phase 4.2.2 GlobIterForTiming | Checksum: 14700eec9
+
+Time (s): cpu = 00:01:52 ; elapsed = 00:00:35 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117921
+Phase 4.2 Global Iteration 1 | Checksum: 14700eec9
+
+Time (s): cpu = 00:01:52 ; elapsed = 00:00:35 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117921
+
+Phase 4.3 Global Iteration 2
+ Number of Nodes with overlaps = 727
+ Number of Nodes with overlaps = 210
+ Number of Nodes with overlaps = 53
+ Number of Nodes with overlaps = 19
+ Number of Nodes with overlaps = 4
+ Number of Nodes with overlaps = 4
+ Number of Nodes with overlaps = 13
+ Number of Nodes with overlaps = 1
+ Number of Nodes with overlaps = 0
+
+Phase 4.3.1 Update Timing
+Phase 4.3.1 Update Timing | Checksum: 23e419967
+
+Time (s): cpu = 00:02:25 ; elapsed = 00:00:44 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117921
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-1.125 | TNS=-97.138| WHS=N/A    | THS=N/A    |
+
+
+Phase 4.3.2 GlobIterForTiming
+
+Phase 4.3.2.1 Update Timing
+Phase 4.3.2.1 Update Timing | Checksum: 1c47c74aa
+
+Time (s): cpu = 00:02:26 ; elapsed = 00:00:44 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117921
+
+Phase 4.3.2.2 Fast Budgeting
+Phase 4.3.2.2 Fast Budgeting | Checksum: 1a9fb42a1
+
+Time (s): cpu = 00:02:27 ; elapsed = 00:00:45 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117921
+Phase 4.3.2 GlobIterForTiming | Checksum: 132250b37
+
+Time (s): cpu = 00:02:27 ; elapsed = 00:00:45 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117921
+Phase 4.3 Global Iteration 2 | Checksum: 132250b37
+
+Time (s): cpu = 00:02:27 ; elapsed = 00:00:45 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117921
+
+Phase 4.4 Global Iteration 3
+ Number of Nodes with overlaps = 748
+ Number of Nodes with overlaps = 206
+ Number of Nodes with overlaps = 39
+ Number of Nodes with overlaps = 4
+ Number of Nodes with overlaps = 17
+ Number of Nodes with overlaps = 6
+ Number of Nodes with overlaps = 3
+ Number of Nodes with overlaps = 2
+ Number of Nodes with overlaps = 4
+ Number of Nodes with overlaps = 0
+
+Phase 4.4.1 Update Timing
+Phase 4.4.1 Update Timing | Checksum: 197cf7008
+
+Time (s): cpu = 00:03:03 ; elapsed = 00:00:56 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117920
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-1.290 | TNS=-134.975| WHS=N/A    | THS=N/A    |
+
+Phase 4.4 Global Iteration 3 | Checksum: 1df8591ac
+
+Time (s): cpu = 00:03:03 ; elapsed = 00:00:56 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117920
+Phase 4 Rip-up And Reroute | Checksum: 1df8591ac
+
+Time (s): cpu = 00:03:03 ; elapsed = 00:00:56 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117920
+
+Phase 5 Delay and Skew Optimization
+
+Phase 5.1 Delay CleanUp
+
+Phase 5.1.1 Update Timing
+Phase 5.1.1 Update Timing | Checksum: 1c1476e61
+
+Time (s): cpu = 00:03:05 ; elapsed = 00:00:56 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117920
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-1.125 | TNS=-90.296| WHS=N/A    | THS=N/A    |
+
+ Number of Nodes with overlaps = 0
+Phase 5.1 Delay CleanUp | Checksum: 1aefd0fa3
+
+Time (s): cpu = 00:03:05 ; elapsed = 00:00:56 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117920
+
+Phase 5.2 Clock Skew Optimization
+Phase 5.2 Clock Skew Optimization | Checksum: 1aefd0fa3
+
+Time (s): cpu = 00:03:05 ; elapsed = 00:00:56 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117920
+Phase 5 Delay and Skew Optimization | Checksum: 1aefd0fa3
+
+Time (s): cpu = 00:03:05 ; elapsed = 00:00:56 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117920
+
+Phase 6 Post Hold Fix
+
+Phase 6.1 Hold Fix Iter
+
+Phase 6.1.1 Update Timing
+Phase 6.1.1 Update Timing | Checksum: 2834a2066
+
+Time (s): cpu = 00:03:07 ; elapsed = 00:00:57 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117920
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-1.102 | TNS=-88.844| WHS=0.016  | THS=0.000  |
+
+Phase 6.1 Hold Fix Iter | Checksum: 26f5371c0
+
+Time (s): cpu = 00:03:07 ; elapsed = 00:00:57 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117920
+Phase 6 Post Hold Fix | Checksum: 26f5371c0
+
+Time (s): cpu = 00:03:07 ; elapsed = 00:00:57 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117920
+
+Phase 7 Route finalize
+
+Router Utilization Summary
+  Global Vertical Routing Utilization    = 3.81038 %
+  Global Horizontal Routing Utilization  = 4.98615 %
+  Routable Net Status*
+  *Does not include unroutable nets such as driverless and loadless.
+  Run report_route_status for detailed report.
+  Number of Failed Nets               = 0
+  Number of Unrouted Nets             = 0
+  Number of Partially Routed Nets     = 0
+  Number of Node Overlaps             = 0
+
+Congestion Report
+North Dir 1x1 Area, Max Cong = 82.8829%, No Congested Regions.
+South Dir 1x1 Area, Max Cong = 69.3694%, No Congested Regions.
+East Dir 1x1 Area, Max Cong = 64.7059%, No Congested Regions.
+West Dir 1x1 Area, Max Cong = 73.5294%, No Congested Regions.
+Phase 7 Route finalize | Checksum: 27876a80e
+
+Time (s): cpu = 00:03:08 ; elapsed = 00:00:57 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117920
+
+Phase 8 Verifying routed nets
+
+ Verification completed successfully
+Phase 8 Verifying routed nets | Checksum: 27876a80e
+
+Time (s): cpu = 00:03:08 ; elapsed = 00:00:57 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117920
+
+Phase 9 Depositing Routes
+Phase 9 Depositing Routes | Checksum: 2c1bcb04a
+
+Time (s): cpu = 00:03:08 ; elapsed = 00:00:58 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117920
+
+Phase 10 Post Router Timing
+INFO: [Route 35-57] Estimated Timing Summary | WNS=-1.102 | TNS=-88.844| WHS=0.016  | THS=0.000  |
+
+WARNING: [Route 35-328] Router estimated timing not met.
+Resolution: For a complete and accurate timing signoff, report_timing_summary must be run after route_design. Alternatively, route_design can be run with the -timing_summary option to enable a complete timing signoff at the end of route_design.
+Phase 10 Post Router Timing | Checksum: 2c1bcb04a
+
+Time (s): cpu = 00:03:08 ; elapsed = 00:00:58 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117920
+INFO: [Route 35-16] Router Completed Successfully
+
+Time (s): cpu = 00:03:09 ; elapsed = 00:00:58 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117920
+
+Routing Is Done.
+INFO: [Common 17-83] Releasing license: Implementation
+59 Infos, 118 Warnings, 16 Critical Warnings and 0 Errors encountered.
+route_design completed successfully
+route_design: Time (s): cpu = 00:03:10 ; elapsed = 00:00:58 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3878 ; free virtual = 117920
+Writing placer database...
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Write XDEF Complete: Time (s): cpu = 00:00:03 ; elapsed = 00:00:00.93 . Memory (MB): peak = 2258.629 ; gain = 0.000 ; free physical = 3846 ; free virtual = 117920
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Coretcl 2-168] The results of DRC are in file /home/sean/vivado_workspace/neo430_simple/neo430_simple.runs/impl_1/top_drc_routed.rpt.
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -3, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 8 CPUs
+CRITICAL WARNING: [Timing 38-282] The design failed to meet the timing requirements. Please see the timing summary report for details on the timing violations.
+Running Vector-less Activity Propagation...
+
+Finished Running Vector-less Activity Propagation
+WARNING: [Power 33-332] Found switching activity that implies high-fanout reset nets being asserted for excessive periods of time which may result in inaccurate power analysis.
+Resolution: To review and fix problems, please run Power Constraints Advisor in the GUI from Tools > Power Constraints Advisor or run report_power with the -advisory option to generate a text report.
+INFO: [Common 17-206] Exiting Vivado at Sat Jan 13 14:01:00 2018...

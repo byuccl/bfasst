@@ -1,0 +1,776 @@
+#-----------------------------------------------------------
+# Vivado v2016.2 (64-bit)
+# SW Build 1577090 on Thu Jun  2 16:32:35 MDT 2016
+# IP Build 1577682 on Fri Jun  3 12:00:54 MDT 2016
+# Start of session at: Sat Jan 13 15:19:42 2018
+# Process ID: 21134
+# Current directory: /home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.runs/synth_1
+# Command line: vivado -log top.vds -mode batch -messageDb vivado.pb -notrace -source top.tcl
+# Log file: /home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.runs/synth_1/top.vds
+# Journal file: /home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.runs/synth_1/vivado.jou
+#-----------------------------------------------------------
+source top.tcl -notrace
+Command: synth_design -top top -part xc7a100tcsg324-3 -flatten_hierarchy full
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: Launching helper process for spawning children vivado processes
+INFO: Helper process launched with PID 21153 
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:04 ; elapsed = 00:00:05 . Memory (MB): peak = 1048.215 ; gain = 163.137 ; free physical = 7710 ; free virtual = 31485
+---------------------------------------------------------------------------------
+INFO: [Synth 8-638] synthesizing module 'top' [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/new/top.v:23]
+INFO: [Synth 8-638] synthesizing module 'des3_perf' [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/perf_opt/des3_perf.v:35]
+INFO: [Synth 8-638] synthesizing module 'des' [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/perf_opt/des.v:35]
+INFO: [Synth 8-638] synthesizing module 'key_sel' [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/perf_opt/key_sel.v:36]
+INFO: [Synth 8-256] done synthesizing module 'key_sel' (1#1) [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/perf_opt/key_sel.v:36]
+INFO: [Synth 8-638] synthesizing module 'crp' [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/crp.v:35]
+INFO: [Synth 8-638] synthesizing module 'sbox1' [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox1.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox1.v:41]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox1.v:41]
+INFO: [Synth 8-256] done synthesizing module 'sbox1' (2#1) [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox1.v:35]
+INFO: [Synth 8-638] synthesizing module 'sbox2' [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox2.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox2.v:41]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox2.v:41]
+INFO: [Synth 8-256] done synthesizing module 'sbox2' (3#1) [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox2.v:35]
+INFO: [Synth 8-638] synthesizing module 'sbox3' [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox3.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox3.v:41]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox3.v:41]
+INFO: [Synth 8-256] done synthesizing module 'sbox3' (4#1) [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox3.v:35]
+INFO: [Synth 8-638] synthesizing module 'sbox4' [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox4.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox4.v:41]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox4.v:41]
+INFO: [Synth 8-256] done synthesizing module 'sbox4' (5#1) [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox4.v:35]
+INFO: [Synth 8-638] synthesizing module 'sbox5' [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox5.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox5.v:41]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox5.v:41]
+INFO: [Synth 8-256] done synthesizing module 'sbox5' (6#1) [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox5.v:35]
+INFO: [Synth 8-638] synthesizing module 'sbox6' [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox6.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox6.v:41]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox6.v:41]
+INFO: [Synth 8-256] done synthesizing module 'sbox6' (7#1) [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox6.v:35]
+INFO: [Synth 8-638] synthesizing module 'sbox7' [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox7.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox7.v:41]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox7.v:41]
+INFO: [Synth 8-256] done synthesizing module 'sbox7' (8#1) [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox7.v:35]
+INFO: [Synth 8-638] synthesizing module 'sbox8' [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox8.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox8.v:41]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox8.v:41]
+INFO: [Synth 8-256] done synthesizing module 'sbox8' (9#1) [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/sbox8.v:35]
+INFO: [Synth 8-256] done synthesizing module 'crp' (10#1) [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/common/crp.v:35]
+INFO: [Synth 8-256] done synthesizing module 'des' (11#1) [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/perf_opt/des.v:35]
+INFO: [Synth 8-256] done synthesizing module 'des3_perf' (12#1) [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/imports/verilog/perf_opt/des3_perf.v:35]
+INFO: [Synth 8-256] done synthesizing module 'top' (13#1) [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/sources_1/new/top.v:23]
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:05 ; elapsed = 00:00:06 . Memory (MB): peak = 1099.652 ; gain = 214.574 ; free physical = 7657 ; free virtual = 31431
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 1099.652 ; gain = 214.574 ; free physical = 7657 ; free virtual = 31431
+---------------------------------------------------------------------------------
+INFO: [Device 21-403] Loading part xc7a100tcsg324-3
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/constrs_1/imports/opencores/top.xdc]
+Finished Parsing XDC File [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/constrs_1/imports/opencores/top.xdc]
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [/home/sean/vivado_workspace/des3_perf_simple/des3_perf_simple.srcs/constrs_1/imports/opencores/top.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/top_propImpl.xdc].
+Resolution: To avoid this warning, move constraints listed in [.Xil/top_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
+Completed Processing XDC Constraints
+
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 1490.191 ; gain = 0.000 ; free physical = 7377 ; free virtual = 31152
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:12 ; elapsed = 00:00:12 . Memory (MB): peak = 1490.191 ; gain = 605.113 ; free physical = 7373 ; free virtual = 31148
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7a100tcsg324-3
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:12 ; elapsed = 00:00:12 . Memory (MB): peak = 1490.191 ; gain = 605.113 ; free physical = 7373 ; free virtual = 31148
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:12 ; elapsed = 00:00:12 . Memory (MB): peak = 1490.191 ; gain = 605.113 ; free physical = 7373 ; free virtual = 31148
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:13 ; elapsed = 00:00:13 . Memory (MB): peak = 1490.191 ; gain = 605.113 ; free physical = 7372 ; free virtual = 31147
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---XORs : 
+	   2 Input     48 Bit         XORs := 48    
+	   2 Input     32 Bit         XORs := 48    
++---XORs : 
+	               64 Bit    Wide XORs := 1     
++---Registers : 
+	               64 Bit    Registers := 6     
+	               56 Bit    Registers := 99    
+	               32 Bit    Registers := 90    
++---Muxes : 
+	   2 Input     56 Bit        Muxes := 2     
+	   2 Input      1 Bit        Muxes := 2304  
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Hierarchical Component Statistics 
+---------------------------------------------------------------------------------
+Hierarchical RTL Component report 
+Module top 
+Detailed RTL Component Info : 
++---XORs : 
+	               64 Bit    Wide XORs := 1     
+Module key_sel 
+Detailed RTL Component Info : 
++---Registers : 
+	               56 Bit    Registers := 15    
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 768   
+Module crp 
+Detailed RTL Component Info : 
++---XORs : 
+	   2 Input     48 Bit         XORs := 1     
+Module des 
+Detailed RTL Component Info : 
++---XORs : 
+	   2 Input     32 Bit         XORs := 16    
++---Registers : 
+	               64 Bit    Registers := 2     
+	               56 Bit    Registers := 1     
+	               32 Bit    Registers := 30    
+Module des3_perf 
+Detailed RTL Component Info : 
++---Registers : 
+	               56 Bit    Registers := 51    
++---Muxes : 
+	   2 Input     56 Bit        Muxes := 2     
+---------------------------------------------------------------------------------
+Finished RTL Hierarchical Component Statistics
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 240 (col length:80)
+BRAMs: 270 (col length: RAMB18 80 RAMB36 40)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+Start Parallel Synthesis Optimization  : Time (s): cpu = 00:00:13 ; elapsed = 00:00:13 . Memory (MB): peak = 1490.191 ; gain = 605.113 ; free physical = 7371 ; free virtual = 31146
+---------------------------------------------------------------------------------
+Start Cross Boundary Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Cross Boundary Optimization : Time (s): cpu = 00:00:25 ; elapsed = 00:00:25 . Memory (MB): peak = 1490.191 ; gain = 605.113 ; free physical = 7379 ; free virtual = 31154
+---------------------------------------------------------------------------------
+Finished Parallel Reinference  : Time (s): cpu = 00:00:25 ; elapsed = 00:00:25 . Memory (MB): peak = 1490.191 ; gain = 605.113 ; free physical = 7379 ; free virtual = 31154
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+ROM:
++------------+------------+---------------+----------------+
+|Module Name | RTL Object | Depth x Width | Implemented As | 
++------------+------------+---------------+----------------+
+|sbox1       | dout       | 64x4          | LUT            | 
+|sbox2       | dout       | 64x4          | LUT            | 
+|sbox3       | dout       | 64x4          | LUT            | 
+|sbox4       | dout       | 64x4          | LUT            | 
+|sbox5       | dout       | 64x4          | LUT            | 
+|sbox6       | dout       | 64x4          | LUT            | 
+|sbox7       | dout       | 64x4          | LUT            | 
+|sbox8       | dout       | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u1/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u3/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u0/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u5/dout    | 64x4          | LUT            | 
+|crp         | u1/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u1/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u1/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u1/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u0/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
++------------+------------+---------------+----------------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Area Optimization
+---------------------------------------------------------------------------------
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][0]' (FD) to 'des3_perf_0/key_c_r_reg[0][16]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][1]' (FD) to 'des3_perf_0/key_c_r_reg[0][17]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][2]' (FD) to 'des3_perf_0/key_c_r_reg[0][18]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][3]' (FD) to 'des3_perf_0/key_c_r_reg[0][19]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][4]' (FD) to 'des3_perf_0/key_c_r_reg[0][20]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][5]' (FD) to 'des3_perf_0/key_c_r_reg[0][21]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][6]' (FD) to 'des3_perf_0/key_c_r_reg[0][22]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][7]' (FD) to 'des3_perf_0/key_c_r_reg[0][23]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][8]' (FD) to 'des3_perf_0/key_c_r_reg[0][24]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][9]' (FD) to 'des3_perf_0/key_c_r_reg[0][25]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][10]' (FD) to 'des3_perf_0/key_c_r_reg[0][26]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][11]' (FD) to 'des3_perf_0/key_c_r_reg[0][27]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][12]' (FD) to 'des3_perf_0/key_c_r_reg[0][28]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][13]' (FD) to 'des3_perf_0/key_c_r_reg[0][29]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][14]' (FD) to 'des3_perf_0/key_c_r_reg[0][30]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][15]' (FD) to 'des3_perf_0/key_c_r_reg[0][31]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][16]' (FD) to 'des3_perf_0/key_c_r_reg[0][32]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][17]' (FD) to 'des3_perf_0/key_c_r_reg[0][33]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][18]' (FD) to 'des3_perf_0/key_c_r_reg[0][34]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][19]' (FD) to 'des3_perf_0/key_c_r_reg[0][35]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][20]' (FD) to 'des3_perf_0/key_c_r_reg[0][36]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][21]' (FD) to 'des3_perf_0/key_c_r_reg[0][37]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][22]' (FD) to 'des3_perf_0/key_c_r_reg[0][38]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][23]' (FD) to 'des3_perf_0/key_c_r_reg[0][39]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][24]' (FD) to 'des3_perf_0/key_c_r_reg[0][40]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][25]' (FD) to 'des3_perf_0/key_c_r_reg[0][41]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][26]' (FD) to 'des3_perf_0/key_c_r_reg[0][42]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][27]' (FD) to 'des3_perf_0/key_c_r_reg[0][43]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][28]' (FD) to 'des3_perf_0/key_c_r_reg[0][44]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][29]' (FD) to 'des3_perf_0/key_c_r_reg[0][45]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][30]' (FD) to 'des3_perf_0/key_c_r_reg[0][46]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][31]' (FD) to 'des3_perf_0/key_c_r_reg[0][47]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][32]' (FD) to 'des3_perf_0/key_c_r_reg[0][48]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][33]' (FD) to 'des3_perf_0/key_c_r_reg[0][49]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][34]' (FD) to 'des3_perf_0/key_c_r_reg[0][50]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][35]' (FD) to 'des3_perf_0/key_c_r_reg[0][51]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][36]' (FD) to 'des3_perf_0/key_c_r_reg[0][52]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][37]' (FD) to 'des3_perf_0/key_c_r_reg[0][53]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][38]' (FD) to 'des3_perf_0/key_c_r_reg[0][54]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[0][39]' (FD) to 'des3_perf_0/key_c_r_reg[0][55]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][0]' (FD) to 'des3_perf_0/key_c_r_reg[1][32]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][1]' (FD) to 'des3_perf_0/key_c_r_reg[1][33]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][2]' (FD) to 'des3_perf_0/key_c_r_reg[1][34]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][3]' (FD) to 'des3_perf_0/key_c_r_reg[1][35]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][4]' (FD) to 'des3_perf_0/key_c_r_reg[1][36]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][5]' (FD) to 'des3_perf_0/key_c_r_reg[1][37]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][6]' (FD) to 'des3_perf_0/key_c_r_reg[1][38]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][7]' (FD) to 'des3_perf_0/key_c_r_reg[1][39]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][8]' (FD) to 'des3_perf_0/key_c_r_reg[1][24]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][9]' (FD) to 'des3_perf_0/key_c_r_reg[1][25]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][10]' (FD) to 'des3_perf_0/key_c_r_reg[1][26]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][11]' (FD) to 'des3_perf_0/key_c_r_reg[1][27]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][12]' (FD) to 'des3_perf_0/key_c_r_reg[1][28]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][13]' (FD) to 'des3_perf_0/key_c_r_reg[1][29]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][14]' (FD) to 'des3_perf_0/key_c_r_reg[1][30]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][15]' (FD) to 'des3_perf_0/key_c_r_reg[1][31]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][16]' (FD) to 'des3_perf_0/key_c_r_reg[1][32]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][17]' (FD) to 'des3_perf_0/key_c_r_reg[1][33]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][18]' (FD) to 'des3_perf_0/key_c_r_reg[1][34]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][19]' (FD) to 'des3_perf_0/key_c_r_reg[1][35]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][20]' (FD) to 'des3_perf_0/key_c_r_reg[1][36]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][21]' (FD) to 'des3_perf_0/key_c_r_reg[1][37]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][22]' (FD) to 'des3_perf_0/key_c_r_reg[1][38]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][23]' (FD) to 'des3_perf_0/key_c_r_reg[1][39]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][24]' (FD) to 'des3_perf_0/key_c_r_reg[1][40]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][25]' (FD) to 'des3_perf_0/key_c_r_reg[1][41]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][26]' (FD) to 'des3_perf_0/key_c_r_reg[1][42]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][27]' (FD) to 'des3_perf_0/key_c_r_reg[1][43]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][28]' (FD) to 'des3_perf_0/key_c_r_reg[1][44]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][29]' (FD) to 'des3_perf_0/key_c_r_reg[1][45]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][30]' (FD) to 'des3_perf_0/key_c_r_reg[1][46]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][31]' (FD) to 'des3_perf_0/key_c_r_reg[1][47]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][32]' (FD) to 'des3_perf_0/key_c_r_reg[1][48]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][33]' (FD) to 'des3_perf_0/key_c_r_reg[1][49]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][34]' (FD) to 'des3_perf_0/key_c_r_reg[1][50]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][35]' (FD) to 'des3_perf_0/key_c_r_reg[1][51]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][36]' (FD) to 'des3_perf_0/key_c_r_reg[1][52]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][37]' (FD) to 'des3_perf_0/key_c_r_reg[1][53]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][38]' (FD) to 'des3_perf_0/key_c_r_reg[1][54]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[1][39]' (FD) to 'des3_perf_0/key_c_r_reg[1][55]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[2][0]' (FD) to 'des3_perf_0/key_c_r_reg[2][32]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[2][1]' (FD) to 'des3_perf_0/key_c_r_reg[2][33]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[2][2]' (FD) to 'des3_perf_0/key_c_r_reg[2][34]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[2][3]' (FD) to 'des3_perf_0/key_c_r_reg[2][35]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[2][4]' (FD) to 'des3_perf_0/key_c_r_reg[2][36]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[2][5]' (FD) to 'des3_perf_0/key_c_r_reg[2][37]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[2][6]' (FD) to 'des3_perf_0/key_c_r_reg[2][38]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[2][7]' (FD) to 'des3_perf_0/key_c_r_reg[2][39]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[2][8]' (FD) to 'des3_perf_0/key_c_r_reg[2][24]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[2][9]' (FD) to 'des3_perf_0/key_c_r_reg[2][25]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[2][10]' (FD) to 'des3_perf_0/key_c_r_reg[2][26]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[2][11]' (FD) to 'des3_perf_0/key_c_r_reg[2][27]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[2][12]' (FD) to 'des3_perf_0/key_c_r_reg[2][28]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[2][13]' (FD) to 'des3_perf_0/key_c_r_reg[2][29]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[2][14]' (FD) to 'des3_perf_0/key_c_r_reg[2][30]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[2][15]' (FD) to 'des3_perf_0/key_c_r_reg[2][31]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[2][16]' (FD) to 'des3_perf_0/key_c_r_reg[2][32]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[2][17]' (FD) to 'des3_perf_0/key_c_r_reg[2][33]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[2][18]' (FD) to 'des3_perf_0/key_c_r_reg[2][34]'
+INFO: [Synth 8-3886] merging instance 'des3_perf_0/key_c_r_reg[2][19]' (FD) to 'des3_perf_0/key_c_r_reg[2][35]'
+INFO: [Common 17-14] Message 'Synth 8-3886' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][39]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][38]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][37]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][36]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][35]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][34]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][33]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][32]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][31]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][30]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][29]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][28]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][27]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][26]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][25]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][24]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][23]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][22]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][21]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][20]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][19]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][18]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][17]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][16]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][15]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][14]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][13]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][12]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][11]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][10]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][9]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][8]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][7]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][6]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][5]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][4]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][3]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][2]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][1]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[0][0]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][39]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][38]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][37]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][36]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][35]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][34]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][33]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][32]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][31]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][30]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][29]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][28]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][27]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][26]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][25]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][24]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][23]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][22]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][21]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][20]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][19]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][18]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][17]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][16]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][15]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][14]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][13]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][12]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][11]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][10]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][9]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][8]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][7]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][6]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][5]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][4]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][3]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][2]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][1]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[1][0]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[2][39]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[2][38]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[2][37]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[2][36]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[2][35]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[2][34]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[2][33]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[2][32]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[2][31]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[2][30]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[2][29]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[2][28]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[2][27]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[2][26]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[2][25]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[2][24]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[2][23]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[2][22]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[2][21]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (des3_perf_0/key_c_r_reg[2][20]) is unused and will be removed from module top.
+INFO: [Common 17-14] Message 'Synth 8-3332' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+---------------------------------------------------------------------------------
+Finished Area Optimization : Time (s): cpu = 00:00:27 ; elapsed = 00:00:27 . Memory (MB): peak = 1490.191 ; gain = 605.113 ; free physical = 7380 ; free virtual = 31155
+---------------------------------------------------------------------------------
+Finished Parallel Area Optimization  : Time (s): cpu = 00:00:27 ; elapsed = 00:00:27 . Memory (MB): peak = 1490.191 ; gain = 605.113 ; free physical = 7380 ; free virtual = 31155
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying XDC Timing Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:31 ; elapsed = 00:00:32 . Memory (MB): peak = 1490.191 ; gain = 605.113 ; free physical = 7371 ; free virtual = 31147
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:33 ; elapsed = 00:00:33 . Memory (MB): peak = 1494.230 ; gain = 609.152 ; free physical = 7338 ; free virtual = 31114
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:34 ; elapsed = 00:00:35 . Memory (MB): peak = 1494.230 ; gain = 609.152 ; free physical = 7338 ; free virtual = 31113
+---------------------------------------------------------------------------------
+Finished Parallel Technology Mapping Optimization  : Time (s): cpu = 00:00:34 ; elapsed = 00:00:35 . Memory (MB): peak = 1494.230 ; gain = 609.152 ; free physical = 7338 ; free virtual = 31113
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+Finished Parallel Synthesis Optimization  : Time (s): cpu = 00:00:34 ; elapsed = 00:00:35 . Memory (MB): peak = 1494.230 ; gain = 609.152 ; free physical = 7338 ; free virtual = 31113
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:35 ; elapsed = 00:00:35 . Memory (MB): peak = 1494.230 ; gain = 609.152 ; free physical = 7338 ; free virtual = 31113
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:35 ; elapsed = 00:00:35 . Memory (MB): peak = 1494.230 ; gain = 609.152 ; free physical = 7338 ; free virtual = 31113
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:36 ; elapsed = 00:00:36 . Memory (MB): peak = 1494.230 ; gain = 609.152 ; free physical = 7338 ; free virtual = 31113
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+Static Shift Register Report:
++------------+------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|Module Name | RTL Name                     | Length | Width | Reset Signal | Pull out first Reg | Pull out last Reg | SRL16E | SRLC32E | 
++------------+------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|top         | des3_perf_0/u1/key_r_reg[52] | 16     | 7     | NO           | NO                 | YES               | 7      | 0       | 
+|top         | des3_perf_0/u1/key_r_reg[50] | 18     | 1     | NO           | NO                 | YES               | 0      | 1       | 
+|top         | des3_perf_0/u1/key_r_reg[49] | 17     | 8     | NO           | NO                 | YES               | 8      | 0       | 
+|top         | des3_perf_0/u2/key_r_reg[49] | 19     | 16    | NO           | NO                 | YES               | 0      | 16      | 
++------------+------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+--------+------+
+|      |Cell    |Count |
++------+--------+------+
+|1     |BUFG    |     1|
+|2     |LUT2    |  1562|
+|3     |LUT3    |    14|
+|4     |LUT4    |  2264|
+|5     |LUT5    |     2|
+|6     |LUT6    |  1547|
+|7     |SRL16E  |    15|
+|8     |SRLC32E |    17|
+|9     |FDRE    |  3960|
+|10    |IBUF    |    17|
+|11    |OBUF    |    16|
++------+--------+------+
+
+Report Instance Areas: 
++------+---------+-------+------+
+|      |Instance |Module |Cells |
++------+---------+-------+------+
+|1     |top      |       |  9415|
++------+---------+-------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:36 ; elapsed = 00:00:36 . Memory (MB): peak = 1494.230 ; gain = 609.152 ; free physical = 7338 ; free virtual = 31113
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 4310 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:30 ; elapsed = 00:00:31 . Memory (MB): peak = 1494.230 ; gain = 129.473 ; free physical = 7338 ; free virtual = 31113
+Synthesis Optimization Complete : Time (s): cpu = 00:00:36 ; elapsed = 00:00:36 . Memory (MB): peak = 1494.238 ; gain = 609.160 ; free physical = 7338 ; free virtual = 31113
+INFO: [Project 1-571] Translating synthesized netlist
+INFO: [Netlist 29-17] Analyzing 17 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+WARNING: [Netlist 29-101] Netlist 'top' is not ideal for floorplanning, since the cellview 'top' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+INFO: [Common 17-83] Releasing license: Synthesis
+156 Infos, 101 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:00:36 ; elapsed = 00:00:36 . Memory (MB): peak = 1526.246 ; gain = 564.613 ; free physical = 7340 ; free virtual = 31115
+report_utilization: Time (s): cpu = 00:00:00.09 ; elapsed = 00:00:00.11 . Memory (MB): peak = 1558.262 ; gain = 0.000 ; free physical = 7338 ; free virtual = 31114
+INFO: [Common 17-206] Exiting Vivado at Sat Jan 13 15:20:24 2018...

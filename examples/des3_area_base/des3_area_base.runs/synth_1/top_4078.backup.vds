@@ -1,0 +1,1486 @@
+#-----------------------------------------------------------
+# Vivado v2016.2 (64-bit)
+# SW Build 1577090 on Thu Jun  2 16:32:35 MDT 2016
+# IP Build 1577682 on Fri Jun  3 12:00:54 MDT 2016
+# Start of session at: Mon Oct  2 18:12:37 2017
+# Process ID: 4078
+# Current directory: /home/sean/vivado_workspace/des3_area_top/des3_area_top.runs/synth_1
+# Command line: vivado -log top.vds -mode batch -messageDb vivado.pb -notrace -source top.tcl
+# Log file: /home/sean/vivado_workspace/des3_area_top/des3_area_top.runs/synth_1/top.vds
+# Journal file: /home/sean/vivado_workspace/des3_area_top/des3_area_top.runs/synth_1/vivado.jou
+#-----------------------------------------------------------
+source top.tcl -notrace
+Command: synth_design -top top -part xc7a100tcsg324-3 -flatten_hierarchy full
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: Launching helper process for spawning children vivado processes
+INFO: Helper process launched with PID 4082 
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 1050.219 ; gain = 165.137 ; free physical = 13066 ; free virtual = 35709
+---------------------------------------------------------------------------------
+INFO: [Synth 8-638] synthesizing module 'top' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/new/top.v:23]
+INFO: [Synth 8-638] synthesizing module 'mc_top' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_top.v:113]
+INFO: [Synth 8-638] synthesizing module 'mc_rf' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_rf.v:119]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_rf.v:247]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_rf.v:247]
+INFO: [Synth 8-638] synthesizing module 'mc_cs_rf' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_cs_rf.v:109]
+	Parameter this_cs bound to: 3'b000 
+	Parameter reg_select bound to: 4'b0010 
+INFO: [Synth 8-256] done synthesizing module 'mc_cs_rf' (1#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_cs_rf.v:109]
+INFO: [Synth 8-638] synthesizing module 'mc_cs_rf__parameterized0' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_cs_rf.v:109]
+	Parameter this_cs bound to: 3'b001 
+	Parameter reg_select bound to: 4'b0011 
+INFO: [Synth 8-256] done synthesizing module 'mc_cs_rf__parameterized0' (1#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_cs_rf.v:109]
+INFO: [Synth 8-638] synthesizing module 'mc_cs_rf_dummy' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_cs_rf.v:242]
+	Parameter this_cs bound to: 3'b010 
+INFO: [Synth 8-256] done synthesizing module 'mc_cs_rf_dummy' (2#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_cs_rf.v:242]
+INFO: [Synth 8-638] synthesizing module 'mc_cs_rf_dummy__parameterized0' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_cs_rf.v:242]
+	Parameter this_cs bound to: 3'b011 
+INFO: [Synth 8-256] done synthesizing module 'mc_cs_rf_dummy__parameterized0' (2#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_cs_rf.v:242]
+INFO: [Synth 8-638] synthesizing module 'mc_cs_rf_dummy__parameterized1' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_cs_rf.v:242]
+	Parameter this_cs bound to: 3'b100 
+INFO: [Synth 8-256] done synthesizing module 'mc_cs_rf_dummy__parameterized1' (2#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_cs_rf.v:242]
+INFO: [Synth 8-638] synthesizing module 'mc_cs_rf_dummy__parameterized2' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_cs_rf.v:242]
+	Parameter this_cs bound to: 3'b101 
+INFO: [Synth 8-256] done synthesizing module 'mc_cs_rf_dummy__parameterized2' (2#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_cs_rf.v:242]
+INFO: [Synth 8-638] synthesizing module 'mc_cs_rf_dummy__parameterized3' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_cs_rf.v:242]
+	Parameter this_cs bound to: 3'b110 
+INFO: [Synth 8-256] done synthesizing module 'mc_cs_rf_dummy__parameterized3' (2#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_cs_rf.v:242]
+INFO: [Synth 8-638] synthesizing module 'mc_cs_rf_dummy__parameterized4' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_cs_rf.v:242]
+	Parameter this_cs bound to: 3'b111 
+INFO: [Synth 8-256] done synthesizing module 'mc_cs_rf_dummy__parameterized4' (2#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_cs_rf.v:242]
+WARNING: [Synth 8-5788] Register csr_r_reg in module mc_rf is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_rf.v:236]
+INFO: [Synth 8-256] done synthesizing module 'mc_rf' (3#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_rf.v:119]
+INFO: [Synth 8-638] synthesizing module 'mc_adr_sel' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_adr_sel.v:86]
+INFO: [Synth 8-638] synthesizing module 'mc_incn_r' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_incn_r.v:73]
+	Parameter incN_width bound to: 24 - type: integer 
+	Parameter incN_center bound to: 12 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'mc_incn_r' (4#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_incn_r.v:73]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_adr_sel.v:168]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_adr_sel.v:168]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_adr_sel.v:189]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_adr_sel.v:189]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_adr_sel.v:207]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_adr_sel.v:207]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_adr_sel.v:221]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_adr_sel.v:221]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_adr_sel.v:241]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_adr_sel.v:241]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_adr_sel.v:255]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_adr_sel.v:255]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_adr_sel.v:271]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_adr_sel.v:271]
+INFO: [Synth 8-256] done synthesizing module 'mc_adr_sel' (5#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_adr_sel.v:86]
+INFO: [Synth 8-638] synthesizing module 'mc_obct_top' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_obct_top.v:78]
+INFO: [Synth 8-638] synthesizing module 'mc_obct' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_obct.v:100]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_obct.v:168]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_obct.v:168]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_obct.v:205]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_obct.v:205]
+INFO: [Synth 8-256] done synthesizing module 'mc_obct' (6#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_obct.v:100]
+INFO: [Synth 8-638] synthesizing module 'mc_obct_dummy' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_obct.v:216]
+INFO: [Synth 8-256] done synthesizing module 'mc_obct_dummy' (7#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_obct.v:216]
+INFO: [Synth 8-256] done synthesizing module 'mc_obct_top' (8#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_obct_top.v:78]
+INFO: [Synth 8-638] synthesizing module 'mc_dp' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_dp.v:105]
+INFO: [Synth 8-638] synthesizing module 'mc_rd_fifo' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_rd_fifo.v:80]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_rd_fifo.v:119]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_rd_fifo.v:119]
+INFO: [Synth 8-256] done synthesizing module 'mc_rd_fifo' (9#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_rd_fifo.v:80]
+INFO: [Synth 8-256] done synthesizing module 'mc_dp' (10#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_dp.v:105]
+INFO: [Synth 8-638] synthesizing module 'mc_refresh' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_refresh.v:95]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_refresh.v:188]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_refresh.v:188]
+INFO: [Synth 8-256] done synthesizing module 'mc_refresh' (11#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_refresh.v:95]
+INFO: [Synth 8-638] synthesizing module 'mc_timing' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_timing.v:124]
+	Parameter POR bound to: 66'b000000000000000000000000000000000000000000000000000000000000000001 
+	Parameter IDLE bound to: 66'b000000000000000000000000000000000000000000000000000000000000000010 
+	Parameter IDLE_T bound to: 66'b000000000000000000000000000000000000000000000000000000000000000100 
+	Parameter IDLE_T2 bound to: 66'b000000000000000000000000000000000000000000000000000000000000001000 
+	Parameter PRECHARGE bound to: 66'b000000000000000000000000000000000000000000000000000000000000010000 
+	Parameter PRECHARGE_W bound to: 66'b000000000000000000000000000000000000000000000000000000000000100000 
+	Parameter ACTIVATE bound to: 66'b000000000000000000000000000000000000000000000000000000000001000000 
+	Parameter ACTIVATE_W bound to: 66'b000000000000000000000000000000000000000000000000000000000010000000 
+	Parameter SD_RD_WR bound to: 66'b000000000000000000000000000000000000000000000000000000000100000000 
+	Parameter SD_RD bound to: 66'b000000000000000000000000000000000000000000000000000000001000000000 
+	Parameter SD_RD_W bound to: 66'b000000000000000000000000000000000000000000000000000000010000000000 
+	Parameter SD_RD_LOOP bound to: 66'b000000000000000000000000000000000000000000000000000000100000000000 
+	Parameter SD_RD_W2 bound to: 66'b000000000000000000000000000000000000000000000000000001000000000000 
+	Parameter SD_WR bound to: 66'b000000000000000000000000000000000000000000000000000010000000000000 
+	Parameter SD_WR_W bound to: 66'b000000000000000000000000000000000000000000000000000100000000000000 
+	Parameter BT bound to: 66'b000000000000000000000000000000000000000000000000001000000000000000 
+	Parameter BT_W bound to: 66'b000000000000000000000000000000000000000000000000010000000000000000 
+	Parameter REFR bound to: 66'b000000000000000000000000000000000000000000000000100000000000000000 
+	Parameter LMR0 bound to: 66'b000000000000000000000000000000000000000000000001000000000000000000 
+	Parameter LMR1 bound to: 66'b000000000000000000000000000000000000000000000010000000000000000000 
+	Parameter LMR2 bound to: 66'b000000000000000000000000000000000000000000000100000000000000000000 
+	Parameter INIT0 bound to: 66'b000000000000000000000000000000000000000000001000000000000000000000 
+	Parameter INIT bound to: 66'b000000000000000000000000000000000000000000010000000000000000000000 
+	Parameter INIT_W bound to: 66'b000000000000000000000000000000000000000000100000000000000000000000 
+	Parameter INIT_REFR1 bound to: 66'b000000000000000000000000000000000000000001000000000000000000000000 
+	Parameter INIT_REFR1_W bound to: 66'b000000000000000000000000000000000000000010000000000000000000000000 
+	Parameter INIT_LMR bound to: 66'b000000000000000000000000000000000000000100000000000000000000000000 
+	Parameter SUSP1 bound to: 66'b000000000000000000000000000000000000001000000000000000000000000000 
+	Parameter SUSP2 bound to: 66'b000000000000000000000000000000000000010000000000000000000000000000 
+	Parameter SUSP3 bound to: 66'b000000000000000000000000000000000000100000000000000000000000000000 
+	Parameter SUSP4 bound to: 66'b000000000000000000000000000000000001000000000000000000000000000000 
+	Parameter RESUME1 bound to: 66'b000000000000000000000000000000000010000000000000000000000000000000 
+	Parameter RESUME2 bound to: 66'b000000000000000000000000000000000100000000000000000000000000000000 
+	Parameter BG0 bound to: 66'b000000000000000000000000000000001000000000000000000000000000000000 
+	Parameter BG1 bound to: 66'b000000000000000000000000000000010000000000000000000000000000000000 
+	Parameter BG2 bound to: 66'b000000000000000000000000000000100000000000000000000000000000000000 
+	Parameter ACS_RD bound to: 66'b000000000000000000000000000001000000000000000000000000000000000000 
+	Parameter ACS_RD1 bound to: 66'b000000000000000000000000000010000000000000000000000000000000000000 
+	Parameter ACS_RD2A bound to: 66'b000000000000000000000000000100000000000000000000000000000000000000 
+	Parameter ACS_RD2 bound to: 66'b000000000000000000000000001000000000000000000000000000000000000000 
+	Parameter ACS_RD3 bound to: 66'b000000000000000000000000010000000000000000000000000000000000000000 
+	Parameter ACS_RD_8_1 bound to: 66'b000000000000000000000000100000000000000000000000000000000000000000 
+	Parameter ACS_RD_8_2 bound to: 66'b000000000000000000000001000000000000000000000000000000000000000000 
+	Parameter ACS_RD_8_3 bound to: 66'b000000000000000000000010000000000000000000000000000000000000000000 
+	Parameter ACS_RD_8_4 bound to: 66'b000000000000000000000100000000000000000000000000000000000000000000 
+	Parameter ACS_RD_8_5 bound to: 66'b000000000000000000001000000000000000000000000000000000000000000000 
+	Parameter ACS_RD_8_6 bound to: 66'b000000000000000000010000000000000000000000000000000000000000000000 
+	Parameter ACS_WR bound to: 66'b000000000000000000100000000000000000000000000000000000000000000000 
+	Parameter ACS_WR1 bound to: 66'b000000000000000001000000000000000000000000000000000000000000000000 
+	Parameter ACS_WR2 bound to: 66'b000000000000000010000000000000000000000000000000000000000000000000 
+	Parameter ACS_WR3 bound to: 66'b000000000000000100000000000000000000000000000000000000000000000000 
+	Parameter ACS_WR4 bound to: 66'b000000000000001000000000000000000000000000000000000000000000000000 
+	Parameter SRAM_RD bound to: 66'b000000000000010000000000000000000000000000000000000000000000000000 
+	Parameter SRAM_RD0 bound to: 66'b000000000000100000000000000000000000000000000000000000000000000000 
+	Parameter SRAM_RD1 bound to: 66'b000000000001000000000000000000000000000000000000000000000000000000 
+	Parameter SRAM_RD2 bound to: 66'b000000000010000000000000000000000000000000000000000000000000000000 
+	Parameter SRAM_RD3 bound to: 66'b000000000100000000000000000000000000000000000000000000000000000000 
+	Parameter SRAM_RD4 bound to: 66'b000000001000000000000000000000000000000000000000000000000000000000 
+	Parameter SRAM_WR bound to: 66'b000000010000000000000000000000000000000000000000000000000000000000 
+	Parameter SRAM_WR0 bound to: 66'b000000100000000000000000000000000000000000000000000000000000000000 
+	Parameter SCS_RD bound to: 66'b000001000000000000000000000000000000000000000000000000000000000000 
+	Parameter SCS_RD1 bound to: 66'b000010000000000000000000000000000000000000000000000000000000000000 
+	Parameter SCS_RD2 bound to: 66'b000100000000000000000000000000000000000000000000000000000000000000 
+	Parameter SCS_WR bound to: 66'b001000000000000000000000000000000000000000000000000000000000000000 
+	Parameter SCS_WR1 bound to: 66'b010000000000000000000000000000000000000000000000000000000000000000 
+	Parameter SCS_ERR bound to: 66'b100000000000000000000000000000000000000000000000000000000000000000 
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_timing.v:747]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_timing.v:747]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_timing.v:889]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_timing.v:889]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_timing.v:936]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_timing.v:936]
+INFO: [Synth 8-256] done synthesizing module 'mc_timing' (12#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_timing.v:124]
+INFO: [Synth 8-638] synthesizing module 'mc_wb_if' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_wb_if.v:111]
+INFO: [Synth 8-256] done synthesizing module 'mc_wb_if' (13#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_wb_if.v:111]
+INFO: [Synth 8-638] synthesizing module 'mc_mem_if' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_mem_if.v:110]
+WARNING: [Synth 8-5788] Register mc_cs__reg in module mc_mem_if is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_mem_if.v:281]
+WARNING: [Synth 8-5788] Register mc_cs__reg in module mc_mem_if is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_mem_if.v:290]
+WARNING: [Synth 8-5788] Register mc_cs__reg in module mc_mem_if is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_mem_if.v:299]
+WARNING: [Synth 8-5788] Register mc_cs__reg in module mc_mem_if is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_mem_if.v:308]
+WARNING: [Synth 8-5788] Register mc_cs__reg in module mc_mem_if is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_mem_if.v:317]
+WARNING: [Synth 8-5788] Register mc_cs__reg in module mc_mem_if is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_mem_if.v:326]
+WARNING: [Synth 8-5788] Register mc_cs__reg in module mc_mem_if is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_mem_if.v:335]
+WARNING: [Synth 8-5788] Register mc_cs__reg in module mc_mem_if is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_mem_if.v:344]
+INFO: [Synth 8-256] done synthesizing module 'mc_mem_if' (14#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_mem_if.v:110]
+INFO: [Synth 8-256] done synthesizing module 'mc_top' (15#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_top.v:113]
+INFO: [Synth 8-638] synthesizing module 'ac97_top' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_top.v:77]
+INFO: [Synth 8-638] synthesizing module 'ac97_sout' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_sout.v:66]
+INFO: [Synth 8-256] done synthesizing module 'ac97_sout' (16#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_sout.v:66]
+INFO: [Synth 8-638] synthesizing module 'ac97_sin' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_sin.v:66]
+INFO: [Synth 8-256] done synthesizing module 'ac97_sin' (17#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_sin.v:66]
+INFO: [Synth 8-638] synthesizing module 'ac97_soc' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_soc.v:71]
+INFO: [Synth 8-256] done synthesizing module 'ac97_soc' (18#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_soc.v:71]
+INFO: [Synth 8-638] synthesizing module 'ac97_out_fifo' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_out_fifo.v:74]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_out_fifo.v:148]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_out_fifo.v:148]
+INFO: [Synth 8-256] done synthesizing module 'ac97_out_fifo' (19#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_out_fifo.v:74]
+INFO: [Synth 8-638] synthesizing module 'ac97_in_fifo' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_in_fifo.v:83]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_in_fifo.v:153]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_in_fifo.v:153]
+INFO: [Synth 8-256] done synthesizing module 'ac97_in_fifo' (20#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_in_fifo.v:83]
+INFO: [Synth 8-638] synthesizing module 'ac97_wb_if' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_wb_if.v:78]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_wb_if.v:142]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_wb_if.v:142]
+INFO: [Synth 8-256] done synthesizing module 'ac97_wb_if' (21#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_wb_if.v:78]
+INFO: [Synth 8-638] synthesizing module 'ac97_rf' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_rf.v:78]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_rf.v:171]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_rf.v:171]
+INFO: [Synth 8-256] done synthesizing module 'ac97_rf' (22#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_rf.v:78]
+INFO: [Synth 8-638] synthesizing module 'ac97_prc' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_prc.v:78]
+INFO: [Synth 8-638] synthesizing module 'ac97_fifo_ctrl' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_fifo_ctrl.v:71]
+INFO: [Synth 8-256] done synthesizing module 'ac97_fifo_ctrl' (23#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_fifo_ctrl.v:71]
+INFO: [Synth 8-256] done synthesizing module 'ac97_prc' (24#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_prc.v:78]
+INFO: [Synth 8-638] synthesizing module 'ac97_cra' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_cra.v:72]
+INFO: [Synth 8-256] done synthesizing module 'ac97_cra' (25#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_cra.v:72]
+INFO: [Synth 8-638] synthesizing module 'ac97_dma_if' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_dma_if.v:78]
+INFO: [Synth 8-638] synthesizing module 'ac97_dma_req' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_dma_req.v:71]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_dma_req.v:93]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_dma_req.v:93]
+INFO: [Synth 8-256] done synthesizing module 'ac97_dma_req' (26#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_dma_req.v:71]
+INFO: [Synth 8-256] done synthesizing module 'ac97_dma_if' (27#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_dma_if.v:78]
+INFO: [Synth 8-638] synthesizing module 'ac97_int' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_int.v:71]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_int.v:102]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_int.v:102]
+WARNING: [Synth 8-5788] Register int_set_reg in module ac97_int is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_int.v:100]
+WARNING: [Synth 8-5788] Register int_set_reg in module ac97_int is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_int.v:113]
+WARNING: [Synth 8-5788] Register int_set_reg in module ac97_int is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_int.v:119]
+INFO: [Synth 8-256] done synthesizing module 'ac97_int' (28#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_int.v:71]
+INFO: [Synth 8-638] synthesizing module 'ac97_rst' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_rst.v:59]
+INFO: [Synth 8-256] done synthesizing module 'ac97_rst' (29#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_rst.v:59]
+INFO: [Synth 8-256] done synthesizing module 'ac97_top' (30#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_top.v:77]
+INFO: [Synth 8-638] synthesizing module 'des3_area' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/des3_area.v:35]
+INFO: [Synth 8-638] synthesizing module 'crp' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/crp.v:35]
+INFO: [Synth 8-638] synthesizing module 'sbox1' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox1.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox1.v:41]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox1.v:41]
+INFO: [Synth 8-256] done synthesizing module 'sbox1' (31#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox1.v:35]
+INFO: [Synth 8-638] synthesizing module 'sbox2' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox2.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox2.v:41]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox2.v:41]
+INFO: [Synth 8-256] done synthesizing module 'sbox2' (32#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox2.v:35]
+INFO: [Synth 8-638] synthesizing module 'sbox3' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox3.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox3.v:41]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox3.v:41]
+INFO: [Synth 8-256] done synthesizing module 'sbox3' (33#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox3.v:35]
+INFO: [Synth 8-638] synthesizing module 'sbox4' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox4.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox4.v:41]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox4.v:41]
+INFO: [Synth 8-256] done synthesizing module 'sbox4' (34#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox4.v:35]
+INFO: [Synth 8-638] synthesizing module 'sbox5' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox5.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox5.v:41]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox5.v:41]
+INFO: [Synth 8-256] done synthesizing module 'sbox5' (35#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox5.v:35]
+INFO: [Synth 8-638] synthesizing module 'sbox6' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox6.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox6.v:41]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox6.v:41]
+INFO: [Synth 8-256] done synthesizing module 'sbox6' (36#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox6.v:35]
+INFO: [Synth 8-638] synthesizing module 'sbox7' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox7.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox7.v:41]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox7.v:41]
+INFO: [Synth 8-256] done synthesizing module 'sbox7' (37#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox7.v:35]
+INFO: [Synth 8-638] synthesizing module 'sbox8' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox8.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox8.v:41]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox8.v:41]
+INFO: [Synth 8-256] done synthesizing module 'sbox8' (38#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/sbox8.v:35]
+INFO: [Synth 8-256] done synthesizing module 'crp' (39#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/crp.v:35]
+INFO: [Synth 8-638] synthesizing module 'key_sel3' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/key_sel3.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/key_sel3.v:48]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/key_sel3.v:48]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/key_sel3.v:61]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/key_sel3.v:61]
+INFO: [Synth 8-256] done synthesizing module 'key_sel3' (40#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/key_sel3.v:35]
+INFO: [Synth 8-256] done synthesizing module 'des3_area' (41#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/hdl/des3_area.v:35]
+INFO: [Synth 8-256] done synthesizing module 'top' (42#1) [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/new/top.v:23]
+WARNING: [Synth 8-3331] design ac97_int has unconnected port cfg[7]
+WARNING: [Synth 8-3331] design ac97_int has unconnected port cfg[6]
+WARNING: [Synth 8-3331] design ac97_int has unconnected port cfg[3]
+WARNING: [Synth 8-3331] design ac97_int has unconnected port cfg[2]
+WARNING: [Synth 8-3331] design ac97_int has unconnected port cfg[1]
+WARNING: [Synth 8-3331] design ac97_dma_req has unconnected port cfg[7]
+WARNING: [Synth 8-3331] design ac97_dma_req has unconnected port cfg[3]
+WARNING: [Synth 8-3331] design ac97_dma_req has unconnected port cfg[2]
+WARNING: [Synth 8-3331] design ac97_dma_req has unconnected port cfg[1]
+WARNING: [Synth 8-3331] design ac97_cra has unconnected port crac_out[30]
+WARNING: [Synth 8-3331] design ac97_cra has unconnected port crac_out[29]
+WARNING: [Synth 8-3331] design ac97_cra has unconnected port crac_out[28]
+WARNING: [Synth 8-3331] design ac97_cra has unconnected port crac_out[27]
+WARNING: [Synth 8-3331] design ac97_cra has unconnected port crac_out[26]
+WARNING: [Synth 8-3331] design ac97_cra has unconnected port crac_out[25]
+WARNING: [Synth 8-3331] design ac97_cra has unconnected port crac_out[24]
+WARNING: [Synth 8-3331] design ac97_cra has unconnected port crac_out[23]
+WARNING: [Synth 8-3331] design ac97_cra has unconnected port in_slt2[3]
+WARNING: [Synth 8-3331] design ac97_cra has unconnected port in_slt2[2]
+WARNING: [Synth 8-3331] design ac97_cra has unconnected port in_slt2[1]
+WARNING: [Synth 8-3331] design ac97_cra has unconnected port in_slt2[0]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port rst
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt0[14]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt0[13]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt0[10]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt0[8]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt0[7]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt0[6]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt0[5]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt0[4]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt0[3]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt0[2]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt0[1]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt0[0]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt1[19]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt1[18]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt1[17]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt1[16]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt1[15]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt1[14]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt1[13]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt1[12]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt1[9]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt1[4]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt1[3]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt1[2]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt1[1]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port in_slt1[0]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc0_cfg[7]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc0_cfg[6]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc0_cfg[5]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc0_cfg[4]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc0_cfg[3]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc0_cfg[2]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc1_cfg[7]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc1_cfg[6]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc1_cfg[5]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc1_cfg[4]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc1_cfg[3]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc1_cfg[2]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc2_cfg[7]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc2_cfg[6]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc2_cfg[5]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc2_cfg[4]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc2_cfg[3]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc2_cfg[2]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc3_cfg[7]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc3_cfg[6]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc3_cfg[5]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc3_cfg[4]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc3_cfg[3]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc3_cfg[2]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc4_cfg[7]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc4_cfg[6]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc4_cfg[5]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc4_cfg[4]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc4_cfg[3]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc4_cfg[2]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc5_cfg[7]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc5_cfg[6]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc5_cfg[5]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc5_cfg[4]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc5_cfg[3]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port oc5_cfg[2]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port ic0_cfg[7]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port ic0_cfg[6]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port ic0_cfg[5]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port ic0_cfg[4]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port ic0_cfg[3]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port ic0_cfg[2]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port ic1_cfg[7]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port ic1_cfg[6]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port ic1_cfg[5]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port ic1_cfg[4]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port ic1_cfg[3]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port ic1_cfg[2]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port ic2_cfg[7]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port ic2_cfg[6]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port ic2_cfg[5]
+WARNING: [Synth 8-3331] design ac97_prc has unconnected port ic2_cfg[4]
+INFO: [Common 17-14] Message 'Synth 8-3331' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 1135.656 ; gain = 250.574 ; free physical = 12976 ; free virtual = 35621
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:08 ; elapsed = 00:00:08 . Memory (MB): peak = 1135.656 ; gain = 250.574 ; free physical = 12977 ; free virtual = 35622
+---------------------------------------------------------------------------------
+INFO: [Device 21-403] Loading part xc7a100tcsg324-3
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/constrs_1/imports/new/top.xdc]
+Finished Parsing XDC File [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/constrs_1/imports/new/top.xdc]
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/constrs_1/imports/new/top.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/top_propImpl.xdc].
+Resolution: To avoid this warning, move constraints listed in [.Xil/top_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
+Completed Processing XDC Constraints
+
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 1515.414 ; gain = 0.000 ; free physical = 12739 ; free virtual = 35428
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:15 ; elapsed = 00:00:18 . Memory (MB): peak = 1515.414 ; gain = 630.332 ; free physical = 12731 ; free virtual = 35422
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7a100tcsg324-3
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:15 ; elapsed = 00:00:18 . Memory (MB): peak = 1515.414 ; gain = 630.332 ; free physical = 12729 ; free virtual = 35420
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+Applied set_property DONT_TOUCH = true for des3_area_0. (constraint file  /home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/constrs_1/imports/new/top.xdc, line 1).
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:15 ; elapsed = 00:00:18 . Memory (MB): peak = 1515.414 ; gain = 630.332 ; free physical = 12730 ; free virtual = 35420
+---------------------------------------------------------------------------------
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_timing.v:623]
+INFO: [Synth 8-802] inferred FSM for state register 'state_reg' in module 'mc_timing'
+INFO: [Synth 8-5544] ROM "tmr2_ld_tsrdv" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "tmr2_ld_tscsto" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "tmr2_ld_tsrdv" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "tmr2_ld_tscsto" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "cmd" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "cmd" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "cmd" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "cmd" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "cmd" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "cmd" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "cmd" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "cmd" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                     POR |                          0000000 | 000000000000000000000000000000000000000000000000000000000000000001
+                    IDLE |                          0000001 | 000000000000000000000000000000000000000000000000000000000000000010
+               PRECHARGE |                          0000010 | 000000000000000000000000000000000000000000000000000000000000010000
+             PRECHARGE_W |                          0000011 | 000000000000000000000000000000000000000000000000000000000000100000
+                   INIT0 |                          0000100 | 000000000000000000000000000000000000000000001000000000000000000000
+                    INIT |                          0000101 | 000000000000000000000000000000000000000000010000000000000000000000
+                  INIT_W |                          0000110 | 000000000000000000000000000000000000000000100000000000000000000000
+              INIT_REFR1 |                          0000111 | 000000000000000000000000000000000000000001000000000000000000000000
+            INIT_REFR1_W |                          0001000 | 000000000000000000000000000000000000000010000000000000000000000000
+                INIT_LMR |                          0001001 | 000000000000000000000000000000000000000100000000000000000000000000
+                    LMR0 |                          0001010 | 000000000000000000000000000000000000000000000001000000000000000000
+                    LMR1 |                          0001011 | 000000000000000000000000000000000000000000000010000000000000000000
+                    LMR2 |                          0001100 | 000000000000000000000000000000000000000000000100000000000000000000
+                   SUSP1 |                          0001101 | 000000000000000000000000000000000000001000000000000000000000000000
+                   SUSP2 |                          0001110 | 000000000000000000000000000000000000010000000000000000000000000000
+                   SUSP3 |                          0001111 | 000000000000000000000000000000000000100000000000000000000000000000
+                   SUSP4 |                          0010000 | 000000000000000000000000000000000001000000000000000000000000000000
+                 RESUME1 |                          0010001 | 000000000000000000000000000000000010000000000000000000000000000000
+                 RESUME2 |                          0010010 | 000000000000000000000000000000000100000000000000000000000000000000
+                    REFR |                          0010011 | 000000000000000000000000000000000000000000000000100000000000000000
+                     BG0 |                          0010100 | 000000000000000000000000000000001000000000000000000000000000000000
+                     BG1 |                          0010101 | 000000000000000000000000000000010000000000000000000000000000000000
+                     BG2 |                          0010110 | 000000000000000000000000000000100000000000000000000000000000000000
+                SD_RD_WR |                          0010111 | 000000000000000000000000000000000000000000000000000000000100000000
+                ACTIVATE |                          0011000 | 000000000000000000000000000000000000000000000000000000000001000000
+              ACTIVATE_W |                          0011001 | 000000000000000000000000000000000000000000000000000000000010000000
+                   SD_WR |                          0011010 | 000000000000000000000000000000000000000000000000000010000000000000
+                 SD_WR_W |                          0011011 | 000000000000000000000000000000000000000000000000000100000000000000
+                   SD_RD |                          0011100 | 000000000000000000000000000000000000000000000000000000001000000000
+                 SD_RD_W |                          0011101 | 000000000000000000000000000000000000000000000000000000010000000000
+              SD_RD_LOOP |                          0011110 | 000000000000000000000000000000000000000000000000000000100000000000
+                      BT |                          0011111 | 000000000000000000000000000000000000000000000000001000000000000000
+                SD_RD_W2 |                          0100000 | 000000000000000000000000000000000000000000000000000001000000000000
+                    BT_W |                          0100001 | 000000000000000000000000000000000000000000000000010000000000000000
+                  ACS_WR |                          0100010 | 000000000000000000100000000000000000000000000000000000000000000000
+                 ACS_WR1 |                          0100011 | 000000000000000001000000000000000000000000000000000000000000000000
+                 ACS_WR2 |                          0100100 | 000000000000000010000000000000000000000000000000000000000000000000
+                 ACS_WR3 |                          0100101 | 000000000000000100000000000000000000000000000000000000000000000000
+                 ACS_WR4 |                          0100110 | 000000000000001000000000000000000000000000000000000000000000000000
+                  ACS_RD |                          0100111 | 000000000000000000000000000001000000000000000000000000000000000000
+                 ACS_RD1 |                          0101000 | 000000000000000000000000000010000000000000000000000000000000000000
+              ACS_RD_8_1 |                          0101001 | 000000000000000000000000100000000000000000000000000000000000000000
+              ACS_RD_8_2 |                          0101010 | 000000000000000000000001000000000000000000000000000000000000000000
+              ACS_RD_8_3 |                          0101011 | 000000000000000000000010000000000000000000000000000000000000000000
+              ACS_RD_8_4 |                          0101100 | 000000000000000000000100000000000000000000000000000000000000000000
+              ACS_RD_8_5 |                          0101101 | 000000000000000000001000000000000000000000000000000000000000000000
+              ACS_RD_8_6 |                          0101110 | 000000000000000000010000000000000000000000000000000000000000000000
+                ACS_RD2A |                          0101111 | 000000000000000000000000000100000000000000000000000000000000000000
+                 ACS_RD2 |                          0110000 | 000000000000000000000000001000000000000000000000000000000000000000
+                 ACS_RD3 |                          0110001 | 000000000000000000000000010000000000000000000000000000000000000000
+                  SCS_WR |                          0110010 | 001000000000000000000000000000000000000000000000000000000000000000
+                 SCS_WR1 |                          0110011 | 010000000000000000000000000000000000000000000000000000000000000000
+                  SCS_RD |                          0110100 | 000001000000000000000000000000000000000000000000000000000000000000
+                 SCS_RD1 |                          0110101 | 000010000000000000000000000000000000000000000000000000000000000000
+                 SCS_RD2 |                          0110110 | 000100000000000000000000000000000000000000000000000000000000000000
+                  IDLE_T |                          0110111 | 000000000000000000000000000000000000000000000000000000000000000100
+                 SCS_ERR |                          0111000 | 100000000000000000000000000000000000000000000000000000000000000000
+                 IDLE_T2 |                          0111001 | 000000000000000000000000000000000000000000000000000000000000001000
+                 SRAM_WR |                          0111010 | 000000010000000000000000000000000000000000000000000000000000000000
+                SRAM_WR0 |                          0111011 | 000000100000000000000000000000000000000000000000000000000000000000
+                 SRAM_RD |                          0111100 | 000000000000010000000000000000000000000000000000000000000000000000
+                SRAM_RD0 |                          0111101 | 000000000000100000000000000000000000000000000000000000000000000000
+                SRAM_RD1 |                          0111110 | 000000000001000000000000000000000000000000000000000000000000000000
+                SRAM_RD2 |                          0111111 | 000000000010000000000000000000000000000000000000000000000000000000
+                SRAM_RD3 |                          1000000 | 000000000100000000000000000000000000000000000000000000000000000000
+                SRAM_RD4 |                          1000001 | 000000001000000000000000000000000000000000000000000000000000000000
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 'sequential' in module 'mc_timing'
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:20 ; elapsed = 00:00:23 . Memory (MB): peak = 1515.414 ; gain = 630.332 ; free physical = 12710 ; free virtual = 35402
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     13 Bit       Adders := 1     
+	   2 Input     12 Bit       Adders := 1     
+	   2 Input     11 Bit       Adders := 1     
+	   2 Input      9 Bit       Adders := 1     
+	   2 Input      8 Bit       Adders := 5     
+	   2 Input      6 Bit       Adders := 4     
+	   2 Input      4 Bit       Adders := 35    
+	   2 Input      3 Bit       Adders := 20    
+	   3 Input      2 Bit       Adders := 18    
++---XORs : 
+	   2 Input     48 Bit         XORs := 1     
+	   2 Input     32 Bit         XORs := 1     
+	   2 Input      1 Bit         XORs := 5     
++---XORs : 
+	                8 Bit    Wide XORs := 8     
++---Registers : 
+	               64 Bit    Registers := 1     
+	               36 Bit    Registers := 5     
+	               32 Bit    Registers := 28    
+	               29 Bit    Registers := 4     
+	               24 Bit    Registers := 5     
+	               20 Bit    Registers := 48    
+	               16 Bit    Registers := 16    
+	               13 Bit    Registers := 10    
+	               11 Bit    Registers := 2     
+	               10 Bit    Registers := 1     
+	                9 Bit    Registers := 1     
+	                8 Bit    Registers := 11    
+	                7 Bit    Registers := 3     
+	                6 Bit    Registers := 4     
+	                4 Bit    Registers := 31    
+	                3 Bit    Registers := 6     
+	                2 Bit    Registers := 19    
+	                1 Bit    Registers := 323   
++---RAMs : 
+	              128 Bit         RAMs := 18    
++---Muxes : 
+	   7 Input     56 Bit        Muxes := 27    
+	   2 Input     32 Bit        Muxes := 8     
+	   4 Input     32 Bit        Muxes := 8     
+	   3 Input     32 Bit        Muxes := 2     
+	   2 Input     29 Bit        Muxes := 4     
+	   2 Input     28 Bit        Muxes := 1     
+	   2 Input     24 Bit        Muxes := 4     
+	   4 Input     24 Bit        Muxes := 1     
+	   3 Input     24 Bit        Muxes := 1     
+	   2 Input     20 Bit        Muxes := 16    
+	   4 Input     20 Bit        Muxes := 12    
+	   2 Input     16 Bit        Muxes := 14    
+	  10 Input     13 Bit        Muxes := 2     
+	   2 Input     13 Bit        Muxes := 3     
+	  10 Input     11 Bit        Muxes := 1     
+	   6 Input     11 Bit        Muxes := 1     
+	   2 Input     11 Bit        Muxes := 1     
+	  10 Input     10 Bit        Muxes := 1     
+	   2 Input      8 Bit        Muxes := 8     
+	 105 Input      7 Bit        Muxes := 1     
+	   2 Input      6 Bit        Muxes := 4     
+	   2 Input      4 Bit        Muxes := 24    
+	  14 Input      4 Bit        Muxes := 1     
+	   3 Input      4 Bit        Muxes := 2     
+	  66 Input      4 Bit        Muxes := 1     
+	  10 Input      3 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 2     
+	   6 Input      2 Bit        Muxes := 1     
+	   2 Input      2 Bit        Muxes := 8     
+	   4 Input      2 Bit        Muxes := 3     
+	   2 Input      1 Bit        Muxes := 880   
+	   4 Input      1 Bit        Muxes := 49    
+	  11 Input      1 Bit        Muxes := 1     
+	   8 Input      1 Bit        Muxes := 1     
+	   7 Input      1 Bit        Muxes := 1     
+	  66 Input      1 Bit        Muxes := 53    
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Hierarchical Component Statistics 
+---------------------------------------------------------------------------------
+Hierarchical RTL Component report 
+Module top 
+Detailed RTL Component Info : 
++---XORs : 
+	   2 Input      1 Bit         XORs := 1     
+Module mc_cs_rf 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 2     
+	                7 Bit    Registers := 1     
+	                1 Bit    Registers := 7     
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 3     
+Module mc_cs_rf__parameterized0 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 2     
+	                7 Bit    Registers := 1     
+	                1 Bit    Registers := 7     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 2     
+Module mc_rf 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 5     
+	               11 Bit    Registers := 1     
+	                8 Bit    Registers := 3     
+	                7 Bit    Registers := 1     
+	                1 Bit    Registers := 11    
++---Muxes : 
+	   2 Input      8 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 2     
+Module mc_incn_r 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     13 Bit       Adders := 1     
+	   2 Input     12 Bit       Adders := 1     
++---Registers : 
+	               13 Bit    Registers := 1     
+Module mc_adr_sel 
+Detailed RTL Component Info : 
++---Registers : 
+	               24 Bit    Registers := 2     
+	               13 Bit    Registers := 1     
+	               10 Bit    Registers := 1     
+	                2 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     24 Bit        Muxes := 4     
+	   4 Input     24 Bit        Muxes := 1     
+	   3 Input     24 Bit        Muxes := 1     
+	  10 Input     13 Bit        Muxes := 2     
+	   2 Input     13 Bit        Muxes := 3     
+	  10 Input     11 Bit        Muxes := 1     
+	  10 Input     10 Bit        Muxes := 1     
+	  10 Input      3 Bit        Muxes := 1     
+	   6 Input      2 Bit        Muxes := 1     
+	   2 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 2     
+Module mc_obct 
+Detailed RTL Component Info : 
++---Registers : 
+	               13 Bit    Registers := 4     
+	                1 Bit    Registers := 4     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 2     
+Module mc_obct_top 
+Detailed RTL Component Info : 
++---Registers : 
+	                1 Bit    Registers := 3     
+Module mc_rd_fifo 
+Detailed RTL Component Info : 
++---Registers : 
+	               36 Bit    Registers := 4     
+	                4 Bit    Registers := 2     
++---Muxes : 
+	   2 Input      4 Bit        Muxes := 2     
+	   2 Input      1 Bit        Muxes := 2     
+Module mc_dp 
+Detailed RTL Component Info : 
++---XORs : 
+	   2 Input      1 Bit         XORs := 4     
++---XORs : 
+	                8 Bit    Wide XORs := 8     
++---Registers : 
+	               32 Bit    Registers := 1     
+	                8 Bit    Registers := 3     
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 3     
+	   2 Input      8 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 1     
+Module mc_refresh 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      8 Bit       Adders := 2     
++---Registers : 
+	                8 Bit    Registers := 2     
+	                1 Bit    Registers := 5     
++---Muxes : 
+	   2 Input      8 Bit        Muxes := 2     
+	   2 Input      1 Bit        Muxes := 3     
+Module mc_timing 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     11 Bit       Adders := 1     
+	   2 Input      9 Bit       Adders := 1     
+	   2 Input      8 Bit       Adders := 1     
+	   2 Input      4 Bit       Adders := 3     
++---Registers : 
+	               11 Bit    Registers := 1     
+	                9 Bit    Registers := 1     
+	                8 Bit    Registers := 1     
+	                4 Bit    Registers := 4     
+	                1 Bit    Registers := 47    
++---Muxes : 
+	   2 Input     28 Bit        Muxes := 1     
+	   6 Input     11 Bit        Muxes := 1     
+	   2 Input     11 Bit        Muxes := 1     
+	 105 Input      7 Bit        Muxes := 1     
+	  14 Input      4 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 10    
+	   3 Input      4 Bit        Muxes := 1     
+	  66 Input      4 Bit        Muxes := 1     
+	   2 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 52    
+	   4 Input      1 Bit        Muxes := 9     
+	  11 Input      1 Bit        Muxes := 1     
+	   8 Input      1 Bit        Muxes := 1     
+	   7 Input      1 Bit        Muxes := 1     
+	  66 Input      1 Bit        Muxes := 53    
+Module mc_wb_if 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 1     
+	                1 Bit    Registers := 10    
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 4     
+Module mc_mem_if 
+Detailed RTL Component Info : 
++---Registers : 
+	               36 Bit    Registers := 1     
+	               32 Bit    Registers := 1     
+	               24 Bit    Registers := 1     
+	                4 Bit    Registers := 4     
+	                1 Bit    Registers := 14    
++---Muxes : 
+	   3 Input      4 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 16    
+Module mc_top 
+Detailed RTL Component Info : 
++---Registers : 
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 2     
+	   2 Input      8 Bit        Muxes := 2     
+Module ac97_sout 
+Detailed RTL Component Info : 
++---Registers : 
+	               20 Bit    Registers := 12    
+	               16 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     20 Bit        Muxes := 8     
+	   2 Input     16 Bit        Muxes := 1     
+Module ac97_sin 
+Detailed RTL Component Info : 
++---Registers : 
+	               20 Bit    Registers := 6     
+	               16 Bit    Registers := 1     
+Module ac97_soc 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      8 Bit       Adders := 1     
+	   2 Input      6 Bit       Adders := 1     
+	   2 Input      4 Bit       Adders := 1     
++---Registers : 
+	                8 Bit    Registers := 1     
+	                6 Bit    Registers := 1     
+	                4 Bit    Registers := 1     
+	                1 Bit    Registers := 17    
++---Muxes : 
+	   2 Input      8 Bit        Muxes := 1     
+	   2 Input      6 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 2     
+Module ac97_out_fifo 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      4 Bit       Adders := 2     
+	   2 Input      3 Bit       Adders := 1     
+	   3 Input      2 Bit       Adders := 1     
++---Registers : 
+	               20 Bit    Registers := 1     
+	                4 Bit    Registers := 1     
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 1     
++---RAMs : 
+	              128 Bit         RAMs := 1     
++---Muxes : 
+	   4 Input     20 Bit        Muxes := 1     
+	   2 Input     16 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 2     
+Module ac97_in_fifo 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      4 Bit       Adders := 1     
+	   2 Input      3 Bit       Adders := 1     
+	   3 Input      2 Bit       Adders := 1     
++---Registers : 
+	               32 Bit    Registers := 1     
+	               16 Bit    Registers := 1     
+	                4 Bit    Registers := 1     
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 2     
++---RAMs : 
+	              128 Bit         RAMs := 1     
++---Muxes : 
+	   4 Input     32 Bit        Muxes := 1     
+	   2 Input      2 Bit        Muxes := 1     
+Module ac97_wb_if 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 2     
+	                1 Bit    Registers := 15    
++---Muxes : 
+	   4 Input     32 Bit        Muxes := 1     
+	   4 Input      2 Bit        Muxes := 1     
+Module ac97_rf 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 2     
+	               29 Bit    Registers := 2     
+	               24 Bit    Registers := 1     
+	               16 Bit    Registers := 2     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input     29 Bit        Muxes := 2     
+Module ac97_fifo_ctrl 
+Detailed RTL Component Info : 
++---Registers : 
+	                1 Bit    Registers := 3     
+Module ac97_prc 
+Detailed RTL Component Info : 
++---Registers : 
+	                1 Bit    Registers := 2     
+Module ac97_cra 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+	                1 Bit    Registers := 8     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 6     
+Module ac97_dma_req 
+Detailed RTL Component Info : 
++---Registers : 
+	                1 Bit    Registers := 2     
++---Muxes : 
+	   4 Input      1 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 1     
+Module ac97_int 
+Detailed RTL Component Info : 
++---Muxes : 
+	   4 Input      1 Bit        Muxes := 1     
+Module ac97_rst 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      6 Bit       Adders := 1     
+	   2 Input      3 Bit       Adders := 1     
++---Registers : 
+	                6 Bit    Registers := 1     
+	                3 Bit    Registers := 1     
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      6 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 2     
+Module ac97_top 
+Detailed RTL Component Info : 
++---Registers : 
+	                3 Bit    Registers := 2     
+	                1 Bit    Registers := 2     
+Module crp 
+Detailed RTL Component Info : 
++---XORs : 
+	   2 Input     48 Bit         XORs := 1     
+Module key_sel3 
+Detailed RTL Component Info : 
++---Muxes : 
+	   7 Input     56 Bit        Muxes := 27    
+	   2 Input      1 Bit        Muxes := 715   
+Module des3_area 
+Detailed RTL Component Info : 
++---XORs : 
+	   2 Input     32 Bit         XORs := 1     
++---Registers : 
+	               64 Bit    Registers := 1     
+	               32 Bit    Registers := 2     
++---Muxes : 
+	   3 Input     32 Bit        Muxes := 2     
+	   2 Input     32 Bit        Muxes := 1     
+	   4 Input      2 Bit        Muxes := 1     
+---------------------------------------------------------------------------------
+Finished RTL Hierarchical Component Statistics
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 240 (col length:80)
+BRAMs: 270 (col length: RAMB18 80 RAMB36 40)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+Start Parallel Synthesis Optimization  : Time (s): cpu = 00:00:20 ; elapsed = 00:00:23 . Memory (MB): peak = 1515.414 ; gain = 630.332 ; free physical = 12708 ; free virtual = 35400
+---------------------------------------------------------------------------------
+Start Cross Boundary Optimization
+---------------------------------------------------------------------------------
+INFO: [Synth 8-4471] merging register 'u1/rst_r1_reg' into 'u0/rst_r1_reg' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_cs_rf.v:157]
+INFO: [Synth 8-4471] merging register 'u1/rst_r2_reg' into 'u0/rst_r2_reg' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_cs_rf.v:161]
+INFO: [Synth 8-4471] merging register 'u1/addr_r_reg[6:0]' into 'u0/addr_r_reg[6:0]' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_cs_rf.v:172]
+INFO: [Synth 8-4471] merging register 'wb_addr_r_reg[6:0]' into 'u0/addr_r_reg[6:0]' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_rf.v:278]
+INFO: [Synth 8-4471] merging register 'rst_r1_reg' into 'u0/rst_r1_reg' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_rf.v:317]
+INFO: [Synth 8-4471] merging register 'rst_r2_reg' into 'u0/rst_r2_reg' [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/mc_rf.v:321]
+WARNING: [Synth 8-3936] Found unconnected internal register 'u1/slt1_reg' and it is trimmed from '20' to '12' bits. [/home/sean/vivado_workspace/des3_area_top/des3_area_top.srcs/sources_1/imports/src/ac97_sin.v:114]
+---------------------------------------------------------------------------------
+Finished Cross Boundary Optimization : Time (s): cpu = 00:00:23 ; elapsed = 00:00:26 . Memory (MB): peak = 1515.414 ; gain = 630.332 ; free physical = 12702 ; free virtual = 35395
+---------------------------------------------------------------------------------
+Finished Parallel Reinference  : Time (s): cpu = 00:00:23 ; elapsed = 00:00:26 . Memory (MB): peak = 1515.414 ; gain = 630.332 ; free physical = 12702 ; free virtual = 35395
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+ROM:
++------------+------------+---------------+----------------+
+|Module Name | RTL Object | Depth x Width | Implemented As | 
++------------+------------+---------------+----------------+
+|sbox1       | dout       | 64x4          | LUT            | 
+|sbox2       | dout       | 64x4          | LUT            | 
+|sbox3       | dout       | 64x4          | LUT            | 
+|sbox4       | dout       | 64x4          | LUT            | 
+|sbox5       | dout       | 64x4          | LUT            | 
+|sbox6       | dout       | 64x4          | LUT            | 
+|sbox7       | dout       | 64x4          | LUT            | 
+|sbox8       | dout       | 64x4          | LUT            | 
+|des3_area   | u0/u6/dout | 64x4          | LUT            | 
+|des3_area   | u0/u2/dout | 64x4          | LUT            | 
+|des3_area   | u0/u5/dout | 64x4          | LUT            | 
+|des3_area   | u0/u1/dout | 64x4          | LUT            | 
+|des3_area   | u0/u7/dout | 64x4          | LUT            | 
+|des3_area   | u0/u3/dout | 64x4          | LUT            | 
+|des3_area   | u0/u4/dout | 64x4          | LUT            | 
+|des3_area   | u0/u0/dout | 64x4          | LUT            | 
++------------+------------+---------------+----------------+
+
+
+Distributed RAM: Preliminary Mapping  Report (see note below)
++------------+-------------+-----------+----------------------+--------------+
+|Module Name | RTL Object  | Inference | Size (Depth x Width) | Primitives   | 
++------------+-------------+-----------+----------------------+--------------+
+|ac97_top    | u3/mem_reg  | Implied   | 4 x 32               | RAM32M x 6   | 
+|ac97_top    | u4/mem_reg  | Implied   | 4 x 32               | RAM32M x 6   | 
+|ac97_top    | u5/mem_reg  | Implied   | 4 x 32               | RAM32M x 6   | 
+|ac97_top    | u6/mem_reg  | Implied   | 4 x 32               | RAM32M x 6   | 
+|ac97_top    | u7/mem_reg  | Implied   | 4 x 32               | RAM32M x 6   | 
+|ac97_top    | u8/mem_reg  | Implied   | 4 x 32               | RAM32M x 6   | 
+|ac97_top    | u9/mem_reg  | Implied   | 4 x 32               | RAM32M x 6   | 
+|ac97_top    | u10/mem_reg | Implied   | 4 x 32               | RAM32M x 6   | 
+|ac97_top    | u11/mem_reg | Implied   | 4 x 32               | RAM32M x 6   | 
++------------+-------------+-----------+----------------------+--------------+
+
+Note: The table above is a preliminary report that shows the Distributed RAMs at the current stage of the synthesis flow. Some Distributed RAMs may be reimplemented as non Distributed RAM primitives later in the synthesis flow. Multiple instantiated RAMs are reported only once.
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Area Optimization
+---------------------------------------------------------------------------------
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt12_r_reg[1]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3886] merging instance 'mem_ctrl_0/u0/spec_req_cs_reg[2]' (FDCE) to 'mem_ctrl_0/u0/spec_req_cs_reg[3]'
+INFO: [Synth 8-3886] merging instance 'mem_ctrl_0/u0/cs_reg[2]' (FDCE) to 'mem_ctrl_0/u0/cs_reg[3]'
+INFO: [Synth 8-3886] merging instance 'mem_ctrl_0/u0/spec_req_cs_reg[3]' (FDCE) to 'mem_ctrl_0/u0/spec_req_cs_reg[4]'
+INFO: [Synth 8-3886] merging instance 'mem_ctrl_0/u0/cs_reg[3]' (FDCE) to 'mem_ctrl_0/u0/cs_reg[4]'
+INFO: [Synth 8-3886] merging instance 'mem_ctrl_0/u0/spec_req_cs_reg[7]' (FDCE) to 'mem_ctrl_0/u0/spec_req_cs_reg[4]'
+INFO: [Synth 8-3886] merging instance 'mem_ctrl_0/u0/cs_reg[7]' (FDCE) to 'mem_ctrl_0/u0/cs_reg[4]'
+INFO: [Synth 8-3886] merging instance 'mem_ctrl_0/u0/spec_req_cs_reg[6]' (FDCE) to 'mem_ctrl_0/u0/spec_req_cs_reg[4]'
+INFO: [Synth 8-3886] merging instance 'mem_ctrl_0/u0/cs_reg[6]' (FDCE) to 'mem_ctrl_0/u0/cs_reg[4]'
+INFO: [Synth 8-3886] merging instance 'mem_ctrl_0/u0/spec_req_cs_reg[4]' (FDCE) to 'mem_ctrl_0/u0/spec_req_cs_reg[5]'
+INFO: [Synth 8-3886] merging instance 'mem_ctrl_0/u0/cs_reg[4]' (FDCE) to 'mem_ctrl_0/u0/cs_reg[5]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (mem_ctrl_0/\u0/spec_req_cs_reg[5] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (mem_ctrl_0/\u0/cs_reg[5] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt12_r_reg[2]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt12_r_reg[3]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt12_r_reg[4]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt12_r_reg[5]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt12_r_reg[6]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt12_r_reg[7]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt12_r_reg[8]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt12_r_reg[9]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt12_r_reg[10]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt12_r_reg[11]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt12_r_reg[12]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt12_r_reg[13]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt12_r_reg[14]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt12_r_reg[15]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt12_r_reg[16]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt12_r_reg[17]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt12_r_reg[18]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt12_r_reg[19]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt11_r_reg[0]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt11_r_reg[1]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt11_r_reg[2]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt11_r_reg[3]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt11_r_reg[4]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt11_r_reg[5]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt11_r_reg[6]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt11_r_reg[7]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt11_r_reg[8]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt11_r_reg[9]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt11_r_reg[10]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt11_r_reg[11]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt11_r_reg[12]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt11_r_reg[13]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt11_r_reg[14]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt11_r_reg[15]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt11_r_reg[16]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt11_r_reg[17]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt11_r_reg[18]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt11_r_reg[19]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt10_r_reg[0]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt10_r_reg[1]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt10_r_reg[2]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt10_r_reg[3]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt10_r_reg[4]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt10_r_reg[5]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt10_r_reg[6]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt10_r_reg[7]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt10_r_reg[8]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt10_r_reg[9]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt10_r_reg[10]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt10_r_reg[11]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt10_r_reg[12]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt10_r_reg[13]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt10_r_reg[14]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt10_r_reg[15]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt10_r_reg[16]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt10_r_reg[17]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt10_r_reg[18]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+INFO: [Synth 8-3886] merging instance 'ac97_top:/u0/slt10_r_reg[19]' (FDR) to 'ac97_top:/u0/slt12_r_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_top:/\u0/slt12_r_reg[0] )
+WARNING: [Synth 8-3332] Sequential element (u0/u0/addr_r_reg[1]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/u0/addr_r_reg[0]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/wb_ack_o_reg) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/csc_reg[31]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/csc_reg[30]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/csc_reg[29]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/csc_reg[28]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/csc_reg[27]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/csc_reg[26]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/csc_reg[25]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/csc_reg[24]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/csc_reg[23]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/csc_reg[22]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/csc_reg[21]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/csc_reg[20]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/csc_reg[19]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/csc_reg[18]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/csc_reg[17]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/csc_reg[16]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/csc_reg[15]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/csc_reg[14]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/csc_reg[13]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/csc_reg[12]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/csc_reg[8]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/csc_reg[0]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/tms_reg[31]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/tms_reg[30]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/tms_reg[29]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/tms_reg[28]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/spec_req_cs_reg[7]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/spec_req_cs_reg[6]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/spec_req_cs_reg[5]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/spec_req_cs_reg[4]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/spec_req_cs_reg[3]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/spec_req_cs_reg[2]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_csc_reg[31]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_csc_reg[30]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_csc_reg[29]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_csc_reg[28]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_csc_reg[27]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_csc_reg[26]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_csc_reg[25]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_csc_reg[24]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_csc_reg[23]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_csc_reg[22]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_csc_reg[21]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_csc_reg[20]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_csc_reg[19]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_csc_reg[18]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_csc_reg[17]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_csc_reg[16]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_csc_reg[15]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_csc_reg[14]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_csc_reg[13]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_csc_reg[12]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_csc_reg[11]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_csc_reg[8]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_csc_reg[0]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_tms_reg[31]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_tms_reg[30]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_tms_reg[29]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/sp_tms_reg[28]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/cs_reg[7]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/cs_reg[6]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/cs_reg[5]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/cs_reg[4]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/cs_reg[3]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u0/cs_reg[2]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u1/sram_addr_reg[3]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u1/col_adr_reg[3]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u2/any_bank_open_reg) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u3/mc_data_o_reg[31]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u3/mc_data_o_reg[30]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u3/mc_data_o_reg[29]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u3/mc_data_o_reg[28]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u3/mc_data_o_reg[27]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u3/mc_data_o_reg[26]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u3/mc_data_o_reg[25]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u3/mc_data_o_reg[24]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u3/mc_data_o_reg[23]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u3/mc_data_o_reg[17]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u3/mc_data_o_reg[16]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u3/mc_dp_o_reg[3]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u3/mc_dp_o_reg[2]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u3/mc_dp_o_reg[1]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u3/mc_dp_o_reg[0]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u5/data_oe_r_reg) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u5/data_oe_r2_reg) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u5/data_oe_reg) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u5/oe__reg) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u5/cmd_r_reg[2]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u5/cmd_r_reg[0]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u5/cmd_del_reg[2]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u5/cmd_del_reg[0]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u7/mc_cs__reg[7]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u7/mc_cs__reg[6]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u7/mc_cs__reg[5]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u7/mc_cs__reg[4]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u7/mc_cs__reg[3]) is unused and will be removed from module mc_top.
+WARNING: [Synth 8-3332] Sequential element (u7/mc_cs__reg[2]) is unused and will be removed from module mc_top.
+INFO: [Common 17-14] Message 'Synth 8-3332' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+INFO: [Synth 8-3886] merging instance 'des3_area_0/L_reg[25]' (FD) to 'des3_area_0/FP_R_reg[57]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/FP_R_reg[25]' (FD) to 'des3_area_0/R_reg[25]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/L_reg[17]' (FD) to 'des3_area_0/FP_R_reg[49]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/FP_R_reg[17]' (FD) to 'des3_area_0/R_reg[17]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/L_reg[9]' (FD) to 'des3_area_0/FP_R_reg[41]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/FP_R_reg[9]' (FD) to 'des3_area_0/R_reg[9]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/L_reg[1]' (FD) to 'des3_area_0/FP_R_reg[33]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/FP_R_reg[1]' (FD) to 'des3_area_0/R_reg[1]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/L_reg[26]' (FD) to 'des3_area_0/FP_R_reg[58]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/FP_R_reg[26]' (FD) to 'des3_area_0/R_reg[26]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/L_reg[18]' (FD) to 'des3_area_0/FP_R_reg[50]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/FP_R_reg[18]' (FD) to 'des3_area_0/R_reg[18]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/L_reg[10]' (FD) to 'des3_area_0/FP_R_reg[42]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/FP_R_reg[10]' (FD) to 'des3_area_0/R_reg[10]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/L_reg[2]' (FD) to 'des3_area_0/FP_R_reg[34]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/FP_R_reg[2]' (FD) to 'des3_area_0/R_reg[2]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/L_reg[27]' (FD) to 'des3_area_0/FP_R_reg[59]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/FP_R_reg[27]' (FD) to 'des3_area_0/R_reg[27]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/L_reg[19]' (FD) to 'des3_area_0/FP_R_reg[51]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/FP_R_reg[19]' (FD) to 'des3_area_0/R_reg[19]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/L_reg[11]' (FD) to 'des3_area_0/FP_R_reg[43]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/FP_R_reg[11]' (FD) to 'des3_area_0/R_reg[11]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/L_reg[3]' (FD) to 'des3_area_0/FP_R_reg[35]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/FP_R_reg[3]' (FD) to 'des3_area_0/R_reg[3]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/L_reg[28]' (FD) to 'des3_area_0/FP_R_reg[60]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/FP_R_reg[28]' (FD) to 'des3_area_0/R_reg[28]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/L_reg[20]' (FD) to 'des3_area_0/FP_R_reg[52]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/FP_R_reg[20]' (FD) to 'des3_area_0/R_reg[20]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/L_reg[12]' (FD) to 'des3_area_0/FP_R_reg[44]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/FP_R_reg[12]' (FD) to 'des3_area_0/R_reg[12]'
+INFO: [Synth 8-3886] merging instance 'des3_area_0/L_reg[4]' (FD) to 'des3_area_0/FP_R_reg[36]'
+INFO: [Common 17-14] Message 'Synth 8-3886' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_1/\u1/sdata_in_r_reg )
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (ac97_0/\u1/sdata_in_r_reg )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_1/\u16/u6/dma_req_r1_reg )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_0/\u16/u5/dma_req_r1_reg )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_1/\u16/u6/dma_req_reg )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_0/\u16/u5/dma_req_reg )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_1/\u1/sr_reg[1] )
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (ac97_0/\u1/sr_reg[0] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_1/\u1/sr_reg[2] )
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (ac97_0/\u1/sr_reg[0] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_1/\u1/slt4_reg[1] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_1/\u1/slt3_reg[1] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_1/\u1/slt6_reg[1] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_1/\u1/sr_reg[2] )
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (ac97_0/\u1/sr_reg[2] )
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (ac97_0/\u1/slt4_reg[1] )
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (ac97_0/\u1/slt3_reg[1] )
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (ac97_0/\u1/slt6_reg[1] )
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (ac97_0/\u1/sr_reg[2] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_1/\u1/sr_reg[2] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_1/\u1/slt4_reg[3] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_1/\u1/slt3_reg[3] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_1/\u1/slt6_reg[3] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_1/\u1/sr_reg[2] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_1/\u10/din_tmp1_reg[0] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_1/\u9/din_tmp1_reg[0] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_1/\u11/din_tmp1_reg[0] )
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (ac97_0/\u1/sr_reg[2] )
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (ac97_0/\u1/slt4_reg[3] )
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (ac97_0/\u1/slt3_reg[3] )
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (ac97_0/\u1/slt6_reg[3] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_1/\u1/slt1_reg[5] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_1/\u1/slt4_reg[5] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_1/\u1/sr_reg[2] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_1/\u1/slt3_reg[5] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (ac97_1/\u1/slt6_reg[5] )
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (ac97_0/\u1/sr_reg[2] )
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (ac97_0/\u10/din_tmp1_reg[0] )
+INFO: [Common 17-14] Message 'Synth 8-3333' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+---------------------------------------------------------------------------------
+Finished Area Optimization : Time (s): cpu = 00:00:45 ; elapsed = 00:00:49 . Memory (MB): peak = 1515.414 ; gain = 630.332 ; free physical = 12673 ; free virtual = 35375
+---------------------------------------------------------------------------------
+Finished Parallel Area Optimization  : Time (s): cpu = 00:00:45 ; elapsed = 00:00:49 . Memory (MB): peak = 1515.414 ; gain = 630.332 ; free physical = 12673 ; free virtual = 35375
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying XDC Timing Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:51 ; elapsed = 00:00:54 . Memory (MB): peak = 1515.414 ; gain = 630.332 ; free physical = 12603 ; free virtual = 35311
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:55 ; elapsed = 00:00:59 . Memory (MB): peak = 1580.555 ; gain = 695.473 ; free physical = 12528 ; free virtual = 35238
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:56 ; elapsed = 00:01:00 . Memory (MB): peak = 1589.562 ; gain = 704.480 ; free physical = 12519 ; free virtual = 35230
+---------------------------------------------------------------------------------
+Finished Parallel Technology Mapping Optimization  : Time (s): cpu = 00:00:56 ; elapsed = 00:01:00 . Memory (MB): peak = 1589.562 ; gain = 704.480 ; free physical = 12519 ; free virtual = 35230
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+Finished Parallel Synthesis Optimization  : Time (s): cpu = 00:00:56 ; elapsed = 00:01:00 . Memory (MB): peak = 1589.562 ; gain = 704.480 ; free physical = 12519 ; free virtual = 35230
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:57 ; elapsed = 00:01:01 . Memory (MB): peak = 1589.562 ; gain = 704.480 ; free physical = 12519 ; free virtual = 35229
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:57 ; elapsed = 00:01:01 . Memory (MB): peak = 1589.562 ; gain = 704.480 ; free physical = 12518 ; free virtual = 35228
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:57 ; elapsed = 00:01:01 . Memory (MB): peak = 1589.562 ; gain = 704.480 ; free physical = 12518 ; free virtual = 35228
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+Static Shift Register Report:
++------------+-----------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|Module Name | RTL Name                    | Length | Width | Reset Signal | Pull out first Reg | Pull out last Reg | SRL16E | SRLC32E | 
++------------+-----------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|top         | mem_ctrl_0/u5/cke_o_del_reg | 3      | 1     | NO           | NO                 | YES               | 1      | 0       | 
+|top         | ac97_0/valid_s_reg          | 3      | 1     | NO           | NO                 | YES               | 1      | 0       | 
+|top         | ac97_0/in_valid_s_reg[2]    | 3      | 3     | NO           | NO                 | YES               | 3      | 0       | 
+|top         | ac97_1/valid_s_reg          | 3      | 1     | NO           | NO                 | YES               | 1      | 0       | 
+|top         | ac97_1/in_valid_s_reg[2]    | 3      | 3     | NO           | NO                 | YES               | 3      | 0       | 
++------------+-----------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+-------+------+
+|      |Cell   |Count |
++------+-------+------+
+|1     |BUFG   |     1|
+|2     |CARRY4 |    22|
+|3     |LUT1   |    56|
+|4     |LUT2   |   196|
+|5     |LUT3   |   222|
+|6     |LUT4   |   317|
+|7     |LUT5   |   415|
+|8     |LUT6   |  1290|
+|9     |MUXF7  |   194|
+|10    |MUXF8  |    48|
+|11    |RAM32M |    12|
+|12    |SRL16E |     9|
+|13    |FDCE   |   480|
+|14    |FDPE   |   100|
+|15    |FDRE   |  1175|
+|16    |FDSE   |    33|
+|17    |IBUF   |    18|
+|18    |OBUF   |    16|
++------+-------+------+
+
+Report Instance Areas: 
++------+--------------+----------+------+
+|      |Instance      |Module    |Cells |
++------+--------------+----------+------+
+|1     |top           |          |  4604|
+|2     |  des3_area_0 |des3_area |   961|
++------+--------------+----------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:57 ; elapsed = 00:01:01 . Memory (MB): peak = 1589.562 ; gain = 704.480 ; free physical = 12518 ; free virtual = 35228
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 1760 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:51 ; elapsed = 00:00:53 . Memory (MB): peak = 1589.562 ; gain = 235.582 ; free physical = 12519 ; free virtual = 35229
+Synthesis Optimization Complete : Time (s): cpu = 00:00:57 ; elapsed = 00:01:01 . Memory (MB): peak = 1589.570 ; gain = 704.488 ; free physical = 12519 ; free virtual = 35229
+INFO: [Project 1-571] Translating synthesized netlist
+INFO: [Netlist 29-17] Analyzing 52 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 12 instances were transformed.
+  RAM32M => RAM32M (RAMD32, RAMD32, RAMD32, RAMD32, RAMD32, RAMD32, RAMS32, RAMS32): 12 instances
+
+INFO: [Common 17-83] Releasing license: Synthesis
+435 Infos, 213 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:00:57 ; elapsed = 00:01:01 . Memory (MB): peak = 1621.578 ; gain = 659.941 ; free physical = 12512 ; free virtual = 35229
+report_utilization: Time (s): cpu = 00:00:00.09 ; elapsed = 00:00:00.11 . Memory (MB): peak = 1653.594 ; gain = 0.000 ; free physical = 12515 ; free virtual = 35230
+INFO: [Common 17-206] Exiting Vivado at Mon Oct  2 18:13:45 2017...

@@ -1,0 +1,575 @@
+#-----------------------------------------------------------
+# Vivado v2016.2 (64-bit)
+# SW Build 1577090 on Thu Jun  2 16:32:35 MDT 2016
+# IP Build 1577682 on Fri Jun  3 12:00:54 MDT 2016
+# Start of session at: Sun Nov 19 16:08:31 2017
+# Process ID: 30087
+# Current directory: /home/adam/vivado_workspace/des3_perf_top/des3_perf_top.runs/synth_1
+# Command line: vivado -log top.vds -mode batch -messageDb vivado.pb -notrace -source top.tcl
+# Log file: /home/adam/vivado_workspace/des3_perf_top/des3_perf_top.runs/synth_1/top.vds
+# Journal file: /home/adam/vivado_workspace/des3_perf_top/des3_perf_top.runs/synth_1/vivado.jou
+#-----------------------------------------------------------
+source top.tcl -notrace
+Command: synth_design -top top -part xc7a100tcsg324-3 -flatten_hierarchy full
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: Launching helper process for spawning children vivado processes
+INFO: Helper process launched with PID 30100 
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:10 . Memory (MB): peak = 1040.211 ; gain = 155.137 ; free physical = 191 ; free virtual = 3833
+---------------------------------------------------------------------------------
+INFO: [Synth 8-638] synthesizing module 'top' [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/new/top.v:23]
+INFO: [Synth 8-638] synthesizing module 'des3_perf' [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/perf_opt/des3_perf.v:35]
+INFO: [Synth 8-638] synthesizing module 'des' [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/perf_opt/des.v:35]
+INFO: [Synth 8-638] synthesizing module 'key_sel' [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/perf_opt/key_sel.v:36]
+INFO: [Synth 8-256] done synthesizing module 'key_sel' (1#1) [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/perf_opt/key_sel.v:36]
+INFO: [Synth 8-638] synthesizing module 'crp' [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/crp.v:35]
+INFO: [Synth 8-638] synthesizing module 'sbox1' [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox1.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox1.v:41]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox1.v:41]
+INFO: [Synth 8-256] done synthesizing module 'sbox1' (2#1) [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox1.v:35]
+INFO: [Synth 8-638] synthesizing module 'sbox2' [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox2.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox2.v:41]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox2.v:41]
+INFO: [Synth 8-256] done synthesizing module 'sbox2' (3#1) [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox2.v:35]
+INFO: [Synth 8-638] synthesizing module 'sbox3' [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox3.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox3.v:41]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox3.v:41]
+INFO: [Synth 8-256] done synthesizing module 'sbox3' (4#1) [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox3.v:35]
+INFO: [Synth 8-638] synthesizing module 'sbox4' [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox4.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox4.v:41]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox4.v:41]
+INFO: [Synth 8-256] done synthesizing module 'sbox4' (5#1) [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox4.v:35]
+INFO: [Synth 8-638] synthesizing module 'sbox5' [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox5.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox5.v:41]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox5.v:41]
+INFO: [Synth 8-256] done synthesizing module 'sbox5' (6#1) [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox5.v:35]
+INFO: [Synth 8-638] synthesizing module 'sbox6' [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox6.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox6.v:41]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox6.v:41]
+INFO: [Synth 8-256] done synthesizing module 'sbox6' (7#1) [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox6.v:35]
+INFO: [Synth 8-638] synthesizing module 'sbox7' [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox7.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox7.v:41]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox7.v:41]
+INFO: [Synth 8-256] done synthesizing module 'sbox7' (8#1) [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox7.v:35]
+INFO: [Synth 8-638] synthesizing module 'sbox8' [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox8.v:35]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma parallel_case detected. Simulation mismatch may occur [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox8.v:41]
+INFO: [Synth 8-3536] HDL ADVISOR - Pragma full_case detected. Simulation mismatch may occur [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox8.v:41]
+INFO: [Synth 8-256] done synthesizing module 'sbox8' (9#1) [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/sbox8.v:35]
+INFO: [Synth 8-256] done synthesizing module 'crp' (10#1) [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/common/crp.v:35]
+INFO: [Synth 8-256] done synthesizing module 'des' (11#1) [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/perf_opt/des.v:35]
+INFO: [Synth 8-256] done synthesizing module 'des3_perf' (12#1) [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/imports/verilog/perf_opt/des3_perf.v:35]
+INFO: [Synth 8-256] done synthesizing module 'top' (13#1) [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/sources_1/new/top.v:23]
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:07 ; elapsed = 00:00:11 . Memory (MB): peak = 1091.648 ; gain = 206.574 ; free physical = 164 ; free virtual = 3791
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:08 ; elapsed = 00:00:11 . Memory (MB): peak = 1091.648 ; gain = 206.574 ; free physical = 163 ; free virtual = 3790
+---------------------------------------------------------------------------------
+INFO: [Device 21-403] Loading part xc7a100tcsg324-3
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/constrs_1/imports/opencores/top.xdc]
+Finished Parsing XDC File [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/constrs_1/imports/opencores/top.xdc]
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [/home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/constrs_1/imports/opencores/top.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/top_propImpl.xdc].
+Resolution: To avoid this warning, move constraints listed in [.Xil/top_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
+Completed Processing XDC Constraints
+
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1451.391 ; gain = 0.000 ; free physical = 215 ; free virtual = 3679
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:17 ; elapsed = 00:00:22 . Memory (MB): peak = 1451.391 ; gain = 566.316 ; free physical = 213 ; free virtual = 3677
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7a100tcsg324-3
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:17 ; elapsed = 00:00:22 . Memory (MB): peak = 1451.391 ; gain = 566.316 ; free physical = 213 ; free virtual = 3677
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+Applied set_property DONT_TOUCH = true for des3_perf_0. (constraint file  /home/adam/vivado_workspace/des3_perf_top/des3_perf_top.srcs/constrs_1/imports/opencores/top.xdc, line 1).
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:17 ; elapsed = 00:00:22 . Memory (MB): peak = 1451.391 ; gain = 566.316 ; free physical = 213 ; free virtual = 3677
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:18 ; elapsed = 00:00:23 . Memory (MB): peak = 1451.391 ; gain = 566.316 ; free physical = 198 ; free virtual = 3662
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---XORs : 
+	   2 Input     48 Bit         XORs := 48    
+	   2 Input     32 Bit         XORs := 48    
++---XORs : 
+	               64 Bit    Wide XORs := 1     
++---Registers : 
+	               64 Bit    Registers := 6     
+	               56 Bit    Registers := 99    
+	               32 Bit    Registers := 90    
++---Muxes : 
+	   2 Input     56 Bit        Muxes := 2     
+	   2 Input      1 Bit        Muxes := 2304  
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Hierarchical Component Statistics 
+---------------------------------------------------------------------------------
+Hierarchical RTL Component report 
+Module top 
+Detailed RTL Component Info : 
++---XORs : 
+	               64 Bit    Wide XORs := 1     
+Module key_sel 
+Detailed RTL Component Info : 
++---Registers : 
+	               56 Bit    Registers := 15    
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 768   
+Module crp 
+Detailed RTL Component Info : 
++---XORs : 
+	   2 Input     48 Bit         XORs := 1     
+Module des 
+Detailed RTL Component Info : 
++---XORs : 
+	   2 Input     32 Bit         XORs := 16    
++---Registers : 
+	               64 Bit    Registers := 2     
+	               56 Bit    Registers := 1     
+	               32 Bit    Registers := 30    
+Module des3_perf 
+Detailed RTL Component Info : 
++---Registers : 
+	               56 Bit    Registers := 51    
++---Muxes : 
+	   2 Input     56 Bit        Muxes := 2     
+---------------------------------------------------------------------------------
+Finished RTL Hierarchical Component Statistics
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 240 (col length:80)
+BRAMs: 270 (col length: RAMB18 80 RAMB36 40)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+Start Parallel Synthesis Optimization  : Time (s): cpu = 00:00:18 ; elapsed = 00:00:24 . Memory (MB): peak = 1451.391 ; gain = 566.316 ; free physical = 198 ; free virtual = 3661
+---------------------------------------------------------------------------------
+Start Cross Boundary Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Cross Boundary Optimization : Time (s): cpu = 00:00:33 ; elapsed = 00:00:39 . Memory (MB): peak = 1451.391 ; gain = 566.316 ; free physical = 197 ; free virtual = 3660
+---------------------------------------------------------------------------------
+Finished Parallel Reinference  : Time (s): cpu = 00:00:33 ; elapsed = 00:00:39 . Memory (MB): peak = 1451.391 ; gain = 566.316 ; free physical = 197 ; free virtual = 3660
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+ROM:
++------------+------------+---------------+----------------+
+|Module Name | RTL Object | Depth x Width | Implemented As | 
++------------+------------+---------------+----------------+
+|sbox1       | dout       | 64x4          | LUT            | 
+|sbox2       | dout       | 64x4          | LUT            | 
+|sbox3       | dout       | 64x4          | LUT            | 
+|sbox4       | dout       | 64x4          | LUT            | 
+|sbox5       | dout       | 64x4          | LUT            | 
+|sbox6       | dout       | 64x4          | LUT            | 
+|sbox7       | dout       | 64x4          | LUT            | 
+|sbox8       | dout       | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u1/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u3/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u0/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u5/dout    | 64x4          | LUT            | 
+|crp         | u1/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u1/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u1/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u1/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u0/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
+|crp         | u6/dout    | 64x4          | LUT            | 
+|crp         | u2/dout    | 64x4          | LUT            | 
+|crp         | u7/dout    | 64x4          | LUT            | 
+|crp         | u4/dout    | 64x4          | LUT            | 
++------------+------------+---------------+----------------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Area Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Area Optimization : Time (s): cpu = 00:00:35 ; elapsed = 00:00:41 . Memory (MB): peak = 1451.391 ; gain = 566.316 ; free physical = 195 ; free virtual = 3659
+---------------------------------------------------------------------------------
+Finished Parallel Area Optimization  : Time (s): cpu = 00:00:35 ; elapsed = 00:00:41 . Memory (MB): peak = 1451.391 ; gain = 566.316 ; free physical = 195 ; free virtual = 3659
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying XDC Timing Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:43 ; elapsed = 00:00:49 . Memory (MB): peak = 1455.391 ; gain = 570.316 ; free physical = 169 ; free virtual = 3598
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:45 ; elapsed = 00:00:51 . Memory (MB): peak = 1503.438 ; gain = 618.363 ; free physical = 163 ; free virtual = 3564
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:48 ; elapsed = 00:00:54 . Memory (MB): peak = 1503.438 ; gain = 618.363 ; free physical = 161 ; free virtual = 3561
+---------------------------------------------------------------------------------
+Finished Parallel Technology Mapping Optimization  : Time (s): cpu = 00:00:48 ; elapsed = 00:00:54 . Memory (MB): peak = 1503.438 ; gain = 618.363 ; free physical = 161 ; free virtual = 3561
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+Finished Parallel Synthesis Optimization  : Time (s): cpu = 00:00:48 ; elapsed = 00:00:54 . Memory (MB): peak = 1503.438 ; gain = 618.363 ; free physical = 161 ; free virtual = 3561
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:49 ; elapsed = 00:00:55 . Memory (MB): peak = 1503.438 ; gain = 618.363 ; free physical = 162 ; free virtual = 3562
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:49 ; elapsed = 00:00:55 . Memory (MB): peak = 1503.438 ; gain = 618.363 ; free physical = 162 ; free virtual = 3562
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:51 ; elapsed = 00:00:57 . Memory (MB): peak = 1503.438 ; gain = 618.363 ; free physical = 161 ; free virtual = 3562
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+Static Shift Register Report:
++------------+------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|Module Name | RTL Name         | Length | Width | Reset Signal | Pull out first Reg | Pull out last Reg | SRL16E | SRLC32E | 
++------------+------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|des3_perf   | u1/key_r_reg[55] | 18     | 56    | NO           | YES                | YES               | 56     | 0       | 
+|des3_perf   | u2/key_r_reg[55] | 35     | 56    | NO           | NO                 | YES               | 0      | 112     | 
++------------+------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+--------+------+
+|      |Cell    |Count |
++------+--------+------+
+|1     |BUFG    |     1|
+|2     |LUT2    |  1536|
+|3     |LUT3    |   112|
+|4     |LUT4    |  2304|
+|5     |LUT5    |     2|
+|6     |LUT6    |  1547|
+|7     |SRL16E  |    56|
+|8     |SRLC32E |   112|
+|9     |FDRE    |  6008|
+|10    |IBUF    |    17|
+|11    |OBUF    |    16|
++------+--------+------+
+
+Report Instance Areas: 
++------+--------------+----------+------+
+|      |Instance      |Module    |Cells |
++------+--------------+----------+------+
+|1     |top           |          | 11711|
+|2     |  des3_perf_0 |des3_perf | 11664|
++------+--------------+----------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:51 ; elapsed = 00:00:57 . Memory (MB): peak = 1503.438 ; gain = 618.363 ; free physical = 161 ; free virtual = 3562
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 0 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:43 ; elapsed = 00:00:44 . Memory (MB): peak = 1503.438 ; gain = 171.480 ; free physical = 161 ; free virtual = 3562
+Synthesis Optimization Complete : Time (s): cpu = 00:00:51 ; elapsed = 00:00:57 . Memory (MB): peak = 1503.445 ; gain = 618.371 ; free physical = 162 ; free virtual = 3563
+INFO: [Project 1-571] Translating synthesized netlist
+INFO: [Netlist 29-17] Analyzing 17 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+WARNING: [Netlist 29-101] Netlist 'top' is not ideal for floorplanning, since the cellview 'des3_perf' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 56 instances were transformed.
+  SRLC32E => SRL16E: 56 instances
+
+INFO: [Common 17-83] Releasing license: Synthesis
+54 Infos, 1 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:00:51 ; elapsed = 00:00:54 . Memory (MB): peak = 1503.445 ; gain = 543.816 ; free physical = 163 ; free virtual = 3564
+report_utilization: Time (s): cpu = 00:00:00.13 ; elapsed = 00:00:00.27 . Memory (MB): peak = 1535.453 ; gain = 0.000 ; free physical = 161 ; free virtual = 3564
+INFO: [Common 17-206] Exiting Vivado at Sun Nov 19 16:09:37 2017...

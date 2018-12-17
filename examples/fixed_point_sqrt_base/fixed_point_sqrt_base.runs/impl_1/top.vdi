@@ -1,0 +1,774 @@
+#-----------------------------------------------------------
+# Vivado v2016.2 (64-bit)
+# SW Build 1577090 on Thu Jun  2 16:32:35 MDT 2016
+# IP Build 1577682 on Fri Jun  3 12:00:54 MDT 2016
+# Start of session at: Sat Jan 13 13:36:42 2018
+# Process ID: 4866
+# Current directory: /home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.runs/impl_1
+# Command line: vivado -log top.vdi -applog -messageDb vivado.pb -mode batch -source top.tcl -notrace
+# Log file: /home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.runs/impl_1/top.vdi
+# Journal file: /home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.runs/impl_1/vivado.jou
+#-----------------------------------------------------------
+source top.tcl -notrace
+Design is defaulting to srcset: sources_1
+Design is defaulting to constrset: constrs_1
+INFO: [Netlist 29-17] Analyzing 623 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+WARNING: [Netlist 29-101] Netlist 'top' is not ideal for floorplanning, since the cellview 'top' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.
+INFO: [Project 1-479] Netlist was created with Vivado 2016.2
+INFO: [Device 21-403] Loading part xc7a100tcsg324-3
+INFO: [Project 1-570] Preparing netlist for logic optimization
+Parsing XDC File [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc]
+WARNING: [Vivado 12-584] No ports matched 'sw[8]'. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:41]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:41]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[8]'. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:42]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:42]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[9]'. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:44]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:44]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[9]'. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:45]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:45]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[10]'. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:47]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:47]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[10]'. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:48]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:48]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[11]'. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:50]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:50]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[11]'. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:51]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:51]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[12]'. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:53]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:53]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[12]'. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:54]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:54]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[13]'. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:56]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:56]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[13]'. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:57]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:57]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[14]'. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:59]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:59]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[14]'. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:60]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:60]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[15]'. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:62]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:62]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[15]'. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:63]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:63]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+Finished Parsing XDC File [/home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc]
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+INFO: [Vivado_Tcl 4-424] Cannot write hardware definition file as there are no IPI block design hardware handoff files present
+Command: opt_design
+Attempting to get a license for feature 'Implementation' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xc7a100t'
+Running DRC as a precondition to command opt_design
+
+Starting DRC Task
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Project 1-461] DRC finished with 0 Errors
+INFO: [Project 1-462] Please refer to the DRC report (report_drc) for more information.
+
+Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.06 . Memory (MB): peak = 1379.457 ; gain = 69.031 ; free physical = 24434 ; free virtual = 94115
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+
+Starting Logic Optimization Task
+Implement Debug Cores | Checksum: 166e6da49
+
+Phase 1 Retarget
+INFO: [Opt 31-138] Pushed 1 inverter(s) to 9 load pin(s).
+INFO: [Opt 31-49] Retargeted 0 cell(s).
+Phase 1 Retarget | Checksum: 1506eaf9e
+
+Time (s): cpu = 00:00:00.53 ; elapsed = 00:00:00.46 . Memory (MB): peak = 1799.887 ; gain = 0.000 ; free physical = 24089 ; free virtual = 93770
+
+Phase 2 Constant Propagation
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Opt 31-10] Eliminated 1 cells.
+Phase 2 Constant Propagation | Checksum: 284a6ad56
+
+Time (s): cpu = 00:00:00.67 ; elapsed = 00:00:00.59 . Memory (MB): peak = 1799.887 ; gain = 0.000 ; free physical = 24088 ; free virtual = 93768
+
+Phase 3 Sweep
+INFO: [Opt 31-12] Eliminated 2385 unconnected nets.
+INFO: [Opt 31-11] Eliminated 2 unconnected cells.
+Phase 3 Sweep | Checksum: 21b449248
+
+Time (s): cpu = 00:00:00.90 ; elapsed = 00:00:00.83 . Memory (MB): peak = 1799.887 ; gain = 0.000 ; free physical = 24088 ; free virtual = 93768
+
+Starting Connectivity Check Task
+
+Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00 . Memory (MB): peak = 1799.887 ; gain = 0.000 ; free physical = 24088 ; free virtual = 93768
+Ending Logic Optimization Task | Checksum: 21b449248
+
+Time (s): cpu = 00:00:00.92 ; elapsed = 00:00:00.85 . Memory (MB): peak = 1799.887 ; gain = 0.000 ; free physical = 24088 ; free virtual = 93768
+
+Starting Power Optimization Task
+INFO: [Pwropt 34-132] Skipping clock gating for clocks with a period < 2.00 ns.
+INFO: [Pwropt 34-9] Applying IDT optimizations ...
+INFO: [Pwropt 34-10] Applying ODC optimizations ...
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Running Vector-less Activity Propagation...
+
+Finished Running Vector-less Activity Propagation
+
+
+Starting PowerOpt Patch Enables Task
+INFO: [Pwropt 34-162] WRITE_MODE attribute of 0 BRAM(s) out of a total of 1 has been updated to save power. Run report_power_opt to get a complete listing of the BRAMs updated.
+INFO: [Pwropt 34-201] Structural ODC has moved 0 WE to EN ports
+Number of BRAM Ports augmented: 0 newly gated: 0 Total Ports: 2
+Ending PowerOpt Patch Enables Task | Checksum: 21b449248
+
+Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23964 ; free virtual = 93644
+Ending Power Optimization Task | Checksum: 21b449248
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.71 . Memory (MB): peak = 2130.086 ; gain = 330.199 ; free physical = 23964 ; free virtual = 93644
+INFO: [Common 17-83] Releasing license: Implementation
+26 Infos, 17 Warnings, 16 Critical Warnings and 0 Errors encountered.
+opt_design completed successfully
+opt_design: Time (s): cpu = 00:00:08 ; elapsed = 00:00:06 . Memory (MB): peak = 2130.086 ; gain = 819.660 ; free physical = 23964 ; free virtual = 93644
+Writing placer database...
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Write XDEF Complete: Time (s): cpu = 00:00:00.03 ; elapsed = 00:00:00.01 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23962 ; free virtual = 93645
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Coretcl 2-168] The results of DRC are in file /home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.runs/impl_1/top_drc_opted.rpt.
+INFO: [Chipscope 16-241] No debug cores found in the current design.
+Before running the implement_debug_core command, either use the Set Up Debug wizard (GUI mode)
+or use the create_debug_core and connect_debug_core Tcl commands to insert debug cores into the design.
+Command: place_design
+Attempting to get a license for feature 'Implementation' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xc7a100t'
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+Running DRC as a precondition to command place_design
+INFO: [DRC 23-27] Running DRC with 8 threads
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[10]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[11]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[12]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[13]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[14]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[15]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[16]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[17]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[18]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[19]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[1]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[20]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[21]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[22]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[23]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[24]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[25]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[26]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[27]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[28]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[29]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[2]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[30]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[31]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[32]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[33]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[34]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[35]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[36]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[37]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[38]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[39]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[3]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[40]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[41]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[42]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[43]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[44]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[45]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[46]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[47]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[48]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[49]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[4]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[50]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[51]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[52]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[53]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[54]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[55]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[56]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[57]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[58]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[59]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[5]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[60]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[61]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[62]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[63]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[6]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[7]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[8]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[10] (net: I_2/adr_reg_i_1_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[9]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[10]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[11]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[12]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[13]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[14]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[15]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[16]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[17]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[18]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[19]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[1]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[20]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[21]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[22]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[23]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[24]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[25]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[26]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[27]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[28]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[29]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[2]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[30]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[31]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[32]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[33]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[34]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[35]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[36]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[37]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[38]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[39]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[3]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[40]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[41]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[42]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 I_2/adr_reg has an input control pin I_2/adr_reg/ADDRARDADDR[4] (net: I_2/adr_reg_i_7_n_0) which is driven by a register (graphiti_0/I_1/ctr_48_reg[43]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+INFO: [Common 17-14] Message 'DRC 23-20' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors, 882 Warnings
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+
+Starting Placer Task
+INFO: [Place 30-611] Multithreading enabled for place_design using a maximum of 8 CPUs
+
+Phase 1 Placer Initialization
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23954 ; free virtual = 93636
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.01 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23954 ; free virtual = 93636
+
+Phase 1.1 IO Placement/ Clock Placement/ Build Placer Device
+
+Phase 1.1.1 ParallelPlaceIOClockAndInitTop
+
+Phase 1.1.1.1 Pre-Place Cells
+Phase 1.1.1.1 Pre-Place Cells | Checksum: d08a7e05
+
+Time (s): cpu = 00:00:00.03 ; elapsed = 00:00:00.02 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23954 ; free virtual = 93636
+
+Phase 1.1.1.2 Constructing HAPIClkRuleMgr
+Phase 1.1.1.2 Constructing HAPIClkRuleMgr | Checksum: d08a7e05
+
+Time (s): cpu = 00:00:00.10 ; elapsed = 00:00:00.11 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23954 ; free virtual = 93636
+
+Phase 1.1.1.3 DSPChecker
+
+Phase 1.1.1.6 ClockRegionPlacementChecker
+
+Phase 1.1.1.5 IOBufferPlacementChecker
+
+Phase 1.1.1.4 IOLockPlacementChecker
+Phase 1.1.1.3 DSPChecker | Checksum: d08a7e05
+
+Time (s): cpu = 00:00:00.57 ; elapsed = 00:00:00.28 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23954 ; free virtual = 93636
+
+Phase 1.1.1.7 V7IOVoltageChecker
+Phase 1.1.1.7 V7IOVoltageChecker | Checksum: d08a7e05
+
+Time (s): cpu = 00:00:00.57 ; elapsed = 00:00:00.28 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23954 ; free virtual = 93636
+
+Phase 1.1.1.8 OverlappingPBlocksChecker
+Phase 1.1.1.8 OverlappingPBlocksChecker | Checksum: d08a7e05
+
+Time (s): cpu = 00:00:00.57 ; elapsed = 00:00:00.28 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23954 ; free virtual = 93636
+Phase 1.1.1.4 IOLockPlacementChecker | Checksum: d08a7e05
+
+Time (s): cpu = 00:00:00.60 ; elapsed = 00:00:00.28 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23954 ; free virtual = 93636
+
+Phase 1.1.1.9 CheckerForMandatoryPrePlacedCells
+Phase 1.1.1.5 IOBufferPlacementChecker | Checksum: d08a7e05
+
+Time (s): cpu = 00:00:00.60 ; elapsed = 00:00:00.28 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23954 ; free virtual = 93636
+
+Phase 1.1.1.10 DisallowedInsts
+Phase 1.1.1.9 CheckerForMandatoryPrePlacedCells | Checksum: d08a7e05
+
+Time (s): cpu = 00:00:00.60 ; elapsed = 00:00:00.28 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23954 ; free virtual = 93636
+
+Phase 1.1.1.11 CascadeElementConstraintsChecker
+Phase 1.1.1.10 DisallowedInsts | Checksum: d08a7e05
+
+Time (s): cpu = 00:00:00.60 ; elapsed = 00:00:00.28 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23954 ; free virtual = 93636
+
+Phase 1.1.1.12 Laguna PBlock Checker
+Phase 1.1.1.12 Laguna PBlock Checker | Checksum: d08a7e05
+
+Time (s): cpu = 00:00:00.60 ; elapsed = 00:00:00.28 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23954 ; free virtual = 93636
+
+Phase 1.1.1.13 ShapePlacementValidityChecker
+Phase 1.1.1.11 CascadeElementConstraintsChecker | Checksum: d08a7e05
+
+Time (s): cpu = 00:00:00.60 ; elapsed = 00:00:00.28 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23954 ; free virtual = 93636
+
+Phase 1.1.1.14 HdioRelatedChecker
+Phase 1.1.1.14 HdioRelatedChecker | Checksum: d08a7e05
+
+Time (s): cpu = 00:00:00.62 ; elapsed = 00:00:00.28 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23954 ; free virtual = 93636
+Phase 1.1.1.6 ClockRegionPlacementChecker | Checksum: d08a7e05
+
+Time (s): cpu = 00:00:00.62 ; elapsed = 00:00:00.28 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23954 ; free virtual = 93636
+
+Phase 1.1.1.15 CheckerForUnsupportedConstraints
+Phase 1.1.1.15 CheckerForUnsupportedConstraints | Checksum: d08a7e05
+
+Time (s): cpu = 00:00:00.66 ; elapsed = 00:00:00.29 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23954 ; free virtual = 93636
+
+Phase 1.1.1.16 ShapesExcludeCompatibilityChecker
+Phase 1.1.1.16 ShapesExcludeCompatibilityChecker | Checksum: d08a7e05
+
+Time (s): cpu = 00:00:00.66 ; elapsed = 00:00:00.29 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23954 ; free virtual = 93636
+
+Phase 1.1.1.17 IOStdCompatabilityChecker
+Phase 1.1.1.17 IOStdCompatabilityChecker | Checksum: d08a7e05
+
+Time (s): cpu = 00:00:00.66 ; elapsed = 00:00:00.29 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23954 ; free virtual = 93636
+Phase 1.1.1.13 ShapePlacementValidityChecker | Checksum: d08a7e05
+
+Time (s): cpu = 00:00:00.96 ; elapsed = 00:00:00.40 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23954 ; free virtual = 93636
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+
+Phase 1.1.1.18 IO and Clk Clean Up
+
+Phase 1.1.1.18.1 Constructing HAPIClkRuleMgr
+Phase 1.1.1.18.1 Constructing HAPIClkRuleMgr | Checksum: d08a7e05
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.67 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23950 ; free virtual = 93633
+Phase 1.1.1.18 IO and Clk Clean Up | Checksum: d08a7e05
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.68 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23950 ; free virtual = 93633
+
+Phase 1.1.1.19 Implementation Feasibility check On IDelay
+Phase 1.1.1.19 Implementation Feasibility check On IDelay | Checksum: d08a7e05
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.70 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23950 ; free virtual = 93633
+
+Phase 1.1.1.20 Commit IO Placement
+Phase 1.1.1.20 Commit IO Placement | Checksum: 3b9cd223
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.70 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23950 ; free virtual = 93633
+Phase 1.1.1 ParallelPlaceIOClockAndInitTop | Checksum: 3b9cd223
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.70 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23950 ; free virtual = 93633
+Phase 1.1 IO Placement/ Clock Placement/ Build Placer Device | Checksum: e3f532d3
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.70 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23950 ; free virtual = 93633
+
+Phase 1.2 Build Placer Netlist Model
+
+Phase 1.2.1 Place Init Design
+
+Phase 1.2.1.1 Make Others
+Phase 1.2.1.1 Make Others | Checksum: 11b544ece
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.82 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23950 ; free virtual = 93632
+
+Phase 1.2.1.2 Init Lut Pin Assignment
+Phase 1.2.1.2 Init Lut Pin Assignment | Checksum: 11b544ece
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.84 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23947 ; free virtual = 93630
+Phase 1.2.1 Place Init Design | Checksum: 10ea09f42
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23938 ; free virtual = 93620
+Phase 1.2 Build Placer Netlist Model | Checksum: 10ea09f42
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23938 ; free virtual = 93620
+
+Phase 1.3 Constrain Clocks/Macros
+Phase 1.3 Constrain Clocks/Macros | Checksum: 10ea09f42
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23938 ; free virtual = 93620
+Phase 1 Placer Initialization | Checksum: 10ea09f42
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23938 ; free virtual = 93620
+
+Phase 2 Global Placement
+Phase 2 Global Placement | Checksum: 12b99c52d
+
+Time (s): cpu = 00:00:13 ; elapsed = 00:00:04 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23927 ; free virtual = 93610
+
+Phase 3 Detail Placement
+
+Phase 3.1 Commit Multi Column Macros
+Phase 3.1 Commit Multi Column Macros | Checksum: 12b99c52d
+
+Time (s): cpu = 00:00:13 ; elapsed = 00:00:04 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23927 ; free virtual = 93610
+
+Phase 3.2 Commit Most Macros & LUTRAMs
+Phase 3.2 Commit Most Macros & LUTRAMs | Checksum: 107d5876d
+
+Time (s): cpu = 00:00:14 ; elapsed = 00:00:04 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23927 ; free virtual = 93609
+
+Phase 3.3 Area Swap Optimization
+Phase 3.3 Area Swap Optimization | Checksum: 129d8b4f3
+
+Time (s): cpu = 00:00:14 ; elapsed = 00:00:04 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23927 ; free virtual = 93609
+
+Phase 3.4 updateClock Trees: DP
+Phase 3.4 updateClock Trees: DP | Checksum: 129d8b4f3
+
+Time (s): cpu = 00:00:14 ; elapsed = 00:00:04 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23927 ; free virtual = 93609
+
+Phase 3.5 Timing Path Optimizer
+Phase 3.5 Timing Path Optimizer | Checksum: 1aa47eccd
+
+Time (s): cpu = 00:00:14 ; elapsed = 00:00:05 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23927 ; free virtual = 93609
+
+Phase 3.6 Fast Optimization
+Phase 3.6 Fast Optimization | Checksum: 1c0301cf7
+
+Time (s): cpu = 00:00:15 ; elapsed = 00:00:05 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23925 ; free virtual = 93608
+
+Phase 3.7 Small Shape Detail Placement
+Phase 3.7 Small Shape Detail Placement | Checksum: 1ec39c4c7
+
+Time (s): cpu = 00:00:16 ; elapsed = 00:00:05 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23924 ; free virtual = 93607
+
+Phase 3.8 Re-assign LUT pins
+Phase 3.8 Re-assign LUT pins | Checksum: 1d1b415b0
+
+Time (s): cpu = 00:00:16 ; elapsed = 00:00:05 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23924 ; free virtual = 93607
+
+Phase 3.9 Pipeline Register Optimization
+Phase 3.9 Pipeline Register Optimization | Checksum: 1d1b415b0
+
+Time (s): cpu = 00:00:16 ; elapsed = 00:00:05 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23924 ; free virtual = 93607
+
+Phase 3.10 Fast Optimization
+Phase 3.10 Fast Optimization | Checksum: 21a376626
+
+Time (s): cpu = 00:00:17 ; elapsed = 00:00:06 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23923 ; free virtual = 93606
+Phase 3 Detail Placement | Checksum: 21a376626
+
+Time (s): cpu = 00:00:17 ; elapsed = 00:00:06 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23924 ; free virtual = 93607
+
+Phase 4 Post Placement Optimization and Clean-Up
+
+Phase 4.1 Post Commit Optimization
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+
+Phase 4.1.1 updateClock Trees: PCOPT
+Phase 4.1.1 updateClock Trees: PCOPT | Checksum: 179474dc5
+
+Time (s): cpu = 00:00:18 ; elapsed = 00:00:06 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23919 ; free virtual = 93601
+
+Phase 4.1.2 Post Placement Optimization
+INFO: [Place 30-746] Post Placement Timing Summary WNS=-5.367. For the most accurate timing information please run report_timing.
+Phase 4.1.2 Post Placement Optimization | Checksum: 23e819c3f
+
+Time (s): cpu = 00:00:23 ; elapsed = 00:00:11 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23919 ; free virtual = 93601
+Phase 4.1 Post Commit Optimization | Checksum: 23e819c3f
+
+Time (s): cpu = 00:00:23 ; elapsed = 00:00:11 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23919 ; free virtual = 93601
+
+Phase 4.2 Sweep Clock Roots: Post-Placement
+Phase 4.2 Sweep Clock Roots: Post-Placement | Checksum: 23e819c3f
+
+Time (s): cpu = 00:00:23 ; elapsed = 00:00:11 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23919 ; free virtual = 93601
+
+Phase 4.3 Uram Pipeline Register Optimization
+Phase 4.3 Uram Pipeline Register Optimization | Checksum: 23e819c3f
+
+Time (s): cpu = 00:00:23 ; elapsed = 00:00:11 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23919 ; free virtual = 93601
+
+Phase 4.4 Post Placement Cleanup
+Phase 4.4 Post Placement Cleanup | Checksum: 23e819c3f
+
+Time (s): cpu = 00:00:23 ; elapsed = 00:00:11 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23919 ; free virtual = 93601
+
+Phase 4.5 Placer Reporting
+Phase 4.5 Placer Reporting | Checksum: 23e819c3f
+
+Time (s): cpu = 00:00:23 ; elapsed = 00:00:11 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23919 ; free virtual = 93601
+
+Phase 4.6 Final Placement Cleanup
+Phase 4.6 Final Placement Cleanup | Checksum: 21a2919d2
+
+Time (s): cpu = 00:00:23 ; elapsed = 00:00:11 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23919 ; free virtual = 93601
+Phase 4 Post Placement Optimization and Clean-Up | Checksum: 21a2919d2
+
+Time (s): cpu = 00:00:23 ; elapsed = 00:00:11 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23919 ; free virtual = 93601
+Ending Placer Task | Checksum: 1b1942581
+
+Time (s): cpu = 00:00:23 ; elapsed = 00:00:11 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23919 ; free virtual = 93601
+INFO: [Common 17-83] Releasing license: Implementation
+42 Infos, 117 Warnings, 16 Critical Warnings and 0 Errors encountered.
+place_design completed successfully
+place_design: Time (s): cpu = 00:00:24 ; elapsed = 00:00:11 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23919 ; free virtual = 93601
+Writing placer database...
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Write XDEF Complete: Time (s): cpu = 00:00:00.56 ; elapsed = 00:00:00.20 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23913 ; free virtual = 93601
+report_io: Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.09 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23917 ; free virtual = 93601
+report_utilization: Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.08 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23917 ; free virtual = 93601
+report_control_sets: Time (s): cpu = 00:00:00.05 ; elapsed = 00:00:00.06 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23916 ; free virtual = 93600
+Command: route_design
+Attempting to get a license for feature 'Implementation' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xc7a100t'
+Running DRC as a precondition to command route_design
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+
+
+Starting Routing Task
+INFO: [Route 35-254] Multithreading enabled for route_design using a maximum of 8 CPUs
+Checksum: PlaceDB: faad1340 ConstDB: 0 ShapeSum: b6e71241 RouteDB: 0
+
+Phase 1 Build RT Design
+Phase 1 Build RT Design | Checksum: c9551263
+
+Time (s): cpu = 00:00:14 ; elapsed = 00:00:11 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23865 ; free virtual = 93548
+
+Phase 2 Router Initialization
+
+Phase 2.1 Create Timer
+Phase 2.1 Create Timer | Checksum: c9551263
+
+Time (s): cpu = 00:00:14 ; elapsed = 00:00:11 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23862 ; free virtual = 93546
+
+Phase 2.2 Fix Topology Constraints
+Phase 2.2 Fix Topology Constraints | Checksum: c9551263
+
+Time (s): cpu = 00:00:14 ; elapsed = 00:00:11 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23845 ; free virtual = 93529
+
+Phase 2.3 Pre Route Cleanup
+Phase 2.3 Pre Route Cleanup | Checksum: c9551263
+
+Time (s): cpu = 00:00:14 ; elapsed = 00:00:11 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23845 ; free virtual = 93529
+ Number of Nodes with overlaps = 0
+
+Phase 2.4 Update Timing
+Phase 2.4 Update Timing | Checksum: 1aeb0e729
+
+Time (s): cpu = 00:00:16 ; elapsed = 00:00:12 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23822 ; free virtual = 93506
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-5.269 | TNS=-407.041| WHS=-0.167 | THS=-40.103|
+
+Phase 2 Router Initialization | Checksum: 12a501e04
+
+Time (s): cpu = 00:00:17 ; elapsed = 00:00:12 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23823 ; free virtual = 93507
+
+Phase 3 Initial Routing
+Phase 3 Initial Routing | Checksum: 1766822e3
+
+Time (s): cpu = 00:00:19 ; elapsed = 00:00:12 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23823 ; free virtual = 93507
+
+Phase 4 Rip-up And Reroute
+
+Phase 4.1 Global Iteration 0
+ Number of Nodes with overlaps = 339
+ Number of Nodes with overlaps = 3
+ Number of Nodes with overlaps = 0
+
+Phase 4.1.1 Update Timing
+Phase 4.1.1 Update Timing | Checksum: 1327df2e3
+
+Time (s): cpu = 00:00:23 ; elapsed = 00:00:13 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23823 ; free virtual = 93507
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-5.279 | TNS=-408.562| WHS=N/A    | THS=N/A    |
+
+
+Phase 4.1.2 GlobIterForTiming
+
+Phase 4.1.2.1 Update Timing
+Phase 4.1.2.1 Update Timing | Checksum: 195d4a1ef
+
+Time (s): cpu = 00:00:24 ; elapsed = 00:00:13 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23823 ; free virtual = 93507
+
+Phase 4.1.2.2 Fast Budgeting
+Phase 4.1.2.2 Fast Budgeting | Checksum: 11179a973
+
+Time (s): cpu = 00:00:24 ; elapsed = 00:00:13 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23823 ; free virtual = 93507
+Phase 4.1.2 GlobIterForTiming | Checksum: 13dddbf58
+
+Time (s): cpu = 00:00:24 ; elapsed = 00:00:13 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23823 ; free virtual = 93507
+Phase 4.1 Global Iteration 0 | Checksum: 13dddbf58
+
+Time (s): cpu = 00:00:24 ; elapsed = 00:00:13 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23823 ; free virtual = 93507
+
+Phase 4.2 Global Iteration 1
+ Number of Nodes with overlaps = 9
+ Number of Nodes with overlaps = 0
+
+Phase 4.2.1 Update Timing
+Phase 4.2.1 Update Timing | Checksum: 17c32c4bf
+
+Time (s): cpu = 00:00:26 ; elapsed = 00:00:14 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23823 ; free virtual = 93507
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-5.179 | TNS=-401.979| WHS=N/A    | THS=N/A    |
+
+
+Phase 4.2.2 GlobIterForTiming
+
+Phase 4.2.2.1 Update Timing
+Phase 4.2.2.1 Update Timing | Checksum: 224d409bf
+
+Time (s): cpu = 00:00:26 ; elapsed = 00:00:14 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23823 ; free virtual = 93507
+
+Phase 4.2.2.2 Fast Budgeting
+Phase 4.2.2.2 Fast Budgeting | Checksum: 2a548886a
+
+Time (s): cpu = 00:00:26 ; elapsed = 00:00:14 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23823 ; free virtual = 93507
+Phase 4.2.2 GlobIterForTiming | Checksum: 2703ef951
+
+Time (s): cpu = 00:00:26 ; elapsed = 00:00:14 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23823 ; free virtual = 93507
+Phase 4.2 Global Iteration 1 | Checksum: 2703ef951
+
+Time (s): cpu = 00:00:26 ; elapsed = 00:00:14 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23823 ; free virtual = 93507
+
+Phase 4.3 Global Iteration 2
+ Number of Nodes with overlaps = 18
+ Number of Nodes with overlaps = 3
+ Number of Nodes with overlaps = 0
+
+Phase 4.3.1 Update Timing
+Phase 4.3.1 Update Timing | Checksum: 1ebc0b3da
+
+Time (s): cpu = 00:00:28 ; elapsed = 00:00:14 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23823 ; free virtual = 93507
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-5.191 | TNS=-403.008| WHS=N/A    | THS=N/A    |
+
+Phase 4.3 Global Iteration 2 | Checksum: 161e353ec
+
+Time (s): cpu = 00:00:28 ; elapsed = 00:00:14 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23823 ; free virtual = 93507
+Phase 4 Rip-up And Reroute | Checksum: 161e353ec
+
+Time (s): cpu = 00:00:28 ; elapsed = 00:00:14 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23823 ; free virtual = 93507
+
+Phase 5 Delay and Skew Optimization
+
+Phase 5.1 Delay CleanUp
+
+Phase 5.1.1 Update Timing
+Phase 5.1.1 Update Timing | Checksum: 20ad6ac99
+
+Time (s): cpu = 00:00:29 ; elapsed = 00:00:14 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23823 ; free virtual = 93507
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-5.173 | TNS=-400.035| WHS=N/A    | THS=N/A    |
+
+ Number of Nodes with overlaps = 0
+Phase 5.1 Delay CleanUp | Checksum: 1de00eb0f
+
+Time (s): cpu = 00:00:29 ; elapsed = 00:00:14 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23819 ; free virtual = 93503
+
+Phase 5.2 Clock Skew Optimization
+Phase 5.2 Clock Skew Optimization | Checksum: 1de00eb0f
+
+Time (s): cpu = 00:00:29 ; elapsed = 00:00:14 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23819 ; free virtual = 93503
+Phase 5 Delay and Skew Optimization | Checksum: 1de00eb0f
+
+Time (s): cpu = 00:00:29 ; elapsed = 00:00:14 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23819 ; free virtual = 93503
+
+Phase 6 Post Hold Fix
+
+Phase 6.1 Hold Fix Iter
+
+Phase 6.1.1 Update Timing
+Phase 6.1.1 Update Timing | Checksum: 1f4abe4d4
+
+Time (s): cpu = 00:00:30 ; elapsed = 00:00:14 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23819 ; free virtual = 93503
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-5.171 | TNS=-398.571| WHS=0.098  | THS=0.000  |
+
+Phase 6.1 Hold Fix Iter | Checksum: 1f4abe4d4
+
+Time (s): cpu = 00:00:30 ; elapsed = 00:00:14 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23819 ; free virtual = 93503
+Phase 6 Post Hold Fix | Checksum: 1f4abe4d4
+
+Time (s): cpu = 00:00:30 ; elapsed = 00:00:15 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23819 ; free virtual = 93503
+
+Phase 7 Route finalize
+
+Router Utilization Summary
+  Global Vertical Routing Utilization    = 0.89459 %
+  Global Horizontal Routing Utilization  = 0.992825 %
+  Routable Net Status*
+  *Does not include unroutable nets such as driverless and loadless.
+  Run report_route_status for detailed report.
+  Number of Failed Nets               = 0
+  Number of Unrouted Nets             = 0
+  Number of Partially Routed Nets     = 0
+  Number of Node Overlaps             = 0
+
+Congestion Report
+North Dir 1x1 Area, Max Cong = 41.4414%, No Congested Regions.
+South Dir 1x1 Area, Max Cong = 45.045%, No Congested Regions.
+East Dir 1x1 Area, Max Cong = 38.2353%, No Congested Regions.
+West Dir 1x1 Area, Max Cong = 44.1176%, No Congested Regions.
+Phase 7 Route finalize | Checksum: 250064877
+
+Time (s): cpu = 00:00:30 ; elapsed = 00:00:15 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23819 ; free virtual = 93503
+
+Phase 8 Verifying routed nets
+
+ Verification completed successfully
+Phase 8 Verifying routed nets | Checksum: 250064877
+
+Time (s): cpu = 00:00:30 ; elapsed = 00:00:15 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23819 ; free virtual = 93503
+
+Phase 9 Depositing Routes
+Phase 9 Depositing Routes | Checksum: 211422af1
+
+Time (s): cpu = 00:00:30 ; elapsed = 00:00:15 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23819 ; free virtual = 93503
+
+Phase 10 Post Router Timing
+INFO: [Route 35-57] Estimated Timing Summary | WNS=-5.171 | TNS=-398.571| WHS=0.098  | THS=0.000  |
+
+WARNING: [Route 35-328] Router estimated timing not met.
+Resolution: For a complete and accurate timing signoff, report_timing_summary must be run after route_design. Alternatively, route_design can be run with the -timing_summary option to enable a complete timing signoff at the end of route_design.
+Phase 10 Post Router Timing | Checksum: 211422af1
+
+Time (s): cpu = 00:00:30 ; elapsed = 00:00:15 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23819 ; free virtual = 93503
+INFO: [Route 35-16] Router Completed Successfully
+
+Time (s): cpu = 00:00:30 ; elapsed = 00:00:15 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23819 ; free virtual = 93503
+
+Routing Is Done.
+INFO: [Common 17-83] Releasing license: Implementation
+56 Infos, 118 Warnings, 16 Critical Warnings and 0 Errors encountered.
+route_design completed successfully
+route_design: Time (s): cpu = 00:00:31 ; elapsed = 00:00:15 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23819 ; free virtual = 93503
+Writing placer database...
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Write XDEF Complete: Time (s): cpu = 00:00:00.57 ; elapsed = 00:00:00.20 . Memory (MB): peak = 2130.086 ; gain = 0.000 ; free physical = 23810 ; free virtual = 93502
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Coretcl 2-168] The results of DRC are in file /home/sean/vivado_workspace/fixed_point_sqrt_simple/fixed_point_sqrt_simple.runs/impl_1/top_drc_routed.rpt.
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -3, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 8 CPUs
+CRITICAL WARNING: [Timing 38-282] The design failed to meet the timing requirements. Please see the timing summary report for details on the timing violations.
+Running Vector-less Activity Propagation...
+
+Finished Running Vector-less Activity Propagation
+WARNING: [Power 33-332] Found switching activity that implies high-fanout reset nets being asserted for excessive periods of time which may result in inaccurate power analysis.
+Resolution: To review and fix problems, please run Power Constraints Advisor in the GUI from Tools > Power Constraints Advisor or run report_power with the -advisory option to generate a text report.
+INFO: [Common 17-206] Exiting Vivado at Sat Jan 13 13:37:26 2018...

@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenRun Id="synth_1" LaunchPart="xc7a100tcsg324-3" LaunchTime="1515877523">
+  <File Type="VDS-TIMING-PB" Name="top_timing_summary_synth.pb"/>
+  <File Type="RDS-RDS" Name="top.vds"/>
+  <File Type="PA-TCL" Name="top.tcl"/>
+  <File Type="VDS-TIMINGSUMMARY" Name="top_timing_summary_synth.rpt"/>
+  <File Type="RDS-DCP" Name="top.dcp"/>
+  <File Type="RDS-UTIL-PB" Name="top_utilization_synth.pb"/>
+  <File Type="RDS-UTIL" Name="top_utilization_synth.rpt"/>
+  <File Type="RDS-PROPCONSTRS" Name="top_drc_synth.rpt"/>
+  <FileSet Name="sources" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
+    <Filter Type="Srcs"/>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_types.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_potato/Sources/hdl/pp_types.vhd"/>
+        <Attr Name="ImportTime" Val="1507834531"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_constants.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_potato/Sources/hdl/pp_constants.vhd"/>
+        <Attr Name="ImportTime" Val="1507834531"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_csr.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_potato/Sources/hdl/pp_csr.vhd"/>
+        <Attr Name="ImportTime" Val="1507834531"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_utilities.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_potato/Sources/hdl/pp_utilities.vhd"/>
+        <Attr Name="ImportTime" Val="1507834531"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_alu_control_unit.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_potato/Sources/hdl/pp_alu_control_unit.vhd"/>
+        <Attr Name="ImportTime" Val="1507834531"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_imm_decoder.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_potato/Sources/hdl/pp_imm_decoder.vhd"/>
+        <Attr Name="ImportTime" Val="1507834531"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_control_unit.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_potato/Sources/hdl/pp_control_unit.vhd"/>
+        <Attr Name="ImportTime" Val="1507834531"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_alu_mux.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_potato/Sources/hdl/pp_alu_mux.vhd"/>
+        <Attr Name="ImportTime" Val="1507834531"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_comparator.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_potato/Sources/hdl/pp_comparator.vhd"/>
+        <Attr Name="ImportTime" Val="1507834531"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_csr_alu.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_potato/Sources/hdl/pp_csr_alu.vhd"/>
+        <Attr Name="ImportTime" Val="1507834531"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_alu.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_potato/Sources/hdl/pp_alu.vhd"/>
+        <Attr Name="ImportTime" Val="1507834531"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_counter.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_potato/Sources/hdl/pp_counter.vhd"/>
+        <Attr Name="ImportTime" Val="1507834531"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_pwm/Sources/hdl/minus_one.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_pwm/Sources/hdl/minus_one.v"/>
+        <Attr Name="ImportTime" Val="1507759388"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_execute.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_potato/Sources/hdl/pp_execute.vhd"/>
+        <Attr Name="ImportTime" Val="1507834531"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_register_file.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_potato/Sources/hdl/pp_register_file.vhd"/>
+        <Attr Name="ImportTime" Val="1507834531"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_memory.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_potato/Sources/hdl/pp_memory.vhd"/>
+        <Attr Name="ImportTime" Val="1507834531"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_csr_unit.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_potato/Sources/hdl/pp_csr_unit.vhd"/>
+        <Attr Name="ImportTime" Val="1507834531"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_fetch.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_potato/Sources/hdl/pp_fetch.vhd"/>
+        <Attr Name="ImportTime" Val="1507834531"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_writeback.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_potato/Sources/hdl/pp_writeback.vhd"/>
+        <Attr Name="ImportTime" Val="1507834531"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_decode.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_potato/Sources/hdl/pp_decode.vhd"/>
+        <Attr Name="ImportTime" Val="1507834531"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_pwm/Sources/hdl/down_clocking_odd.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_pwm/Sources/hdl/down_clocking_odd.v"/>
+        <Attr Name="ImportTime" Val="1507759388"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_pwm/Sources/hdl/down_clocking_even.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_pwm/Sources/hdl/down_clocking_even.v"/>
+        <Attr Name="ImportTime" Val="1507759388"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_icache.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_potato/Sources/hdl/pp_icache.vhd"/>
+        <Attr Name="ImportTime" Val="1507834531"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_core.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_potato/Sources/hdl/pp_core.vhd"/>
+        <Attr Name="ImportTime" Val="1507834531"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_wb_arbiter.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_potato/Sources/hdl/pp_wb_arbiter.vhd"/>
+        <Attr Name="ImportTime" Val="1507834531"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_wb_adapter.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_potato/Sources/hdl/pp_wb_adapter.vhd"/>
+        <Attr Name="ImportTime" Val="1507834531"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_pwm/Sources/hdl/pwm.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_pwm/Sources/hdl/pwm.v"/>
+        <Attr Name="ImportTime" Val="1507759412"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_pci_mini/Sources/hdl/pci_mini.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_pci_mini/Sources/hdl/pci_mini.v"/>
+        <Attr Name="ImportTime" Val="1507835909"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/potato.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_potato/Sources/hdl/potato.vhd"/>
+        <Attr Name="ImportTime" Val="1507834586"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/hdl/quadratic_func.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/parallel_search_for_maximum_weight_top/parallel_search_for_maximum_weight_top.srcs/sources_1/imports/hdl/quadratic_func.vhd"/>
+        <Attr Name="ImportTime" Val="1507764809"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/hdl/pic.vhd">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_pic/Sources/hdl/pic.vhd"/>
+        <Attr Name="ImportTime" Val="1515088077"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/top.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/parallel_search_for_maximum_weight_top/parallel_search_for_maximum_weight_top.srcs/sources_1/new/top.v"/>
+        <Attr Name="ImportTime" Val="1510285651"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PPRDIR/../../vivado_workspace/pic_top/pic_top.srcs/sources_1/imports/ooc_pic/project_checkpoint_pic_ooc.v">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_pic/project_checkpoint_pic_ooc.v"/>
+        <Attr Name="ImportTime" Val="1510958370"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_parallel_search_for_maximum_weight/Sources/hdl/basic_size.vhd">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_parallel_search_for_maximum_weight/Sources/hdl/basic_size.vhd"/>
+        <Attr Name="ImportTime" Val="1507830562"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_parallel_search_for_maximum_weight/Sources/hdl/basic_component.vhd">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_parallel_search_for_maximum_weight/Sources/hdl/basic_component.vhd"/>
+        <Attr Name="ImportTime" Val="1507830562"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <Config>
+      <Option Name="DesignMode" Val="RTL"/>
+      <Option Name="TopModule" Val="top"/>
+      <Option Name="TopAutoSet" Val="TRUE"/>
+    </Config>
+  </FileSet>
+  <FileSet Name="constrs_in" Type="Constrs" RelSrcDir="$PSRCDIR/constrs_1">
+    <Filter Type="Constrs"/>
+    <File Path="$PSRCDIR/constrs_1/imports/constrs_1/imports/new/constr.xdc">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/basicrsa_top/basicrsa_top.srcs/constrs_1/imports/new/constr.xdc"/>
+        <Attr Name="ImportTime" Val="1510259205"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+      </FileInfo>
+    </File>
+    <Config>
+      <Option Name="ConstrsType" Val="XDC"/>
+    </Config>
+  </FileSet>
+  <Strategy Version="1" Minor="2">
+    <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2016"/>
+    <Step Id="synth_design">
+      <Option Id="FlattenHierarchy">0</Option>
+    </Step>
+  </Strategy>
+</GenRun>

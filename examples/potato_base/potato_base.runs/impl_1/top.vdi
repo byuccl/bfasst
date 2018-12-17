@@ -1,0 +1,799 @@
+#-----------------------------------------------------------
+# Vivado v2016.2 (64-bit)
+# SW Build 1577090 on Thu Jun  2 16:32:35 MDT 2016
+# IP Build 1577682 on Fri Jun  3 12:00:54 MDT 2016
+# Start of session at: Sat Jan 13 14:11:39 2018
+# Process ID: 6791
+# Current directory: /home/sean/vivado_workspace/potato_simple/potato_simple.runs/impl_1
+# Command line: vivado -log top.vdi -applog -messageDb vivado.pb -mode batch -source top.tcl -notrace
+# Log file: /home/sean/vivado_workspace/potato_simple/potato_simple.runs/impl_1/top.vdi
+# Journal file: /home/sean/vivado_workspace/potato_simple/potato_simple.runs/impl_1/vivado.jou
+#-----------------------------------------------------------
+source top.tcl -notrace
+Design is defaulting to srcset: sources_1
+Design is defaulting to constrset: constrs_1
+INFO: [Netlist 29-17] Analyzing 267 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+WARNING: [Netlist 29-101] Netlist 'top' is not ideal for floorplanning, since the cellview 'top' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.
+INFO: [Project 1-479] Netlist was created with Vivado 2016.2
+INFO: [Device 21-403] Loading part xc7a100tcsg324-3
+INFO: [Project 1-570] Preparing netlist for logic optimization
+Parsing XDC File [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc]
+WARNING: [Vivado 12-584] No ports matched 'sw[8]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:41]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:41]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[8]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:42]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:42]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[9]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:44]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:44]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[9]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:45]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:45]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[10]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:47]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:47]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[10]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:48]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:48]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[11]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:50]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:50]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[11]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:51]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:51]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[12]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:53]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:53]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[12]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:54]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:54]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[13]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:56]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:56]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[13]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:57]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:57]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[14]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:59]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:59]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[14]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:60]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:60]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[15]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:62]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:62]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[15]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:63]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:63]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+Finished Parsing XDC File [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc]
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 26 instances were transformed.
+  RAM32M => RAM32M (RAMD32, RAMD32, RAMD32, RAMD32, RAMD32, RAMD32, RAMS32, RAMS32): 12 instances
+  RAM64M => RAM64M (RAMD64E, RAMD64E, RAMD64E, RAMD64E): 14 instances
+
+INFO: [Vivado_Tcl 4-424] Cannot write hardware definition file as there are no IPI block design hardware handoff files present
+Command: opt_design
+Attempting to get a license for feature 'Implementation' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xc7a100t'
+Running DRC as a precondition to command opt_design
+
+Starting DRC Task
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Project 1-461] DRC finished with 0 Errors
+INFO: [Project 1-462] Please refer to the DRC report (report_drc) for more information.
+
+Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.06 . Memory (MB): peak = 1377.980 ; gain = 67.031 ; free physical = 4527 ; free virtual = 118656
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+
+Starting Logic Optimization Task
+Implement Debug Cores | Checksum: 1fdf7ae49
+
+Phase 1 Retarget
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Opt 31-49] Retargeted 0 cell(s).
+Phase 1 Retarget | Checksum: 1eb229c02
+
+Time (s): cpu = 00:00:00.30 ; elapsed = 00:00:00.23 . Memory (MB): peak = 1740.410 ; gain = 0.000 ; free physical = 4191 ; free virtual = 118320
+
+Phase 2 Constant Propagation
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Opt 31-10] Eliminated 39 cells.
+Phase 2 Constant Propagation | Checksum: 165525fc9
+
+Time (s): cpu = 00:00:00.49 ; elapsed = 00:00:00.35 . Memory (MB): peak = 1740.410 ; gain = 0.000 ; free physical = 4190 ; free virtual = 118319
+
+Phase 3 Sweep
+INFO: [Opt 31-12] Eliminated 1011 unconnected nets.
+INFO: [Opt 31-11] Eliminated 303 unconnected cells.
+Phase 3 Sweep | Checksum: 8c42813f
+
+Time (s): cpu = 00:00:00.70 ; elapsed = 00:00:00.49 . Memory (MB): peak = 1740.410 ; gain = 0.000 ; free physical = 4190 ; free virtual = 118319
+
+Starting Connectivity Check Task
+
+Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00 . Memory (MB): peak = 1740.410 ; gain = 0.000 ; free physical = 4190 ; free virtual = 118319
+Ending Logic Optimization Task | Checksum: 8c42813f
+
+Time (s): cpu = 00:00:00.72 ; elapsed = 00:00:00.51 . Memory (MB): peak = 1740.410 ; gain = 0.000 ; free physical = 4190 ; free virtual = 118319
+
+Starting Power Optimization Task
+INFO: [Pwropt 34-132] Skipping clock gating for clocks with a period < 2.00 ns.
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Running Vector-less Activity Propagation...
+INFO: [Pwropt 34-9] Applying IDT optimizations ...
+INFO: [Pwropt 34-10] Applying ODC optimizations ...
+
+Finished Running Vector-less Activity Propagation
+
+
+Starting PowerOpt Patch Enables Task
+INFO: [Pwropt 34-162] WRITE_MODE attribute of 0 BRAM(s) out of a total of 2 has been updated to save power. Run report_power_opt to get a complete listing of the BRAMs updated.
+INFO: [Pwropt 34-201] Structural ODC has moved 0 WE to EN ports
+Number of BRAM Ports augmented: 0 newly gated: 2 Total Ports: 4
+Ending PowerOpt Patch Enables Task | Checksum: 1166ba371
+
+Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4070 ; free virtual = 118199
+Ending Power Optimization Task | Checksum: 1166ba371
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.58 . Memory (MB): peak = 2075.613 ; gain = 335.203 ; free physical = 4070 ; free virtual = 118199
+INFO: [Common 17-83] Releasing license: Implementation
+26 Infos, 17 Warnings, 16 Critical Warnings and 0 Errors encountered.
+opt_design completed successfully
+opt_design: Time (s): cpu = 00:00:07 ; elapsed = 00:00:06 . Memory (MB): peak = 2075.613 ; gain = 764.664 ; free physical = 4070 ; free virtual = 118199
+Writing placer database...
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Write XDEF Complete: Time (s): cpu = 00:00:00.02 ; elapsed = 00:00:00.01 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4068 ; free virtual = 118198
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Coretcl 2-168] The results of DRC are in file /home/sean/vivado_workspace/potato_simple/potato_simple.runs/impl_1/top_drc_opted.rpt.
+INFO: [Chipscope 16-241] No debug cores found in the current design.
+Before running the implement_debug_core command, either use the Set Up Debug wizard (GUI mode)
+or use the create_debug_core and connect_debug_core Tcl commands to insert debug cores into the design.
+Command: place_design
+Attempting to get a license for feature 'Implementation' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xc7a100t'
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+Running DRC as a precondition to command place_design
+INFO: [DRC 23-27] Running DRC with 8 threads
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/DC_reg[0]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/DC_reg[1]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/DC_reg[2]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/DC_reg[3]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/DC_reg[4]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/DC_reg[5]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/DC_reg[6]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/DC_reg[7]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/ctrl_reg[0]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/ctrl_reg[1]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/ctrl_reg[2]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/ctrl_reg[3]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/ctrl_reg[4]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/ctrl_reg[5]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/ctrl_reg[6]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/ctrl_reg[7]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/divisor_reg[0]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/divisor_reg[1]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/divisor_reg[2]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/divisor_reg[3]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/divisor_reg[4]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/divisor_reg[5]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/divisor_reg[6]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/divisor_reg[7]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/period_reg[0]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/period_reg[1]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/period_reg[2]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/period_reg[3]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/period_reg[4]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/period_reg[5]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/period_reg[6]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[10] (net: potato_0/imem_address[8]) which is driven by a register (pwm_0/period_reg[7]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/DC_reg[0]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/DC_reg[1]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/DC_reg[2]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/DC_reg[3]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/DC_reg[4]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/DC_reg[5]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/DC_reg[6]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/DC_reg[7]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/ctrl_reg[0]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/ctrl_reg[1]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/ctrl_reg[2]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/ctrl_reg[3]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/ctrl_reg[4]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/ctrl_reg[5]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/ctrl_reg[6]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/ctrl_reg[7]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/divisor_reg[0]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/divisor_reg[1]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/divisor_reg[2]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/divisor_reg[3]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/divisor_reg[4]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/divisor_reg[5]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/divisor_reg[6]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/divisor_reg[7]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/period_reg[0]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/period_reg[1]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/period_reg[2]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/period_reg[3]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/period_reg[4]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/period_reg[5]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/period_reg[6]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[11] (net: potato_0/imem_address[9]) which is driven by a register (pwm_0/period_reg[7]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/DC_reg[0]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/DC_reg[1]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/DC_reg[2]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/DC_reg[3]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/DC_reg[4]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/DC_reg[5]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/DC_reg[6]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/DC_reg[7]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/ctrl_reg[0]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/ctrl_reg[1]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/ctrl_reg[2]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/ctrl_reg[3]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/ctrl_reg[4]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/ctrl_reg[5]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/ctrl_reg[6]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/ctrl_reg[7]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/divisor_reg[0]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/divisor_reg[1]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/divisor_reg[2]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/divisor_reg[3]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/divisor_reg[4]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/divisor_reg[5]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/divisor_reg[6]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/divisor_reg[7]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/period_reg[0]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/period_reg[1]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/period_reg[2]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/period_reg[3]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/period_reg[4]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/period_reg[5]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/period_reg[6]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[12] (net: potato_0/imem_address[10]) which is driven by a register (pwm_0/period_reg[7]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[6] (net: potato_0/imem_address[4]) which is driven by a register (pwm_0/DC_reg[0]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[6] (net: potato_0/imem_address[4]) which is driven by a register (pwm_0/DC_reg[1]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[6] (net: potato_0/imem_address[4]) which is driven by a register (pwm_0/DC_reg[2]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1839) RAMB36 async control check - The RAMB36E1 potato_0/icache/cache_memory_reg_0 has an input control pin potato_0/icache/cache_memory_reg_0/ADDRARDADDR[6] (net: potato_0/imem_address[4]) which is driven by a register (pwm_0/DC_reg[3]) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+INFO: [Common 17-14] Message 'DRC 23-20' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors, 448 Warnings
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+
+Starting Placer Task
+INFO: [Place 30-611] Multithreading enabled for place_design using a maximum of 8 CPUs
+
+Phase 1 Placer Initialization
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4063 ; free virtual = 118193
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.01 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4062 ; free virtual = 118193
+
+Phase 1.1 IO Placement/ Clock Placement/ Build Placer Device
+
+Phase 1.1.1 ParallelPlaceIOClockAndInitTop
+
+Phase 1.1.1.1 Pre-Place Cells
+Phase 1.1.1.1 Pre-Place Cells | Checksum: 075e6775
+
+Time (s): cpu = 00:00:00.24 ; elapsed = 00:00:00.14 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4062 ; free virtual = 118193
+
+Phase 1.1.1.2 Constructing HAPIClkRuleMgr
+Phase 1.1.1.2 Constructing HAPIClkRuleMgr | Checksum: 075e6775
+
+Time (s): cpu = 00:00:00.30 ; elapsed = 00:00:00.22 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4062 ; free virtual = 118193
+
+Phase 1.1.1.3 ClockRegionPlacementChecker
+
+Phase 1.1.1.5 IOBufferPlacementChecker
+
+Phase 1.1.1.6 DSPChecker
+
+Phase 1.1.1.4 IOLockPlacementChecker
+Phase 1.1.1.6 DSPChecker | Checksum: 075e6775
+
+Time (s): cpu = 00:00:00.69 ; elapsed = 00:00:00.34 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4062 ; free virtual = 118192
+
+Phase 1.1.1.7 V7IOVoltageChecker
+Phase 1.1.1.7 V7IOVoltageChecker | Checksum: 075e6775
+
+Time (s): cpu = 00:00:00.69 ; elapsed = 00:00:00.34 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4062 ; free virtual = 118192
+
+Phase 1.1.1.8 OverlappingPBlocksChecker
+Phase 1.1.1.8 OverlappingPBlocksChecker | Checksum: 075e6775
+
+Time (s): cpu = 00:00:00.69 ; elapsed = 00:00:00.34 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4062 ; free virtual = 118192
+Phase 1.1.1.4 IOLockPlacementChecker | Checksum: 075e6775
+
+Time (s): cpu = 00:00:00.71 ; elapsed = 00:00:00.34 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4062 ; free virtual = 118192
+
+Phase 1.1.1.9 CheckerForMandatoryPrePlacedCells
+Phase 1.1.1.9 CheckerForMandatoryPrePlacedCells | Checksum: 075e6775
+
+Time (s): cpu = 00:00:00.72 ; elapsed = 00:00:00.34 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4062 ; free virtual = 118192
+
+Phase 1.1.1.10 CascadeElementConstraintsChecker
+Phase 1.1.1.5 IOBufferPlacementChecker | Checksum: 075e6775
+
+Time (s): cpu = 00:00:00.72 ; elapsed = 00:00:00.34 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4062 ; free virtual = 118192
+
+Phase 1.1.1.11 DisallowedInsts
+Phase 1.1.1.10 CascadeElementConstraintsChecker | Checksum: 075e6775
+
+Time (s): cpu = 00:00:00.74 ; elapsed = 00:00:00.34 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4062 ; free virtual = 118192
+
+Phase 1.1.1.12 HdioRelatedChecker
+Phase 1.1.1.11 DisallowedInsts | Checksum: 075e6775
+
+Time (s): cpu = 00:00:00.74 ; elapsed = 00:00:00.34 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4062 ; free virtual = 118192
+
+Phase 1.1.1.13 Laguna PBlock Checker
+Phase 1.1.1.13 Laguna PBlock Checker | Checksum: 075e6775
+
+Time (s): cpu = 00:00:00.74 ; elapsed = 00:00:00.34 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4062 ; free virtual = 118192
+
+Phase 1.1.1.14 ShapePlacementValidityChecker
+Phase 1.1.1.3 ClockRegionPlacementChecker | Checksum: 075e6775
+
+Time (s): cpu = 00:00:00.74 ; elapsed = 00:00:00.34 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4062 ; free virtual = 118192
+
+Phase 1.1.1.15 CheckerForUnsupportedConstraints
+Phase 1.1.1.12 HdioRelatedChecker | Checksum: 075e6775
+
+Time (s): cpu = 00:00:00.74 ; elapsed = 00:00:00.34 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4062 ; free virtual = 118192
+Phase 1.1.1.15 CheckerForUnsupportedConstraints | Checksum: 075e6775
+
+Time (s): cpu = 00:00:00.76 ; elapsed = 00:00:00.35 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4062 ; free virtual = 118192
+
+Phase 1.1.1.16 ShapesExcludeCompatibilityChecker
+Phase 1.1.1.16 ShapesExcludeCompatibilityChecker | Checksum: 075e6775
+
+Time (s): cpu = 00:00:00.76 ; elapsed = 00:00:00.35 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4062 ; free virtual = 118192
+
+Phase 1.1.1.17 IOStdCompatabilityChecker
+Phase 1.1.1.17 IOStdCompatabilityChecker | Checksum: 075e6775
+
+Time (s): cpu = 00:00:00.76 ; elapsed = 00:00:00.35 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4062 ; free virtual = 118192
+Phase 1.1.1.14 ShapePlacementValidityChecker | Checksum: 075e6775
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.44 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4062 ; free virtual = 118192
+WARNING: [Place 30-568] A LUT 'clk_i_2' is driving clock pin of 1 registers. This could lead to large hold time violations. First few involved registers are:
+	pwm_0/down_clocking_odd_0/clk_reg {FDCE}
+WARNING: [Place 30-879] Found overlapping PBlocks. The use of overlapping PBlocks is not recommended as it may lead to legalization errors or unplaced instances.
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+
+Phase 1.1.1.18 IO and Clk Clean Up
+
+Phase 1.1.1.18.1 Constructing HAPIClkRuleMgr
+Phase 1.1.1.18.1 Constructing HAPIClkRuleMgr | Checksum: 075e6775
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.65 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4062 ; free virtual = 118192
+Phase 1.1.1.18 IO and Clk Clean Up | Checksum: 075e6775
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.66 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4062 ; free virtual = 118192
+
+Phase 1.1.1.19 Implementation Feasibility check On IDelay
+Phase 1.1.1.19 Implementation Feasibility check On IDelay | Checksum: 075e6775
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.67 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4062 ; free virtual = 118192
+
+Phase 1.1.1.20 Commit IO Placement
+Phase 1.1.1.20 Commit IO Placement | Checksum: 6f6143ba
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.67 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4062 ; free virtual = 118192
+Phase 1.1.1 ParallelPlaceIOClockAndInitTop | Checksum: 6f6143ba
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.68 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4062 ; free virtual = 118192
+Phase 1.1 IO Placement/ Clock Placement/ Build Placer Device | Checksum: b68d9d96
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.68 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4062 ; free virtual = 118192
+
+Phase 1.2 Build Placer Netlist Model
+
+Phase 1.2.1 Place Init Design
+
+Phase 1.2.1.1 Make Others
+Phase 1.2.1.1 Make Others | Checksum: d26d6356
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.78 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4061 ; free virtual = 118191
+
+Phase 1.2.1.2 Init Lut Pin Assignment
+Phase 1.2.1.2 Init Lut Pin Assignment | Checksum: d26d6356
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.80 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4057 ; free virtual = 118188
+Phase 1.2.1 Place Init Design | Checksum: 16a10e0c6
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4056 ; free virtual = 118186
+Phase 1.2 Build Placer Netlist Model | Checksum: 16a10e0c6
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4056 ; free virtual = 118186
+
+Phase 1.3 Constrain Clocks/Macros
+Phase 1.3 Constrain Clocks/Macros | Checksum: 16a10e0c6
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4056 ; free virtual = 118186
+Phase 1 Placer Initialization | Checksum: 16a10e0c6
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4056 ; free virtual = 118186
+
+Phase 2 Global Placement
+Phase 2 Global Placement | Checksum: 15f6a2c5b
+
+Time (s): cpu = 00:00:16 ; elapsed = 00:00:04 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4051 ; free virtual = 118181
+
+Phase 3 Detail Placement
+
+Phase 3.1 Commit Multi Column Macros
+Phase 3.1 Commit Multi Column Macros | Checksum: 15f6a2c5b
+
+Time (s): cpu = 00:00:16 ; elapsed = 00:00:04 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4051 ; free virtual = 118181
+
+Phase 3.2 Commit Most Macros & LUTRAMs
+Phase 3.2 Commit Most Macros & LUTRAMs | Checksum: f7fc5d45
+
+Time (s): cpu = 00:00:17 ; elapsed = 00:00:05 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4051 ; free virtual = 118182
+
+Phase 3.3 Area Swap Optimization
+Phase 3.3 Area Swap Optimization | Checksum: 124353c52
+
+Time (s): cpu = 00:00:18 ; elapsed = 00:00:05 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4051 ; free virtual = 118182
+
+Phase 3.4 updateClock Trees: DP
+Phase 3.4 updateClock Trees: DP | Checksum: 124353c52
+
+Time (s): cpu = 00:00:18 ; elapsed = 00:00:05 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4051 ; free virtual = 118182
+
+Phase 3.5 Timing Path Optimizer
+Phase 3.5 Timing Path Optimizer | Checksum: 164175a7b
+
+Time (s): cpu = 00:00:18 ; elapsed = 00:00:05 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4051 ; free virtual = 118182
+
+Phase 3.6 Fast Optimization
+Phase 3.6 Fast Optimization | Checksum: fa8d9d8c
+
+Time (s): cpu = 00:00:19 ; elapsed = 00:00:06 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4049 ; free virtual = 118179
+
+Phase 3.7 Small Shape Detail Placement
+Phase 3.7 Small Shape Detail Placement | Checksum: 1de8fe861
+
+Time (s): cpu = 00:00:21 ; elapsed = 00:00:07 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4051 ; free virtual = 118181
+
+Phase 3.8 Re-assign LUT pins
+Phase 3.8 Re-assign LUT pins | Checksum: 12b248385
+
+Time (s): cpu = 00:00:21 ; elapsed = 00:00:07 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4051 ; free virtual = 118181
+
+Phase 3.9 Pipeline Register Optimization
+Phase 3.9 Pipeline Register Optimization | Checksum: 12b248385
+
+Time (s): cpu = 00:00:21 ; elapsed = 00:00:07 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4051 ; free virtual = 118181
+
+Phase 3.10 Fast Optimization
+Phase 3.10 Fast Optimization | Checksum: 17e223b24
+
+Time (s): cpu = 00:00:24 ; elapsed = 00:00:10 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4051 ; free virtual = 118181
+Phase 3 Detail Placement | Checksum: 17e223b24
+
+Time (s): cpu = 00:00:24 ; elapsed = 00:00:10 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4051 ; free virtual = 118181
+
+Phase 4 Post Placement Optimization and Clean-Up
+
+Phase 4.1 Post Commit Optimization
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+
+Phase 4.1.1 updateClock Trees: PCOPT
+Phase 4.1.1 updateClock Trees: PCOPT | Checksum: 16a30b781
+
+Time (s): cpu = 00:00:25 ; elapsed = 00:00:10 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4049 ; free virtual = 118180
+
+Phase 4.1.2 Post Placement Optimization
+INFO: [Place 30-746] Post Placement Timing Summary WNS=-1.823. For the most accurate timing information please run report_timing.
+Phase 4.1.2 Post Placement Optimization | Checksum: 226f042b7
+
+Time (s): cpu = 00:00:32 ; elapsed = 00:00:16 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4049 ; free virtual = 118180
+Phase 4.1 Post Commit Optimization | Checksum: 226f042b7
+
+Time (s): cpu = 00:00:32 ; elapsed = 00:00:16 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4049 ; free virtual = 118180
+
+Phase 4.2 Sweep Clock Roots: Post-Placement
+Phase 4.2 Sweep Clock Roots: Post-Placement | Checksum: 226f042b7
+
+Time (s): cpu = 00:00:32 ; elapsed = 00:00:16 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4049 ; free virtual = 118180
+
+Phase 4.3 Uram Pipeline Register Optimization
+Phase 4.3 Uram Pipeline Register Optimization | Checksum: 226f042b7
+
+Time (s): cpu = 00:00:32 ; elapsed = 00:00:16 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4049 ; free virtual = 118180
+
+Phase 4.4 Post Placement Cleanup
+Phase 4.4 Post Placement Cleanup | Checksum: 226f042b7
+
+Time (s): cpu = 00:00:32 ; elapsed = 00:00:16 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4049 ; free virtual = 118180
+
+Phase 4.5 Placer Reporting
+Phase 4.5 Placer Reporting | Checksum: 226f042b7
+
+Time (s): cpu = 00:00:32 ; elapsed = 00:00:16 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4049 ; free virtual = 118180
+
+Phase 4.6 Final Placement Cleanup
+Phase 4.6 Final Placement Cleanup | Checksum: 16d579080
+
+Time (s): cpu = 00:00:32 ; elapsed = 00:00:16 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4049 ; free virtual = 118180
+Phase 4 Post Placement Optimization and Clean-Up | Checksum: 16d579080
+
+Time (s): cpu = 00:00:32 ; elapsed = 00:00:16 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4049 ; free virtual = 118180
+Ending Placer Task | Checksum: 887fc6c9
+
+Time (s): cpu = 00:00:32 ; elapsed = 00:00:16 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4049 ; free virtual = 118180
+INFO: [Common 17-83] Releasing license: Implementation
+44 Infos, 119 Warnings, 16 Critical Warnings and 0 Errors encountered.
+place_design completed successfully
+place_design: Time (s): cpu = 00:00:33 ; elapsed = 00:00:17 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4049 ; free virtual = 118180
+Writing placer database...
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Write XDEF Complete: Time (s): cpu = 00:00:00.50 ; elapsed = 00:00:00.19 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4043 ; free virtual = 118180
+report_io: Time (s): cpu = 00:00:00.05 ; elapsed = 00:00:00.09 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4047 ; free virtual = 118179
+report_utilization: Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.08 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4047 ; free virtual = 118179
+report_control_sets: Time (s): cpu = 00:00:00.04 ; elapsed = 00:00:00.06 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 4047 ; free virtual = 118178
+Command: route_design
+Attempting to get a license for feature 'Implementation' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xc7a100t'
+Running DRC as a precondition to command route_design
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+
+
+Starting Routing Task
+INFO: [Route 35-254] Multithreading enabled for route_design using a maximum of 8 CPUs
+Checksum: PlaceDB: 67b328f9 ConstDB: 0 ShapeSum: 20cc9dd0 RouteDB: 0
+
+Phase 1 Build RT Design
+Phase 1 Build RT Design | Checksum: 11f19e90f
+
+Time (s): cpu = 00:00:14 ; elapsed = 00:00:11 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 3984 ; free virtual = 118116
+
+Phase 2 Router Initialization
+
+Phase 2.1 Create Timer
+Phase 2.1 Create Timer | Checksum: 11f19e90f
+
+Time (s): cpu = 00:00:14 ; elapsed = 00:00:11 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 3984 ; free virtual = 118116
+
+Phase 2.2 Fix Topology Constraints
+Phase 2.2 Fix Topology Constraints | Checksum: 11f19e90f
+
+Time (s): cpu = 00:00:14 ; elapsed = 00:00:11 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 3963 ; free virtual = 118095
+
+Phase 2.3 Pre Route Cleanup
+Phase 2.3 Pre Route Cleanup | Checksum: 11f19e90f
+
+Time (s): cpu = 00:00:14 ; elapsed = 00:00:11 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 3963 ; free virtual = 118095
+ Number of Nodes with overlaps = 0
+
+Phase 2.4 Update Timing
+Phase 2.4 Update Timing | Checksum: 15a15891e
+
+Time (s): cpu = 00:00:16 ; elapsed = 00:00:12 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 3935 ; free virtual = 118066
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-1.327 | TNS=-4.661 | WHS=-0.868 | THS=-230.553|
+
+Phase 2 Router Initialization | Checksum: 1a98fed9f
+
+Time (s): cpu = 00:00:17 ; elapsed = 00:00:12 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 3935 ; free virtual = 118066
+
+Phase 3 Initial Routing
+Phase 3 Initial Routing | Checksum: 1ca814ab8
+
+Time (s): cpu = 00:00:20 ; elapsed = 00:00:12 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 3935 ; free virtual = 118066
+
+Phase 4 Rip-up And Reroute
+
+Phase 4.1 Global Iteration 0
+ Number of Nodes with overlaps = 1357
+ Number of Nodes with overlaps = 395
+ Number of Nodes with overlaps = 113
+ Number of Nodes with overlaps = 73
+ Number of Nodes with overlaps = 52
+ Number of Nodes with overlaps = 18
+ Number of Nodes with overlaps = 20
+ Number of Nodes with overlaps = 13
+ Number of Nodes with overlaps = 7
+ Number of Nodes with overlaps = 3
+ Number of Nodes with overlaps = 13
+ Number of Nodes with overlaps = 4
+ Number of Nodes with overlaps = 1
+ Number of Nodes with overlaps = 0
+
+Phase 4.1.1 Update Timing
+Phase 4.1.1 Update Timing | Checksum: 1535094ec
+
+Time (s): cpu = 00:00:52 ; elapsed = 00:00:18 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 3914 ; free virtual = 118046
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-2.841 | TNS=-268.985| WHS=N/A    | THS=N/A    |
+
+
+Phase 4.1.2 GlobIterForTiming
+
+Phase 4.1.2.1 Update Timing
+Phase 4.1.2.1 Update Timing | Checksum: 1189cc918
+
+Time (s): cpu = 00:00:52 ; elapsed = 00:00:19 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 3914 ; free virtual = 118046
+
+Phase 4.1.2.2 Fast Budgeting
+Phase 4.1.2.2 Fast Budgeting | Checksum: 179183f0f
+
+Time (s): cpu = 00:00:52 ; elapsed = 00:00:19 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 3914 ; free virtual = 118046
+Phase 4.1.2 GlobIterForTiming | Checksum: 1400ac43e
+
+Time (s): cpu = 00:00:53 ; elapsed = 00:00:19 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 3914 ; free virtual = 118046
+Phase 4.1 Global Iteration 0 | Checksum: 1400ac43e
+
+Time (s): cpu = 00:00:53 ; elapsed = 00:00:19 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 3914 ; free virtual = 118046
+
+Phase 4.2 Global Iteration 1
+ Number of Nodes with overlaps = 197
+ Number of Nodes with overlaps = 91
+ Number of Nodes with overlaps = 28
+ Number of Nodes with overlaps = 13
+ Number of Nodes with overlaps = 1
+ Number of Nodes with overlaps = 0
+
+Phase 4.2.1 Update Timing
+Phase 4.2.1 Update Timing | Checksum: 15ae1b722
+
+Time (s): cpu = 00:01:00 ; elapsed = 00:00:20 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 3914 ; free virtual = 118046
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-2.944 | TNS=-337.759| WHS=N/A    | THS=N/A    |
+
+Phase 4.2 Global Iteration 1 | Checksum: fddb6371
+
+Time (s): cpu = 00:01:00 ; elapsed = 00:00:20 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 3914 ; free virtual = 118046
+Phase 4 Rip-up And Reroute | Checksum: fddb6371
+
+Time (s): cpu = 00:01:00 ; elapsed = 00:00:20 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 3914 ; free virtual = 118046
+
+Phase 5 Delay and Skew Optimization
+
+Phase 5.1 Delay CleanUp
+
+Phase 5.1.1 Update Timing
+Phase 5.1.1 Update Timing | Checksum: 1a8e6074b
+
+Time (s): cpu = 00:01:01 ; elapsed = 00:00:20 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 3914 ; free virtual = 118046
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-2.835 | TNS=-264.920| WHS=N/A    | THS=N/A    |
+
+ Number of Nodes with overlaps = 0
+Phase 5.1 Delay CleanUp | Checksum: 21387babc
+
+Time (s): cpu = 00:01:02 ; elapsed = 00:00:20 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 3910 ; free virtual = 118041
+
+Phase 5.2 Clock Skew Optimization
+Phase 5.2 Clock Skew Optimization | Checksum: 21387babc
+
+Time (s): cpu = 00:01:02 ; elapsed = 00:00:20 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 3910 ; free virtual = 118041
+Phase 5 Delay and Skew Optimization | Checksum: 21387babc
+
+Time (s): cpu = 00:01:02 ; elapsed = 00:00:21 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 3910 ; free virtual = 118041
+
+Phase 6 Post Hold Fix
+
+Phase 6.1 Hold Fix Iter
+
+Phase 6.1.1 Update Timing
+Phase 6.1.1 Update Timing | Checksum: 23afd9eaf
+
+Time (s): cpu = 00:01:02 ; elapsed = 00:00:21 . Memory (MB): peak = 2075.613 ; gain = 0.000 ; free physical = 3909 ; free virtual = 118041
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-2.808 | TNS=-255.152| WHS=-0.474 | THS=-16.029|
+
+
+Phase 6.1.2 Lut RouteThru Assignment for hold
+Phase 6.1.2 Lut RouteThru Assignment for hold | Checksum: 1c5352a0e
+
+Time (s): cpu = 00:02:30 ; elapsed = 00:00:51 . Memory (MB): peak = 3779.840 ; gain = 1704.227 ; free physical = 2143 ; free virtual = 116275
+Phase 6.1 Hold Fix Iter | Checksum: 1c5352a0e
+
+Time (s): cpu = 00:02:30 ; elapsed = 00:00:51 . Memory (MB): peak = 3779.840 ; gain = 1704.227 ; free physical = 2143 ; free virtual = 116275
+
+Phase 6.2 Additional Hold Fix
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=-2.808 | TNS=-255.152| WHS=-0.263 | THS=-4.552 |
+
+Phase 6.2 Additional Hold Fix | Checksum: 1f1bbd504
+
+Time (s): cpu = 00:02:46 ; elapsed = 00:01:02 . Memory (MB): peak = 3779.840 ; gain = 1704.227 ; free physical = 2141 ; free virtual = 116272
+WARNING: [Route 35-468] The router encountered 1 pins that are both setup-critical and hold-critical and tried to fix hold violations at the expense of setup slack. Such pins are:
+	csr_data_out[31]_i_20/I2
+
+Phase 6 Post Hold Fix | Checksum: 1f1bbd504
+
+Time (s): cpu = 00:02:46 ; elapsed = 00:01:02 . Memory (MB): peak = 3779.840 ; gain = 1704.227 ; free physical = 2141 ; free virtual = 116272
+
+Phase 7 Route finalize
+
+Router Utilization Summary
+  Global Vertical Routing Utilization    = 1.45358 %
+  Global Horizontal Routing Utilization  = 1.76059 %
+  Routable Net Status*
+  *Does not include unroutable nets such as driverless and loadless.
+  Run report_route_status for detailed report.
+  Number of Failed Nets               = 0
+  Number of Unrouted Nets             = 0
+  Number of Partially Routed Nets     = 0
+  Number of Node Overlaps             = 0
+
+Congestion Report
+North Dir 1x1 Area, Max Cong = 74.7748%, No Congested Regions.
+South Dir 1x1 Area, Max Cong = 75.6757%, No Congested Regions.
+East Dir 1x1 Area, Max Cong = 83.8235%, No Congested Regions.
+West Dir 1x1 Area, Max Cong = 70.5882%, No Congested Regions.
+Phase 7 Route finalize | Checksum: 1a8fefd98
+
+Time (s): cpu = 00:02:46 ; elapsed = 00:01:02 . Memory (MB): peak = 3779.840 ; gain = 1704.227 ; free physical = 2141 ; free virtual = 116273
+
+Phase 8 Verifying routed nets
+
+ Verification completed successfully
+Phase 8 Verifying routed nets | Checksum: 1a8fefd98
+
+Time (s): cpu = 00:02:46 ; elapsed = 00:01:02 . Memory (MB): peak = 3779.840 ; gain = 1704.227 ; free physical = 2141 ; free virtual = 116273
+
+Phase 9 Depositing Routes
+Phase 9 Depositing Routes | Checksum: 16025d1b4
+
+Time (s): cpu = 00:02:46 ; elapsed = 00:01:02 . Memory (MB): peak = 3779.840 ; gain = 1704.227 ; free physical = 2141 ; free virtual = 116273
+
+Phase 10 Post Router Timing
+
+Phase 10.1 Update Timing
+Phase 10.1 Update Timing | Checksum: 16214ee19
+
+Time (s): cpu = 00:02:47 ; elapsed = 00:01:02 . Memory (MB): peak = 3779.840 ; gain = 1704.227 ; free physical = 2141 ; free virtual = 116273
+INFO: [Route 35-57] Estimated Timing Summary | WNS=-2.808 | TNS=-255.152| WHS=-0.263 | THS=-4.552 |
+
+WARNING: [Route 35-328] Router estimated timing not met.
+Resolution: For a complete and accurate timing signoff, report_timing_summary must be run after route_design. Alternatively, route_design can be run with the -timing_summary option to enable a complete timing signoff at the end of route_design.
+Phase 10 Post Router Timing | Checksum: 16214ee19
+
+Time (s): cpu = 00:02:47 ; elapsed = 00:01:02 . Memory (MB): peak = 3779.840 ; gain = 1704.227 ; free physical = 2141 ; free virtual = 116273
+WARNING: [Route 35-456] Router was unable to fix hold violation on 2 pins because of tight setup and hold constraints. Such pins are:
+	pwm_0/ct_reg[0]/CE
+	pwm_0/ct_reg[11]/CE
+
+Resolution: Run report_timing_summary to analyze the hold violations.
+WARNING: [Route 35-459] Router was unable to fix hold violation on 5 pins. This could be due to a combination of congestion, blockages and run-time limitations. Such pins are:
+	ct[15]_i_1/I1
+	ct[10]_i_1/I3
+	ct[0]_i_1__0/I3
+	ct[13]_i_1/I3
+	ct[15]_i_2/I3
+
+Resolution: You may try high effort hold fixing by turning on param route.enableGlobalHoldIter.
+INFO: [Route 35-16] Router Completed Successfully
+
+Time (s): cpu = 00:02:47 ; elapsed = 00:01:02 . Memory (MB): peak = 3779.840 ; gain = 1704.227 ; free physical = 2141 ; free virtual = 116273
+
+Routing Is Done.
+INFO: [Common 17-83] Releasing license: Implementation
+58 Infos, 123 Warnings, 16 Critical Warnings and 0 Errors encountered.
+route_design completed successfully
+route_design: Time (s): cpu = 00:02:47 ; elapsed = 00:01:02 . Memory (MB): peak = 3779.840 ; gain = 1704.227 ; free physical = 2141 ; free virtual = 116273
+Writing placer database...
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Write XDEF Complete: Time (s): cpu = 00:00:00.59 ; elapsed = 00:00:00.21 . Memory (MB): peak = 3811.855 ; gain = 0.000 ; free physical = 2134 ; free virtual = 116273
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Coretcl 2-168] The results of DRC are in file /home/sean/vivado_workspace/potato_simple/potato_simple.runs/impl_1/top_drc_routed.rpt.
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -3, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 8 CPUs
+CRITICAL WARNING: [Timing 38-282] The design failed to meet the timing requirements. Please see the timing summary report for details on the timing violations.
+Running Vector-less Activity Propagation...
+
+Finished Running Vector-less Activity Propagation
+WARNING: [Power 33-332] Found switching activity that implies high-fanout reset nets being asserted for excessive periods of time which may result in inaccurate power analysis.
+Resolution: To review and fix problems, please run Power Constraints Advisor in the GUI from Tools > Power Constraints Advisor or run report_power with the -advisory option to generate a text report.
+INFO: [Common 17-206] Exiting Vivado at Sat Jan 13 14:13:15 2018...

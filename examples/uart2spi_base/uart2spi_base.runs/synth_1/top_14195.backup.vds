@@ -1,0 +1,931 @@
+#-----------------------------------------------------------
+# Vivado v2016.2 (64-bit)
+# SW Build 1577090 on Thu Jun  2 16:32:35 MDT 2016
+# IP Build 1577682 on Fri Jun  3 12:00:54 MDT 2016
+# Start of session at: Wed Aug 16 10:15:11 2017
+# Process ID: 14195
+# Current directory: /home/sean/vivado_workspace/uart2spi_top/uart2spi_top.runs/synth_1
+# Command line: vivado -log top.vds -mode batch -messageDb vivado.pb -notrace -source top.tcl
+# Log file: /home/sean/vivado_workspace/uart2spi_top/uart2spi_top.runs/synth_1/top.vds
+# Journal file: /home/sean/vivado_workspace/uart2spi_top/uart2spi_top.runs/synth_1/vivado.jou
+#-----------------------------------------------------------
+source top.tcl -notrace
+Command: synth_design -top top -part xc7a100tcsg324-3 -flatten_hierarchy full
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: Launching helper process for spawning children vivado processes
+INFO: Helper process launched with PID 14222 
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 1048.215 ; gain = 163.137 ; free physical = 6521 ; free virtual = 32283
+---------------------------------------------------------------------------------
+INFO: [Synth 8-638] synthesizing module 'top' [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/new/top.v:23]
+INFO: [Synth 8-638] synthesizing module 'gng' [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/gng.v:39]
+INFO: [Synth 8-638] synthesizing module 'gng_ctg' [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/gng_ctg.v:41]
+INFO: [Synth 8-256] done synthesizing module 'gng_ctg' (1#1) [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/gng_ctg.v:41]
+INFO: [Synth 8-638] synthesizing module 'gng_interp' [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/gng_interp.v:39]
+INFO: [Synth 8-638] synthesizing module 'gng_lzd' [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/gng_lzd.v:39]
+INFO: [Synth 8-256] done synthesizing module 'gng_lzd' (2#1) [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/gng_lzd.v:39]
+INFO: [Synth 8-638] synthesizing module 'gng_coef' [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/gng_coef.v:39]
+INFO: [Synth 8-256] done synthesizing module 'gng_coef' (3#1) [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/gng_coef.v:39]
+INFO: [Synth 8-638] synthesizing module 'gng_smul_16_18_sadd_37' [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/gng_smul_16_18_sadd_37.v:40]
+INFO: [Synth 8-256] done synthesizing module 'gng_smul_16_18_sadd_37' (4#1) [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/gng_smul_16_18_sadd_37.v:40]
+INFO: [Synth 8-638] synthesizing module 'gng_smul_16_18' [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/gng_smul_16_18.v:39]
+INFO: [Synth 8-256] done synthesizing module 'gng_smul_16_18' (5#1) [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/gng_smul_16_18.v:39]
+INFO: [Synth 8-256] done synthesizing module 'gng_interp' (6#1) [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/gng_interp.v:39]
+INFO: [Synth 8-638] synthesizing module 'uart2spi' [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/top/uart2spi.v:48]
+INFO: [Synth 8-638] synthesizing module 'spi_core' [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/spi/spi_core.v:43]
+INFO: [Synth 8-638] synthesizing module 'spi_if' [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/spi/spi_if.v:44]
+INFO: [Synth 8-256] done synthesizing module 'spi_if' (7#1) [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/spi/spi_if.v:44]
+INFO: [Synth 8-638] synthesizing module 'spi_ctl' [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/spi/spi_ctl.v:46]
+INFO: [Synth 8-155] case statement is not full and has no default [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/spi/spi_ctl.v:200]
+WARNING: [Synth 8-5788] Register op_done_reg in module spi_ctl is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/spi/spi_ctl.v:203]
+INFO: [Synth 8-256] done synthesizing module 'spi_ctl' (8#1) [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/spi/spi_ctl.v:46]
+INFO: [Synth 8-638] synthesizing module 'spi_cfg' [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/spi/spi_cfg.v:46]
+INFO: [Synth 8-638] synthesizing module 'generic_register' [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/lib/registers.v:192]
+	Parameter WD bound to: 8 - type: integer 
+	Parameter RESET_DEFAULT bound to: 0 - type: integer 
+INFO: [Synth 8-638] synthesizing module 'bit_register' [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/lib/registers.v:50]
+	Parameter RESET_DEFAULT bound to: 1'b0 
+INFO: [Synth 8-256] done synthesizing module 'bit_register' (9#1) [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/lib/registers.v:50]
+INFO: [Synth 8-256] done synthesizing module 'generic_register' (10#1) [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/lib/registers.v:192]
+INFO: [Synth 8-638] synthesizing module 'req_register' [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/lib/registers.v:95]
+	Parameter RESET_DEFAULT bound to: 0 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'req_register' (11#1) [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/lib/registers.v:95]
+INFO: [Synth 8-256] done synthesizing module 'spi_cfg' (12#1) [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/spi/spi_cfg.v:46]
+INFO: [Synth 8-256] done synthesizing module 'spi_core' (13#1) [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/spi/spi_core.v:43]
+INFO: [Synth 8-638] synthesizing module 'uart_core' [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/uart_core/uart_core.v:43]
+INFO: [Synth 8-638] synthesizing module 'clk_ctl' [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/uart_core/clk_ctl.v:53]
+	Parameter WD bound to: 11 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'clk_ctl' (14#1) [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/uart_core/clk_ctl.v:53]
+INFO: [Synth 8-638] synthesizing module 'uart_txfsm' [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/uart_core/uart_txfsm.v:47]
+	Parameter idle_st bound to: 3'b000 
+	Parameter xfr_data_st bound to: 3'b001 
+	Parameter xfr_pri_st bound to: 3'b010 
+	Parameter xfr_stop_st1 bound to: 3'b011 
+	Parameter xfr_stop_st2 bound to: 3'b100 
+INFO: [Synth 8-155] case statement is not full and has no default [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/uart_core/uart_txfsm.v:114]
+INFO: [Synth 8-256] done synthesizing module 'uart_txfsm' (15#1) [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/uart_core/uart_txfsm.v:47]
+INFO: [Synth 8-638] synthesizing module 'uart_rxfsm' [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/uart_core/uart_rxfsm.v:46]
+	Parameter idle_st bound to: 3'b000 
+	Parameter xfr_start bound to: 3'b001 
+	Parameter xfr_data_st bound to: 3'b010 
+	Parameter xfr_pri_st bound to: 3'b011 
+	Parameter xfr_stop_st1 bound to: 3'b100 
+	Parameter xfr_stop_st2 bound to: 3'b101 
+INFO: [Synth 8-155] case statement is not full and has no default [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/uart_core/uart_rxfsm.v:128]
+INFO: [Synth 8-256] done synthesizing module 'uart_rxfsm' (16#1) [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/uart_core/uart_rxfsm.v:46]
+INFO: [Synth 8-256] done synthesizing module 'uart_core' (17#1) [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/uart_core/uart_core.v:43]
+INFO: [Synth 8-638] synthesizing module 'uart_msg_handler' [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/msg_hand/uart_msg_handler.v:44]
+INFO: [Synth 8-155] case statement is not full and has no default [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/msg_hand/uart_msg_handler.v:168]
+WARNING: [Synth 8-5788] Register TxMsgBuf_reg in module uart_msg_handler is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/msg_hand/uart_msg_handler.v:171]
+WARNING: [Synth 8-5788] Register TxMsgSize_reg in module uart_msg_handler is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/msg_hand/uart_msg_handler.v:172]
+WARNING: [Synth 8-5788] Register RxMsgCnt_reg in module uart_msg_handler is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/msg_hand/uart_msg_handler.v:192]
+WARNING: [Synth 8-5788] Register reg_addr_reg in module uart_msg_handler is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/msg_hand/uart_msg_handler.v:207]
+WARNING: [Synth 8-5788] Register reg_wdata_reg in module uart_msg_handler is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/msg_hand/uart_msg_handler.v:208]
+WARNING: [Synth 8-5788] Register cmd_reg in module uart_msg_handler is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/msg_hand/uart_msg_handler.v:205]
+WARNING: [Synth 8-5788] Register reg_wr_reg in module uart_msg_handler is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/msg_hand/uart_msg_handler.v:253]
+WARNING: [Synth 8-5788] Register tx_data_reg in module uart_msg_handler is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/msg_hand/uart_msg_handler.v:318]
+INFO: [Synth 8-256] done synthesizing module 'uart_msg_handler' (18#1) [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/msg_hand/uart_msg_handler.v:44]
+INFO: [Synth 8-256] done synthesizing module 'uart2spi' (19#1) [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/top/uart2spi.v:48]
+INFO: [Synth 8-256] done synthesizing module 'gng' (20#1) [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/gng.v:39]
+INFO: [Synth 8-256] done synthesizing module 'top' (21#1) [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/new/top.v:23]
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 1090.652 ; gain = 205.574 ; free physical = 6477 ; free virtual = 32239
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 1090.652 ; gain = 205.574 ; free physical = 6477 ; free virtual = 32239
+---------------------------------------------------------------------------------
+INFO: [Device 21-403] Loading part xc7a100tcsg324-3
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/constrs_1/imports/opencores/top.xdc]
+Finished Parsing XDC File [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/constrs_1/imports/opencores/top.xdc]
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/constrs_1/imports/opencores/top.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/top_propImpl.xdc].
+Resolution: To avoid this warning, move constraints listed in [.Xil/top_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
+Completed Processing XDC Constraints
+
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1477.426 ; gain = 0.000 ; free physical = 6262 ; free virtual = 32024
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:12 ; elapsed = 00:00:12 . Memory (MB): peak = 1477.426 ; gain = 592.348 ; free physical = 6260 ; free virtual = 32022
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7a100tcsg324-3
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:12 ; elapsed = 00:00:12 . Memory (MB): peak = 1477.426 ; gain = 592.348 ; free physical = 6260 ; free virtual = 32022
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+Applied set_property DONT_TOUCH = true for uart2spi_0. (constraint file  /home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/constrs_1/imports/opencores/top.xdc, line 2).
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:12 ; elapsed = 00:00:12 . Memory (MB): peak = 1477.426 ; gain = 592.348 ; free physical = 6260 ; free virtual = 32022
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-3936] Found unconnected internal register 'sum2_reg' and it is trimmed from '19' to '18' bits. [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/gng_interp.v:197]
+INFO: [Synth 8-5546] ROM "mask" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-802] inferred FSM for state register 'spiif_cs_reg' in module 'spi_ctl'
+INFO: [Synth 8-5546] ROM "spiif_cs" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5544] ROM "shift_in" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
+INFO: [Synth 8-5546] ROM "shift_enb" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5544] ROM "shift_enb" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "spiif_cs" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "spiif_cs" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/uart_core/clk_ctl.v:103]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/uart_core/clk_ctl.v:108]
+INFO: [Synth 8-802] inferred FSM for state register 'txstate_reg' in module 'uart_txfsm'
+INFO: [Synth 8-5544] ROM "txstate" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "txstate" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "txstate" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-802] inferred FSM for state register 'rxstate_reg' in module 'uart_rxfsm'
+INFO: [Synth 8-5544] ROM "rxstate" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "rxstate" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "rxstate" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "rxstate" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5546] ROM "tx_data_avail" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "reg_req" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "State" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "RxMsgCnt" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "reg_wdata" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5587] ROM size for "char2hex" is below threshold of ROM address width. It will be mapped to LUTs
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                  iSTATE |                              000 |                             0000
+                 iSTATE0 |                              001 |                             0001
+                 iSTATE1 |                              010 |                             0010
+                 iSTATE2 |                              011 |                             0011
+                 iSTATE3 |                              100 |                             0100
+                 iSTATE4 |                              101 |                             0101
+                 iSTATE5 |                              110 |                             1111
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'spiif_cs_reg' using encoding 'sequential' in module 'spi_ctl'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                 idle_st |                              000 |                              000
+             xfr_data_st |                              001 |                              001
+              xfr_pri_st |                              010 |                              010
+            xfr_stop_st1 |                              011 |                              011
+            xfr_stop_st2 |                              100 |                              100
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'txstate_reg' using encoding 'sequential' in module 'uart_txfsm'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                 idle_st |                              000 |                              000
+               xfr_start |                              001 |                              001
+             xfr_data_st |                              010 |                              010
+              xfr_pri_st |                              011 |                              011
+            xfr_stop_st1 |                              100 |                              100
+            xfr_stop_st2 |                              101 |                              101
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'rxstate_reg' using encoding 'sequential' in module 'uart_rxfsm'
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:13 ; elapsed = 00:00:13 . Memory (MB): peak = 1477.426 ; gain = 592.348 ; free physical = 6240 ; free virtual = 32002
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     18 Bit       Adders := 1     
+	   2 Input     16 Bit       Adders := 1     
+	   2 Input     15 Bit       Adders := 1     
+	   2 Input     11 Bit       Adders := 4     
+	   2 Input      6 Bit       Adders := 4     
+	   2 Input      5 Bit       Adders := 4     
+	   2 Input      4 Bit       Adders := 6     
+	   2 Input      3 Bit       Adders := 6     
++---XORs : 
+	   3 Input     64 Bit         XORs := 1     
+	   2 Input     25 Bit         XORs := 1     
+	   2 Input     19 Bit         XORs := 1     
+	   2 Input     16 Bit         XORs := 1     
+	   8 Input      1 Bit         XORs := 2     
++---XORs : 
+	                8 Bit    Wide XORs := 4     
+	                4 Bit    Wide XORs := 2     
++---Registers : 
+	              128 Bit    Registers := 2     
+	               64 Bit    Registers := 4     
+	               32 Bit    Registers := 6     
+	               18 Bit    Registers := 9     
+	               17 Bit    Registers := 1     
+	               16 Bit    Registers := 7     
+	               15 Bit    Registers := 7     
+	               11 Bit    Registers := 4     
+	                9 Bit    Registers := 2     
+	                8 Bit    Registers := 10    
+	                6 Bit    Registers := 5     
+	                5 Bit    Registers := 4     
+	                4 Bit    Registers := 10    
+	                3 Bit    Registers := 6     
+	                2 Bit    Registers := 3     
+	                1 Bit    Registers := 158   
++---Muxes : 
+	   2 Input    128 Bit        Muxes := 4     
+	  12 Input    128 Bit        Muxes := 4     
+	   2 Input     64 Bit        Muxes := 3     
+	   7 Input     32 Bit        Muxes := 6     
+	  12 Input     32 Bit        Muxes := 2     
+	   3 Input     16 Bit        Muxes := 1     
+	   2 Input     16 Bit        Muxes := 1     
+	  12 Input     16 Bit        Muxes := 2     
+	   2 Input     15 Bit        Muxes := 1     
+	  17 Input     15 Bit        Muxes := 1     
+	   2 Input     11 Bit        Muxes := 4     
+	   2 Input      8 Bit        Muxes := 6     
+	   4 Input      8 Bit        Muxes := 2     
+	   6 Input      8 Bit        Muxes := 2     
+	  16 Input      7 Bit        Muxes := 16    
+	   2 Input      6 Bit        Muxes := 8     
+	   2 Input      5 Bit        Muxes := 3     
+	  12 Input      5 Bit        Muxes := 4     
+	   2 Input      4 Bit        Muxes := 4     
+	  12 Input      4 Bit        Muxes := 2     
+	   7 Input      4 Bit        Muxes := 2     
+	  16 Input      4 Bit        Muxes := 2     
+	  23 Input      4 Bit        Muxes := 2     
+	   2 Input      3 Bit        Muxes := 8     
+	  11 Input      3 Bit        Muxes := 4     
+	   5 Input      3 Bit        Muxes := 2     
+	   8 Input      3 Bit        Muxes := 2     
+	   6 Input      3 Bit        Muxes := 2     
+	  12 Input      3 Bit        Muxes := 4     
+	   4 Input      3 Bit        Muxes := 2     
+	   2 Input      2 Bit        Muxes := 12    
+	   4 Input      2 Bit        Muxes := 2     
+	   3 Input      2 Bit        Muxes := 2     
+	   6 Input      2 Bit        Muxes := 2     
+	  12 Input      2 Bit        Muxes := 2     
+	   2 Input      1 Bit        Muxes := 93    
+	   7 Input      1 Bit        Muxes := 32    
+	   5 Input      1 Bit        Muxes := 16    
+	   6 Input      1 Bit        Muxes := 12    
+	  12 Input      1 Bit        Muxes := 20    
+	   3 Input      1 Bit        Muxes := 2     
+	  13 Input      1 Bit        Muxes := 2     
+	   4 Input      1 Bit        Muxes := 2     
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Hierarchical Component Statistics 
+---------------------------------------------------------------------------------
+Hierarchical RTL Component report 
+Module top 
+Detailed RTL Component Info : 
++---XORs : 
+	   8 Input      1 Bit         XORs := 1     
++---XORs : 
+	                4 Bit    Wide XORs := 1     
+Module gng_ctg 
+Detailed RTL Component Info : 
++---XORs : 
+	   3 Input     64 Bit         XORs := 1     
+	   2 Input     25 Bit         XORs := 1     
+	   2 Input     19 Bit         XORs := 1     
+	   2 Input     16 Bit         XORs := 1     
++---Registers : 
+	               64 Bit    Registers := 4     
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     64 Bit        Muxes := 3     
+	   2 Input      1 Bit        Muxes := 1     
+Module gng_lzd 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      5 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 2     
+	   2 Input      3 Bit        Muxes := 4     
+	   2 Input      2 Bit        Muxes := 8     
+	   2 Input      1 Bit        Muxes := 16    
+Module gng_coef 
+Detailed RTL Component Info : 
++---Registers : 
+	               18 Bit    Registers := 2     
+	               17 Bit    Registers := 1     
+Module gng_smul_16_18_sadd_37 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module gng_smul_16_18 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+Module gng_interp 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     18 Bit       Adders := 1     
+	   2 Input     16 Bit       Adders := 1     
+	   2 Input     15 Bit       Adders := 1     
++---Registers : 
+	               18 Bit    Registers := 7     
+	               16 Bit    Registers := 1     
+	               15 Bit    Registers := 7     
+	                9 Bit    Registers := 2     
+	                6 Bit    Registers := 1     
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   3 Input     16 Bit        Muxes := 1     
+	   2 Input     16 Bit        Muxes := 1     
+	   2 Input     15 Bit        Muxes := 1     
+	  17 Input     15 Bit        Muxes := 1     
+Module spi_if 
+Detailed RTL Component Info : 
++---Registers : 
+	                8 Bit    Registers := 2     
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      8 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 5     
+Module spi_ctl 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      6 Bit       Adders := 2     
+	   2 Input      3 Bit       Adders := 1     
++---Registers : 
+	               32 Bit    Registers := 1     
+	                6 Bit    Registers := 2     
+	                3 Bit    Registers := 1     
+	                1 Bit    Registers := 10    
++---Muxes : 
+	   7 Input     32 Bit        Muxes := 3     
+	   4 Input      8 Bit        Muxes := 1     
+	   2 Input      8 Bit        Muxes := 1     
+	   2 Input      6 Bit        Muxes := 4     
+	   2 Input      3 Bit        Muxes := 1     
+	  11 Input      3 Bit        Muxes := 1     
+	   4 Input      2 Bit        Muxes := 1     
+	   2 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 6     
+	   7 Input      1 Bit        Muxes := 16    
+Module bit_register 
+Detailed RTL Component Info : 
++---Registers : 
+	                1 Bit    Registers := 1     
+Module req_register 
+Detailed RTL Component Info : 
++---Registers : 
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 1     
+Module spi_cfg 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 1     
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 1     
+Module clk_ctl 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     11 Bit       Adders := 2     
++---Registers : 
+	               11 Bit    Registers := 2     
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     11 Bit        Muxes := 2     
+	   2 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 2     
+Module uart_txfsm 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      4 Bit       Adders := 1     
+	   2 Input      3 Bit       Adders := 1     
++---XORs : 
+	                8 Bit    Wide XORs := 1     
++---Registers : 
+	                8 Bit    Registers := 1     
+	                4 Bit    Registers := 1     
+	                3 Bit    Registers := 1     
+	                1 Bit    Registers := 2     
++---Muxes : 
+	   5 Input      3 Bit        Muxes := 1     
+	   8 Input      3 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   5 Input      1 Bit        Muxes := 7     
+Module uart_rxfsm 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      4 Bit       Adders := 2     
+	   2 Input      3 Bit       Adders := 1     
++---XORs : 
+	                8 Bit    Wide XORs := 1     
++---Registers : 
+	                8 Bit    Registers := 1     
+	                4 Bit    Registers := 2     
+	                3 Bit    Registers := 1     
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      8 Bit        Muxes := 1     
+	   6 Input      8 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 1     
+	   6 Input      3 Bit        Muxes := 1     
+	  11 Input      3 Bit        Muxes := 1     
+	   3 Input      2 Bit        Muxes := 1     
+	   6 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 4     
+	   6 Input      1 Bit        Muxes := 6     
+Module uart_msg_handler 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      5 Bit       Adders := 2     
++---Registers : 
+	              128 Bit    Registers := 1     
+	               32 Bit    Registers := 1     
+	               16 Bit    Registers := 2     
+	                8 Bit    Registers := 1     
+	                5 Bit    Registers := 2     
+	                4 Bit    Registers := 2     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input    128 Bit        Muxes := 2     
+	  12 Input    128 Bit        Muxes := 2     
+	  12 Input     32 Bit        Muxes := 1     
+	  12 Input     16 Bit        Muxes := 1     
+	  16 Input      7 Bit        Muxes := 8     
+	  12 Input      5 Bit        Muxes := 2     
+	   2 Input      5 Bit        Muxes := 1     
+	  12 Input      4 Bit        Muxes := 1     
+	   7 Input      4 Bit        Muxes := 1     
+	  16 Input      4 Bit        Muxes := 1     
+	  23 Input      4 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+	  12 Input      3 Bit        Muxes := 2     
+	   4 Input      3 Bit        Muxes := 1     
+	  12 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 11    
+	  12 Input      1 Bit        Muxes := 10    
+	   3 Input      1 Bit        Muxes := 1     
+	   5 Input      1 Bit        Muxes := 1     
+	  13 Input      1 Bit        Muxes := 1     
+	   4 Input      1 Bit        Muxes := 1     
+Module gng 
+Detailed RTL Component Info : 
++---XORs : 
+	   8 Input      1 Bit         XORs := 1     
++---XORs : 
+	                4 Bit    Wide XORs := 1     
+---------------------------------------------------------------------------------
+Finished RTL Hierarchical Component Statistics
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 240 (col length:80)
+BRAMs: 270 (col length: RAMB18 80 RAMB36 40)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+Start Parallel Synthesis Optimization  : Time (s): cpu = 00:00:13 ; elapsed = 00:00:13 . Memory (MB): peak = 1477.426 ; gain = 592.348 ; free physical = 6240 ; free virtual = 32002
+---------------------------------------------------------------------------------
+Start Cross Boundary Optimization
+---------------------------------------------------------------------------------
+INFO: [Synth 8-5546] ROM "RxMsgCnt" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "p_0_out" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "reg_req" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5587] ROM size for "char2hex" is below threshold of ROM address width. It will be mapped to LUTs
+INFO: [Synth 8-5546] ROM "reg_wdata" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "RxMsgCnt" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "p_0_out" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "reg_req" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5587] ROM size for "char2hex" is below threshold of ROM address width. It will be mapped to LUTs
+INFO: [Synth 8-5546] ROM "reg_wdata" won't be mapped to RAM because it is too sparse
+WARNING: [Synth 8-3936] Found unconnected internal register 'gng_0/u_gng_interp/u_gng_smul_16_18/prod_reg' and it is trimmed from '34' to '33' bits. [/home/sean/vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/imports/rtl/gng_smul_16_18.v:60]
+DSP Report: Generating DSP gng_0/u_gng_interp/u_gng_smul_16_18_sadd_37/result_reg, operation Mode is: (C'+(A''*B'')')'.
+DSP Report: register B is absorbed into DSP gng_0/u_gng_interp/u_gng_smul_16_18_sadd_37/result_reg.
+DSP Report: register B is absorbed into DSP gng_0/u_gng_interp/u_gng_smul_16_18_sadd_37/result_reg.
+DSP Report: register A is absorbed into DSP gng_0/u_gng_interp/u_gng_smul_16_18_sadd_37/result_reg.
+DSP Report: register A is absorbed into DSP gng_0/u_gng_interp/u_gng_smul_16_18_sadd_37/result_reg.
+DSP Report: register gng_0/u_gng_interp/u_gng_smul_16_18_sadd_37/c_reg_reg is absorbed into DSP gng_0/u_gng_interp/u_gng_smul_16_18_sadd_37/result_reg.
+DSP Report: register gng_0/u_gng_interp/u_gng_smul_16_18_sadd_37/result_reg is absorbed into DSP gng_0/u_gng_interp/u_gng_smul_16_18_sadd_37/result_reg.
+DSP Report: register gng_0/u_gng_interp/u_gng_smul_16_18_sadd_37/prod_reg is absorbed into DSP gng_0/u_gng_interp/u_gng_smul_16_18_sadd_37/result_reg.
+DSP Report: operator gng_0/u_gng_interp/u_gng_smul_16_18_sadd_37/sum is absorbed into DSP gng_0/u_gng_interp/u_gng_smul_16_18_sadd_37/result_reg.
+DSP Report: operator gng_0/u_gng_interp/u_gng_smul_16_18_sadd_37/prod0 is absorbed into DSP gng_0/u_gng_interp/u_gng_smul_16_18_sadd_37/result_reg.
+DSP Report: Generating DSP gng_0/u_gng_interp/u_gng_smul_16_18/prod_reg, operation Mode is: (A2*B'')'.
+DSP Report: register B is absorbed into DSP gng_0/u_gng_interp/u_gng_smul_16_18/prod_reg.
+DSP Report: register B is absorbed into DSP gng_0/u_gng_interp/u_gng_smul_16_18/prod_reg.
+DSP Report: register gng_0/u_gng_interp/u_gng_smul_16_18/b_reg_reg is absorbed into DSP gng_0/u_gng_interp/u_gng_smul_16_18/prod_reg.
+DSP Report: register gng_0/u_gng_interp/u_gng_smul_16_18/prod_reg is absorbed into DSP gng_0/u_gng_interp/u_gng_smul_16_18/prod_reg.
+DSP Report: operator gng_0/u_gng_interp/u_gng_smul_16_18/p0 is absorbed into DSP gng_0/u_gng_interp/u_gng_smul_16_18/prod_reg.
+---------------------------------------------------------------------------------
+Finished Cross Boundary Optimization : Time (s): cpu = 00:00:14 ; elapsed = 00:00:14 . Memory (MB): peak = 1477.426 ; gain = 592.348 ; free physical = 6240 ; free virtual = 32002
+---------------------------------------------------------------------------------
+Finished Parallel Reinference  : Time (s): cpu = 00:00:14 ; elapsed = 00:00:14 . Memory (MB): peak = 1477.426 ; gain = 592.348 ; free physical = 6240 ; free virtual = 32002
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+ROM:
++------------+---------------------------------+---------------+----------------+
+|Module Name | RTL Object                      | Depth x Width | Implemented As | 
++------------+---------------------------------+---------------+----------------+
+|gng_coef    | d                               | 256x53        | LUT            | 
+|top         | gng_0/u_gng_interp/u_gng_coef/d | 256x53        | Block RAM      | 
++------------+---------------------------------+---------------+----------------+
+
+
+DSP: Preliminary Mapping  Report (see note below)
++------------+------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|Module Name | DSP Mapping      | A Size | B Size | C Size | D Size | P Size | AREG | BREG | CREG | DREG | ADREG | MREG | PREG | 
++------------+------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|top         | (C'+(A''*B'')')' | 18     | 16     | 37     | -      | 38     | 2    | 2    | 1    | -    | -     | 1    | 1    | 
+|top         | (A2*B'')'        | 18     | 16     | -      | -      | 34     | 1    | 2    | -    | -    | -     | 1    | 0    | 
++------------+------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+
+Note: The table above is a preliminary report that shows the DSPs inferred at the current stage of the synthesis flow. Some DSP may be reimplemented as non DSP primitives later in the synthesis flow. Multiple instantiated DSPs are reported only once.
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Area Optimization
+---------------------------------------------------------------------------------
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[7]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[6]'
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[6]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[4]'
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[4]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[2]'
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[3]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[1]'
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[2]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\gng_0/uart2spi_0/u_msg /\TxMsgBuf_reg[0] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\gng_0/uart2spi_0/u_msg /\NextState_reg[2] )
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[0]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[15]'
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[15]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[14]'
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[14]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[10]'
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[11]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[9]'
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[10]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[8]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\gng_0/uart2spi_0/u_msg /\TxMsgBuf_reg[8] )
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[12]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[22]'
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[8]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[23]'
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[23]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[16]'
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[19]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[17]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\gng_0/uart2spi_0/u_msg /\TxMsgBuf_reg[16] )
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[16]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[31]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\gng_0/uart2spi_0/u_msg /\TxMsgBuf_reg[31] )
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[27]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[25]'
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[31]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[39]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\gng_0/uart2spi_0/u_msg /\TxMsgBuf_reg[39] )
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[39]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[47]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\gng_0/uart2spi_0/u_msg /\TxMsgBuf_reg[47] )
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[47]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[55]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\gng_0/uart2spi_0/u_msg /\TxMsgBuf_reg[55] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\gng_0/uart2spi_0/u_msg /\TxMsgBuf_reg[63] )
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[63]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[71]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\gng_0/uart2spi_0/u_msg /\TxMsgBuf_reg[71] )
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[71]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[79]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\gng_0/uart2spi_0/u_msg /\TxMsgBuf_reg[79] )
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[79]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[87]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\gng_0/uart2spi_0/u_msg /\TxMsgBuf_reg[87] )
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[87]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[95]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\gng_0/uart2spi_0/u_msg /\TxMsgBuf_reg[95] )
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[95]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[103]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\gng_0/uart2spi_0/u_msg /\TxMsgBuf_reg[103] )
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[103]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[111]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\gng_0/uart2spi_0/u_msg /\TxMsgBuf_reg[111] )
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[111]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[119]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\gng_0/uart2spi_0/u_msg /\TxMsgBuf_reg[119] )
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[119]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[127]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\gng_0/uart2spi_0/u_msg /\TxMsgBuf_reg[127] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (\gng_0/uart2spi_0/u_msg /\tx_data_reg[7] )
+WARNING: [Synth 8-3332] Sequential element (NextState_reg[2]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[127]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[119]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[111]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[103]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[95]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[87]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[79]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[71]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[63]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[55]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[47]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[39]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[31]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[27]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[23]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[19]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[16]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[15]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[14]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[12]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[11]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[10]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[8]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[7]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[6]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[4]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[3]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[2]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (TxMsgBuf_reg[0]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (tx_data_reg[7]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (reg_addr_reg[15]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (reg_addr_reg[14]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (reg_addr_reg[13]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (reg_addr_reg[12]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (reg_addr_reg[11]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (reg_addr_reg[10]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (reg_addr_reg[9]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (reg_addr_reg[8]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (reg_addr_reg[7]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (reg_addr_reg[6]) is unused and will be removed from module uart_msg_handler__1.
+WARNING: [Synth 8-3332] Sequential element (gng_0/u_gng_ctg/z2_reg[5]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (gng_0/u_gng_ctg/z2_reg[4]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (gng_0/u_gng_ctg/z2_reg[3]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (gng_0/u_gng_ctg/z2_reg[2]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (gng_0/u_gng_ctg/z2_reg[1]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (gng_0/u_gng_ctg/z2_reg[0]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (gng_0/u_gng_ctg/z3_reg[8]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (gng_0/u_gng_ctg/z3_reg[7]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (gng_0/u_gng_ctg/z3_reg[6]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (gng_0/u_gng_ctg/z3_reg[5]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (gng_0/u_gng_ctg/z3_reg[4]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (gng_0/u_gng_ctg/z3_reg[3]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (gng_0/u_gng_ctg/z3_reg[2]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (gng_0/u_gng_ctg/z3_reg[1]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (gng_0/u_gng_ctg/z3_reg[0]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (gng_0/u_gng_ctg/z1_reg[0]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (gng_0/u_gng_interp/sum2_reg[1]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (gng_0/u_gng_interp/sum2_reg[0]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (gng_0/uart2spi_0/u_core/u_txfsm/txdata_reg[7]) is unused and will be removed from module top.
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[7]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[6]'
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[6]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[4]'
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[4]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[2]'
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[3]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[1]'
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[2]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (uart2spi_0/\u_msg/TxMsgBuf_reg[0] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (uart2spi_0/\u_msg/NextState_reg[2] )
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[0]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[15]'
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[15]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[14]'
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[14]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[10]'
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[11]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[9]'
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[10]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[8]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (uart2spi_0/\u_msg/TxMsgBuf_reg[8] )
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[12]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[22]'
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[8]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[23]'
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[23]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[16]'
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[19]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[17]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (uart2spi_0/\u_msg/TxMsgBuf_reg[16] )
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[16]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[31]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (uart2spi_0/\u_msg/TxMsgBuf_reg[31] )
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[27]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[25]'
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[31]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[39]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (uart2spi_0/\u_msg/TxMsgBuf_reg[39] )
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[39]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[47]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (uart2spi_0/\u_msg/TxMsgBuf_reg[47] )
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[47]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[55]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (uart2spi_0/\u_msg/TxMsgBuf_reg[55] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (uart2spi_0/\u_msg/TxMsgBuf_reg[63] )
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[63]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[71]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (uart2spi_0/\u_msg/TxMsgBuf_reg[71] )
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[71]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[79]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (uart2spi_0/\u_msg/TxMsgBuf_reg[79] )
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[79]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[87]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (uart2spi_0/\u_msg/TxMsgBuf_reg[87] )
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[87]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[95]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (uart2spi_0/\u_msg/TxMsgBuf_reg[95] )
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[95]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[103]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (uart2spi_0/\u_msg/TxMsgBuf_reg[103] )
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[103]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[111]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (uart2spi_0/\u_msg/TxMsgBuf_reg[111] )
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[111]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[119]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (uart2spi_0/\u_msg/TxMsgBuf_reg[119] )
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[119]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[127]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (uart2spi_0/\u_msg/TxMsgBuf_reg[127] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (uart2spi_0/\u_msg/tx_data_reg[7] )
+WARNING: [Synth 8-3332] Sequential element (u_msg/NextState_reg[2]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[127]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[119]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[111]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[103]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[95]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[87]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[79]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[71]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[63]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[55]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[47]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[39]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[31]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[27]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[23]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[19]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[16]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[15]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[14]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[12]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[11]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[10]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[8]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[7]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[6]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[4]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[3]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[2]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/TxMsgBuf_reg[0]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/tx_data_reg[7]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/reg_addr_reg[15]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/reg_addr_reg[14]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/reg_addr_reg[13]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/reg_addr_reg[12]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/reg_addr_reg[11]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/reg_addr_reg[10]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/reg_addr_reg[9]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/reg_addr_reg[8]) is unused and will be removed from module uart2spi.
+WARNING: [Synth 8-3332] Sequential element (u_msg/reg_addr_reg[7]) is unused and will be removed from module uart2spi.
+INFO: [Common 17-14] Message 'Synth 8-3332' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[1]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[22]'
+INFO: [Synth 8-3886] merging instance 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[9]' (FDE) to 'gng_0/uart2spi_0/u_msg/TxMsgBuf_reg[30]'
+---------------------------------------------------------------------------------
+Finished Area Optimization : Time (s): cpu = 00:00:18 ; elapsed = 00:00:18 . Memory (MB): peak = 1477.426 ; gain = 592.348 ; free physical = 6213 ; free virtual = 31975
+---------------------------------------------------------------------------------
+Finished Parallel Area Optimization  : Time (s): cpu = 00:00:18 ; elapsed = 00:00:18 . Memory (MB): peak = 1477.426 ; gain = 592.348 ; free physical = 6213 ; free virtual = 31975
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying XDC Timing Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:25 ; elapsed = 00:00:25 . Memory (MB): peak = 1477.426 ; gain = 592.348 ; free physical = 6167 ; free virtual = 31929
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:25 ; elapsed = 00:00:25 . Memory (MB): peak = 1484.426 ; gain = 599.348 ; free physical = 6152 ; free virtual = 31915
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[1]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[22]'
+INFO: [Synth 8-3886] merging instance 'uart2spi_0/u_msg/TxMsgBuf_reg[9]' (FDE) to 'uart2spi_0/u_msg/TxMsgBuf_reg[30]'
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:26 ; elapsed = 00:00:26 . Memory (MB): peak = 1504.449 ; gain = 619.371 ; free physical = 6134 ; free virtual = 31897
+---------------------------------------------------------------------------------
+Finished Parallel Technology Mapping Optimization  : Time (s): cpu = 00:00:26 ; elapsed = 00:00:26 . Memory (MB): peak = 1504.449 ; gain = 619.371 ; free physical = 6134 ; free virtual = 31897
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+Finished Parallel Synthesis Optimization  : Time (s): cpu = 00:00:26 ; elapsed = 00:00:26 . Memory (MB): peak = 1504.449 ; gain = 619.371 ; free physical = 6134 ; free virtual = 31897
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:26 ; elapsed = 00:00:26 . Memory (MB): peak = 1504.449 ; gain = 619.371 ; free physical = 6134 ; free virtual = 31896
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:26 ; elapsed = 00:00:27 . Memory (MB): peak = 1504.449 ; gain = 619.371 ; free physical = 6134 ; free virtual = 31896
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:26 ; elapsed = 00:00:27 . Memory (MB): peak = 1504.449 ; gain = 619.371 ; free physical = 6134 ; free virtual = 31896
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+Static Shift Register Report:
++------------+----------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|Module Name | RTL Name                         | Length | Width | Reset Signal | Pull out first Reg | Pull out last Reg | SRL16E | SRLC32E | 
++------------+----------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|top         | gng_0/u_gng_interp/sign_r_reg[8] | 9      | 1     | NO           | NO                 | YES               | 1      | 0       | 
+|top         | gng_0/u_gng_interp/x_r3_reg[14]  | 3      | 15    | NO           | NO                 | YES               | 15     | 0       | 
+|top         | gng_0/u_gng_interp/c0_r5_reg[17] | 6      | 18    | NO           | YES                | YES               | 18     | 0       | 
+|top         | gng_0/u_gng_interp/valid_out_reg | 11     | 1     | YES          | NO                 | YES               | 1      | 0       | 
++------------+----------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+-----------+------+
+|      |Cell       |Count |
++------+-----------+------+
+|1     |BUFG       |     3|
+|2     |CARRY4     |    25|
+|3     |DSP48E1_1  |     1|
+|4     |DSP48E1_2  |     1|
+|5     |LUT1       |    42|
+|6     |LUT2       |   164|
+|7     |LUT3       |   330|
+|8     |LUT4       |   163|
+|9     |LUT5       |   204|
+|10    |LUT6       |   447|
+|11    |RAMB18E1   |     1|
+|12    |RAMB18E1_1 |     1|
+|13    |SRL16E     |    35|
+|14    |FDCE       |   468|
+|15    |FDPE       |    12|
+|16    |FDRE       |   692|
+|17    |FDSE       |    35|
+|18    |IBUF       |    17|
+|19    |OBUF       |    17|
++------+-----------+------+
+
+Report Instance Areas: 
++------+-------------+---------+------+
+|      |Instance     |Module   |Cells |
++------+-------------+---------+------+
+|1     |top          |         |  2658|
+|2     |  uart2spi_0 |uart2spi |   885|
++------+-------------+---------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:26 ; elapsed = 00:00:27 . Memory (MB): peak = 1504.449 ; gain = 619.371 ; free physical = 6134 ; free virtual = 31896
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 108 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:21 ; elapsed = 00:00:22 . Memory (MB): peak = 1504.449 ; gain = 143.457 ; free physical = 6134 ; free virtual = 31896
+Synthesis Optimization Complete : Time (s): cpu = 00:00:27 ; elapsed = 00:00:27 . Memory (MB): peak = 1504.457 ; gain = 619.379 ; free physical = 6134 ; free virtual = 31896
+INFO: [Project 1-571] Translating synthesized netlist
+INFO: [Netlist 29-17] Analyzing 46 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+INFO: [Common 17-83] Releasing license: Synthesis
+191 Infos, 111 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:00:26 ; elapsed = 00:00:26 . Memory (MB): peak = 1536.465 ; gain = 574.832 ; free physical = 6136 ; free virtual = 31898
+report_utilization: Time (s): cpu = 00:00:00.06 ; elapsed = 00:00:00.08 . Memory (MB): peak = 1568.480 ; gain = 0.000 ; free physical = 6134 ; free virtual = 31897
+INFO: [Common 17-206] Exiting Vivado at Wed Aug 16 10:15:44 2017...

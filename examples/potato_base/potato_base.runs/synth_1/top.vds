@@ -1,0 +1,1318 @@
+#-----------------------------------------------------------
+# Vivado v2016.2 (64-bit)
+# SW Build 1577090 on Thu Jun  2 16:32:35 MDT 2016
+# IP Build 1577682 on Fri Jun  3 12:00:54 MDT 2016
+# Start of session at: Sat Jan 13 14:10:53 2018
+# Process ID: 6693
+# Current directory: /home/sean/vivado_workspace/potato_simple/potato_simple.runs/synth_1
+# Command line: vivado -log top.vds -mode batch -messageDb vivado.pb -notrace -source top.tcl
+# Log file: /home/sean/vivado_workspace/potato_simple/potato_simple.runs/synth_1/top.vds
+# Journal file: /home/sean/vivado_workspace/potato_simple/potato_simple.runs/synth_1/vivado.jou
+#-----------------------------------------------------------
+source top.tcl -notrace
+Command: synth_design -top top -part xc7a100tcsg324-3 -flatten_hierarchy full
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: Launching helper process for spawning children vivado processes
+INFO: Helper process launched with PID 6698 
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:03 ; elapsed = 00:00:03 . Memory (MB): peak = 1047.648 ; gain = 155.137 ; free physical = 4698 ; free virtual = 118826
+---------------------------------------------------------------------------------
+INFO: [Synth 8-638] synthesizing module 'top' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/new/top.v:23]
+INFO: [Synth 8-638] synthesizing module 'pci_mini' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_pci_mini/Sources/hdl/pci_mini.v:84]
+	Parameter DEVICE_ID bound to: 16'b1001010100000000 
+	Parameter VENDOR_ID bound to: 16'b0001000011101110 
+	Parameter DEVICE_CLASS bound to: 24'b000001101000000000000000 
+	Parameter DEVICE_REV bound to: 8'b00000001 
+	Parameter SUBSYSTEM_ID bound to: 16'b0000000000000001 
+	Parameter SUBSYSTEM_VENDOR_ID bound to: 16'b1011111010111110 
+	Parameter DEVSEL_TIMING bound to: 2'b00 
+	Parameter EN_NONE bound to: 0 - type: integer 
+	Parameter EN_RD bound to: 1 - type: integer 
+	Parameter EN_WR bound to: 2 - type: integer 
+	Parameter EN_TR bound to: 3 - type: integer 
+	Parameter ST_IDLE bound to: 3'b000 
+	Parameter ST_BUSY bound to: 3'b010 
+	Parameter ST_MEMREAD bound to: 3'b100 
+	Parameter ST_MEMWRITE bound to: 3'b101 
+	Parameter ST_CFGREAD bound to: 3'b110 
+	Parameter ST_CFGWRITE bound to: 3'b111 
+	Parameter MEMREAD bound to: 4'b0110 
+	Parameter MEMWRITE bound to: 4'b0111 
+	Parameter CFGREAD bound to: 4'b1010 
+	Parameter CFGWRITE bound to: 4'b1011 
+	Parameter arb_state1 bound to: 2'b00 
+	Parameter arb_state2 bound to: 2'b01 
+	Parameter machine_waiting bound to: 2'b00 
+	Parameter machine_flushing bound to: 2'b01 
+	Parameter machine_read_filling bound to: 2'b11 
+INFO: [Synth 8-226] default block is never used [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_pci_mini/Sources/hdl/pci_mini.v:255]
+INFO: [Synth 8-155] case statement is not full and has no default [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_pci_mini/Sources/hdl/pci_mini.v:495]
+INFO: [Synth 8-256] done synthesizing module 'pci_mini' (1#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_pci_mini/Sources/hdl/pci_mini.v:84]
+WARNING: [Synth 8-689] width (1) of port connection 'wb_dat_i' does not match port width (32) of module 'pci_mini' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/new/top.v:79]
+INFO: [Synth 8-638] synthesizing module 'pic' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_pic/Sources/hdl/pic.vhd:58]
+INFO: [Synth 8-256] done synthesizing module 'pic' (2#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_pic/Sources/hdl/pic.vhd:58]
+WARNING: [Synth 8-350] instance 'pic_0' of module 'pic' requires 6 connections, but only 5 given [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/new/top.v:94]
+INFO: [Synth 8-638] synthesizing module 'potato' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/potato.vhd:43]
+	Parameter PROCESSOR_ID bound to: 32'b00000000000000000000000000000000 
+	Parameter RESET_ADDRESS bound to: 32'b00000000000000000000001000000000 
+INFO: [Synth 8-638] synthesizing module 'pp_core' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_core.vhd:54]
+	Parameter PROCESSOR_ID bound to: 0 - type: integer 
+	Parameter RESET_ADDRESS bound to: 512 - type: integer 
+INFO: [Synth 8-638] synthesizing module 'pp_csr_unit' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_csr_unit.vhd:57]
+	Parameter PROCESSOR_ID bound to: 0 - type: integer 
+INFO: [Synth 8-638] synthesizing module 'pp_counter' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_counter.vhd:23]
+	Parameter COUNTER_WIDTH bound to: 64 - type: integer 
+	Parameter COUNTER_STEP bound to: 1 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'pp_counter' (3#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_counter.vhd:23]
+INFO: [Synth 8-256] done synthesizing module 'pp_csr_unit' (4#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_csr_unit.vhd:57]
+INFO: [Synth 8-638] synthesizing module 'pp_register_file' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_register_file.vhd:32]
+INFO: [Synth 8-256] done synthesizing module 'pp_register_file' (5#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_register_file.vhd:32]
+INFO: [Synth 8-638] synthesizing module 'pp_fetch' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_fetch.vhd:42]
+	Parameter RESET_ADDRESS bound to: 512 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'pp_fetch' (6#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_fetch.vhd:42]
+INFO: [Synth 8-638] synthesizing module 'pp_decode' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_decode.vhd:67]
+	Parameter RESET_ADDRESS bound to: 512 - type: integer 
+	Parameter PROCESSOR_ID bound to: 0 - type: integer 
+INFO: [Synth 8-638] synthesizing module 'pp_imm_decoder' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_imm_decoder.vhd:16]
+INFO: [Synth 8-256] done synthesizing module 'pp_imm_decoder' (7#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_imm_decoder.vhd:16]
+INFO: [Synth 8-638] synthesizing module 'pp_control_unit' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_control_unit.vhd:46]
+INFO: [Synth 8-638] synthesizing module 'pp_alu_control_unit' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_alu_control_unit.vhd:25]
+INFO: [Synth 8-226] default block is never used [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_alu_control_unit.vhd:70]
+INFO: [Synth 8-226] default block is never used [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_alu_control_unit.vhd:98]
+INFO: [Synth 8-256] done synthesizing module 'pp_alu_control_unit' (8#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_alu_control_unit.vhd:25]
+INFO: [Synth 8-256] done synthesizing module 'pp_control_unit' (9#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_control_unit.vhd:46]
+INFO: [Synth 8-256] done synthesizing module 'pp_decode' (10#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_decode.vhd:67]
+INFO: [Synth 8-638] synthesizing module 'pp_execute' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_execute.vhd:125]
+WARNING: [Synth 8-5827] expecting unsigned expression [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_execute.vhd:290]
+WARNING: [Synth 8-5827] expecting unsigned expression [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_execute.vhd:290]
+WARNING: [Synth 8-5827] expecting unsigned expression [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_execute.vhd:290]
+WARNING: [Synth 8-5827] expecting unsigned expression [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_execute.vhd:290]
+WARNING: [Synth 8-5827] expecting unsigned expression [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_execute.vhd:290]
+WARNING: [Synth 8-5827] expecting unsigned expression [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_execute.vhd:290]
+WARNING: [Synth 8-5827] expecting unsigned expression [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_execute.vhd:290]
+WARNING: [Synth 8-5827] expecting unsigned expression [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_execute.vhd:290]
+INFO: [Synth 8-638] synthesizing module 'pp_alu_mux' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_alu_mux.vhd:26]
+INFO: [Synth 8-256] done synthesizing module 'pp_alu_mux' (11#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_alu_mux.vhd:26]
+INFO: [Synth 8-638] synthesizing module 'pp_comparator' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_comparator.vhd:20]
+INFO: [Synth 8-256] done synthesizing module 'pp_comparator' (12#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_comparator.vhd:20]
+INFO: [Synth 8-638] synthesizing module 'pp_alu' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_alu.vhd:19]
+INFO: [Synth 8-256] done synthesizing module 'pp_alu' (13#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_alu.vhd:19]
+INFO: [Synth 8-638] synthesizing module 'pp_csr_alu' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_csr_alu.vhd:22]
+INFO: [Synth 8-256] done synthesizing module 'pp_csr_alu' (14#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_csr_alu.vhd:22]
+INFO: [Synth 8-256] done synthesizing module 'pp_execute' (15#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_execute.vhd:125]
+INFO: [Synth 8-638] synthesizing module 'pp_memory' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_memory.vhd:61]
+INFO: [Synth 8-256] done synthesizing module 'pp_memory' (16#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_memory.vhd:61]
+INFO: [Synth 8-638] synthesizing module 'pp_writeback' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_writeback.vhd:45]
+INFO: [Synth 8-256] done synthesizing module 'pp_writeback' (17#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_writeback.vhd:45]
+INFO: [Synth 8-256] done synthesizing module 'pp_core' (18#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_core.vhd:54]
+INFO: [Synth 8-638] synthesizing module 'pp_icache' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_icache.vhd:43]
+	Parameter LINE_SIZE bound to: 4 - type: integer 
+	Parameter NUM_LINES bound to: 128 - type: integer 
+INFO: [Synth 8-5534] Detected attribute (* ram_style = "block" *) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_icache.vhd:59]
+INFO: [Synth 8-226] default block is never used [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_utilities.vhd:71]
+INFO: [Synth 8-226] default block is never used [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_icache.vhd:239]
+INFO: [Synth 8-226] default block is never used [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_utilities.vhd:71]
+INFO: [Synth 8-226] default block is never used [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_icache.vhd:252]
+INFO: [Synth 8-256] done synthesizing module 'pp_icache' (19#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_icache.vhd:43]
+INFO: [Synth 8-638] synthesizing module 'pp_wb_adapter' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_wb_adapter.vhd:34]
+INFO: [Synth 8-226] default block is never used [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_wb_adapter.vhd:90]
+INFO: [Synth 8-226] default block is never used [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_utilities.vhd:71]
+INFO: [Synth 8-226] default block is never used [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_utilities.vhd:71]
+INFO: [Synth 8-226] default block is never used [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_wb_adapter.vhd:107]
+INFO: [Synth 8-256] done synthesizing module 'pp_wb_adapter' (20#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_wb_adapter.vhd:34]
+INFO: [Synth 8-638] synthesizing module 'pp_wb_arbiter' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_wb_arbiter.vhd:37]
+INFO: [Synth 8-256] done synthesizing module 'pp_wb_arbiter' (21#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_wb_arbiter.vhd:37]
+INFO: [Synth 8-256] done synthesizing module 'potato' (22#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/potato.vhd:43]
+INFO: [Synth 8-638] synthesizing module 'pwm' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_pwm/Sources/hdl/pwm.v:19]
+	Parameter adr_ctrl bound to: 0 - type: integer 
+	Parameter adr_divisor bound to: 2 - type: integer 
+	Parameter adr_period bound to: 4 - type: integer 
+	Parameter adr_DC bound to: 6 - type: integer 
+INFO: [Synth 8-155] case statement is not full and has no default [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_pwm/Sources/hdl/pwm.v:60]
+INFO: [Synth 8-638] synthesizing module 'down_clocking_even' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_pwm/Sources/hdl/down_clocking_even.v:4]
+INFO: [Synth 8-638] synthesizing module 'minus_one' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_pwm/Sources/hdl/minus_one.v:13]
+INFO: [Synth 8-256] done synthesizing module 'minus_one' (23#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_pwm/Sources/hdl/minus_one.v:13]
+INFO: [Synth 8-256] done synthesizing module 'down_clocking_even' (24#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_pwm/Sources/hdl/down_clocking_even.v:4]
+INFO: [Synth 8-638] synthesizing module 'down_clocking_odd' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_pwm/Sources/hdl/down_clocking_odd.v:6]
+INFO: [Synth 8-256] done synthesizing module 'down_clocking_odd' (25#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_pwm/Sources/hdl/down_clocking_odd.v:6]
+WARNING: [Synth 8-5788] Register ctrl_reg in module pwm is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_pwm/Sources/hdl/pwm.v:53]
+WARNING: [Synth 8-5788] Register ctrl_reg in module pwm is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_pwm/Sources/hdl/pwm.v:73]
+INFO: [Synth 8-256] done synthesizing module 'pwm' (26#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_pwm/Sources/hdl/pwm.v:19]
+INFO: [Synth 8-638] synthesizing module 'quadratic_func' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/hdl/quadratic_func.vhd:53]
+	Parameter fw bound to: 6 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'quadratic_func' (27#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/hdl/quadratic_func.vhd:53]
+INFO: [Synth 8-256] done synthesizing module 'top' (28#1) [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/new/top.v:23]
+WARNING: [Synth 8-3331] design pp_memory has unconnected port dmem_read_ack
+WARNING: [Synth 8-3331] design pp_memory has unconnected port dmem_write_ack
+WARNING: [Synth 8-3331] design pp_fetch has unconnected port flush
+WARNING: [Synth 8-3331] design pci_mini has unconnected port wb_gnt
+WARNING: [Synth 8-3331] design pci_mini has unconnected port wb_req_other
+WARNING: [Synth 8-3331] design top has unconnected port led[15]
+WARNING: [Synth 8-3331] design top has unconnected port led[14]
+WARNING: [Synth 8-3331] design top has unconnected port led[13]
+WARNING: [Synth 8-3331] design top has unconnected port led[12]
+WARNING: [Synth 8-3331] design top has unconnected port led[11]
+WARNING: [Synth 8-3331] design top has unconnected port led[10]
+WARNING: [Synth 8-3331] design top has unconnected port led[3]
+WARNING: [Synth 8-3331] design top has unconnected port sw[7]
+WARNING: [Synth 8-3331] design top has unconnected port sw[6]
+WARNING: [Synth 8-3331] design top has unconnected port sw[5]
+WARNING: [Synth 8-3331] design top has unconnected port sw[4]
+WARNING: [Synth 8-3331] design top has unconnected port JA[7]
+WARNING: [Synth 8-3331] design top has unconnected port JA[6]
+WARNING: [Synth 8-3331] design top has unconnected port JA[5]
+WARNING: [Synth 8-3331] design top has unconnected port JA[4]
+WARNING: [Synth 8-3331] design top has unconnected port JA[3]
+WARNING: [Synth 8-3331] design top has unconnected port JA[2]
+WARNING: [Synth 8-3331] design top has unconnected port JA[1]
+WARNING: [Synth 8-3331] design top has unconnected port JA[0]
+WARNING: [Synth 8-3331] design top has unconnected port JB[7]
+WARNING: [Synth 8-3331] design top has unconnected port JB[6]
+WARNING: [Synth 8-3331] design top has unconnected port JB[5]
+WARNING: [Synth 8-3331] design top has unconnected port JB[4]
+WARNING: [Synth 8-3331] design top has unconnected port JB[3]
+WARNING: [Synth 8-3331] design top has unconnected port JB[2]
+WARNING: [Synth 8-3331] design top has unconnected port JB[1]
+WARNING: [Synth 8-3331] design top has unconnected port JB[0]
+WARNING: [Synth 8-3331] design top has unconnected port JC[7]
+WARNING: [Synth 8-3331] design top has unconnected port JC[6]
+WARNING: [Synth 8-3331] design top has unconnected port JC[5]
+WARNING: [Synth 8-3331] design top has unconnected port JC[4]
+WARNING: [Synth 8-3331] design top has unconnected port JC[3]
+WARNING: [Synth 8-3331] design top has unconnected port JC[2]
+WARNING: [Synth 8-3331] design top has unconnected port JC[1]
+WARNING: [Synth 8-3331] design top has unconnected port JC[0]
+WARNING: [Synth 8-3331] design top has unconnected port JD[7]
+WARNING: [Synth 8-3331] design top has unconnected port JD[6]
+WARNING: [Synth 8-3331] design top has unconnected port JD[5]
+WARNING: [Synth 8-3331] design top has unconnected port JD[4]
+WARNING: [Synth 8-3331] design top has unconnected port JD[3]
+WARNING: [Synth 8-3331] design top has unconnected port JD[2]
+WARNING: [Synth 8-3331] design top has unconnected port JD[1]
+WARNING: [Synth 8-3331] design top has unconnected port JD[0]
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 1106.086 ; gain = 213.574 ; free physical = 4636 ; free virtual = 118765
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+WARNING: [Synth 8-3295] tying undriven pin pic_0:IR[7] to constant 0 [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/new/top.v:94]
+WARNING: [Synth 8-3295] tying undriven pin pic_0:IR[6] to constant 0 [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/new/top.v:94]
+WARNING: [Synth 8-3295] tying undriven pin pic_0:IR[5] to constant 0 [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/new/top.v:94]
+WARNING: [Synth 8-3295] tying undriven pin pic_0:IR[4] to constant 0 [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/new/top.v:94]
+WARNING: [Synth 8-3295] tying undriven pin pic_0:IR[3] to constant 0 [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/new/top.v:94]
+WARNING: [Synth 8-3295] tying undriven pin pic_0:IR[2] to constant 0 [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/new/top.v:94]
+WARNING: [Synth 8-3295] tying undriven pin pic_0:IR[1] to constant 0 [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/new/top.v:94]
+WARNING: [Synth 8-3295] tying undriven pin pic_0:IR[0] to constant 0 [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/new/top.v:94]
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:04 ; elapsed = 00:00:05 . Memory (MB): peak = 1106.086 ; gain = 213.574 ; free physical = 4636 ; free virtual = 118765
+---------------------------------------------------------------------------------
+INFO: [Device 21-403] Loading part xc7a100tcsg324-3
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc]
+WARNING: [Vivado 12-584] No ports matched 'sw[8]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:41]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:41]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[8]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:42]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:42]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[9]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:44]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:44]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[9]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:45]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:45]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[10]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:47]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:47]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[10]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:48]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:48]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[11]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:50]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:50]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[11]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:51]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:51]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[12]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:53]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:53]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[12]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:54]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:54]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[13]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:56]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:56]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[13]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:57]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:57]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[14]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:59]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:59]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[14]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:60]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:60]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[15]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:62]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:62]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[15]'. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:63]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc:63]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+Finished Parsing XDC File [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc]
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/top_propImpl.xdc].
+Resolution: To avoid this warning, move constraints listed in [.Xil/top_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
+Completed Processing XDC Constraints
+
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1491.852 ; gain = 0.000 ; free physical = 4449 ; free virtual = 118578
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:10 ; elapsed = 00:00:10 . Memory (MB): peak = 1491.852 ; gain = 599.340 ; free physical = 4447 ; free virtual = 118576
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7a100tcsg324-3
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:10 ; elapsed = 00:00:10 . Memory (MB): peak = 1491.852 ; gain = 599.340 ; free physical = 4447 ; free virtual = 118576
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:10 ; elapsed = 00:00:10 . Memory (MB): peak = 1491.852 ; gain = 599.340 ; free physical = 4447 ; free virtual = 118576
+---------------------------------------------------------------------------------
+INFO: [Synth 8-4471] merging register 'fifo_start_wb_addr_rd_reg[31:0]' into 'fifo_start_wb_addr_reg[31:0]' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_pci_mini/Sources/hdl/pci_mini.v:513]
+INFO: [Synth 8-4471] merging register 'wb_stb_o_reg' into 'wb_cyc_o_reg' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_pci_mini/Sources/hdl/pci_mini.v:327]
+INFO: [Synth 8-802] inferred FSM for state register 'wbw_phase_reg' in module 'pci_mini'
+INFO: [Synth 8-5544] ROM "trdy0" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "ad1" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "wbwf_state" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "failed_addr_reg" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5546] ROM "baseaddr" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "memen" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "int_line" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "wb_baseaddr_reg" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "user_command_reg" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5544] ROM "wbwf_state" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
+INFO: [Synth 8-802] inferred FSM for state register 'next_s_reg' in module 'pic'
+INFO: [Synth 8-5544] ROM "int_type" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
+INFO: [Synth 8-5545] ROM "int_index" won't be mapped to RAM because address size (32) is larger than maximum supported(25)
+INFO: [Synth 8-5544] ROM "flag1" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "int_index" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_s" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_s" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_s" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_s" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "int_type" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
+INFO: [Synth 8-5545] ROM "int_index" won't be mapped to RAM because address size (32) is larger than maximum supported(25)
+INFO: [Synth 8-5544] ROM "flag1" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "int_index" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_s" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_s" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_s" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_s" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5546] ROM "software_interrupt" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "mtvec" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "mepc" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "mie" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "mscratch" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "mtime_compare" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5587] ROM size for "alu_x_src" is below threshold of ROM address width. It will be mapped to LUTs
+INFO: [Synth 8-5546] ROM "alu_op" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "alu_op" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5544] ROM "rd_write" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "csr_write" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "mem_op" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "mem_op" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "mem_size" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "mem_size" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_execute.vhd:365]
+INFO: [Synth 8-5544] ROM "exception_cause" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "dmem_data_size" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "state" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "wb_outputs[cyc]" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "cl_current_word" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-4471] merging register 'wb_outputs_reg[stb]' into 'wb_outputs_reg[cyc]' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_wb_adapter.vhd:79]
+INFO: [Synth 8-802] inferred FSM for state register 'state_reg' in module 'pp_wb_arbiter'
+INFO: [Synth 8-5544] ROM "state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5546] ROM "ctrl" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "DC" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "period" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "divisor" won't be mapped to RAM because it is too sparse
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                  iSTATE |                               00 |                               00
+                 iSTATE0 |                               01 |                               01
+                 iSTATE1 |                               10 |                               10
+                 iSTATE2 |                               11 |                               11
+*
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'wbw_phase_reg' using encoding 'sequential' in module 'pci_mini'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                 reset_s |                             0000 |                             0000
+            get_commands |                             0001 |                             0001
+         jump_int_method |                             0010 |                             0010
+           start_polling |                             0011 |                             0011
+     tx_int_info_polling |                             0100 |                             0100
+          ack_txinfo_rxd |                             0101 |                             0110
+            ack_isr_done |                             0110 |                             0101
+    start_priority_check |                             0111 |                             0111
+    tx_int_info_priority |                             1000 |                             1000
+ ack_txinfo_rxd_priority |                             1001 |                             1001
+         ack_isr_done_pt |                             1010 |                             1010
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'next_s_reg' using encoding 'sequential' in module 'pic'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                    idle |                               00 |                               00
+                 m1_busy |                               01 |                               01
+                 m2_busy |                               10 |                               10
+                  iSTATE |                               11 |                               11
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 'sequential' in module 'pp_wb_arbiter'
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:11 ; elapsed = 00:00:11 . Memory (MB): peak = 1491.852 ; gain = 599.340 ; free physical = 4433 ; free virtual = 118561
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     32 Bit       Adders := 8     
+	   3 Input     32 Bit       Adders := 1     
+	   2 Input     16 Bit       Adders := 2     
+	   2 Input      6 Bit       Adders := 1     
+	   2 Input      4 Bit       Adders := 2     
+	   2 Input      3 Bit       Adders := 2     
+	   2 Input      2 Bit       Adders := 1     
++---XORs : 
+	   2 Input     32 Bit         XORs := 1     
+	  36 Input      1 Bit         XORs := 1     
+	   2 Input      1 Bit         XORs := 2     
+	   3 Input      1 Bit         XORs := 1     
+	   6 Input      1 Bit         XORs := 1     
+	   7 Input      1 Bit         XORs := 1     
++---XORs : 
+	               32 Bit    Wide XORs := 2     
+	               24 Bit    Wide XORs := 1     
+	               16 Bit    Wide XORs := 1     
+	                4 Bit    Wide XORs := 1     
++---Registers : 
+	              128 Bit    Registers := 2     
+	               32 Bit    Registers := 44    
+	               28 Bit    Registers := 1     
+	               20 Bit    Registers := 1     
+	               16 Bit    Registers := 6     
+	               12 Bit    Registers := 4     
+	               10 Bit    Registers := 1     
+	                8 Bit    Registers := 5     
+	                6 Bit    Registers := 5     
+	                5 Bit    Registers := 8     
+	                4 Bit    Registers := 9     
+	                3 Bit    Registers := 18    
+	                2 Bit    Registers := 13    
+	                1 Bit    Registers := 54    
++---RAMs : 
+	              16K Bit         RAMs := 1     
+	               2K Bit         RAMs := 1     
+	             1024 Bit         RAMs := 1     
++---Muxes : 
+	   8 Input    128 Bit        Muxes := 2     
+	   2 Input    128 Bit        Muxes := 2     
+	   4 Input     32 Bit        Muxes := 9     
+	   2 Input     32 Bit        Muxes := 39    
+	  12 Input     32 Bit        Muxes := 1     
+	   7 Input     32 Bit        Muxes := 1     
+	  11 Input     32 Bit        Muxes := 2     
+	  20 Input     32 Bit        Muxes := 1     
+	   6 Input     32 Bit        Muxes := 1     
+	   8 Input     32 Bit        Muxes := 1     
+	   2 Input     16 Bit        Muxes := 6     
+	   2 Input     12 Bit        Muxes := 4     
+	   2 Input      8 Bit        Muxes := 5     
+	  11 Input      8 Bit        Muxes := 2     
+	   7 Input      8 Bit        Muxes := 1     
+	   7 Input      6 Bit        Muxes := 1     
+	   2 Input      6 Bit        Muxes := 5     
+	  22 Input      5 Bit        Muxes := 1     
+	  17 Input      5 Bit        Muxes := 1     
+	   5 Input      5 Bit        Muxes := 1     
+	   2 Input      5 Bit        Muxes := 2     
+	   7 Input      5 Bit        Muxes := 2     
+	   4 Input      4 Bit        Muxes := 4     
+	   2 Input      4 Bit        Muxes := 3     
+	  12 Input      4 Bit        Muxes := 1     
+	  30 Input      4 Bit        Muxes := 1     
+	   8 Input      4 Bit        Muxes := 3     
+	   5 Input      4 Bit        Muxes := 1     
+	   7 Input      4 Bit        Muxes := 1     
+	   7 Input      3 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 13    
+	  11 Input      3 Bit        Muxes := 3     
+	  12 Input      3 Bit        Muxes := 3     
+	  16 Input      3 Bit        Muxes := 1     
+	   3 Input      3 Bit        Muxes := 1     
+	   4 Input      3 Bit        Muxes := 1     
+	   8 Input      3 Bit        Muxes := 1     
+	   9 Input      3 Bit        Muxes := 1     
+	   8 Input      2 Bit        Muxes := 1     
+	   4 Input      2 Bit        Muxes := 3     
+	   5 Input      2 Bit        Muxes := 4     
+	   6 Input      2 Bit        Muxes := 3     
+	   3 Input      2 Bit        Muxes := 2     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      2 Bit        Muxes := 10    
+	  11 Input      2 Bit        Muxes := 1     
+	   7 Input      2 Bit        Muxes := 1     
+	   7 Input      1 Bit        Muxes := 25    
+	   2 Input      1 Bit        Muxes := 104   
+	   4 Input      1 Bit        Muxes := 39    
+	   8 Input      1 Bit        Muxes := 26    
+	  11 Input      1 Bit        Muxes := 15    
+	  13 Input      1 Bit        Muxes := 1     
+	  16 Input      1 Bit        Muxes := 1     
+	   3 Input      1 Bit        Muxes := 7     
+	   5 Input      1 Bit        Muxes := 3     
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Hierarchical Component Statistics 
+---------------------------------------------------------------------------------
+Hierarchical RTL Component report 
+Module top 
+Detailed RTL Component Info : 
++---XORs : 
+	   2 Input      1 Bit         XORs := 2     
+	   3 Input      1 Bit         XORs := 1     
+	   6 Input      1 Bit         XORs := 1     
+	   7 Input      1 Bit         XORs := 1     
++---XORs : 
+	               32 Bit    Wide XORs := 2     
+	               24 Bit    Wide XORs := 1     
+	               16 Bit    Wide XORs := 1     
+	                4 Bit    Wide XORs := 1     
+Module pci_mini 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      6 Bit       Adders := 1     
+	   2 Input      4 Bit       Adders := 2     
+	   2 Input      2 Bit       Adders := 1     
++---XORs : 
+	  36 Input      1 Bit         XORs := 1     
++---Registers : 
+	               32 Bit    Registers := 9     
+	               10 Bit    Registers := 1     
+	                8 Bit    Registers := 2     
+	                6 Bit    Registers := 1     
+	                4 Bit    Registers := 6     
+	                3 Bit    Registers := 1     
+	                2 Bit    Registers := 3     
+	                1 Bit    Registers := 12    
++---Muxes : 
+	   4 Input     32 Bit        Muxes := 2     
+	   2 Input     32 Bit        Muxes := 3     
+	  12 Input     32 Bit        Muxes := 1     
+	   7 Input     32 Bit        Muxes := 1     
+	   7 Input      6 Bit        Muxes := 1     
+	   4 Input      4 Bit        Muxes := 3     
+	   2 Input      4 Bit        Muxes := 2     
+	  12 Input      4 Bit        Muxes := 1     
+	   7 Input      3 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 1     
+	   8 Input      2 Bit        Muxes := 1     
+	   4 Input      2 Bit        Muxes := 1     
+	   5 Input      2 Bit        Muxes := 1     
+	   6 Input      2 Bit        Muxes := 1     
+	   3 Input      2 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   7 Input      1 Bit        Muxes := 25    
+	   2 Input      1 Bit        Muxes := 19    
+	   4 Input      1 Bit        Muxes := 25    
+Module pic 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     32 Bit       Adders := 2     
+	   2 Input      3 Bit       Adders := 1     
++---Registers : 
+	               32 Bit    Registers := 2     
+	                3 Bit    Registers := 9     
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 4     
+	  11 Input     32 Bit        Muxes := 2     
+	   2 Input      8 Bit        Muxes := 4     
+	  11 Input      8 Bit        Muxes := 2     
+	  30 Input      4 Bit        Muxes := 1     
+	  11 Input      3 Bit        Muxes := 3     
+	   2 Input      2 Bit        Muxes := 1     
+	  11 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 11    
+	   8 Input      1 Bit        Muxes := 2     
+	  11 Input      1 Bit        Muxes := 15    
+Module pp_csr_unit 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 10    
+	                6 Bit    Registers := 1     
+	                1 Bit    Registers := 5     
++---Muxes : 
+	  20 Input     32 Bit        Muxes := 1     
+	   2 Input     32 Bit        Muxes := 2     
+	  22 Input      5 Bit        Muxes := 1     
+	   8 Input      1 Bit        Muxes := 7     
+	   2 Input      1 Bit        Muxes := 13    
+Module pp_register_file 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 2     
++---RAMs : 
+	             1024 Bit         RAMs := 1     
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 4     
+Module pp_fetch 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     32 Bit       Adders := 1     
++---Registers : 
+	               32 Bit    Registers := 1     
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 3     
+	   2 Input      1 Bit        Muxes := 2     
+Module pp_imm_decoder 
+Detailed RTL Component Info : 
++---Muxes : 
+	   6 Input     32 Bit        Muxes := 1     
+Module pp_alu_control_unit 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      4 Bit        Muxes := 1     
+	   8 Input      4 Bit        Muxes := 2     
+	   5 Input      4 Bit        Muxes := 1     
+	  12 Input      3 Bit        Muxes := 3     
+	   2 Input      3 Bit        Muxes := 1     
+	   2 Input      2 Bit        Muxes := 1     
+Module pp_control_unit 
+Detailed RTL Component Info : 
++---Muxes : 
+	  17 Input      5 Bit        Muxes := 1     
+	  16 Input      3 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 2     
+	   3 Input      3 Bit        Muxes := 1     
+	   4 Input      3 Bit        Muxes := 1     
+	   5 Input      2 Bit        Muxes := 1     
+	   6 Input      2 Bit        Muxes := 2     
+	   2 Input      2 Bit        Muxes := 2     
+	   3 Input      2 Bit        Muxes := 1     
+	   4 Input      2 Bit        Muxes := 1     
+	  13 Input      1 Bit        Muxes := 1     
+	  16 Input      1 Bit        Muxes := 1     
+Module pp_decode 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 2     
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     12 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 3     
+Module pp_alu_mux 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     32 Bit       Adders := 1     
+Module pp_alu 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     32 Bit       Adders := 1     
+	   3 Input     32 Bit       Adders := 1     
++---XORs : 
+	   2 Input     32 Bit         XORs := 1     
+Module pp_csr_alu 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 1     
+	   4 Input     32 Bit        Muxes := 1     
+Module pp_execute 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     32 Bit       Adders := 2     
++---Registers : 
+	               32 Bit    Registers := 4     
+	               12 Bit    Registers := 1     
+	                6 Bit    Registers := 1     
+	                5 Bit    Registers := 4     
+	                4 Bit    Registers := 1     
+	                3 Bit    Registers := 5     
+	                2 Bit    Registers := 2     
+	                1 Bit    Registers := 5     
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 11    
+	   4 Input     32 Bit        Muxes := 2     
+	   2 Input      6 Bit        Muxes := 4     
+	   5 Input      5 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 8     
+	   2 Input      2 Bit        Muxes := 4     
+	   4 Input      2 Bit        Muxes := 1     
+	   3 Input      1 Bit        Muxes := 2     
+	   2 Input      1 Bit        Muxes := 6     
+Module pp_memory 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 3     
+	               12 Bit    Registers := 1     
+	                6 Bit    Registers := 1     
+	                5 Bit    Registers := 1     
+	                3 Bit    Registers := 1     
+	                2 Bit    Registers := 2     
+	                1 Bit    Registers := 5     
++---Muxes : 
+	   4 Input     32 Bit        Muxes := 1     
+	   2 Input     32 Bit        Muxes := 5     
+	   2 Input      6 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 5     
+Module pp_writeback 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 3     
+	               12 Bit    Registers := 1     
+	                6 Bit    Registers := 1     
+	                5 Bit    Registers := 1     
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 5     
+Module pp_core 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 2     
+	               12 Bit    Registers := 1     
+	                5 Bit    Registers := 2     
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 2     
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 2     
+	   2 Input     12 Bit        Muxes := 3     
+	   2 Input      5 Bit        Muxes := 2     
+	   2 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 2     
+Module pp_icache 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      3 Bit       Adders := 1     
++---Registers : 
+	              128 Bit    Registers := 2     
+	               32 Bit    Registers := 3     
+	               28 Bit    Registers := 1     
+	                4 Bit    Registers := 1     
+	                3 Bit    Registers := 2     
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 6     
++---RAMs : 
+	              16K Bit         RAMs := 1     
+	               2K Bit         RAMs := 1     
++---Muxes : 
+	   8 Input    128 Bit        Muxes := 2     
+	   2 Input    128 Bit        Muxes := 2     
+	   2 Input     32 Bit        Muxes := 2     
+	   4 Input     32 Bit        Muxes := 1     
+	   8 Input     32 Bit        Muxes := 1     
+	   7 Input      5 Bit        Muxes := 1     
+	   8 Input      4 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 1     
+	   8 Input      3 Bit        Muxes := 1     
+	   9 Input      3 Bit        Muxes := 1     
+	   2 Input      2 Bit        Muxes := 1     
+	   8 Input      1 Bit        Muxes := 17    
+	   2 Input      1 Bit        Muxes := 8     
+Module pp_wb_adapter 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 3     
+	                4 Bit    Registers := 1     
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   7 Input      5 Bit        Muxes := 1     
+	   7 Input      4 Bit        Muxes := 1     
+	   5 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 2     
+	   4 Input      1 Bit        Muxes := 10    
+Module pp_wb_arbiter 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 2     
+	   4 Input     32 Bit        Muxes := 2     
+	   4 Input      4 Bit        Muxes := 1     
+	   7 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 3     
+	   4 Input      1 Bit        Muxes := 4     
+Module down_clocking_even 
+Detailed RTL Component Info : 
++---Registers : 
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 1     
+Module down_clocking_odd 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 1     
+	                1 Bit    Registers := 2     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 3     
+Module pwm 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     16 Bit       Adders := 2     
++---Registers : 
+	               16 Bit    Registers := 5     
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 6     
+	   2 Input      8 Bit        Muxes := 1     
+	   7 Input      8 Bit        Muxes := 1     
+	   5 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 26    
+	   5 Input      1 Bit        Muxes := 3     
+	   3 Input      1 Bit        Muxes := 5     
+Module quadratic_func 
+Detailed RTL Component Info : 
++---Registers : 
+	               20 Bit    Registers := 1     
+	                8 Bit    Registers := 3     
+---------------------------------------------------------------------------------
+Finished RTL Hierarchical Component Statistics
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 240 (col length:80)
+BRAMs: 270 (col length: RAMB18 80 RAMB36 40)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+Start Parallel Synthesis Optimization  : Time (s): cpu = 00:00:11 ; elapsed = 00:00:11 . Memory (MB): peak = 1491.852 ; gain = 599.340 ; free physical = 4433 ; free virtual = 118561
+---------------------------------------------------------------------------------
+Start Cross Boundary Optimization
+---------------------------------------------------------------------------------
+INFO: [Synth 8-5544] ROM "ad1" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
+INFO: [Synth 8-5545] ROM "int_index" won't be mapped to RAM because address size (32) is larger than maximum supported(25)
+INFO: [Synth 8-4471] merging register 'cl_current_word_reg[2:0]' into 'cl_current_word_reg[2:0]' [/home/sean/vivado_workspace/potato_simple/potato_simple.srcs/sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_icache.vhd:226]
+INFO: [Synth 8-5546] ROM "processor/csr_unit/mscratch" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "processor/csr_unit/mepc" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "processor/csr_unit/mtvec" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "processor/csr_unit/software_interrupt" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "processor/csr_unit/mtime_compare" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "processor/csr_unit/mie" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "processor/decode/control_unit/alu_control/alu_op" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "processor/decode/control_unit/alu_control/alu_op" won't be mapped to RAM because it is too sparse
+DSP Report: Generating DSP quadratic_func_0/x2_a_reg, operation Mode is: (A2*B2)'.
+DSP Report: register quadratic_func_0/coeff_a_reg_reg is absorbed into DSP quadratic_func_0/x2_a_reg.
+DSP Report: register quadratic_func_0/x2_reg is absorbed into DSP quadratic_func_0/x2_a_reg.
+DSP Report: register quadratic_func_0/x2_a_reg is absorbed into DSP quadratic_func_0/x2_a_reg.
+DSP Report: operator quadratic_func_0/multOp is absorbed into DSP quadratic_func_0/x2_a_reg.
+DSP Report: Generating DSP quadratic_func_0/sum_reg_reg, operation Mode is: (PCIN+A2:B2+C')'.
+DSP Report: register B is absorbed into DSP quadratic_func_0/sum_reg_reg.
+DSP Report: register A is absorbed into DSP quadratic_func_0/sum_reg_reg.
+DSP Report: register C is absorbed into DSP quadratic_func_0/sum_reg_reg.
+DSP Report: register quadratic_func_0/sum_reg_reg is absorbed into DSP quadratic_func_0/sum_reg_reg.
+DSP Report: operator quadratic_func_0/plusOp is absorbed into DSP quadratic_func_0/sum_reg_reg.
+WARNING: [Synth 8-3331] design pci_mini has unconnected port wb_gnt
+WARNING: [Synth 8-3331] design pci_mini has unconnected port wb_req_other
+WARNING: [Synth 8-3331] design top has unconnected port sw[7]
+WARNING: [Synth 8-3331] design top has unconnected port sw[6]
+WARNING: [Synth 8-3331] design top has unconnected port sw[5]
+WARNING: [Synth 8-3331] design top has unconnected port sw[4]
+WARNING: [Synth 8-3331] design top has unconnected port JA[7]
+WARNING: [Synth 8-3331] design top has unconnected port JA[6]
+WARNING: [Synth 8-3331] design top has unconnected port JA[5]
+WARNING: [Synth 8-3331] design top has unconnected port JA[4]
+WARNING: [Synth 8-3331] design top has unconnected port JA[3]
+WARNING: [Synth 8-3331] design top has unconnected port JA[2]
+WARNING: [Synth 8-3331] design top has unconnected port JA[1]
+WARNING: [Synth 8-3331] design top has unconnected port JA[0]
+WARNING: [Synth 8-3331] design top has unconnected port JB[7]
+WARNING: [Synth 8-3331] design top has unconnected port JB[6]
+WARNING: [Synth 8-3331] design top has unconnected port JB[5]
+WARNING: [Synth 8-3331] design top has unconnected port JB[4]
+WARNING: [Synth 8-3331] design top has unconnected port JB[3]
+WARNING: [Synth 8-3331] design top has unconnected port JB[2]
+WARNING: [Synth 8-3331] design top has unconnected port JB[1]
+WARNING: [Synth 8-3331] design top has unconnected port JB[0]
+WARNING: [Synth 8-3331] design top has unconnected port JC[7]
+WARNING: [Synth 8-3331] design top has unconnected port JC[6]
+WARNING: [Synth 8-3331] design top has unconnected port JC[5]
+WARNING: [Synth 8-3331] design top has unconnected port JC[4]
+WARNING: [Synth 8-3331] design top has unconnected port JC[3]
+WARNING: [Synth 8-3331] design top has unconnected port JC[2]
+WARNING: [Synth 8-3331] design top has unconnected port JC[1]
+WARNING: [Synth 8-3331] design top has unconnected port JC[0]
+WARNING: [Synth 8-3331] design top has unconnected port JD[7]
+WARNING: [Synth 8-3331] design top has unconnected port JD[6]
+WARNING: [Synth 8-3331] design top has unconnected port JD[5]
+WARNING: [Synth 8-3331] design top has unconnected port JD[4]
+WARNING: [Synth 8-3331] design top has unconnected port JD[3]
+WARNING: [Synth 8-3331] design top has unconnected port JD[2]
+WARNING: [Synth 8-3331] design top has unconnected port JD[1]
+WARNING: [Synth 8-3331] design top has unconnected port JD[0]
+---------------------------------------------------------------------------------
+Finished Cross Boundary Optimization : Time (s): cpu = 00:00:12 ; elapsed = 00:00:12 . Memory (MB): peak = 1491.852 ; gain = 599.340 ; free physical = 4432 ; free virtual = 118561
+---------------------------------------------------------------------------------
+Finished Parallel Reinference  : Time (s): cpu = 00:00:12 ; elapsed = 00:00:12 . Memory (MB): peak = 1491.852 ; gain = 599.340 ; free physical = 4432 ; free virtual = 118561
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+Block RAM: Preliminary Mapping  Report (see note below)
++------------+------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+|Module Name | RTL Object       | PORT A (Depth x Width) | W | R | PORT B (Depth x Width) | W | R | Ports driving FF | RAMB18 | RAMB36 | 
++------------+------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+|pp_icache   | cache_memory_reg | 128 x 128(READ_FIRST)  | W |   | 128 x 128(WRITE_FIRST) |   | R | Port A and B     | 0      | 2      | 
++------------+------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+
+Note: The table above is a preliminary report that shows the Block RAMs at the current stage of the synthesis flow. Some Block RAMs may be reimplemented as non Block RAM primitives later in the synthesis flow. Multiple instantiated Block RAMs are reported only once. 
+
+Distributed RAM: Preliminary Mapping  Report (see note below)
++------------+---------------------------------+-----------+----------------------+---------------+
+|Module Name | RTL Object                      | Inference | Size (Depth x Width) | Primitives    | 
++------------+---------------------------------+-----------+----------------------+---------------+
+|potato      | processor/regfile/registers_reg | Implied   | 32 x 32              | RAM32M x 12   | 
+|potato      | icache/tag_memory_reg           | Implied   | 128 x 21             | RAM64M x 14   | 
++------------+---------------------------------+-----------+----------------------+---------------+
+
+Note: The table above is a preliminary report that shows the Distributed RAMs at the current stage of the synthesis flow. Some Distributed RAMs may be reimplemented as non Distributed RAM primitives later in the synthesis flow. Multiple instantiated RAMs are reported only once.
+
+DSP: Preliminary Mapping  Report (see note below)
++---------------+------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|Module Name    | DSP Mapping      | A Size | B Size | C Size | D Size | P Size | AREG | BREG | CREG | DREG | ADREG | MREG | PREG | 
++---------------+------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|quadratic_func | (A2*B2)'         | 16     | 8      | -      | -      | 24     | 1    | 1    | -    | -    | -     | 1    | 0    | 
+|top            | (PCIN+A2:B2+C')' | 6      | 18     | 20     | -      | -1     | 1    | 1    | 1    | -    | -     | 0    | 1    | 
++---------------+------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+
+Note: The table above is a preliminary report that shows the DSPs inferred at the current stage of the synthesis flow. Some DSP may be reimplemented as non DSP primitives later in the synthesis flow. Multiple instantiated DSPs are reported only once.
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Area Optimization
+---------------------------------------------------------------------------------
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/load_buffer_tag_reg[2]' (FDE) to 'potato_0/icache/cl_load_address_reg[13]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/load_buffer_tag_reg[1]' (FDE) to 'potato_0/icache/cl_load_address_reg[12]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/load_buffer_tag_reg[0]' (FDE) to 'potato_0/icache/cl_load_address_reg[11]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/load_buffer_tag_reg[5]' (FDE) to 'potato_0/icache/cl_load_address_reg[16]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/load_buffer_tag_reg[4]' (FDE) to 'potato_0/icache/cl_load_address_reg[15]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/load_buffer_tag_reg[3]' (FDE) to 'potato_0/icache/cl_load_address_reg[14]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/load_buffer_tag_reg[8]' (FDE) to 'potato_0/icache/cl_load_address_reg[19]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/load_buffer_tag_reg[7]' (FDE) to 'potato_0/icache/cl_load_address_reg[18]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/load_buffer_tag_reg[6]' (FDE) to 'potato_0/icache/cl_load_address_reg[17]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/load_buffer_tag_reg[11]' (FDE) to 'potato_0/icache/cl_load_address_reg[22]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/load_buffer_tag_reg[10]' (FDE) to 'potato_0/icache/cl_load_address_reg[21]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/load_buffer_tag_reg[9]' (FDE) to 'potato_0/icache/cl_load_address_reg[20]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/load_buffer_tag_reg[14]' (FDE) to 'potato_0/icache/cl_load_address_reg[25]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/load_buffer_tag_reg[13]' (FDE) to 'potato_0/icache/cl_load_address_reg[24]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/load_buffer_tag_reg[12]' (FDE) to 'potato_0/icache/cl_load_address_reg[23]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/load_buffer_tag_reg[17]' (FDE) to 'potato_0/icache/cl_load_address_reg[28]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/load_buffer_tag_reg[16]' (FDE) to 'potato_0/icache/cl_load_address_reg[27]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/load_buffer_tag_reg[15]' (FDE) to 'potato_0/icache/cl_load_address_reg[26]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/cl_current_line_reg[0]' (FDE) to 'potato_0/icache/cl_load_address_reg[4]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/cl_current_line_reg[1]' (FDE) to 'potato_0/icache/cl_load_address_reg[5]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/cl_current_line_reg[2]' (FDE) to 'potato_0/icache/cl_load_address_reg[6]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/cl_current_line_reg[3]' (FDE) to 'potato_0/icache/cl_load_address_reg[7]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/cl_current_line_reg[4]' (FDE) to 'potato_0/icache/cl_load_address_reg[8]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/cl_current_line_reg[5]' (FDE) to 'potato_0/icache/cl_load_address_reg[9]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/cl_current_line_reg[6]' (FDE) to 'potato_0/icache/cl_load_address_reg[10]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/load_buffer_tag_reg[20]' (FDE) to 'potato_0/icache/cl_load_address_reg[31]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/load_buffer_tag_reg[19]' (FDE) to 'potato_0/icache/cl_load_address_reg[30]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/load_buffer_tag_reg[18]' (FDE) to 'potato_0/icache/cl_load_address_reg[29]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_write_reg_reg[0]' (FDRE) to 'pci_mini_0/led_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_write_reg_reg[1]' (FDRE) to 'pci_mini_0/led_reg[1]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_write_reg_reg[2]' (FDRE) to 'pci_mini_0/led_reg[2]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_write_reg_reg[3]' (FDRE) to 'pci_mini_0/led_reg[3]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[7]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[7]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[31]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[11]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[11]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[31]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[15]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[15]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[31]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[19]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[19]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[31]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[23]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[23]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[31]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[20]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[20]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[31]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[21]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[21]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[31]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[22]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[22]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[31]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[16]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[16]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[31]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[17]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[17]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[31]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[18]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[18]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[31]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[12]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[12]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[31]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[13]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[13]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[31]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[14]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[14]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[31]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[8]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[8]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[31]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[9]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[9]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[31]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[10]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[10]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[31]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[4]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[4]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[31]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[5]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[5]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[31]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[6]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[6]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[31]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[30]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[30]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[31]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[31]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[31]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[29]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[24]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[24]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[29]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[25]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[25]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[29]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[26]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[26]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[29]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[27]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[27]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[29]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[28]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[28]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[29]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[29]' (FDRE) to 'pci_mini_0/user_status_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[29]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[3]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[0]' (FDRE) to 'pci_mini_0/user_status_reg_reg[1]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[1]' (FDRE) to 'pci_mini_0/user_status_reg_reg[2]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[1]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[3]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/user_status_reg_reg[2]' (FDRE) to 'pci_mini_0/user_status_reg_reg[3]'
+INFO: [Synth 8-3886] merging instance 'pci_mini_0/pci_read_reg_reg[2]' (FDRE) to 'pci_mini_0/pci_read_reg_reg[3]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (pci_mini_0/\user_status_reg_reg[3] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (pci_mini_0/\pci_read_reg_reg[3] )
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/wb_outputs_reg[sel][0]' (FDE) to 'potato_0/icache/wb_outputs_reg[sel][3]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/wb_outputs_reg[sel][2]' (FDE) to 'potato_0/icache/wb_outputs_reg[sel][3]'
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/wb_outputs_reg[sel][3]' (FDE) to 'potato_0/icache/wb_outputs_reg[sel][1]'
+INFO: [Synth 8-3886] merging instance 'potato_0/processor/execute/decode_exception_cause_reg[4]' (FDE) to 'potato_0/processor/execute/decode_exception_cause_reg[2]'
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (potato_0/\processor/execute /\decode_exception_cause_reg[1] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\processor/execute /\decode_exception_cause_reg[5] )
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (pci_mini_0/EN_RDd_reg)
+INFO: [Synth 8-3886] merging instance 'potato_0/icache/wb_outputs_reg[adr][0]' (FDE) to 'potato_0/icache/wb_outputs_reg[adr][1]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[adr][1] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][0] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][1] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][2] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][3] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][4] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][5] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][6] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][7] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][8] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][9] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][10] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][11] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][12] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][13] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][14] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][15] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][16] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][17] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][18] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][19] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][20] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][21] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][22] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][23] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][24] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][25] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][26] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][27] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][28] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][29] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][30] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[dat][31] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato_0/\icache/wb_outputs_reg[we] )
+WARNING: [Synth 8-3332] Sequential element (pci_read_sel_reg_reg[3]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_sel_reg_reg[2]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_sel_reg_reg[1]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_write_sel_reg_reg[3]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_write_sel_reg_reg[2]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_write_sel_reg_reg[1]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (wb_sel_o_reg[3]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (wb_sel_o_reg[2]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (wb_sel_o_reg[1]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[31]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[30]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[29]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[28]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[27]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[26]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[25]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[24]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[23]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[22]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[21]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[20]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[19]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[18]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[17]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[16]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[15]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[14]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[13]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[12]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[11]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[10]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[9]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[8]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[7]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[6]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[5]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[4]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[3]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[2]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[1]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (user_status_reg_reg[0]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[31]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[30]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[29]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[28]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[27]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[26]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[25]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[24]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[23]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[22]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[21]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[20]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[19]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[18]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[17]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[16]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[15]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[14]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[13]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[12]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[11]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[10]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[9]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[8]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[7]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[6]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[5]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[4]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[3]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[2]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_read_reg_reg[1]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (EN_RDd_reg) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_write_reg_reg[0]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_write_reg_reg[1]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_write_reg_reg[2]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (pci_write_reg_reg[3]) is unused and will be removed from module pci_mini.
+WARNING: [Synth 8-3332] Sequential element (INTR_O_reg) is unused and will be removed from module pic.
+WARNING: [Synth 8-3332] Sequential element (decode_exception_cause_reg[5]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (decode_exception_cause_reg[4]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (decode_exception_cause_reg[1]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[23]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[22]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[21]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[20]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[19]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[18]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[17]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[16]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[15]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[14]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[13]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[12]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[11]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[10]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[9]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[8]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[6]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[5]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[4]) is unused and will be removed from module pp_execute.
+INFO: [Common 17-14] Message 'Synth 8-3332' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+INFO: [Synth 8-3886] merging instance 'potato_0/processor/execute/csr_use_immediate_reg' (FDE) to 'potato_0/processor/execute/funct3_reg[2]'
+---------------------------------------------------------------------------------
+Finished Area Optimization : Time (s): cpu = 00:00:24 ; elapsed = 00:00:25 . Memory (MB): peak = 1491.852 ; gain = 599.340 ; free physical = 4356 ; free virtual = 118485
+---------------------------------------------------------------------------------
+Finished Parallel Area Optimization  : Time (s): cpu = 00:00:24 ; elapsed = 00:00:25 . Memory (MB): peak = 1491.852 ; gain = 599.340 ; free physical = 4356 ; free virtual = 118485
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying XDC Timing Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:30 ; elapsed = 00:00:30 . Memory (MB): peak = 1562.125 ; gain = 669.613 ; free physical = 4250 ; free virtual = 118379
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:37 ; elapsed = 00:00:37 . Memory (MB): peak = 1640.531 ; gain = 748.020 ; free physical = 4172 ; free virtual = 118301
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+INFO: [Synth 8-4480] The timing for the instance potato_0/icache/cache_memory_reg_0 (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
+INFO: [Synth 8-4480] The timing for the instance potato_0/icache/cache_memory_reg_1 (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:39 ; elapsed = 00:00:40 . Memory (MB): peak = 1676.547 ; gain = 784.035 ; free physical = 4135 ; free virtual = 118264
+---------------------------------------------------------------------------------
+Finished Parallel Technology Mapping Optimization  : Time (s): cpu = 00:00:39 ; elapsed = 00:00:40 . Memory (MB): peak = 1676.547 ; gain = 784.035 ; free physical = 4135 ; free virtual = 118264
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+Finished Parallel Synthesis Optimization  : Time (s): cpu = 00:00:39 ; elapsed = 00:00:40 . Memory (MB): peak = 1676.547 ; gain = 784.035 ; free physical = 4135 ; free virtual = 118264
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:40 ; elapsed = 00:00:40 . Memory (MB): peak = 1676.547 ; gain = 784.035 ; free physical = 4135 ; free virtual = 118264
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:40 ; elapsed = 00:00:40 . Memory (MB): peak = 1676.547 ; gain = 784.035 ; free physical = 4135 ; free virtual = 118264
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:40 ; elapsed = 00:00:40 . Memory (MB): peak = 1676.547 ; gain = 784.035 ; free physical = 4135 ; free virtual = 118264
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+----------+------+
+|      |Cell      |Count |
++------+----------+------+
+|1     |BUFG      |     2|
+|2     |CARRY4    |   233|
+|3     |DSP48E1   |     1|
+|4     |DSP48E1_1 |     1|
+|5     |LUT1      |   420|
+|6     |LUT2      |   371|
+|7     |LUT3      |   371|
+|8     |LUT4      |   566|
+|9     |LUT5      |   794|
+|10    |LUT6      |  1312|
+|11    |MUXF7     |    63|
+|12    |MUXF8     |     8|
+|13    |RAM32M    |    12|
+|14    |RAM64M    |    14|
+|15    |RAMB36E1  |     2|
+|16    |FDCE      |   181|
+|17    |FDRE      |  2008|
+|18    |FDSE      |    26|
+|19    |IBUF      |     6|
+|20    |OBUF      |     9|
+|21    |OBUFT     |     7|
++------+----------+------+
+
+Report Instance Areas: 
++------+---------+-------+------+
+|      |Instance |Module |Cells |
++------+---------+-------+------+
+|1     |top      |       |  6407|
++------+---------+-------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:40 ; elapsed = 00:00:40 . Memory (MB): peak = 1676.547 ; gain = 784.035 ; free physical = 4135 ; free virtual = 118264
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 268 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:36 ; elapsed = 00:00:36 . Memory (MB): peak = 1676.547 ; gain = 311.129 ; free physical = 4135 ; free virtual = 118264
+Synthesis Optimization Complete : Time (s): cpu = 00:00:40 ; elapsed = 00:00:41 . Memory (MB): peak = 1676.555 ; gain = 784.043 ; free physical = 4135 ; free virtual = 118264
+INFO: [Project 1-571] Translating synthesized netlist
+INFO: [Netlist 29-17] Analyzing 269 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+WARNING: [Netlist 29-101] Netlist 'top' is not ideal for floorplanning, since the cellview 'top' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 1 inverter(s) to 17 load pin(s).
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 26 instances were transformed.
+  RAM32M => RAM32M (RAMD32, RAMD32, RAMD32, RAMD32, RAMD32, RAMD32, RAMS32, RAMS32): 12 instances
+  RAM64M => RAM64M (RAMD64E, RAMD64E, RAMD64E, RAMD64E): 14 instances
+
+INFO: [Common 17-83] Releasing license: Synthesis
+295 Infos, 223 Warnings, 16 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:00:41 ; elapsed = 00:00:41 . Memory (MB): peak = 1708.562 ; gain = 741.496 ; free physical = 4136 ; free virtual = 118266
+report_utilization: Time (s): cpu = 00:00:00.06 ; elapsed = 00:00:00.07 . Memory (MB): peak = 1740.578 ; gain = 0.000 ; free physical = 4135 ; free virtual = 118265
+INFO: [Common 17-206] Exiting Vivado at Sat Jan 13 14:11:39 2018...

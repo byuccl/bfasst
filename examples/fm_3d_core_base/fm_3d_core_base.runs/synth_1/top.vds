@@ -1,0 +1,2673 @@
+#-----------------------------------------------------------
+# Vivado v2016.2 (64-bit)
+# SW Build 1577090 on Thu Jun  2 16:32:35 MDT 2016
+# IP Build 1577682 on Fri Jun  3 12:00:54 MDT 2016
+# Start of session at: Sat Jan 13 13:37:39 2018
+# Process ID: 8807
+# Current directory: /home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.runs/synth_1
+# Command line: vivado -log top.vds -mode batch -messageDb vivado.pb -notrace -source top.tcl
+# Log file: /home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.runs/synth_1/top.vds
+# Journal file: /home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.runs/synth_1/vivado.jou
+#-----------------------------------------------------------
+source top.tcl -notrace
+Command: synth_design -top top -part xc7a100tcsg324-1 -flatten_hierarchy full
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: Launching helper process for spawning children vivado processes
+INFO: Helper process launched with PID 8810 
+WARNING: [Synth 8-2507] parameter declaration becomes local in tmu_pixout with formal parameter declaration list [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_pixout.v:97]
+WARNING: [Synth 8-2507] parameter declaration becomes local in tmu_pixout with formal parameter declaration list [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_pixout.v:98]
+WARNING: [Synth 8-2507] parameter declaration becomes local in tmu_pixout with formal parameter declaration list [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_pixout.v:99]
+WARNING: [Synth 8-2507] parameter declaration becomes local in tmu_pixout with formal parameter declaration list [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_pixout.v:100]
+WARNING: [Synth 8-2507] parameter declaration becomes local in tmu_pixin with formal parameter declaration list [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_pixin.v:186]
+WARNING: [Synth 8-2507] parameter declaration becomes local in tmu_pixin with formal parameter declaration list [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_pixin.v:187]
+WARNING: [Synth 8-2507] parameter declaration becomes local in tmu_pixin with formal parameter declaration list [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_pixin.v:188]
+WARNING: [Synth 8-2507] parameter declaration becomes local in tmu_pixin with formal parameter declaration list [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_pixin.v:189]
+WARNING: [Synth 8-2507] parameter declaration becomes local in tmu_pixin with formal parameter declaration list [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_pixin.v:190]
+WARNING: [Synth 8-2507] parameter declaration becomes local in tmu_pixin with formal parameter declaration list [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_pixin.v:191]
+WARNING: [Synth 8-2507] parameter declaration becomes local in tmu_pixin with formal parameter declaration list [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_pixin.v:192]
+WARNING: [Synth 8-2507] parameter declaration becomes local in tmu_pixin with formal parameter declaration list [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_pixin.v:193]
+WARNING: [Synth 8-2507] parameter declaration becomes local in tmu_pixin with formal parameter declaration list [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_pixin.v:194]
+WARNING: [Synth 8-2507] parameter declaration becomes local in tmu_burst with formal parameter declaration list [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_burst.v:114]
+WARNING: [Synth 8-2507] parameter declaration becomes local in tmu_burst with formal parameter declaration list [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_burst.v:115]
+WARNING: [Synth 8-2507] parameter declaration becomes local in tmu with formal parameter declaration list [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu.v:829]
+WARNING: [Synth 8-2507] parameter declaration becomes local in tmu with formal parameter declaration list [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu.v:830]
+WARNING: [Synth 8-2507] parameter declaration becomes local in tmu with formal parameter declaration list [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu.v:831]
+WARNING: [Synth 8-2507] parameter declaration becomes local in tmu with formal parameter declaration list [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu.v:832]
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:03 ; elapsed = 00:00:04 . Memory (MB): peak = 1056.309 ; gain = 164.324 ; free physical = 24568 ; free virtual = 94272
+---------------------------------------------------------------------------------
+INFO: [Synth 8-638] synthesizing module 'top' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/new/top.v:23]
+INFO: [Synth 8-638] synthesizing module 'pp_potato' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_potato.vhd:49]
+	Parameter PROCESSOR_ID bound to: 32'b00000000000000000000000000000000 
+	Parameter RESET_ADDRESS bound to: 32'b00000000000000000000001000000000 
+	Parameter MTIME_DIVIDER bound to: 5 - type: integer 
+	Parameter ICACHE_ENABLE bound to: 1 - type: bool 
+	Parameter ICACHE_AREAS bound to: 32'b11111111111111111111111111111111 
+	Parameter ICACHE_LINE_SIZE bound to: 4 - type: integer 
+	Parameter ICACHE_NUM_LINES bound to: 128 - type: integer 
+INFO: [Synth 8-638] synthesizing module 'pp_core' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_core.vhd:55]
+	Parameter PROCESSOR_ID bound to: 0 - type: integer 
+	Parameter RESET_ADDRESS bound to: 512 - type: integer 
+	Parameter MTIME_DIVIDER bound to: 5 - type: integer 
+INFO: [Synth 8-638] synthesizing module 'pp_csr_unit' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_csr_unit.vhd:59]
+	Parameter PROCESSOR_ID bound to: 0 - type: integer 
+	Parameter MTIME_DIVIDER bound to: 5 - type: integer 
+INFO: [Synth 8-638] synthesizing module 'pp_counter' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_counter.vhd:23]
+	Parameter COUNTER_WIDTH bound to: 64 - type: integer 
+	Parameter COUNTER_STEP bound to: 1 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'pp_counter' (1#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_counter.vhd:23]
+INFO: [Synth 8-256] done synthesizing module 'pp_csr_unit' (2#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_csr_unit.vhd:59]
+INFO: [Synth 8-638] synthesizing module 'pp_register_file' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_register_file.vhd:32]
+INFO: [Synth 8-256] done synthesizing module 'pp_register_file' (3#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_register_file.vhd:32]
+INFO: [Synth 8-638] synthesizing module 'pp_fetch' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_fetch.vhd:42]
+	Parameter RESET_ADDRESS bound to: 512 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'pp_fetch' (4#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_fetch.vhd:42]
+INFO: [Synth 8-638] synthesizing module 'pp_decode' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_decode.vhd:67]
+	Parameter RESET_ADDRESS bound to: 512 - type: integer 
+	Parameter PROCESSOR_ID bound to: 0 - type: integer 
+INFO: [Synth 8-638] synthesizing module 'pp_imm_decoder' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_imm_decoder.vhd:16]
+INFO: [Synth 8-256] done synthesizing module 'pp_imm_decoder' (5#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_imm_decoder.vhd:16]
+INFO: [Synth 8-638] synthesizing module 'pp_control_unit' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_control_unit.vhd:52]
+INFO: [Synth 8-638] synthesizing module 'pp_alu_control_unit' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_alu_control_unit.vhd:25]
+INFO: [Synth 8-226] default block is never used [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_alu_control_unit.vhd:70]
+INFO: [Synth 8-226] default block is never used [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_alu_control_unit.vhd:98]
+INFO: [Synth 8-256] done synthesizing module 'pp_alu_control_unit' (6#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_alu_control_unit.vhd:25]
+INFO: [Synth 8-256] done synthesizing module 'pp_control_unit' (7#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_control_unit.vhd:52]
+INFO: [Synth 8-256] done synthesizing module 'pp_decode' (8#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_decode.vhd:67]
+INFO: [Synth 8-638] synthesizing module 'pp_execute' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_execute.vhd:125]
+WARNING: [Synth 8-5827] expecting unsigned expression [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_execute.vhd:290]
+WARNING: [Synth 8-5827] expecting unsigned expression [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_execute.vhd:290]
+WARNING: [Synth 8-5827] expecting unsigned expression [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_execute.vhd:290]
+WARNING: [Synth 8-5827] expecting unsigned expression [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_execute.vhd:290]
+WARNING: [Synth 8-5827] expecting unsigned expression [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_execute.vhd:290]
+WARNING: [Synth 8-5827] expecting unsigned expression [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_execute.vhd:290]
+WARNING: [Synth 8-5827] expecting unsigned expression [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_execute.vhd:290]
+WARNING: [Synth 8-5827] expecting unsigned expression [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_execute.vhd:290]
+INFO: [Synth 8-638] synthesizing module 'pp_alu_mux' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_alu_mux.vhd:26]
+INFO: [Synth 8-256] done synthesizing module 'pp_alu_mux' (9#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_alu_mux.vhd:26]
+INFO: [Synth 8-638] synthesizing module 'pp_comparator' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_comparator.vhd:20]
+INFO: [Synth 8-256] done synthesizing module 'pp_comparator' (10#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_comparator.vhd:20]
+INFO: [Synth 8-638] synthesizing module 'pp_alu' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_alu.vhd:26]
+INFO: [Synth 8-256] done synthesizing module 'pp_alu' (11#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_alu.vhd:26]
+INFO: [Synth 8-638] synthesizing module 'pp_csr_alu' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_csr_alu.vhd:22]
+INFO: [Synth 8-256] done synthesizing module 'pp_csr_alu' (12#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_csr_alu.vhd:22]
+INFO: [Synth 8-256] done synthesizing module 'pp_execute' (13#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_execute.vhd:125]
+INFO: [Synth 8-638] synthesizing module 'pp_memory' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_memory.vhd:61]
+INFO: [Synth 8-256] done synthesizing module 'pp_memory' (14#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_memory.vhd:61]
+INFO: [Synth 8-638] synthesizing module 'pp_writeback' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_writeback.vhd:45]
+INFO: [Synth 8-256] done synthesizing module 'pp_writeback' (15#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_writeback.vhd:45]
+INFO: [Synth 8-256] done synthesizing module 'pp_core' (16#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_core.vhd:55]
+INFO: [Synth 8-638] synthesizing module 'pp_icache' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_icache.vhd:39]
+	Parameter LINE_SIZE bound to: 4 - type: integer 
+	Parameter NUM_LINES bound to: 128 - type: integer 
+	Parameter CACHED_AREAS bound to: -1 - type: integer 
+INFO: [Synth 8-5534] Detected attribute (* ram_style = "block" *) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_icache.vhd:55]
+WARNING: [Synth 8-3848] Net wb_outputs[dat] in module/entity pp_icache does not have driver. [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_icache.vhd:35]
+INFO: [Synth 8-256] done synthesizing module 'pp_icache' (17#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_icache.vhd:39]
+INFO: [Synth 8-638] synthesizing module 'pp_wb_adapter' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_wb_adapter.vhd:34]
+INFO: [Synth 8-226] default block is never used [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_wb_adapter.vhd:90]
+INFO: [Synth 8-226] default block is never used [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_utilities.vhd:71]
+INFO: [Synth 8-226] default block is never used [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_utilities.vhd:71]
+INFO: [Synth 8-226] default block is never used [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_wb_adapter.vhd:107]
+INFO: [Synth 8-256] done synthesizing module 'pp_wb_adapter' (18#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_wb_adapter.vhd:34]
+INFO: [Synth 8-638] synthesizing module 'pp_wb_arbiter' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_wb_arbiter.vhd:37]
+INFO: [Synth 8-256] done synthesizing module 'pp_wb_arbiter' (19#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_wb_arbiter.vhd:37]
+INFO: [Synth 8-256] done synthesizing module 'pp_potato' (20#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_potato.vhd:49]
+INFO: [Synth 8-638] synthesizing module 'fm_3d_core' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_3d_core.v:43]
+INFO: [Synth 8-638] synthesizing module 'fm_sys' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_sys.v:43]
+INFO: [Synth 8-638] synthesizing module 'fm_3d_fcnv' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_3d_fcnv.v:43]
+INFO: [Synth 8-256] done synthesizing module 'fm_3d_fcnv' (21#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_3d_fcnv.v:43]
+INFO: [Synth 8-256] done synthesizing module 'fm_sys' (22#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_sys.v:43]
+INFO: [Synth 8-638] synthesizing module 'fm_geo' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/src/fm_geo.v:43]
+INFO: [Synth 8-638] synthesizing module 'fm_geo_mem' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/src/fm_geo_mem.v:43]
+	Parameter P_BURST_MODE bound to: 0 - type: integer 
+	Parameter P_IDLE bound to: 0 - type: integer 
+	Parameter P_REQ bound to: 1 - type: integer 
+	Parameter P_RD_X bound to: 2 - type: integer 
+	Parameter P_RD_Y bound to: 3 - type: integer 
+	Parameter P_RD_Z bound to: 4 - type: integer 
+	Parameter P_RD_W bound to: 5 - type: integer 
+	Parameter P_ACK_WAIT bound to: 6 - type: integer 
+	Parameter P_DONE bound to: 7 - type: integer 
+INFO: [Synth 8-155] case statement is not full and has no default [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/src/fm_geo_mem.v:197]
+INFO: [Synth 8-155] case statement is not full and has no default [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/src/fm_geo_mem.v:240]
+INFO: [Synth 8-256] done synthesizing module 'fm_geo_mem' (23#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/src/fm_geo_mem.v:43]
+WARNING: [Synth 8-350] instance 'u_geo_mem' of module 'fm_geo_mem' requires 19 connections, but only 18 given [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/src/fm_geo.v:190]
+INFO: [Synth 8-638] synthesizing module 'fm_geo_matrix' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_geo_matrix.v:43]
+	Parameter P_IDLE bound to: 0 - type: integer 
+	Parameter P_ROW1_IN bound to: 1 - type: integer 
+	Parameter P_ROW2_IN bound to: 2 - type: integer 
+	Parameter P_ROW3_IN bound to: 3 - type: integer 
+	Parameter P_WAIT bound to: 4 - type: integer 
+	Parameter P_DONE bound to: 5 - type: integer 
+	Parameter P_FMUL_LAT bound to: 3 - type: integer 
+	Parameter P_FADD_LAT bound to: 3 - type: integer 
+	Parameter P_ROW_LAT bound to: 8 - type: integer 
+INFO: [Synth 8-155] case statement is not full and has no default [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_geo_matrix.v:457]
+INFO: [Synth 8-638] synthesizing module 'fm_3d_fmul' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_3d_fmul.v:42]
+INFO: [Synth 8-638] synthesizing module 'fm_3d_norm' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_3d_norm.v:42]
+INFO: [Synth 8-256] done synthesizing module 'fm_3d_norm' (24#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_3d_norm.v:42]
+INFO: [Synth 8-256] done synthesizing module 'fm_3d_fmul' (25#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_3d_fmul.v:42]
+INFO: [Synth 8-638] synthesizing module 'fm_3d_fadd' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_3d_fadd.v:43]
+INFO: [Synth 8-256] done synthesizing module 'fm_3d_fadd' (26#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_3d_fadd.v:43]
+INFO: [Synth 8-256] done synthesizing module 'fm_geo_matrix' (27#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_geo_matrix.v:43]
+INFO: [Synth 8-638] synthesizing module 'fm_geo_clip' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_geo_clip.v:43]
+	Parameter P_IDLE bound to: 0 - type: integer 
+	Parameter P_X_P1_PLANE bound to: 1 - type: integer 
+	Parameter P_Y_M1_PLANE bound to: 2 - type: integer 
+	Parameter P_Y_P1_PLANE bound to: 3 - type: integer 
+	Parameter P_Z_M1_PLANE bound to: 4 - type: integer 
+	Parameter P_Z_P1_PLANE bound to: 5 - type: integer 
+	Parameter P_WADD0 bound to: 6 - type: integer 
+	Parameter P_WADD1 bound to: 7 - type: integer 
+	Parameter P_WADD2 bound to: 8 - type: integer 
+	Parameter P_DONE bound to: 9 - type: integer 
+INFO: [Synth 8-155] case statement is not full and has no default [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_geo_clip.v:170]
+INFO: [Synth 8-256] done synthesizing module 'fm_geo_clip' (28#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_geo_clip.v:43]
+INFO: [Synth 8-638] synthesizing module 'fm_geo_persdiv' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_geo_persdiv.v:44]
+	Parameter P_IDLE bound to: 0 - type: integer 
+	Parameter P_WRECIP0 bound to: 1 - type: integer 
+	Parameter P_X_IN bound to: 2 - type: integer 
+	Parameter P_Y_IN bound to: 3 - type: integer 
+	Parameter P_WMUL0 bound to: 4 - type: integer 
+	Parameter P_WMUL1 bound to: 5 - type: integer 
+	Parameter P_WMUL2 bound to: 6 - type: integer 
+	Parameter P_DONE bound to: 7 - type: integer 
+INFO: [Synth 8-155] case statement is not full and has no default [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_geo_persdiv.v:133]
+INFO: [Synth 8-638] synthesizing module 'fm_3d_frcp' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_3d_frcp.v:43]
+INFO: [Synth 8-638] synthesizing module 'fm_3d_frcp_rom' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_3d_frcp_rom.v:42]
+INFO: [Synth 8-226] default block is never used [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_3d_frcp_rom.v:67]
+INFO: [Synth 8-256] done synthesizing module 'fm_3d_frcp_rom' (29#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_3d_frcp_rom.v:42]
+INFO: [Synth 8-256] done synthesizing module 'fm_3d_frcp' (30#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_3d_frcp.v:43]
+INFO: [Synth 8-256] done synthesizing module 'fm_geo_persdiv' (31#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_geo_persdiv.v:44]
+INFO: [Synth 8-638] synthesizing module 'fm_geo_viewport' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_geo_viewport.v:53]
+	Parameter P_IDLE bound to: 0 - type: integer 
+	Parameter P_Y_IN bound to: 1 - type: integer 
+	Parameter P_WADD2 bound to: 2 - type: integer 
+	Parameter P_WMUL0 bound to: 3 - type: integer 
+	Parameter P_WMUL1 bound to: 4 - type: integer 
+	Parameter P_WMUL2 bound to: 5 - type: integer 
+	Parameter P_WMUL3 bound to: 6 - type: integer 
+	Parameter P_WAIT bound to: 7 - type: integer 
+	Parameter P_DONE bound to: 8 - type: integer 
+	Parameter P_1F bound to: 22'b0011111000000000000000 
+	Parameter P_SCREEN_WIDTH bound to: 22'b0110001010000000000000 
+	Parameter P_SCREEN_HEIGHT bound to: 22'b0101111111000000000000 
+	Parameter P_SCREEN_WIDTH_HALF bound to: 22'b0101111010000000000000 
+	Parameter P_SCREEN_HEIGHT_HALF bound to: 22'b0101101111000000000000 
+INFO: [Synth 8-155] case statement is not full and has no default [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_geo_viewport.v:143]
+INFO: [Synth 8-256] done synthesizing module 'fm_geo_viewport' (32#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_geo_viewport.v:53]
+INFO: [Synth 8-638] synthesizing module 'fm_geo_tri' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_geo_tri.v:47]
+	Parameter P_V0_X_IN bound to: 0 - type: integer 
+	Parameter P_V0_Y_IN bound to: 1 - type: integer 
+	Parameter P_V1_X_IN bound to: 2 - type: integer 
+	Parameter P_V1_Y_IN bound to: 3 - type: integer 
+	Parameter P_V2_X_IN bound to: 4 - type: integer 
+	Parameter P_V2_Y_IN bound to: 5 - type: integer 
+	Parameter P_DONE bound to: 6 - type: integer 
+INFO: [Synth 8-155] case statement is not full and has no default [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_geo_tri.v:174]
+INFO: [Synth 8-638] synthesizing module 'fm_3d_f22_to_i' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_3d_f22_to_i.v:42]
+INFO: [Synth 8-256] done synthesizing module 'fm_3d_f22_to_i' (33#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_3d_f22_to_i.v:42]
+INFO: [Synth 8-256] done synthesizing module 'fm_geo_tri' (34#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_geo_tri.v:47]
+INFO: [Synth 8-638] synthesizing module 'fm_geo_cull' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_geo_cull.v:43]
+	Parameter P_IDLE bound to: 0 - type: integer 
+	Parameter P_SUM1 bound to: 1 - type: integer 
+	Parameter P_SUM2 bound to: 2 - type: integer 
+	Parameter P_OUT bound to: 3 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'fm_geo_cull' (35#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_geo_cull.v:43]
+INFO: [Synth 8-256] done synthesizing module 'fm_geo' (36#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/src/fm_geo.v:43]
+INFO: [Synth 8-638] synthesizing module 'fm_ras' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/src/fm_ras.v:43]
+INFO: [Synth 8-638] synthesizing module 'fm_ras_state' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_ras_state.v:45]
+	Parameter P_IDLE bound to: 0 - type: integer 
+	Parameter P_LINE_0 bound to: 1 - type: integer 
+	Parameter P_LINE_1 bound to: 2 - type: integer 
+	Parameter P_LINE_2 bound to: 3 - type: integer 
+INFO: [Synth 8-155] case statement is not full and has no default [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_ras_state.v:144]
+INFO: [Synth 8-256] done synthesizing module 'fm_ras_state' (37#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_ras_state.v:45]
+INFO: [Synth 8-638] synthesizing module 'fm_ras_line' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_ras_line.v:43]
+	Parameter P_IDLE bound to: 0 - type: integer 
+	Parameter P_OUT bound to: 1 - type: integer 
+	Parameter P_PROC bound to: 2 - type: integer 
+INFO: [Synth 8-155] case statement is not full and has no default [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_ras_line.v:144]
+INFO: [Synth 8-155] case statement is not full and has no default [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_ras_line.v:178]
+INFO: [Synth 8-155] case statement is not full and has no default [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_ras_line.v:162]
+INFO: [Synth 8-256] done synthesizing module 'fm_ras_line' (38#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_ras_line.v:43]
+INFO: [Synth 8-638] synthesizing module 'fm_ras_mem' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_ras_mem.v:44]
+	Parameter P_IDLE bound to: 0 - type: integer 
+	Parameter P_REQ bound to: 1 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'fm_ras_mem' (39#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_ras_mem.v:44]
+INFO: [Synth 8-256] done synthesizing module 'fm_ras' (40#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/src/fm_ras.v:43]
+INFO: [Synth 8-638] synthesizing module 'fm_mem_arb' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_mem_arb.v:43]
+	Parameter P_IDLE bound to: 0 - type: integer 
+	Parameter P_WAIT bound to: 1 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'fm_mem_arb' (41#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_mem_arb.v:43]
+INFO: [Synth 8-256] done synthesizing module 'fm_3d_core' (42#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_3d_core.v:43]
+INFO: [Synth 8-638] synthesizing module 'tmu' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu.v:19]
+	Parameter csr_addr bound to: 4'b0000 
+	Parameter fml_depth bound to: 26 - type: integer 
+	Parameter pixin_cache_depth bound to: 12 - type: integer 
+	Parameter IDLE bound to: 2'b00 
+	Parameter WAIT_PROCESS bound to: 2'b01 
+	Parameter FLUSH bound to: 2'b10 
+	Parameter WAIT_FLUSH bound to: 2'b11 
+INFO: [Synth 8-638] synthesizing module 'tmu_ctlif' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_ctlif.v:19]
+	Parameter csr_addr bound to: 4'b0000 
+	Parameter fml_depth bound to: 26 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'tmu_ctlif' (43#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_ctlif.v:19]
+INFO: [Synth 8-638] synthesizing module 'tmu_meshgen' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_meshgen.v:19]
+	Parameter IDLE bound to: 6'b000000 
+	Parameter LS_WAIT_AADR bound to: 6'b000001 
+	Parameter LS_WAIT2_AADR bound to: 6'b000010 
+	Parameter LS_LOAD_A bound to: 6'b000011 
+	Parameter LS_WAIT_BADR bound to: 6'b000100 
+	Parameter LS_WAIT2_BADR bound to: 6'b000101 
+	Parameter LS_LOAD_B bound to: 6'b000110 
+	Parameter LS_WAIT_CADR bound to: 6'b000111 
+	Parameter LS_WAIT2_CADR bound to: 6'b001000 
+	Parameter LS_LOAD_C bound to: 6'b001001 
+	Parameter IL1T_WAIT_BADR bound to: 6'b001010 
+	Parameter IL1T_WAIT2_BADR bound to: 6'b001011 
+	Parameter IL1T_LOAD_B bound to: 6'b001100 
+	Parameter IL1T_PIPEOUT bound to: 6'b001101 
+	Parameter IL1B_WAIT_AADR bound to: 6'b001110 
+	Parameter IL1B_WAIT2_AADR bound to: 6'b001111 
+	Parameter IL1B_LOAD_A bound to: 6'b010000 
+	Parameter IL1B_PIPEOUT bound to: 6'b010001 
+	Parameter IL2T_WAIT_CADR bound to: 6'b010010 
+	Parameter IL2T_WAIT2_CADR bound to: 6'b010011 
+	Parameter IL2T_LOAD_C bound to: 6'b010100 
+	Parameter IL2T_PIPEOUT bound to: 6'b010101 
+	Parameter IL2B_WAIT_BADR bound to: 6'b010110 
+	Parameter IL2B_WAIT2_BADR bound to: 6'b010111 
+	Parameter IL2B_LOAD_B bound to: 6'b011000 
+	Parameter IL2B_PIPEOUT bound to: 6'b011001 
+	Parameter IL3T_WAIT_AADR bound to: 6'b011010 
+	Parameter IL3T_WAIT2_AADR bound to: 6'b011011 
+	Parameter IL3T_LOAD_A bound to: 6'b011100 
+	Parameter IL3T_PIPEOUT bound to: 6'b011101 
+	Parameter IL3B_WAIT_CADR bound to: 6'b011110 
+	Parameter IL3B_WAIT2_CADR bound to: 6'b011111 
+	Parameter IL3B_LOAD_C bound to: 6'b100000 
+	Parameter IL3B_PIPEOUT bound to: 6'b100001 
+INFO: [Synth 8-155] case statement is not full and has no default [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_meshgen.v:248]
+INFO: [Synth 8-256] done synthesizing module 'tmu_meshgen' (44#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_meshgen.v:19]
+INFO: [Synth 8-638] synthesizing module 'tmu_reorder' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_reorder.v:19]
+INFO: [Synth 8-256] done synthesizing module 'tmu_reorder' (45#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_reorder.v:19]
+INFO: [Synth 8-638] synthesizing module 'tmu_edgedivops' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_edgedivops.v:19]
+INFO: [Synth 8-256] done synthesizing module 'tmu_edgedivops' (46#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_edgedivops.v:19]
+INFO: [Synth 8-638] synthesizing module 'tmu_edgediv' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_edgediv.v:19]
+	Parameter IDLE bound to: 1'b0 
+	Parameter WAIT bound to: 1'b1 
+INFO: [Synth 8-638] synthesizing module 'tmu_divider11' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_divider11.v:21]
+INFO: [Synth 8-256] done synthesizing module 'tmu_divider11' (47#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_divider11.v:21]
+INFO: [Synth 8-256] done synthesizing module 'tmu_edgediv' (48#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_edgediv.v:19]
+INFO: [Synth 8-638] synthesizing module 'tmu_edgetrace' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_edgetrace.v:19]
+	Parameter IDLE bound to: 3'b000 
+	Parameter A_NEXT bound to: 3'b001 
+	Parameter A_PIPEOUT_WAIT bound to: 3'b010 
+	Parameter A_PIPEOUT bound to: 3'b011 
+	Parameter B_START bound to: 3'b100 
+	Parameter B_NEXT bound to: 3'b101 
+	Parameter B_PIPEOUT_WAIT bound to: 3'b110 
+	Parameter B_PIPEOUT bound to: 3'b111 
+INFO: [Synth 8-256] done synthesizing module 'tmu_edgetrace' (49#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_edgetrace.v:19]
+INFO: [Synth 8-638] synthesizing module 'tmu_scandivops' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_scandivops.v:19]
+INFO: [Synth 8-256] done synthesizing module 'tmu_scandivops' (50#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_scandivops.v:19]
+INFO: [Synth 8-638] synthesizing module 'tmu_scandiv' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_scandiv.v:19]
+	Parameter IDLE bound to: 1'b0 
+	Parameter WAIT bound to: 1'b1 
+INFO: [Synth 8-256] done synthesizing module 'tmu_scandiv' (51#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_scandiv.v:19]
+INFO: [Synth 8-638] synthesizing module 'tmu_scantrace' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_scantrace.v:19]
+	Parameter IDLE bound to: 1'b0 
+	Parameter BUSY bound to: 1'b1 
+INFO: [Synth 8-256] done synthesizing module 'tmu_scantrace' (52#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_scantrace.v:19]
+INFO: [Synth 8-638] synthesizing module 'tmu_filter' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_filter.v:19]
+INFO: [Synth 8-256] done synthesizing module 'tmu_filter' (53#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_filter.v:19]
+INFO: [Synth 8-638] synthesizing module 'tmu_addresses' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_addresses.v:19]
+	Parameter fml_depth bound to: 26 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'tmu_addresses' (54#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_addresses.v:19]
+INFO: [Synth 8-638] synthesizing module 'tmu_pixin' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_pixin.v:19]
+	Parameter fml_depth bound to: 26 - type: integer 
+	Parameter cache_depth bound to: 12 - type: integer 
+	Parameter IDLE bound to: 4'b0000 
+	Parameter RUNNING bound to: 4'b0001 
+	Parameter WAIT_DOWNSTREAM bound to: 4'b0010 
+	Parameter CACHEMISS bound to: 4'b0011 
+	Parameter BURST2 bound to: 4'b0100 
+	Parameter BURST3 bound to: 4'b0101 
+	Parameter BURST4 bound to: 4'b0110 
+	Parameter READOFFSET bound to: 4'b0111 
+	Parameter FLUSH bound to: 4'b1000 
+INFO: [Synth 8-155] case statement is not full and has no default [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_pixin.v:225]
+INFO: [Synth 8-256] done synthesizing module 'tmu_pixin' (55#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_pixin.v:19]
+INFO: [Synth 8-638] synthesizing module 'tmu_decay' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_decay.v:19]
+	Parameter fml_depth bound to: 26 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'tmu_decay' (56#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_decay.v:19]
+INFO: [Synth 8-638] synthesizing module 'tmu_burst' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_burst.v:19]
+	Parameter fml_depth bound to: 26 - type: integer 
+	Parameter RUNNING bound to: 1'b0 
+	Parameter DOWNSTREAM bound to: 1'b1 
+INFO: [Synth 8-256] done synthesizing module 'tmu_burst' (57#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_burst.v:19]
+INFO: [Synth 8-638] synthesizing module 'tmu_pixout' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_pixout.v:19]
+	Parameter fml_depth bound to: 26 - type: integer 
+	Parameter IDLE bound to: 2'b00 
+	Parameter WAIT bound to: 2'b01 
+	Parameter XFER2 bound to: 2'b10 
+	Parameter XFER3 bound to: 2'b11 
+INFO: [Synth 8-256] done synthesizing module 'tmu_pixout' (58#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_pixout.v:19]
+INFO: [Synth 8-638] synthesizing module 'tmu_perfcounters' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_perfcounters.v:19]
+INFO: [Synth 8-256] done synthesizing module 'tmu_perfcounters' (59#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_perfcounters.v:19]
+INFO: [Synth 8-256] done synthesizing module 'tmu' (60#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu.v:19]
+INFO: [Synth 8-638] synthesizing module 'vga80x40' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/vga80x40.vhd:53]
+	Parameter M bound to: 794 - type: integer 
+INFO: [Synth 8-3491] module 'ctrm' declared at '/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/ctrm.vhd:28' bound to instance 'U_HCTR' of component 'ctrm' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/vga80x40.vhd:210]
+INFO: [Synth 8-638] synthesizing module 'ctrm' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/ctrm.vhd:42]
+	Parameter M bound to: 794 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'ctrm' (61#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/ctrm.vhd:42]
+	Parameter M bound to: 525 - type: integer 
+INFO: [Synth 8-3491] module 'ctrm' declared at '/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/ctrm.vhd:28' bound to instance 'U_VCTR' of component 'ctrm' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/vga80x40.vhd:213]
+INFO: [Synth 8-638] synthesizing module 'ctrm__parameterized1' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/ctrm.vhd:42]
+	Parameter M bound to: 525 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'ctrm__parameterized1' (61#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/ctrm.vhd:42]
+	Parameter M bound to: 8 - type: integer 
+INFO: [Synth 8-3491] module 'ctrm' declared at '/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/ctrm.vhd:28' bound to instance 'U_CHRX' of component 'ctrm' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/vga80x40.vhd:220]
+INFO: [Synth 8-638] synthesizing module 'ctrm__parameterized3' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/ctrm.vhd:42]
+	Parameter M bound to: 8 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'ctrm__parameterized3' (61#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/ctrm.vhd:42]
+	Parameter M bound to: 12 - type: integer 
+INFO: [Synth 8-3491] module 'ctrm' declared at '/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/ctrm.vhd:28' bound to instance 'U_CHRY' of component 'ctrm' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/vga80x40.vhd:221]
+INFO: [Synth 8-638] synthesizing module 'ctrm__parameterized5' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/ctrm.vhd:42]
+	Parameter M bound to: 12 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'ctrm__parameterized5' (61#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/ctrm.vhd:42]
+	Parameter M bound to: 80 - type: integer 
+INFO: [Synth 8-3491] module 'ctrm' declared at '/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/ctrm.vhd:28' bound to instance 'U_SCRX' of component 'ctrm' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/vga80x40.vhd:222]
+INFO: [Synth 8-638] synthesizing module 'ctrm__parameterized7' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/ctrm.vhd:42]
+	Parameter M bound to: 80 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'ctrm__parameterized7' (61#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/ctrm.vhd:42]
+	Parameter M bound to: 40 - type: integer 
+INFO: [Synth 8-3491] module 'ctrm' declared at '/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/ctrm.vhd:28' bound to instance 'U_SCRY' of component 'ctrm' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/vga80x40.vhd:223]
+INFO: [Synth 8-638] synthesizing module 'ctrm__parameterized9' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/ctrm.vhd:42]
+	Parameter M bound to: 40 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'ctrm__parameterized9' (61#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/ctrm.vhd:42]
+	Parameter N bound to: 8 - type: integer 
+INFO: [Synth 8-3491] module 'losr' declared at '/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/losr.vhd:31' bound to instance 'U_LOSR' of component 'losr' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/vga80x40.vhd:256]
+INFO: [Synth 8-638] synthesizing module 'losr' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/losr.vhd:44]
+	Parameter N bound to: 8 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'losr' (62#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/losr.vhd:44]
+INFO: [Synth 8-256] done synthesizing module 'vga80x40' (63#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/vga80x40.vhd:53]
+INFO: [Synth 8-256] done synthesizing module 'top' (64#1) [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/new/top.v:23]
+WARNING: [Synth 8-3331] design vga80x40 has unconnected port ocrx[7]
+WARNING: [Synth 8-3331] design vga80x40 has unconnected port ocry[7]
+WARNING: [Synth 8-3331] design vga80x40 has unconnected port ocry[6]
+WARNING: [Synth 8-3331] design vga80x40 has unconnected port octl[3]
+WARNING: [Synth 8-3331] design tmu_meshgen has unconnected port wbm_dat_i[31]
+WARNING: [Synth 8-3331] design tmu_meshgen has unconnected port wbm_dat_i[30]
+WARNING: [Synth 8-3331] design tmu_meshgen has unconnected port wbm_dat_i[29]
+WARNING: [Synth 8-3331] design tmu_meshgen has unconnected port wbm_dat_i[28]
+WARNING: [Synth 8-3331] design tmu_meshgen has unconnected port wbm_dat_i[27]
+WARNING: [Synth 8-3331] design tmu_meshgen has unconnected port wbm_dat_i[15]
+WARNING: [Synth 8-3331] design tmu_meshgen has unconnected port wbm_dat_i[14]
+WARNING: [Synth 8-3331] design tmu_meshgen has unconnected port wbm_dat_i[13]
+WARNING: [Synth 8-3331] design tmu_meshgen has unconnected port wbm_dat_i[12]
+WARNING: [Synth 8-3331] design tmu_meshgen has unconnected port wbm_dat_i[11]
+WARNING: [Synth 8-3331] design tmu_ctlif has unconnected port csr_a[9]
+WARNING: [Synth 8-3331] design tmu_ctlif has unconnected port csr_a[8]
+WARNING: [Synth 8-3331] design tmu_ctlif has unconnected port csr_a[7]
+WARNING: [Synth 8-3331] design tmu_ctlif has unconnected port csr_a[6]
+WARNING: [Synth 8-3331] design tmu_ctlif has unconnected port csr_a[5]
+WARNING: [Synth 8-3331] design fm_mem_arb has unconnected port i_adrs_geo[1]
+WARNING: [Synth 8-3331] design fm_mem_arb has unconnected port i_adrs_geo[0]
+WARNING: [Synth 8-3331] design fm_mem_arb has unconnected port i_adrs_ras[1]
+WARNING: [Synth 8-3331] design fm_mem_arb has unconnected port i_adrs_ras[0]
+WARNING: [Synth 8-3331] design fm_ras_mem has unconnected port i_scr_w[1]
+WARNING: [Synth 8-3331] design fm_ras_mem has unconnected port i_scr_w[0]
+WARNING: [Synth 8-3331] design fm_ras_mem has unconnected port i_scr_h_m1[15]
+WARNING: [Synth 8-3331] design fm_ras_mem has unconnected port i_scr_h_m1[14]
+WARNING: [Synth 8-3331] design fm_ras_mem has unconnected port i_scr_h_m1[13]
+WARNING: [Synth 8-3331] design fm_ras_mem has unconnected port i_scr_h_m1[12]
+WARNING: [Synth 8-3331] design fm_3d_frcp has unconnected port i_a[15]
+WARNING: [Synth 8-3331] design fm_3d_fcnv has unconnected port i_f32[6]
+WARNING: [Synth 8-3331] design fm_3d_fcnv has unconnected port i_f32[5]
+WARNING: [Synth 8-3331] design fm_3d_fcnv has unconnected port i_f32[4]
+WARNING: [Synth 8-3331] design fm_3d_fcnv has unconnected port i_f32[3]
+WARNING: [Synth 8-3331] design fm_3d_fcnv has unconnected port i_f32[2]
+WARNING: [Synth 8-3331] design fm_3d_fcnv has unconnected port i_f32[1]
+WARNING: [Synth 8-3331] design fm_3d_fcnv has unconnected port i_f32[0]
+WARNING: [Synth 8-3331] design fm_geo_mem has unconnected port i_strr_m
+WARNING: [Synth 8-3331] design fm_sys has unconnected port i_wb_adr[7]
+WARNING: [Synth 8-3331] design fm_sys has unconnected port i_debug
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][31]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][30]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][29]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][28]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][27]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][26]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][25]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][24]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][23]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][22]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][21]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][20]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][19]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][18]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][17]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][16]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][15]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][14]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][13]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][12]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][11]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][10]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][9]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][8]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][7]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][6]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][5]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][4]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][3]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][2]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][1]
+WARNING: [Synth 8-3331] design pp_icache has unconnected port wb_outputs[dat][0]
+WARNING: [Synth 8-3331] design pp_memory has unconnected port dmem_read_ack
+WARNING: [Synth 8-3331] design pp_memory has unconnected port dmem_write_ack
+WARNING: [Synth 8-3331] design pp_fetch has unconnected port flush
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 1127.559 ; gain = 235.574 ; free physical = 24494 ; free virtual = 94200
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 1127.559 ; gain = 235.574 ; free physical = 24494 ; free virtual = 94200
+---------------------------------------------------------------------------------
+INFO: [Device 21-403] Loading part xc7a100tcsg324-1
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/constrs_1/new/top.xdc]
+Finished Parsing XDC File [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/constrs_1/new/top.xdc]
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/constrs_1/new/top.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/top_propImpl.xdc].
+Resolution: To avoid this warning, move constraints listed in [.Xil/top_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
+Completed Processing XDC Constraints
+
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1522.324 ; gain = 0.000 ; free physical = 24291 ; free virtual = 93996
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:11 ; elapsed = 00:00:11 . Memory (MB): peak = 1522.324 ; gain = 630.340 ; free physical = 24289 ; free virtual = 93995
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7a100tcsg324-1
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:11 ; elapsed = 00:00:11 . Memory (MB): peak = 1522.324 ; gain = 630.340 ; free physical = 24289 ; free virtual = 93995
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:11 ; elapsed = 00:00:11 . Memory (MB): peak = 1522.324 ; gain = 630.340 ; free physical = 24289 ; free virtual = 93995
+---------------------------------------------------------------------------------
+INFO: [Synth 8-5545] ROM "counter_mtime" won't be mapped to RAM because address size (31) is larger than maximum supported(25)
+INFO: [Synth 8-5546] ROM "software_interrupt" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "mtvec" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "mepc" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "mie" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "mscratch" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "mtime_compare" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5587] ROM size for "alu_x_src" is below threshold of ROM address width. It will be mapped to LUTs
+INFO: [Synth 8-5546] ROM "alu_op" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "alu_op" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5544] ROM "rd_write" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "csr_write" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "mem_op" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "mem_op" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "mem_size" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "mem_size" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_execute.vhd:365]
+INFO: [Synth 8-5544] ROM "exception_cause" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "dmem_data_size" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
+INFO: [Synth 8-4471] merging register 'wb_outputs_reg[stb]' into 'wb_outputs_reg[cyc]' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_wb_adapter.vhd:79]
+INFO: [Synth 8-802] inferred FSM for state register 'state_reg' in module 'pp_wb_arbiter'
+INFO: [Synth 8-5544] ROM "state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "state" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "wb_outputs[cyc]" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "cl_current_word" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-802] inferred FSM for state register 'r_state_reg' in module 'fm_geo_mem'
+INFO: [Synth 8-5544] ROM "r_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_3d_norm.v:158]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_3d_fadd.v:125]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_3d_fadd.v:183]
+INFO: [Synth 8-802] inferred FSM for state register 'r_state_reg' in module 'fm_geo_matrix'
+INFO: [Synth 8-802] inferred FSM for state register 'r_state_reg' in module 'fm_geo_clip'
+INFO: [Synth 8-5544] ROM "r_bc" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "r_bc" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "r_bc" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "r_bc" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "r_bc" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "r_bc" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-802] inferred FSM for state register 'r_state_reg' in module 'fm_geo_persdiv'
+INFO: [Synth 8-802] inferred FSM for state register 'r_state_reg' in module 'fm_geo_viewport'
+INFO: [Synth 8-802] inferred FSM for state register 'r_state_reg' in module 'fm_geo_tri'
+INFO: [Synth 8-5544] ROM "r_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-802] inferred FSM for state register 'r_state_reg' in module 'fm_ras_state'
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_ras_line.v:114]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_ras_line.v:115]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_ras_line.v:178]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_ras_line.v:181]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/fm_3d_core/src/fm_ras_line.v:185]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_meshgen.v:107]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_meshgen.v:107]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_meshgen.v:107]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_meshgen.v:107]
+INFO: [Synth 8-802] inferred FSM for state register 'state_reg' in module 'tmu_meshgen'
+INFO: [Synth 8-5546] ROM "turtle_ix" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5587] ROM size for "turtle_iy" is below threshold of ROM address width. It will be mapped to LUTs
+INFO: [Synth 8-5546] ROM "loadC" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "loadB" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "loadA" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "move_origin" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "pipe_stb" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "busy" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_edgedivops.v:105]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_edgedivops.v:124]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_edgedivops.v:146]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_edgedivops.v:109]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_edgedivops.v:128]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_edgedivops.v:150]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_edgedivops.v:113]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_edgedivops.v:132]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_edgedivops.v:154]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_edgetrace.v:283]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_edgetrace.v:241]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_edgetrace.v:327]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_edgetrace.v:297]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_edgetrace.v:255]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_edgetrace.v:341]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_edgetrace.v:311]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_edgetrace.v:269]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_edgetrace.v:355]
+INFO: [Synth 8-802] inferred FSM for state register 'state_reg' in module 'tmu_edgetrace'
+INFO: [Synth 8-5544] ROM "busy" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "pipe_ack_o" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "addDX2" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "addDX3" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_ABh" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "next_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_scandivops.v:69]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_scandivops.v:73]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_scantrace.v:96]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_scantrace.v:110]
+INFO: [Synth 8-5546] ROM "hctr_639" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "hctr_rs" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "vctr_ce" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "vctr_rs" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5544] ROM "chry_011" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-5546] ROM "vctr_479" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "scrx_079" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5544] ROM "losr_ld" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                    idle |                               00 |                               00
+                 m1_busy |                               01 |                               01
+                 m2_busy |                               10 |                               10
+                  iSTATE |                               11 |                               11
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 'sequential' in module 'pp_wb_arbiter'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                  P_IDLE |                           000001 |                              000
+                  P_RD_X |                           000010 |                              010
+                  P_RD_Y |                           000100 |                              011
+                  P_RD_Z |                           001000 |                              100
+              P_ACK_WAIT |                           010000 |                              110
+                  P_DONE |                           100000 |                              111
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'r_state_reg' using encoding 'one-hot' in module 'fm_geo_mem'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                  P_IDLE |                           000001 |                              000
+               P_ROW1_IN |                           000010 |                              001
+               P_ROW2_IN |                           000100 |                              010
+               P_ROW3_IN |                           001000 |                              011
+                  P_WAIT |                           010000 |                              100
+                  P_DONE |                           100000 |                              101
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'r_state_reg' using encoding 'one-hot' in module 'fm_geo_matrix'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                  P_IDLE |                       0000000001 |                             0000
+            P_X_P1_PLANE |                       0000000010 |                             0001
+            P_Y_M1_PLANE |                       0000000100 |                             0010
+            P_Y_P1_PLANE |                       0000001000 |                             0011
+            P_Z_M1_PLANE |                       0000010000 |                             0100
+            P_Z_P1_PLANE |                       0000100000 |                             0101
+                 P_WADD0 |                       0001000000 |                             0110
+                 P_WADD1 |                       0010000000 |                             0111
+                 P_WADD2 |                       0100000000 |                             1000
+                  P_DONE |                       1000000000 |                             1001
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'r_state_reg' using encoding 'one-hot' in module 'fm_geo_clip'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                  P_IDLE |                              000 |                             0000
+               P_WRECIP0 |                              001 |                             0001
+                  P_X_IN |                              010 |                             0010
+                  P_Y_IN |                              011 |                             0011
+                 P_WMUL0 |                              100 |                             0100
+                 P_WMUL1 |                              101 |                             0101
+                 P_WMUL2 |                              110 |                             0110
+                  P_DONE |                              111 |                             0111
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'r_state_reg' using encoding 'sequential' in module 'fm_geo_persdiv'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                  P_IDLE |                             0000 |                             0000
+                  P_Y_IN |                             0001 |                             0001
+                 P_WADD2 |                             0010 |                             0010
+                 P_WMUL0 |                             0011 |                             0011
+                 P_WMUL1 |                             0100 |                             0100
+                 P_WMUL2 |                             0101 |                             0101
+                 P_WMUL3 |                             0110 |                             0110
+                  P_WAIT |                             0111 |                             0111
+                  P_DONE |                             1000 |                             1000
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'r_state_reg' using encoding 'sequential' in module 'fm_geo_viewport'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+               P_V0_X_IN |                          0000001 |                              000
+               P_V0_Y_IN |                          0000010 |                              001
+               P_V1_X_IN |                          0000100 |                              010
+               P_V1_Y_IN |                          0001000 |                              011
+               P_V2_X_IN |                          0010000 |                              100
+               P_V2_Y_IN |                          0100000 |                              101
+                  P_DONE |                          1000000 |                              110
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'r_state_reg' using encoding 'one-hot' in module 'fm_geo_tri'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                  P_IDLE |                               00 |                              000
+                P_LINE_0 |                               01 |                              001
+                P_LINE_1 |                               10 |                              010
+                P_LINE_2 |                               11 |                              011
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'r_state_reg' using encoding 'sequential' in module 'fm_ras_state'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                    IDLE |                           000000 |                           000000
+            LS_WAIT_AADR |                           000001 |                           000001
+           LS_WAIT2_AADR |                           000010 |                           000010
+               LS_LOAD_A |                           000011 |                           000011
+            LS_WAIT_BADR |                           000100 |                           000100
+           LS_WAIT2_BADR |                           000101 |                           000101
+               LS_LOAD_B |                           000110 |                           000110
+            LS_WAIT_CADR |                           000111 |                           000111
+           LS_WAIT2_CADR |                           001000 |                           001000
+               LS_LOAD_C |                           001001 |                           001001
+            IL1T_PIPEOUT |                           001010 |                           001101
+          IL1B_WAIT_AADR |                           001011 |                           001110
+         IL1B_WAIT2_AADR |                           001100 |                           001111
+             IL1B_LOAD_A |                           001101 |                           010000
+            IL1B_PIPEOUT |                           001110 |                           010001
+          IL2T_WAIT_CADR |                           001111 |                           010010
+         IL2T_WAIT2_CADR |                           010000 |                           010011
+             IL2T_LOAD_C |                           010001 |                           010100
+            IL2T_PIPEOUT |                           010010 |                           010101
+          IL2B_WAIT_BADR |                           010011 |                           010110
+         IL2B_WAIT2_BADR |                           010100 |                           010111
+             IL2B_LOAD_B |                           010101 |                           011000
+            IL2B_PIPEOUT |                           010110 |                           011001
+          IL3T_WAIT_AADR |                           010111 |                           011010
+         IL3T_WAIT2_AADR |                           011000 |                           011011
+             IL3T_LOAD_A |                           011001 |                           011100
+            IL3T_PIPEOUT |                           011010 |                           011101
+          IL3B_WAIT_CADR |                           011011 |                           011110
+         IL3B_WAIT2_CADR |                           011100 |                           011111
+             IL3B_LOAD_C |                           011101 |                           100000
+            IL3B_PIPEOUT |                           011110 |                           100001
+          IL1T_WAIT_BADR |                           011111 |                           001010
+         IL1T_WAIT2_BADR |                           100000 |                           001011
+             IL1T_LOAD_B |                           100001 |                           001100
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 'sequential' in module 'tmu_meshgen'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                    IDLE |                              000 |                              000
+          A_PIPEOUT_WAIT |                              001 |                              010
+               A_PIPEOUT |                              010 |                              011
+                 B_START |                              011 |                              100
+          B_PIPEOUT_WAIT |                              100 |                              110
+               B_PIPEOUT |                              101 |                              111
+                  B_NEXT |                              110 |                              101
+                  A_NEXT |                              111 |                              001
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 'sequential' in module 'tmu_edgetrace'
+WARNING: [Synth 8-327] inferring latch for variable 'counters.ram_tmp_reg' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/vga80x40/src/vga80x40.vhd:242]
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:14 ; elapsed = 00:00:14 . Memory (MB): peak = 1522.324 ; gain = 630.340 ; free physical = 24283 ; free virtual = 93989
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++------+--------------+------------+----------+
+|      |RTL Partition |Replication |Instances |
++------+--------------+------------+----------+
+|1     |top__GB0      |           1|     17729|
+|2     |pp_potato     |           1|     16369|
+|3     |fm_3d_core    |           1|     15956|
++------+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     32 Bit       Adders := 7     
+	   3 Input     32 Bit       Adders := 1     
+	   2 Input     31 Bit       Adders := 1     
+	   2 Input     30 Bit       Adders := 2     
+	   2 Input     24 Bit       Adders := 1     
+	   2 Input     17 Bit       Adders := 6     
+	   3 Input     17 Bit       Adders := 5     
+	   2 Input     16 Bit       Adders := 4     
+	   3 Input     16 Bit       Adders := 1     
+	   3 Input     12 Bit       Adders := 26    
+	   4 Input     12 Bit       Adders := 1     
+	   2 Input     12 Bit       Adders := 13    
+	   3 Input     11 Bit       Adders := 41    
+	   2 Input     11 Bit       Adders := 2     
+	   2 Input     10 Bit       Adders := 6     
+	   3 Input      9 Bit       Adders := 2     
+	   2 Input      8 Bit       Adders := 1     
+	   2 Input      7 Bit       Adders := 6     
+	   3 Input      6 Bit       Adders := 18    
+	   2 Input      6 Bit       Adders := 11    
+	   3 Input      5 Bit       Adders := 5     
+	   2 Input      5 Bit       Adders := 1     
+	   2 Input      4 Bit       Adders := 14    
+	   2 Input      3 Bit       Adders := 4     
+	   2 Input      2 Bit       Adders := 1     
++---XORs : 
+	   2 Input     32 Bit         XORs := 1     
+	   2 Input      1 Bit         XORs := 19    
++---Registers : 
+	              256 Bit    Registers := 2     
+	              128 Bit    Registers := 2     
+	               64 Bit    Registers := 2     
+	               32 Bit    Registers := 36    
+	               31 Bit    Registers := 1     
+	               30 Bit    Registers := 4     
+	               28 Bit    Registers := 1     
+	               26 Bit    Registers := 3     
+	               25 Bit    Registers := 9     
+	               24 Bit    Registers := 1     
+	               23 Bit    Registers := 1     
+	               22 Bit    Registers := 62    
+	               21 Bit    Registers := 2     
+	               18 Bit    Registers := 6     
+	               17 Bit    Registers := 11    
+	               16 Bit    Registers := 21    
+	               15 Bit    Registers := 1     
+	               12 Bit    Registers := 42    
+	               11 Bit    Registers := 146   
+	               10 Bit    Registers := 6     
+	                8 Bit    Registers := 7     
+	                7 Bit    Registers := 10    
+	                6 Bit    Registers := 15    
+	                5 Bit    Registers := 33    
+	                4 Bit    Registers := 18    
+	                3 Bit    Registers := 11    
+	                2 Bit    Registers := 14    
+	                1 Bit    Registers := 154   
++---RAMs : 
+	              32K Bit         RAMs := 1     
+	              16K Bit         RAMs := 1     
+	               2K Bit         RAMs := 1     
+	             1024 Bit         RAMs := 1     
+	               1K Bit         RAMs := 1     
++---ROMs : 
+	                              ROMs := 1     
++---Muxes : 
+	  18 Input    256 Bit        Muxes := 1     
+	   7 Input    128 Bit        Muxes := 2     
+	   2 Input    128 Bit        Muxes := 2     
+	   4 Input     64 Bit        Muxes := 1     
+	  20 Input     32 Bit        Muxes := 1     
+	   2 Input     32 Bit        Muxes := 32    
+	   6 Input     32 Bit        Muxes := 1     
+	   4 Input     32 Bit        Muxes := 7     
+	   7 Input     32 Bit        Muxes := 1     
+	  28 Input     32 Bit        Muxes := 1     
+	   2 Input     31 Bit        Muxes := 1     
+	   2 Input     30 Bit        Muxes := 3     
+	   6 Input     30 Bit        Muxes := 1     
+	   2 Input     25 Bit        Muxes := 2     
+	   4 Input     24 Bit        Muxes := 1     
+	   2 Input     22 Bit        Muxes := 53    
+	   4 Input     22 Bit        Muxes := 4     
+	   6 Input     22 Bit        Muxes := 1     
+	   2 Input     17 Bit        Muxes := 5     
+	   2 Input     16 Bit        Muxes := 43    
+	   6 Input     16 Bit        Muxes := 1     
+	   4 Input     16 Bit        Muxes := 1     
+	   2 Input     12 Bit        Muxes := 42    
+	   3 Input     12 Bit        Muxes := 8     
+	   4 Input     12 Bit        Muxes := 5     
+	   7 Input     11 Bit        Muxes := 3     
+	   2 Input     11 Bit        Muxes := 100   
+	   2 Input     10 Bit        Muxes := 6     
+	   2 Input      8 Bit        Muxes := 4     
+	   4 Input      8 Bit        Muxes := 1     
+	   8 Input      7 Bit        Muxes := 1     
+	   2 Input      7 Bit        Muxes := 5     
+	   2 Input      6 Bit        Muxes := 20    
+	   9 Input      6 Bit        Muxes := 1     
+	  41 Input      6 Bit        Muxes := 1     
+	  22 Input      5 Bit        Muxes := 1     
+	  17 Input      5 Bit        Muxes := 1     
+	   5 Input      5 Bit        Muxes := 1     
+	   2 Input      5 Bit        Muxes := 14    
+	   7 Input      5 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 17    
+	   8 Input      4 Bit        Muxes := 2     
+	   5 Input      4 Bit        Muxes := 1     
+	   7 Input      4 Bit        Muxes := 1     
+	   4 Input      4 Bit        Muxes := 2     
+	  15 Input      4 Bit        Muxes := 12    
+	   9 Input      4 Bit        Muxes := 1     
+	  12 Input      3 Bit        Muxes := 4     
+	   2 Input      3 Bit        Muxes := 26    
+	  16 Input      3 Bit        Muxes := 1     
+	   3 Input      3 Bit        Muxes := 1     
+	   4 Input      3 Bit        Muxes := 1     
+	   7 Input      3 Bit        Muxes := 1     
+	   8 Input      3 Bit        Muxes := 2     
+	   2 Input      2 Bit        Muxes := 15    
+	   5 Input      2 Bit        Muxes := 4     
+	   6 Input      2 Bit        Muxes := 2     
+	   3 Input      2 Bit        Muxes := 1     
+	   4 Input      2 Bit        Muxes := 6     
+	   7 Input      2 Bit        Muxes := 2     
+	   8 Input      1 Bit        Muxes := 19    
+	   2 Input      1 Bit        Muxes := 152   
+	  13 Input      1 Bit        Muxes := 1     
+	  16 Input      1 Bit        Muxes := 18    
+	   3 Input      1 Bit        Muxes := 2     
+	   4 Input      1 Bit        Muxes := 39    
+	   7 Input      1 Bit        Muxes := 21    
+	   6 Input      1 Bit        Muxes := 3     
+	  10 Input      1 Bit        Muxes := 14    
+	   9 Input      1 Bit        Muxes := 1     
+	  34 Input      1 Bit        Muxes := 13    
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Hierarchical Component Statistics 
+---------------------------------------------------------------------------------
+Hierarchical RTL Component report 
+Module pp_csr_unit 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     31 Bit       Adders := 1     
++---Registers : 
+	               32 Bit    Registers := 10    
+	               31 Bit    Registers := 1     
+	                6 Bit    Registers := 1     
+	                1 Bit    Registers := 5     
++---Muxes : 
+	  20 Input     32 Bit        Muxes := 1     
+	   2 Input     32 Bit        Muxes := 2     
+	   2 Input     31 Bit        Muxes := 1     
+	  22 Input      5 Bit        Muxes := 1     
+	   8 Input      1 Bit        Muxes := 7     
+	   2 Input      1 Bit        Muxes := 14    
+Module pp_register_file 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 2     
++---RAMs : 
+	             1024 Bit         RAMs := 1     
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 4     
+Module pp_fetch 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     32 Bit       Adders := 1     
++---Registers : 
+	               32 Bit    Registers := 1     
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 3     
+	   2 Input      1 Bit        Muxes := 2     
+Module pp_imm_decoder 
+Detailed RTL Component Info : 
++---Muxes : 
+	   6 Input     32 Bit        Muxes := 1     
+Module pp_alu_control_unit 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      4 Bit        Muxes := 1     
+	   8 Input      4 Bit        Muxes := 2     
+	   5 Input      4 Bit        Muxes := 1     
+	  12 Input      3 Bit        Muxes := 3     
+	   2 Input      3 Bit        Muxes := 1     
+	   2 Input      2 Bit        Muxes := 1     
+Module pp_control_unit 
+Detailed RTL Component Info : 
++---Muxes : 
+	  17 Input      5 Bit        Muxes := 1     
+	  16 Input      3 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 2     
+	   3 Input      3 Bit        Muxes := 1     
+	   4 Input      3 Bit        Muxes := 1     
+	   5 Input      2 Bit        Muxes := 1     
+	   6 Input      2 Bit        Muxes := 2     
+	   2 Input      2 Bit        Muxes := 2     
+	   3 Input      2 Bit        Muxes := 1     
+	   4 Input      2 Bit        Muxes := 1     
+	  13 Input      1 Bit        Muxes := 1     
+	  16 Input      1 Bit        Muxes := 1     
+Module pp_decode 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 2     
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     12 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 3     
+Module pp_alu_mux__1 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     32 Bit       Adders := 1     
+Module pp_alu_mux 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     32 Bit       Adders := 1     
+Module pp_alu 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     32 Bit       Adders := 1     
+	   3 Input     32 Bit       Adders := 1     
++---XORs : 
+	   2 Input     32 Bit         XORs := 1     
+Module pp_csr_alu 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 1     
+	   4 Input     32 Bit        Muxes := 1     
+Module pp_execute 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     32 Bit       Adders := 2     
++---Registers : 
+	               32 Bit    Registers := 4     
+	               12 Bit    Registers := 1     
+	                6 Bit    Registers := 1     
+	                5 Bit    Registers := 4     
+	                4 Bit    Registers := 1     
+	                3 Bit    Registers := 5     
+	                2 Bit    Registers := 2     
+	                1 Bit    Registers := 5     
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 11    
+	   4 Input     32 Bit        Muxes := 2     
+	   2 Input      6 Bit        Muxes := 4     
+	   5 Input      5 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 8     
+	   2 Input      2 Bit        Muxes := 4     
+	   4 Input      2 Bit        Muxes := 1     
+	   3 Input      1 Bit        Muxes := 2     
+	   2 Input      1 Bit        Muxes := 6     
+Module pp_memory 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 3     
+	               12 Bit    Registers := 1     
+	                6 Bit    Registers := 1     
+	                5 Bit    Registers := 1     
+	                3 Bit    Registers := 1     
+	                2 Bit    Registers := 2     
+	                1 Bit    Registers := 5     
++---Muxes : 
+	   4 Input     32 Bit        Muxes := 1     
+	   2 Input     32 Bit        Muxes := 5     
+	   2 Input      6 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 5     
+Module pp_writeback 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 3     
+	               12 Bit    Registers := 1     
+	                6 Bit    Registers := 1     
+	                5 Bit    Registers := 1     
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 5     
+Module pp_core 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 2     
+	               12 Bit    Registers := 1     
+	                5 Bit    Registers := 2     
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 2     
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 2     
+	   2 Input     12 Bit        Muxes := 3     
+	   2 Input      5 Bit        Muxes := 2     
+	   2 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 2     
+Module pp_wb_adapter 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 3     
+	                4 Bit    Registers := 1     
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   7 Input      5 Bit        Muxes := 1     
+	   7 Input      4 Bit        Muxes := 1     
+	   5 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 2     
+	   4 Input      1 Bit        Muxes := 10    
+Module pp_wb_arbiter 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 2     
+	   4 Input     32 Bit        Muxes := 2     
+	   4 Input      4 Bit        Muxes := 1     
+	   7 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 3     
+	   4 Input      1 Bit        Muxes := 4     
+Module pp_icache 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      3 Bit       Adders := 1     
++---Registers : 
+	              128 Bit    Registers := 2     
+	               32 Bit    Registers := 2     
+	               28 Bit    Registers := 1     
+	               21 Bit    Registers := 1     
+	                4 Bit    Registers := 1     
+	                3 Bit    Registers := 2     
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 6     
++---RAMs : 
+	              16K Bit         RAMs := 1     
+	               2K Bit         RAMs := 1     
++---Muxes : 
+	   7 Input    128 Bit        Muxes := 2     
+	   2 Input    128 Bit        Muxes := 2     
+	   2 Input     32 Bit        Muxes := 2     
+	   4 Input     32 Bit        Muxes := 1     
+	   7 Input     32 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+	   7 Input      3 Bit        Muxes := 1     
+	   8 Input      3 Bit        Muxes := 1     
+	   7 Input      1 Bit        Muxes := 15    
+	   2 Input      1 Bit        Muxes := 5     
+Module fm_3d_fcnv 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     16 Bit       Adders := 1     
+	   3 Input      9 Bit       Adders := 1     
++---Muxes : 
+	   2 Input      5 Bit        Muxes := 1     
+Module fm_sys 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 1     
+	               30 Bit    Registers := 2     
+	               22 Bit    Registers := 18    
+	               16 Bit    Registers := 4     
+	                8 Bit    Registers := 1     
+	                1 Bit    Registers := 8     
++---Muxes : 
+	  28 Input     32 Bit        Muxes := 1     
+	   2 Input     30 Bit        Muxes := 2     
+	   2 Input     22 Bit        Muxes := 18    
+	   2 Input     16 Bit        Muxes := 4     
+	   2 Input      1 Bit        Muxes := 3     
+Module fm_3d_fcnv__1 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     16 Bit       Adders := 1     
+	   3 Input      9 Bit       Adders := 1     
++---Muxes : 
+	   2 Input      5 Bit        Muxes := 1     
+Module fm_geo_mem 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     30 Bit       Adders := 1     
+	   2 Input     16 Bit       Adders := 1     
++---Registers : 
+	               30 Bit    Registers := 1     
+	               22 Bit    Registers := 3     
+	               16 Bit    Registers := 1     
++---Muxes : 
+	   6 Input     30 Bit        Muxes := 1     
+	   6 Input     16 Bit        Muxes := 1     
+	   9 Input      6 Bit        Muxes := 1     
+	   6 Input      1 Bit        Muxes := 2     
+	   4 Input      1 Bit        Muxes := 3     
+Module fm_3d_norm__5 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      6 Bit       Adders := 1     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 2     
+	   2 Input      6 Bit        Muxes := 1     
+	  15 Input      4 Bit        Muxes := 1     
+Module fm_3d_fmul__3 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     17 Bit       Adders := 1     
+	   3 Input      6 Bit       Adders := 1     
+	   2 Input      6 Bit       Adders := 1     
++---XORs : 
+	   2 Input      1 Bit         XORs := 1     
++---Registers : 
+	               22 Bit    Registers := 1     
+	               18 Bit    Registers := 1     
+	               17 Bit    Registers := 1     
+	                5 Bit    Registers := 2     
+	                1 Bit    Registers := 2     
+Module fm_3d_norm__6 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      6 Bit       Adders := 1     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 2     
+	   2 Input      6 Bit        Muxes := 1     
+	  15 Input      4 Bit        Muxes := 1     
+Module fm_3d_fmul__4 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     17 Bit       Adders := 1     
+	   3 Input      6 Bit       Adders := 1     
+	   2 Input      6 Bit       Adders := 1     
++---XORs : 
+	   2 Input      1 Bit         XORs := 1     
++---Registers : 
+	               22 Bit    Registers := 1     
+	               18 Bit    Registers := 1     
+	               17 Bit    Registers := 1     
+	                5 Bit    Registers := 2     
+	                1 Bit    Registers := 2     
+Module fm_3d_norm__7 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      6 Bit       Adders := 1     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 2     
+	   2 Input      6 Bit        Muxes := 1     
+	  15 Input      4 Bit        Muxes := 1     
+Module fm_3d_fmul__5 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     17 Bit       Adders := 1     
+	   3 Input      6 Bit       Adders := 1     
+	   2 Input      6 Bit       Adders := 1     
++---XORs : 
+	   2 Input      1 Bit         XORs := 1     
++---Registers : 
+	               22 Bit    Registers := 1     
+	               18 Bit    Registers := 1     
+	               17 Bit    Registers := 1     
+	                5 Bit    Registers := 2     
+	                1 Bit    Registers := 2     
+Module fm_3d_norm__1 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      6 Bit       Adders := 1     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 2     
+	   2 Input      6 Bit        Muxes := 1     
+	  15 Input      4 Bit        Muxes := 1     
+Module fm_3d_fmul 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     17 Bit       Adders := 1     
+	   3 Input      6 Bit       Adders := 1     
+	   2 Input      6 Bit       Adders := 1     
++---XORs : 
+	   2 Input      1 Bit         XORs := 1     
++---Registers : 
+	               22 Bit    Registers := 1     
+	               18 Bit    Registers := 1     
+	               17 Bit    Registers := 1     
+	                5 Bit    Registers := 2     
+	                1 Bit    Registers := 2     
+Module fm_3d_norm__10 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      6 Bit       Adders := 1     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 2     
+	   2 Input      6 Bit        Muxes := 1     
+	  15 Input      4 Bit        Muxes := 1     
+Module fm_3d_fadd__3 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     17 Bit       Adders := 1     
+	   3 Input      5 Bit       Adders := 1     
++---XORs : 
+	   2 Input      1 Bit         XORs := 2     
++---Registers : 
+	               22 Bit    Registers := 1     
+	               17 Bit    Registers := 1     
+	               16 Bit    Registers := 2     
+	                5 Bit    Registers := 2     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input     17 Bit        Muxes := 1     
+	   2 Input     16 Bit        Muxes := 2     
+	   2 Input      5 Bit        Muxes := 2     
+	   2 Input      1 Bit        Muxes := 1     
+Module fm_3d_norm__11 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      6 Bit       Adders := 1     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 2     
+	   2 Input      6 Bit        Muxes := 1     
+	  15 Input      4 Bit        Muxes := 1     
+Module fm_3d_fadd__4 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     17 Bit       Adders := 1     
+	   3 Input      5 Bit       Adders := 1     
++---XORs : 
+	   2 Input      1 Bit         XORs := 2     
++---Registers : 
+	               22 Bit    Registers := 1     
+	               17 Bit    Registers := 1     
+	               16 Bit    Registers := 2     
+	                5 Bit    Registers := 2     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input     17 Bit        Muxes := 1     
+	   2 Input     16 Bit        Muxes := 2     
+	   2 Input      5 Bit        Muxes := 2     
+	   2 Input      1 Bit        Muxes := 1     
+Module fm_3d_norm__2 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      6 Bit       Adders := 1     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 2     
+	   2 Input      6 Bit        Muxes := 1     
+	  15 Input      4 Bit        Muxes := 1     
+Module fm_3d_fadd 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     17 Bit       Adders := 1     
+	   3 Input      5 Bit       Adders := 1     
++---XORs : 
+	   2 Input      1 Bit         XORs := 2     
++---Registers : 
+	               22 Bit    Registers := 1     
+	               17 Bit    Registers := 1     
+	               16 Bit    Registers := 2     
+	                5 Bit    Registers := 2     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input     17 Bit        Muxes := 1     
+	   2 Input     16 Bit        Muxes := 2     
+	   2 Input      5 Bit        Muxes := 2     
+	   2 Input      1 Bit        Muxes := 1     
+Module fm_geo_matrix 
+Detailed RTL Component Info : 
++---Registers : 
+	               22 Bit    Registers := 8     
+	               12 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   4 Input     22 Bit        Muxes := 4     
+	   2 Input     22 Bit        Muxes := 4     
+	   6 Input      1 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 1     
+Module fm_3d_norm__9 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      6 Bit       Adders := 1     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 2     
+	   2 Input      6 Bit        Muxes := 1     
+	  15 Input      4 Bit        Muxes := 1     
+Module fm_3d_fadd__2 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     17 Bit       Adders := 1     
+	   3 Input      5 Bit       Adders := 1     
++---XORs : 
+	   2 Input      1 Bit         XORs := 2     
++---Registers : 
+	               22 Bit    Registers := 1     
+	               17 Bit    Registers := 1     
+	               16 Bit    Registers := 2     
+	                5 Bit    Registers := 2     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input     17 Bit        Muxes := 1     
+	   2 Input     16 Bit        Muxes := 2     
+	   2 Input      5 Bit        Muxes := 2     
+	   2 Input      1 Bit        Muxes := 1     
+Module fm_geo_clip 
+Detailed RTL Component Info : 
++---Registers : 
+	               22 Bit    Registers := 4     
+	                6 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     22 Bit        Muxes := 1     
+	   6 Input     22 Bit        Muxes := 1     
+	  10 Input      1 Bit        Muxes := 1     
+Module fm_3d_frcp_rom 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 1     
++---ROMs : 
+	                              ROMs := 1     
+Module fm_3d_norm 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      6 Bit       Adders := 1     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 2     
+	   2 Input      6 Bit        Muxes := 1     
+	  15 Input      4 Bit        Muxes := 1     
+Module fm_3d_frcp 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     16 Bit       Adders := 1     
+	   2 Input      5 Bit       Adders := 1     
++---Registers : 
+	               22 Bit    Registers := 1     
+	                8 Bit    Registers := 1     
+	                5 Bit    Registers := 1     
+	                1 Bit    Registers := 1     
+Module fm_3d_norm__4 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      6 Bit       Adders := 1     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 2     
+	   2 Input      6 Bit        Muxes := 1     
+	  15 Input      4 Bit        Muxes := 1     
+Module fm_3d_fmul__2 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     17 Bit       Adders := 1     
+	   3 Input      6 Bit       Adders := 1     
+	   2 Input      6 Bit       Adders := 1     
++---XORs : 
+	   2 Input      1 Bit         XORs := 1     
++---Registers : 
+	               22 Bit    Registers := 1     
+	               18 Bit    Registers := 1     
+	               17 Bit    Registers := 1     
+	                5 Bit    Registers := 2     
+	                1 Bit    Registers := 2     
+Module fm_geo_persdiv 
+Detailed RTL Component Info : 
++---Registers : 
+	               22 Bit    Registers := 3     
+	                6 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     22 Bit        Muxes := 5     
+	   8 Input      3 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 2     
+	   8 Input      1 Bit        Muxes := 1     
+Module fm_3d_norm__8 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      6 Bit       Adders := 1     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 2     
+	   2 Input      6 Bit        Muxes := 1     
+	  15 Input      4 Bit        Muxes := 1     
+Module fm_3d_fadd__1 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     17 Bit       Adders := 1     
+	   3 Input      5 Bit       Adders := 1     
++---XORs : 
+	   2 Input      1 Bit         XORs := 2     
++---Registers : 
+	               22 Bit    Registers := 1     
+	               17 Bit    Registers := 1     
+	               16 Bit    Registers := 2     
+	                5 Bit    Registers := 2     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input     17 Bit        Muxes := 1     
+	   2 Input     16 Bit        Muxes := 2     
+	   2 Input      5 Bit        Muxes := 2     
+	   2 Input      1 Bit        Muxes := 1     
+Module fm_3d_norm__3 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      6 Bit       Adders := 1     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 2     
+	   2 Input      6 Bit        Muxes := 1     
+	  15 Input      4 Bit        Muxes := 1     
+Module fm_3d_fmul__1 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     17 Bit       Adders := 1     
+	   3 Input      6 Bit       Adders := 1     
+	   2 Input      6 Bit       Adders := 1     
++---XORs : 
+	   2 Input      1 Bit         XORs := 1     
++---Registers : 
+	               22 Bit    Registers := 1     
+	               18 Bit    Registers := 1     
+	               17 Bit    Registers := 1     
+	                5 Bit    Registers := 2     
+	                1 Bit    Registers := 2     
+Module fm_geo_viewport 
+Detailed RTL Component Info : 
++---Registers : 
+	               22 Bit    Registers := 2     
+	                6 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     22 Bit        Muxes := 2     
+	   9 Input      4 Bit        Muxes := 1     
+	   9 Input      1 Bit        Muxes := 1     
+Module fm_3d_f22_to_i 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     16 Bit       Adders := 1     
+	   2 Input      6 Bit       Adders := 1     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 2     
+Module fm_geo_tri 
+Detailed RTL Component Info : 
++---Registers : 
+	               22 Bit    Registers := 1     
+	               12 Bit    Registers := 6     
+	                6 Bit    Registers := 3     
++---Muxes : 
+	   2 Input     22 Bit        Muxes := 1     
+	   8 Input      7 Bit        Muxes := 1     
+	   7 Input      1 Bit        Muxes := 1     
+Module fm_geo_cull 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     24 Bit       Adders := 1     
++---Registers : 
+	               24 Bit    Registers := 1     
+	               12 Bit    Registers := 6     
+	                2 Bit    Registers := 1     
++---Muxes : 
+	   4 Input     24 Bit        Muxes := 1     
+	   3 Input     12 Bit        Muxes := 4     
+	   4 Input      2 Bit        Muxes := 1     
+	   2 Input      2 Bit        Muxes := 1     
+	   4 Input      1 Bit        Muxes := 2     
+	   2 Input      1 Bit        Muxes := 4     
+Module fm_geo 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      8 Bit       Adders := 1     
++---Registers : 
+	                8 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      8 Bit        Muxes := 1     
+Module fm_ras_state 
+Detailed RTL Component Info : 
++---Registers : 
+	               12 Bit    Registers := 6     
++---Muxes : 
+	   3 Input     12 Bit        Muxes := 4     
+	   4 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 9     
+	   4 Input      1 Bit        Muxes := 1     
+Module fm_ras_line 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     12 Bit       Adders := 3     
+	   4 Input     12 Bit       Adders := 1     
+	   2 Input     12 Bit       Adders := 2     
++---Registers : 
+	               12 Bit    Registers := 8     
+	                2 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     12 Bit        Muxes := 20    
+	   4 Input     12 Bit        Muxes := 5     
+	   2 Input      2 Bit        Muxes := 2     
+	   5 Input      2 Bit        Muxes := 1     
+	   4 Input      1 Bit        Muxes := 11    
+	   2 Input      1 Bit        Muxes := 6     
+	   7 Input      1 Bit        Muxes := 3     
+Module fm_ras_mem 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     30 Bit       Adders := 1     
+	   3 Input     12 Bit       Adders := 1     
++---Registers : 
+	               23 Bit    Registers := 1     
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     12 Bit        Muxes := 1     
+	   4 Input      4 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 1     
+Module fm_mem_arb 
+Detailed RTL Component Info : 
++---Registers : 
+	                1 Bit    Registers := 2     
++---Muxes : 
+	   2 Input     30 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 4     
+Module tmu_ctlif 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 1     
+	               30 Bit    Registers := 1     
+	               25 Bit    Registers := 2     
+	               11 Bit    Registers := 6     
+	                7 Bit    Registers := 4     
+	                6 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 7     
+	  16 Input      1 Bit        Muxes := 17    
+Module tmu_meshgen 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     32 Bit       Adders := 1     
+	   3 Input     11 Bit       Adders := 2     
+	   2 Input      7 Bit       Adders := 2     
++---Registers : 
+	               32 Bit    Registers := 1     
+	               11 Bit    Registers := 14    
+	                7 Bit    Registers := 2     
+	                1 Bit    Registers := 6     
++---Muxes : 
+	   7 Input     11 Bit        Muxes := 3     
+	  41 Input      6 Bit        Muxes := 1     
+	   7 Input      2 Bit        Muxes := 1     
+	   7 Input      1 Bit        Muxes := 2     
+	  34 Input      1 Bit        Muxes := 13    
+Module tmu_reorder 
+Detailed RTL Component Info : 
++---Registers : 
+	               11 Bit    Registers := 24    
+	                1 Bit    Registers := 6     
++---Muxes : 
+	   2 Input     11 Bit        Muxes := 48    
+Module tmu_edgedivops 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     11 Bit       Adders := 12    
++---Registers : 
+	               11 Bit    Registers := 18    
+	                1 Bit    Registers := 10    
++---Muxes : 
+	   2 Input     11 Bit        Muxes := 18    
+Module tmu_divider11__3 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     12 Bit       Adders := 1     
+	   2 Input      4 Bit       Adders := 1     
++---Registers : 
+	               22 Bit    Registers := 1     
+	               11 Bit    Registers := 1     
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     22 Bit        Muxes := 2     
+	   2 Input      4 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 1     
+Module tmu_divider11__4 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     12 Bit       Adders := 1     
+	   2 Input      4 Bit       Adders := 1     
++---Registers : 
+	               22 Bit    Registers := 1     
+	               11 Bit    Registers := 1     
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     22 Bit        Muxes := 2     
+	   2 Input      4 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 1     
+Module tmu_divider11__5 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     12 Bit       Adders := 1     
+	   2 Input      4 Bit       Adders := 1     
++---Registers : 
+	               22 Bit    Registers := 1     
+	               11 Bit    Registers := 1     
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     22 Bit        Muxes := 2     
+	   2 Input      4 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 1     
+Module tmu_divider11__6 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     12 Bit       Adders := 1     
+	   2 Input      4 Bit       Adders := 1     
++---Registers : 
+	               22 Bit    Registers := 1     
+	               11 Bit    Registers := 1     
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     22 Bit        Muxes := 2     
+	   2 Input      4 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 1     
+Module tmu_divider11__7 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     12 Bit       Adders := 1     
+	   2 Input      4 Bit       Adders := 1     
++---Registers : 
+	               22 Bit    Registers := 1     
+	               11 Bit    Registers := 1     
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     22 Bit        Muxes := 2     
+	   2 Input      4 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 1     
+Module tmu_divider11__8 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     12 Bit       Adders := 1     
+	   2 Input      4 Bit       Adders := 1     
++---Registers : 
+	               22 Bit    Registers := 1     
+	               11 Bit    Registers := 1     
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     22 Bit        Muxes := 2     
+	   2 Input      4 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 1     
+Module tmu_divider11__9 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     12 Bit       Adders := 1     
+	   2 Input      4 Bit       Adders := 1     
++---Registers : 
+	               22 Bit    Registers := 1     
+	               11 Bit    Registers := 1     
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     22 Bit        Muxes := 2     
+	   2 Input      4 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 1     
+Module tmu_divider11__10 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     12 Bit       Adders := 1     
+	   2 Input      4 Bit       Adders := 1     
++---Registers : 
+	               22 Bit    Registers := 1     
+	               11 Bit    Registers := 1     
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     22 Bit        Muxes := 2     
+	   2 Input      4 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 1     
+Module tmu_divider11 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     12 Bit       Adders := 1     
+	   2 Input      4 Bit       Adders := 1     
++---Registers : 
+	               22 Bit    Registers := 1     
+	               11 Bit    Registers := 1     
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     22 Bit        Muxes := 2     
+	   2 Input      4 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 1     
+Module tmu_edgediv 
+Detailed RTL Component Info : 
++---Registers : 
+	               11 Bit    Registers := 9     
+	                1 Bit    Registers := 10    
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 4     
+Module tmu_edgetrace 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     12 Bit       Adders := 9     
+	   2 Input     12 Bit       Adders := 9     
+	   2 Input     11 Bit       Adders := 1     
+	   3 Input     11 Bit       Adders := 18    
++---Registers : 
+	               12 Bit    Registers := 9     
+	               11 Bit    Registers := 36    
+	                1 Bit    Registers := 10    
++---Muxes : 
+	   2 Input     12 Bit        Muxes := 9     
+	   2 Input     11 Bit        Muxes := 25    
+	  12 Input      3 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 5     
+	   8 Input      1 Bit        Muxes := 11    
+Module tmu_scandivops 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     11 Bit       Adders := 3     
++---Registers : 
+	               11 Bit    Registers := 8     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input     11 Bit        Muxes := 4     
+Module tmu_divider11__1 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     12 Bit       Adders := 1     
+	   2 Input      4 Bit       Adders := 1     
++---Registers : 
+	               22 Bit    Registers := 1     
+	               11 Bit    Registers := 1     
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     22 Bit        Muxes := 2     
+	   2 Input      4 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 1     
+Module tmu_divider11__2 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     12 Bit       Adders := 1     
+	   2 Input      4 Bit       Adders := 1     
++---Registers : 
+	               22 Bit    Registers := 1     
+	               11 Bit    Registers := 1     
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     22 Bit        Muxes := 2     
+	   2 Input      4 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 1     
+Module tmu_scandiv 
+Detailed RTL Component Info : 
++---Registers : 
+	               11 Bit    Registers := 6     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 4     
+Module tmu_scantrace 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     12 Bit       Adders := 2     
+	   2 Input     12 Bit       Adders := 2     
+	   2 Input     11 Bit       Adders := 1     
+	   3 Input     11 Bit       Adders := 4     
++---Registers : 
+	               12 Bit    Registers := 2     
+	               11 Bit    Registers := 10    
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input     12 Bit        Muxes := 2     
+	   2 Input     11 Bit        Muxes := 5     
+	   2 Input      1 Bit        Muxes := 6     
+Module tmu_filter 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     11 Bit       Adders := 2     
++---Registers : 
+	               11 Bit    Registers := 4     
+	                1 Bit    Registers := 1     
+Module tmu_addresses 
+Detailed RTL Component Info : 
++---Registers : 
+	               25 Bit    Registers := 2     
+	                1 Bit    Registers := 2     
+Module tmu_pixin 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      7 Bit       Adders := 1     
+	   2 Input      2 Bit       Adders := 1     
++---Registers : 
+	               64 Bit    Registers := 1     
+	               26 Bit    Registers := 2     
+	               25 Bit    Registers := 1     
+	               15 Bit    Registers := 1     
+	                7 Bit    Registers := 1     
+	                4 Bit    Registers := 1     
+	                2 Bit    Registers := 1     
++---RAMs : 
+	              32K Bit         RAMs := 1     
+	               1K Bit         RAMs := 1     
++---Muxes : 
+	   4 Input     16 Bit        Muxes := 1     
+	   2 Input      7 Bit        Muxes := 2     
+	   2 Input      4 Bit        Muxes := 1     
+	   2 Input      2 Bit        Muxes := 4     
+	   2 Input      1 Bit        Muxes := 1     
+	  10 Input      1 Bit        Muxes := 13    
+Module tmu_decay 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      6 Bit       Adders := 1     
++---Registers : 
+	               25 Bit    Registers := 3     
+	               16 Bit    Registers := 3     
+	                6 Bit    Registers := 1     
+	                5 Bit    Registers := 2     
+	                1 Bit    Registers := 6     
++---Muxes : 
+	   2 Input     16 Bit        Muxes := 1     
+Module tmu_burst 
+Detailed RTL Component Info : 
++---Registers : 
+	              256 Bit    Registers := 1     
+	               25 Bit    Registers := 1     
+	               21 Bit    Registers := 1     
+	               16 Bit    Registers := 2     
+	                1 Bit    Registers := 1     
++---Muxes : 
+	  18 Input    256 Bit        Muxes := 1     
+	   2 Input     25 Bit        Muxes := 2     
+	   2 Input     16 Bit        Muxes := 2     
+	   2 Input      1 Bit        Muxes := 7     
+Module tmu_pixout 
+Detailed RTL Component Info : 
++---Registers : 
+	              256 Bit    Registers := 1     
+	               64 Bit    Registers := 1     
+	               26 Bit    Registers := 1     
+	               16 Bit    Registers := 1     
+	                8 Bit    Registers := 1     
+	                2 Bit    Registers := 1     
++---Muxes : 
+	   4 Input     64 Bit        Muxes := 1     
+	   4 Input      8 Bit        Muxes := 1     
+	   4 Input      2 Bit        Muxes := 2     
+	   4 Input      1 Bit        Muxes := 5     
+Module tmu 
+Detailed RTL Component Info : 
++---Registers : 
+	                2 Bit    Registers := 1     
++---Muxes : 
+	   5 Input      2 Bit        Muxes := 1     
+	   4 Input      1 Bit        Muxes := 3     
+Module losr__1 
+Detailed RTL Component Info : 
++---Registers : 
+	                8 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      8 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 1     
+Module ctrm__1 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     10 Bit       Adders := 1     
++---Registers : 
+	               10 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     10 Bit        Muxes := 1     
+Module ctrm__parameterized1__1 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     10 Bit       Adders := 1     
++---Registers : 
+	               10 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     10 Bit        Muxes := 1     
+Module ctrm__parameterized3__1 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      3 Bit       Adders := 1     
++---Registers : 
+	                3 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      3 Bit        Muxes := 1     
+Module ctrm__parameterized5__1 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      4 Bit       Adders := 1     
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      4 Bit        Muxes := 1     
+Module ctrm__parameterized7__1 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      7 Bit       Adders := 1     
++---Registers : 
+	                7 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+Module ctrm__parameterized9__1 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      6 Bit       Adders := 1     
++---Registers : 
+	                6 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      6 Bit        Muxes := 1     
+Module vga80x40__1 
+Detailed RTL Component Info : 
++---XORs : 
+	   2 Input      1 Bit         XORs := 1     
++---Registers : 
+	                1 Bit    Registers := 5     
++---Muxes : 
+	   2 Input     12 Bit        Muxes := 2     
+	   2 Input      1 Bit        Muxes := 9     
+Module losr__2 
+Detailed RTL Component Info : 
++---Registers : 
+	                8 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      8 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 1     
+Module ctrm__2 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     10 Bit       Adders := 1     
++---Registers : 
+	               10 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     10 Bit        Muxes := 1     
+Module ctrm__parameterized1__2 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     10 Bit       Adders := 1     
++---Registers : 
+	               10 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     10 Bit        Muxes := 1     
+Module ctrm__parameterized3__2 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      3 Bit       Adders := 1     
++---Registers : 
+	                3 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      3 Bit        Muxes := 1     
+Module ctrm__parameterized5__2 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      4 Bit       Adders := 1     
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      4 Bit        Muxes := 1     
+Module ctrm__parameterized7__2 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      7 Bit       Adders := 1     
++---Registers : 
+	                7 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+Module ctrm__parameterized9__2 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      6 Bit       Adders := 1     
++---Registers : 
+	                6 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      6 Bit        Muxes := 1     
+Module vga80x40__2 
+Detailed RTL Component Info : 
++---XORs : 
+	   2 Input      1 Bit         XORs := 1     
++---Registers : 
+	                1 Bit    Registers := 5     
++---Muxes : 
+	   2 Input     12 Bit        Muxes := 2     
+	   2 Input      1 Bit        Muxes := 9     
+Module losr 
+Detailed RTL Component Info : 
++---Registers : 
+	                8 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      8 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 1     
+Module ctrm 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     10 Bit       Adders := 1     
++---Registers : 
+	               10 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     10 Bit        Muxes := 1     
+Module ctrm__parameterized1 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     10 Bit       Adders := 1     
++---Registers : 
+	               10 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     10 Bit        Muxes := 1     
+Module ctrm__parameterized3 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      3 Bit       Adders := 1     
++---Registers : 
+	                3 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      3 Bit        Muxes := 1     
+Module ctrm__parameterized5 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      4 Bit       Adders := 1     
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      4 Bit        Muxes := 1     
+Module ctrm__parameterized7 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      7 Bit       Adders := 1     
++---Registers : 
+	                7 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+Module ctrm__parameterized9 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      6 Bit       Adders := 1     
++---Registers : 
+	                6 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      6 Bit        Muxes := 1     
+Module vga80x40 
+Detailed RTL Component Info : 
++---XORs : 
+	   2 Input      1 Bit         XORs := 1     
++---Registers : 
+	                1 Bit    Registers := 5     
++---Muxes : 
+	   2 Input     12 Bit        Muxes := 2     
+	   2 Input      1 Bit        Muxes := 9     
+---------------------------------------------------------------------------------
+Finished RTL Hierarchical Component Statistics
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 240 (col length:80)
+BRAMs: 270 (col length: RAMB18 80 RAMB36 40)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+Start Parallel Synthesis Optimization  : Time (s): cpu = 00:00:14 ; elapsed = 00:00:14 . Memory (MB): peak = 1522.324 ; gain = 630.340 ; free physical = 24283 ; free virtual = 93988
+---------------------------------------------------------------------------------
+Start Cross Boundary Optimization
+---------------------------------------------------------------------------------
+INFO: [Synth 8-4471] merging register 'cl_current_word_reg[2:0]' into 'cl_current_word_reg[2:0]' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/pp_potato/src/pp_icache.vhd:186]
+INFO: [Synth 8-5546] ROM "processor/csr_unit/mscratch" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "processor/csr_unit/mepc" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "processor/csr_unit/mtvec" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "processor/csr_unit/software_interrupt" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "processor/csr_unit/mtime_compare" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5545] ROM "processor/csr_unit/counter_mtime" won't be mapped to RAM because address size (31) is larger than maximum supported(25)
+INFO: [Synth 8-5546] ROM "processor/csr_unit/mie" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "processor/decode/control_unit/alu_control/alu_op" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "processor/decode/control_unit/alu_control/alu_op" won't be mapped to RAM because it is too sparse
+DSP Report: Generating DSP w_cf_tmp, operation Mode is: A*B.
+DSP Report: operator w_cf_tmp is absorbed into DSP w_cf_tmp.
+DSP Report: Generating DSP w_cf_tmp, operation Mode is: A*B.
+DSP Report: operator w_cf_tmp is absorbed into DSP w_cf_tmp.
+DSP Report: Generating DSP w_cf_tmp, operation Mode is: A*B.
+DSP Report: operator w_cf_tmp is absorbed into DSP w_cf_tmp.
+DSP Report: Generating DSP w_cf_tmp, operation Mode is: A*B.
+DSP Report: operator w_cf_tmp is absorbed into DSP w_cf_tmp.
+DSP Report: Generating DSP u_frcp/w_rom_correct, operation Mode is: A2*B2.
+DSP Report: register u_frcp/r_a_frac_l_reg is absorbed into DSP u_frcp/w_rom_correct.
+DSP Report: register u_frcp/frcp_rom/r_c_reg is absorbed into DSP u_frcp/w_rom_correct.
+DSP Report: operator u_frcp/w_rom_correct is absorbed into DSP u_frcp/w_rom_correct.
+DSP Report: Generating DSP u_fmul/w_cf_tmp, operation Mode is: A*B.
+DSP Report: operator u_fmul/w_cf_tmp is absorbed into DSP u_fmul/w_cf_tmp.
+DSP Report: Generating DSP u_fmul/w_cf_tmp, operation Mode is: A2*B.
+DSP Report: register u_fadd/r_c_reg is absorbed into DSP u_fmul/w_cf_tmp.
+DSP Report: operator u_fmul/w_cf_tmp is absorbed into DSP u_fmul/w_cf_tmp.
+DSP Report: Generating DSP f_multi_return0, operation Mode is: A*B.
+DSP Report: operator f_multi_return0 is absorbed into DSP f_multi_return0.
+DSP Report: Generating DSP f_multi_return, operation Mode is: C+A*B+1.
+DSP Report: operator f_multi_return is absorbed into DSP f_multi_return.
+DSP Report: operator f_multi_return0 is absorbed into DSP f_multi_return.
+DSP Report: Generating DSP u_ras_mem/r_adrs_m_reg, operation Mode is: (C'+A*B)'.
+DSP Report: register C is absorbed into DSP u_ras_mem/r_adrs_m_reg.
+DSP Report: register u_ras_mem/r_adrs_m_reg is absorbed into DSP u_ras_mem/r_adrs_m_reg.
+DSP Report: operator u_ras_mem/w_adrs is absorbed into DSP u_ras_mem/r_adrs_m_reg.
+DSP Report: operator u_ras_mem/w_adrs0 is absorbed into DSP u_ras_mem/r_adrs_m_reg.
+INFO: [Synth 8-4471] merging register 's1_brightness1_reg[5:0]' into 's1_brightness1_reg[5:0]' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_decay.v:108]
+INFO: [Synth 8-4471] merging register 's1_brightness1_reg[5:0]' into 's1_brightness1_reg[5:0]' [/home/sean/vivado_workspace/fm_3d_core_simple/fm_3d_core_simple.srcs/sources_1/imports/opencores/tmu/src/tmu_decay.v:108]
+DSP Report: Generating DSP addresses/s0_expanded_pv, operation Mode is: A*B.
+DSP Report: operator addresses/s0_expanded_pv is absorbed into DSP addresses/s0_expanded_pv.
+DSP Report: Generating DSP addresses/s1_src_addr_reg, operation Mode is: (PCIN+(A:0x0):B+C)'.
+DSP Report: register addresses/s1_src_addr_reg is absorbed into DSP addresses/s1_src_addr_reg.
+DSP Report: operator addresses/s1_src_addr0 is absorbed into DSP addresses/s1_src_addr_reg.
+DSP Report: Generating DSP addresses/s0_expanded_py, operation Mode is: A*B.
+DSP Report: operator addresses/s0_expanded_py is absorbed into DSP addresses/s0_expanded_py.
+DSP Report: Generating DSP addresses/s1_dst_addr_reg, operation Mode is: (PCIN+(A:0x0):B+C)'.
+DSP Report: register addresses/s1_dst_addr_reg is absorbed into DSP addresses/s1_dst_addr_reg.
+DSP Report: operator addresses/s1_dst_addr0 is absorbed into DSP addresses/s1_dst_addr_reg.
+INFO: [Synth 8-5546] ROM "vga80x40_0/scrx_079" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "vga80x40_0/hctr_639" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "vga80x40_0/vctr_479" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "vga80x40_0/vctr_ce" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "vga80x40_0/vctr_rs" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "vga80x40_0/hctr_rs" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "vga80x40_1/scrx_079" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "vga80x40_1/hctr_639" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "vga80x40_1/vctr_479" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "vga80x40_1/vctr_ce" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "vga80x40_1/vctr_rs" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "vga80x40_1/hctr_rs" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "vga80x40_2/scrx_079" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "vga80x40_2/hctr_639" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "vga80x40_2/vctr_479" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "vga80x40_2/vctr_ce" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "vga80x40_2/vctr_rs" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "vga80x40_2/hctr_rs" won't be mapped to RAM because it is too sparse
+---------------------------------------------------------------------------------
+Finished Cross Boundary Optimization : Time (s): cpu = 00:00:17 ; elapsed = 00:00:17 . Memory (MB): peak = 1522.324 ; gain = 630.340 ; free physical = 24259 ; free virtual = 93965
+---------------------------------------------------------------------------------
+Finished Parallel Reinference  : Time (s): cpu = 00:00:17 ; elapsed = 00:00:17 . Memory (MB): peak = 1522.324 ; gain = 630.340 ; free physical = 24259 ; free virtual = 93965
+
+Report RTL Partitions: 
++------+--------------+------------+----------+
+|      |RTL Partition |Replication |Instances |
++------+--------------+------------+----------+
+|1     |top__GB0      |           1|     20891|
+|2     |pp_potato     |           1|     17142|
+|3     |fm_3d_core    |           1|     18382|
++------+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+ROM:
++---------------+---------------------+---------------+----------------+
+|Module Name    | RTL Object          | Depth x Width | Implemented As | 
++---------------+---------------------+---------------+----------------+
+|fm_3d_frcp_rom | r_c_reg             | 128x32        | Block RAM      | 
+|fm_geo_persdiv | u_frcp/frcp_rom/r_c | 128x32        | LUT            | 
++---------------+---------------------+---------------+----------------+
+
+
+Block RAM: Preliminary Mapping  Report (see note below)
++------------+------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+|Module Name | RTL Object       | PORT A (Depth x Width) | W | R | PORT B (Depth x Width) | W | R | Ports driving FF | RAMB18 | RAMB36 | 
++------------+------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+|pp_icache   | cache_memory_reg | 128 x 128(READ_FIRST)  | W |   | 128 x 128(WRITE_FIRST) |   | R | Port A and B     | 0      | 2      | 
+|tmu_pixin   | tags_reg         | 128 x 15(READ_FIRST)   | W | R |                        |   |   | Port A           | 1      | 0      | 
+|tmu_pixin   | data_reg         | 512 x 64(READ_FIRST)   | W | R |                        |   |   | Port A           | 2      | 0      | 
++------------+------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+
+Note: The table above is a preliminary report that shows the Block RAMs at the current stage of the synthesis flow. Some Block RAMs may be reimplemented as non Block RAM primitives later in the synthesis flow. Multiple instantiated Block RAMs are reported only once. 
+
+Distributed RAM: Preliminary Mapping  Report (see note below)
++------------+--------------------------------------+-----------+----------------------+---------------+
+|Module Name | RTL Object                           | Inference | Size (Depth x Width) | Primitives    | 
++------------+--------------------------------------+-----------+----------------------+---------------+
+|pp_potato   | processor/regfile/registers_reg      | Implied   | 32 x 32              | RAM32M x 12   | 
+|pp_potato   | icache_enabled.icache/tag_memory_reg | Implied   | 128 x 21             | RAM64M x 14   | 
++------------+--------------------------------------+-----------+----------------------+---------------+
+
+Note: The table above is a preliminary report that shows the Distributed RAMs at the current stage of the synthesis flow. Some Distributed RAMs may be reimplemented as non Distributed RAM primitives later in the synthesis flow. Multiple instantiated RAMs are reported only once.
+
+DSP: Preliminary Mapping  Report (see note below)
++----------------+---------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|Module Name     | DSP Mapping         | A Size | B Size | C Size | D Size | P Size | AREG | BREG | CREG | DREG | ADREG | MREG | PREG | 
++----------------+---------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|fm_3d_fmul      | A*B                 | 16     | 16     | -      | -      | 32     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fm_3d_fmul      | A*B                 | 16     | 16     | -      | -      | 32     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fm_3d_fmul      | A*B                 | 16     | 16     | -      | -      | 32     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fm_3d_fmul      | A*B                 | 16     | 16     | -      | -      | 32     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fm_3d_frcp      | A2*B2               | 16     | 8      | -      | -      | 24     | 1    | 1    | -    | -    | -     | 0    | 0    | 
+|fm_3d_fmul      | A*B                 | 16     | 16     | -      | -      | 32     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fm_geo_viewport | A2*B                | 16     | 16     | -      | -      | 32     | 1    | 0    | -    | -    | -     | 0    | 0    | 
+|fm_geo_cull     | A*B                 | 12     | 12     | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fm_geo_cull     | C+A*B+1             | 12     | 12     | 24     | -      | 24     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|fm_ras          | (C'+A*B)'           | 14     | 12     | 10     | -      | 23     | 0    | 0    | 1    | -    | -     | 0    | 1    | 
+|tmu_addresses   | A*B                 | 11     | 11     | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|tmu_addresses   | (PCIN+(A:0x0):B+C)' | 30     | 11     | 25     | -      | -1     | 0    | 0    | 0    | -    | -     | 0    | 1    | 
+|tmu_addresses   | A*B                 | 11     | 11     | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|tmu_addresses   | (PCIN+(A:0x0):B+C)' | 30     | 11     | 25     | -      | -1     | 0    | 0    | 0    | -    | -     | 0    | 1    | 
++----------------+---------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+
+Note: The table above is a preliminary report that shows the DSPs inferred at the current stage of the synthesis flow. Some DSP may be reimplemented as non DSP primitives later in the synthesis flow. Multiple instantiated DSPs are reported only once.
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Area Optimization
+---------------------------------------------------------------------------------
+INFO: [Synth 8-3886] merging instance 'potato0/icache_enabled.icache/cl_current_line_reg[0]' (FDE) to 'potato0/icache_enabled.icache/cl_load_address_reg[4]'
+INFO: [Synth 8-3886] merging instance 'potato0/icache_enabled.icache/cl_current_line_reg[1]' (FDE) to 'potato0/icache_enabled.icache/cl_load_address_reg[5]'
+INFO: [Synth 8-3886] merging instance 'potato0/icache_enabled.icache/cl_current_line_reg[2]' (FDE) to 'potato0/icache_enabled.icache/cl_load_address_reg[6]'
+INFO: [Synth 8-3886] merging instance 'potato0/icache_enabled.icache/cl_current_line_reg[3]' (FDE) to 'potato0/icache_enabled.icache/cl_load_address_reg[7]'
+INFO: [Synth 8-3886] merging instance 'potato0/icache_enabled.icache/cl_current_line_reg[4]' (FDE) to 'potato0/icache_enabled.icache/cl_load_address_reg[8]'
+INFO: [Synth 8-3886] merging instance 'potato0/icache_enabled.icache/cl_current_line_reg[5]' (FDE) to 'potato0/icache_enabled.icache/cl_load_address_reg[9]'
+INFO: [Synth 8-3886] merging instance 'potato0/icache_enabled.icache/cl_current_line_reg[6]' (FDE) to 'potato0/icache_enabled.icache/cl_load_address_reg[10]'
+INFO: [Synth 8-3886] merging instance 'potato0/processor/execute/decode_exception_cause_reg[4]' (FDE) to 'potato0/processor/execute/decode_exception_cause_reg[2]'
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (potato0/\processor/execute /\decode_exception_cause_reg[1] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato0/\processor/execute /\decode_exception_cause_reg[5] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato0/\icache_enabled.icache/wb_outputs_reg[we] )
+INFO: [Synth 8-3886] merging instance 'potato0/icache_enabled.icache/wb_outputs_reg[sel][0]' (FDE) to 'potato0/icache_enabled.icache/wb_outputs_reg[sel][3]'
+INFO: [Synth 8-3886] merging instance 'potato0/icache_enabled.icache/wb_outputs_reg[sel][1]' (FDE) to 'potato0/icache_enabled.icache/wb_outputs_reg[sel][3]'
+INFO: [Synth 8-3886] merging instance 'potato0/icache_enabled.icache/wb_outputs_reg[sel][2]' (FDE) to 'potato0/icache_enabled.icache/wb_outputs_reg[sel][3]'
+INFO: [Synth 8-3886] merging instance 'potato0/icache_enabled.icache/wb_outputs_reg[adr][0]' (FDE) to 'potato0/icache_enabled.icache/wb_outputs_reg[adr][1]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (potato0/\icache_enabled.icache/wb_outputs_reg[adr][1] )
+WARNING: [Synth 8-3332] Sequential element (decode_exception_cause_reg[5]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (decode_exception_cause_reg[4]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (decode_exception_cause_reg[1]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[23]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[22]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[21]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[20]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[19]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[18]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[17]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[16]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[15]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[14]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[13]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[12]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[11]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[10]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[9]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[8]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[6]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[5]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[4]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[2]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[1]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (mie_reg[0]) is unused and will be removed from module pp_execute.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[31]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[30]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[29]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[28]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[27]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[26]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[25]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[24]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[23]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[22]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[21]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[20]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[19]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[18]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[17]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[16]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[15]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[14]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[13]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[12]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[11]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[10]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[9]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[8]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[7]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[6]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[5]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[4]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[3]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[2]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[1]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/read_data_out_reg[0]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/wb_outputs_reg[adr][1]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/wb_outputs_reg[adr][0]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/wb_outputs_reg[sel][2]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/wb_outputs_reg[sel][1]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/wb_outputs_reg[sel][0]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/wb_outputs_reg[we]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/cl_current_line_reg[0]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/cl_current_line_reg[1]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/cl_current_line_reg[2]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/cl_current_line_reg[3]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/cl_current_line_reg[4]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/cl_current_line_reg[5]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (icache_enabled.icache/cl_current_line_reg[6]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (processor/decode/instruction_reg[1]) is unused and will be removed from module pp_potato.
+WARNING: [Synth 8-3332] Sequential element (processor/decode/instruction_reg[0]) is unused and will be removed from module pp_potato.
+INFO: [Synth 8-3886] merging instance 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[0]' (FDE) to 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[1]'
+INFO: [Synth 8-3886] merging instance 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[1]' (FDE) to 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[2]'
+INFO: [Synth 8-3886] merging instance 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[2]' (FDE) to 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[3]'
+INFO: [Synth 8-3886] merging instance 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[3]' (FDE) to 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[4]'
+INFO: [Synth 8-3886] merging instance 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[4]' (FDE) to 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[5]'
+INFO: [Synth 8-3886] merging instance 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[5]' (FDE) to 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[6]'
+INFO: [Synth 8-3886] merging instance 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[6]' (FDE) to 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[7]'
+INFO: [Synth 8-3886] merging instance 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[7]' (FDE) to 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[8]'
+INFO: [Synth 8-3886] merging instance 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[8]' (FDE) to 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[9]'
+INFO: [Synth 8-3886] merging instance 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[9]' (FDE) to 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[10]'
+INFO: [Synth 8-3886] merging instance 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[10]' (FDE) to 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[11]'
+INFO: [Synth 8-3886] merging instance 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[11]' (FDE) to 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[12]'
+INFO: [Synth 8-3886] merging instance 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[12]' (FDE) to 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[13]'
+INFO: [Synth 8-3886] merging instance 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[13]' (FDE) to 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[14]'
+INFO: [Synth 8-3886] merging instance 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[14]' (FDE) to 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[20]'
+INFO: [Synth 8-3886] merging instance 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[15]' (FDE) to 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[16]'
+INFO: [Synth 8-3886] merging instance 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[21]' (FDE) to 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[20]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (fm_3d_core_0/u_geo/u_geo_matrix/\r_vw_in_reg[20] )
+INFO: [Synth 8-3886] merging instance 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[18]' (FDE) to 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[16]'
+INFO: [Synth 8-3886] merging instance 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[19]' (FDE) to 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[16]'
+INFO: [Synth 8-3886] merging instance 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[17]' (FDE) to 'fm_3d_core_0/u_geo/u_geo_matrix/r_vw_in_reg[16]'
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (fm_3d_core_0/u_geo/u_geo_matrix/\r_vw_in_reg[16] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (fm_3d_core_0/\u_ras/u_ras_line/r_e2_reg[0] )
+WARNING: [Synth 8-3332] Sequential element (r_vw_in_reg[21]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (r_vw_in_reg[20]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (r_vw_in_reg[19]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (r_vw_in_reg[18]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (r_vw_in_reg[17]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (r_vw_in_reg[16]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (r_vw_in_reg[15]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (r_vw_in_reg[14]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (r_vw_in_reg[13]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (r_vw_in_reg[12]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (r_vw_in_reg[11]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (r_vw_in_reg[10]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (r_vw_in_reg[9]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (r_vw_in_reg[8]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (r_vw_in_reg[7]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (r_vw_in_reg[6]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (r_vw_in_reg[5]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (r_vw_in_reg[4]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (r_vw_in_reg[3]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (r_vw_in_reg[2]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (r_vw_in_reg[1]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (r_vw_in_reg[0]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (r_lat_cnt_reg[11]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (r_lat_cnt_reg[10]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (r_lat_cnt_reg[9]) is unused and will be removed from module fm_geo_matrix.
+WARNING: [Synth 8-3332] Sequential element (u_fadd/r_c_reg[20]) is unused and will be removed from module fm_geo_clip.
+WARNING: [Synth 8-3332] Sequential element (u_fadd/r_c_reg[19]) is unused and will be removed from module fm_geo_clip.
+WARNING: [Synth 8-3332] Sequential element (u_fadd/r_c_reg[18]) is unused and will be removed from module fm_geo_clip.
+INFO: [Common 17-14] Message 'Synth 8-3332' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/pixout/fml_sel_reg[4]' (FD) to 'i_0/tmu_0/pixout/fml_sel_reg[5]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/pixout/fml_sel_reg[6]' (FD) to 'i_0/tmu_0/pixout/fml_sel_reg[7]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/decay/s1_pixel_full_reg[2]' (FDE) to 'i_0/tmu_0/decay/s1_b_reg[2]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/decay/s1_pixel_full_reg[3]' (FDE) to 'i_0/tmu_0/decay/s1_b_reg[3]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/decay/s1_pixel_full_reg[10]' (FDE) to 'i_0/tmu_0/decay/s1_g_reg[5]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/decay/s1_pixel_full_reg[4]' (FDE) to 'i_0/tmu_0/decay/s1_b_reg[4]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/decay/s1_pixel_full_reg[5]' (FDE) to 'i_0/tmu_0/decay/s1_g_reg[0]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/decay/s1_pixel_full_reg[7]' (FDE) to 'i_0/tmu_0/decay/s1_g_reg[2]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/decay/s1_pixel_full_reg[8]' (FDE) to 'i_0/tmu_0/decay/s1_g_reg[3]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/decay/s1_pixel_full_reg[0]' (FDE) to 'i_0/tmu_0/decay/s1_b_reg[0]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/decay/s1_pixel_full_reg[1]' (FDE) to 'i_0/tmu_0/decay/s1_b_reg[1]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/decay/s1_pixel_full_reg[9]' (FDE) to 'i_0/tmu_0/decay/s1_g_reg[4]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/decay/s1_pixel_full_reg[6]' (FDE) to 'i_0/tmu_0/decay/s1_g_reg[1]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/decay/s1_pixel_full_reg[14]' (FDE) to 'i_0/tmu_0/decay/s1_r_reg[3]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/decay/s1_pixel_full_reg[15]' (FDE) to 'i_0/tmu_0/decay/s1_r_reg[4]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/decay/s1_pixel_full_reg[13]' (FDE) to 'i_0/tmu_0/decay/s1_r_reg[2]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/decay/s1_pixel_full_reg[12]' (FDE) to 'i_0/tmu_0/decay/s1_r_reg[1]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/decay/s1_pixel_full_reg[11]' (FDE) to 'i_0/tmu_0/decay/s1_r_reg[0]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/pixout/fml_adr_reg[0]' (FDE) to 'i_0/tmu_0/pixout/fml_adr_reg[1]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/pixout/fml_adr_reg[1]' (FDE) to 'i_0/tmu_0/pixout/fml_adr_reg[2]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/pixout/fml_adr_reg[2]' (FDE) to 'i_0/tmu_0/pixout/fml_adr_reg[3]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/pixout/fml_adr_reg[3]' (FDE) to 'i_0/tmu_0/pixout/fml_adr_reg[4]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (i_0/tmu_0/pixout/\fml_adr_reg[4] )
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/pixin/fml_adr_reg[0]' (FDR) to 'i_0/tmu_0/pixin/fml_adr_reg[3]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/pixin/fml_adr_reg[1]' (FDR) to 'i_0/tmu_0/pixin/fml_adr_reg[3]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/pixin/fml_adr_reg[3]' (FDR) to 'i_0/tmu_0/pixin/fml_adr_reg[2]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/pixin/fml_adr_reg[2]' (FDR) to 'i_0/tmu_0/pixin/fml_adr_reg[4]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (i_0/tmu_0/pixin/\fml_adr_reg[4] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (i_0/tmu_0/meshgen/\wbm_adr_o_reg[0] )
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/pixout/fml_sel_reg[2]' (FD) to 'i_0/tmu_0/pixout/fml_sel_reg[3]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/pixout/fml_sel_reg[1]' (FD) to 'i_0/tmu_0/pixout/fml_sel_reg[0]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (i_0/tmu_0/meshgen/\wbm_adr_o_reg[1] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (i_0/\vga80x40_0/R_reg )
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (fm_3d_core_0/u_geo/u_geo_mem/\r_vx_reg[21] )
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (fm_3d_core_0/u_geo/u_geo_mem/\r_vy_reg[21] )
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (fm_3d_core_0/u_geo/u_geo_mem/\r_vz_reg[21] )
+INFO: [Synth 8-3886] merging instance 'fm_3d_core_0/u_geo/u_geo_matrix/r_vx_in_reg[21]' (FDE) to 'fm_3d_core_0/u_geo/u_geo_matrix/r_vy_in_reg[21]'
+INFO: [Synth 8-3886] merging instance 'fm_3d_core_0/u_geo/u_geo_matrix/r_vy_in_reg[21]' (FDE) to 'fm_3d_core_0/u_geo/u_geo_matrix/r_vz_in_reg[21]'
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (fm_3d_core_0/u_geo/u_geo_matrix/\r_vz_in_reg[21] )
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du2/divisor_r_reg[0]' (FDE) to 'i_0/tmu_0/edgediv/d_dv2/divisor_r_reg[0]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du1/divisor_r_reg[0]' (FDE) to 'i_0/tmu_0/edgediv/d_dv1/divisor_r_reg[0]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du3/divisor_r_reg[0]' (FDE) to 'i_0/tmu_0/edgediv/d_dv3/divisor_r_reg[0]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_dv2/divisor_r_reg[0]' (FDE) to 'i_0/tmu_0/edgediv/d_dx2/divisor_r_reg[0]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_dv1/divisor_r_reg[0]' (FDE) to 'i_0/tmu_0/edgediv/d_dx1/divisor_r_reg[0]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_dv3/divisor_r_reg[0]' (FDE) to 'i_0/tmu_0/edgediv/d_dx3/divisor_r_reg[0]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du2/divisor_r_reg[1]' (FDE) to 'i_0/tmu_0/edgediv/d_dv2/divisor_r_reg[1]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du2/divisor_r_reg[2]' (FDE) to 'i_0/tmu_0/edgediv/d_dv2/divisor_r_reg[2]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du2/divisor_r_reg[3]' (FDE) to 'i_0/tmu_0/edgediv/d_dv2/divisor_r_reg[3]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du2/divisor_r_reg[4]' (FDE) to 'i_0/tmu_0/edgediv/d_dv2/divisor_r_reg[4]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du2/divisor_r_reg[5]' (FDE) to 'i_0/tmu_0/edgediv/d_dv2/divisor_r_reg[5]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du2/divisor_r_reg[6]' (FDE) to 'i_0/tmu_0/edgediv/d_dv2/divisor_r_reg[6]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du2/divisor_r_reg[7]' (FDE) to 'i_0/tmu_0/edgediv/d_dv2/divisor_r_reg[7]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du2/divisor_r_reg[8]' (FDE) to 'i_0/tmu_0/edgediv/d_dv2/divisor_r_reg[8]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du2/divisor_r_reg[9]' (FDE) to 'i_0/tmu_0/edgediv/d_dv2/divisor_r_reg[9]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du2/divisor_r_reg[10]' (FDE) to 'i_0/tmu_0/edgediv/d_dv2/divisor_r_reg[10]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du1/divisor_r_reg[1]' (FDE) to 'i_0/tmu_0/edgediv/d_dv1/divisor_r_reg[1]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du1/divisor_r_reg[2]' (FDE) to 'i_0/tmu_0/edgediv/d_dv1/divisor_r_reg[2]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du1/divisor_r_reg[3]' (FDE) to 'i_0/tmu_0/edgediv/d_dv1/divisor_r_reg[3]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du1/divisor_r_reg[4]' (FDE) to 'i_0/tmu_0/edgediv/d_dv1/divisor_r_reg[4]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du1/divisor_r_reg[5]' (FDE) to 'i_0/tmu_0/edgediv/d_dv1/divisor_r_reg[5]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du1/divisor_r_reg[6]' (FDE) to 'i_0/tmu_0/edgediv/d_dv1/divisor_r_reg[6]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du1/divisor_r_reg[7]' (FDE) to 'i_0/tmu_0/edgediv/d_dv1/divisor_r_reg[7]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du1/divisor_r_reg[8]' (FDE) to 'i_0/tmu_0/edgediv/d_dv1/divisor_r_reg[8]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du1/divisor_r_reg[9]' (FDE) to 'i_0/tmu_0/edgediv/d_dv1/divisor_r_reg[9]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du1/divisor_r_reg[10]' (FDE) to 'i_0/tmu_0/edgediv/d_dv1/divisor_r_reg[10]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du3/divisor_r_reg[1]' (FDE) to 'i_0/tmu_0/edgediv/d_dv3/divisor_r_reg[1]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du3/divisor_r_reg[2]' (FDE) to 'i_0/tmu_0/edgediv/d_dv3/divisor_r_reg[2]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du3/divisor_r_reg[3]' (FDE) to 'i_0/tmu_0/edgediv/d_dv3/divisor_r_reg[3]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du3/divisor_r_reg[4]' (FDE) to 'i_0/tmu_0/edgediv/d_dv3/divisor_r_reg[4]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du3/divisor_r_reg[5]' (FDE) to 'i_0/tmu_0/edgediv/d_dv3/divisor_r_reg[5]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du3/divisor_r_reg[6]' (FDE) to 'i_0/tmu_0/edgediv/d_dv3/divisor_r_reg[6]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du3/divisor_r_reg[7]' (FDE) to 'i_0/tmu_0/edgediv/d_dv3/divisor_r_reg[7]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du3/divisor_r_reg[8]' (FDE) to 'i_0/tmu_0/edgediv/d_dv3/divisor_r_reg[8]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du3/divisor_r_reg[9]' (FDE) to 'i_0/tmu_0/edgediv/d_dv3/divisor_r_reg[9]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_du3/divisor_r_reg[10]' (FDE) to 'i_0/tmu_0/edgediv/d_dv3/divisor_r_reg[10]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_dv2/divisor_r_reg[1]' (FDE) to 'i_0/tmu_0/edgediv/d_dx2/divisor_r_reg[1]'
+INFO: [Synth 8-3886] merging instance 'i_0/tmu_0/edgediv/d_dv2/divisor_r_reg[2]' (FDE) to 'i_0/tmu_0/edgediv/d_dx2/divisor_r_reg[2]'
+INFO: [Common 17-14] Message 'Synth 8-3886' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+---------------------------------------------------------------------------------
+Finished Area Optimization : Time (s): cpu = 00:00:39 ; elapsed = 00:00:39 . Memory (MB): peak = 1522.324 ; gain = 630.340 ; free physical = 24195 ; free virtual = 93901
+---------------------------------------------------------------------------------
+Finished Parallel Area Optimization  : Time (s): cpu = 00:00:39 ; elapsed = 00:00:39 . Memory (MB): peak = 1522.324 ; gain = 630.340 ; free physical = 24195 ; free virtual = 93901
+
+Report RTL Partitions: 
++------+--------------+------------+----------+
+|      |RTL Partition |Replication |Instances |
++------+--------------+------------+----------+
+|1     |top__GB0      |           1|     11132|
+|2     |pp_potato     |           1|     10204|
+|3     |fm_3d_core    |           1|     11010|
++------+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying XDC Timing Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:45 ; elapsed = 00:00:45 . Memory (MB): peak = 1623.598 ; gain = 731.613 ; free physical = 24067 ; free virtual = 93774
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:52 ; elapsed = 00:00:53 . Memory (MB): peak = 1704.527 ; gain = 812.543 ; free physical = 23986 ; free virtual = 93692
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++------+--------------+------------+----------+
+|      |RTL Partition |Replication |Instances |
++------+--------------+------------+----------+
+|1     |top__GB0      |           1|     11132|
+|2     |pp_potato     |           1|     10192|
+|3     |fm_3d_core    |           1|     11010|
++------+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+INFO: [Synth 8-4480] The timing for the instance potato0/icache_enabled.icache/cache_memory_reg_0 (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
+INFO: [Synth 8-4480] The timing for the instance potato0/icache_enabled.icache/cache_memory_reg_1 (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
+INFO: [Synth 8-4480] The timing for the instance tmu_0/pixin/tags_reg (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
+INFO: [Synth 8-4480] The timing for the instance tmu_0/pixin/data_reg_0 (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
+INFO: [Synth 8-4480] The timing for the instance tmu_0/pixin/data_reg_0 (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
+INFO: [Synth 8-4480] The timing for the instance tmu_0/pixin/data_reg_1 (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
+INFO: [Synth 8-4480] The timing for the instance tmu_0/pixin/data_reg_1 (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:57 ; elapsed = 00:00:57 . Memory (MB): peak = 1746.980 ; gain = 854.996 ; free physical = 23943 ; free virtual = 93649
+---------------------------------------------------------------------------------
+Finished Parallel Technology Mapping Optimization  : Time (s): cpu = 00:00:57 ; elapsed = 00:00:57 . Memory (MB): peak = 1746.980 ; gain = 854.996 ; free physical = 23943 ; free virtual = 93649
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+Finished Parallel Synthesis Optimization  : Time (s): cpu = 00:00:57 ; elapsed = 00:00:57 . Memory (MB): peak = 1746.980 ; gain = 854.996 ; free physical = 23943 ; free virtual = 93649
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+INFO: [Synth 8-5365] Flop fm_3d_core_0/u_geo/u_geo_persdiv/u_frcp/frcp_rom/r_c_reg[31] is being inverted and renamed to fm_3d_core_0/u_geo/u_geo_persdiv/u_frcp/frcp_rom/r_c_reg[31]_inv.
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:58 ; elapsed = 00:00:58 . Memory (MB): peak = 1746.980 ; gain = 854.996 ; free physical = 23943 ; free virtual = 93649
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:58 ; elapsed = 00:00:58 . Memory (MB): peak = 1746.980 ; gain = 854.996 ; free physical = 23943 ; free virtual = 93649
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:59 ; elapsed = 00:00:59 . Memory (MB): peak = 1746.980 ; gain = 854.996 ; free physical = 23943 ; free virtual = 93649
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+Static Shift Register Report:
++------------+------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|Module Name | RTL Name                           | Length | Width | Reset Signal | Pull out first Reg | Pull out last Reg | SRL16E | SRLC32E | 
++------------+------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|top         | tmu_0/decay/s3_full_brightness_reg | 3      | 1     | NO           | NO                 | YES               | 1      | 0       | 
+|top         | tmu_0/decay/dst_addr1_reg[24]      | 3      | 25    | NO           | NO                 | YES               | 25     | 0       | 
++------------+------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+-----------+------+
+|      |Cell       |Count |
++------+-----------+------+
+|1     |BUFG       |     1|
+|2     |CARRY4     |   689|
+|3     |DSP48E1    |     1|
+|4     |DSP48E1_1  |     1|
+|5     |DSP48E1_3  |     1|
+|6     |DSP48E1_4  |     6|
+|7     |DSP48E1_6  |     2|
+|8     |DSP48E1_7  |     2|
+|9     |DSP48E1_8  |     1|
+|10    |LUT1       |   723|
+|11    |LUT2       |  1384|
+|12    |LUT3       |  1432|
+|13    |LUT4       |  1496|
+|14    |LUT5       |  1682|
+|15    |LUT6       |  2534|
+|16    |MUXF7      |   133|
+|17    |MUXF8      |    30|
+|18    |RAM32M     |    12|
+|19    |RAM64M     |    14|
+|20    |RAMB18E1   |     1|
+|21    |RAMB18E1_1 |     2|
+|22    |RAMB36E1   |     2|
+|23    |SRL16E     |    26|
+|24    |FDCE       |   120|
+|25    |FDRE       |  6204|
+|26    |FDSE       |    88|
+|27    |IBUF       |    18|
+|28    |OBUF       |    16|
++------+-----------+------+
+
+Report Instance Areas: 
++------+---------+-------+------+
+|      |Instance |Module |Cells |
++------+---------+-------+------+
+|1     |top      |       | 16621|
++------+---------+-------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:59 ; elapsed = 00:00:59 . Memory (MB): peak = 1746.980 ; gain = 854.996 ; free physical = 23943 ; free virtual = 93649
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 1286 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:54 ; elapsed = 00:00:54 . Memory (MB): peak = 1746.980 ; gain = 373.090 ; free physical = 23943 ; free virtual = 93649
+Synthesis Optimization Complete : Time (s): cpu = 00:00:59 ; elapsed = 00:00:59 . Memory (MB): peak = 1746.988 ; gain = 855.004 ; free physical = 23943 ; free virtual = 93649
+INFO: [Project 1-571] Translating synthesized netlist
+INFO: [Netlist 29-17] Analyzing 752 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+WARNING: [Netlist 29-101] Netlist 'top' is not ideal for floorplanning, since the cellview 'top' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 26 instances were transformed.
+  RAM32M => RAM32M (RAMD32, RAMD32, RAMD32, RAMD32, RAMD32, RAMD32, RAMS32, RAMS32): 12 instances
+  RAM64M => RAM64M (RAMD64E, RAMD64E, RAMD64E, RAMD64E): 14 instances
+
+INFO: [Common 17-83] Releasing license: Synthesis
+444 Infos, 206 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:01:00 ; elapsed = 00:01:00 . Memory (MB): peak = 1778.996 ; gain = 812.457 ; free physical = 23945 ; free virtual = 93651
+report_utilization: Time (s): cpu = 00:00:00.09 ; elapsed = 00:00:00.10 . Memory (MB): peak = 1811.012 ; gain = 0.000 ; free physical = 23942 ; free virtual = 93650
+INFO: [Common 17-206] Exiting Vivado at Sat Jan 13 13:38:45 2018...

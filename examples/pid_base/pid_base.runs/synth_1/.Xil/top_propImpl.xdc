@@ -1,0 +1,7 @@
+set_property SRC_FILE_INFO {cfile:/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/constrs_1/new/constraints.xdc rfile:../../../pid_simple.srcs/constrs_1/new/constraints.xdc id:1} [current_design]
+set_property src_info {type:XDC file:1 line:9 export:INPUT save:INPUT read:READ} [current_design]
+set_property PACKAGE_PIN E3 [get_ports clk]
+set_property src_info {type:XDC file:1 line:15 export:INPUT save:INPUT read:READ} [current_design]
+set_property PACKAGE_PIN U9 [get_ports {rst}]
+set_property src_info {type:XDC file:1 line:67 export:INPUT save:INPUT read:READ} [current_design]
+set_property PACKAGE_PIN T8 [get_ports {out_led}]

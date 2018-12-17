@@ -1,0 +1,3572 @@
+#-----------------------------------------------------------
+# Vivado v2016.2 (64-bit)
+# SW Build 1577090 on Thu Jun  2 16:32:35 MDT 2016
+# IP Build 1577682 on Fri Jun  3 12:00:54 MDT 2016
+# Start of session at: Sun Nov 12 18:35:07 2017
+# Process ID: 4119
+# Current directory: /home/adam/vivado_workspace/sudoku_top/sudoku_top.runs/synth_1
+# Command line: vivado -log top.vds -mode batch -messageDb vivado.pb -notrace -source top.tcl
+# Log file: /home/adam/vivado_workspace/sudoku_top/sudoku_top.runs/synth_1/top.vds
+# Journal file: /home/adam/vivado_workspace/sudoku_top/sudoku_top.runs/synth_1/vivado.jou
+#-----------------------------------------------------------
+source top.tcl -notrace
+Command: synth_design -top top -part xc7a100tcsg324-3
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: Launching helper process for spawning children vivado processes
+INFO: Helper process launched with PID 4145 
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:10 . Memory (MB): peak = 1040.223 ; gain = 155.137 ; free physical = 3916 ; free virtual = 9522
+---------------------------------------------------------------------------------
+INFO: [Synth 8-638] synthesizing module 'top' [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/big_counter_top/big_counter_top.srcs/sources_1/new/top.v:23]
+INFO: [Synth 8-638] synthesizing module 'sudoku' [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/ooc_sudoku/Sources/hdl/sudoku.v:1]
+INFO: [Synth 8-638] synthesizing module 'piece' [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/ooc_sudoku/Sources/hdl/piece.v:1]
+INFO: [Synth 8-638] synthesizing module 'one_set' [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/ooc_sudoku/Sources/hdl/piece.v:256]
+INFO: [Synth 8-256] done synthesizing module 'one_set' (1#1) [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/ooc_sudoku/Sources/hdl/piece.v:256]
+INFO: [Synth 8-155] case statement is not full and has no default [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/ooc_sudoku/Sources/hdl/piece.v:176]
+INFO: [Synth 8-256] done synthesizing module 'piece' (2#1) [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/ooc_sudoku/Sources/hdl/piece.v:1]
+INFO: [Synth 8-638] synthesizing module 'checkCorrect' [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/ooc_sudoku/Sources/hdl/sudoku_search.v:389]
+INFO: [Synth 8-256] done synthesizing module 'checkCorrect' (3#1) [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/ooc_sudoku/Sources/hdl/sudoku_search.v:389]
+INFO: [Synth 8-638] synthesizing module 'minPiece' [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/ooc_sudoku/Sources/hdl/minPiece.v:1]
+INFO: [Synth 8-638] synthesizing module 'countPoss' [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/ooc_sudoku/Sources/hdl/minPiece.v:209]
+INFO: [Synth 8-638] synthesizing module 'one_count9' [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/ooc_sudoku/Sources/hdl/piece.v:316]
+INFO: [Synth 8-638] synthesizing module 'one_count4' [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/ooc_sudoku/Sources/hdl/piece.v:296]
+INFO: [Synth 8-256] done synthesizing module 'one_count4' (4#1) [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/ooc_sudoku/Sources/hdl/piece.v:296]
+INFO: [Synth 8-256] done synthesizing module 'one_count9' (5#1) [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/ooc_sudoku/Sources/hdl/piece.v:316]
+INFO: [Synth 8-256] done synthesizing module 'countPoss' (6#1) [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/ooc_sudoku/Sources/hdl/minPiece.v:209]
+INFO: [Synth 8-638] synthesizing module 'cmpPiece' [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/ooc_sudoku/Sources/hdl/minPiece.v:187]
+INFO: [Synth 8-256] done synthesizing module 'cmpPiece' (7#1) [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/ooc_sudoku/Sources/hdl/minPiece.v:187]
+INFO: [Synth 8-256] done synthesizing module 'minPiece' (8#1) [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/ooc_sudoku/Sources/hdl/minPiece.v:1]
+INFO: [Synth 8-638] synthesizing module 'ones_count81' [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/ooc_sudoku/Sources/hdl/piece.v:271]
+INFO: [Synth 8-256] done synthesizing module 'ones_count81' (9#1) [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/ooc_sudoku/Sources/hdl/piece.v:271]
+INFO: [Synth 8-256] done synthesizing module 'sudoku' (10#1) [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/ooc_sudoku/Sources/hdl/sudoku.v:1]
+WARNING: [Synth 8-689] width (704) of port connection 'inGrid' does not match port width (729) of module 'sudoku' [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/big_counter_top/big_counter_top.srcs/sources_1/new/top.v:45]
+INFO: [Synth 8-638] synthesizing module 'tiny_encryption_algorithm' [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/ooc_tiny_encryption_algorithm/Sources/hdl/tiny_encryption_algorithm.vhd:17]
+INFO: [Synth 8-256] done synthesizing module 'tiny_encryption_algorithm' (11#1) [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/ooc_tiny_encryption_algorithm/Sources/hdl/tiny_encryption_algorithm.vhd:17]
+WARNING: [Synth 8-2900] ignoring illegal expression in output port connection [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/big_counter_top/big_counter_top.srcs/sources_1/new/top.v:62]
+INFO: [Synth 8-256] done synthesizing module 'top' (12#1) [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/sources_1/imports/vivado_workspace/big_counter_top/big_counter_top.srcs/sources_1/new/top.v:23]
+WARNING: [Synth 8-3331] design top has unconnected port led[15]
+WARNING: [Synth 8-3331] design top has unconnected port led[14]
+WARNING: [Synth 8-3331] design top has unconnected port led[13]
+WARNING: [Synth 8-3331] design top has unconnected port led[12]
+WARNING: [Synth 8-3331] design top has unconnected port led[11]
+WARNING: [Synth 8-3331] design top has unconnected port led[10]
+WARNING: [Synth 8-3331] design top has unconnected port led[9]
+WARNING: [Synth 8-3331] design top has unconnected port sw[7]
+WARNING: [Synth 8-3331] design top has unconnected port sw[6]
+WARNING: [Synth 8-3331] design top has unconnected port sw[5]
+WARNING: [Synth 8-3331] design top has unconnected port sw[4]
+WARNING: [Synth 8-3331] design top has unconnected port sw[3]
+WARNING: [Synth 8-3331] design top has unconnected port sw[2]
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:07 ; elapsed = 00:00:11 . Memory (MB): peak = 1084.660 ; gain = 199.574 ; free physical = 3869 ; free virtual = 9476
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:08 ; elapsed = 00:00:11 . Memory (MB): peak = 1084.660 ; gain = 199.574 ; free physical = 3869 ; free virtual = 9475
+---------------------------------------------------------------------------------
+INFO: [Device 21-403] Loading part xc7a100tcsg324-3
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc]
+WARNING: [Vivado 12-584] No ports matched 'sw[8]'. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:42]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:42]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[8]'. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:43]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:43]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[9]'. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:45]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:45]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[9]'. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:46]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:46]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[10]'. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:48]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:48]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[10]'. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:49]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:49]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[11]'. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:51]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:51]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[11]'. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:52]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:52]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[12]'. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:54]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:54]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[12]'. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:55]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:55]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[13]'. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:57]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:57]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[13]'. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:58]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:58]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[14]'. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:60]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:60]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[14]'. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:61]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:61]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[15]'. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:63]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:63]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[15]'. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:64]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc:64]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+Finished Parsing XDC File [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc]
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [/home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/top_propImpl.xdc].
+Resolution: To avoid this warning, move constraints listed in [.Xil/top_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
+Completed Processing XDC Constraints
+
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00.03 ; elapsed = 00:00:00.03 . Memory (MB): peak = 1543.434 ; gain = 0.000 ; free physical = 3465 ; free virtual = 9091
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:21 ; elapsed = 00:00:25 . Memory (MB): peak = 1543.434 ; gain = 658.348 ; free physical = 3463 ; free virtual = 9089
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7a100tcsg324-3
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:21 ; elapsed = 00:00:25 . Memory (MB): peak = 1543.434 ; gain = 658.348 ; free physical = 3463 ; free virtual = 9089
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+Applied set_property DONT_TOUCH = true for sudoku_0. (constraint file  /home/adam/vivado_workspace/sudoku_top/sudoku_top.srcs/constrs_1/imports/new/constr.xdc, line 1).
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:21 ; elapsed = 00:00:25 . Memory (MB): peak = 1543.434 ; gain = 658.348 ; free physical = 3459 ; free virtual = 9090
+---------------------------------------------------------------------------------
+INFO: [Synth 8-5544] ROM "w_out" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+INFO: [Synth 8-802] inferred FSM for state register 'r_state_reg' in module 'piece'
+INFO: [Synth 8-5544] ROM "n_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "n_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                  iSTATE |                               00 |                              000
+                 iSTATE0 |                               01 |                              001
+                 iSTATE1 |                               10 |                              010
+                 iSTATE2 |                               11 |                              111
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'r_state_reg' using encoding 'sequential' in module 'piece'
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:22 ; elapsed = 00:00:26 . Memory (MB): peak = 1543.434 ; gain = 658.348 ; free physical = 3459 ; free virtual = 9085
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++------+--------------+------------+----------+
+|      |RTL Partition |Replication |Instances |
++------+--------------+------------+----------+
+|1     |sudoku__GB0   |           1|     57773|
+|2     |sudoku__GB1   |           1|     16152|
+|3     |sudoku__GB2   |           1|     21536|
+|4     |sudoku__GB3   |           1|     27683|
+|5     |sudoku__GB4   |           1|     59304|
+|6     |sudoku__GB5   |           1|     61557|
+|7     |top__GC0      |           1|      1791|
++------+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     32 Bit       Adders := 3     
+	  21 Input      7 Bit       Adders := 1     
+	   2 Input      7 Bit       Adders := 1     
+	   3 Input      4 Bit       Adders := 81    
+	   2 Input      4 Bit       Adders := 1     
++---XORs : 
+	   3 Input     32 Bit         XORs := 1     
++---XORs : 
+	              729 Bit    Wide XORs := 1     
+	               64 Bit    Wide XORs := 1     
+	                7 Bit    Wide XORs := 2     
+	                4 Bit    Wide XORs := 1     
++---Registers : 
+	               32 Bit    Registers := 6     
+	                9 Bit    Registers := 81    
+	                7 Bit    Registers := 3     
+	                4 Bit    Registers := 83    
+	                1 Bit    Registers := 243   
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 3     
+	   2 Input      9 Bit        Muxes := 162   
+	   4 Input      9 Bit        Muxes := 81    
+	   2 Input      7 Bit        Muxes := 81    
+	   2 Input      4 Bit        Muxes := 80    
+	  16 Input      3 Bit        Muxes := 183   
+	  10 Input      2 Bit        Muxes := 81    
+	   3 Input      1 Bit        Muxes := 81    
+	   2 Input      1 Bit        Muxes := 652   
+	   4 Input      1 Bit        Muxes := 567   
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Hierarchical Component Statistics 
+---------------------------------------------------------------------------------
+Hierarchical RTL Component report 
+Module top 
+Detailed RTL Component Info : 
++---XORs : 
+	              729 Bit    Wide XORs := 1     
+	               64 Bit    Wide XORs := 1     
+	                7 Bit    Wide XORs := 2     
+	                4 Bit    Wide XORs := 1     
+Module cmpPiece__1 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__2 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__3 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module one_count4__3 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__2 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__1 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__1 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__5 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__4 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__2 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__2 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__7 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__6 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__3 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__3 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__9 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__8 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__4 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__4 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__11 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__10 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__5 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__5 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__13 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__12 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__6 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__6 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__15 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__14 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__7 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__7 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__17 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__16 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__8 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__8 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__19 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__18 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__9 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__9 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__21 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__20 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__10 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__10 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__23 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__22 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__11 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__11 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__25 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__24 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__12 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__12 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__27 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__26 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__13 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__13 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__29 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__28 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__14 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__14 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__31 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__30 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__15 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__15 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__33 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__32 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__16 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__16 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__35 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__34 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__17 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__17 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__37 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__36 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__18 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__18 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__39 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__38 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__19 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__19 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__41 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__40 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__20 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__20 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__43 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__42 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__21 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__21 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__45 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__44 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__22 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__22 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__47 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__46 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__23 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__23 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__49 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__48 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__24 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__24 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__51 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__50 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__25 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__25 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__53 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__52 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__26 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__26 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__55 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__54 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__27 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__27 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__57 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__56 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__28 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__28 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__59 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__58 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__29 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__29 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__61 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__60 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__30 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__30 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__63 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__62 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__31 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__31 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__65 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__64 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__32 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__32 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__67 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__66 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__33 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__33 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__69 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__68 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__34 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__34 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__71 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__70 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__35 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__35 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__73 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__72 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__36 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__36 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__75 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__74 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__37 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__37 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__77 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__76 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__38 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__38 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__79 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__78 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__39 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__39 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__81 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__80 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__40 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__40 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__83 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__82 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__41 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__41 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__85 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__84 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__42 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__42 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__87 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__86 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__43 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__43 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__89 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__88 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__44 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__44 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__91 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__90 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__45 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__45 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__93 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__92 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__46 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__46 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__95 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__94 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__47 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__47 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__97 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__96 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__48 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__48 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__99 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__98 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__49 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__49 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__101 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__100 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__50 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__50 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__103 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__102 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__51 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__51 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__105 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__104 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__52 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__52 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__107 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__106 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__53 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__53 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__109 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__108 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__54 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__54 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__111 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__110 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__55 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__55 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__113 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__112 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__56 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__56 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__115 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__114 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__57 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__57 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__117 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__116 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__58 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__58 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__119 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__118 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__59 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__59 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__121 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__120 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__60 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__60 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__123 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__122 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__61 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__61 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__125 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__124 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__62 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__62 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__127 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__126 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__63 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__63 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__129 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__128 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__64 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__64 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__131 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__130 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__65 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__65 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__133 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__132 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__66 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__66 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__135 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__134 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__67 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__67 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__137 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__136 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__68 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__68 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__139 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__138 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__69 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__69 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__141 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__140 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__70 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__70 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__143 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__142 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__71 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__71 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__145 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__144 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__72 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__72 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__147 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__146 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__73 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__73 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__149 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__148 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__74 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__74 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__151 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__150 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__75 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__75 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__153 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__152 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__76 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__76 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__155 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__154 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__77 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__77 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__157 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__156 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__78 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__78 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__159 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__158 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__79 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__79 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__161 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__160 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9__80 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss__80 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module one_count4__1 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__162 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count9 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+Module countPoss 
+Detailed RTL Component Info : 
++---Registers : 
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   3 Input      1 Bit        Muxes := 1     
+Module cmpPiece__4 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__5 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__6 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__7 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__8 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__9 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__10 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__11 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__12 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__13 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__14 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__15 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__16 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__17 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__18 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__19 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__20 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__21 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__22 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__23 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__24 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__25 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__26 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__27 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__28 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__29 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__30 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__31 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__32 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__33 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__34 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__35 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__36 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__37 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__38 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__39 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__40 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__41 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__42 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__43 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__44 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__45 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__46 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__47 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__48 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__49 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__50 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__51 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__52 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__53 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__54 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__55 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__56 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__57 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__58 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__59 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__60 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__61 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__62 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__63 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__64 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__65 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__66 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__67 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__68 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__69 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__70 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__71 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__72 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__73 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__74 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__75 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__76 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__77 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__78 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece__79 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module cmpPiece 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+Module minPiece 
+Detailed RTL Component Info : 
++---Registers : 
+	                7 Bit    Registers := 1     
+	                4 Bit    Registers := 1     
+Module piece__1 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__2 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__3 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__4 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__5 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__6 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__7 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__8 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__9 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__10 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__11 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__12 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__13 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__14 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__15 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__16 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__17 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__18 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__19 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__20 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__21 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__22 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__23 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__24 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__25 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__26 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__27 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__28 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__29 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__30 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__31 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__32 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__33 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__34 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__35 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__36 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__37 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__38 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__39 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__40 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__41 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__42 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__43 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__44 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__45 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__46 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__47 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__48 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__49 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__50 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__51 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__52 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__53 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__54 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__55 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__56 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__57 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__58 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__59 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__60 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__61 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__62 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__63 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__64 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__65 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__66 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__67 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__68 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__69 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__70 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__71 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__72 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__73 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__74 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__75 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__76 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__77 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__78 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__79 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece__80 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module piece 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 2     
+	   4 Input      9 Bit        Muxes := 1     
+	  10 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 7     
+Module one_count4__163 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__164 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__165 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__166 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__167 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__168 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__169 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__170 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__171 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__172 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__173 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__174 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__175 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__176 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__177 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__178 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__179 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__180 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__181 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4__182 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module one_count4 
+Detailed RTL Component Info : 
++---Muxes : 
+	  16 Input      3 Bit        Muxes := 1     
+Module ones_count81 
+Detailed RTL Component Info : 
++---Adders : 
+	  21 Input      7 Bit       Adders := 1     
+Module sudoku 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      4 Bit       Adders := 1     
++---Registers : 
+	                7 Bit    Registers := 1     
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 3     
+Module tiny_encryption_algorithm 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     32 Bit       Adders := 3     
+	   2 Input      7 Bit       Adders := 1     
++---XORs : 
+	   3 Input     32 Bit         XORs := 1     
++---Registers : 
+	               32 Bit    Registers := 6     
+	                7 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 3     
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 1     
+---------------------------------------------------------------------------------
+Finished RTL Hierarchical Component Statistics
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 240 (col length:80)
+BRAMs: 270 (col length: RAMB18 80 RAMB36 40)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+INFO: [Synth 8-5580] Multithreading enabled for synth_design using a maximum of 4 processes.
+Start Parallel Synthesis Optimization  : Time (s): cpu = 00:00:24 ; elapsed = 00:00:28 . Memory (MB): peak = 1547.355 ; gain = 662.270 ; free physical = 3458 ; free virtual = 9084
+---------------------------------------------------------------------------------
+Start Cross Boundary Optimization
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-3331] design top has unconnected port led[15]
+WARNING: [Synth 8-3331] design top has unconnected port led[14]
+WARNING: [Synth 8-3331] design top has unconnected port led[13]
+WARNING: [Synth 8-3331] design top has unconnected port led[12]
+WARNING: [Synth 8-3331] design top has unconnected port led[11]
+WARNING: [Synth 8-3331] design top has unconnected port led[10]
+WARNING: [Synth 8-3331] design top has unconnected port led[9]
+WARNING: [Synth 8-3331] design top has unconnected port sw[7]
+WARNING: [Synth 8-3331] design top has unconnected port sw[6]
+WARNING: [Synth 8-3331] design top has unconnected port sw[5]
+WARNING: [Synth 8-3331] design top has unconnected port sw[4]
+WARNING: [Synth 8-3331] design top has unconnected port sw[3]
+WARNING: [Synth 8-3331] design top has unconnected port sw[2]
+---------------------------------------------------------------------------------
+Finished Cross Boundary Optimization : Time (s): cpu = 00:00:31 ; elapsed = 00:01:06 . Memory (MB): peak = 1563.078 ; gain = 677.992 ; free physical = 1801 ; free virtual = 7411
+---------------------------------------------------------------------------------
+Finished Parallel Reinference  : Time (s): cpu = 00:00:31 ; elapsed = 00:01:06 . Memory (MB): peak = 1563.078 ; gain = 677.992 ; free physical = 1801 ; free virtual = 7411
+
+Report RTL Partitions: 
++------+--------------+------------+----------+
+|      |RTL Partition |Replication |Instances |
++------+--------------+------------+----------+
+|1     |sudoku__GB0   |           1|     55219|
+|2     |sudoku__GB1   |           1|     15192|
+|3     |sudoku__GB2   |           1|     20256|
+|4     |sudoku__GB3   |           1|     26020|
+|5     |sudoku__GB4   |           1|     55600|
+|6     |sudoku__GB5   |           1|     57645|
+|7     |top__GC0      |           1|      1983|
++------+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Area Optimization
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__1.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__2.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__3.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__4.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__5.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__6.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__7.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__8.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__9.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__10.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__11.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__12.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__13.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__14.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__15.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__16.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__17.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__18.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__19.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__20.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__21.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__22.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__23.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__24.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__25.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__26.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__27.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__28.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__29.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__30.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__31.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__32.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__33.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__34.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__35.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__36.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__37.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__38.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__39.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__40.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__41.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__42.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__43.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__44.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__45.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__46.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__47.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__48.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__49.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__50.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__51.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__52.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__53.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__54.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__55.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__56.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__57.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__58.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__59.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__60.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__61.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__62.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__63.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__64.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__65.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__66.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__67.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__68.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__69.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__70.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__71.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__72.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__73.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__74.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__75.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__76.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__77.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__78.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__79.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece__80.
+WARNING: [Synth 8-3332] Sequential element (r_error_reg) is unused and will be removed from module piece.
+---------------------------------------------------------------------------------
+Finished Area Optimization : Time (s): cpu = 00:01:31 ; elapsed = 00:03:28 . Memory (MB): peak = 1821.152 ; gain = 936.066 ; free physical = 251 ; free virtual = 5875
+---------------------------------------------------------------------------------
+Finished Parallel Area Optimization  : Time (s): cpu = 00:01:31 ; elapsed = 00:03:28 . Memory (MB): peak = 1821.152 ; gain = 936.066 ; free physical = 251 ; free virtual = 5875
+
+Report RTL Partitions: 
++------+--------------+------------+----------+
+|      |RTL Partition |Replication |Instances |
++------+--------------+------------+----------+
+|1     |sudoku__GB0   |           1|     42297|
+|2     |sudoku__GB1   |           1|      8172|
+|3     |sudoku__GB2   |           1|     10950|
+|4     |sudoku__GB3   |           1|     18229|
+|5     |sudoku__GB4   |           1|     38987|
+|6     |sudoku__GB5   |           1|     30784|
+|7     |top__GC0      |           1|      1685|
++------+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying XDC Timing Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:01:39 ; elapsed = 00:03:36 . Memory (MB): peak = 1942.441 ; gain = 1057.355 ; free physical = 792 ; free virtual = 6416
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:01:50 ; elapsed = 00:03:46 . Memory (MB): peak = 1995.473 ; gain = 1110.387 ; free physical = 510 ; free virtual = 6133
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++------+--------------+------------+----------+
+|      |RTL Partition |Replication |Instances |
++------+--------------+------------+----------+
+|1     |sudoku__GB0   |           1|     42297|
+|2     |sudoku__GB1   |           1|      8172|
+|3     |sudoku__GB2   |           1|     10950|
+|4     |sudoku__GB3   |           1|     18229|
+|5     |sudoku__GB4   |           1|     38987|
+|6     |sudoku__GB5   |           1|     30784|
+|7     |top__GC0      |           1|      1685|
++------+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:02:11 ; elapsed = 00:04:29 . Memory (MB): peak = 2007.402 ; gain = 1122.316 ; free physical = 208 ; free virtual = 4690
+---------------------------------------------------------------------------------
+Finished Parallel Technology Mapping Optimization  : Time (s): cpu = 00:02:11 ; elapsed = 00:04:29 . Memory (MB): peak = 2007.402 ; gain = 1122.316 ; free physical = 208 ; free virtual = 4690
+
+Report RTL Partitions: 
++------+--------------+------------+----------+
+|      |RTL Partition |Replication |Instances |
++------+--------------+------------+----------+
+|1     |sudoku__GB0   |           1|     10694|
+|2     |sudoku__GB2   |           1|      2476|
+|3     |sudoku__GB3   |           1|      4828|
+|4     |sudoku__GB4   |           1|      9630|
+|5     |sudoku__GB5   |           1|      5896|
++------+--------------+------------+----------+
+Finished Parallel Synthesis Optimization  : Time (s): cpu = 00:02:11 ; elapsed = 00:04:29 . Memory (MB): peak = 2007.402 ; gain = 1122.316 ; free physical = 206 ; free virtual = 4690
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:02:15 ; elapsed = 00:04:34 . Memory (MB): peak = 2007.402 ; gain = 1122.316 ; free physical = 166 ; free virtual = 4680
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:02:15 ; elapsed = 00:04:34 . Memory (MB): peak = 2007.402 ; gain = 1122.316 ; free physical = 162 ; free virtual = 4677
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:02:20 ; elapsed = 00:04:39 . Memory (MB): peak = 2007.402 ; gain = 1122.316 ; free physical = 159 ; free virtual = 4680
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:02:21 ; elapsed = 00:04:40 . Memory (MB): peak = 2007.402 ; gain = 1122.316 ; free physical = 155 ; free virtual = 4680
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:02:22 ; elapsed = 00:04:41 . Memory (MB): peak = 2007.402 ; gain = 1122.316 ; free physical = 206 ; free virtual = 4715
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:02:23 ; elapsed = 00:04:41 . Memory (MB): peak = 2007.402 ; gain = 1122.316 ; free physical = 206 ; free virtual = 4715
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+-------+------+
+|      |Cell   |Count |
++------+-------+------+
+|1     |BUFG   |     1|
+|2     |CARRY4 |   123|
+|3     |LUT1   |    33|
+|4     |LUT2   |  2707|
+|5     |LUT3   |  1325|
+|6     |LUT4   |  6686|
+|7     |LUT5   |  5180|
+|8     |LUT6   | 15855|
+|9     |MUXF7  |     6|
+|10    |MUXF8  |     1|
+|11    |FDRE   |  1272|
+|12    |FDSE   |   358|
+|13    |IBUF   |    36|
+|14    |OBUF   |     9|
+|15    |OBUFT  |     7|
++------+-------+------+
+
+Report Instance Areas: 
++------+------------------------------+--------------------------+------+
+|      |Instance                      |Module                    |Cells |
++------+------------------------------+--------------------------+------+
+|1     |top                           |                          | 33599|
+|2     |  sudoku_0                    |sudoku                    | 32882|
+|3     |    mP0                       |minPiece                  |   887|
+|4     |      \unflatten[0].cP        |countPoss                 |     4|
+|5     |      \unflatten[10].cP       |countPoss_80              |     4|
+|6     |      \unflatten[11].cP       |countPoss_81              |    16|
+|7     |      \unflatten[12].cP       |countPoss_82              |     4|
+|8     |      \unflatten[13].cP       |countPoss_83              |    10|
+|9     |      \unflatten[14].cP       |countPoss_84              |     4|
+|10    |      \unflatten[15].cP       |countPoss_85              |    32|
+|11    |      \unflatten[16].cP       |countPoss_86              |     4|
+|12    |      \unflatten[17].cP       |countPoss_87              |    14|
+|13    |      \unflatten[18].cP       |countPoss_88              |     4|
+|14    |      \unflatten[19].cP       |countPoss_89              |    16|
+|15    |      \unflatten[1].cP        |countPoss_90              |    17|
+|16    |      \unflatten[20].cP       |countPoss_91              |     4|
+|17    |      \unflatten[21].cP       |countPoss_92              |    10|
+|18    |      \unflatten[22].cP       |countPoss_93              |     4|
+|19    |      \unflatten[23].cP       |countPoss_94              |    23|
+|20    |      \unflatten[24].cP       |countPoss_95              |     4|
+|21    |      \unflatten[25].cP       |countPoss_96              |    13|
+|22    |      \unflatten[26].cP       |countPoss_97              |     4|
+|23    |      \unflatten[27].cP       |countPoss_98              |    16|
+|24    |      \unflatten[28].cP       |countPoss_99              |     4|
+|25    |      \unflatten[29].cP       |countPoss_100             |    10|
+|26    |      \unflatten[2].cP        |countPoss_101             |     4|
+|27    |      \unflatten[30].cP       |countPoss_102             |     4|
+|28    |      \unflatten[31].cP       |countPoss_103             |    39|
+|29    |      \unflatten[32].cP       |countPoss_104             |     4|
+|30    |      \unflatten[33].cP       |countPoss_105             |    15|
+|31    |      \unflatten[34].cP       |countPoss_106             |     4|
+|32    |      \unflatten[35].cP       |countPoss_107             |    16|
+|33    |      \unflatten[36].cP       |countPoss_108             |     4|
+|34    |      \unflatten[37].cP       |countPoss_109             |    10|
+|35    |      \unflatten[38].cP       |countPoss_110             |     4|
+|36    |      \unflatten[39].cP       |countPoss_111             |    23|
+|37    |      \unflatten[3].cP        |countPoss_112             |    16|
+|38    |      \unflatten[40].cP       |countPoss_113             |     4|
+|39    |      \unflatten[41].cP       |countPoss_114             |    13|
+|40    |      \unflatten[42].cP       |countPoss_115             |     4|
+|41    |      \unflatten[43].cP       |countPoss_116             |    16|
+|42    |      \unflatten[44].cP       |countPoss_117             |     4|
+|43    |      \unflatten[45].cP       |countPoss_118             |    10|
+|44    |      \unflatten[46].cP       |countPoss_119             |     4|
+|45    |      \unflatten[47].cP       |countPoss_120             |    31|
+|46    |      \unflatten[48].cP       |countPoss_121             |     4|
+|47    |      \unflatten[49].cP       |countPoss_122             |    14|
+|48    |      \unflatten[4].cP        |countPoss_123             |     4|
+|49    |      \unflatten[50].cP       |countPoss_124             |     4|
+|50    |      \unflatten[51].cP       |countPoss_125             |    16|
+|51    |      \unflatten[52].cP       |countPoss_126             |     4|
+|52    |      \unflatten[53].cP       |countPoss_127             |    10|
+|53    |      \unflatten[54].cP       |countPoss_128             |     4|
+|54    |      \unflatten[55].cP       |countPoss_129             |    23|
+|55    |      \unflatten[56].cP       |countPoss_130             |     4|
+|56    |      \unflatten[57].cP       |countPoss_131             |    13|
+|57    |      \unflatten[58].cP       |countPoss_132             |     4|
+|58    |      \unflatten[59].cP       |countPoss_133             |    16|
+|59    |      \unflatten[5].cP        |countPoss_134             |    10|
+|60    |      \unflatten[60].cP       |countPoss_135             |     4|
+|61    |      \unflatten[61].cP       |countPoss_136             |    10|
+|62    |      \unflatten[62].cP       |countPoss_137             |     4|
+|63    |      \unflatten[63].cP       |countPoss_138             |    56|
+|64    |      \unflatten[64].cP       |countPoss_139             |     4|
+|65    |      \unflatten[65].cP       |countPoss_140             |    16|
+|66    |      \unflatten[66].cP       |countPoss_141             |     4|
+|67    |      \unflatten[67].cP       |countPoss_142             |    13|
+|68    |      \unflatten[68].cP       |countPoss_143             |     4|
+|69    |      \unflatten[69].cP       |countPoss_144             |    19|
+|70    |      \unflatten[6].cP        |countPoss_145             |     4|
+|71    |      \unflatten[70].cP       |countPoss_146             |     4|
+|72    |      \unflatten[71].cP       |countPoss_147             |    13|
+|73    |      \unflatten[72].cP       |countPoss_148             |     4|
+|74    |      \unflatten[73].cP       |countPoss_149             |    15|
+|75    |      \unflatten[74].cP       |countPoss_150             |     4|
+|76    |      \unflatten[75].cP       |countPoss_151             |    14|
+|77    |      \unflatten[76].cP       |countPoss_152             |     4|
+|78    |      \unflatten[77].cP       |countPoss_153             |    34|
+|79    |      \unflatten[78].cP       |countPoss_154             |     4|
+|80    |      \unflatten[79].cP       |countPoss_155             |    13|
+|81    |      \unflatten[7].cP        |countPoss_156             |    23|
+|82    |      \unflatten[80].cP       |countPoss_157             |     9|
+|83    |      \unflatten[8].cP        |countPoss_158             |     4|
+|84    |      \unflatten[9].cP        |countPoss_159             |    13|
+|85    |    \pieces[0].pg             |piece                     |   397|
+|86    |    \pieces[10].pg            |piece_0                   |   504|
+|87    |    \pieces[11].pg            |piece_1                   |   375|
+|88    |    \pieces[12].pg            |piece_2                   |   363|
+|89    |    \pieces[13].pg            |piece_3                   |   392|
+|90    |    \pieces[14].pg            |piece_4                   |   357|
+|91    |    \pieces[15].pg            |piece_5                   |   416|
+|92    |    \pieces[16].pg            |piece_6                   |   380|
+|93    |    \pieces[17].pg            |piece_7                   |   327|
+|94    |    \pieces[18].pg            |piece_8                   |   512|
+|95    |    \pieces[19].pg            |piece_9                   |   351|
+|96    |    \pieces[1].pg             |piece_10                  |   481|
+|97    |    \pieces[20].pg            |piece_11                  |   455|
+|98    |    \pieces[21].pg            |piece_12                  |   555|
+|99    |    \pieces[22].pg            |piece_13                  |   637|
+|100   |    \pieces[23].pg            |piece_14                  |   485|
+|101   |    \pieces[24].pg            |piece_15                  |   689|
+|102   |    \pieces[25].pg            |piece_16                  |   478|
+|103   |    \pieces[26].pg            |piece_17                  |   605|
+|104   |    \pieces[27].pg            |piece_18                  |   261|
+|105   |    \pieces[28].pg            |piece_19                  |   322|
+|106   |    \pieces[29].pg            |piece_20                  |   470|
+|107   |    \pieces[2].pg             |piece_21                  |   377|
+|108   |    \pieces[30].pg            |piece_22                  |   304|
+|109   |    \pieces[31].pg            |piece_23                  |   427|
+|110   |    \pieces[32].pg            |piece_24                  |   506|
+|111   |    \pieces[33].pg            |piece_25                  |   343|
+|112   |    \pieces[34].pg            |piece_26                  |   308|
+|113   |    \pieces[35].pg            |piece_27                  |   436|
+|114   |    \pieces[36].pg            |piece_28                  |   324|
+|115   |    \pieces[37].pg            |piece_29                  |   410|
+|116   |    \pieces[38].pg            |piece_30                  |   399|
+|117   |    \pieces[39].pg            |piece_31                  |   402|
+|118   |    \pieces[3].pg             |piece_32                  |   387|
+|119   |    \pieces[40].pg            |piece_33                  |   399|
+|120   |    \pieces[41].pg            |piece_34                  |   673|
+|121   |    \pieces[42].pg            |piece_35                  |   296|
+|122   |    \pieces[43].pg            |piece_36                  |   276|
+|123   |    \pieces[44].pg            |piece_37                  |   291|
+|124   |    \pieces[45].pg            |piece_38                  |   406|
+|125   |    \pieces[46].pg            |piece_39                  |   405|
+|126   |    \pieces[47].pg            |piece_40                  |   349|
+|127   |    \pieces[48].pg            |piece_41                  |   458|
+|128   |    \pieces[49].pg            |piece_42                  |   399|
+|129   |    \pieces[4].pg             |piece_43                  |   369|
+|130   |    \pieces[50].pg            |piece_44                  |   524|
+|131   |    \pieces[51].pg            |piece_45                  |   344|
+|132   |    \pieces[52].pg            |piece_46                  |   330|
+|133   |    \pieces[53].pg            |piece_47                  |   264|
+|134   |    \pieces[54].pg            |piece_48                  |   341|
+|135   |    \pieces[55].pg            |piece_49                  |   475|
+|136   |    \pieces[56].pg            |piece_50                  |   400|
+|137   |    \pieces[57].pg            |piece_51                  |   247|
+|138   |    \pieces[58].pg            |piece_52                  |   345|
+|139   |    \pieces[59].pg            |piece_53                  |   574|
+|140   |    \pieces[5].pg             |piece_54                  |   524|
+|141   |    \pieces[60].pg            |piece_55                  |   394|
+|142   |    \pieces[61].pg            |piece_56                  |   299|
+|143   |    \pieces[62].pg            |piece_57                  |   451|
+|144   |    \pieces[63].pg            |piece_58                  |   377|
+|145   |    \pieces[64].pg            |piece_59                  |   284|
+|146   |    \pieces[65].pg            |piece_60                  |   497|
+|147   |    \pieces[66].pg            |piece_61                  |   313|
+|148   |    \pieces[67].pg            |piece_62                  |   370|
+|149   |    \pieces[68].pg            |piece_63                  |   365|
+|150   |    \pieces[69].pg            |piece_64                  |   310|
+|151   |    \pieces[6].pg             |piece_65                  |   367|
+|152   |    \pieces[70].pg            |piece_66                  |   343|
+|153   |    \pieces[71].pg            |piece_67                  |   247|
+|154   |    \pieces[72].pg            |piece_68                  |   285|
+|155   |    \pieces[73].pg            |piece_69                  |   461|
+|156   |    \pieces[74].pg            |piece_70                  |   450|
+|157   |    \pieces[75].pg            |piece_71                  |   254|
+|158   |    \pieces[76].pg            |piece_72                  |   434|
+|159   |    \pieces[77].pg            |piece_73                  |   332|
+|160   |    \pieces[78].pg            |piece_74                  |   267|
+|161   |    \pieces[79].pg            |piece_75                  |   405|
+|162   |    \pieces[7].pg             |piece_76                  |   366|
+|163   |    \pieces[80].pg            |piece_77                  |   211|
+|164   |    \pieces[8].pg             |piece_78                  |   360|
+|165   |    \pieces[9].pg             |piece_79                  |   412|
+|166   |  tiny_encryption_algorithm_0 |tiny_encryption_algorithm |   513|
++------+------------------------------+--------------------------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:02:23 ; elapsed = 00:04:41 . Memory (MB): peak = 2007.402 ; gain = 1122.316 ; free physical = 205 ; free virtual = 4714
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 94 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:02:10 ; elapsed = 00:04:26 . Memory (MB): peak = 2007.402 ; gain = 576.402 ; free physical = 205 ; free virtual = 4715
+Synthesis Optimization Complete : Time (s): cpu = 00:02:23 ; elapsed = 00:04:42 . Memory (MB): peak = 2007.402 ; gain = 1122.316 ; free physical = 198 ; free virtual = 4716
+INFO: [Project 1-571] Translating synthesized netlist
+INFO: [Netlist 29-17] Analyzing 159 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+INFO: [Common 17-83] Releasing license: Synthesis
+43 Infos, 125 Warnings, 16 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:02:28 ; elapsed = 00:04:45 . Memory (MB): peak = 2027.488 ; gain = 1067.848 ; free physical = 3826 ; free virtual = 8427
+write_checkpoint: Time (s): cpu = 00:00:06 ; elapsed = 00:00:05 . Memory (MB): peak = 2059.504 ; gain = 32.016 ; free physical = 3736 ; free virtual = 8344
+report_utilization: Time (s): cpu = 00:00:00.20 ; elapsed = 00:00:00.24 . Memory (MB): peak = 2059.504 ; gain = 0.000 ; free physical = 3735 ; free virtual = 8343
+INFO: [Common 17-206] Exiting Vivado at Sun Nov 12 18:40:10 2017...

@@ -1,0 +1,1144 @@
+#-----------------------------------------------------------
+# Vivado v2016.2 (64-bit)
+# SW Build 1577090 on Thu Jun  2 16:32:35 MDT 2016
+# IP Build 1577682 on Fri Jun  3 12:00:54 MDT 2016
+# Start of session at: Thu Jan 18 08:34:35 2018
+# Process ID: 23299
+# Current directory: /home/sean/vivado_workspace/vga_simple/vga_simple.runs/synth_1
+# Command line: vivado -log top.vds -mode batch -messageDb vivado.pb -notrace -source top.tcl
+# Log file: /home/sean/vivado_workspace/vga_simple/vga_simple.runs/synth_1/top.vds
+# Journal file: /home/sean/vivado_workspace/vga_simple/vga_simple.runs/synth_1/vivado.jou
+#-----------------------------------------------------------
+source top.tcl -notrace
+Command: synth_design -top top -part xc7a100tcsg324-1 -flatten_hierarchy full
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: Launching helper process for spawning children vivado processes
+INFO: Helper process launched with PID 23319 
+WARNING: [Synth 8-2507] parameter declaration becomes local in bilinearDemosaic with formal parameter declaration list [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:121]
+WARNING: [Synth 8-2507] parameter declaration becomes local in bilinearDemosaic with formal parameter declaration list [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:122]
+WARNING: [Synth 8-2507] parameter declaration becomes local in bilinearDemosaic with formal parameter declaration list [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:232]
+WARNING: [Synth 8-2507] parameter declaration becomes local in bilinearDemosaic with formal parameter declaration list [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:233]
+WARNING: [Synth 8-2507] parameter declaration becomes local in bilinearDemosaic with formal parameter declaration list [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:234]
+WARNING: [Synth 8-2507] parameter declaration becomes local in bilinearDemosaic with formal parameter declaration list [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:235]
+WARNING: [Synth 8-2507] parameter declaration becomes local in streamScaler with formal parameter declaration list [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:146]
+WARNING: [Synth 8-2507] parameter declaration becomes local in streamScaler with formal parameter declaration list [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:147]
+WARNING: [Synth 8-2507] parameter declaration becomes local in streamScaler with formal parameter declaration list [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:437]
+WARNING: [Synth 8-2507] parameter declaration becomes local in streamScaler with formal parameter declaration list [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:438]
+WARNING: [Synth 8-2507] parameter declaration becomes local in streamScaler with formal parameter declaration list [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:439]
+WARNING: [Synth 8-2507] parameter declaration becomes local in streamScaler with formal parameter declaration list [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:440]
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 1056.395 ; gain = 171.324 ; free physical = 3922 ; free virtual = 29044
+---------------------------------------------------------------------------------
+INFO: [Synth 8-638] synthesizing module 'top' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/maybetop/maybetop.srcs/sources_1/new/top.v:23]
+INFO: [Synth 8-638] synthesizing module 'bilinearDemosaic' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:57]
+	Parameter DATA_WIDTH bound to: 8 - type: integer 
+	Parameter X_RES_WIDTH bound to: 11 - type: integer 
+	Parameter Y_RES_WIDTH bound to: 11 - type: integer 
+	Parameter BUFFER_SIZE bound to: 4 - type: integer 
+	Parameter BUFFER_SIZE_WIDTH bound to: 3 - type: integer 
+	Parameter RS_START bound to: 1'b0 
+	Parameter RS_READ_LINE bound to: 1'b1 
+	Parameter WS_START bound to: 0 - type: integer 
+	Parameter WS_DISCARD bound to: 1 - type: integer 
+	Parameter WS_READ bound to: 2 - type: integer 
+	Parameter WS_DONE bound to: 3 - type: integer 
+INFO: [Synth 8-155] case statement is not full and has no default [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:251]
+INFO: [Synth 8-638] synthesizing module 'registerDelay' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/registerDelay.v:8]
+	Parameter DATA_WIDTH bound to: 4 - type: integer 
+	Parameter STAGES bound to: 3 - type: integer 
+WARNING: [Synth 8-5788] Register rd_generate[0].delayReg_reg in module registerDelay is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/registerDelay.v:43]
+WARNING: [Synth 8-5788] Register rd_generate[1].delayReg_reg in module registerDelay is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/registerDelay.v:43]
+WARNING: [Synth 8-5788] Register delayReg_reg in module registerDelay is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/registerDelay.v:18]
+INFO: [Synth 8-256] done synthesizing module 'registerDelay' (1#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/registerDelay.v:8]
+INFO: [Synth 8-638] synthesizing module 'registerDelay__parameterized0' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/registerDelay.v:8]
+	Parameter DATA_WIDTH bound to: 2 - type: integer 
+	Parameter STAGES bound to: 5 - type: integer 
+WARNING: [Synth 8-5788] Register rd_generate[0].delayReg_reg in module registerDelay__parameterized0 is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/registerDelay.v:43]
+WARNING: [Synth 8-5788] Register rd_generate[1].delayReg_reg in module registerDelay__parameterized0 is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/registerDelay.v:43]
+WARNING: [Synth 8-5788] Register rd_generate[2].delayReg_reg in module registerDelay__parameterized0 is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/registerDelay.v:43]
+WARNING: [Synth 8-5788] Register rd_generate[3].delayReg_reg in module registerDelay__parameterized0 is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/registerDelay.v:43]
+WARNING: [Synth 8-5788] Register delayReg_reg in module registerDelay__parameterized0 is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/registerDelay.v:18]
+INFO: [Synth 8-256] done synthesizing module 'registerDelay__parameterized0' (1#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/registerDelay.v:8]
+INFO: [Synth 8-638] synthesizing module 'demosaicRamFifo' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:588]
+	Parameter DATA_WIDTH bound to: 8 - type: integer 
+	Parameter ADDRESS_WIDTH bound to: 11 - type: integer 
+	Parameter BUFFER_SIZE bound to: 4 - type: integer 
+	Parameter BUFFER_SIZE_WIDTH bound to: 3 - type: integer 
+INFO: [Synth 8-638] synthesizing module 'demosaicRamDualPort' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:716]
+	Parameter DATA_WIDTH bound to: 8 - type: integer 
+	Parameter ADDRESS_WIDTH bound to: 11 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'demosaicRamDualPort' (2#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:716]
+WARNING: [Synth 8-3848] Net ramDataOut[15] in module/entity demosaicRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:647]
+WARNING: [Synth 8-3848] Net ramDataOut[14] in module/entity demosaicRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:647]
+WARNING: [Synth 8-3848] Net ramDataOut[13] in module/entity demosaicRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:647]
+WARNING: [Synth 8-3848] Net ramDataOut[12] in module/entity demosaicRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:647]
+WARNING: [Synth 8-3848] Net ramDataOut[11] in module/entity demosaicRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:647]
+WARNING: [Synth 8-3848] Net ramDataOut[10] in module/entity demosaicRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:647]
+WARNING: [Synth 8-3848] Net ramDataOut[9] in module/entity demosaicRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:647]
+WARNING: [Synth 8-3848] Net ramDataOut[7] in module/entity demosaicRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:647]
+WARNING: [Synth 8-3848] Net ramDataOut[6] in module/entity demosaicRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:647]
+WARNING: [Synth 8-3848] Net ramDataOut[5] in module/entity demosaicRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:647]
+WARNING: [Synth 8-3848] Net ramDataOut[3] in module/entity demosaicRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:647]
+WARNING: [Synth 8-3848] Net ramDataOut[0] in module/entity demosaicRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:647]
+INFO: [Synth 8-256] done synthesizing module 'demosaicRamFifo' (3#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:588]
+WARNING: [Synth 8-5788] Register blend2_1_reg in module bilinearDemosaic is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:412]
+WARNING: [Synth 8-5788] Register blend3_1_reg in module bilinearDemosaic is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:413]
+WARNING: [Synth 8-5788] Register blend4_1_reg in module bilinearDemosaic is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:414]
+WARNING: [Synth 8-5788] Register blend5_1_reg in module bilinearDemosaic is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:415]
+WARNING: [Synth 8-5788] Register blend5_reg in module bilinearDemosaic is has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:420]
+INFO: [Synth 8-256] done synthesizing module 'bilinearDemosaic' (4#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/bilinearDemosaic/src/bilinearDemosaic.v:57]
+INFO: [Synth 8-638] synthesizing module 'vga' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/vga.vhd:54]
+INFO: [Synth 8-3491] module 'wb_slave' declared at '/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/wb_slave.vhd:13' bound to instance 'u1' of component 'wb_slave' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/vga.vhd:253]
+INFO: [Synth 8-638] synthesizing module 'wb_slave' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/wb_slave.vhd:68]
+INFO: [Synth 8-226] default block is never used [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/wb_slave.vhd:100]
+INFO: [Synth 8-256] done synthesizing module 'wb_slave' (5#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/wb_slave.vhd:68]
+INFO: [Synth 8-3491] module 'wb_master' declared at '/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/wb_master.vhd:25' bound to instance 'u2' of component 'wb_master' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/vga.vhd:262]
+INFO: [Synth 8-638] synthesizing module 'wb_master' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/wb_master.vhd:70]
+	Parameter DEPTH bound to: 16 - type: integer 
+	Parameter WIDTH bound to: 32 - type: integer 
+INFO: [Synth 8-3491] module 'FIFO' declared at '/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/fifo.vhd:14' bound to instance 'pixel_buf' of component 'FIFO' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/wb_master.vhd:344]
+INFO: [Synth 8-638] synthesizing module 'FIFO' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/fifo.vhd:36]
+	Parameter DEPTH bound to: 16 - type: integer 
+	Parameter WIDTH bound to: 32 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'FIFO' (6#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/fifo.vhd:36]
+INFO: [Synth 8-3491] module 'colproc' declared at '/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/colproc.vhd:14' bound to instance 'color_proc' of component 'colproc' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/wb_master.vhd:364]
+INFO: [Synth 8-638] synthesizing module 'colproc' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/colproc.vhd:38]
+INFO: [Synth 8-256] done synthesizing module 'colproc' (7#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/colproc.vhd:38]
+	Parameter DEPTH bound to: 8 - type: integer 
+	Parameter WIDTH bound to: 24 - type: integer 
+INFO: [Synth 8-3491] module 'FIFO' declared at '/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/fifo.vhd:14' bound to instance 'RGB_buf' of component 'FIFO' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/wb_master.vhd:370]
+INFO: [Synth 8-638] synthesizing module 'FIFO__parameterized1' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/fifo.vhd:36]
+	Parameter DEPTH bound to: 8 - type: integer 
+	Parameter WIDTH bound to: 24 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'FIFO__parameterized1' (7#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/fifo.vhd:36]
+INFO: [Synth 8-256] done synthesizing module 'wb_master' (8#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/wb_master.vhd:70]
+INFO: [Synth 8-3491] module 'Pgen' declared at '/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/pgen.vhd:14' bound to instance 'u3' of component 'Pgen' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/vga.vhd:269]
+INFO: [Synth 8-638] synthesizing module 'Pgen' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/pgen.vhd:51]
+INFO: [Synth 8-3491] module 'Tgen' declared at '/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/tgen.vhd:14' bound to instance 'vtgen' of component 'tgen' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/pgen.vhd:108]
+INFO: [Synth 8-638] synthesizing module 'Tgen' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/tgen.vhd:47]
+INFO: [Synth 8-3491] module 'vtim' declared at '/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/vtim.vhd:17' bound to instance 'hor_gen' of component 'vtim' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/tgen.vhd:76]
+INFO: [Synth 8-638] synthesizing module 'vtim' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/vtim.vhd:34]
+	Parameter SIZE bound to: 8 - type: integer 
+INFO: [Synth 8-3491] module 'ro_cnt' declared at '/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:128' bound to instance 'sync_cnt' of component 'ro_cnt' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/vtim.vhd:54]
+INFO: [Synth 8-638] synthesizing module 'ro_cnt' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:145]
+	Parameter SIZE bound to: 8 - type: integer 
+	Parameter SIZE bound to: 8 - type: integer 
+INFO: [Synth 8-3491] module 'ud_cnt' declared at '/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:70' bound to instance 'cnt' of component 'ud_cnt' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:186]
+INFO: [Synth 8-638] synthesizing module 'ud_cnt' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:92]
+	Parameter SIZE bound to: 8 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'ud_cnt' (9#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:92]
+INFO: [Synth 8-256] done synthesizing module 'ro_cnt' (10#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:145]
+	Parameter SIZE bound to: 8 - type: integer 
+INFO: [Synth 8-3491] module 'ro_cnt' declared at '/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:128' bound to instance 'gdel_cnt' of component 'ro_cnt' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/vtim.vhd:58]
+	Parameter SIZE bound to: 16 - type: integer 
+INFO: [Synth 8-3491] module 'ro_cnt' declared at '/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:128' bound to instance 'gate_cnt' of component 'ro_cnt' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/vtim.vhd:62]
+INFO: [Synth 8-638] synthesizing module 'ro_cnt__parameterized2' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:145]
+	Parameter SIZE bound to: 16 - type: integer 
+	Parameter SIZE bound to: 16 - type: integer 
+INFO: [Synth 8-3491] module 'ud_cnt' declared at '/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:70' bound to instance 'cnt' of component 'ud_cnt' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:186]
+INFO: [Synth 8-638] synthesizing module 'ud_cnt__parameterized1' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:92]
+	Parameter SIZE bound to: 16 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'ud_cnt__parameterized1' (10#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:92]
+INFO: [Synth 8-256] done synthesizing module 'ro_cnt__parameterized2' (10#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:145]
+	Parameter SIZE bound to: 16 - type: integer 
+INFO: [Synth 8-3491] module 'ro_cnt' declared at '/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:128' bound to instance 'len_cnt' of component 'ro_cnt' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/vtim.vhd:66]
+INFO: [Synth 8-638] synthesizing module 'ro_cnt__parameterized4' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:145]
+	Parameter SIZE bound to: 16 - type: integer 
+	Parameter SIZE bound to: 16 - type: integer 
+INFO: [Synth 8-3491] module 'ud_cnt' declared at '/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:70' bound to instance 'cnt' of component 'ud_cnt' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:186]
+INFO: [Synth 8-638] synthesizing module 'ud_cnt__parameterized3' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:92]
+	Parameter SIZE bound to: 16 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'ud_cnt__parameterized3' (10#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:92]
+INFO: [Synth 8-256] done synthesizing module 'ro_cnt__parameterized4' (10#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:145]
+INFO: [Synth 8-256] done synthesizing module 'vtim' (11#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/vtim.vhd:34]
+INFO: [Synth 8-3491] module 'vtim' declared at '/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/vtim.vhd:17' bound to instance 'ver_gen' of component 'vtim' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/tgen.vhd:81]
+INFO: [Synth 8-256] done synthesizing module 'Tgen' (12#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/tgen.vhd:47]
+INFO: [Synth 8-256] done synthesizing module 'Pgen' (13#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/pgen.vhd:51]
+	Parameter DEPTH bound to: 256 - type: integer 
+	Parameter DWIDTH bound to: 24 - type: integer 
+INFO: [Synth 8-3491] module 'FIFO_DC' declared at '/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/fifo_dc.vhd:17' bound to instance 'u4' of component 'FIFO_DC' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/vga.vhd:286]
+INFO: [Synth 8-638] synthesizing module 'FIFO_DC' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/fifo_dc.vhd:40]
+	Parameter DEPTH bound to: 256 - type: integer 
+	Parameter DWIDTH bound to: 24 - type: integer 
+	Parameter AWIDTH bound to: 8 - type: integer 
+	Parameter DWIDTH bound to: 24 - type: integer 
+INFO: [Synth 8-3491] module 'dual_ported_memory' declared at '/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/dpm.vhd:21' bound to instance 'mem' of component 'dual_ported_memory' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/fifo_dc.vhd:107]
+INFO: [Synth 8-638] synthesizing module 'dual_ported_memory' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/dpm.vhd:39]
+	Parameter AWIDTH bound to: 8 - type: integer 
+	Parameter DWIDTH bound to: 24 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'dual_ported_memory' (14#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/dpm.vhd:39]
+INFO: [Synth 8-256] done synthesizing module 'FIFO_DC' (15#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/fifo_dc.vhd:40]
+INFO: [Synth 8-256] done synthesizing module 'vga' (16#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/vga.vhd:54]
+WARNING: [Synth 8-689] width (40) of port connection 'ADR_O' does not match port width (30) of module 'vga' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/maybetop/maybetop.srcs/sources_1/new/top.v:81]
+INFO: [Synth 8-638] synthesizing module 'streamScaler' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:49]
+	Parameter DATA_WIDTH bound to: 8 - type: integer 
+	Parameter CHANNELS bound to: 1 - type: integer 
+	Parameter DISCARD_CNT_WIDTH bound to: 8 - type: integer 
+	Parameter INPUT_X_RES_WIDTH bound to: 11 - type: integer 
+	Parameter INPUT_Y_RES_WIDTH bound to: 11 - type: integer 
+	Parameter OUTPUT_X_RES_WIDTH bound to: 11 - type: integer 
+	Parameter OUTPUT_Y_RES_WIDTH bound to: 11 - type: integer 
+	Parameter FRACTION_BITS bound to: 8 - type: integer 
+	Parameter SCALE_INT_BITS bound to: 4 - type: integer 
+	Parameter SCALE_FRAC_BITS bound to: 14 - type: integer 
+	Parameter BUFFER_SIZE bound to: 4 - type: integer 
+	Parameter COEFF_WIDTH bound to: 9 - type: integer 
+	Parameter SCALE_BITS bound to: 18 - type: integer 
+	Parameter BUFFER_SIZE_WIDTH bound to: 3 - type: integer 
+	Parameter RS_START bound to: 0 - type: integer 
+	Parameter RS_READ_LINE bound to: 1 - type: integer 
+	Parameter WS_START bound to: 0 - type: integer 
+	Parameter WS_DISCARD bound to: 1 - type: integer 
+	Parameter WS_READ bound to: 2 - type: integer 
+	Parameter WS_DONE bound to: 3 - type: integer 
+INFO: [Synth 8-638] synthesizing module 'scalerRamFifo' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:576]
+	Parameter DATA_WIDTH bound to: 8 - type: integer 
+	Parameter ADDRESS_WIDTH bound to: 11 - type: integer 
+	Parameter BUFFER_SIZE bound to: 4 - type: integer 
+	Parameter BUFFER_SIZE_WIDTH bound to: 3 - type: integer 
+INFO: [Synth 8-638] synthesizing module 'scalerRamDualPort' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:719]
+	Parameter DATA_WIDTH bound to: 8 - type: integer 
+	Parameter ADDRESS_WIDTH bound to: 11 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'scalerRamDualPort' (17#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:719]
+WARNING: [Synth 8-689] width (32) of port connection 'addrB' does not match port width (11) of module 'scalerRamDualPort' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:667]
+WARNING: [Synth 8-689] width (32) of port connection 'addrB' does not match port width (11) of module 'scalerRamDualPort' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:667]
+WARNING: [Synth 8-689] width (32) of port connection 'addrB' does not match port width (11) of module 'scalerRamDualPort' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:667]
+WARNING: [Synth 8-689] width (32) of port connection 'addrB' does not match port width (11) of module 'scalerRamDualPort' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:667]
+WARNING: [Synth 8-3848] Net ramDataOutA[15] in module/entity scalerRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:643]
+WARNING: [Synth 8-3848] Net ramDataOutA[14] in module/entity scalerRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:643]
+WARNING: [Synth 8-3848] Net ramDataOutA[13] in module/entity scalerRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:643]
+WARNING: [Synth 8-3848] Net ramDataOutA[12] in module/entity scalerRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:643]
+WARNING: [Synth 8-3848] Net ramDataOutA[11] in module/entity scalerRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:643]
+WARNING: [Synth 8-3848] Net ramDataOutA[10] in module/entity scalerRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:643]
+WARNING: [Synth 8-3848] Net ramDataOutA[9] in module/entity scalerRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:643]
+WARNING: [Synth 8-3848] Net ramDataOutA[7] in module/entity scalerRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:643]
+WARNING: [Synth 8-3848] Net ramDataOutA[6] in module/entity scalerRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:643]
+WARNING: [Synth 8-3848] Net ramDataOutA[5] in module/entity scalerRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:643]
+WARNING: [Synth 8-3848] Net ramDataOutA[3] in module/entity scalerRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:643]
+WARNING: [Synth 8-3848] Net ramDataOutA[0] in module/entity scalerRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:643]
+WARNING: [Synth 8-3848] Net ramDataOutB[15] in module/entity scalerRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:644]
+WARNING: [Synth 8-3848] Net ramDataOutB[14] in module/entity scalerRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:644]
+WARNING: [Synth 8-3848] Net ramDataOutB[13] in module/entity scalerRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:644]
+WARNING: [Synth 8-3848] Net ramDataOutB[12] in module/entity scalerRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:644]
+WARNING: [Synth 8-3848] Net ramDataOutB[11] in module/entity scalerRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:644]
+WARNING: [Synth 8-3848] Net ramDataOutB[10] in module/entity scalerRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:644]
+WARNING: [Synth 8-3848] Net ramDataOutB[9] in module/entity scalerRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:644]
+WARNING: [Synth 8-3848] Net ramDataOutB[7] in module/entity scalerRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:644]
+WARNING: [Synth 8-3848] Net ramDataOutB[6] in module/entity scalerRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:644]
+WARNING: [Synth 8-3848] Net ramDataOutB[5] in module/entity scalerRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:644]
+WARNING: [Synth 8-3848] Net ramDataOutB[3] in module/entity scalerRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:644]
+WARNING: [Synth 8-3848] Net ramDataOutB[0] in module/entity scalerRamFifo does not have driver. [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:644]
+INFO: [Synth 8-256] done synthesizing module 'scalerRamFifo' (18#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:576]
+INFO: [Synth 8-256] done synthesizing module 'streamScaler' (19#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/streamScaler/src/scaler.v:49]
+INFO: [Synth 8-256] done synthesizing module 'top' (20#1) [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/maybetop/maybetop.srcs/sources_1/new/top.v:23]
+WARNING: [Synth 8-3331] design streamScaler has unconnected port outputYRes[10]
+WARNING: [Synth 8-3331] design streamScaler has unconnected port outputYRes[9]
+WARNING: [Synth 8-3331] design streamScaler has unconnected port outputYRes[8]
+WARNING: [Synth 8-3331] design streamScaler has unconnected port outputYRes[7]
+WARNING: [Synth 8-3331] design streamScaler has unconnected port outputYRes[6]
+WARNING: [Synth 8-3331] design streamScaler has unconnected port outputYRes[5]
+WARNING: [Synth 8-3331] design streamScaler has unconnected port outputYRes[4]
+WARNING: [Synth 8-3331] design streamScaler has unconnected port outputYRes[3]
+WARNING: [Synth 8-3331] design streamScaler has unconnected port outputYRes[2]
+WARNING: [Synth 8-3331] design streamScaler has unconnected port outputYRes[1]
+WARNING: [Synth 8-3331] design streamScaler has unconnected port outputYRes[0]
+WARNING: [Synth 8-3331] design colproc has unconnected port WB_Di[31]
+WARNING: [Synth 8-3331] design colproc has unconnected port WB_Di[30]
+WARNING: [Synth 8-3331] design colproc has unconnected port WB_Di[29]
+WARNING: [Synth 8-3331] design colproc has unconnected port WB_Di[28]
+WARNING: [Synth 8-3331] design colproc has unconnected port WB_Di[27]
+WARNING: [Synth 8-3331] design colproc has unconnected port WB_Di[26]
+WARNING: [Synth 8-3331] design colproc has unconnected port WB_Di[25]
+WARNING: [Synth 8-3331] design colproc has unconnected port WB_Di[24]
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:05 ; elapsed = 00:00:06 . Memory (MB): peak = 1094.645 ; gain = 209.574 ; free physical = 3879 ; free virtual = 29002
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 1094.645 ; gain = 209.574 ; free physical = 3879 ; free virtual = 29002
+---------------------------------------------------------------------------------
+INFO: [Device 21-403] Loading part xc7a100tcsg324-1
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/constrs_1/imports/xdc/top.xdc]
+Finished Parsing XDC File [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/constrs_1/imports/xdc/top.xdc]
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/constrs_1/imports/xdc/top.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/top_propImpl.xdc].
+Resolution: To avoid this warning, move constraints listed in [.Xil/top_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
+Completed Processing XDC Constraints
+
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1476.176 ; gain = 0.000 ; free physical = 3672 ; free virtual = 28795
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:12 ; elapsed = 00:00:12 . Memory (MB): peak = 1476.176 ; gain = 591.105 ; free physical = 3673 ; free virtual = 28796
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7a100tcsg324-1
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:12 ; elapsed = 00:00:12 . Memory (MB): peak = 1476.176 ; gain = 591.105 ; free physical = 3673 ; free virtual = 28796
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:12 ; elapsed = 00:00:12 . Memory (MB): peak = 1476.176 ; gain = 591.105 ; free physical = 3673 ; free virtual = 28796
+---------------------------------------------------------------------------------
+INFO: [Synth 8-5544] ROM "readyForRead" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
+INFO: [Synth 8-802] inferred FSM for state register 'statemachine.c_state_reg' in module 'colproc'
+INFO: [Synth 8-5544] ROM "nxt_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "nxt_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
+INFO: [Synth 8-4471] merging register 'WB_block.STB_O_reg' into 'WB_block.CYC_O_reg' [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/wb_master.vhd:317]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:96]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:96]
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/home/sean/vivado_workspace/vga_simple/vga_simple.srcs/sources_1/imports/vivado_playground/opencores/vga/src/counter.vhd:96]
+INFO: [Synth 8-5546] ROM "writeState" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-3971] The signal ram_reg was recognized as a true dual port RAM template.
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                    idle |                              000 |                              000
+                fill_buf |                              001 |                              001
+             col_16bpp_a |                              010 |                              100
+             col_16bpp_b |                              011 |                              101
+                  iSTATE |                              100 |                              111
+               col_24bpp |                              101 |                              110
+                col_8bpp |                              110 |                              011
+                 bw_8bpp |                              111 |                              010
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'statemachine.c_state_reg' using encoding 'sequential' in module 'colproc'
+INFO: [Synth 8-3971] The signal ram_reg was recognized as a true dual port RAM template.
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:13 ; elapsed = 00:00:13 . Memory (MB): peak = 1476.176 ; gain = 591.105 ; free physical = 3663 ; free virtual = 28786
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     32 Bit       Adders := 5     
+	   2 Input     25 Bit       Adders := 1     
+	   2 Input     17 Bit       Adders := 2     
+	   3 Input     17 Bit       Adders := 4     
+	   4 Input     17 Bit       Adders := 1     
+	   2 Input     12 Bit       Adders := 5     
+	   2 Input     11 Bit       Adders := 10    
+	   4 Input     10 Bit       Adders := 2     
+	   3 Input     10 Bit       Adders := 1     
+	   2 Input      9 Bit       Adders := 3     
+	   3 Input      9 Bit       Adders := 4     
+	   2 Input      8 Bit       Adders := 3     
+	   3 Input      8 Bit       Adders := 1     
+	   3 Input      5 Bit       Adders := 1     
+	   2 Input      4 Bit       Adders := 4     
+	   3 Input      4 Bit       Adders := 1     
+	   2 Input      3 Bit       Adders := 7     
+	   5 Input      3 Bit       Adders := 1     
+	   2 Input      2 Bit       Adders := 1     
++---XORs : 
+	   2 Input      1 Bit         XORs := 6     
++---Registers : 
+	               32 Bit    Registers := 7     
+	               30 Bit    Registers := 2     
+	               25 Bit    Registers := 3     
+	               24 Bit    Registers := 2     
+	               21 Bit    Registers := 1     
+	               17 Bit    Registers := 4     
+	               16 Bit    Registers := 6     
+	               11 Bit    Registers := 11    
+	               10 Bit    Registers := 11    
+	                9 Bit    Registers := 5     
+	                8 Bit    Registers := 46    
+	                5 Bit    Registers := 1     
+	                4 Bit    Registers := 8     
+	                3 Bit    Registers := 5     
+	                2 Bit    Registers := 3     
+	                1 Bit    Registers := 74    
++---Multipliers : 
+	                 9x32  Multipliers := 1     
+	                 8x32  Multipliers := 1     
+	                32x32  Multipliers := 1     
++---RAMs : 
+	              16K Bit         RAMs := 8     
+	               6K Bit         RAMs := 1     
+	              512 Bit         RAMs := 1     
+	              192 Bit         RAMs := 1     
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 1     
+	   2 Input     30 Bit        Muxes := 2     
+	   2 Input     25 Bit        Muxes := 3     
+	   2 Input     21 Bit        Muxes := 1     
+	   2 Input     17 Bit        Muxes := 4     
+	   2 Input     16 Bit        Muxes := 20    
+	   2 Input     11 Bit        Muxes := 8     
+	   2 Input     10 Bit        Muxes := 2     
+	   2 Input      9 Bit        Muxes := 4     
+	   3 Input      9 Bit        Muxes := 4     
+	   4 Input      8 Bit        Muxes := 11    
+	   7 Input      8 Bit        Muxes := 6     
+	   2 Input      8 Bit        Muxes := 16    
+	   2 Input      5 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 5     
+	   2 Input      3 Bit        Muxes := 7     
+	  13 Input      3 Bit        Muxes := 1     
+	   5 Input      3 Bit        Muxes := 1     
+	   2 Input      2 Bit        Muxes := 4     
+	   5 Input      2 Bit        Muxes := 2     
+	   4 Input      2 Bit        Muxes := 3     
+	   7 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 71    
+	   4 Input      1 Bit        Muxes := 16    
+	   8 Input      1 Bit        Muxes := 8     
+	   7 Input      1 Bit        Muxes := 3     
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Hierarchical Component Statistics 
+---------------------------------------------------------------------------------
+Hierarchical RTL Component report 
+Module demosaicRamDualPort 
+Detailed RTL Component Info : 
++---Registers : 
+	                8 Bit    Registers := 2     
++---RAMs : 
+	              16K Bit         RAMs := 1     
+Module demosaicRamFifo 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      3 Bit       Adders := 1     
++---Registers : 
+	                4 Bit    Registers := 2     
+	                3 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 1     
+Module bilinearDemosaic 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     11 Bit       Adders := 4     
+	   4 Input     10 Bit       Adders := 2     
+	   3 Input     10 Bit       Adders := 1     
+	   2 Input      9 Bit       Adders := 2     
+	   2 Input      3 Bit       Adders := 1     
+	   5 Input      3 Bit       Adders := 1     
++---Registers : 
+	               11 Bit    Registers := 4     
+	               10 Bit    Registers := 11    
+	                8 Bit    Registers := 12    
+	                3 Bit    Registers := 2     
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 8     
++---Muxes : 
+	   2 Input     11 Bit        Muxes := 2     
+	   2 Input     10 Bit        Muxes := 2     
+	   4 Input      8 Bit        Muxes := 3     
+	   2 Input      3 Bit        Muxes := 2     
+	   5 Input      2 Bit        Muxes := 1     
+	   2 Input      2 Bit        Muxes := 3     
+	   4 Input      2 Bit        Muxes := 3     
+	   7 Input      2 Bit        Muxes := 1     
+	   4 Input      1 Bit        Muxes := 6     
+	   2 Input      1 Bit        Muxes := 10    
+Module wb_slave 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 5     
+	               30 Bit    Registers := 2     
+	               21 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 1     
+	   2 Input     21 Bit        Muxes := 1     
+	   8 Input      1 Bit        Muxes := 7     
+	   2 Input      1 Bit        Muxes := 7     
+Module FIFO 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      5 Bit       Adders := 1     
+	   2 Input      4 Bit       Adders := 3     
++---Registers : 
+	               32 Bit    Registers := 1     
+	                5 Bit    Registers := 1     
+	                4 Bit    Registers := 2     
++---RAMs : 
+	              512 Bit         RAMs := 1     
++---Muxes : 
+	   2 Input      5 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 3     
+	   2 Input      1 Bit        Muxes := 2     
+Module colproc 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      2 Bit       Adders := 1     
++---Registers : 
+	               32 Bit    Registers := 1     
+	                8 Bit    Registers := 6     
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 3     
++---Muxes : 
+	   4 Input      8 Bit        Muxes := 7     
+	   7 Input      8 Bit        Muxes := 6     
+	  13 Input      3 Bit        Muxes := 1     
+	   7 Input      1 Bit        Muxes := 3     
+	   8 Input      1 Bit        Muxes := 1     
+Module FIFO__parameterized1 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      4 Bit       Adders := 1     
+	   2 Input      3 Bit       Adders := 2     
++---Registers : 
+	               24 Bit    Registers := 1     
+	                4 Bit    Registers := 1     
++---RAMs : 
+	              192 Bit         RAMs := 1     
++---Muxes : 
+	   2 Input      4 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 2     
+	   2 Input      1 Bit        Muxes := 2     
+Module wb_master 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     17 Bit       Adders := 2     
+	   2 Input      4 Bit       Adders := 1     
++---XORs : 
+	   2 Input      1 Bit         XORs := 2     
++---Registers : 
+	               16 Bit    Registers := 2     
+	                4 Bit    Registers := 1     
+	                3 Bit    Registers := 1     
+	                1 Bit    Registers := 11    
++---Muxes : 
+	   2 Input     30 Bit        Muxes := 2     
+	   2 Input     16 Bit        Muxes := 4     
+	   5 Input      3 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 4     
+Module ud_cnt 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input      9 Bit       Adders := 1     
++---Registers : 
+	                8 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      9 Bit        Muxes := 1     
+	   2 Input      8 Bit        Muxes := 4     
+	   2 Input      1 Bit        Muxes := 2     
+Module ro_cnt 
+Detailed RTL Component Info : 
++---Registers : 
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 1     
+Module ud_cnt__parameterized1 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     17 Bit       Adders := 1     
++---Registers : 
+	               16 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     17 Bit        Muxes := 1     
+	   2 Input     16 Bit        Muxes := 4     
+	   2 Input      1 Bit        Muxes := 2     
+Module ro_cnt__parameterized2 
+Detailed RTL Component Info : 
++---Registers : 
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 1     
+Module ud_cnt__parameterized3 
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input     17 Bit       Adders := 1     
++---Registers : 
+	               16 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     17 Bit        Muxes := 1     
+	   2 Input     16 Bit        Muxes := 4     
+	   2 Input      1 Bit        Muxes := 2     
+Module ro_cnt__parameterized4 
+Detailed RTL Component Info : 
++---Registers : 
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 1     
+Module vtim 
+Detailed RTL Component Info : 
++---Registers : 
+	                1 Bit    Registers := 4     
+Module Tgen 
+Detailed RTL Component Info : 
++---XORs : 
+	   2 Input      1 Bit         XORs := 4     
+Module Pgen 
+Detailed RTL Component Info : 
++---Registers : 
+	                1 Bit    Registers := 7     
+Module dual_ported_memory 
+Detailed RTL Component Info : 
++---Registers : 
+	               24 Bit    Registers := 1     
++---RAMs : 
+	               6K Bit         RAMs := 1     
+Module FIFO_DC 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      8 Bit       Adders := 2     
+	   3 Input      8 Bit       Adders := 1     
++---Registers : 
+	                8 Bit    Registers := 2     
+	                1 Bit    Registers := 8     
+Module vga 
+Detailed RTL Component Info : 
++---Registers : 
+	                1 Bit    Registers := 7     
+Module scalerRamDualPort 
+Detailed RTL Component Info : 
++---Registers : 
+	                8 Bit    Registers := 2     
++---RAMs : 
+	              16K Bit         RAMs := 1     
+Module scalerRamFifo 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     12 Bit       Adders := 1     
+	   2 Input      3 Bit       Adders := 3     
++---Registers : 
+	                4 Bit    Registers := 2     
+	                3 Bit    Registers := 1     
++---Muxes : 
+	   2 Input     11 Bit        Muxes := 4     
+	   2 Input      4 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 3     
+	   2 Input      1 Bit        Muxes := 2     
+Module streamScaler 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     32 Bit       Adders := 5     
+	   2 Input     25 Bit       Adders := 1     
+	   4 Input     17 Bit       Adders := 1     
+	   2 Input     12 Bit       Adders := 4     
+	   2 Input     11 Bit       Adders := 6     
+	   2 Input      9 Bit       Adders := 1     
+	   2 Input      8 Bit       Adders := 1     
++---Registers : 
+	               25 Bit    Registers := 3     
+	               17 Bit    Registers := 4     
+	               11 Bit    Registers := 7     
+	                9 Bit    Registers := 5     
+	                8 Bit    Registers := 6     
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 14    
++---Multipliers : 
+	                 9x32  Multipliers := 1     
+	                 8x32  Multipliers := 1     
+	                32x32  Multipliers := 1     
++---Muxes : 
+	   2 Input     25 Bit        Muxes := 3     
+	   2 Input     11 Bit        Muxes := 2     
+	   3 Input      9 Bit        Muxes := 4     
+	   4 Input      8 Bit        Muxes := 1     
+	   5 Input      2 Bit        Muxes := 1     
+	   4 Input      1 Bit        Muxes := 10    
+	   2 Input      1 Bit        Muxes := 19    
+---------------------------------------------------------------------------------
+Finished RTL Hierarchical Component Statistics
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 240 (col length:80)
+BRAMs: 270 (col length: RAMB18 80 RAMB36 40)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+Start Parallel Synthesis Optimization  : Time (s): cpu = 00:00:13 ; elapsed = 00:00:13 . Memory (MB): peak = 1476.176 ; gain = 591.105 ; free physical = 3663 ; free virtual = 28786
+---------------------------------------------------------------------------------
+Start Cross Boundary Optimization
+---------------------------------------------------------------------------------
+INFO: [Synth 8-5546] ROM "writeState" won't be mapped to RAM because it is too sparse
+DSP Report: Generating DSP xScaleAmount1, operation Mode is: A*B.
+DSP Report: operator xScaleAmount1 is absorbed into DSP xScaleAmount1.
+DSP Report: Generating DSP yScaleAmountNext0, operation Mode is: C+A*B.
+DSP Report: operator yScaleAmountNext0 is absorbed into DSP yScaleAmountNext0.
+DSP Report: operator yScaleAmountNext1 is absorbed into DSP yScaleAmountNext0.
+DSP Report: Generating DSP coeff101, operation Mode is: (C:0x7f)+A*B.
+DSP Report: operator coeff101 is absorbed into DSP coeff101.
+DSP Report: operator coeff102 is absorbed into DSP coeff101.
+DSP Report: Generating DSP coeff001, operation Mode is: (C:0x7f)+A*B.
+DSP Report: operator coeff001 is absorbed into DSP coeff001.
+DSP Report: operator coeff002 is absorbed into DSP coeff001.
+DSP Report: Generating DSP writeNextValidLine1, operation Mode is: C+A*B.
+DSP Report: operator writeNextValidLine1 is absorbed into DSP writeNextValidLine1.
+DSP Report: operator writeNextValidLine2 is absorbed into DSP writeNextValidLine1.
+WARNING: [Synth 8-3331] design streamScaler has unconnected port outputYRes[10]
+WARNING: [Synth 8-3331] design streamScaler has unconnected port outputYRes[9]
+WARNING: [Synth 8-3331] design streamScaler has unconnected port outputYRes[8]
+WARNING: [Synth 8-3331] design streamScaler has unconnected port outputYRes[7]
+WARNING: [Synth 8-3331] design streamScaler has unconnected port outputYRes[6]
+WARNING: [Synth 8-3331] design streamScaler has unconnected port outputYRes[5]
+WARNING: [Synth 8-3331] design streamScaler has unconnected port outputYRes[4]
+WARNING: [Synth 8-3331] design streamScaler has unconnected port outputYRes[3]
+WARNING: [Synth 8-3331] design streamScaler has unconnected port outputYRes[2]
+WARNING: [Synth 8-3331] design streamScaler has unconnected port outputYRes[1]
+WARNING: [Synth 8-3331] design streamScaler has unconnected port outputYRes[0]
+---------------------------------------------------------------------------------
+Finished Cross Boundary Optimization : Time (s): cpu = 00:00:14 ; elapsed = 00:00:14 . Memory (MB): peak = 1476.176 ; gain = 591.105 ; free physical = 3662 ; free virtual = 28785
+---------------------------------------------------------------------------------
+Finished Parallel Reinference  : Time (s): cpu = 00:00:14 ; elapsed = 00:00:14 . Memory (MB): peak = 1476.176 ; gain = 591.105 ; free physical = 3662 ; free virtual = 28785
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+Block RAM: Preliminary Mapping  Report (see note below)
++--------------------+------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+|Module Name         | RTL Object | PORT A (Depth x Width) | W | R | PORT B (Depth x Width) | W | R | Ports driving FF | RAMB18 | RAMB36 | 
++--------------------+------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+|demosaicRamDualPort | ram_reg    | 2 K x 8(WRITE_FIRST)   | W | R | 2 K x 8(WRITE_FIRST)   | W | R | Port A and B     | 1      | 0      | 
+|demosaicRamDualPort | ram_reg    | 2 K x 8(WRITE_FIRST)   | W | R | 2 K x 8(WRITE_FIRST)   | W | R | Port A and B     | 1      | 0      | 
+|demosaicRamDualPort | ram_reg    | 2 K x 8(WRITE_FIRST)   | W | R | 2 K x 8(WRITE_FIRST)   | W | R | Port A and B     | 1      | 0      | 
+|demosaicRamDualPort | ram_reg    | 2 K x 8(WRITE_FIRST)   | W | R | 2 K x 8(WRITE_FIRST)   | W | R | Port A and B     | 1      | 0      | 
+|dual_ported_memory  | mem_reg    | 256 x 24               | W |   | 256 x 24(WRITE_FIRST)  |   | R | Port A and B     | 1      | 0      | 
+|scalerRamDualPort   | ram_reg    | 2 K x 8(WRITE_FIRST)   | W | R | 2 K x 8(WRITE_FIRST)   | W | R | Port A and B     | 1      | 0      | 
+|scalerRamDualPort   | ram_reg    | 2 K x 8(WRITE_FIRST)   | W | R | 2 K x 8(WRITE_FIRST)   | W | R | Port A and B     | 1      | 0      | 
+|scalerRamDualPort   | ram_reg    | 2 K x 8(WRITE_FIRST)   | W | R | 2 K x 8(WRITE_FIRST)   | W | R | Port A and B     | 1      | 0      | 
+|scalerRamDualPort   | ram_reg    | 2 K x 8(WRITE_FIRST)   | W | R | 2 K x 8(WRITE_FIRST)   | W | R | Port A and B     | 1      | 0      | 
++--------------------+------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
+
+Note: The table above is a preliminary report that shows the Block RAMs at the current stage of the synthesis flow. Some Block RAMs may be reimplemented as non Block RAM primitives later in the synthesis flow. Multiple instantiated Block RAMs are reported only once. 
+
+Distributed RAM: Preliminary Mapping  Report (see note below)
++------------+----------------------+-----------+----------------------+--------------+
+|Module Name | RTL Object           | Inference | Size (Depth x Width) | Primitives   | 
++------------+----------------------+-----------+----------------------+--------------+
+|vga         | u2/pixel_buf/mem_reg | Implied   | 16 x 32              | RAM32M x 6   | 
+|vga         | u2/RGB_buf/mem_reg   | Implied   | 8 x 24               | RAM32M x 4   | 
++------------+----------------------+-----------+----------------------+--------------+
+
+Note: The table above is a preliminary report that shows the Distributed RAMs at the current stage of the synthesis flow. Some Distributed RAMs may be reimplemented as non Distributed RAM primitives later in the synthesis flow. Multiple instantiated RAMs are reported only once.
+
+DSP: Preliminary Mapping  Report (see note below)
++-------------+--------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|Module Name  | DSP Mapping  | A Size | B Size | C Size | D Size | P Size | AREG | BREG | CREG | DREG | ADREG | MREG | PREG | 
++-------------+--------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|streamScaler | A*B          | 18     | 12     | -      | -      | 30     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|streamScaler | C+A*B        | 18     | 12     | 14     | -      | 25     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|streamScaler | (C:0x7f)+A*B | 17     | 8      | 7      | -      | 17     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|streamScaler | (C:0x7f)+A*B | 17     | 9      | 7      | -      | 17     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|streamScaler | C+A*B        | 18     | 11     | 14     | -      | 25     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
++-------------+--------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+
+Note: The table above is a preliminary report that shows the DSPs inferred at the current stage of the synthesis flow. Some DSP may be reimplemented as non DSP primitives later in the synthesis flow. Multiple instantiated DSPs are reported only once.
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Area Optimization
+---------------------------------------------------------------------------------
+INFO: [Synth 8-3886] merging instance 'vga_0/u2/WB_block.SEL_O_reg[0]' (FDP) to 'vga_0/u2/WB_block.SEL_O_reg[3]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u2/WB_block.SEL_O_reg[1]' (FDP) to 'vga_0/u2/WB_block.SEL_O_reg[3]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u2/WB_block.SEL_O_reg[2]' (FDP) to 'vga_0/u2/WB_block.SEL_O_reg[3]'
+INFO: [Synth 8-3333] propagating constant 1 across sequential element (vga_0/\u2/WB_block.SEL_O_reg[3] )
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (vga_0/\u2/WB_block.WE_O_reg )
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/hvlen_reg[0]' (FDCE) to 'vga_0/u1/hvlen_reg[30]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/hvlen_reg[1]' (FDCE) to 'vga_0/u1/hvlen_reg[31]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/ctrl_reg[1]' (FDCE) to 'vga_0/u1/ctrl_reg[31]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/hvlen_reg[2]' (FDCE) to 'vga_0/u1/hvlen_reg[16]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/stat_reg[2]' (FDCE) to 'vga_0/u1/stat_reg[31]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/ctrl_reg[2]' (FDCE) to 'vga_0/u1/ctrl_reg[16]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/hvlen_reg[3]' (FDCE) to 'vga_0/u1/hvlen_reg[17]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/stat_reg[3]' (FDCE) to 'vga_0/u1/stat_reg[31]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/ctrl_reg[3]' (FDCE) to 'vga_0/u1/ctrl_reg[17]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/VBARb_reg[4]' (FDCE) to 'vga_0/u1/VBARb_reg[18]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/VBARa_reg[4]' (FDCE) to 'vga_0/u1/VBARa_reg[18]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/hvlen_reg[4]' (FDCE) to 'vga_0/u1/hvlen_reg[18]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/VBARb_reg[5]' (FDCE) to 'vga_0/u1/VBARb_reg[19]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/VBARa_reg[5]' (FDCE) to 'vga_0/u1/VBARa_reg[19]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/hvlen_reg[5]' (FDCE) to 'vga_0/u1/hvlen_reg[19]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/VBARb_reg[6]' (FDCE) to 'vga_0/u1/VBARb_reg[20]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/VBARa_reg[6]' (FDCE) to 'vga_0/u1/VBARa_reg[20]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/hvlen_reg[6]' (FDCE) to 'vga_0/u1/hvlen_reg[20]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/ctrl_reg[6]' (FDCE) to 'vga_0/u1/ctrl_reg[20]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/ctrl_reg[5]' (FDCE) to 'vga_0/u1/ctrl_reg[19]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/ctrl_reg[4]' (FDCE) to 'vga_0/u1/ctrl_reg[18]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/htim_reg[0]' (FDCE) to 'vga_0/u1/htim_reg[30]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/htim_reg[1]' (FDCE) to 'vga_0/u1/htim_reg[31]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/htim_reg[2]' (FDCE) to 'vga_0/u1/htim_reg[16]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/htim_reg[3]' (FDCE) to 'vga_0/u1/htim_reg[17]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/htim_reg[4]' (FDCE) to 'vga_0/u1/htim_reg[18]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/htim_reg[5]' (FDCE) to 'vga_0/u1/htim_reg[19]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/htim_reg[6]' (FDCE) to 'vga_0/u1/htim_reg[20]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/vtim_reg[0]' (FDCE) to 'vga_0/u1/vtim_reg[30]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/vtim_reg[1]' (FDCE) to 'vga_0/u1/vtim_reg[31]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/vtim_reg[2]' (FDCE) to 'vga_0/u1/vtim_reg[16]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/vtim_reg[3]' (FDCE) to 'vga_0/u1/vtim_reg[17]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/vtim_reg[4]' (FDCE) to 'vga_0/u1/vtim_reg[18]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/vtim_reg[5]' (FDCE) to 'vga_0/u1/vtim_reg[19]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/vtim_reg[6]' (FDCE) to 'vga_0/u1/vtim_reg[20]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (streamScaler_0/\xBlend_reg[8] )
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/CBAR_reg[12]' (FDCE) to 'vga_0/u1/CBAR_reg[28]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/VBARb_reg[12]' (FDCE) to 'vga_0/u1/VBARb_reg[28]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/VBARa_reg[12]' (FDCE) to 'vga_0/u1/VBARa_reg[28]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/hvlen_reg[12]' (FDCE) to 'vga_0/u1/hvlen_reg[28]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/vtim_reg[12]' (FDCE) to 'vga_0/u1/vtim_reg[28]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/htim_reg[12]' (FDCE) to 'vga_0/u1/htim_reg[28]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/stat_reg[12]' (FDCE) to 'vga_0/u1/stat_reg[31]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/ctrl_reg[12]' (FDCE) to 'vga_0/u1/ctrl_reg[28]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/CBAR_reg[13]' (FDCE) to 'vga_0/u1/CBAR_reg[29]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/VBARb_reg[13]' (FDCE) to 'vga_0/u1/VBARb_reg[29]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/VBARa_reg[13]' (FDCE) to 'vga_0/u1/VBARa_reg[29]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/hvlen_reg[13]' (FDCE) to 'vga_0/u1/hvlen_reg[29]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/vtim_reg[13]' (FDCE) to 'vga_0/u1/vtim_reg[29]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/htim_reg[13]' (FDCE) to 'vga_0/u1/htim_reg[29]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/stat_reg[13]' (FDCE) to 'vga_0/u1/stat_reg[31]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/ctrl_reg[13]' (FDCE) to 'vga_0/u1/ctrl_reg[29]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/VBARb_reg[10]' (FDCE) to 'vga_0/u1/VBARb_reg[26]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/VBARa_reg[10]' (FDCE) to 'vga_0/u1/VBARa_reg[26]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/hvlen_reg[10]' (FDCE) to 'vga_0/u1/hvlen_reg[26]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/vtim_reg[10]' (FDCE) to 'vga_0/u1/vtim_reg[26]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/htim_reg[10]' (FDCE) to 'vga_0/u1/htim_reg[26]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/stat_reg[10]' (FDCE) to 'vga_0/u1/stat_reg[31]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/ctrl_reg[10]' (FDCE) to 'vga_0/u1/ctrl_reg[26]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/CBAR_reg[11]' (FDCE) to 'vga_0/u1/CBAR_reg[27]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/VBARb_reg[11]' (FDCE) to 'vga_0/u1/VBARb_reg[27]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/VBARa_reg[11]' (FDCE) to 'vga_0/u1/VBARa_reg[27]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/hvlen_reg[11]' (FDCE) to 'vga_0/u1/hvlen_reg[27]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/vtim_reg[11]' (FDCE) to 'vga_0/u1/vtim_reg[27]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/htim_reg[11]' (FDCE) to 'vga_0/u1/htim_reg[27]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/stat_reg[11]' (FDCE) to 'vga_0/u1/stat_reg[31]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/ctrl_reg[11]' (FDCE) to 'vga_0/u1/ctrl_reg[27]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/CBAR_reg[14]' (FDCE) to 'vga_0/u1/CBAR_reg[30]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/VBARb_reg[14]' (FDCE) to 'vga_0/u1/VBARb_reg[30]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/VBARa_reg[14]' (FDCE) to 'vga_0/u1/VBARa_reg[30]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/hvlen_reg[14]' (FDCE) to 'vga_0/u1/hvlen_reg[30]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/vtim_reg[14]' (FDCE) to 'vga_0/u1/vtim_reg[30]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/htim_reg[14]' (FDCE) to 'vga_0/u1/htim_reg[30]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/stat_reg[14]' (FDCE) to 'vga_0/u1/stat_reg[31]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/ctrl_reg[14]' (FDCE) to 'vga_0/u1/ctrl_reg[30]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/VBARb_reg[2]' (FDCE) to 'vga_0/u1/VBARb_reg[16]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/VBARa_reg[2]' (FDCE) to 'vga_0/u1/VBARa_reg[16]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/VBARb_reg[3]' (FDCE) to 'vga_0/u1/VBARb_reg[17]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/VBARa_reg[3]' (FDCE) to 'vga_0/u1/VBARa_reg[17]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/ctrl_reg[0]' (FDCE) to 'vga_0/u1/ctrl_reg[30]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/stat_reg[29]' (FDCE) to 'vga_0/u1/stat_reg[31]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/stat_reg[30]' (FDCE) to 'vga_0/u1/stat_reg[31]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/CBAR_reg[31]' (FDCE) to 'vga_0/u1/CBAR_reg[15]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/VBARb_reg[31]' (FDCE) to 'vga_0/u1/VBARb_reg[15]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/VBARa_reg[31]' (FDCE) to 'vga_0/u1/VBARa_reg[15]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/hvlen_reg[31]' (FDCE) to 'vga_0/u1/hvlen_reg[15]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/vtim_reg[31]' (FDCE) to 'vga_0/u1/vtim_reg[15]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/htim_reg[31]' (FDCE) to 'vga_0/u1/htim_reg[15]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/stat_reg[31]' (FDCE) to 'vga_0/u1/stat_reg[28]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/ctrl_reg[31]' (FDCE) to 'vga_0/u1/ctrl_reg[15]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/stat_reg[15]' (FDCE) to 'vga_0/u1/stat_reg[28]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/stat_reg[18]' (FDCE) to 'vga_0/u1/stat_reg[28]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/stat_reg[19]' (FDCE) to 'vga_0/u1/stat_reg[28]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/stat_reg[20]' (FDCE) to 'vga_0/u1/stat_reg[28]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/VBARb_reg[9]' (FDCE) to 'vga_0/u1/VBARb_reg[23]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/VBARa_reg[9]' (FDCE) to 'vga_0/u1/VBARa_reg[23]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/hvlen_reg[9]' (FDCE) to 'vga_0/u1/hvlen_reg[23]'
+INFO: [Synth 8-3886] merging instance 'vga_0/u1/vtim_reg[9]' (FDCE) to 'vga_0/u1/vtim_reg[23]'
+INFO: [Common 17-14] Message 'Synth 8-3886' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (vga_0/\u1/stat_reg[7] )
+WARNING: [Synth 8-3332] Sequential element (blend2_1_reg[9]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend2_1_reg[8]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend2_reg[9]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend2_reg[8]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend4_1_reg[9]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend4_1_reg[8]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend4_reg[9]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend4_reg[8]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend3_1_reg[9]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend3_1_reg[8]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend3_reg[9]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend3_reg[8]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend5_1_reg[9]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend5_1_reg[8]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend5_reg[9]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend5_reg[8]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend1Sum_reg[9]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend1Sum_reg[8]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend1Sum_reg[0]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend1SumOver3_reg[9]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend1SumOver3_reg[8]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend1SumOver3_reg[7]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend1SumOver3_reg[6]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend1_reg[9]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend1_reg[8]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend1_reg[7]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (blend1_reg[6]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (gOut_reg[7]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (gOut_reg[6]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (bOut_reg[2]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (bOut_reg[1]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (bOut_reg[0]) is unused and will be removed from module bilinearDemosaic.
+WARNING: [Synth 8-3332] Sequential element (u1/ctrl_reg[31]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/ctrl_reg[21]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/ctrl_reg[14]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/ctrl_reg[13]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/ctrl_reg[12]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/ctrl_reg[11]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/ctrl_reg[10]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/ctrl_reg[9]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/ctrl_reg[8]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/ctrl_reg[6]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/ctrl_reg[5]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/ctrl_reg[4]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/ctrl_reg[3]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/ctrl_reg[2]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/ctrl_reg[1]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/ctrl_reg[0]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[31]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[30]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[29]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[28]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[27]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[26]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[25]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[24]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[23]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[22]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[21]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[20]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[19]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[18]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[15]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[14]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[13]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[12]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[11]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[10]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[9]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[8]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[7]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[3]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/stat_reg[2]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/htim_reg[31]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/htim_reg[21]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/htim_reg[14]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/htim_reg[13]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/htim_reg[12]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/htim_reg[11]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/htim_reg[10]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/htim_reg[9]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/htim_reg[8]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/htim_reg[6]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/htim_reg[5]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/htim_reg[4]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/htim_reg[3]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/htim_reg[2]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/htim_reg[1]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/htim_reg[0]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/vtim_reg[31]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/vtim_reg[21]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/vtim_reg[14]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/vtim_reg[13]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/vtim_reg[12]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/vtim_reg[11]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/vtim_reg[10]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/vtim_reg[9]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/vtim_reg[8]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/vtim_reg[6]) is unused and will be removed from module vga.
+WARNING: [Synth 8-3332] Sequential element (u1/vtim_reg[5]) is unused and will be removed from module vga.
+INFO: [Common 17-14] Message 'Synth 8-3332' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+---------------------------------------------------------------------------------
+Finished Area Optimization : Time (s): cpu = 00:00:19 ; elapsed = 00:00:20 . Memory (MB): peak = 1476.176 ; gain = 591.105 ; free physical = 3632 ; free virtual = 28755
+---------------------------------------------------------------------------------
+Finished Parallel Area Optimization  : Time (s): cpu = 00:00:19 ; elapsed = 00:00:20 . Memory (MB): peak = 1476.176 ; gain = 591.105 ; free physical = 3632 ; free virtual = 28755
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying XDC Timing Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:27 ; elapsed = 00:00:27 . Memory (MB): peak = 1483.160 ; gain = 598.090 ; free physical = 3332 ; free virtual = 28461
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:28 ; elapsed = 00:00:29 . Memory (MB): peak = 1509.559 ; gain = 624.488 ; free physical = 3299 ; free virtual = 28436
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+INFO: [Synth 8-4480] The timing for the instance demosaic_0/ramRB/ram_generate[0].ram_inst_i/ram_reg (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
+INFO: [Synth 8-4480] The timing for the instance demosaic_0/ramRB/ram_generate[1].ram_inst_i/ram_reg (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
+INFO: [Synth 8-4480] The timing for the instance demosaic_0/ramRB/ram_generate[2].ram_inst_i/ram_reg (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
+INFO: [Synth 8-4480] The timing for the instance demosaic_0/ramRB/ram_generate[3].ram_inst_i/ram_reg (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
+INFO: [Synth 8-4480] The timing for the instance vga_0/u4/mem/mem_reg (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
+INFO: [Synth 8-4480] The timing for the instance streamScaler_0/ramRB/ram_generate[0].ram_inst_i/ram_reg (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
+INFO: [Synth 8-4480] The timing for the instance streamScaler_0/ramRB/ram_generate[0].ram_inst_i/ram_reg (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
+INFO: [Synth 8-4480] The timing for the instance streamScaler_0/ramRB/ram_generate[1].ram_inst_i/ram_reg (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
+INFO: [Synth 8-4480] The timing for the instance streamScaler_0/ramRB/ram_generate[1].ram_inst_i/ram_reg (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
+INFO: [Synth 8-4480] The timing for the instance streamScaler_0/ramRB/ram_generate[2].ram_inst_i/ram_reg (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
+INFO: [Synth 8-4480] The timing for the instance streamScaler_0/ramRB/ram_generate[2].ram_inst_i/ram_reg (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
+INFO: [Synth 8-4480] The timing for the instance streamScaler_0/ramRB/ram_generate[3].ram_inst_i/ram_reg (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
+INFO: [Synth 8-4480] The timing for the instance streamScaler_0/ramRB/ram_generate[3].ram_inst_i/ram_reg (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:30 ; elapsed = 00:00:30 . Memory (MB): peak = 1537.676 ; gain = 652.605 ; free physical = 3270 ; free virtual = 28406
+---------------------------------------------------------------------------------
+Finished Parallel Technology Mapping Optimization  : Time (s): cpu = 00:00:30 ; elapsed = 00:00:30 . Memory (MB): peak = 1537.676 ; gain = 652.605 ; free physical = 3270 ; free virtual = 28406
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+Finished Parallel Synthesis Optimization  : Time (s): cpu = 00:00:30 ; elapsed = 00:00:30 . Memory (MB): peak = 1537.676 ; gain = 652.605 ; free physical = 3270 ; free virtual = 28406
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:30 ; elapsed = 00:00:31 . Memory (MB): peak = 1537.676 ; gain = 652.605 ; free physical = 3272 ; free virtual = 28408
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:30 ; elapsed = 00:00:31 . Memory (MB): peak = 1537.676 ; gain = 652.605 ; free physical = 3272 ; free virtual = 28408
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:31 ; elapsed = 00:00:31 . Memory (MB): peak = 1537.676 ; gain = 652.605 ; free physical = 3273 ; free virtual = 28409
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+Static Shift Register Report:
++------------+--------------------------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|Module Name | RTL Name                                               | Length | Width | Reset Signal | Pull out first Reg | Pull out last Reg | SRL16E | SRLC32E | 
++------------+--------------------------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|top         | demosaic_0/rd_blendMode/rd_generate[0].delayReg_reg[1] | 5      | 2     | YES          | NO                 | YES               | 2      | 0       | 
+|top         | streamScaler_0/dOutValid_reg                           | 4      | 1     | YES          | NO                 | YES               | 1      | 0       | 
++------------+--------------------------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+-----------+------+
+|      |Cell       |Count |
++------+-----------+------+
+|1     |BUFG       |     2|
+|2     |CARRY4     |   146|
+|3     |DSP48E1    |     1|
+|4     |DSP48E1_1  |     4|
+|5     |LUT1       |   140|
+|6     |LUT2       |   301|
+|7     |LUT3       |   235|
+|8     |LUT4       |   378|
+|9     |LUT5       |   268|
+|10    |LUT6       |   689|
+|11    |MUXF7      |    11|
+|12    |RAM32M     |    10|
+|13    |RAMB18E1   |     8|
+|14    |RAMB18E1_1 |     1|
+|15    |SRL16E     |     3|
+|16    |FDCE       |   644|
+|17    |FDPE       |     9|
+|18    |FDRE       |   409|
+|19    |FDSE       |     4|
+|20    |IBUF       |    18|
+|21    |OBUF       |    16|
++------+-----------+------+
+
+Report Instance Areas: 
++------+---------+-------+------+
+|      |Instance |Module |Cells |
++------+---------+-------+------+
+|1     |top      |       |  3297|
++------+---------+-------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:31 ; elapsed = 00:00:31 . Memory (MB): peak = 1537.676 ; gain = 652.605 ; free physical = 3273 ; free virtual = 28409
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 227 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:26 ; elapsed = 00:00:26 . Memory (MB): peak = 1537.676 ; gain = 181.934 ; free physical = 3273 ; free virtual = 28409
+Synthesis Optimization Complete : Time (s): cpu = 00:00:31 ; elapsed = 00:00:31 . Memory (MB): peak = 1537.684 ; gain = 652.613 ; free physical = 3273 ; free virtual = 28409
+INFO: [Project 1-571] Translating synthesized netlist
+INFO: [Netlist 29-17] Analyzing 188 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+WARNING: [Netlist 29-101] Netlist 'top' is not ideal for floorplanning, since the cellview 'top' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 10 instances were transformed.
+  RAM32M => RAM32M (RAMD32, RAMD32, RAMD32, RAMD32, RAMD32, RAMD32, RAMS32, RAMS32): 10 instances
+
+INFO: [Common 17-83] Releasing license: Synthesis
+216 Infos, 197 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:00:30 ; elapsed = 00:00:31 . Memory (MB): peak = 1569.691 ; gain = 608.066 ; free physical = 3282 ; free virtual = 28419
+report_utilization: Time (s): cpu = 00:00:00.08 ; elapsed = 00:00:00.11 . Memory (MB): peak = 1601.707 ; gain = 0.000 ; free physical = 3270 ; free virtual = 28417
+INFO: [Common 17-206] Exiting Vivado at Thu Jan 18 08:35:12 2018...

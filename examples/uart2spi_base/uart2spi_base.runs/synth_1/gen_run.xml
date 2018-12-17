@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenRun Id="synth_1" LaunchPart="xc7a100tcsg324-3" LaunchTime="1515881986">
+  <File Type="VDS-TIMING-PB" Name="top_timing_summary_synth.pb"/>
+  <File Type="RDS-RDS" Name="top.vds"/>
+  <File Type="PA-TCL" Name="top.tcl"/>
+  <File Type="VDS-TIMINGSUMMARY" Name="top_timing_summary_synth.rpt"/>
+  <File Type="RDS-DCP" Name="top.dcp"/>
+  <File Type="RDS-UTIL-PB" Name="top_utilization_synth.pb"/>
+  <File Type="RDS-UTIL" Name="top_utilization_synth.rpt"/>
+  <File Type="RDS-PROPCONSTRS" Name="top_drc_synth.rpt"/>
+  <FileSet Name="sources" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
+    <Filter Type="Srcs"/>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/lib/registers.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_uart2spi/Sources/hdl/rtl/lib/registers.v"/>
+        <Attr Name="ImportTime" Val="1359612727"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/uart_core/uart_txfsm.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_uart2spi/Sources/hdl/rtl/uart_core/uart_txfsm.v"/>
+        <Attr Name="ImportTime" Val="1359612727"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/uart_core/uart_rxfsm.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_uart2spi/Sources/hdl/rtl/uart_core/uart_rxfsm.v"/>
+        <Attr Name="ImportTime" Val="1359612727"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/spi/spi_if.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_uart2spi/Sources/hdl/rtl/spi/spi_if.v"/>
+        <Attr Name="ImportTime" Val="1359612727"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/spi/spi_ctl.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_uart2spi/Sources/hdl/rtl/spi/spi_ctl.v"/>
+        <Attr Name="ImportTime" Val="1359612727"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/spi/spi_cfg.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_uart2spi/Sources/hdl/rtl/spi/spi_cfg.v"/>
+        <Attr Name="ImportTime" Val="1359612727"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/uart_core/clk_ctl.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_uart2spi/Sources/hdl/rtl/uart_core/clk_ctl.v"/>
+        <Attr Name="ImportTime" Val="1359612727"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/gng_smul_16_18_sadd_37.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../Downloads/gng/trunk/rtl/gng_smul_16_18_sadd_37.v"/>
+        <Attr Name="ImportTime" Val="1407516041"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/gng_smul_16_18.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../Downloads/gng/trunk/rtl/gng_smul_16_18.v"/>
+        <Attr Name="ImportTime" Val="1407516041"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/gng_lzd.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../Downloads/gng/trunk/rtl/gng_lzd.v"/>
+        <Attr Name="ImportTime" Val="1407516041"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/gng_coef.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../Downloads/gng/trunk/rtl/gng_coef.v"/>
+        <Attr Name="ImportTime" Val="1407516041"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/msg_hand/uart_msg_handler.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_uart2spi/Sources/hdl/rtl/msg_hand/uart_msg_handler.v"/>
+        <Attr Name="ImportTime" Val="1359612727"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/uart_core/uart_core.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_uart2spi/Sources/hdl/rtl/uart_core/uart_core.v"/>
+        <Attr Name="ImportTime" Val="1359612727"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/spi/spi_core.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_uart2spi/Sources/hdl/rtl/spi/spi_core.v"/>
+        <Attr Name="ImportTime" Val="1359612727"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/gng_interp.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../Downloads/gng/trunk/rtl/gng_interp.v"/>
+        <Attr Name="ImportTime" Val="1407769607"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/gng_ctg.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../Downloads/gng/trunk/rtl/gng_ctg.v"/>
+        <Attr Name="ImportTime" Val="1407516041"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/top/uart2spi.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_uart2spi/Sources/hdl/rtl/top/uart2spi.v"/>
+        <Attr Name="ImportTime" Val="1499704580"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/gng.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../Downloads/gng/trunk/rtl/gng.v"/>
+        <Attr Name="ImportTime" Val="1407516041"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/top.v">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/uart2spi_top/uart2spi_top.srcs/sources_1/new/top.v"/>
+        <Attr Name="ImportTime" Val="1515791151"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <Config>
+      <Option Name="DesignMode" Val="RTL"/>
+      <Option Name="TopModule" Val="top"/>
+    </Config>
+  </FileSet>
+  <FileSet Name="constrs_in" Type="Constrs" RelSrcDir="$PSRCDIR/constrs_1">
+    <Filter Type="Constrs"/>
+    <File Path="$PSRCDIR/constrs_1/imports/opencores/top.xdc">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/aes128_top/aes128_top.srcs/constrs_1/imports/opencores/top.xdc"/>
+        <Attr Name="ImportTime" Val="1497459646"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+      </FileInfo>
+    </File>
+    <Config>
+      <Option Name="ConstrsType" Val="XDC"/>
+    </Config>
+  </FileSet>
+  <Strategy Version="1" Minor="2">
+    <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2016"/>
+    <Step Id="synth_design">
+      <Option Id="FlattenHierarchy">0</Option>
+    </Step>
+  </Strategy>
+</GenRun>

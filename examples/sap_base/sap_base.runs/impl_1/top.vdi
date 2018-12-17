@@ -1,0 +1,601 @@
+#-----------------------------------------------------------
+# Vivado v2016.2 (64-bit)
+# SW Build 1577090 on Thu Jun  2 16:32:35 MDT 2016
+# IP Build 1577682 on Fri Jun  3 12:00:54 MDT 2016
+# Start of session at: Thu Jan 18 18:25:33 2018
+# Process ID: 32673
+# Current directory: /home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.runs/impl_1
+# Command line: vivado -log top.vdi -applog -messageDb vivado.pb -mode batch -source top.tcl -notrace
+# Log file: /home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.runs/impl_1/top.vdi
+# Journal file: /home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.runs/impl_1/vivado.jou
+#-----------------------------------------------------------
+source top.tcl -notrace
+Design is defaulting to srcset: sources_1
+Design is defaulting to constrset: constrs_1
+INFO: [Netlist 29-17] Analyzing 87 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+WARNING: [Netlist 29-101] Netlist 'top' is not ideal for floorplanning, since the cellview 'top' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.
+INFO: [Project 1-479] Netlist was created with Vivado 2016.2
+INFO: [Device 21-403] Loading part xc7a100tcsg324-3
+INFO: [Project 1-570] Preparing netlist for logic optimization
+Parsing XDC File [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc]
+WARNING: [Vivado 12-584] No ports matched 'sw[8]'. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:41]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:41]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[8]'. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:42]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:42]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[9]'. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:44]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:44]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[9]'. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:45]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:45]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[10]'. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:47]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:47]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[10]'. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:48]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:48]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[11]'. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:50]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:50]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[11]'. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:51]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:51]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[12]'. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:53]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:53]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[12]'. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:54]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:54]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[13]'. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:56]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:56]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[13]'. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:57]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:57]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[14]'. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:59]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:59]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[14]'. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:60]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:60]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[15]'. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:62]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:62]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sw[15]'. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:63]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc:63]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+Finished Parsing XDC File [/home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.srcs/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc]
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+INFO: [Vivado_Tcl 4-424] Cannot write hardware definition file as there are no IPI block design hardware handoff files present
+Command: opt_design
+Attempting to get a license for feature 'Implementation' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xc7a100t'
+Running DRC as a precondition to command opt_design
+
+Starting DRC Task
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Project 1-461] DRC finished with 0 Errors
+INFO: [Project 1-462] Please refer to the DRC report (report_drc) for more information.
+
+Time (s): cpu = 00:00:00.13 ; elapsed = 00:00:00.10 . Memory (MB): peak = 1388.547 ; gain = 68.031 ; free physical = 7866 ; free virtual = 30553
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+
+Starting Logic Optimization Task
+Implement Debug Cores | Checksum: 2516e4dd3
+
+Phase 1 Retarget
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Opt 31-49] Retargeted 0 cell(s).
+Phase 1 Retarget | Checksum: 15036c805
+
+Time (s): cpu = 00:00:00.47 ; elapsed = 00:00:00.43 . Memory (MB): peak = 1808.977 ; gain = 0.000 ; free physical = 7520 ; free virtual = 30209
+
+Phase 2 Constant Propagation
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Opt 31-10] Eliminated 3 cells.
+Phase 2 Constant Propagation | Checksum: 198b7f973
+
+Time (s): cpu = 00:00:00.74 ; elapsed = 00:00:00.69 . Memory (MB): peak = 1808.977 ; gain = 0.000 ; free physical = 7519 ; free virtual = 30208
+
+Phase 3 Sweep
+INFO: [Opt 31-12] Eliminated 134 unconnected nets.
+INFO: [Opt 31-11] Eliminated 0 unconnected cells.
+Phase 3 Sweep | Checksum: 223aa7ba5
+
+Time (s): cpu = 00:00:00.98 ; elapsed = 00:00:00.93 . Memory (MB): peak = 1808.977 ; gain = 0.000 ; free physical = 7519 ; free virtual = 30208
+
+Starting Connectivity Check Task
+
+Time (s): cpu = 00:00:00.02 ; elapsed = 00:00:00.03 . Memory (MB): peak = 1808.977 ; gain = 0.000 ; free physical = 7519 ; free virtual = 30208
+Ending Logic Optimization Task | Checksum: 223aa7ba5
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:01 . Memory (MB): peak = 1808.977 ; gain = 0.000 ; free physical = 7519 ; free virtual = 30208
+
+Starting Power Optimization Task
+INFO: [Pwropt 34-132] Skipping clock gating for clocks with a period < 2.00 ns.
+Ending Power Optimization Task | Checksum: 223aa7ba5
+
+Time (s): cpu = 00:00:00.02 ; elapsed = 00:00:00.02 . Memory (MB): peak = 1808.977 ; gain = 0.000 ; free physical = 7519 ; free virtual = 30208
+INFO: [Common 17-83] Releasing license: Implementation
+21 Infos, 17 Warnings, 16 Critical Warnings and 0 Errors encountered.
+opt_design completed successfully
+opt_design: Time (s): cpu = 00:00:07 ; elapsed = 00:00:07 . Memory (MB): peak = 1808.977 ; gain = 488.461 ; free physical = 7519 ; free virtual = 30208
+Writing placer database...
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Write XDEF Complete: Time (s): cpu = 00:00:00.05 ; elapsed = 00:00:00.01 . Memory (MB): peak = 1840.992 ; gain = 0.000 ; free physical = 7517 ; free virtual = 30207
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Coretcl 2-168] The results of DRC are in file /home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.runs/impl_1/top_drc_opted.rpt.
+INFO: [Chipscope 16-241] No debug cores found in the current design.
+Before running the implement_debug_core command, either use the Set Up Debug wizard (GUI mode)
+or use the create_debug_core and connect_debug_core Tcl commands to insert debug cores into the design.
+Command: place_design
+Attempting to get a license for feature 'Implementation' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xc7a100t'
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+Running DRC as a precondition to command place_design
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+
+Starting Placer Task
+INFO: [Place 30-611] Multithreading enabled for place_design using a maximum of 8 CPUs
+
+Phase 1 Placer Initialization
+Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 1873.008 ; gain = 0.000 ; free physical = 7502 ; free virtual = 30193
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1873.008 ; gain = 0.000 ; free physical = 7502 ; free virtual = 30193
+
+Phase 1.1 IO Placement/ Clock Placement/ Build Placer Device
+
+Phase 1.1.1 ParallelPlaceIOClockAndInitTop
+
+Phase 1.1.1.1 Pre-Place Cells
+Phase 1.1.1.1 Pre-Place Cells | Checksum: 91acc988
+
+Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.08 . Memory (MB): peak = 1873.008 ; gain = 0.000 ; free physical = 7502 ; free virtual = 30193
+
+Phase 1.1.1.2 Constructing HAPIClkRuleMgr
+Phase 1.1.1.2 Constructing HAPIClkRuleMgr | Checksum: 91acc988
+
+Time (s): cpu = 00:00:00.26 ; elapsed = 00:00:00.33 . Memory (MB): peak = 1873.008 ; gain = 0.000 ; free physical = 7502 ; free virtual = 30192
+
+Phase 1.1.1.5 IOBufferPlacementChecker
+
+Phase 1.1.1.3 IOLockPlacementChecker
+
+Phase 1.1.1.6 DSPChecker
+Phase 1.1.1.6 DSPChecker | Checksum: 91acc988
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.74 . Memory (MB): peak = 1889.016 ; gain = 16.008 ; free physical = 7502 ; free virtual = 30192
+
+Phase 1.1.1.4 ClockRegionPlacementChecker
+
+Phase 1.1.1.7 V7IOVoltageChecker
+Phase 1.1.1.7 V7IOVoltageChecker | Checksum: 91acc988
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.74 . Memory (MB): peak = 1889.016 ; gain = 16.008 ; free physical = 7502 ; free virtual = 30192
+
+Phase 1.1.1.8 OverlappingPBlocksChecker
+Phase 1.1.1.8 OverlappingPBlocksChecker | Checksum: 91acc988
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.74 . Memory (MB): peak = 1889.016 ; gain = 16.008 ; free physical = 7502 ; free virtual = 30192
+Phase 1.1.1.3 IOLockPlacementChecker | Checksum: 91acc988
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.75 . Memory (MB): peak = 1889.016 ; gain = 16.008 ; free physical = 7502 ; free virtual = 30192
+
+Phase 1.1.1.9 CheckerForMandatoryPrePlacedCells
+Phase 1.1.1.9 CheckerForMandatoryPrePlacedCells | Checksum: 91acc988
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.76 . Memory (MB): peak = 1889.016 ; gain = 16.008 ; free physical = 7502 ; free virtual = 30192
+
+Phase 1.1.1.10 CascadeElementConstraintsChecker
+Phase 1.1.1.5 IOBufferPlacementChecker | Checksum: 91acc988
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.76 . Memory (MB): peak = 1889.016 ; gain = 16.008 ; free physical = 7502 ; free virtual = 30192
+
+Phase 1.1.1.11 DisallowedInsts
+Phase 1.1.1.10 CascadeElementConstraintsChecker | Checksum: 91acc988
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.76 . Memory (MB): peak = 1889.016 ; gain = 16.008 ; free physical = 7502 ; free virtual = 30192
+
+Phase 1.1.1.12 HdioRelatedChecker
+Phase 1.1.1.11 DisallowedInsts | Checksum: 91acc988
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.76 . Memory (MB): peak = 1889.016 ; gain = 16.008 ; free physical = 7502 ; free virtual = 30192
+
+Phase 1.1.1.13 Laguna PBlock Checker
+Phase 1.1.1.13 Laguna PBlock Checker | Checksum: 91acc988
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.76 . Memory (MB): peak = 1889.016 ; gain = 16.008 ; free physical = 7502 ; free virtual = 30192
+
+Phase 1.1.1.14 ShapePlacementValidityChecker
+Phase 1.1.1.12 HdioRelatedChecker | Checksum: 91acc988
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.76 . Memory (MB): peak = 1889.016 ; gain = 16.008 ; free physical = 7502 ; free virtual = 30192
+Phase 1.1.1.4 ClockRegionPlacementChecker | Checksum: 91acc988
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.76 . Memory (MB): peak = 1889.016 ; gain = 16.008 ; free physical = 7502 ; free virtual = 30192
+
+Phase 1.1.1.15 CheckerForUnsupportedConstraints
+Phase 1.1.1.15 CheckerForUnsupportedConstraints | Checksum: 91acc988
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.78 . Memory (MB): peak = 1889.016 ; gain = 16.008 ; free physical = 7502 ; free virtual = 30192
+
+Phase 1.1.1.16 ShapesExcludeCompatibilityChecker
+Phase 1.1.1.16 ShapesExcludeCompatibilityChecker | Checksum: 91acc988
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.78 . Memory (MB): peak = 1889.016 ; gain = 16.008 ; free physical = 7502 ; free virtual = 30192
+
+Phase 1.1.1.17 IOStdCompatabilityChecker
+Phase 1.1.1.17 IOStdCompatabilityChecker | Checksum: 91acc988
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.78 . Memory (MB): peak = 1889.016 ; gain = 16.008 ; free physical = 7502 ; free virtual = 30192
+Phase 1.1.1.14 ShapePlacementValidityChecker | Checksum: 91acc988
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 1889.016 ; gain = 16.008 ; free physical = 7501 ; free virtual = 30191
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+
+Phase 1.1.1.18 IO and Clk Clean Up
+
+Phase 1.1.1.18.1 Constructing HAPIClkRuleMgr
+Phase 1.1.1.18.1 Constructing HAPIClkRuleMgr | Checksum: 91acc988
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:02 . Memory (MB): peak = 1889.016 ; gain = 16.008 ; free physical = 7490 ; free virtual = 30181
+Phase 1.1.1.18 IO and Clk Clean Up | Checksum: 91acc988
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:02 . Memory (MB): peak = 1889.016 ; gain = 16.008 ; free physical = 7491 ; free virtual = 30181
+
+Phase 1.1.1.19 Implementation Feasibility check On IDelay
+Phase 1.1.1.19 Implementation Feasibility check On IDelay | Checksum: 91acc988
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 1889.016 ; gain = 16.008 ; free physical = 7491 ; free virtual = 30181
+
+Phase 1.1.1.20 Commit IO Placement
+Phase 1.1.1.20 Commit IO Placement | Checksum: 8d124e79
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 1889.016 ; gain = 16.008 ; free physical = 7491 ; free virtual = 30181
+Phase 1.1.1 ParallelPlaceIOClockAndInitTop | Checksum: 8d124e79
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 1889.016 ; gain = 16.008 ; free physical = 7491 ; free virtual = 30181
+Phase 1.1 IO Placement/ Clock Placement/ Build Placer Device | Checksum: 14feb5097
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 1889.016 ; gain = 16.008 ; free physical = 7491 ; free virtual = 30181
+
+Phase 1.2 Build Placer Netlist Model
+
+Phase 1.2.1 Place Init Design
+
+Phase 1.2.1.1 Make Others
+Phase 1.2.1.1 Make Others | Checksum: 1834a4344
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 1889.016 ; gain = 16.008 ; free physical = 7484 ; free virtual = 30174
+
+Phase 1.2.1.2 Init Lut Pin Assignment
+Phase 1.2.1.2 Init Lut Pin Assignment | Checksum: 1834a4344
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 1889.016 ; gain = 16.008 ; free physical = 7463 ; free virtual = 30154
+Phase 1.2.1 Place Init Design | Checksum: 204905a63
+
+Time (s): cpu = 00:00:08 ; elapsed = 00:00:04 . Memory (MB): peak = 1910.035 ; gain = 37.027 ; free physical = 7446 ; free virtual = 30136
+Phase 1.2 Build Placer Netlist Model | Checksum: 204905a63
+
+Time (s): cpu = 00:00:08 ; elapsed = 00:00:04 . Memory (MB): peak = 1910.035 ; gain = 37.027 ; free physical = 7446 ; free virtual = 30136
+
+Phase 1.3 Constrain Clocks/Macros
+Phase 1.3 Constrain Clocks/Macros | Checksum: 204905a63
+
+Time (s): cpu = 00:00:08 ; elapsed = 00:00:04 . Memory (MB): peak = 1910.035 ; gain = 37.027 ; free physical = 7444 ; free virtual = 30134
+Phase 1 Placer Initialization | Checksum: 204905a63
+
+Time (s): cpu = 00:00:08 ; elapsed = 00:00:04 . Memory (MB): peak = 1910.035 ; gain = 37.027 ; free physical = 7444 ; free virtual = 30134
+
+Phase 2 Global Placement
+Phase 2 Global Placement | Checksum: 173d81276
+
+Time (s): cpu = 00:00:28 ; elapsed = 00:00:12 . Memory (MB): peak = 1966.062 ; gain = 93.055 ; free physical = 7424 ; free virtual = 30115
+
+Phase 3 Detail Placement
+
+Phase 3.1 Commit Multi Column Macros
+Phase 3.1 Commit Multi Column Macros | Checksum: 173d81276
+
+Time (s): cpu = 00:00:29 ; elapsed = 00:00:12 . Memory (MB): peak = 1966.062 ; gain = 93.055 ; free physical = 7424 ; free virtual = 30115
+
+Phase 3.2 Commit Most Macros & LUTRAMs
+Phase 3.2 Commit Most Macros & LUTRAMs | Checksum: 23916a14c
+
+Time (s): cpu = 00:00:34 ; elapsed = 00:00:14 . Memory (MB): peak = 1966.062 ; gain = 93.055 ; free physical = 7424 ; free virtual = 30115
+
+Phase 3.3 Area Swap Optimization
+Phase 3.3 Area Swap Optimization | Checksum: 23ca4ea70
+
+Time (s): cpu = 00:00:34 ; elapsed = 00:00:14 . Memory (MB): peak = 1966.062 ; gain = 93.055 ; free physical = 7424 ; free virtual = 30115
+
+Phase 3.4 updateClock Trees: DP
+Phase 3.4 updateClock Trees: DP | Checksum: 23ca4ea70
+
+Time (s): cpu = 00:00:34 ; elapsed = 00:00:14 . Memory (MB): peak = 1966.062 ; gain = 93.055 ; free physical = 7424 ; free virtual = 30115
+
+Phase 3.5 Timing Path Optimizer
+Phase 3.5 Timing Path Optimizer | Checksum: 157786632
+
+Time (s): cpu = 00:00:35 ; elapsed = 00:00:15 . Memory (MB): peak = 1966.062 ; gain = 93.055 ; free physical = 7424 ; free virtual = 30115
+
+Phase 3.6 Fast Optimization
+Phase 3.6 Fast Optimization | Checksum: 157786632
+
+Time (s): cpu = 00:00:36 ; elapsed = 00:00:15 . Memory (MB): peak = 1966.062 ; gain = 93.055 ; free physical = 7424 ; free virtual = 30115
+
+Phase 3.7 Small Shape Detail Placement
+Phase 3.7 Small Shape Detail Placement | Checksum: 1a9b4390b
+
+Time (s): cpu = 00:00:41 ; elapsed = 00:00:20 . Memory (MB): peak = 1966.062 ; gain = 93.055 ; free physical = 7414 ; free virtual = 30108
+
+Phase 3.8 Re-assign LUT pins
+Phase 3.8 Re-assign LUT pins | Checksum: 16a5859b6
+
+Time (s): cpu = 00:00:42 ; elapsed = 00:00:20 . Memory (MB): peak = 1966.062 ; gain = 93.055 ; free physical = 7411 ; free virtual = 30105
+
+Phase 3.9 Pipeline Register Optimization
+Phase 3.9 Pipeline Register Optimization | Checksum: 16a5859b6
+
+Time (s): cpu = 00:00:42 ; elapsed = 00:00:20 . Memory (MB): peak = 1966.062 ; gain = 93.055 ; free physical = 7411 ; free virtual = 30105
+
+Phase 3.10 Fast Optimization
+Phase 3.10 Fast Optimization | Checksum: 16a5859b6
+
+Time (s): cpu = 00:00:44 ; elapsed = 00:00:21 . Memory (MB): peak = 1966.062 ; gain = 93.055 ; free physical = 7407 ; free virtual = 30101
+Phase 3 Detail Placement | Checksum: 16a5859b6
+
+Time (s): cpu = 00:00:44 ; elapsed = 00:00:21 . Memory (MB): peak = 1966.062 ; gain = 93.055 ; free physical = 7406 ; free virtual = 30100
+
+Phase 4 Post Placement Optimization and Clean-Up
+
+Phase 4.1 Post Commit Optimization
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+
+Phase 4.1.1 updateClock Trees: PCOPT
+Phase 4.1.1 updateClock Trees: PCOPT | Checksum: 189e38d45
+
+Time (s): cpu = 00:00:49 ; elapsed = 00:00:23 . Memory (MB): peak = 1966.062 ; gain = 93.055 ; free physical = 7305 ; free virtual = 29998
+
+Phase 4.1.2 Post Placement Optimization
+INFO: [Place 30-746] Post Placement Timing Summary WNS=0.740. For the most accurate timing information please run report_timing.
+Phase 4.1.2 Post Placement Optimization | Checksum: 1f60c550d
+
+Time (s): cpu = 00:00:49 ; elapsed = 00:00:23 . Memory (MB): peak = 1966.062 ; gain = 93.055 ; free physical = 7302 ; free virtual = 29996
+Phase 4.1 Post Commit Optimization | Checksum: 1f60c550d
+
+Time (s): cpu = 00:00:49 ; elapsed = 00:00:23 . Memory (MB): peak = 1966.062 ; gain = 93.055 ; free physical = 7301 ; free virtual = 29995
+
+Phase 4.2 Sweep Clock Roots: Post-Placement
+Phase 4.2 Sweep Clock Roots: Post-Placement | Checksum: 1f60c550d
+
+Time (s): cpu = 00:00:49 ; elapsed = 00:00:23 . Memory (MB): peak = 1966.062 ; gain = 93.055 ; free physical = 7300 ; free virtual = 29994
+
+Phase 4.3 Uram Pipeline Register Optimization
+Phase 4.3 Uram Pipeline Register Optimization | Checksum: 1f60c550d
+
+Time (s): cpu = 00:00:50 ; elapsed = 00:00:23 . Memory (MB): peak = 1966.062 ; gain = 93.055 ; free physical = 7300 ; free virtual = 29994
+
+Phase 4.4 Post Placement Cleanup
+Phase 4.4 Post Placement Cleanup | Checksum: 1f60c550d
+
+Time (s): cpu = 00:00:50 ; elapsed = 00:00:23 . Memory (MB): peak = 1966.062 ; gain = 93.055 ; free physical = 7300 ; free virtual = 29994
+
+Phase 4.5 Placer Reporting
+Phase 4.5 Placer Reporting | Checksum: 1f60c550d
+
+Time (s): cpu = 00:00:50 ; elapsed = 00:00:23 . Memory (MB): peak = 1966.062 ; gain = 93.055 ; free physical = 7300 ; free virtual = 29994
+
+Phase 4.6 Final Placement Cleanup
+Phase 4.6 Final Placement Cleanup | Checksum: 1c0311b4d
+
+Time (s): cpu = 00:00:50 ; elapsed = 00:00:23 . Memory (MB): peak = 1966.062 ; gain = 93.055 ; free physical = 7300 ; free virtual = 29994
+Phase 4 Post Placement Optimization and Clean-Up | Checksum: 1c0311b4d
+
+Time (s): cpu = 00:00:50 ; elapsed = 00:00:23 . Memory (MB): peak = 1966.062 ; gain = 93.055 ; free physical = 7300 ; free virtual = 29994
+Ending Placer Task | Checksum: ce3908a5
+
+Time (s): cpu = 00:00:50 ; elapsed = 00:00:23 . Memory (MB): peak = 1966.062 ; gain = 93.055 ; free physical = 7300 ; free virtual = 29994
+INFO: [Common 17-83] Releasing license: Implementation
+36 Infos, 17 Warnings, 16 Critical Warnings and 0 Errors encountered.
+place_design completed successfully
+place_design: Time (s): cpu = 00:00:51 ; elapsed = 00:00:24 . Memory (MB): peak = 1966.062 ; gain = 93.055 ; free physical = 7300 ; free virtual = 29994
+Writing placer database...
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Write XDEF Complete: Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.45 . Memory (MB): peak = 1966.062 ; gain = 0.000 ; free physical = 7288 ; free virtual = 29994
+report_io: Time (s): cpu = 00:00:00.10 ; elapsed = 00:00:00.12 . Memory (MB): peak = 1966.062 ; gain = 0.000 ; free physical = 7294 ; free virtual = 29991
+report_utilization: Time (s): cpu = 00:00:00.12 ; elapsed = 00:00:00.15 . Memory (MB): peak = 1966.062 ; gain = 0.000 ; free physical = 7293 ; free virtual = 29989
+report_control_sets: Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.08 . Memory (MB): peak = 1966.062 ; gain = 0.000 ; free physical = 7293 ; free virtual = 29990
+Command: route_design
+Attempting to get a license for feature 'Implementation' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xc7a100t'
+Running DRC as a precondition to command route_design
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+
+
+Starting Routing Task
+INFO: [Route 35-254] Multithreading enabled for route_design using a maximum of 8 CPUs
+Checksum: PlaceDB: 8ce71b9a ConstDB: 0 ShapeSum: 4151ed0b RouteDB: 0
+
+Phase 1 Build RT Design
+Phase 1 Build RT Design | Checksum: f0f152f3
+
+Time (s): cpu = 00:00:21 ; elapsed = 00:00:16 . Memory (MB): peak = 2063.871 ; gain = 97.809 ; free physical = 7136 ; free virtual = 29833
+
+Phase 2 Router Initialization
+
+Phase 2.1 Create Timer
+Phase 2.1 Create Timer | Checksum: f0f152f3
+
+Time (s): cpu = 00:00:21 ; elapsed = 00:00:17 . Memory (MB): peak = 2063.871 ; gain = 97.809 ; free physical = 7135 ; free virtual = 29831
+
+Phase 2.2 Fix Topology Constraints
+Phase 2.2 Fix Topology Constraints | Checksum: f0f152f3
+
+Time (s): cpu = 00:00:22 ; elapsed = 00:00:17 . Memory (MB): peak = 2063.871 ; gain = 97.809 ; free physical = 7106 ; free virtual = 29803
+
+Phase 2.3 Pre Route Cleanup
+Phase 2.3 Pre Route Cleanup | Checksum: f0f152f3
+
+Time (s): cpu = 00:00:22 ; elapsed = 00:00:17 . Memory (MB): peak = 2063.871 ; gain = 97.809 ; free physical = 7106 ; free virtual = 29803
+ Number of Nodes with overlaps = 0
+
+Phase 2.4 Update Timing
+Phase 2.4 Update Timing | Checksum: 1beda3a9c
+
+Time (s): cpu = 00:00:28 ; elapsed = 00:00:21 . Memory (MB): peak = 2079.125 ; gain = 113.062 ; free physical = 7065 ; free virtual = 29762
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=0.742  | TNS=0.000  | WHS=-0.203 | THS=-131.642|
+
+Phase 2 Router Initialization | Checksum: 1758e4b29
+
+Time (s): cpu = 00:00:30 ; elapsed = 00:00:22 . Memory (MB): peak = 2079.125 ; gain = 113.062 ; free physical = 7074 ; free virtual = 29770
+
+Phase 3 Initial Routing
+Phase 3 Initial Routing | Checksum: e4e39a75
+
+Time (s): cpu = 00:00:37 ; elapsed = 00:00:24 . Memory (MB): peak = 2079.125 ; gain = 113.062 ; free physical = 7055 ; free virtual = 29763
+
+Phase 4 Rip-up And Reroute
+
+Phase 4.1 Global Iteration 0
+ Number of Nodes with overlaps = 10029
+ Number of Nodes with overlaps = 3521
+ Number of Nodes with overlaps = 1356
+ Number of Nodes with overlaps = 699
+ Number of Nodes with overlaps = 383
+ Number of Nodes with overlaps = 191
+ Number of Nodes with overlaps = 91
+ Number of Nodes with overlaps = 60
+ Number of Nodes with overlaps = 33
+ Number of Nodes with overlaps = 36
+ Number of Nodes with overlaps = 22
+ Number of Nodes with overlaps = 8
+ Number of Nodes with overlaps = 2
+ Number of Nodes with overlaps = 2
+ Number of Nodes with overlaps = 0
+
+Phase 4.1.1 Update Timing
+Phase 4.1.1 Update Timing | Checksum: 1cd5b7ccd
+
+Time (s): cpu = 00:16:10 ; elapsed = 00:05:54 . Memory (MB): peak = 2103.031 ; gain = 136.969 ; free physical = 6485 ; free virtual = 29181
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=0.726  | TNS=0.000  | WHS=N/A    | THS=N/A    |
+
+Phase 4.1 Global Iteration 0 | Checksum: 201ba20f1
+
+Time (s): cpu = 00:16:10 ; elapsed = 00:05:54 . Memory (MB): peak = 2103.031 ; gain = 136.969 ; free physical = 6485 ; free virtual = 29181
+Phase 4 Rip-up And Reroute | Checksum: 201ba20f1
+
+Time (s): cpu = 00:16:10 ; elapsed = 00:05:54 . Memory (MB): peak = 2103.031 ; gain = 136.969 ; free physical = 6485 ; free virtual = 29181
+
+Phase 5 Delay and Skew Optimization
+
+Phase 5.1 Delay CleanUp
+
+Phase 5.1.1 Update Timing
+Phase 5.1.1 Update Timing | Checksum: 14e1f325d
+
+Time (s): cpu = 00:16:11 ; elapsed = 00:05:54 . Memory (MB): peak = 2103.031 ; gain = 136.969 ; free physical = 6485 ; free virtual = 29182
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=0.731  | TNS=0.000  | WHS=N/A    | THS=N/A    |
+
+Phase 5.1 Delay CleanUp | Checksum: 14e1f325d
+
+Time (s): cpu = 00:16:11 ; elapsed = 00:05:54 . Memory (MB): peak = 2103.031 ; gain = 136.969 ; free physical = 6485 ; free virtual = 29182
+
+Phase 5.2 Clock Skew Optimization
+Phase 5.2 Clock Skew Optimization | Checksum: 14e1f325d
+
+Time (s): cpu = 00:16:11 ; elapsed = 00:05:54 . Memory (MB): peak = 2103.031 ; gain = 136.969 ; free physical = 6485 ; free virtual = 29182
+Phase 5 Delay and Skew Optimization | Checksum: 14e1f325d
+
+Time (s): cpu = 00:16:11 ; elapsed = 00:05:54 . Memory (MB): peak = 2103.031 ; gain = 136.969 ; free physical = 6485 ; free virtual = 29182
+
+Phase 6 Post Hold Fix
+
+Phase 6.1 Hold Fix Iter
+
+Phase 6.1.1 Update Timing
+Phase 6.1.1 Update Timing | Checksum: 193c38cf5
+
+Time (s): cpu = 00:16:12 ; elapsed = 00:05:55 . Memory (MB): peak = 2103.031 ; gain = 136.969 ; free physical = 6485 ; free virtual = 29182
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=0.731  | TNS=0.000  | WHS=0.103  | THS=0.000  |
+
+Phase 6.1 Hold Fix Iter | Checksum: 193c38cf5
+
+Time (s): cpu = 00:16:12 ; elapsed = 00:05:55 . Memory (MB): peak = 2103.031 ; gain = 136.969 ; free physical = 6485 ; free virtual = 29182
+Phase 6 Post Hold Fix | Checksum: 193c38cf5
+
+Time (s): cpu = 00:16:12 ; elapsed = 00:05:55 . Memory (MB): peak = 2103.031 ; gain = 136.969 ; free physical = 6485 ; free virtual = 29182
+
+Phase 7 Route finalize
+
+Router Utilization Summary
+  Global Vertical Routing Utilization    = 8.89359 %
+  Global Horizontal Routing Utilization  = 9.45034 %
+  Routable Net Status*
+  *Does not include unroutable nets such as driverless and loadless.
+  Run report_route_status for detailed report.
+  Number of Failed Nets               = 0
+  Number of Unrouted Nets             = 0
+  Number of Partially Routed Nets     = 0
+  Number of Node Overlaps             = 0
+
+Phase 7 Route finalize | Checksum: 1dc43ba0d
+
+Time (s): cpu = 00:16:13 ; elapsed = 00:05:55 . Memory (MB): peak = 2103.031 ; gain = 136.969 ; free physical = 6485 ; free virtual = 29182
+
+Phase 8 Verifying routed nets
+
+ Verification completed successfully
+Phase 8 Verifying routed nets | Checksum: 1dc43ba0d
+
+Time (s): cpu = 00:16:13 ; elapsed = 00:05:55 . Memory (MB): peak = 2103.031 ; gain = 136.969 ; free physical = 6485 ; free virtual = 29182
+
+Phase 9 Depositing Routes
+Phase 9 Depositing Routes | Checksum: 174ad2b13
+
+Time (s): cpu = 00:16:14 ; elapsed = 00:05:56 . Memory (MB): peak = 2103.031 ; gain = 136.969 ; free physical = 6485 ; free virtual = 29182
+
+Phase 10 Post Router Timing
+INFO: [Route 35-57] Estimated Timing Summary | WNS=0.731  | TNS=0.000  | WHS=0.103  | THS=0.000  |
+
+INFO: [Route 35-327] The final timing numbers are based on the router estimated timing analysis. For a complete and accurate timing signoff, please run report_timing_summary.
+Phase 10 Post Router Timing | Checksum: 174ad2b13
+
+Time (s): cpu = 00:16:14 ; elapsed = 00:05:56 . Memory (MB): peak = 2103.031 ; gain = 136.969 ; free physical = 6485 ; free virtual = 29182
+INFO: [Route 35-16] Router Completed Successfully
+
+Time (s): cpu = 00:16:14 ; elapsed = 00:05:56 . Memory (MB): peak = 2103.031 ; gain = 136.969 ; free physical = 6485 ; free virtual = 29182
+
+Routing Is Done.
+INFO: [Common 17-83] Releasing license: Implementation
+49 Infos, 17 Warnings, 16 Critical Warnings and 0 Errors encountered.
+route_design completed successfully
+route_design: Time (s): cpu = 00:16:15 ; elapsed = 00:05:57 . Memory (MB): peak = 2103.031 ; gain = 136.969 ; free physical = 6485 ; free virtual = 29182
+Writing placer database...
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Write XDEF Complete: Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.85 . Memory (MB): peak = 2135.047 ; gain = 0.000 ; free physical = 6469 ; free virtual = 29182
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Coretcl 2-168] The results of DRC are in file /home/sean/vivado_workspace/sha3_low_throughput_simple/sha3_low_throughput_simple.runs/impl_1/top_drc_routed.rpt.
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -3, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 8 CPUs
+Running Vector-less Activity Propagation...
+
+Finished Running Vector-less Activity Propagation
+INFO: [Common 17-206] Exiting Vivado at Thu Jan 18 18:32:24 2018...

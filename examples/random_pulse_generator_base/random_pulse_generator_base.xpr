@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Product Version: Vivado v2016.2 (64-bit)              -->
+<!--                                                         -->
+<!-- Copyright 1986-2016 Xilinx, Inc. All Rights Reserved.   -->
+
+<Project Version="7" Minor="14" Path="/home/sean/ipassurance/random_pulse_generator_base/random_pulse_generator_base.xpr">
+  <DefaultLaunch Dir="$PRUNDIR"/>
+  <Configuration>
+    <Option Name="Id" Val="eebd9b39653a4de48bf8ab0add061386"/>
+    <Option Name="Part" Val="xc7a100tcsg324-3"/>
+    <Option Name="CompiledLibDir" Val="$PCACHEDIR/compile_simlib"/>
+    <Option Name="CompiledLibDirXSim" Val=""/>
+    <Option Name="CompiledLibDirModelSim" Val="/home/sean/ipassurance/random_pulse_generator_base/random_pulse_generator_base.cache/compile_simlib/modelsim"/>
+    <Option Name="CompiledLibDirQuesta" Val="/home/sean/ipassurance/random_pulse_generator_base/random_pulse_generator_base.cache/compile_simlib/questa"/>
+    <Option Name="CompiledLibDirIES" Val="/home/sean/ipassurance/random_pulse_generator_base/random_pulse_generator_base.cache/compile_simlib/ies"/>
+    <Option Name="CompiledLibDirVCS" Val="/home/sean/ipassurance/random_pulse_generator_base/random_pulse_generator_base.cache/compile_simlib/vcs"/>
+    <Option Name="CompiledLibDirRiviera" Val="/home/sean/ipassurance/random_pulse_generator_base/random_pulse_generator_base.cache/compile_simlib/riviera"/>
+    <Option Name="CompiledLibDirActivehdl" Val="/home/sean/ipassurance/random_pulse_generator_base/random_pulse_generator_base.cache/compile_simlib/activehdl"/>
+    <Option Name="BoardPart" Val=""/>
+    <Option Name="ActiveSimSet" Val="sim_1"/>
+    <Option Name="DefaultLib" Val="xil_defaultlib"/>
+    <Option Name="EnableCoreContainer" Val="FALSE"/>
+    <Option Name="CreateRefXciForCoreContainers" Val="FALSE"/>
+    <Option Name="IPUserFilesDir" Val="$PPRDIR/random_pulse_generator_base.ip_user_files"/>
+    <Option Name="IPStaticSourceDir" Val="$PPRDIR/random_pulse_generator_base.ip_user_files/ipstatic"/>
+    <Option Name="EnableBDX" Val="FALSE"/>
+    <Option Name="WTXSimLaunchSim" Val="0"/>
+    <Option Name="WTModelSimLaunchSim" Val="0"/>
+    <Option Name="WTQuestaLaunchSim" Val="0"/>
+    <Option Name="WTIesLaunchSim" Val="0"/>
+    <Option Name="WTVcsLaunchSim" Val="0"/>
+    <Option Name="WTRivieraLaunchSim" Val="0"/>
+    <Option Name="WTActivehdlLaunchSim" Val="0"/>
+    <Option Name="WTXSimExportSim" Val="0"/>
+    <Option Name="WTModelSimExportSim" Val="0"/>
+    <Option Name="WTQuestaExportSim" Val="0"/>
+    <Option Name="WTIesExportSim" Val="0"/>
+    <Option Name="WTVcsExportSim" Val="0"/>
+    <Option Name="WTRivieraExportSim" Val="0"/>
+    <Option Name="WTActivehdlExportSim" Val="0"/>
+  </Configuration>
+  <FileSets Version="1" Minor="31">
+    <FileSet Name="sources_1" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
+      <Filter Type="Srcs"/>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_sha3_low_throughput/Sources/hdl/round.v">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_sha3_low_throughput/Sources/hdl/round.v"/>
+          <Attr Name="ImportTime" Val="1515088077"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_sha3_low_throughput/Sources/hdl/rconst.v">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_sha3_low_throughput/Sources/hdl/rconst.v"/>
+          <Attr Name="ImportTime" Val="1515088077"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_sha3_low_throughput/Sources/hdl/padder1_l.v">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_sha3_low_throughput/Sources/hdl/padder1_l.v"/>
+          <Attr Name="ImportTime" Val="1516323847"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_sha3_high_throughput/Sources/hdl/rconst2in1.v">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_sha3_high_throughput/Sources/hdl/rconst2in1.v"/>
+          <Attr Name="ImportTime" Val="1515088077"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_sha3_high_throughput/Sources/hdl/padder1_h.v">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_sha3_high_throughput/Sources/hdl/padder1_h.v"/>
+          <Attr Name="ImportTime" Val="1516323735"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_sha3_high_throughput/Sources/hdl/round2in1.v">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_sha3_high_throughput/Sources/hdl/round2in1.v"/>
+          <Attr Name="ImportTime" Val="1515088077"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/hdl/Simon_bit_serial_key_expansion_FPGA.v">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_simon_core/Sources/hdl/Simon_bit_serial_key_expansion_FPGA.v"/>
+          <Attr Name="ImportTime" Val="1507843479"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/hdl/Simon_bit_serial_datapath_FPGA.v">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_simon_core/Sources/hdl/Simon_bit_serial_datapath_FPGA.v"/>
+          <Attr Name="ImportTime" Val="1507843479"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_sap/Sources/hdl/rom_16_8_behave.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_sap/Sources/hdl/rom_16_8_behave.vhd"/>
+          <Attr Name="ImportTime" Val="1507761170"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_sap/Sources/hdl/pc_behave.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_sap/Sources/hdl/pc_behave.vhd"/>
+          <Attr Name="ImportTime" Val="1507761170"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_sap/Sources/hdl/o_behave.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_sap/Sources/hdl/o_behave.vhd"/>
+          <Attr Name="ImportTime" Val="1507761170"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_sap/Sources/hdl/mar_behave.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_sap/Sources/hdl/mar_behave.vhd"/>
+          <Attr Name="ImportTime" Val="1507761170"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_sap/Sources/hdl/ir_behave.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_sap/Sources/hdl/ir_behave.vhd"/>
+          <Attr Name="ImportTime" Val="1507761170"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_sap/Sources/hdl/irdec_behave.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_sap/Sources/hdl/irdec_behave.vhd"/>
+          <Attr Name="ImportTime" Val="1507761170"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_sap/Sources/hdl/control_unit_fsm.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_sap/Sources/hdl/control_unit_fsm.vhd"/>
+          <Attr Name="ImportTime" Val="1507761170"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_sap/Sources/hdl/b_reg_behave.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_sap/Sources/hdl/b_reg_behave.vhd"/>
+          <Attr Name="ImportTime" Val="1507761170"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_sap/Sources/hdl/alu_behave.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_sap/Sources/hdl/alu_behave.vhd"/>
+          <Attr Name="ImportTime" Val="1507761170"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_sap/Sources/hdl/ac_behave.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_sap/Sources/hdl/ac_behave.vhd"/>
+          <Attr Name="ImportTime" Val="1507761170"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_sha3_high_throughput/Sources/hdl/padder_h.v">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_sha3_high_throughput/Sources/hdl/padder_h.v"/>
+          <Attr Name="ImportTime" Val="1516323719"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_sha3_low_throughput/Sources/hdl/padder_l.v">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_sha3_low_throughput/Sources/hdl/padder_l.v"/>
+          <Attr Name="ImportTime" Val="1516323840"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_sha3_low_throughput/Sources/hdl/f_permutation_l.v">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_sha3_low_throughput/Sources/hdl/f_permutation_l.v"/>
+          <Attr Name="ImportTime" Val="1516323823"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_sha3_high_throughput/Sources/hdl/f_permutation_h.v">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_sha3_high_throughput/Sources/hdl/f_permutation_h.v"/>
+          <Attr Name="ImportTime" Val="1516323244"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/hdl/simon_core.v">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_simon_core/Sources/hdl/simon_core.v"/>
+          <Attr Name="ImportTime" Val="1507843502"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_sap/Sources/hdl/sap.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_sap/Sources/hdl/sap.vhd"/>
+          <Attr Name="ImportTime" Val="1507761189"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_random_pulse_generator/Sources/hdl/random_pulse_generator.v">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_random_pulse_generator/Sources/hdl/random_pulse_generator.v"/>
+          <Attr Name="ImportTime" Val="1507759736"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_sha3_low_throughput/Sources/hdl/sha3_low_throughput.v">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_sha3_low_throughput/Sources/hdl/sha3_low_throughput.v"/>
+          <Attr Name="ImportTime" Val="1516323863"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vivado_workspace/ooc_sha3_high_throughput/Sources/hdl/sha3_high_throughput.v">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/ooc_sha3_high_throughput/Sources/hdl/sha3_high_throughput.v"/>
+          <Attr Name="ImportTime" Val="1516323761"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/new/top.v">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/bubblesort_top/bubblesort_top.srcs/sources_1/new/top.v"/>
+          <Attr Name="ImportTime" Val="1510261086"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../../vivado_workspace/sha3_low_throughput_top/sha3_low_throughput_top.srcs/sources_1/imports/sha3_low_throughput_top/project_checkpoint_sha3_low_throughput_top.v">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/sha3_low_throughput_top/project_checkpoint_sha3_low_throughput_top.v"/>
+          <Attr Name="ImportTime" Val="1510959131"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <Config>
+        <Option Name="DesignMode" Val="RTL"/>
+        <Option Name="TopModule" Val="top"/>
+        <Option Name="TopAutoSet" Val="TRUE"/>
+      </Config>
+    </FileSet>
+    <FileSet Name="constrs_1" Type="Constrs" RelSrcDir="$PSRCDIR/constrs_1">
+      <Filter Type="Constrs"/>
+      <File Path="$PSRCDIR/constrs_1/imports/constrs_1/imports/constrs_1/imports/new/constr.xdc">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../vivado_workspace/bubblesort_top/bubblesort_top.srcs/constrs_1/imports/constrs_1/imports/new/constr.xdc"/>
+          <Attr Name="ImportTime" Val="1510261617"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+        </FileInfo>
+      </File>
+      <Config>
+        <Option Name="ConstrsType" Val="XDC"/>
+      </Config>
+    </FileSet>
+    <FileSet Name="sim_1" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/sim_1">
+      <Filter Type="Srcs"/>
+      <Config>
+        <Option Name="DesignMode" Val="RTL"/>
+        <Option Name="TopModule" Val="top"/>
+        <Option Name="TopLib" Val="xil_defaultlib"/>
+        <Option Name="TopAutoSet" Val="TRUE"/>
+        <Option Name="TransportPathDelay" Val="0"/>
+        <Option Name="TransportIntDelay" Val="0"/>
+        <Option Name="SimMode" Val="post-implementation"/>
+        <Option Name="SrcSet" Val="sources_1"/>
+      </Config>
+    </FileSet>
+  </FileSets>
+  <Simulators>
+    <Simulator Name="XSim">
+      <Option Name="Description" Val="Vivado Simulator"/>
+      <Option Name="CompiledLib" Val="0"/>
+    </Simulator>
+    <Simulator Name="ModelSim">
+      <Option Name="Description" Val="ModelSim Simulator"/>
+    </Simulator>
+    <Simulator Name="Questa">
+      <Option Name="Description" Val="Questa Advanced Simulator"/>
+    </Simulator>
+    <Simulator Name="IES">
+      <Option Name="Description" Val="Incisive Enterprise Simulator (IES)"/>
+    </Simulator>
+    <Simulator Name="VCS">
+      <Option Name="Description" Val="Verilog Compiler Simulator (VCS)"/>
+    </Simulator>
+    <Simulator Name="Riviera">
+      <Option Name="Description" Val="Riviera-PRO Simulator"/>
+    </Simulator>
+  </Simulators>
+  <Runs Version="1" Minor="10">
+    <Run Id="synth_1" Type="Ft3:Synth" SrcSet="sources_1" Part="xc7a100tcsg324-3" ConstrsSet="constrs_1" Description="Vivado Synthesis Defaults" State="current" Dir="$PRUNDIR/synth_1" IncludeInArchive="true">
+      <Strategy Version="1" Minor="2">
+        <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2016"/>
+        <Step Id="synth_design">
+          <Option Id="FlattenHierarchy">0</Option>
+        </Step>
+      </Strategy>
+      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
+    </Run>
+    <Run Id="impl_1" Type="Ft2:EntireDesign" Part="xc7a100tcsg324-3" ConstrsSet="constrs_1" Description="Default settings for Implementation." State="current" Dir="$PRUNDIR/impl_1" SynthRun="synth_1" IncludeInArchive="true">
+      <Strategy Version="1" Minor="2">
+        <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2016"/>
+        <Step Id="init_design"/>
+        <Step Id="opt_design"/>
+        <Step Id="power_opt_design"/>
+        <Step Id="place_design"/>
+        <Step Id="post_place_power_opt_design"/>
+        <Step Id="phys_opt_design"/>
+        <Step Id="route_design"/>
+        <Step Id="post_route_phys_opt_design"/>
+        <Step Id="write_bitstream"/>
+      </Strategy>
+      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
+    </Run>
+  </Runs>
+</Project>

@@ -1,0 +1,548 @@
+#-----------------------------------------------------------
+# Vivado v2016.2 (64-bit)
+# SW Build 1577090 on Thu Jun  2 16:32:35 MDT 2016
+# IP Build 1577682 on Fri Jun  3 12:00:54 MDT 2016
+# Start of session at: Sat Jan 13 14:07:52 2018
+# Process ID: 1307
+# Current directory: /home/sean/vivado_workspace/pid_simple/pid_simple.runs/synth_1
+# Command line: vivado -log top.vds -mode batch -messageDb vivado.pb -notrace -source top.tcl
+# Log file: /home/sean/vivado_workspace/pid_simple/pid_simple.runs/synth_1/top.vds
+# Journal file: /home/sean/vivado_workspace/pid_simple/pid_simple.runs/synth_1/vivado.jou
+#-----------------------------------------------------------
+source top.tcl -notrace
+Command: synth_design -top top -part xc7a100tcsg324-3 -flatten_hierarchy full
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: Launching helper process for spawning children vivado processes
+INFO: Helper process launched with PID 1311 
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:03 ; elapsed = 00:00:04 . Memory (MB): peak = 1047.648 ; gain = 155.137 ; free physical = 4723 ; free virtual = 118828
+---------------------------------------------------------------------------------
+INFO: [Synth 8-638] synthesizing module 'top' [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/new/top.v:23]
+	Parameter wb_nb bound to: 32 - type: integer 
+	Parameter adr_wb_nb bound to: 32 - type: integer 
+INFO: [Synth 8-638] synthesizing module 'divider_dshift' [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/signed_integer_divider/trunk/divider_dshift.v:1]
+	Parameter state_1 bound to: 1 - type: integer 
+	Parameter state_2 bound to: 2 - type: integer 
+	Parameter state_3 bound to: 4 - type: integer 
+	Parameter state_4 bound to: 8 - type: integer 
+	Parameter state_5 bound to: 16 - type: integer 
+	Parameter state_6 bound to: 32 - type: integer 
+INFO: [Synth 8-638] synthesizing module 'shifter' [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/signed_integer_divider/trunk/shifter.v:72]
+INFO: [Synth 8-638] synthesizing module 'shift_1b' [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/signed_integer_divider/trunk/shifter.v:1]
+INFO: [Synth 8-256] done synthesizing module 'shift_1b' (1#1) [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/signed_integer_divider/trunk/shifter.v:1]
+INFO: [Synth 8-638] synthesizing module 'shift_3b' [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/signed_integer_divider/trunk/shifter.v:10]
+INFO: [Synth 8-256] done synthesizing module 'shift_3b' (2#1) [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/signed_integer_divider/trunk/shifter.v:10]
+INFO: [Synth 8-638] synthesizing module 'shift_7b' [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/signed_integer_divider/trunk/shifter.v:26]
+INFO: [Synth 8-256] done synthesizing module 'shift_7b' (3#1) [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/signed_integer_divider/trunk/shifter.v:26]
+INFO: [Synth 8-256] done synthesizing module 'shifter' (4#1) [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/signed_integer_divider/trunk/shifter.v:72]
+INFO: [Synth 8-638] synthesizing module 'adder_32bit' [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/CLA_fixed.v:47]
+INFO: [Synth 8-638] synthesizing module 'operator_A' [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/CLA_fixed.v:6]
+INFO: [Synth 8-256] done synthesizing module 'operator_A' (5#1) [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/CLA_fixed.v:6]
+INFO: [Synth 8-638] synthesizing module 'operator_C' [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/CLA_fixed.v:28]
+INFO: [Synth 8-256] done synthesizing module 'operator_C' (6#1) [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/CLA_fixed.v:28]
+INFO: [Synth 8-638] synthesizing module 'operator_B' [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/CLA_fixed.v:18]
+INFO: [Synth 8-256] done synthesizing module 'operator_B' (7#1) [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/CLA_fixed.v:18]
+INFO: [Synth 8-256] done synthesizing module 'adder_32bit' (8#1) [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/CLA_fixed.v:47]
+INFO: [Synth 8-155] case statement is not full and has no default [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/signed_integer_divider/trunk/divider_dshift.v:164]
+INFO: [Synth 8-155] case statement is not full and has no default [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/signed_integer_divider/trunk/divider_dshift.v:162]
+INFO: [Synth 8-256] done synthesizing module 'divider_dshift' (9#1) [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/signed_integer_divider/trunk/divider_dshift.v:1]
+INFO: [Synth 8-638] synthesizing module 'pid' [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/PID.v:38]
+	Parameter wb_nb bound to: 32 - type: integer 
+	Parameter adr_wb_nb bound to: 16 - type: integer 
+	Parameter kp_adr bound to: 0 - type: integer 
+	Parameter ki_adr bound to: 1 - type: integer 
+	Parameter kd_adr bound to: 2 - type: integer 
+	Parameter sp_adr bound to: 3 - type: integer 
+	Parameter pv_adr bound to: 4 - type: integer 
+	Parameter kpd_adr bound to: 5 - type: integer 
+	Parameter err_0_adr bound to: 6 - type: integer 
+	Parameter err_1_adr bound to: 7 - type: integer 
+	Parameter un_adr bound to: 8 - type: integer 
+	Parameter sigma_adr bound to: 9 - type: integer 
+	Parameter of_adr bound to: 10 - type: integer 
+	Parameter RS_adr bound to: 11 - type: integer 
+INFO: [Synth 8-155] case statement is not full and has no default [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/PID.v:165]
+INFO: [Synth 8-155] case statement is not full and has no default [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/PID.v:261]
+INFO: [Synth 8-638] synthesizing module 'multiplier_16x16bit_pipelined' [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/16x16bit_multiplier_pipelined.v:145]
+INFO: [Synth 8-638] synthesizing module 'booth_array' [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/16x16bit_multiplier_pipelined.v:7]
+INFO: [Synth 8-638] synthesizing module 'booth_radix4' [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/booth.v:5]
+INFO: [Synth 8-256] done synthesizing module 'booth_radix4' (10#1) [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/booth.v:5]
+INFO: [Synth 8-256] done synthesizing module 'booth_array' (11#1) [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/16x16bit_multiplier_pipelined.v:7]
+INFO: [Synth 8-638] synthesizing module 'partial_product_gen' [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/16x16bit_multiplier_pipelined.v:73]
+INFO: [Synth 8-256] done synthesizing module 'partial_product_gen' (12#1) [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/16x16bit_multiplier_pipelined.v:73]
+INFO: [Synth 8-638] synthesizing module 'full_adder' [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/16x16bit_multiplier_pipelined.v:101]
+INFO: [Synth 8-256] done synthesizing module 'full_adder' (13#1) [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/16x16bit_multiplier_pipelined.v:101]
+INFO: [Synth 8-638] synthesizing module 'compressor42' [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/16x16bit_multiplier_pipelined.v:116]
+INFO: [Synth 8-256] done synthesizing module 'compressor42' (14#1) [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/16x16bit_multiplier_pipelined.v:116]
+INFO: [Synth 8-638] synthesizing module 'half_adder' [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/16x16bit_multiplier_pipelined.v:91]
+INFO: [Synth 8-256] done synthesizing module 'half_adder' (15#1) [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/16x16bit_multiplier_pipelined.v:91]
+INFO: [Synth 8-256] done synthesizing module 'multiplier_16x16bit_pipelined' (16#1) [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/16x16bit_multiplier_pipelined.v:145]
+INFO: [Synth 8-256] done synthesizing module 'pid' (17#1) [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/PID.v:38]
+WARNING: [Synth 8-689] width (32) of port connection 'i_wb_adr' does not match port width (16) of module 'pid' [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/new/top.v:113]
+INFO: [Synth 8-256] done synthesizing module 'top' (18#1) [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/new/top.v:23]
+WARNING: [Synth 8-3331] design pid has unconnected port i_wb_adr[1]
+WARNING: [Synth 8-3331] design pid has unconnected port i_wb_adr[0]
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 1089.086 ; gain = 196.574 ; free physical = 4680 ; free virtual = 118785
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 1089.086 ; gain = 196.574 ; free physical = 4680 ; free virtual = 118785
+---------------------------------------------------------------------------------
+INFO: [Device 21-403] Loading part xc7a100tcsg324-3
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/constrs_1/new/constraints.xdc]
+Finished Parsing XDC File [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/constrs_1/new/constraints.xdc]
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/constrs_1/new/constraints.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/top_propImpl.xdc].
+Resolution: To avoid this warning, move constraints listed in [.Xil/top_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
+Completed Processing XDC Constraints
+
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1489.625 ; gain = 0.000 ; free physical = 4473 ; free virtual = 118578
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:09 ; elapsed = 00:00:09 . Memory (MB): peak = 1489.625 ; gain = 597.113 ; free physical = 4472 ; free virtual = 118578
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7a100tcsg324-3
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:09 ; elapsed = 00:00:09 . Memory (MB): peak = 1489.625 ; gain = 597.113 ; free physical = 4472 ; free virtual = 118578
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:10 ; elapsed = 00:00:10 . Memory (MB): peak = 1489.625 ; gain = 597.113 ; free physical = 4472 ; free virtual = 118578
+---------------------------------------------------------------------------------
+INFO: [Synth 8-3898] No Re-encoding of one hot register 'state_reg' in module 'divider_dshift'
+INFO: [Synth 8-5546] ROM "PR_1" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "ready" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "ct" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "DD_sign" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "o_quotient" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5587] ROM size for "state_reg" is below threshold of ROM address width. It will be mapped to LUTs
+INFO: [Synth 8-4471] merging register 'md_index_reg[1:0]' into 'mr_index_reg[1:0]' [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/PID.v:232]
+INFO: [Synth 8-4471] merging register 'wlb_reg' into 'rlb_reg' [/home/sean/vivado_workspace/pid_simple/pid_simple.srcs/sources_1/imports/Downloads/pid_controller/trunk/RTL/PID.v:83]
+INFO: [Synth 8-3898] No Re-encoding of one hot register 'state_1_reg' in module 'pid'
+INFO: [Synth 8-5546] ROM "err" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "kpd" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "p" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "start" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "mr_index" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "cout" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5545] ROM "out_led" won't be mapped to RAM because address size (32) is larger than maximum supported(25)
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:10 ; elapsed = 00:00:10 . Memory (MB): peak = 1489.625 ; gain = 597.113 ; free physical = 4459 ; free virtual = 118564
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     31 Bit       Adders := 16    
++---XORs : 
+	   2 Input      3 Bit         XORs := 8     
+	   2 Input      1 Bit         XORs := 1399  
++---XORs : 
+	               32 Bit    Wide XORs := 2     
++---Registers : 
+	               32 Bit    Registers := 68    
+	               31 Bit    Registers := 16    
+	               16 Bit    Registers := 10    
+	               10 Bit    Registers := 1     
+	                6 Bit    Registers := 24    
+	                5 Bit    Registers := 17    
+	                4 Bit    Registers := 4     
+	                3 Bit    Registers := 11    
+	                2 Bit    Registers := 22    
+	                1 Bit    Registers := 55    
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 137   
+	   3 Input     32 Bit        Muxes := 16    
+	   4 Input     32 Bit        Muxes := 8     
+	  11 Input     32 Bit        Muxes := 1     
+	   2 Input     31 Bit        Muxes := 8     
+	   4 Input     31 Bit        Muxes := 8     
+	   2 Input     17 Bit        Muxes := 8     
+	   2 Input     16 Bit        Muxes := 8     
+	   3 Input     16 Bit        Muxes := 2     
+	  11 Input     10 Bit        Muxes := 1     
+	   4 Input      6 Bit        Muxes := 16    
+	   7 Input      6 Bit        Muxes := 8     
+	   2 Input      5 Bit        Muxes := 48    
+	   5 Input      5 Bit        Muxes := 8     
+	   4 Input      5 Bit        Muxes := 8     
+	   6 Input      5 Bit        Muxes := 1     
+	  11 Input      5 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+	  11 Input      3 Bit        Muxes := 1     
+	   2 Input      2 Bit        Muxes := 32    
+	   7 Input      2 Bit        Muxes := 24    
+	   4 Input      2 Bit        Muxes := 8     
+	   3 Input      2 Bit        Muxes := 32    
+	  11 Input      2 Bit        Muxes := 6     
+	   3 Input      1 Bit        Muxes := 22    
+	   5 Input      1 Bit        Muxes := 8     
+	   4 Input      1 Bit        Muxes := 120   
+	  10 Input      1 Bit        Muxes := 32    
+	   7 Input      1 Bit        Muxes := 40    
+	   2 Input      1 Bit        Muxes := 19    
+	   6 Input      1 Bit        Muxes := 5     
+	  11 Input      1 Bit        Muxes := 6     
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Hierarchical Component Statistics 
+---------------------------------------------------------------------------------
+Hierarchical RTL Component report 
+Module top 
+Detailed RTL Component Info : 
++---XORs : 
+	               32 Bit    Wide XORs := 2     
++---Registers : 
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 1     
+Module shift_1b 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 1     
+Module shift_3b 
+Detailed RTL Component Info : 
++---XORs : 
+	   2 Input      1 Bit         XORs := 1     
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 1     
+Module shift_7b 
+Detailed RTL Component Info : 
++---XORs : 
+	   2 Input      3 Bit         XORs := 1     
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 1     
+Module shifter 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 1     
+	   2 Input      5 Bit        Muxes := 5     
+	   5 Input      5 Bit        Muxes := 1     
+	   2 Input      2 Bit        Muxes := 1     
+Module operator_A 
+Detailed RTL Component Info : 
++---XORs : 
+	   2 Input      1 Bit         XORs := 1     
+Module adder_32bit 
+Detailed RTL Component Info : 
++---XORs : 
+	   2 Input      1 Bit         XORs := 32    
+Module divider_dshift 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input     31 Bit       Adders := 2     
++---XORs : 
+	   2 Input      1 Bit         XORs := 2     
++---Registers : 
+	               32 Bit    Registers := 8     
+	               31 Bit    Registers := 2     
+	                6 Bit    Registers := 3     
+	                5 Bit    Registers := 2     
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 5     
++---Muxes : 
+	   2 Input     32 Bit        Muxes := 8     
+	   3 Input     32 Bit        Muxes := 2     
+	   4 Input     32 Bit        Muxes := 1     
+	   2 Input     31 Bit        Muxes := 1     
+	   4 Input     31 Bit        Muxes := 1     
+	   4 Input      6 Bit        Muxes := 2     
+	   7 Input      6 Bit        Muxes := 1     
+	   4 Input      5 Bit        Muxes := 1     
+	   2 Input      5 Bit        Muxes := 1     
+	   7 Input      2 Bit        Muxes := 3     
+	   2 Input      2 Bit        Muxes := 3     
+	   4 Input      2 Bit        Muxes := 1     
+	   3 Input      2 Bit        Muxes := 4     
+	   3 Input      1 Bit        Muxes := 2     
+	   5 Input      1 Bit        Muxes := 1     
+	   4 Input      1 Bit        Muxes := 15    
+	  10 Input      1 Bit        Muxes := 4     
+	   7 Input      1 Bit        Muxes := 5     
+Module partial_product_gen 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     17 Bit        Muxes := 1     
+	   2 Input     16 Bit        Muxes := 1     
+Module full_adder 
+Detailed RTL Component Info : 
++---XORs : 
+	   2 Input      1 Bit         XORs := 2     
+Module compressor42 
+Detailed RTL Component Info : 
++---XORs : 
+	   2 Input      1 Bit         XORs := 4     
+Module half_adder 
+Detailed RTL Component Info : 
++---XORs : 
+	   2 Input      1 Bit         XORs := 1     
+Module multiplier_16x16bit_pipelined 
+Detailed RTL Component Info : 
++---Registers : 
+	               16 Bit    Registers := 2     
+	                4 Bit    Registers := 4     
+	                3 Bit    Registers := 11    
+	                2 Bit    Registers := 13    
+	                1 Bit    Registers := 6     
+Module pid 
+Detailed RTL Component Info : 
++---Registers : 
+	               32 Bit    Registers := 4     
+	               16 Bit    Registers := 8     
+	               10 Bit    Registers := 1     
+	                5 Bit    Registers := 1     
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 8     
++---Muxes : 
+	  11 Input     32 Bit        Muxes := 1     
+	   2 Input     32 Bit        Muxes := 1     
+	   3 Input     16 Bit        Muxes := 2     
+	  11 Input     10 Bit        Muxes := 1     
+	   6 Input      5 Bit        Muxes := 1     
+	  11 Input      5 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+	  11 Input      3 Bit        Muxes := 1     
+	  11 Input      2 Bit        Muxes := 6     
+	   2 Input      1 Bit        Muxes := 18    
+	   3 Input      1 Bit        Muxes := 6     
+	   6 Input      1 Bit        Muxes := 5     
+	  11 Input      1 Bit        Muxes := 6     
+---------------------------------------------------------------------------------
+Finished RTL Hierarchical Component Statistics
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 240 (col length:80)
+BRAMs: 270 (col length: RAMB18 80 RAMB36 40)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+Start Parallel Synthesis Optimization  : Time (s): cpu = 00:00:10 ; elapsed = 00:00:10 . Memory (MB): peak = 1489.625 ; gain = 597.113 ; free physical = 4459 ; free virtual = 118564
+---------------------------------------------------------------------------------
+Start Cross Boundary Optimization
+---------------------------------------------------------------------------------
+INFO: [Synth 8-5546] ROM "kpd" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "err" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "p" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "cout" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "start" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "mr_index" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5545] ROM "out_led" won't be mapped to RAM because address size (32) is larger than maximum supported(25)
+WARNING: [Synth 8-3331] design pid has unconnected port i_wb_adr[1]
+WARNING: [Synth 8-3331] design pid has unconnected port i_wb_adr[0]
+---------------------------------------------------------------------------------
+Finished Cross Boundary Optimization : Time (s): cpu = 00:00:13 ; elapsed = 00:00:13 . Memory (MB): peak = 1489.625 ; gain = 597.113 ; free physical = 4459 ; free virtual = 118564
+---------------------------------------------------------------------------------
+Finished Parallel Reinference  : Time (s): cpu = 00:00:13 ; elapsed = 00:00:13 . Memory (MB): peak = 1489.625 ; gain = 597.113 ; free physical = 4459 ; free virtual = 118564
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Area Optimization
+---------------------------------------------------------------------------------
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (divider_dshift:/\shifted_reg[4] )
+INFO: [Synth 8-3886] merging instance 'pid_0/multiplier_16x16bit_pipelined/reg_layer_2_w29_reg[2]' (FDCE) to 'pid_0/multiplier_16x16bit_pipelined/reg_layer_2_w21_reg[2]'
+INFO: [Synth 8-3886] merging instance 'pid_0/multiplier_16x16bit_pipelined/reg_layer_2_w21_reg[2]' (FDCE) to 'pid_0/multiplier_16x16bit_pipelined/reg_layer_2_w16_reg[3]'
+WARNING: [Synth 8-3332] Sequential element (shifted_reg[4]) is unused and will be removed from module divider_dshift.
+WARNING: [Synth 8-3332] Sequential element (shifted_1_reg[4]) is unused and will be removed from module divider_dshift.
+WARNING: [Synth 8-3332] Sequential element (pid_0/multiplier_16x16bit_pipelined/stage_1_ready_reg) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (pid_0/multiplier_16x16bit_pipelined/reg_layer_2_w21_reg[2]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (pid_0/multiplier_16x16bit_pipelined/reg_layer_2_w29_reg[2]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (pid_0/rla_reg) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (pid_0/of_reg[4]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (pid_0/of_reg[3]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (pid_0/of_reg[2]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (pid_0/of_reg[1]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (pid_0/of_reg[0]) is unused and will be removed from module top.
+WARNING: [Synth 8-3332] Sequential element (o_remainder_reg[31]) is unused and will be removed from module divider_dshift.
+WARNING: [Synth 8-3332] Sequential element (o_remainder_reg[30]) is unused and will be removed from module divider_dshift.
+WARNING: [Synth 8-3332] Sequential element (o_remainder_reg[29]) is unused and will be removed from module divider_dshift.
+WARNING: [Synth 8-3332] Sequential element (o_remainder_reg[28]) is unused and will be removed from module divider_dshift.
+WARNING: [Synth 8-3332] Sequential element (o_remainder_reg[27]) is unused and will be removed from module divider_dshift.
+WARNING: [Synth 8-3332] Sequential element (o_remainder_reg[26]) is unused and will be removed from module divider_dshift.
+WARNING: [Synth 8-3332] Sequential element (o_remainder_reg[25]) is unused and will be removed from module divider_dshift.
+WARNING: [Synth 8-3332] Sequential element (o_remainder_reg[24]) is unused and will be removed from module divider_dshift.
+WARNING: [Synth 8-3332] Sequential element (o_remainder_reg[23]) is unused and will be removed from module divider_dshift.
+WARNING: [Synth 8-3332] Sequential element (o_remainder_reg[22]) is unused and will be removed from module divider_dshift.
+WARNING: [Synth 8-3332] Sequential element (o_remainder_reg[21]) is unused and will be removed from module divider_dshift.
+WARNING: [Synth 8-3332] Sequential element (o_remainder_reg[20]) is unused and will be removed from module divider_dshift.
+WARNING: [Synth 8-3332] Sequential element (o_remainder_reg[19]) is unused and will be removed from module divider_dshift.
+WARNING: [Synth 8-3332] Sequential element (o_remainder_reg[18]) is unused and will be removed from module divider_dshift.
+WARNING: [Synth 8-3332] Sequential element (o_remainder_reg[17]) is unused and will be removed from module divider_dshift.
+WARNING: [Synth 8-3332] Sequential element (o_remainder_reg[16]) is unused and will be removed from module divider_dshift.
+WARNING: [Synth 8-3332] Sequential element (o_remainder_reg[1]) is unused and will be removed from module divider_dshift.
+WARNING: [Synth 8-3332] Sequential element (o_remainder_reg[0]) is unused and will be removed from module divider_dshift.
+---------------------------------------------------------------------------------
+Finished Area Optimization : Time (s): cpu = 00:00:33 ; elapsed = 00:00:33 . Memory (MB): peak = 1534.891 ; gain = 642.379 ; free physical = 4303 ; free virtual = 118408
+---------------------------------------------------------------------------------
+Finished Parallel Area Optimization  : Time (s): cpu = 00:00:33 ; elapsed = 00:00:33 . Memory (MB): peak = 1534.891 ; gain = 642.379 ; free physical = 4303 ; free virtual = 118408
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying XDC Timing Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:37 ; elapsed = 00:00:37 . Memory (MB): peak = 1626.180 ; gain = 733.668 ; free physical = 4213 ; free virtual = 118318
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:39 ; elapsed = 00:00:39 . Memory (MB): peak = 1679.203 ; gain = 786.691 ; free physical = 4160 ; free virtual = 118265
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:42 ; elapsed = 00:00:43 . Memory (MB): peak = 1789.219 ; gain = 896.707 ; free physical = 4048 ; free virtual = 118153
+---------------------------------------------------------------------------------
+Finished Parallel Technology Mapping Optimization  : Time (s): cpu = 00:00:42 ; elapsed = 00:00:43 . Memory (MB): peak = 1789.219 ; gain = 896.707 ; free physical = 4048 ; free virtual = 118153
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+Finished Parallel Synthesis Optimization  : Time (s): cpu = 00:00:42 ; elapsed = 00:00:43 . Memory (MB): peak = 1789.219 ; gain = 896.707 ; free physical = 4048 ; free virtual = 118153
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:43 ; elapsed = 00:00:43 . Memory (MB): peak = 1789.219 ; gain = 896.707 ; free physical = 4048 ; free virtual = 118153
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:43 ; elapsed = 00:00:43 . Memory (MB): peak = 1789.219 ; gain = 896.707 ; free physical = 4048 ; free virtual = 118153
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:44 ; elapsed = 00:00:44 . Memory (MB): peak = 1789.219 ; gain = 896.707 ; free physical = 4048 ; free virtual = 118153
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+-------+------+
+|      |Cell   |Count |
++------+-------+------+
+|1     |BUFG   |     1|
+|2     |CARRY4 |   128|
+|3     |LUT1   |   488|
+|4     |LUT2   |   250|
+|5     |LUT3   |   962|
+|6     |LUT4   |   883|
+|7     |LUT5   |  1575|
+|8     |LUT6   |  3488|
+|9     |FDCE   |  3166|
+|10    |FDPE   |     9|
+|11    |FDRE   |     1|
+|12    |IBUF   |     2|
+|13    |OBUF   |     1|
++------+-------+------+
+
+Report Instance Areas: 
++------+---------+-------+------+
+|      |Instance |Module |Cells |
++------+---------+-------+------+
+|1     |top      |       | 10954|
++------+---------+-------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:44 ; elapsed = 00:00:44 . Memory (MB): peak = 1789.219 ; gain = 896.707 ; free physical = 4048 ; free virtual = 118153
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 31 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:39 ; elapsed = 00:00:40 . Memory (MB): peak = 1789.219 ; gain = 409.027 ; free physical = 4048 ; free virtual = 118153
+Synthesis Optimization Complete : Time (s): cpu = 00:00:44 ; elapsed = 00:00:44 . Memory (MB): peak = 1789.227 ; gain = 896.715 ; free physical = 4048 ; free virtual = 118153
+INFO: [Project 1-571] Translating synthesized netlist
+INFO: [Netlist 29-17] Analyzing 130 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+WARNING: [Netlist 29-101] Netlist 'top' is not ideal for floorplanning, since the cellview 'top' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+INFO: [Common 17-83] Releasing license: Synthesis
+79 Infos, 35 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:00:45 ; elapsed = 00:00:45 . Memory (MB): peak = 1821.234 ; gain = 854.168 ; free physical = 4049 ; free virtual = 118155
+report_utilization: Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.07 . Memory (MB): peak = 1853.250 ; gain = 0.000 ; free physical = 4047 ; free virtual = 118153
+INFO: [Common 17-206] Exiting Vivado at Sat Jan 13 14:08:42 2018...

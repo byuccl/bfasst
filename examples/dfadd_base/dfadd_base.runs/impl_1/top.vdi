@@ -1,0 +1,590 @@
+#-----------------------------------------------------------
+# Vivado v2016.2 (64-bit)
+# SW Build 1577090 on Thu Jun  2 16:32:35 MDT 2016
+# IP Build 1577682 on Fri Jun  3 12:00:54 MDT 2016
+# Start of session at: Sat Jan 13 15:22:53 2018
+# Process ID: 23992
+# Current directory: /home/sean/vivado_workspace/dfadd_simple/dfadd_simple.runs/impl_1
+# Command line: vivado -log top.vdi -applog -messageDb vivado.pb -mode batch -source top.tcl -notrace
+# Log file: /home/sean/vivado_workspace/dfadd_simple/dfadd_simple.runs/impl_1/top.vdi
+# Journal file: /home/sean/vivado_workspace/dfadd_simple/dfadd_simple.runs/impl_1/vivado.jou
+#-----------------------------------------------------------
+source top.tcl -notrace
+Design is defaulting to srcset: sources_1
+Design is defaulting to constrset: constrs_1
+INFO: [Netlist 29-17] Analyzing 442 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+WARNING: [Netlist 29-101] Netlist 'top' is not ideal for floorplanning, since the cellview 'top' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.
+INFO: [Project 1-479] Netlist was created with Vivado 2016.2
+INFO: [Device 21-403] Loading part xc7a100tcsg324-3
+INFO: [Project 1-570] Preparing netlist for logic optimization
+Parsing XDC File [/home/sean/vivado_workspace/dfadd_simple/dfadd_simple.srcs/constrs_1/imports/xdc/top.xdc]
+Finished Parsing XDC File [/home/sean/vivado_workspace/dfadd_simple/dfadd_simple.srcs/constrs_1/imports/xdc/top.xdc]
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+INFO: [Vivado_Tcl 4-424] Cannot write hardware definition file as there are no IPI block design hardware handoff files present
+Command: opt_design
+Attempting to get a license for feature 'Implementation' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xc7a100t'
+Running DRC as a precondition to command opt_design
+
+Starting DRC Task
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Project 1-461] DRC finished with 0 Errors
+INFO: [Project 1-462] Please refer to the DRC report (report_drc) for more information.
+
+Time (s): cpu = 00:00:00.14 ; elapsed = 00:00:00.12 . Memory (MB): peak = 1394.551 ; gain = 65.031 ; free physical = 7506 ; free virtual = 31316
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+
+Starting Logic Optimization Task
+Implement Debug Cores | Checksum: 1cfe059b1
+
+Phase 1 Retarget
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Opt 31-49] Retargeted 0 cell(s).
+Phase 1 Retarget | Checksum: 1a6d49db7
+
+Time (s): cpu = 00:00:00.94 ; elapsed = 00:00:00.91 . Memory (MB): peak = 1817.980 ; gain = 0.000 ; free physical = 7145 ; free virtual = 30960
+
+Phase 2 Constant Propagation
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Opt 31-10] Eliminated 1182 cells.
+Phase 2 Constant Propagation | Checksum: 196ae6a33
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:02 . Memory (MB): peak = 1817.980 ; gain = 0.000 ; free physical = 7148 ; free virtual = 30962
+
+Phase 3 Sweep
+INFO: [Opt 31-12] Eliminated 2696 unconnected nets.
+INFO: [Opt 31-11] Eliminated 740 unconnected cells.
+Phase 3 Sweep | Checksum: 18fd4a4fc
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:02 . Memory (MB): peak = 1817.980 ; gain = 0.000 ; free physical = 7147 ; free virtual = 30961
+
+Starting Connectivity Check Task
+
+Time (s): cpu = 00:00:00.03 ; elapsed = 00:00:00.03 . Memory (MB): peak = 1817.980 ; gain = 0.000 ; free physical = 7147 ; free virtual = 30961
+Ending Logic Optimization Task | Checksum: 18fd4a4fc
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:02 . Memory (MB): peak = 1817.980 ; gain = 0.000 ; free physical = 7147 ; free virtual = 30961
+
+Starting Power Optimization Task
+INFO: [Pwropt 34-132] Skipping clock gating for clocks with a period < 2.00 ns.
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Running Vector-less Activity Propagation...
+
+Finished Running Vector-less Activity Propagation
+INFO: [Pwropt 34-9] Applying IDT optimizations ...
+INFO: [Pwropt 34-10] Applying ODC optimizations ...
+
+
+Starting PowerOpt Patch Enables Task
+INFO: [Pwropt 34-162] WRITE_MODE attribute of 0 BRAM(s) out of a total of 97 has been updated to save power. Run report_power_opt to get a complete listing of the BRAMs updated.
+INFO: [Pwropt 34-201] Structural ODC has moved 0 WE to EN ports
+Number of BRAM Ports augmented: 0 newly gated: 49 Total Ports: 194
+Ending PowerOpt Patch Enables Task | Checksum: 1cd996e63
+
+Time (s): cpu = 00:00:00.09 ; elapsed = 00:00:00.06 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6907 ; free virtual = 30717
+Ending Power Optimization Task | Checksum: 1cd996e63
+
+Time (s): cpu = 00:00:08 ; elapsed = 00:00:05 . Memory (MB): peak = 2202.277 ; gain = 384.297 ; free physical = 6905 ; free virtual = 30715
+INFO: [Common 17-83] Releasing license: Implementation
+26 Infos, 1 Warnings, 0 Critical Warnings and 0 Errors encountered.
+opt_design completed successfully
+opt_design: Time (s): cpu = 00:00:17 ; elapsed = 00:00:14 . Memory (MB): peak = 2202.277 ; gain = 872.758 ; free physical = 6905 ; free virtual = 30715
+Writing placer database...
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Write XDEF Complete: Time (s): cpu = 00:00:00.05 ; elapsed = 00:00:00.02 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6904 ; free virtual = 30715
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Coretcl 2-168] The results of DRC are in file /home/sean/vivado_workspace/dfadd_simple/dfadd_simple.runs/impl_1/top_drc_opted.rpt.
+INFO: [Chipscope 16-241] No debug cores found in the current design.
+Before running the implement_debug_core command, either use the Set Up Debug wizard (GUI mode)
+or use the create_debug_core and connect_debug_core Tcl commands to insert debug cores into the design.
+Command: place_design
+Attempting to get a license for feature 'Implementation' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xc7a100t'
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+Running DRC as a precondition to command place_design
+INFO: [DRC 23-27] Running DRC with 8 threads
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi0/decoder1/trelis_mem_A/mem_reg has an input control pin viterbi0/decoder1/trelis_mem_A/mem_reg/ENARDEN (net: viterbi0/decoder1/trelis_mem_A/mem_reg_ENARDEN_cooolgate_en_sig_17) which is driven by a register (viterbi0/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi0/decoder1/trelis_mem_C/mem_reg has an input control pin viterbi0/decoder1/trelis_mem_C/mem_reg/ENARDEN (net: viterbi0/decoder1/trelis_mem_C/mem_reg_ENARDEN_cooolgate_en_sig_18) which is driven by a register (viterbi0/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi1/decoder1/trelis_mem_A/mem_reg has an input control pin viterbi1/decoder1/trelis_mem_A/mem_reg/ENARDEN (net: viterbi1/decoder1/trelis_mem_A/mem_reg_ENARDEN_cooolgate_en_sig_19) which is driven by a register (viterbi1/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi1/decoder1/trelis_mem_C/mem_reg has an input control pin viterbi1/decoder1/trelis_mem_C/mem_reg/ENARDEN (net: viterbi1/decoder1/trelis_mem_C/mem_reg_ENARDEN_cooolgate_en_sig_20) which is driven by a register (viterbi1/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi10/decoder1/trelis_mem_A/mem_reg has an input control pin viterbi10/decoder1/trelis_mem_A/mem_reg/ENARDEN (net: viterbi10/decoder1/trelis_mem_A/mem_reg_ENARDEN_cooolgate_en_sig_21) which is driven by a register (viterbi10/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi10/decoder1/trelis_mem_C/mem_reg has an input control pin viterbi10/decoder1/trelis_mem_C/mem_reg/ENARDEN (net: viterbi10/decoder1/trelis_mem_C/mem_reg_ENARDEN_cooolgate_en_sig_22) which is driven by a register (viterbi10/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi11/decoder1/trelis_mem_A/mem_reg has an input control pin viterbi11/decoder1/trelis_mem_A/mem_reg/ENARDEN (net: viterbi11/decoder1/trelis_mem_A/mem_reg_ENARDEN_cooolgate_en_sig_23) which is driven by a register (viterbi11/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi11/decoder1/trelis_mem_C/mem_reg has an input control pin viterbi11/decoder1/trelis_mem_C/mem_reg/ENARDEN (net: viterbi11/decoder1/trelis_mem_C/mem_reg_ENARDEN_cooolgate_en_sig_24) which is driven by a register (viterbi11/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi12/decoder1/trelis_mem_A/mem_reg has an input control pin viterbi12/decoder1/trelis_mem_A/mem_reg/ENARDEN (net: viterbi12/decoder1/trelis_mem_A/mem_reg_ENARDEN_cooolgate_en_sig_25) which is driven by a register (viterbi12/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi12/decoder1/trelis_mem_C/mem_reg has an input control pin viterbi12/decoder1/trelis_mem_C/mem_reg/ENARDEN (net: viterbi12/decoder1/trelis_mem_C/mem_reg_ENARDEN_cooolgate_en_sig_26) which is driven by a register (viterbi12/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi13/decoder1/trelis_mem_A/mem_reg has an input control pin viterbi13/decoder1/trelis_mem_A/mem_reg/ENARDEN (net: viterbi13/decoder1/trelis_mem_A/mem_reg_ENARDEN_cooolgate_en_sig_27) which is driven by a register (viterbi13/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi13/decoder1/trelis_mem_C/mem_reg has an input control pin viterbi13/decoder1/trelis_mem_C/mem_reg/ENARDEN (net: viterbi13/decoder1/trelis_mem_C/mem_reg_ENARDEN_cooolgate_en_sig_28) which is driven by a register (viterbi13/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi14/decoder1/trelis_mem_A/mem_reg has an input control pin viterbi14/decoder1/trelis_mem_A/mem_reg/ENARDEN (net: viterbi14/decoder1/trelis_mem_A/mem_reg_ENARDEN_cooolgate_en_sig_29) which is driven by a register (viterbi14/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi14/decoder1/trelis_mem_C/mem_reg has an input control pin viterbi14/decoder1/trelis_mem_C/mem_reg/ENARDEN (net: viterbi14/decoder1/trelis_mem_C/mem_reg_ENARDEN_cooolgate_en_sig_30) which is driven by a register (viterbi14/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi15/decoder1/trelis_mem_A/mem_reg has an input control pin viterbi15/decoder1/trelis_mem_A/mem_reg/ENARDEN (net: viterbi15/decoder1/trelis_mem_A/mem_reg_ENARDEN_cooolgate_en_sig_31) which is driven by a register (viterbi15/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi15/decoder1/trelis_mem_C/mem_reg has an input control pin viterbi15/decoder1/trelis_mem_C/mem_reg/ENARDEN (net: viterbi15/decoder1/trelis_mem_C/mem_reg_ENARDEN_cooolgate_en_sig_32) which is driven by a register (viterbi15/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi2/decoder1/trelis_mem_A/mem_reg has an input control pin viterbi2/decoder1/trelis_mem_A/mem_reg/ENARDEN (net: viterbi2/decoder1/trelis_mem_A/mem_reg_ENARDEN_cooolgate_en_sig_33) which is driven by a register (viterbi2/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi2/decoder1/trelis_mem_C/mem_reg has an input control pin viterbi2/decoder1/trelis_mem_C/mem_reg/ENARDEN (net: viterbi2/decoder1/trelis_mem_C/mem_reg_ENARDEN_cooolgate_en_sig_34) which is driven by a register (viterbi2/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi3/decoder1/trelis_mem_A/mem_reg has an input control pin viterbi3/decoder1/trelis_mem_A/mem_reg/ENARDEN (net: viterbi3/decoder1/trelis_mem_A/mem_reg_ENARDEN_cooolgate_en_sig_35) which is driven by a register (viterbi3/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi3/decoder1/trelis_mem_C/mem_reg has an input control pin viterbi3/decoder1/trelis_mem_C/mem_reg/ENARDEN (net: viterbi3/decoder1/trelis_mem_C/mem_reg_ENARDEN_cooolgate_en_sig_36) which is driven by a register (viterbi3/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi4/decoder1/trelis_mem_A/mem_reg has an input control pin viterbi4/decoder1/trelis_mem_A/mem_reg/ENARDEN (net: viterbi4/decoder1/trelis_mem_A/mem_reg_ENARDEN_cooolgate_en_sig_37) which is driven by a register (viterbi4/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi4/decoder1/trelis_mem_C/mem_reg has an input control pin viterbi4/decoder1/trelis_mem_C/mem_reg/ENARDEN (net: viterbi4/decoder1/trelis_mem_C/mem_reg_ENARDEN_cooolgate_en_sig_38) which is driven by a register (viterbi4/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi5/decoder1/trelis_mem_A/mem_reg has an input control pin viterbi5/decoder1/trelis_mem_A/mem_reg/ENARDEN (net: viterbi5/decoder1/trelis_mem_A/mem_reg_ENARDEN_cooolgate_en_sig_39) which is driven by a register (viterbi5/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi5/decoder1/trelis_mem_C/mem_reg has an input control pin viterbi5/decoder1/trelis_mem_C/mem_reg/ENARDEN (net: viterbi5/decoder1/trelis_mem_C/mem_reg_ENARDEN_cooolgate_en_sig_40) which is driven by a register (viterbi5/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi6/decoder1/trelis_mem_A/mem_reg has an input control pin viterbi6/decoder1/trelis_mem_A/mem_reg/ENARDEN (net: viterbi6/decoder1/trelis_mem_A/mem_reg_ENARDEN_cooolgate_en_sig_41) which is driven by a register (viterbi6/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi6/decoder1/trelis_mem_C/mem_reg has an input control pin viterbi6/decoder1/trelis_mem_C/mem_reg/ENARDEN (net: viterbi6/decoder1/trelis_mem_C/mem_reg_ENARDEN_cooolgate_en_sig_42) which is driven by a register (viterbi6/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi7/decoder1/trelis_mem_A/mem_reg has an input control pin viterbi7/decoder1/trelis_mem_A/mem_reg/ENARDEN (net: viterbi7/decoder1/trelis_mem_A/mem_reg_ENARDEN_cooolgate_en_sig_43) which is driven by a register (viterbi7/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi7/decoder1/trelis_mem_C/mem_reg has an input control pin viterbi7/decoder1/trelis_mem_C/mem_reg/ENARDEN (net: viterbi7/decoder1/trelis_mem_C/mem_reg_ENARDEN_cooolgate_en_sig_44) which is driven by a register (viterbi7/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi8/decoder1/trelis_mem_A/mem_reg has an input control pin viterbi8/decoder1/trelis_mem_A/mem_reg/ENARDEN (net: viterbi8/decoder1/trelis_mem_A/mem_reg_ENARDEN_cooolgate_en_sig_45) which is driven by a register (viterbi8/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi8/decoder1/trelis_mem_C/mem_reg has an input control pin viterbi8/decoder1/trelis_mem_C/mem_reg/ENARDEN (net: viterbi8/decoder1/trelis_mem_C/mem_reg_ENARDEN_cooolgate_en_sig_46) which is driven by a register (viterbi8/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi9/decoder1/trelis_mem_A/mem_reg has an input control pin viterbi9/decoder1/trelis_mem_A/mem_reg/ENARDEN (net: viterbi9/decoder1/trelis_mem_A/mem_reg_ENARDEN_cooolgate_en_sig_47) which is driven by a register (viterbi9/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+WARNING: [DRC 23-20] Rule violation (REQP-1840) RAMB18 async control check - The RAMB18E1 viterbi9/decoder1/trelis_mem_C/mem_reg has an input control pin viterbi9/decoder1/trelis_mem_C/mem_reg/ENARDEN (net: viterbi9/decoder1/trelis_mem_C/mem_reg_ENARDEN_cooolgate_en_sig_48) which is driven by a register (viterbi9/decoder1/enable_tbu_0_reg) that has an active asychronous set or reset. This may cause corruption of the memory contents and/or read values when the set/reset is asserted and is not analyzed by the default static timing analysis. It is suggested to eliminate the use of a set/reset to registers driving this RAMB pin or else use a synchronous reset in which the assertion of the reset is timed by default.
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors, 32 Warnings
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+
+Starting Placer Task
+INFO: [Place 30-611] Multithreading enabled for place_design using a maximum of 8 CPUs
+
+Phase 1 Placer Initialization
+Netlist sorting complete. Time (s): cpu = 00:00:00.04 ; elapsed = 00:00:00.03 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6896 ; free virtual = 30712
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+INFO: [Opt 31-138] Pushed 16 inverter(s) to 32 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.01 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6895 ; free virtual = 30711
+
+Phase 1.1 IO Placement/ Clock Placement/ Build Placer Device
+
+Phase 1.1.1 ParallelPlaceIOClockAndInitTop
+
+Phase 1.1.1.1 Pre-Place Cells
+Phase 1.1.1.1 Pre-Place Cells | Checksum: fe7ccd4c
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.58 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6895 ; free virtual = 30711
+
+Phase 1.1.1.2 Constructing HAPIClkRuleMgr
+Phase 1.1.1.2 Constructing HAPIClkRuleMgr | Checksum: fe7ccd4c
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.73 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6898 ; free virtual = 30711
+
+Phase 1.1.1.3 IOBufferPlacementChecker
+
+Phase 1.1.1.4 IOLockPlacementChecker
+
+Phase 1.1.1.6 DSPChecker
+
+Phase 1.1.1.5 ClockRegionPlacementChecker
+Phase 1.1.1.6 DSPChecker | Checksum: fe7ccd4c
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6898 ; free virtual = 30710
+
+Phase 1.1.1.7 V7IOVoltageChecker
+Phase 1.1.1.7 V7IOVoltageChecker | Checksum: fe7ccd4c
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6898 ; free virtual = 30710
+
+Phase 1.1.1.8 OverlappingPBlocksChecker
+Phase 1.1.1.8 OverlappingPBlocksChecker | Checksum: fe7ccd4c
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6898 ; free virtual = 30710
+Phase 1.1.1.3 IOBufferPlacementChecker | Checksum: fe7ccd4c
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6898 ; free virtual = 30710
+
+Phase 1.1.1.9 DisallowedInsts
+Phase 1.1.1.4 IOLockPlacementChecker | Checksum: fe7ccd4c
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6898 ; free virtual = 30710
+
+Phase 1.1.1.10 CheckerForMandatoryPrePlacedCells
+Phase 1.1.1.9 DisallowedInsts | Checksum: fe7ccd4c
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6898 ; free virtual = 30710
+
+Phase 1.1.1.11 Laguna PBlock Checker
+Phase 1.1.1.11 Laguna PBlock Checker | Checksum: fe7ccd4c
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6898 ; free virtual = 30710
+
+Phase 1.1.1.12 ShapePlacementValidityChecker
+Phase 1.1.1.10 CheckerForMandatoryPrePlacedCells | Checksum: fe7ccd4c
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6898 ; free virtual = 30710
+
+Phase 1.1.1.13 CascadeElementConstraintsChecker
+Phase 1.1.1.13 CascadeElementConstraintsChecker | Checksum: fe7ccd4c
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6898 ; free virtual = 30710
+
+Phase 1.1.1.14 HdioRelatedChecker
+Phase 1.1.1.14 HdioRelatedChecker | Checksum: fe7ccd4c
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6898 ; free virtual = 30710
+Phase 1.1.1.5 ClockRegionPlacementChecker | Checksum: fe7ccd4c
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6898 ; free virtual = 30710
+
+Phase 1.1.1.15 CheckerForUnsupportedConstraints
+Phase 1.1.1.15 CheckerForUnsupportedConstraints | Checksum: fe7ccd4c
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6898 ; free virtual = 30710
+
+Phase 1.1.1.16 ShapesExcludeCompatibilityChecker
+Phase 1.1.1.16 ShapesExcludeCompatibilityChecker | Checksum: fe7ccd4c
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6898 ; free virtual = 30710
+
+Phase 1.1.1.17 IOStdCompatabilityChecker
+Phase 1.1.1.17 IOStdCompatabilityChecker | Checksum: fe7ccd4c
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:01 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6898 ; free virtual = 30710
+Phase 1.1.1.12 ShapePlacementValidityChecker | Checksum: fe7ccd4c
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6897 ; free virtual = 30710
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+
+Phase 1.1.1.18 IO and Clk Clean Up
+
+Phase 1.1.1.18.1 Constructing HAPIClkRuleMgr
+Phase 1.1.1.18.1 Constructing HAPIClkRuleMgr | Checksum: fe7ccd4c
+
+Time (s): cpu = 00:00:05 ; elapsed = 00:00:02 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6896 ; free virtual = 30709
+Phase 1.1.1.18 IO and Clk Clean Up | Checksum: fe7ccd4c
+
+Time (s): cpu = 00:00:05 ; elapsed = 00:00:02 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6896 ; free virtual = 30709
+
+Phase 1.1.1.19 Implementation Feasibility check On IDelay
+Phase 1.1.1.19 Implementation Feasibility check On IDelay | Checksum: fe7ccd4c
+
+Time (s): cpu = 00:00:05 ; elapsed = 00:00:02 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6896 ; free virtual = 30709
+
+Phase 1.1.1.20 Commit IO Placement
+Phase 1.1.1.20 Commit IO Placement | Checksum: 505d0c52
+
+Time (s): cpu = 00:00:05 ; elapsed = 00:00:02 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6896 ; free virtual = 30709
+Phase 1.1.1 ParallelPlaceIOClockAndInitTop | Checksum: 505d0c52
+
+Time (s): cpu = 00:00:05 ; elapsed = 00:00:02 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6896 ; free virtual = 30709
+Phase 1.1 IO Placement/ Clock Placement/ Build Placer Device | Checksum: c086df0d
+
+Time (s): cpu = 00:00:05 ; elapsed = 00:00:02 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6896 ; free virtual = 30709
+
+Phase 1.2 Build Placer Netlist Model
+
+Phase 1.2.1 Place Init Design
+
+Phase 1.2.1.1 Make Others
+Phase 1.2.1.1 Make Others | Checksum: 14a60f1c8
+
+Time (s): cpu = 00:00:05 ; elapsed = 00:00:03 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6894 ; free virtual = 30707
+
+Phase 1.2.1.2 Init Lut Pin Assignment
+Phase 1.2.1.2 Init Lut Pin Assignment | Checksum: 14a60f1c8
+
+Time (s): cpu = 00:00:06 ; elapsed = 00:00:03 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6892 ; free virtual = 30704
+Phase 1.2.1 Place Init Design | Checksum: 17a9c450d
+
+Time (s): cpu = 00:00:10 ; elapsed = 00:00:05 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6890 ; free virtual = 30702
+Phase 1.2 Build Placer Netlist Model | Checksum: 17a9c450d
+
+Time (s): cpu = 00:00:10 ; elapsed = 00:00:05 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6890 ; free virtual = 30702
+
+Phase 1.3 Constrain Clocks/Macros
+Phase 1.3 Constrain Clocks/Macros | Checksum: 17a9c450d
+
+Time (s): cpu = 00:00:10 ; elapsed = 00:00:05 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6889 ; free virtual = 30702
+Phase 1 Placer Initialization | Checksum: 17a9c450d
+
+Time (s): cpu = 00:00:10 ; elapsed = 00:00:05 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6888 ; free virtual = 30701
+
+Phase 2 Global Placement
+Phase 2 Global Placement | Checksum: 175f29164
+
+Time (s): cpu = 00:00:27 ; elapsed = 00:00:11 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6956 ; free virtual = 30768
+
+Phase 3 Detail Placement
+
+Phase 3.1 Commit Multi Column Macros
+Phase 3.1 Commit Multi Column Macros | Checksum: 175f29164
+
+Time (s): cpu = 00:00:27 ; elapsed = 00:00:11 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6956 ; free virtual = 30768
+
+Phase 3.2 Commit Most Macros & LUTRAMs
+Phase 3.2 Commit Most Macros & LUTRAMs | Checksum: 16b02feb0
+
+Time (s): cpu = 00:00:32 ; elapsed = 00:00:13 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6956 ; free virtual = 30768
+
+Phase 3.3 Area Swap Optimization
+Phase 3.3 Area Swap Optimization | Checksum: 221fb662e
+
+Time (s): cpu = 00:00:32 ; elapsed = 00:00:13 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6956 ; free virtual = 30768
+
+Phase 3.4 updateClock Trees: DP
+Phase 3.4 updateClock Trees: DP | Checksum: 221fb662e
+
+Time (s): cpu = 00:00:32 ; elapsed = 00:00:13 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6956 ; free virtual = 30768
+
+Phase 3.5 Timing Path Optimizer
+Phase 3.5 Timing Path Optimizer | Checksum: 186f2c15f
+
+Time (s): cpu = 00:00:33 ; elapsed = 00:00:13 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6956 ; free virtual = 30768
+
+Phase 3.6 Fast Optimization
+Phase 3.6 Fast Optimization | Checksum: 186f2c15f
+
+Time (s): cpu = 00:00:33 ; elapsed = 00:00:14 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6956 ; free virtual = 30768
+
+Phase 3.7 Small Shape Detail Placement
+Phase 3.7 Small Shape Detail Placement | Checksum: 171cc46f3
+
+Time (s): cpu = 00:00:37 ; elapsed = 00:00:17 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6958 ; free virtual = 30770
+
+Phase 3.8 Re-assign LUT pins
+Phase 3.8 Re-assign LUT pins | Checksum: 17192090b
+
+Time (s): cpu = 00:00:37 ; elapsed = 00:00:17 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6958 ; free virtual = 30770
+
+Phase 3.9 Pipeline Register Optimization
+Phase 3.9 Pipeline Register Optimization | Checksum: 17192090b
+
+Time (s): cpu = 00:00:37 ; elapsed = 00:00:17 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6958 ; free virtual = 30770
+
+Phase 3.10 Fast Optimization
+Phase 3.10 Fast Optimization | Checksum: 17192090b
+
+Time (s): cpu = 00:00:40 ; elapsed = 00:00:18 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6958 ; free virtual = 30770
+Phase 3 Detail Placement | Checksum: 17192090b
+
+Time (s): cpu = 00:00:40 ; elapsed = 00:00:18 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6957 ; free virtual = 30770
+
+Phase 4 Post Placement Optimization and Clean-Up
+
+Phase 4.1 Post Commit Optimization
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+
+Phase 4.1.1 updateClock Trees: PCOPT
+Phase 4.1.1 updateClock Trees: PCOPT | Checksum: 1dcd32e46
+
+Time (s): cpu = 00:00:44 ; elapsed = 00:00:19 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6929 ; free virtual = 30742
+
+Phase 4.1.2 Post Placement Optimization
+INFO: [Place 30-746] Post Placement Timing Summary WNS=2.662. For the most accurate timing information please run report_timing.
+Phase 4.1.2 Post Placement Optimization | Checksum: 1ebe7f534
+
+Time (s): cpu = 00:00:44 ; elapsed = 00:00:20 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6933 ; free virtual = 30745
+Phase 4.1 Post Commit Optimization | Checksum: 1ebe7f534
+
+Time (s): cpu = 00:00:44 ; elapsed = 00:00:20 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6933 ; free virtual = 30745
+
+Phase 4.2 Sweep Clock Roots: Post-Placement
+Phase 4.2 Sweep Clock Roots: Post-Placement | Checksum: 1ebe7f534
+
+Time (s): cpu = 00:00:44 ; elapsed = 00:00:20 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6933 ; free virtual = 30745
+
+Phase 4.3 Uram Pipeline Register Optimization
+Phase 4.3 Uram Pipeline Register Optimization | Checksum: 1ebe7f534
+
+Time (s): cpu = 00:00:44 ; elapsed = 00:00:20 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6932 ; free virtual = 30744
+
+Phase 4.4 Post Placement Cleanup
+Phase 4.4 Post Placement Cleanup | Checksum: 1ebe7f534
+
+Time (s): cpu = 00:00:45 ; elapsed = 00:00:20 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6932 ; free virtual = 30744
+
+Phase 4.5 Placer Reporting
+Phase 4.5 Placer Reporting | Checksum: 1ebe7f534
+
+Time (s): cpu = 00:00:45 ; elapsed = 00:00:20 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6932 ; free virtual = 30744
+
+Phase 4.6 Final Placement Cleanup
+Phase 4.6 Final Placement Cleanup | Checksum: 2ad828749
+
+Time (s): cpu = 00:00:45 ; elapsed = 00:00:20 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6932 ; free virtual = 30745
+Phase 4 Post Placement Optimization and Clean-Up | Checksum: 2ad828749
+
+Time (s): cpu = 00:00:45 ; elapsed = 00:00:20 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6933 ; free virtual = 30745
+Ending Placer Task | Checksum: 1bbf69ab6
+
+Time (s): cpu = 00:00:45 ; elapsed = 00:00:20 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6932 ; free virtual = 30745
+INFO: [Common 17-83] Releasing license: Implementation
+43 Infos, 33 Warnings, 0 Critical Warnings and 0 Errors encountered.
+place_design completed successfully
+place_design: Time (s): cpu = 00:00:46 ; elapsed = 00:00:21 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6933 ; free virtual = 30745
+Writing placer database...
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Write XDEF Complete: Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.60 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6918 ; free virtual = 30746
+report_io: Time (s): cpu = 00:00:00.10 ; elapsed = 00:00:00.13 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6928 ; free virtual = 30743
+report_utilization: Time (s): cpu = 00:00:00.14 ; elapsed = 00:00:00.16 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6929 ; free virtual = 30744
+report_control_sets: Time (s): cpu = 00:00:00.05 ; elapsed = 00:00:00.09 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6928 ; free virtual = 30743
+Command: route_design
+Attempting to get a license for feature 'Implementation' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xc7a100t'
+Running DRC as a precondition to command route_design
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+
+
+Starting Routing Task
+INFO: [Route 35-254] Multithreading enabled for route_design using a maximum of 8 CPUs
+Checksum: PlaceDB: bfda1a85 ConstDB: 0 ShapeSum: fc1c8031 RouteDB: 0
+
+Phase 1 Build RT Design
+Phase 1 Build RT Design | Checksum: 9e5b0138
+
+Time (s): cpu = 00:00:19 ; elapsed = 00:00:14 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6887 ; free virtual = 30702
+
+Phase 2 Router Initialization
+
+Phase 2.1 Create Timer
+Phase 2.1 Create Timer | Checksum: 9e5b0138
+
+Time (s): cpu = 00:00:19 ; elapsed = 00:00:14 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6887 ; free virtual = 30702
+
+Phase 2.2 Fix Topology Constraints
+Phase 2.2 Fix Topology Constraints | Checksum: 9e5b0138
+
+Time (s): cpu = 00:00:19 ; elapsed = 00:00:14 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6879 ; free virtual = 30693
+
+Phase 2.3 Pre Route Cleanup
+Phase 2.3 Pre Route Cleanup | Checksum: 9e5b0138
+
+Time (s): cpu = 00:00:19 ; elapsed = 00:00:14 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6879 ; free virtual = 30693
+ Number of Nodes with overlaps = 0
+
+Phase 2.4 Update Timing
+Phase 2.4 Update Timing | Checksum: 20a3ebb8f
+
+Time (s): cpu = 00:00:25 ; elapsed = 00:00:17 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6837 ; free virtual = 30652
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=2.766  | TNS=0.000  | WHS=-0.265 | THS=-506.498|
+
+Phase 2 Router Initialization | Checksum: 202994f6a
+
+Time (s): cpu = 00:00:28 ; elapsed = 00:00:17 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6841 ; free virtual = 30656
+
+Phase 3 Initial Routing
+Phase 3 Initial Routing | Checksum: 246ab8d16
+
+Time (s): cpu = 00:00:36 ; elapsed = 00:00:19 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6841 ; free virtual = 30656
+
+Phase 4 Rip-up And Reroute
+
+Phase 4.1 Global Iteration 0
+ Number of Nodes with overlaps = 1948
+ Number of Nodes with overlaps = 133
+ Number of Nodes with overlaps = 0
+
+Phase 4.1.1 Update Timing
+Phase 4.1.1 Update Timing | Checksum: 1ba72215d
+
+Time (s): cpu = 00:00:56 ; elapsed = 00:00:22 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6839 ; free virtual = 30654
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=3.164  | TNS=0.000  | WHS=N/A    | THS=N/A    |
+
+Phase 4.1 Global Iteration 0 | Checksum: 20a4d50be
+
+Time (s): cpu = 00:00:56 ; elapsed = 00:00:22 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6839 ; free virtual = 30654
+Phase 4 Rip-up And Reroute | Checksum: 20a4d50be
+
+Time (s): cpu = 00:00:56 ; elapsed = 00:00:22 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6839 ; free virtual = 30654
+
+Phase 5 Delay and Skew Optimization
+
+Phase 5.1 Delay CleanUp
+
+Phase 5.1.1 Update Timing
+Phase 5.1.1 Update Timing | Checksum: 15cc7e634
+
+Time (s): cpu = 00:00:57 ; elapsed = 00:00:22 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6839 ; free virtual = 30654
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=3.212  | TNS=0.000  | WHS=N/A    | THS=N/A    |
+
+Phase 5.1 Delay CleanUp | Checksum: 15cc7e634
+
+Time (s): cpu = 00:00:57 ; elapsed = 00:00:22 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6839 ; free virtual = 30654
+
+Phase 5.2 Clock Skew Optimization
+Phase 5.2 Clock Skew Optimization | Checksum: 15cc7e634
+
+Time (s): cpu = 00:00:57 ; elapsed = 00:00:22 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6839 ; free virtual = 30654
+Phase 5 Delay and Skew Optimization | Checksum: 15cc7e634
+
+Time (s): cpu = 00:00:57 ; elapsed = 00:00:22 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6839 ; free virtual = 30654
+
+Phase 6 Post Hold Fix
+
+Phase 6.1 Hold Fix Iter
+
+Phase 6.1.1 Update Timing
+Phase 6.1.1 Update Timing | Checksum: 1b7be8cca
+
+Time (s): cpu = 00:00:58 ; elapsed = 00:00:23 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6839 ; free virtual = 30654
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=3.212  | TNS=0.000  | WHS=0.047  | THS=0.000  |
+
+Phase 6.1 Hold Fix Iter | Checksum: 175ef5379
+
+Time (s): cpu = 00:00:58 ; elapsed = 00:00:23 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6839 ; free virtual = 30654
+Phase 6 Post Hold Fix | Checksum: 175ef5379
+
+Time (s): cpu = 00:00:58 ; elapsed = 00:00:23 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6839 ; free virtual = 30654
+
+Phase 7 Route finalize
+
+Router Utilization Summary
+  Global Vertical Routing Utilization    = 1.81255 %
+  Global Horizontal Routing Utilization  = 2.26336 %
+  Routable Net Status*
+  *Does not include unroutable nets such as driverless and loadless.
+  Run report_route_status for detailed report.
+  Number of Failed Nets               = 0
+  Number of Unrouted Nets             = 0
+  Number of Partially Routed Nets     = 0
+  Number of Node Overlaps             = 0
+
+Phase 7 Route finalize | Checksum: 1de9f67ff
+
+Time (s): cpu = 00:00:59 ; elapsed = 00:00:23 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6839 ; free virtual = 30654
+
+Phase 8 Verifying routed nets
+
+ Verification completed successfully
+Phase 8 Verifying routed nets | Checksum: 1de9f67ff
+
+Time (s): cpu = 00:00:59 ; elapsed = 00:00:23 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6839 ; free virtual = 30654
+
+Phase 9 Depositing Routes
+Phase 9 Depositing Routes | Checksum: 16dd8c721
+
+Time (s): cpu = 00:00:59 ; elapsed = 00:00:24 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6816 ; free virtual = 30630
+
+Phase 10 Post Router Timing
+INFO: [Route 35-57] Estimated Timing Summary | WNS=3.212  | TNS=0.000  | WHS=0.047  | THS=0.000  |
+
+INFO: [Route 35-327] The final timing numbers are based on the router estimated timing analysis. For a complete and accurate timing signoff, please run report_timing_summary.
+Phase 10 Post Router Timing | Checksum: 16dd8c721
+
+Time (s): cpu = 00:00:59 ; elapsed = 00:00:24 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6816 ; free virtual = 30630
+INFO: [Route 35-16] Router Completed Successfully
+
+Time (s): cpu = 00:00:59 ; elapsed = 00:00:24 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6816 ; free virtual = 30630
+
+Routing Is Done.
+INFO: [Common 17-83] Releasing license: Implementation
+56 Infos, 33 Warnings, 0 Critical Warnings and 0 Errors encountered.
+route_design completed successfully
+route_design: Time (s): cpu = 00:01:00 ; elapsed = 00:00:24 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6816 ; free virtual = 30630
+Writing placer database...
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Write XDEF Complete: Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.69 . Memory (MB): peak = 2202.277 ; gain = 0.000 ; free physical = 6794 ; free virtual = 30628
+INFO: [DRC 23-27] Running DRC with 8 threads
+INFO: [Coretcl 2-168] The results of DRC are in file /home/sean/vivado_workspace/dfadd_simple/dfadd_simple.runs/impl_1/top_drc_routed.rpt.
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -3, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 8 CPUs
+Running Vector-less Activity Propagation...
+
+Finished Running Vector-less Activity Propagation
+INFO: [Common 17-206] Exiting Vivado at Sat Jan 13 15:24:13 2018...
