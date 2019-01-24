@@ -1,9 +1,10 @@
 #!/usr/bin/env tclsh
 
-# require 7 arguments, 5 from user and 2 from system
-if { $argc != 7 } {
+set numArgs 6
 
-	puts "expected 3 arguments, got $argc"
+if { $argc != $numArgs } {
+
+	puts "expected $numArgs arguments, got $argc"
 	exit -1
 }
 
