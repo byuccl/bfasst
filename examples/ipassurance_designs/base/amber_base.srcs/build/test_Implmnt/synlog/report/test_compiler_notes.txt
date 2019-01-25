@@ -1,0 +1,31 @@
+@N|Running in 64-bit mode
+@N:Top-level is not specified. Trying to extract automatically...
+@N|Running in 64-bit mode
+@N: CD720 :"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vhd/std.vhd":123:18:123:21|Setting time resolution to ps
+@N:"/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/sources_1/imports/hdl/basicrsa.vhd":74:7:74:14|Top entity is set to basicrsa.
+@N|Running in 64-bit mode
+@N: CG334 :"/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/sources_1/imports/vivado_workspace/ooc_amber/Sources/hdl/a25_icache.v":674:11:674:23|Read directive translate_off.
+@N: CG333 :"/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/sources_1/imports/vivado_workspace/ooc_amber/Sources/hdl/a25_icache.v":755:11:755:22|Read directive translate_on.
+@N: CG334 :"/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/sources_1/imports/vivado_workspace/ooc_amber/Sources/hdl/a25_dcache.v":863:11:863:23|Read directive translate_off.
+@N: CG333 :"/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/sources_1/imports/vivado_workspace/ooc_amber/Sources/hdl/a25_dcache.v":943:11:943:22|Read directive translate_on.
+@N: CG334 :"/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/sources_1/imports/vivado_workspace/ooc_amber/Sources/hdl/a25_decode.v":1755:11:1755:23|Read directive translate_off.
+@N: CG333 :"/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/sources_1/imports/vivado_workspace/ooc_amber/Sources/hdl/a25_decode.v":1825:11:1825:22|Read directive translate_on.
+@N: CG334 :"/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/sources_1/imports/vivado_workspace/ooc_amber/Sources/hdl/a25_execute.v":665:11:665:23|Read directive translate_off.
+@N: CG333 :"/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/sources_1/imports/vivado_workspace/ooc_amber/Sources/hdl/a25_execute.v":694:11:694:22|Read directive translate_on.
+@N: CG334 :"/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/sources_1/imports/vivado_workspace/ooc_amber/Sources/hdl/a25_write_back.v":78:11:78:23|Read directive translate_off.
+@N: CG333 :"/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/sources_1/imports/vivado_workspace/ooc_amber/Sources/hdl/a25_write_back.v":83:11:83:22|Read directive translate_on.
+@N:"/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/sources_1/imports/vivado_workspace/ooc_amber/Sources/hdl/generic_sram_line_en.v":57:0:57:24|Top-level module is set to work.generic_sram_line_en
+@N: CG334 :"/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/sources_1/imports/vivado_workspace/ooc_amber/Sources/hdl/a25_icache.v":674:11:674:23|Read directive translate_off.
+@N: CG333 :"/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/sources_1/imports/vivado_workspace/ooc_amber/Sources/hdl/a25_icache.v":755:11:755:22|Read directive translate_on.
+@N: CG334 :"/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/sources_1/imports/vivado_workspace/ooc_amber/Sources/hdl/a25_dcache.v":863:11:863:23|Read directive translate_off.
+@N: CG333 :"/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/sources_1/imports/vivado_workspace/ooc_amber/Sources/hdl/a25_dcache.v":943:11:943:22|Read directive translate_on.
+@N: CG334 :"/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/sources_1/imports/vivado_workspace/ooc_amber/Sources/hdl/a25_decode.v":1755:11:1755:23|Read directive translate_off.
+@N: CG333 :"/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/sources_1/imports/vivado_workspace/ooc_amber/Sources/hdl/a25_decode.v":1825:11:1825:22|Read directive translate_on.
+@N: CG334 :"/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/sources_1/imports/vivado_workspace/ooc_amber/Sources/hdl/a25_execute.v":665:11:665:23|Read directive translate_off.
+@N: CG333 :"/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/sources_1/imports/vivado_workspace/ooc_amber/Sources/hdl/a25_execute.v":694:11:694:22|Read directive translate_on.
+@N: CG334 :"/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/sources_1/imports/vivado_workspace/ooc_amber/Sources/hdl/a25_write_back.v":78:11:78:23|Read directive translate_off.
+@N: CG333 :"/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/sources_1/imports/vivado_workspace/ooc_amber/Sources/hdl/a25_write_back.v":83:11:83:22|Read directive translate_on.
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/sources_1/imports/vivado_workspace/ooc_amber/Sources/hdl/generic_sram_line_en.v":42:7:42:26|Synthesizing module generic_sram_line_en in library work.
+@N: CL134 :"/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/sources_1/imports/vivado_workspace/ooc_amber/Sources/hdl/generic_sram_line_en.v":71:0:71:5|Found RAM mem, depth=128, width=128
+@N|Running in 64-bit mode
+

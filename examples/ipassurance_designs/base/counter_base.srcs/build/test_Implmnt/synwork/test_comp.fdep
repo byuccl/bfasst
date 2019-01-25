@@ -1,0 +1,20 @@
+#OPTIONS:"|-layerid|0|-orig_srs|/home/elicahill/icemachine/examples/ipassurance_designs/counter_base.srcs/build/test_Implmnt/synwork/test_comp.srs|-prodtype|synplify_pro|-primux|-fixsmult|-infer_seqShift|-ice|-sdff_counter|-nram|-divnmod|-nostructver|-I|/home/elicahill/icemachine/examples/ipassurance_designs/counter_base.srcs/build/|-I|/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib|-v2001|-devicelib|/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/generic/sb_ice40.v|-encrypt|-pro|-ui|-fid2|-ram|-sharing|on|-ll|2000|-autosm|-lib|work|-lib|work"
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/linux_a_64/c_ver":1536792965
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/generic/sb_ice40.v":1536792965
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vlog/hypermods.v":1536792965
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vlog/umr_capim.v":1536792965
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vlog/scemi_objects.v":1536792965
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vlog/scemi_pipes.svh":1536792965
+#CUR:"/home/elicahill/icemachine/examples/ipassurance_designs/counter_base.srcs/sources_1/imports/hdl/top.v":1545084593
+#CUR:"/home/elicahill/icemachine/examples/ipassurance_designs/counter_base.srcs/sources_1/imports/hdl/counter/counter.v":1545084593
+0			"/home/elicahill/icemachine/examples/ipassurance_designs/counter_base.srcs/sources_1/imports/hdl/top.v" verilog
+1			"/home/elicahill/icemachine/examples/ipassurance_designs/counter_base.srcs/sources_1/imports/hdl/counter/counter.v" verilog
+#Dependency Lists(Uses List)
+0 1
+1 -1
+#Dependency Lists(Users Of)
+0 -1
+1 0
+#Design Unit to File Association
+module work top 0
+module work counter 1

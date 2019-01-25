@@ -1,0 +1,5 @@
+@N|Running in 64-bit mode
+@N|Running in 64-bit mode
+@N: CG346 :"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/gaisler/i2c/i2c_slave_model.v":209:33:209:41|Read full_case directive.
+@N: CG347 :"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/gaisler/i2c/i2c_slave_model.v":209:43:209:55|Read a parallel_case directive.
+

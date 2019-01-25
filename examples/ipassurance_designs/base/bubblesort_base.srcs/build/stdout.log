@@ -1,0 +1,46 @@
+Running in Lattice mode
+
+
+Starting:    /home/elicahill/lscc/iCEcube2.2017.08/synpbase/linux_a_64/mbin/synbatch
+Install:     /home/elicahill/lscc/iCEcube2.2017.08/synpbase
+Hostname:    goeders-ssh2
+Date:        Thu Jan 24 16:39:56 2019
+Version:     L-2016.09L+ice40
+
+Arguments:   -product synplify_pro -batch bubblesort_base.srcs.prj
+ProductType: synplify_pro
+
+
+
+
+
+log file: "/home/elicahill/icemachine/examples/ipassurance_designs/bubblesort_base.srcs/build/test_Implmnt/test.srr"
+Running: test_Implmnt in foreground
+
+Running bubblesort_base.srcs|test_Implmnt
+
+Running: compile (Compile) on bubblesort_base.srcs|test_Implmnt
+# Thu Jan 24 16:39:56 2019
+
+Running: compile_flow (Compile Process) on bubblesort_base.srcs|test_Implmnt
+# Thu Jan 24 16:39:56 2019
+
+Running: compiler (Compile Input) on bubblesort_base.srcs|test_Implmnt
+# Thu Jan 24 16:39:56 2019
+compiler exited with errors
+Job failed on: bubblesort_base.srcs|test_Implmnt
+
+Job: "compiler" terminated with error status: 2
+See log file: "/home/elicahill/icemachine/examples/ipassurance_designs/bubblesort_base.srcs/build/test_Implmnt/synlog/test_compiler.srr"
+# Thu Jan 24 16:39:57 2019
+
+Return Code: 2
+Run Time:00h:00m:01s
+Complete: Compile Process on bubblesort_base.srcs|test_Implmnt
+Complete: Compile on bubblesort_base.srcs|test_Implmnt
+Complete: Logic Synthesis on bubblesort_base.srcs|test_Implmnt
+
+exit status=2
+
+exit status=2
+

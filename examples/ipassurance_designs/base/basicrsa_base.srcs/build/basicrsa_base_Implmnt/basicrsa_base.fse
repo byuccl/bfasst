@@ -1,0 +1,36 @@
+
+fsm_encoding {1222402242} onehot
+
+fsm_state_encoding {1222402242} CS_INIT {00001}
+
+fsm_state_encoding {1222402242} CS_IDLE {00010}
+
+fsm_state_encoding {1222402242} CS_FILL3 {00100}
+
+fsm_state_encoding {1222402242} CS_FILL_COMPLETE {01000}
+
+fsm_state_encoding {1222402242} CS_TURN_AROUND {10000}
+
+fsm_registers {1222402242} {c_state[4]}  {c_state[3]}  {c_state[2]}  {c_state[1]}  {c_state[0]} 
+
+fsm_encoding {1823002301} onehot
+
+fsm_state_encoding {1823002301} CS_INIT {000000001}
+
+fsm_state_encoding {1823002301} CS_IDLE {000000010}
+
+fsm_state_encoding {1823002301} CS_FILL {000000100}
+
+fsm_state_encoding {1823002301} CS_FILL_COMPLETE {000001000}
+
+fsm_state_encoding {1823002301} CS_TURN_AROUND {000010000}
+
+fsm_state_encoding {1823002301} CS_WRITE_HIT {000100000}
+
+fsm_state_encoding {1823002301} CS_WRITE_HIT_WAIT_WB {001000000}
+
+fsm_state_encoding {1823002301} CS_WRITE_MISS_WAIT_WB {010000000}
+
+fsm_state_encoding {1823002301} CS_EX_DELETE {100000000}
+
+fsm_registers {1823002301} {c_state[8]}  {c_state[7]}  {c_state[6]}  {c_state[5]}  {c_state[4]}  {c_state[3]}  {c_state[2]}  {c_state[1]}  {c_state[0]} 

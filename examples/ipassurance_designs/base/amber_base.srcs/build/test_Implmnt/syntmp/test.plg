@@ -1,0 +1,13 @@
+@P:  Worst Slack : NA
+@P:  generic_sram_line_en|i_clk - Estimated Frequency : NA
+@P:  generic_sram_line_en|i_clk - Requested Frequency : 492.9 MHz
+@P:  generic_sram_line_en|i_clk - Estimated Period : NA
+@P:  generic_sram_line_en|i_clk - Requested Period : 2.029
+@P:  generic_sram_line_en|i_clk - Slack : NA
+@P: generic_sram_line_en Part : ice40hx8kct256
+@P: generic_sram_line_en I/O primitives : 265
+@P: generic_sram_line_en I/O Register bits : 0
+@P: generic_sram_line_en Register bits (Non I/O) : 1 (0%)
+@P: generic_sram_line_en Block Rams : 8 of 32 (25%)
+@P: generic_sram_line_en Total Luts : 128 (1%)
+@P:  CPU Time : 0h:00m:00s

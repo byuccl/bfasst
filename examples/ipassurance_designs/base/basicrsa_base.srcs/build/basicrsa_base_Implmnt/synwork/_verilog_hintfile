@@ -1,0 +1,39 @@
+%%% protect protected_file
+#OPTIONS:"|-bldtbl|-prodtype|synplify_pro|-primux|-fixsmult|-infer_seqShift|-ice|-sdff_counter|-nram|-divnmod|-nostructver|-encrypt|-pro|-lite|-ui|-fid2|-ram|-sharing|on|-ll|2000|-autosm|-ignore_undefined_lib|-lib|work|-lib|work"
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/linux_a_64/c_vhdl":1536792965
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vhd/location.map":1536792965
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vhd/std.vhd":1536792965
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vhd/snps_haps_pkg.vhd":1536792965
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vhd/std1164.vhd":1536792965
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vhd/numeric.vhd":1536792965
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vhd/umr_capim.vhd":1536792965
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vhd/arith.vhd":1536792965
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vhd/unsigned.vhd":1536792965
+#CUR:"/home/elicahill/icemachine/examples/ipassurance_designs/basicrsa_base.srcs/sources_1/imports/hdl/modmult.vhd":1545084593
+#CUR:"/home/elicahill/icemachine/examples/ipassurance_designs/basicrsa_base.srcs/sources_1/imports/hdl/basicrsa.vhd":1545084593
+@E8lFkRDCLHN#ONs#
+LDHs$NsRsIF	N
+bsCNl0RCsi1 YQRZ HCM0o
+CsHkMb0MRH8NN0R
+-4HkMb0MRH RGb-H4
+M0bkRvHMF-8R4k
+F00bkRbO$ERCs-H4
+M0bkR	ODR
+-4HkMb0#R8R
+-4HkMb0CRs#RC0-F4
+kk0b0CRsNR8$-C4
+MF8l8CkD
+8lFkRDCllF8k
+D0DsHLNRs$I	Fs
+sbNN0lCCvsRu7WQR0HMCsoC
+bHMkl0Rb8NMR
+-4HkMb0bRlDsHCR
+-4HkMb0FRl8kkD#4R-
+0FkbRk0b8sFkRO0-H4
+M0bkR	ODR
+-4HkMb0#R8R
+-4HkMb0CRs#RC0-F4
+kk0b0CRsNR8$-C4
+MF8l8CkD
+
+@ 

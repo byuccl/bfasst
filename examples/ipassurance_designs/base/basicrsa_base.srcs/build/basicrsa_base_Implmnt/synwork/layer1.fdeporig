@@ -1,0 +1,32 @@
+#defaultlanguage:vhdl
+#OPTIONS:"|-mixedhdl|-top|work.basicrsa|-mpparams|/home/elicahill/icemachine/examples/ipassurance_designs/basicrsa_base.srcs/build/basicrsa_base_Implmnt/synwork/_mh_params|-layerid|1|-orig_srs|/home/elicahill/icemachine/examples/ipassurance_designs/basicrsa_base.srcs/build/basicrsa_base_Implmnt/synwork/basicrsa_base_comp.srs|-prodtype|synplify_pro|-primux|-fixsmult|-infer_seqShift|-ice|-sdff_counter|-nram|-divnmod|-nostructver|-encrypt|-pro|-lite|-ui|-fid2|-ram|-sharing|on|-ll|2000|-autosm|-ignore_undefined_lib|-lib|work|-lib|work"
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/linux_a_64/c_vhdl":1536792965
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vhd/location.map":1536792965
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vhd/std.vhd":1536792965
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vhd/snps_haps_pkg.vhd":1536792965
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vhd/std1164.vhd":1536792965
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vhd/numeric.vhd":1536792965
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vhd/umr_capim.vhd":1536792965
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vhd/arith.vhd":1536792965
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vhd/unsigned.vhd":1536792965
+#CUR:"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vhd/hyperents.vhd":1536792965
+#CUR:"/home/elicahill/icemachine/examples/ipassurance_designs/basicrsa_base.srcs/sources_1/imports/hdl/modmult.vhd":1545084593
+#CUR:"/home/elicahill/icemachine/examples/ipassurance_designs/basicrsa_base.srcs/sources_1/imports/hdl/basicrsa.vhd":1545084593
+0 "/home/elicahill/icemachine/examples/ipassurance_designs/basicrsa_base.srcs/sources_1/imports/hdl/modmult.vhd" vhdl
+1 "/home/elicahill/icemachine/examples/ipassurance_designs/basicrsa_base.srcs/sources_1/imports/hdl/basicrsa.vhd" vhdl
+
+# Dependency Lists (Uses list)
+0 -1
+1 0 
+
+# Dependency Lists (Users Of)
+0 1 
+1 -1
+
+# Design Unit to File Association
+arch work modmult modmult1 0
+module work modmult 0
+arch work basicrsa behavioral 1
+module work basicrsa 1
+
+# Unbound Instances to File Association

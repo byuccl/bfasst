@@ -1,0 +1,119 @@
+# Synopsys Constraint Checker, version maplat, Build 1612R, built Dec  5 2016
+# Copyright (C) 1994-2016 Synopsys, Inc. All rights reserved. This Synopsys software and all associated documentation are proprietary to Synopsys, Inc. and may only be used pursuant to the terms and conditions of a written license agreement with Synopsys, Inc. All other use, reproduction, modification, or distribution of the Synopsys software or the associated documentation is strictly prohibited.
+
+# Written on Fri Jan 25 14:00:22 2019
+
+
+##### DESIGN INFO #######################################################
+
+Top View:                "top"
+Constraint File(s):      (none)
+
+
+
+
+##### SUMMARY ############################################################
+
+Found 0 issues in 0 out of 0 constraints
+
+
+##### DETAILS ############################################################
+
+
+
+Clock Relationships
+*******************
+
+Starting     Ending      |     rise to rise     |     fall to fall     |     rise to fall     |     fall to rise                     
+------------------------------------------------------------------------------------------------------------------------------------
+top|clk      top|clk     |     41.892           |     No paths         |     No paths         |     No paths                         
+====================================================================================================================================
+ Note: 'No paths' indicates there are no paths in the design for that pair of clock edges.
+       'Diff grp' indicates that paths exist but the starting clock and ending clock are in different clock groups.
+
+
+Unconstrained Start/End Points
+******************************
+
+p:JA[0]
+p:JA[1]
+p:JA[2]
+p:JA[3]
+p:JA[4]
+p:JA[5]
+p:JA[6]
+p:JA[7]
+p:JB[0]
+p:JB[1]
+p:JB[2]
+p:JB[3]
+p:JB[4]
+p:JB[5]
+p:JB[6]
+p:JB[7]
+p:JC[0]
+p:JC[1]
+p:JC[2]
+p:JC[3]
+p:JC[4]
+p:JC[5]
+p:JC[6]
+p:JC[7]
+p:JD[0]
+p:JD[1]
+p:JD[2]
+p:JD[3]
+p:JD[4]
+p:JD[5]
+p:JD[6]
+p:JD[7]
+p:btnCpuReset
+p:led[0]
+p:led[1]
+p:led[2]
+p:led[3]
+p:led[4]
+p:led[5]
+p:led[6]
+p:led[7]
+p:led[8]
+p:led[9]
+p:led[10]
+p:led[11]
+p:led[12]
+p:led[13]
+p:led[14]
+p:led[15]
+p:sw[0]
+p:sw[1]
+p:sw[2]
+p:sw[3]
+p:sw[4]
+p:sw[5]
+p:sw[6]
+p:sw[7]
+
+
+Inapplicable constraints
+************************
+
+(none)
+
+
+Applicable constraints with issues
+**********************************
+
+(none)
+
+
+Constraints with matching wildcard expressions
+**********************************************
+
+(none)
+
+
+Library Report
+**************
+
+
+# End of Constraint Checker Report

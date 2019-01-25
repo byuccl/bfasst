@@ -1,0 +1,55 @@
+#Build: Synplify Pro L-2016.09L+ice40, Build 077R, Dec  2 2016
+#install: /home/elicahill/lscc/iCEcube2.2017.08/synpbase
+#OS: Linux 
+#Hostname: goeders-ssh2
+
+# Thu Jan 24 16:39:49 2019
+
+#Implementation: test_Implmnt
+
+Synopsys HDL Compiler, version comp2016q3p1, Build 141R, built Dec  5 2016
+@N|Running in 64-bit mode
+Copyright (C) 1994-2016 Synopsys, Inc. All rights reserved. This Synopsys software and all associated documentation are proprietary to Synopsys, Inc. and may only be used pursuant to the terms and conditions of a written license agreement with Synopsys, Inc. All other use, reproduction, modification, or distribution of the Synopsys software or the associated documentation is strictly prohibited.
+
+Synopsys Verilog Compiler, version comp2016q3p1, Build 141R, built Dec  5 2016
+@N|Running in 64-bit mode
+Copyright (C) 1994-2016 Synopsys, Inc. All rights reserved. This Synopsys software and all associated documentation are proprietary to Synopsys, Inc. and may only be used pursuant to the terms and conditions of a written license agreement with Synopsys, Inc. All other use, reproduction, modification, or distribution of the Synopsys software or the associated documentation is strictly prohibited.
+
+Running on host :goeders-ssh2
+@I::"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/generic/sb_ice40.v" (library work)
+@I::"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vlog/hypermods.v" (library __hyper__lib__)
+@I::"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vlog/umr_capim.v" (library snps_haps)
+@I::"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vlog/scemi_objects.v" (library snps_haps)
+@I::"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vlog/scemi_pipes.svh" (library snps_haps)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/micron/sdram/mobile_sdr.v" (library work)
+@E: CS185 :"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/micron/sdram/mobile_sdr.v":1141:47:1141:51|delay is not a parameter name
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/opencores/ge_1000baseX/ge_1000baseX_regs.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/opencores/ge_1000baseX/ge_1000baseX_sync.v" (library work)
+@I:"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/opencores/ge_1000baseX/ge_1000baseX_sync.v":"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/opencores/ge_1000baseX/ge_1000baseX_constants.v" (library work)
+@I:"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/opencores/ge_1000baseX/ge_1000baseX_sync.v":"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/opencores/ge_1000baseX/timescale.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/opencores/ge_1000baseX/encoder_8b10b.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/opencores/ge_1000baseX/ge_1000baseX_rx.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/opencores/ge_1000baseX/ge_1000baseX.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/opencores/ge_1000baseX/decoder_8b10b.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/opencores/ge_1000baseX/ge_1000baseX_test.v" (library work)
+@W: CS133 :"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/opencores/ge_1000baseX/ge_1000baseX_test.v":240:30:240:38|Ignoring property xc_pullup
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/opencores/ge_1000baseX/ge_1000baseX_an.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/opencores/ge_1000baseX/ge_1000baseX_tx.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/opencores/ge_1000baseX/clean_rst.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/opencores/ge_1000baseX/ge_1000baseX_mdio.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/gaisler/i2c/i2c_slave_model.v" (library work)
+@W: CS141 :"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/gaisler/i2c/i2c_slave_model.v":121:30:121:39|Unrecognized synthesis directive enum_state. Verify the correct directive name.
+@N: CG346 :"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/gaisler/i2c/i2c_slave_model.v":209:33:209:41|Read full_case directive.
+@N: CG347 :"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/gaisler/i2c/i2c_slave_model.v":209:43:209:55|Read a parallel_case directive.
+@W: CS222 :"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/gaisler/i2c/i2c_slave_model.v":335:1:335:7|Ignoring specify block
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/apbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/gaisler/ddr/mig_interface_model.v" (library work)
+1 syntax errors
+Process took 0h:00m:01s realtime, 0h:00m:01s cputime
+# Thu Jan 24 16:39:49 2019
+
+###########################################################]
+@END
+Process took 0h:00m:01s realtime, 0h:00m:01s cputime
+# Thu Jan 24 16:39:49 2019
+
+###########################################################]

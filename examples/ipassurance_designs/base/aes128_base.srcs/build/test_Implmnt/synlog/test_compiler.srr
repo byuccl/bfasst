@@ -1,0 +1,152 @@
+Synopsys HDL Compiler, version comp2016q3p1, Build 141R, built Dec  5 2016
+@N|Running in 64-bit mode
+Copyright (C) 1994-2016 Synopsys, Inc. All rights reserved. This Synopsys software and all associated documentation are proprietary to Synopsys, Inc. and may only be used pursuant to the terms and conditions of a written license agreement with Synopsys, Inc. All other use, reproduction, modification, or distribution of the Synopsys software or the associated documentation is strictly prohibited.
+
+Synopsys Verilog Compiler, version comp2016q3p1, Build 141R, built Dec  5 2016
+@N|Running in 64-bit mode
+Copyright (C) 1994-2016 Synopsys, Inc. All rights reserved. This Synopsys software and all associated documentation are proprietary to Synopsys, Inc. and may only be used pursuant to the terms and conditions of a written license agreement with Synopsys, Inc. All other use, reproduction, modification, or distribution of the Synopsys software or the associated documentation is strictly prohibited.
+
+Running on host :goeders-ssh2
+@I::"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/generic/sb_ice40.v" (library work)
+@I::"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vlog/hypermods.v" (library __hyper__lib__)
+@I::"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vlog/umr_capim.v" (library snps_haps)
+@I::"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vlog/scemi_objects.v" (library snps_haps)
+@I::"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vlog/scemi_pipes.svh" (library snps_haps)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/new/top.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/mem_1x1024.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/encoder.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/bmc010.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/bmc001.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/decoder.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/bmc100.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/ACS.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/bmc011.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/bmc101.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/mem_8x1024.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/bmc111.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/bmc110.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/viterbi_tx_rx.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/tbu.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/bmc000.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/aes128/src/round.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/aes128/src/aes128.v" (library work)
+@I::"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/aes128/src/table.v" (library work)
+Verilog syntax check successful!
+
+Compiler output is up to date.  No re-compile necessary
+
+Selecting top level module top
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/aes128/src/table.v":59:7:59:7|Synthesizing module S in library work.
+
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/aes128/src/table.v":32:7:32:8|Synthesizing module S4 in library work.
+
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/aes128/src/aes128.v":59:7:59:20|Synthesizing module expand_key_128 in library work.
+
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/aes128/src/table.v":326:7:326:8|Synthesizing module xS in library work.
+
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/aes128/src/table.v":45:7:45:7|Synthesizing module T in library work.
+
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/aes128/src/table.v":17:7:17:18|Synthesizing module table_lookup in library work.
+
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/aes128/src/round.v":18:7:18:15|Synthesizing module one_round in library work.
+
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/aes128/src/round.v":50:7:50:17|Synthesizing module final_round in library work.
+
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/aes128/src/aes128.v":17:7:17:12|Synthesizing module aes128 in library work.
+
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/encoder.v":1:7:1:13|Synthesizing module encoder in library work.
+
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/bmc000.v":1:7:1:12|Synthesizing module bmc000 in library work.
+
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/bmc001.v":1:7:1:12|Synthesizing module bmc001 in library work.
+
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/bmc010.v":1:7:1:12|Synthesizing module bmc010 in library work.
+
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/bmc011.v":1:7:1:12|Synthesizing module bmc011 in library work.
+
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/bmc100.v":1:7:1:12|Synthesizing module bmc100 in library work.
+
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/bmc101.v":1:7:1:12|Synthesizing module bmc101 in library work.
+
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/bmc110.v":1:7:1:12|Synthesizing module bmc110 in library work.
+
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/bmc111.v":1:7:1:12|Synthesizing module bmc111 in library work.
+
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/ACS.v":1:7:1:9|Synthesizing module ACS in library work.
+
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/mem_8x1024.v":1:7:1:9|Synthesizing module mem in library work.
+
+@N: CL134 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/mem_8x1024.v":20:3:20:8|Found RAM mem, depth=1024, width=8
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/tbu.v":1:7:1:9|Synthesizing module tbu in library work.
+
+@W: CL118 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/tbu.v":53:6:53:9|Latch generated from always block for signal d_o_reg; possible missing assignment in an if or case statement.
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/mem_1x1024.v":1:7:1:14|Synthesizing module mem_disp in library work.
+
+@N: CL134 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/mem_1x1024.v":19:3:19:8|Found RAM mem, depth=1024, width=1
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/decoder.v":1:7:1:13|Synthesizing module decoder in library work.
+
+@N: CG179 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/decoder.v":382:30:382:41|Removing redundant assignment.
+@N: CG179 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/decoder.v":394:30:394:41|Removing redundant assignment.
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/viterbi_tx_rx.v":1:7:1:19|Synthesizing module viterbi_tx_rx in library work.
+
+@N: CG364 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/new/top.v":23:7:23:9|Synthesizing module top in library work.
+
+@W: CL177 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/decoder.v":262:3:262:8|Sharing sequential element d_in_mem_B. Add a syn_preserve attribute to the element to prevent sharing.
+@W: CL177 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/decoder.v":262:3:262:8|Sharing sequential element d_in_mem_C. Add a syn_preserve attribute to the element to prevent sharing.
+@W: CL177 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/decoder.v":262:3:262:8|Sharing sequential element d_in_mem_D. Add a syn_preserve attribute to the element to prevent sharing.
+@W: CL177 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/decoder.v":500:3:500:8|Sharing sequential element mem_bank_buf_buf_buf. Add a syn_preserve attribute to the element to prevent sharing.
+@W: CL177 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/tbu.v":32:3:32:8|Sharing sequential element wr_en. Add a syn_preserve attribute to the element to prevent sharing.
+@N: CL201 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/tbu.v":38:3:38:8|Trying to extract state machine for register pstate.
+Extracted state machine for register pstate
+State machine has 8 reachable states with original encodings of:
+   000
+   001
+   010
+   011
+   100
+   101
+   110
+   111
+@N: CL201 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/encoder.v":138:3:138:8|Trying to extract state machine for register cstate.
+Extracted state machine for register cstate
+State machine has 8 reachable states with original encodings of:
+   000
+   001
+   010
+   011
+   100
+   101
+   110
+   111
+
+At c_ver Exit (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 70MB peak: 71MB)
+
+Process took 0h:00m:01s realtime, 0h:00m:01s cputime
+
+Process completed successfully.
+# Fri Jan 25 10:36:13 2019
+
+###########################################################]
+Synopsys Netlist Linker, version comp2016q3p1, Build 141R, built Dec  5 2016
+@N|Running in 64-bit mode
+@N: NF107 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/new/top.v":23:7:23:9|Selected library: work cell: top view verilog as top level
+@N: NF107 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/new/top.v":23:7:23:9|Selected library: work cell: top view verilog as top level
+
+At syn_nfilter Exit (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 71MB peak: 72MB)
+
+Process took 0h:00m:01s realtime, 0h:00m:01s cputime
+
+Process completed successfully.
+# Fri Jan 25 10:36:14 2019
+
+###########################################################]
+@END
+
+At c_hdl Exit (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 3MB peak: 4MB)
+
+Process took 0h:00m:01s realtime, 0h:00m:01s cputime
+
+Process completed successfully.
+# Fri Jan 25 10:36:14 2019
+
+###########################################################]

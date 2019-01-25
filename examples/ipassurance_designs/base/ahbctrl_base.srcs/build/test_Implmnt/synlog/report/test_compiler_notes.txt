@@ -1,0 +1,6 @@
+@N|Running in 64-bit mode
+@N:Top-level is not specified. Trying to extract automatically...
+@N|Running in 64-bit mode
+@N: CD720 :"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vhd/std.vhd":123:18:123:21|Setting time resolution to ps
+@N:"/home/elicahill/icemachine/examples/ipassurance_designs/ahbctrl_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/techmap/unisim/buffer_unisim.vhd":71:7:71:19|Top entity is set to clkmux_xilinx.
+

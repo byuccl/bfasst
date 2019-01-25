@@ -1,0 +1,89 @@
+#-- Synopsys, Inc.
+#-- Project file /home/elicahill/lscc/iCEcube2.2017.08/sbt_backend/Projects/test/test_syn.prj
+#project files
+add_file -verilog -lib work ../sources_1/new/top.v
+add_file -verilog -lib work ../sources_1/imports/vivado_workspace/ooc_pwm/Sources/hdl/minus_one.v
+add_file -verilog -lib work ../sources_1/imports/vivado_workspace/ooc_pwm/Sources/hdl/down_clocking_odd.v
+add_file -verilog -lib work ../sources_1/imports/vivado_workspace/ooc_pwm/Sources/hdl/down_clocking_even.v
+add_file -verilog -lib work ../sources_1/imports/vivado_workspace/ooc_pwm/Sources/hdl/pwm.v
+add_file -verilog -lib work ../sources_1/imports/vivado_workspace/ooc_pci_mini/Sources/hdl/pci_mini.v
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_parallel_search_for_maximum_weight/Sources/hdl/basic_size.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_parallel_search_for_maximum_weight/Sources/hdl/basic_component.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_pic/Sources/hdl/pic.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_wb_arbiter.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_fetch.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_comparator.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_register_file.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_decode.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_alu.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_imm_decoder.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_csr_alu.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_control_unit.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_csr.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_types.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_core.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_memory.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_counter.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_constants.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_csr_unit.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_wb_adapter.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_utilities.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_writeback.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_alu_mux.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_alu_control_unit.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_icache.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/potato.vhd
+add_file -vhdl -lib work ../sources_1/imports/vivado_workspace/ooc_potato/Sources/hdl/pp_execute.vhd
+add_file -vhdl -lib work ../sources_1/imports/hdl/quadratic_func.vhd
+
+#implementation: "test_Implmnt"
+impl -add quadratic_func_base_Implmnt -type fpga
+
+#implementation attributes
+set_option -vlog_std v2001
+set_option -project_relative_includes 1
+
+#device options
+set_option -technology SBTiCE40
+set_option -part iCE40HX8K
+set_option -package CT256
+set_option -speed_grade 
+set_option -part_companion ""
+
+#compilation/mapping options
+
+# mapper_options
+set_option -frequency auto
+set_option -write_verilog 0
+set_option -write_vhdl 0
+
+# Silicon Blue iCE40
+set_option -maxfan 10000
+set_option -disable_io_insertion 0
+set_option -pipe 1
+set_option -retiming 0
+set_option -update_models_cp 0
+set_option -fixgatedclocks 2
+set_option -fixgeneratedclocks 0
+
+# NFilter
+set_option -popfeed 0
+set_option -constprop 0
+set_option -createhierarchy 0
+
+# sequential_optimization_options
+set_option -symbolic_fsm_compiler 1
+
+# Compiler Options
+set_option -compiler_compatible 0
+set_option -resource_sharing 1
+
+#automatic place and route (vendor) options
+set_option -write_apr_constraint 1
+
+#set result format/file last
+project -result_format "edif"
+project -result_file ./quadratic_func_base_Implmnt/quadratic_func_base.edf
+project -log_file ./quadratic_func_base_Implmnt/quadratic_func_base.srr
+impl -active "quadratic_func_base_Implmnt"
+project -run synthesis -clean

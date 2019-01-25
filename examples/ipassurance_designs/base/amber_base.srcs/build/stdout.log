@@ -1,0 +1,79 @@
+Running in Lattice mode
+
+
+Starting:    /home/elicahill/lscc/iCEcube2.2017.08/synpbase/linux_a_64/mbin/synbatch
+Install:     /home/elicahill/lscc/iCEcube2.2017.08/synpbase
+Hostname:    goeders-ssh2
+Date:        Fri Jan 25 10:37:13 2019
+Version:     L-2016.09L+ice40
+
+Arguments:   -product synplify_pro -batch amber_base.srcs.prj
+ProductType: synplify_pro
+
+
+
+
+
+Copied /home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/build/test_Implmnt/test.srr to /home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/build/test_Implmnt/backup/test.srr
+log file: "/home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/build/test_Implmnt/test.srr"
+Running: test_Implmnt in foreground
+
+Running amber_base.srcs|test_Implmnt
+
+Running: compile (Compile) on amber_base.srcs|test_Implmnt
+# Fri Jan 25 10:37:13 2019
+
+Running: compile_flow (Compile Process) on amber_base.srcs|test_Implmnt
+# Fri Jan 25 10:37:13 2019
+
+Running: compiler (Compile Input) on amber_base.srcs|test_Implmnt
+# Fri Jan 25 10:37:13 2019
+Copied /home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/build/test_Implmnt/synwork/test_comp.srs to /home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/build/test_Implmnt/test.srs
+
+compiler completed
+# Fri Jan 25 10:37:14 2019
+
+Return Code: 0
+Run Time:00h:00m:01s
+
+Running: multi_srs_gen (Multi-srs Generator) on amber_base.srcs|test_Implmnt
+# Fri Jan 25 10:37:14 2019
+
+multi_srs_gen completed
+# Fri Jan 25 10:37:14 2019
+
+Return Code: 0
+Run Time:00h:00m:00s
+Copied /home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/build/test_Implmnt/synwork/test_mult.srs to /home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/build/test_Implmnt/test.srs
+Complete: Compile Process on amber_base.srcs|test_Implmnt
+
+Running: premap (Pre-mapping) on amber_base.srcs|test_Implmnt
+# Fri Jan 25 10:37:14 2019
+
+premap completed with warnings
+# Fri Jan 25 10:37:15 2019
+
+Return Code: 1
+Run Time:00h:00m:01s
+Complete: Compile on amber_base.srcs|test_Implmnt
+
+Running: map (Map) on amber_base.srcs|test_Implmnt
+# Fri Jan 25 10:37:15 2019
+License granted for 4 parallel jobs
+
+Running: fpga_mapper (Map & Optimize) on amber_base.srcs|test_Implmnt
+# Fri Jan 25 10:37:15 2019
+Copied /home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/build/test_Implmnt/synwork/test_m.srm to /home/elicahill/icemachine/examples/ipassurance_designs/amber_base.srcs/build/test_Implmnt/test.srm
+
+fpga_mapper completed with warnings
+# Fri Jan 25 10:37:16 2019
+
+Return Code: 1
+Run Time:00h:00m:01s
+Complete: Map on amber_base.srcs|test_Implmnt
+Complete: Logic Synthesis on amber_base.srcs|test_Implmnt
+
+exit status=0
+
+exit status=0
+

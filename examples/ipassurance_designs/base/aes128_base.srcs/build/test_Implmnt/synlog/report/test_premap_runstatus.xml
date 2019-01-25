@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- *************************************************************************************
+FILE DESCRIPTION
+The file contains the job information from mapper to be displayed as part of the summary report.
+*******************************************************************************************-->
+<job_run_status name="Mapper">
+<report_link name="Detailed report">
+<data>/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/build/test_Implmnt/synlog/test_premap.srr</data>
+<title>Synopsys Lattice Technology Pre-mapping</title>
+</report_link>
+<job_status>
+<data>Completed</data>
+</job_status>
+<job_info>
+<info name="Notes">
+<data>4</data>
+<report_link name="more">
+<data>/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/build/test_Implmnt/synlog/report/test_premap_notes.txt</data>
+</report_link>
+</info>
+<info name="Warnings">
+<data>1</data>
+<report_link name="more">
+<data>/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/build/test_Implmnt/synlog/report/test_premap_warnings.txt</data>
+</report_link>
+</info>
+<info name="Errors">
+<data>0</data>
+<report_link name="more">
+<data>/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/build/test_Implmnt/synlog/report/test_premap_errors.txt</data>
+</report_link>
+</info>
+<info name="CPU Time">
+<data>0h:00m:02s</data>
+</info>
+<info name="Real Time">
+<data>0h:00m:02s</data>
+</info>
+<info name="Peak Memory">
+<data>202MB</data>
+</info>
+<info name="Date &amp; Time">
+<data type="timestamp">1548437777</data>
+</info>
+</job_info>
+</job_run_status>

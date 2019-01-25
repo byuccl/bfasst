@@ -1,0 +1,78 @@
+Running in Lattice mode
+
+
+Starting:    /home/elicahill/lscc/iCEcube2.2017.08/synpbase/linux_a_64/mbin/synbatch
+Install:     /home/elicahill/lscc/iCEcube2.2017.08/synpbase
+Hostname:    goeders-ssh2
+Date:        Fri Jan 25 13:16:35 2019
+Version:     L-2016.09L+ice40
+
+Arguments:   -product synplify_pro -batch basicrsa_base.prj
+ProductType: synplify_pro
+
+
+
+
+
+log file: "/home/elicahill/icemachine/examples/ipassurance_designs/basicrsa_base.srcs/build/basicrsa_base_Implmnt/basicrsa_base.srr"
+Running: basicrsa_base_Implmnt in foreground
+
+Running basicrsa_base|basicrsa_base_Implmnt
+
+Running: compile (Compile) on basicrsa_base|basicrsa_base_Implmnt
+# Fri Jan 25 13:16:35 2019
+
+Running: compile_flow (Compile Process) on basicrsa_base|basicrsa_base_Implmnt
+# Fri Jan 25 13:16:35 2019
+
+Running: compiler (Compile Input) on basicrsa_base|basicrsa_base_Implmnt
+# Fri Jan 25 13:16:35 2019
+Copied /home/elicahill/icemachine/examples/ipassurance_designs/basicrsa_base.srcs/build/basicrsa_base_Implmnt/synwork/basicrsa_base_comp.srs to /home/elicahill/icemachine/examples/ipassurance_designs/basicrsa_base.srcs/build/basicrsa_base_Implmnt/basicrsa_base.srs
+
+compiler completed
+# Fri Jan 25 13:16:36 2019
+
+Return Code: 0
+Run Time:00h:00m:01s
+
+Running: multi_srs_gen (Multi-srs Generator) on basicrsa_base|basicrsa_base_Implmnt
+# Fri Jan 25 13:16:36 2019
+
+multi_srs_gen completed
+# Fri Jan 25 13:16:36 2019
+
+Return Code: 0
+Run Time:00h:00m:00s
+Copied /home/elicahill/icemachine/examples/ipassurance_designs/basicrsa_base.srcs/build/basicrsa_base_Implmnt/synwork/basicrsa_base_mult.srs to /home/elicahill/icemachine/examples/ipassurance_designs/basicrsa_base.srcs/build/basicrsa_base_Implmnt/basicrsa_base.srs
+Complete: Compile Process on basicrsa_base|basicrsa_base_Implmnt
+
+Running: premap (Pre-mapping) on basicrsa_base|basicrsa_base_Implmnt
+# Fri Jan 25 13:16:36 2019
+
+premap completed with warnings
+# Fri Jan 25 13:16:36 2019
+
+Return Code: 1
+Run Time:00h:00m:00s
+Complete: Compile on basicrsa_base|basicrsa_base_Implmnt
+
+Running: map (Map) on basicrsa_base|basicrsa_base_Implmnt
+# Fri Jan 25 13:16:36 2019
+License granted for 4 parallel jobs
+
+Running: fpga_mapper (Map & Optimize) on basicrsa_base|basicrsa_base_Implmnt
+# Fri Jan 25 13:16:36 2019
+Copied /home/elicahill/icemachine/examples/ipassurance_designs/basicrsa_base.srcs/build/basicrsa_base_Implmnt/synwork/basicrsa_base_m.srm to /home/elicahill/icemachine/examples/ipassurance_designs/basicrsa_base.srcs/build/basicrsa_base_Implmnt/basicrsa_base.srm
+
+fpga_mapper completed with warnings
+# Fri Jan 25 13:16:37 2019
+
+Return Code: 1
+Run Time:00h:00m:01s
+Complete: Map on basicrsa_base|basicrsa_base_Implmnt
+Complete: Logic Synthesis on basicrsa_base|basicrsa_base_Implmnt
+
+exit status=0
+
+exit status=0
+

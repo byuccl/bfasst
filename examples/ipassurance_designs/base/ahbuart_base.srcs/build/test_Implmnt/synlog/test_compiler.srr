@@ -1,0 +1,59 @@
+Synopsys HDL Compiler, version comp2016q3p1, Build 141R, built Dec  5 2016
+@N|Running in 64-bit mode
+Copyright (C) 1994-2016 Synopsys, Inc. All rights reserved. This Synopsys software and all associated documentation are proprietary to Synopsys, Inc. and may only be used pursuant to the terms and conditions of a written license agreement with Synopsys, Inc. All other use, reproduction, modification, or distribution of the Synopsys software or the associated documentation is strictly prohibited.
+
+@N:Top-level is not specified. Trying to extract automatically...
+Synopsys VHDL Compiler, version comp2016q3p1, Build 141R, built Dec  5 2016
+@N|Running in 64-bit mode
+Copyright (C) 1994-2016 Synopsys, Inc. All rights reserved. This Synopsys software and all associated documentation are proprietary to Synopsys, Inc. and may only be used pursuant to the terms and conditions of a written license agreement with Synopsys, Inc. All other use, reproduction, modification, or distribution of the Synopsys software or the associated documentation is strictly prohibited.
+
+Running on host :goeders-ssh2
+@N: CD720 :"/home/elicahill/lscc/iCEcube2.2017.08/synpbase/lib/vhd/std.vhd":123:18:123:21|Setting time resolution to ps
+@N:"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/techmap/unisim/buffer_unisim.vhd":71:7:71:19|Top entity is set to clkmux_xilinx.
+@W: CD642 :"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/designs/leon3-digilent-nexys4/config.vhd":6:23:6:23|Ignoring use clause - library techmap not found ...
+@E: CD255 :"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/designs/leon3-digilent-nexys4/config.vhd":9:42:9:42|No identifier "artix7" in scope
+1 error parsing file /home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/designs/leon3-digilent-nexys4/config.vhd
+1 error parsing file /home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/opencores/i2c/i2coc.vhd
+1 error parsing file /home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/opencores/ge_1000baseX/ge_1000baseX_comp.vhd
+1 error parsing file /home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/eth/comp/ethcomp.vhd
+1 error parsing file /home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/eth/core/eth_rstgen.vhd
+1 error parsing file /home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/fmf/utilities/conversions.vhd
+@W: CD643 :"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/fmf/utilities/gen_utils.vhd":22:45:22:45|Ignoring use clause - vital_primitives not found ...
+@W: CD643 :"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/fmf/utilities/gen_utils.vhd":23:41:23:41|Ignoring use clause - vital_timing not found ...
+@E: CD255 :"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/fmf/utilities/gen_utils.vhd":30:53:30:54|No identifier "vitalresultmaptype" in scope
+2 errors parsing file /home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/fmf/utilities/gen_utils.vhd
+2 errors parsing file /home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/gaisler/sim/delay_wire.vhd
+2 errors parsing file /home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/gaisler/greth/adapters/word_aligner.vhd
+2 errors parsing file /home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/gaisler/arith/arith.vhd
+2 errors parsing file /home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/gaisler/leon3v3/cmvalidbits.vhd
+2 errors parsing file /home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/work/debug/cpu_disas.vhd
+2 errors parsing file /home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/grlib/dftlib/dftlib.vhd
+2 errors parsing file /home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/grlib/modgen/multlib.vhd
+@W: CD642 :"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/grlib/modgen/leaves.vhd":798:20:798:20|Ignoring use clause - library grlib not found ...
+@E: CD879 :"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/grlib/modgen/leaves.vhd":813:13:813:16|Illegal concurrent statement. Possible missing component declaration for block0
+@W: CD642 :"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/grlib/modgen/leaves.vhd":822:20:822:20|Ignoring use clause - library grlib not found ...
+@E: CD879 :"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/grlib/modgen/leaves.vhd":838:15:838:18|Illegal concurrent statement. Possible missing component declaration for invblock
+@W: CD642 :"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/grlib/modgen/leaves.vhd":853:20:853:20|Ignoring use clause - library grlib not found ...
+@E: CD879 :"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/grlib/modgen/leaves.vhd":869:15:869:18|Illegal concurrent statement. Possible missing component declaration for invblock
+@W: CD642 :"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/grlib/modgen/leaves.vhd":885:20:885:20|Ignoring use clause - library grlib not found ...
+@E: CD879 :"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/grlib/modgen/leaves.vhd":901:15:901:18|Illegal concurrent statement. Possible missing component declaration for invblock
+@W: CD642 :"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/grlib/modgen/leaves.vhd":916:20:916:20|Ignoring use clause - library grlib not found ...
+@E: CD879 :"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/grlib/modgen/leaves.vhd":932:15:932:18|Illegal concurrent statement. Possible missing component declaration for invblock
+@W: CD642 :"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/grlib/modgen/leaves.vhd":947:20:947:20|Ignoring use clause - library grlib not found ...
+@E: CD879 :"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/grlib/modgen/leaves.vhd":963:15:963:18|Illegal concurrent statement. Possible missing component declaration for invblock
+@W: CD642 :"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/grlib/modgen/leaves.vhd":978:20:978:20|Ignoring use clause - library grlib not found ...
+@E: CD879 :"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/grlib/modgen/leaves.vhd":994:15:994:18|Illegal concurrent statement. Possible missing component declaration for invblock
+@W: CD642 :"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/grlib/modgen/leaves.vhd":1007:20:1007:20|Ignoring use clause - library grlib not found ...
+@E: CD879 :"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/grlib/modgen/leaves.vhd":1023:12:1023:15|Illegal concurrent statement. Possible missing component declaration for xxor1
+@W: CD642 :"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/grlib/modgen/leaves.vhd":1033:20:1033:20|Ignoring use clause - library grlib not found ...
+@E: CD879 :"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/grlib/modgen/leaves.vhd":1058:15:1058:18|Illegal concurrent statement. Possible missing component declaration for dblc_0_64
+@E: CD879 :"/home/elicahill/icemachine/examples/ipassurance_designs/ahbuart_base.srcs/sources_1/imports/grlib-gpl-2017.2-b4194/lib/grlib/modgen/leaves.vhd":1058:15:1058:18|Too many errors - aborting.
+# Fri Jan 25 10:37:13 2019
+
+###########################################################]
+@E::VHDL compiler failed
+@END
+Process took 0h:00m:01s realtime, 0h:00m:01s cputime
+# Fri Jan 25 10:37:13 2019
+
+###########################################################]

@@ -1,0 +1,125 @@
+#-- Synopsys, Inc.
+#-- Project file /home/elicahill/lscc/iCEcube2.2017.08/sbt_backend/Projects/test/test_syn.prj
+#project files
+add_file -verilog -lib work ../sources_1/new/top.v
+add_file -verilog -lib work ../sources_1/imports/opencores/fm_3d_core/src/fm_3d_fcnv.v
+add_file -verilog -lib work ../sources_1/imports/opencores/fm_3d_core/src/fm_ras_line.v
+add_file -verilog -lib work ../sources_1/imports/opencores/fm_3d_core/src/fm_sys.v
+add_file -verilog -lib work ../sources_1/imports/opencores/fm_3d_core/src/fm_3d_define.v
+add_file -verilog -lib work ../sources_1/imports/opencores/fm_3d_core/src/fm_ras_state.v
+add_file -verilog -lib work ../sources_1/imports/opencores/fm_3d_core/src/fm_3d_f22_to_i.v
+add_file -verilog -lib work ../sources_1/imports/opencores/fm_3d_core/src/fm_geo_matrix.v
+add_file -verilog -lib work ../sources_1/imports/opencores/fm_3d_core/src/fm_geo_clip.v
+add_file -verilog -lib work ../sources_1/imports/opencores/fm_3d_core/src/fm_ras_mem.v
+add_file -verilog -lib work ../sources_1/imports/opencores/fm_3d_core/src/fm_3d_norm.v
+add_file -verilog -lib work ../sources_1/imports/opencores/fm_3d_core/src/fm_geo_cull.v
+add_file -verilog -lib work ../sources_1/imports/opencores/fm_3d_core/src/fm_3d_fadd.v
+add_file -verilog -lib work ../sources_1/imports/opencores/fm_3d_core/src/fm_3d_fmul.v
+add_file -verilog -lib work ../sources_1/imports/opencores/fm_3d_core/src/fm_3d_frcp.v
+add_file -verilog -lib work ../sources_1/imports/opencores/fm_3d_core/src/fm_3d_core.v
+add_file -verilog -lib work ../sources_1/imports/opencores/fm_3d_core/src/fm_geo_viewport.v
+add_file -verilog -lib work ../sources_1/imports/opencores/fm_3d_core/src/fm_geo_tri.v
+add_file -verilog -lib work ../sources_1/imports/opencores/fm_3d_core/src/fm_3d_frcp_rom.v
+add_file -verilog -lib work ../sources_1/imports/opencores/fm_3d_core/src/fm_geo_persdiv.v
+add_file -verilog -lib work ../sources_1/imports/opencores/fm_3d_core/src/fm_mem_arb.v
+add_file -verilog -lib work ../sources_1/imports/opencores/tmu/src/tmu_meshgen.v
+add_file -verilog -lib work ../sources_1/imports/opencores/tmu/src/tmu_ctlif.v
+add_file -verilog -lib work ../sources_1/imports/opencores/tmu/src/tmu_scantrace.v
+add_file -verilog -lib work ../sources_1/imports/opencores/tmu/src/tmu.v
+add_file -verilog -lib work ../sources_1/imports/opencores/tmu/src/tmu_scandiv.v
+add_file -verilog -lib work ../sources_1/imports/opencores/tmu/src/tmu_perfcounters.v
+add_file -verilog -lib work ../sources_1/imports/opencores/tmu/src/tmu_edgetrace.v
+add_file -verilog -lib work ../sources_1/imports/opencores/tmu/src/tmu_divider11.v
+add_file -verilog -lib work ../sources_1/imports/opencores/tmu/src/tmu_pixin.v
+add_file -verilog -lib work ../sources_1/imports/opencores/tmu/src/tmu_edgedivops.v
+add_file -verilog -lib work ../sources_1/imports/opencores/tmu/src/tmu_pixout.v
+add_file -verilog -lib work ../sources_1/imports/opencores/tmu/src/tmu_burst.v
+add_file -verilog -lib work ../sources_1/imports/opencores/tmu/src/tmu_scandivops.v
+add_file -verilog -lib work ../sources_1/imports/opencores/tmu/src/tmu_addresses.v
+add_file -verilog -lib work ../sources_1/imports/opencores/tmu/src/tmu_reorder.v
+add_file -verilog -lib work ../sources_1/imports/opencores/tmu/src/tmu_edgediv.v
+add_file -verilog -lib work ../sources_1/imports/opencores/tmu/src/tmu_decay.v
+add_file -verilog -lib work ../sources_1/imports/opencores/tmu/src/tmu_filter.v
+add_file -verilog -lib work ../sources_1/imports/src/fm_3d_define.v
+add_file -verilog -lib work ../sources_1/imports/src/fm_geo_mem.v
+add_file -verilog -lib work ../sources_1/imports/src/fm_geo.v
+add_file -verilog -lib work ../sources_1/imports/src/fm_ras.v
+add_file -vhdl -lib work ../sources_1/imports/opencores/pp_potato/src/pp_wb_arbiter.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/pp_potato/src/pp_fetch.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/pp_potato/src/pp_comparator.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/pp_potato/src/pp_register_file.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/pp_potato/src/pp_decode.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/pp_potato/src/pp_alu.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/pp_potato/src/pp_imm_decoder.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/pp_potato/src/pp_csr_alu.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/pp_potato/src/pp_control_unit.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/pp_potato/src/pp_csr.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/pp_potato/src/pp_types.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/pp_potato/src/pp_potato.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/pp_potato/src/pp_core.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/pp_potato/src/pp_memory.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/pp_potato/src/pp_counter.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/pp_potato/src/pp_constants.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/pp_potato/src/pp_csr_unit.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/pp_potato/src/pp_wb_adapter.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/pp_potato/src/pp_utilities.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/pp_potato/src/pp_writeback.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/pp_potato/src/pp_alu_mux.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/pp_potato/src/pp_alu_control_unit.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/pp_potato/src/pp_icache.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/pp_potato/src/pp_execute.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/vga80x40/src/vga80x40.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/vga80x40/src/ctrm.vhd
+add_file -vhdl -lib work ../sources_1/imports/opencores/vga80x40/src/losr.vhd
+
+#implementation: "test_Implmnt"
+impl -add test_Implmnt -type fpga
+
+#implementation attributes
+set_option -vlog_std v2001
+set_option -project_relative_includes 1
+
+#device options
+set_option -technology SBTiCE40
+set_option -part iCE40HX8K
+set_option -package CT256
+set_option -speed_grade 
+set_option -part_companion ""
+
+#compilation/mapping options
+
+# mapper_options
+set_option -frequency auto
+set_option -write_verilog 0
+set_option -write_vhdl 0
+
+# Silicon Blue iCE40
+set_option -maxfan 10000
+set_option -disable_io_insertion 0
+set_option -pipe 1
+set_option -retiming 0
+set_option -update_models_cp 0
+set_option -fixgatedclocks 2
+set_option -fixgeneratedclocks 0
+
+# NFilter
+set_option -popfeed 0
+set_option -constprop 0
+set_option -createhierarchy 0
+
+# sequential_optimization_options
+set_option -symbolic_fsm_compiler 1
+
+# Compiler Options
+set_option -compiler_compatible 0
+set_option -resource_sharing 1
+
+#automatic place and route (vendor) options
+set_option -write_apr_constraint 1
+
+#set result format/file last
+project -result_format "edif"
+project -result_file ./test_Implmnt/test.edf
+project -log_file "./test_Implmnt/test.srr"
+impl -active "test_Implmnt"
+project -run synthesis -clean

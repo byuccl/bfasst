@@ -1,0 +1,7 @@
+/home/elicahill/lscc/iCEcube2.2017.08/synpbase/bin/syn_nfilter  -link  -multisrs  /home/elicahill/icemachine/examples/ipassurance_designs/counter_base.srcs/build/test_Implmnt/synwork/test_comp.srs  -osyn  /home/elicahill/icemachine/examples/ipassurance_designs/counter_base.srcs/build/test_Implmnt/synwork/test_mult.srs  -log  /home/elicahill/icemachine/examples/ipassurance_designs/counter_base.srcs/build/test_Implmnt/synlog/test_multi_srs_gen.srr 
+rc:0 success:1 runtime:0
+file:/home/elicahill/icemachine/examples/ipassurance_designs/counter_base.srcs/build/test_Implmnt/synwork/test_comp.srs|io:i|time:1548373197|size:3166|exec:0
+file:/home/elicahill/icemachine/examples/ipassurance_designs/counter_base.srcs/build/test_Implmnt/synwork/test_mult.srs|io:o|time:1548373198|size:2485|exec:0
+file:/home/elicahill/icemachine/examples/ipassurance_designs/counter_base.srcs/build/test_Implmnt/synlog/test_multi_srs_gen.srr|io:o|time:1548373198|size:766|exec:0
+file:/home/elicahill/lscc/iCEcube2.2017.08/synpbase/linux_a_64/syn_nfilter|io:i|time:1536792966|size:11473624|exec:1
+file:/home/elicahill/lscc/iCEcube2.2017.08/synpbase/bin/syn_nfilter|io:i|time:1536952994|size:368|exec:1
