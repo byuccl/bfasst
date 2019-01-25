@@ -1,0 +1,255 @@
+                          CONFORMAL (R)
+                   Version 15.20-p100 (29-Oct-2015) (64 bit executable)
+   Copyright (c) Cadence Design Systems, Inc., 1997-2015. All Rights Reserved
+
+
+This program is proprietary and confidential information belonging to
+Cadence Design Systems, Inc., and may be used and disclosed only as authorized
+in a license agreement controlling such use and disclosure.
+
+// Warning: You can download the latest version from http://downloads.cadence.com.
+
+// Command: read library -Both -Replace  -sensitive    -Verilog /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v -nooptimize   
+// Parsing file /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v ...
+// Warning: (VLG6.6) Event object is unsupported
+// Warning: 'event triggering' statement is not supported on line 1462 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
+// Warning: SB_RAM4K is blackboxed on line 1462 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
+// Warning: (VLG6.6) Event object is unsupported
+// Warning: 'event triggering' statement is not supported on line 3499 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
+// Warning: SB_RAM256x16 is blackboxed on line 3499 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
+// Warning: (VLG6.6) Event object is unsupported
+// Warning: 'event triggering' statement is not supported on line 4927 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
+// Warning: SB_RAM512x8 is blackboxed on line 4927 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
+// Warning: (VLG6.6) Event object is unsupported
+// Warning: 'event triggering' statement is not supported on line 5965 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
+// Warning: SB_RAM1024x4 is blackboxed on line 5965 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
+// Warning: (VLG6.6) Event object is unsupported
+// Warning: 'event triggering' statement is not supported on line 6960 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
+// Warning: SB_RAM2048x2 is blackboxed on line 6960 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
+// Warning: (VLG6.6) Event object is unsupported
+// Warning: 'event triggering' statement is not supported on line 17400 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
+// Warning: SB_RAM1024x16 is blackboxed on line 17400 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
+// Warning: (VLG6.6) Event object is unsupported
+// Warning: 'event triggering' statement is not supported on line 19211 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
+// Warning: SB_RAM2048x8 is blackboxed on line 19211 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
+// Warning: (VLG6.6) Event object is unsupported
+// Warning: 'event triggering' statement is not supported on line 20631 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
+// Warning: SB_RAM4096x4 is blackboxed on line 20631 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
+// Warning: (VLG6.6) Event object is unsupported
+// Warning: 'event triggering' statement is not supported on line 22006 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
+// Warning: SB_RAM8192x2 is blackboxed on line 22006 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
+// Warning: (VLG6.6) Event object is unsupported
+// Warning: 'event triggering' statement is not supported on line 23382 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
+// Warning: SB_RAM16K is blackboxed on line 23382 at column 4 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v'
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:10832 Module 'X105DSI_RX' is referenced but not defined.
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:25993 Module 'SB_HSOSC_CORE' is referenced but not defined.
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:26015 Module 'SB_LSOSC_CORE' is referenced but not defined.
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:26038 Module 'SB_LFOSC_CORE' is referenced but not defined.
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:26174 Module 'ledd_ip' is referenced but not defined.
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:26471 Module 'SB_RGBA_DRV_CORE' is referenced but not defined.
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:26515 Module 'SB_BARCODE_DRV_CORE' is referenced but not defined.
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:26550 Module 'SB_IR400_DRV_CORE' is referenced but not defined.
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:26587 Module 'SB_IR500_DRV_CORE' is referenced but not defined.
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:26649 Module 'SB_IR_IP_CORE' is referenced but not defined.
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:27037 Module 'ledd_ip' is referenced but not defined.
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:27146 Module 'LED_control' is referenced but not defined.
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:27188 Module 'sadslspk4s1p16384x16m16b4w1c0p1d0t0' is referenced but not defined.
+// Warning: (RTL1.3) Variable/signal is assigned by both blocking and non-blocking assignments (occurrence:4)
+// Warning: (RTL1.6) Blocking assignment is in sequential always block (occurrence:4)
+// Warning: (RTL1.7) Non-blocking assignment is in combinational always block (occurrence:1)
+// Warning: (RTL2.13) Undriven pin is detected (occurrence:2)
+// Warning: (RTL7.2) Gate or transistor primitive is using weak attributes (occurrence:229)
+// Warning: (RTL7.5) Input signal is assigned by logic values (occurrence:228)
+// Note: (RTL8.1) Multiple multipliers/dividers are in module/entity (occurrence:1)
+// Warning: (RTL10) Both posedge and negedge are used in different always/process (occurrence:6)
+// Warning: (RTL14) Signal has input but it has no output (occurrence:12)
+// Warning: (RTL14.1) Fanout load of the signal is removed (occurrence:11)
+// Warning: (VLG1.2) Case equality operators are treated as equality operators (occurrence:11)
+// Warning: (VLG6.3) Unsupported system function call (converted to 1'b1) (occurrence:25)
+// Warning: (VLG6.6) Event object is unsupported (occurrence:10)
+// Note: (VLG9.2) The `define macro is used (occurrence:2)
+// Warning: (DIR6.1) Ignored compiler directive is detected (occurrence:143)
+// Warning: (DIR6.2) Supported compiler directive is detected (occurrence:174)
+// Warning: (IGN1.1) Initial assignment is ignored (occurrence:101)
+// Warning: (IGN2.1) Delay value(s) are ignored (occurrence:84)
+// Warning: (IGN2.2) Invalid defparam statement(s) are ignored (occurrence:144)
+// Warning: (HRC1.4) Module/entity is empty (blackboxed) (occurrence:1)
+// Warning: (HRC3.7) Boundary port direction might not be correct (occurrence:10)
+// Warning: (HRC3.10a) An input port is declared, but it is not completely used in the module (occurrence:3)
+// Warning: (HRC3.16) A wire is declared, but not used in the module (occurrence:3)
+// Note: Read VERILOG library successfully
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:10832 Module 'X105DSI_RX' is referenced but not defined.
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:25993 Module 'SB_HSOSC_CORE' is referenced but not defined.
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:26015 Module 'SB_LSOSC_CORE' is referenced but not defined.
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:26038 Module 'SB_LFOSC_CORE' is referenced but not defined.
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:26174 Module 'ledd_ip' is referenced but not defined.
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:26471 Module 'SB_RGBA_DRV_CORE' is referenced but not defined.
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:26515 Module 'SB_BARCODE_DRV_CORE' is referenced but not defined.
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:26550 Module 'SB_IR400_DRV_CORE' is referenced but not defined.
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:26587 Module 'SB_IR500_DRV_CORE' is referenced but not defined.
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:26649 Module 'SB_IR_IP_CORE' is referenced but not defined.
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:27037 Module 'ledd_ip' is referenced but not defined.
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:27146 Module 'LED_control' is referenced but not defined.
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_syn.v:27188 Module 'sadslspk4s1p16384x16m16b4w1c0p1d0t0' is referenced but not defined.
+// Command: read library -Both -Append  -sensitive    -Verilog /auto/fsh/crg3710/research/lattice_libraries/sb_ice_lc.v -nooptimize   
+// Parsing file /auto/fsh/crg3710/research/lattice_libraries/sb_ice_lc.v ...
+// Warning: (RTL10.1) Unrecognized D-flop coding style. No D-flops can be inferred (blackboxed)
+// Warning:   on line 447 at column 12 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_lc.v'
+// Warning: coredffr is blackboxed on line 447 at column 12 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_lc.v'
+// Warning: Module coredffr is blackboxed due to compilation error
+// Warning: (RTL10.1) Unrecognized D-flop coding style. No D-flops can be inferred (blackboxed)
+// Warning:   on line 529 at column 12 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_lc.v'
+// Warning: coredffr2 is blackboxed on line 529 at column 12 in file '/auto/fsh/crg3710/research/lattice_libraries/sb_ice_lc.v'
+// Warning: Module coredffr2 is blackboxed due to compilation error
+// Warning: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_lc.v:3729 Always block contains loop without wait statement
+// Warning: Module SMCCLK is blackboxed due to compilation error
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_lc.v:3697 Module 'ICE_IR500_DRV_CORE' is referenced but not defined.
+// Warning: (RTL1.3) Variable/signal is assigned by both blocking and non-blocking assignments (occurrence:4)
+// Warning: (RTL1.6) Blocking assignment is in sequential always block (occurrence:4)
+// Warning: (RTL1.7) Non-blocking assignment is in combinational always block (occurrence:1)
+// Warning: (RTL2.13) Undriven pin is detected (occurrence:2)
+// Warning: (RTL6.1) X created due to the assignment of value X (occurrence:3)
+// Warning: (RTL7.2) Gate or transistor primitive is using weak attributes (occurrence:239)
+// Warning: (RTL7.5) Input signal is assigned by logic values (occurrence:237)
+// Note: (RTL8.1) Multiple multipliers/dividers are in module/entity (occurrence:1)
+// Note: (RTL8.2) Latch(es) are inferred due to self assignment (occurrence:1)
+// Warning: (RTL10) Both posedge and negedge are used in different always/process (occurrence:6)
+// Warning: (RTL10.1) Unrecognized D-flop coding style. No D-flops can be inferred (blackboxed) (occurrence:2)
+// Warning: (RTL14) Signal has input but it has no output (occurrence:12)
+// Warning: (RTL14.1) Fanout load of the signal is removed (occurrence:11)
+// Warning: (VLG1.2) Case equality operators are treated as equality operators (occurrence:19)
+// Warning: (VLG6.3) Unsupported system function call (converted to 1'b1) (occurrence:25)
+// Warning: (VLG6.6) Event object is unsupported (occurrence:10)
+// Note: (VLG9.2) The `define macro is used (occurrence:2)
+// Warning: (DIR6.1) Ignored compiler directive is detected (occurrence:162)
+// Warning: (DIR6.2) Supported compiler directive is detected (occurrence:362)
+// Warning: (IGN1.1) Initial assignment is ignored (occurrence:103)
+// Warning: (IGN2.1) Delay value(s) are ignored (occurrence:85)
+// Warning: (IGN2.2) Invalid defparam statement(s) are ignored (occurrence:144)
+// Warning: (HRC1.1) Module/entity is not loaded due to unsupported construct (blackboxed) (occurrence:1)
+// Warning: (HRC1.4) Module/entity is empty (blackboxed) (occurrence:1)
+// Warning: (HRC3.7) Boundary port direction might not be correct (occurrence:10)
+// Warning: (HRC3.10a) An input port is declared, but it is not completely used in the module (occurrence:10)
+// Warning: (HRC3.16) A wire is declared, but not used in the module (occurrence:3)
+// Note: Read VERILOG library successfully
+// Error: /auto/fsh/crg3710/research/lattice_libraries/sb_ice_lc.v:3697 Module 'ICE_IR500_DRV_CORE' is referenced but not defined.
+// Command: read design /auto/fsh/crg3710/research/bcd_adder/bcd_adder_sbt.v -Verilog -Golden   -sensitive         -continuousassignment Bidirectional   -nokeep_unreach   -nosupply 
+// Parsing file /auto/fsh/crg3710/research/bcd_adder/bcd_adder_sbt.v ...
+// Golden root module is set to 'bcd_adder'
+// Warning: (RTL2.13) Undriven pin is detected (occurrence:423)
+// Warning: (RTL14) Signal has input but it has no output (occurrence:2)
+// Warning: (HRC3.5a) Open input/inout port connection is detected (occurrence:135)
+// Note: (HRC3.5b) Open output port connection is detected (occurrence:134)
+// Warning: Total black box modules referenced in Golden = 1
+// Warning: There are 423 undriven pins in Golden
+// Note: Read VERILOG design successfully
+// Command: read design /auto/fsh/crg3710/research/bcd_adder/bcd_adder_extracted.v -Verilog -Revised   -sensitive         -continuousassignment Bidirectional   -nokeep_unreach   -nosupply 
+// Parsing file /auto/fsh/crg3710/research/bcd_adder/bcd_adder_extracted.v ...
+// Revised root module is set to 'chip'
+// Warning: (RTL14) Signal has input but it has no output (occurrence:1)
+// Warning: (IGN1.1) Initial assignment is ignored (occurrence:50)
+// Warning: (HRC3.10a) An input port is declared, but it is not completely used in the module (occurrence:10)
+// Warning: (HRC3.16) A wire is declared, but not used in the module (occurrence:2)
+// Note: Read VERILOG design successfully
+// Command: report black box
+SYSTEM: (G) coredffr2
+// Command: set mapping method -name guide
+// Command: set system mode lec
+// Processing Golden ...
+// Modeling Golden ...
+// Warning: (F34) Converted 498 X assignment(s) as don't care(s)
+// (F32) Created 321 Z gate(s) for floating net(s) and floating pin(s)
+// (F27) Converted 51 internal input port(s) to inout port(s)
+// (F28) Converted 51 internal output port(s) to inout port(s)
+// Processing Revised ...
+// Modeling Revised ...
+// Warning: Golden and Revised have different numbers of key points:
+// Golden  key points = 863
+// Revised key points = 111
+// Mapping key points ...
+// Warning: Primary input 'a_i[14]' in Golden has no correspondence in Revised
+// Warning: Primary input 'a_i[9]' in Golden has no correspondence in Revised
+// Warning: Primary input 'a_i[1]' in Golden has no correspondence in Revised
+// Warning: Primary input 'a_i[0]' in Golden has no correspondence in Revised
+// Warning: Primary input 'b_i[15]' in Golden has no correspondence in Revised
+// Warning: Primary input 'b_i[14]' in Golden has no correspondence in Revised
+// Warning: Primary input 'b_i[13]' in Golden has no correspondence in Revised
+// Warning: Primary output 'sum_o[15]' in Golden has no correspondence in Revised
+// Warning: Primary output 'sum_o[14]' in Golden has no correspondence in Revised
+// Warning: Primary output 'sum_o[10]' in Golden has no correspondence in Revised
+// Warning: Primary output 'sum_o[5]' in Golden has no correspondence in Revised
+// Warning: Primary output 'sum_o[4]' in Golden has no correspondence in Revised
+// Warning: Primary output 'sum_o[3]' in Golden has no correspondence in Revised
+// Warning: Primary output 'sum_o[2]' in Golden has no correspondence in Revised
+// Warning: Primary output 'sum_o[1]' in Golden has no correspondence in Revised
+// Warning: Primary output 'sum_o[0]' in Golden has no correspondence in Revised
+// Warning: Primary output 'cout_o' in Golden has no correspondence in Revised
+// Warning: Primary input 'sum_o[14]' in Revised has no correspondence in Golden
+// Warning: Primary input 'io_0_3_0' in Revised has no correspondence in Golden
+// Warning: Primary input 'io_0_3_1' in Revised has no correspondence in Golden
+// Warning: Primary input 'io_0_4_0' in Revised has no correspondence in Golden
+// Warning: Primary input 'io_0_4_1' in Revised has no correspondence in Golden
+// Warning: Primary input 'sum_o[10]' in Revised has no correspondence in Golden
+// Warning: Primary input 'io_0_14_0' in Revised has no correspondence in Golden
+// Warning: Primary input 'sum_o[3]' in Revised has no correspondence in Golden
+// Warning: Primary input 'sum_o[4]' in Revised has no correspondence in Golden
+// Warning: Primary input 'sum_o[2]' in Revised has no correspondence in Golden
+// Warning: Primary input 'sum_o[0]' in Revised has no correspondence in Golden
+// Warning: Primary input 'sum_o[5]' in Revised has no correspondence in Golden
+// Warning: Primary input 'io_3_33_0' in Revised has no correspondence in Golden
+// Warning: Primary input 'io_4_33_0' in Revised has no correspondence in Golden
+// Warning: Primary input 'sum_o[1]' in Revised has no correspondence in Golden
+// Warning: Primary input 'sum_o[15]' in Revised has no correspondence in Golden
+// Warning: Primary input 'cout_o' in Revised has no correspondence in Golden
+// Warning: Primary output 'b_i[14]' in Revised has no correspondence in Golden
+// Warning: Primary output 'io_0_6_0' in Revised has no correspondence in Golden
+// Warning: Primary output 'io_0_6_1' in Revised has no correspondence in Golden
+// Warning: Primary output 'io_0_7_1' in Revised has no correspondence in Golden
+// Warning: Primary output 'b_i[15]' in Revised has no correspondence in Golden
+// Warning: Primary output 'b_i[13]' in Revised has no correspondence in Golden
+// Warning: Primary output 'a_i[14]' in Revised has no correspondence in Golden
+// Warning: Primary output 'a_i[0]' in Revised has no correspondence in Golden
+// Warning: Primary output 'a_i[1]' in Revised has no correspondence in Golden
+// Warning: Primary output 'a_i[9]' in Revised has no correspondence in Golden
+// Warning: Golden has 100 unmapped key points
+// Warning: Revised has 50 unmapped key points
+================================================================================
+Mapped points: SYSTEM class
+--------------------------------------------------------------------------------
+Mapped points     PI     PO        Total   
+--------------------------------------------------------------------------------
+Golden            27     7         34      
+--------------------------------------------------------------------------------
+Revised           27     7         34      
+================================================================================
+Unmapped points:
+================================================================================
+Golden:
+--------------------------------------------------------------------------------
+Unmapped points   PI     PO     DFF    DLAT   Z      BBOX      Total   
+--------------------------------------------------------------------------------
+Extra             7      10     0      0      0      0         17      
+Unreachable       0      0      306    102    271    33        712     
+Not-mapped        0      0      0      0      50     50        100     
+================================================================================
+Revised:
+--------------------------------------------------------------------------------
+Unmapped points   PI     PO     DFF       Total   
+--------------------------------------------------------------------------------
+Extra             17     10     0         27      
+Not-mapped        0      0      50        50      
+================================================================================
+// Warning: Key point mapping is incomplete
+// Command: add compared points -all
+// Warning: Golden has 50 unmapped key points which will not be compared
+// Warning: Revised has 50 unmapped key points which will not be compared
+// 7 compared points added to compare list
+// Command: compare
+================================================================================
+Compared points      PO        Total   
+--------------------------------------------------------------------------------
+Non-equivalent       7         7       
+================================================================================
+// Warning: There are extra POs in Golden
+// Warning: There are extra POs in Revised
+// Command: exit -f

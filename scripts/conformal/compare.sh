@@ -40,7 +40,7 @@ sed "s:<RTL>:${projectRtl}:; s:<WKDIR>:${projectDir}:; s:<EDIF>:${lseOutDir}/${d
 mv $lse $designName
 
 # move tcl flow and constraints into place
-tcl="flow.tcl"
+tcl="template.tcl"
 if [ ! -f "$tcl" ]; then
 	
 	echo "missing ${tcl}"
@@ -55,7 +55,7 @@ lse -f $lse
 
 # run iCEcube2 flow
 toolOptions=":edifparser -y ${constraints}"
-tclsh $tcl $designName $lseOutDir $toolOptions
+tclsh $tcl $designName $lseOutDir $designName $toolOptions
 	
 # make dofile
 
