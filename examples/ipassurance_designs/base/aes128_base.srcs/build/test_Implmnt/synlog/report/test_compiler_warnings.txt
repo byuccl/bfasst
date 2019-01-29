@@ -1,7 +1,0 @@
-@W: CL118 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/tbu.v":53:6:53:9|Latch generated from always block for signal d_o_reg; possible missing assignment in an if or case statement.
-@W: CL177 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/decoder.v":262:3:262:8|Sharing sequential element d_in_mem_B. Add a syn_preserve attribute to the element to prevent sharing.
-@W: CL177 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/decoder.v":262:3:262:8|Sharing sequential element d_in_mem_C. Add a syn_preserve attribute to the element to prevent sharing.
-@W: CL177 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/decoder.v":262:3:262:8|Sharing sequential element d_in_mem_D. Add a syn_preserve attribute to the element to prevent sharing.
-@W: CL177 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/decoder.v":500:3:500:8|Sharing sequential element mem_bank_buf_buf_buf. Add a syn_preserve attribute to the element to prevent sharing.
-@W: CL177 :"/home/elicahill/icemachine/examples/ipassurance_designs/aes128_base.srcs/sources_1/imports/opencores/viterbi_tx_rx/src/tbu.v":32:3:32:8|Sharing sequential element wr_en. Add a syn_preserve attribute to the element to prevent sharing.
-

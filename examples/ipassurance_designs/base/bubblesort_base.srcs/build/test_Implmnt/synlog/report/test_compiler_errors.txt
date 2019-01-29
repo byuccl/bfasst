@@ -1,3 +1,0 @@
-@E: CS187 :"/home/elicahill/icemachine/examples/ipassurance_designs/bubblesort_base.srcs/sources_1/new/top.v":57:29:57:29|Expecting )
-@E: CS187 :"/home/elicahill/icemachine/examples/ipassurance_designs/bubblesort_base.srcs/sources_1/new/top.v":77:0:77:8|Expecting endmodule
-
