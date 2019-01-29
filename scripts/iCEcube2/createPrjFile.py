@@ -7,8 +7,10 @@
 
 import sys
 import getopt
+import os
 
-example_prj = "../../../../../scripts/iCEcube2/example.prj"
+
+example_prj = os.path.join(os.path.dirname(os.path.realpath(__file__)), "example.prj")
 
 usage_str = "createPrjFile.py -s <source files> -o <prj file> -n <project name>\n\
 Multiple source files must be enclosed in quotes \n\

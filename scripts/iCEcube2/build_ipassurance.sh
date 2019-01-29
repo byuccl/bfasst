@@ -1,20 +1,33 @@
 #!/bin/bash
 # Builds designs from the ipassureance_designs directory in icemachine/examples
 
-# Call from ipassureance_designs directory.
+# Call from ipassureance_designs/ooc or /base directory.
+
+# Call with the icemachine base directory and directory to target
+# ex
 
 # TODO: Consider adding a text file that can track compilation statuses
 
-SCRIPTS_DIR=../../../../../scripts
 ICECUBE2_DIR=$HOME/lscc/iCEcube2.2017.08/
 
+if [ $# != 3 ]; then
+    echo "Usage: build_ipassurance.sh <icemachine base dir> <target dir tree> <iCEcube2 dir>"
+    exit
+fi
 
+SCRIPTS_DIR=$1"/scripts/"
+ICECUBE2_DIR=$3
+cd $2
 
 for d in $( ls ); do
     echo "building $d"
     cd $d
     proj_name=$(echo $d | cut -d '.' -f 1)
     echo "Got project name $proj_name"
+    # Remove the build directory if its there
+    if [ $(ls | grep "build") == "build" ]; then
+	rm -rf build
+    fi
     mkdir build
     srcs=$( find -name "*.v" -exec echo ".{}" \;)
     srcs=$(printf "$srcs\n$( find -name "*.vhd" -exec echo ".{}" \;)")
@@ -49,5 +62,7 @@ for d in $( ls ); do
     cd ../
     #rm -rf build
     cd ../
+
+    echo ""
 done
 
