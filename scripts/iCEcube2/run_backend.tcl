@@ -1,3 +1,5 @@
+#!/usr/bin/env tclsh
+
 if {$argc != 5} {
     puts "Usage: run_backend.tcl <project name> <build directory> <device> <top module> <iCEcube2 directory>"
     exit

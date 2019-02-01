@@ -8,14 +8,14 @@
 
 # TODO: Consider adding a text file that can track compilation statuses
 
-if [ $# != 3 ]; then
-	echo "Usage: build_ipassurance.sh <icemachine base dir> <target dir tree> <iCEcube2 dir>"
+if [ $# != 2 ]; then
+	echo "Usage: build_ipassurance.sh <target dir tree> <iCEcube2 dir>"
 	exit
 fi
 
-SCRIPTS_DIR=$1"scripts"
-ICECUBE2_DIR=$3
-WORKDIR=$2 
+#SCRIPTS_DIR=$1"scripts"
+ICECUBE2_DIR=$2
+WORKDIR=$1 
 
 
 for d in $( ls $WORKDIR ); do
@@ -30,7 +30,8 @@ for d in $( ls $WORKDIR ); do
 	fi
 
 	# Adam's OOC directory
-	OOC_DIR="${WORKDIR}/${d}"
+	#OOC_DIR="${WORKDIR}/${d}"
+	OOC_DIR="${WORKDIR}${d}"
 
 	# directory for iCEcube
 	PRJ_DIR="${OOC_DIR}/build"
@@ -47,7 +48,8 @@ for d in $( ls $WORKDIR ); do
 	# set up the .prj file
 	echo "Creating .prj file"
 	synlog=$proj_name"_syn.log"
-	python3 $SCRIPTS_DIR/iCEcube2/createPrjFile.py -s "$srcs" -o "$PRJ_DIR/$proj_name.prj" -n "$proj_name"
+	#python3 $SCRIPTS_DIR/iCEcube2/createPrjFile.py -s "$srcs" -o "$PRJ_DIR/$proj_name.prj" -n "$proj_name"
+	python3 createPrjFile.py -s "$srcs" -o "$PRJ_DIR/$proj_name.prj" -n "$proj_name"
 
 	# synthesize design with Synplify Pro
 	echo "Starting Synthesis"
@@ -66,10 +68,10 @@ for d in $( ls $WORKDIR ); do
 	# Start by setting variables that can be used by the tcl script
 	# We can scrape the top-level module name from the generated edif file
 	# For now we'll just use some other defaults to make this come together faster
-	impl_dir=$PRJ_DIR/$proj_name"_Implmnt/"
-	topmod=$(head -n 1 $PRJ_DIR/$impl_dir"$proj_name.edf" | cut -d " " -f 2)
-	tclsh $SCRIPTS_DIR/iCEcube2/run_backend.tcl $proj_name . iCE40HX8K-CT256 $topmod $ICECUBE2_DIR
-
+	impl_dir="${PRJ_DIR}/${proj_name}_Implmnt/"
+	topmod=$(head -n 1 "${impl_dir}/${proj_name}.edf" | cut -d " " -f 2)
+	tclsh run_backend.tcl $proj_name $PRJ_DIR "iCE40HX8K-CT256" $topmod $ICECUBE2_DIR
 	echo ""
+
 done
 
