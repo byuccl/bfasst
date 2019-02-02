@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+globdir=$1
+d=$2
+
+extractVerilogNetlist () {
+
+	# capture design
+	local design=$1
+
+	# capture working directory
+	local wkdir="${globdir}${design}"
+
+	# if an icestorm directory already exists, remove it
+	if [ -d "${wkdir}/icestorm" ]; then 
+		rm -rf "${wkdir}/icestorm"
+	fi
+
+	# make a new directory for icestorm files in the OOC directory
+	mkdir "${wkdir}/icestorm"
+
+	# copy bitstream into directory
+	#cp "${wkdir}/build/${design}_Implmnt"
+
+	# copy constraints file into directory
+
+	# unpack bitstream
+
+	# extract verilog netlist
+#	icedir="icestorm"
+#	bitstream="${designName}_bitmap.bin"
+#	mkdir $icedir
+#	cp "${lseOutDir}/sbt/outputs/bitmap/${bitstream}" $icedir
+#
+#	# unset LD_LIBRARY_PATH ...ugh
+#	unset LD_LIBRARY_PATH
+#
+#	# unpack bitstream
+#	asciiRep="${icedir}/unpacked_bitstream.asc"
+#	iceunpack "${icedir}/${bitstream}" > $asciiRep
+#
+#	# extract netlist
+#	netlistName="verilog_netlist.v"
+#	netlist="${icedir}/${netlistName}"
+#	icebox_vlog -p $constraints -s $asciiRep > $netlist
+}
+
+extractVerilogNetlist $d
