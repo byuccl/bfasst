@@ -73,10 +73,10 @@ build_design () {
 	# For now we'll just use some other defaults to make this come together faster
 	local impl_dir="${PRJ_DIR}/${proj_name}_Implmnt/"
 	local topmod=$(head -n 1 "${impl_dir}/${proj_name}.edf" | cut -d " " -f 2)
-	tclsh run_backend.tcl $proj_name $PRJ_DIR "iCE40HX8K-CT256" $topmod $ICECUBE2_DIR
+	local result=$(tclsh run_backend.tcl $proj_name $PRJ_DIR "iCE40HX8K-CT256" $topmod $ICECUBE2_DIR | tail -1)
 	
 	# report successes
-	if [ $? == 0 ]; then
+	if [[ $result != *"failed"* ]]; then
 		echo $d >> $OUTFILE
 	fi
 

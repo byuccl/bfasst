@@ -13,7 +13,6 @@ if [ $# != 2 ]; then
 	exit
 fi
 
-#SCRIPTS_DIR=$1"scripts"
 ICECUBE2_DIR=$2
 WORKDIR=$1 
 
