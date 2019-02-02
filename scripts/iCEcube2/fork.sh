@@ -45,9 +45,16 @@ build_design () {
 	echo $WORKDIR
 	echo $PRJ_DIR
 
-	# gather RTL sources
-	local srcs=$( find $OOC_DIR -name "*.v" )
-	srcs=$( printf "$srcs\n$( find $OOC_DIR -name "*.vhd" )" )
+	#local srcs=$( find $OOC_DIR -name "*.v" )
+	#srcs=$( printf "$srcs\n$( find $OOC_DIR -name "*.vhd" )" )
+
+	# write sources to file
+	#echo $srcs > "${OOC_DIR}/source_list"
+
+	# gather RTL sources 
+	bash gather_sources $OOC_DIR
+	srcs=$(cat "${OOC_DIR}/source_list")
+	
 
 	# set up the .prj file
 	echo "Creating .prj file"

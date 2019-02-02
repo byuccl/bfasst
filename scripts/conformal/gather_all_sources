@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+if [ $# -ne 1 ]; then
+
+	echo "usage: gather_all_sources <path-to-ooc-directory>"
+fi
+
+WORKDIR=$1
+
+for design in $(ls $WORKDIR); do
+
+	DIR="${WORKDIR}${design}"
+
+	# gather the design sources
+	../iCEcube2/gather_sources $DIR
+
+	caedmDir="research/target/${design}"
+	echo "making directory: ${caedmDir}"
+
+	# make the landing zone
+	ssh caedm mkdir $caedmDir
+	
+	# do the deed
+	scp $(cat "${DIR}/source_list") "caedm:${caedmDir}" > /dev/null
+
+done
