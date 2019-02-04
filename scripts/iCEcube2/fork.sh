@@ -20,6 +20,12 @@ OUTFILE="out.txt"
 ICECUBE2_DIR=$2
 WORKDIR=$1 
 
+# don't duplicate output file
+if [ -f "$OUTFILE" ]; then
+
+	rm $OUTFILE
+fi
+
 build_design () {
 
 	d=$1
