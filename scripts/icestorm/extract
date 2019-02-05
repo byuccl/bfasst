@@ -8,6 +8,10 @@ globdir=$1
 infile=$2
 outfile=$3
 
+if [ -f "$outfile" ]; then 
+	rm $outfile
+fi
+
 extractVerilogNetlist () {
 
 	# capture design

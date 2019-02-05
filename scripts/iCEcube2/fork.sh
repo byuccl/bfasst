@@ -51,16 +51,9 @@ build_design () {
 	echo $WORKDIR
 	echo $PRJ_DIR
 
-	#local srcs=$( find $OOC_DIR -name "*.v" )
-	#srcs=$( printf "$srcs\n$( find $OOC_DIR -name "*.vhd" )" )
-
-	# write sources to file
-	#echo $srcs > "${OOC_DIR}/source_list"
-
 	# gather RTL sources 
 	bash gather_sources $OOC_DIR
 	srcs=$(cat "${OOC_DIR}/source_list")
-	
 
 	# set up the .prj file
 	echo "Creating .prj file"
@@ -70,7 +63,7 @@ build_design () {
 	# synthesize design with Synplify Pro
 	echo "Starting Synthesis"
 	source synp_config.sh $ICECUBE2_DIR
-	$ICECUBE2_DIR/sbt_backend/bin/linux/opt/synpwrap/synpwrap -prj "$PRJ_DIR/$proj_name.prj" -log "$PRJ_DIR/$proj_name_syn.log"
+	$ICECUBE2_DIR/sbt_backend/bin/linux/opt/synpwrap/synpwrap -prj "$PRJ_DIR/$proj_name.prj" -log "${PRJ_DIR}/${synlog}"
 
 	# don't try to do implementation if we failed synthesis
 	if [ $? != 0 ]; then
