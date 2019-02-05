@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+if [ "$#" -ne 3 ]; then
+	echo "usgage: extract <ooc directory> <design list> <failure file>"
+fi
+
+globdir=$1
+infile=$2
+outfile=$3
+
+extractVerilogNetlist () {
+
+	# capture design
+	local design=$1
+
+	# capture working directory
+	local wkdir="${globdir}${design}"
+
+	# if an icestorm directory already exists, remove it
+	local icedir="${wkdir}/icestorm"
+	if [ -d $icedir ]; then 
+		rm -rf $icedir
+	fi
+
+	# make a new directory for icestorm files in the OOC directory
+	mkdir $icedir
+
+	# create a variable with the path to the outputs of interest
+	local outdir="${wkdir}/build/${design}_Implmnt/sbt/outputs/"
+
+	# copy bitstream into directory
+	local bitstream="${design#*_}_bitmap.bin"
+	local bitstreamPath="${outdir}bitmap/${bitstream}"
+	echo "looking for bitstream: ${bitstream}..."
+
+	# test for existence
+	if [ -f "$bitstreamPath" ]; then 
+		cp  $bitstreamPath $icedir
+	else
+		echo $design >> $outfile
+		return 1
+	fi
+
+	# copy constraints file into directory
+	local constraints="${design#*_}_sbt.pcf"
+	echo "looking for constraint file: ${constraints}..."
+	cp "${outdir}placer/${constraints}" $icedir
+
+	# unset LD_LIBRARY_PATH ...ugh
+	unset LD_LIBRARY_PATH
+
+	# unpack bitstream
+	echo "unpacking bitstream..."
+	local asciiRep="${icedir}/unpacked_bitstream.asc"
+	iceunpack "${icedir}/${bitstream}" > $asciiRep
+
+	# extract netlist
+	local netlistName="${design#*_}_extracted.v"
+	echo "extracting netlist to ${netlistName}..."
+	local netlist="${icedir}/${netlistName}"
+	icebox_vlog -p "${icedir}/$constraints" -s $asciiRep > $netlist
+}
+
+lines=`cat $infile`
+for line in $lines; do
+	extractVerilogNetlist ${line} &
+done
+
+wait

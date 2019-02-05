@@ -9,18 +9,29 @@
 # TODO: Consider adding a text file that can track compilation statuses
 
 if [ $# != 2 ]; then
-	echo "Usage: build_ipassurance.sh <target dir tree> <iCEcube2 dir>"
+	echo "Usage: build_ipassurance.sh <target dir tree> <iCEcube2 install dir>"
 	exit
 fi
 
+# enable job management
+set -m
+
+OUTFILE="out.txt"
 ICECUBE2_DIR=$2
 WORKDIR=$1 
 
+# don't duplicate output file
+if [ -f "$OUTFILE" ]; then
 
-for d in $( ls $WORKDIR ); do
+	rm $OUTFILE
+fi
+
+build_design () {
+
+	d=$1
 
 	echo "building $d"
-	proj_name=$(echo $d | cut -d '.' -f 1)
+	local proj_name=$(echo $d | cut -d '.' -f 1)
 	echo "Got design name $proj_name"
 
 	# remove the build directory if its there
@@ -30,24 +41,30 @@ for d in $( ls $WORKDIR ); do
 
 	# Adam's OOC directory
 	#OOC_DIR="${WORKDIR}/${d}"
-	OOC_DIR="${WORKDIR}${d}"
+	local OOC_DIR="${WORKDIR}${d}"
 
 	# directory for iCEcube
-	PRJ_DIR="${OOC_DIR}/build"
+	local PRJ_DIR="${OOC_DIR}/build"
 
 	# make design directory
 	mkdir $PRJ_DIR
 	echo $WORKDIR
 	echo $PRJ_DIR
 
-	# gather RTL sources
-	srcs=$( find $OOC_DIR -name "*.v" )
-	srcs=$( printf "$srcs\n$( find $OOC_DIR -name "*.vhd" )" )
+	#local srcs=$( find $OOC_DIR -name "*.v" )
+	#srcs=$( printf "$srcs\n$( find $OOC_DIR -name "*.vhd" )" )
+
+	# write sources to file
+	#echo $srcs > "${OOC_DIR}/source_list"
+
+	# gather RTL sources 
+	bash gather_sources $OOC_DIR
+	srcs=$(cat "${OOC_DIR}/source_list")
+	
 
 	# set up the .prj file
 	echo "Creating .prj file"
-	synlog=$proj_name"_syn.log"
-	#python3 $SCRIPTS_DIR/iCEcube2/createPrjFile.py -s "$srcs" -o "$PRJ_DIR/$proj_name.prj" -n "$proj_name"
+	local synlog=$proj_name"_syn.log"
 	python3 createPrjFile.py -s "$srcs" -o "$PRJ_DIR/$proj_name.prj" -n "$proj_name"
 
 	# synthesize design with Synplify Pro
@@ -67,10 +84,20 @@ for d in $( ls $WORKDIR ); do
 	# Start by setting variables that can be used by the tcl script
 	# We can scrape the top-level module name from the generated edif file
 	# For now we'll just use some other defaults to make this come together faster
-	impl_dir="${PRJ_DIR}/${proj_name}_Implmnt/"
-	topmod=$(head -n 1 "${impl_dir}/${proj_name}.edf" | cut -d " " -f 2)
-	tclsh run_backend.tcl $proj_name $PRJ_DIR "iCE40HX8K-CT256" $topmod $ICECUBE2_DIR
-	echo ""
+	local impl_dir="${PRJ_DIR}/${proj_name}_Implmnt/"
+	local topmod=$(head -n 1 "${impl_dir}/${proj_name}.edf" | cut -d " " -f 2)
+	local result=$(tclsh run_backend.tcl $proj_name $PRJ_DIR "iCE40HX8K-CT256" $topmod $ICECUBE2_DIR | tail -1)
+	
+	# report successes
+	if [[ $result != *"failed"* ]]; then
+		echo $d >> $OUTFILE
+	fi
 
+}
+
+for d in $( ls $WORKDIR ); do
+	build_design $d &
 done
 
+# wait for parallel jobs to finish
+while [ 1 ]; do fg 2> /dev/null; [ $? == 1 ] && break; done
