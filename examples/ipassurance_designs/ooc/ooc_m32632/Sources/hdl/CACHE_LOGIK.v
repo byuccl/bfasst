@@ -452,37 +452,37 @@ endmodule
 //	7. FILTCMP		Address Filter and Comparator
 //
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-module FILTCMP ( DRAMSZ, RADR, DRAM_A, ADR_EQU, TAGDAT );
-
-	input	 [2:0]	DRAMSZ;
-	input	[27:4]	RADR,DRAM_A;
-	
-	output			ADR_EQU;
-	output reg	[27:12]	TAGDAT;
-
-	reg	   [27:23]	adram;
-	
-	always @(DRAMSZ or RADR)
-		casex (DRAMSZ)
-		  3'b00x : TAGDAT = {5'd0,RADR[22:12]};	//   8 MB
-		  3'bx10 : TAGDAT = {3'd0,RADR[24:12]};	//  32 MB
-		  3'bx11 : TAGDAT = {2'd0,RADR[25:12]};	//  64 MB
-		  3'b100 : TAGDAT = {1'd0,RADR[26:12]};	// 128 MB
-		  3'b101 : TAGDAT =       RADR[27:12] ;	// 256 MB
-		endcase
-		
-	always @(DRAMSZ or DRAM_A)	// The address comparator is only used in the data cache.
-		casex (DRAMSZ)
-		  3'b00x : adram =  5'd0;					//   8 MB
-		  3'bx10 : adram = {3'd0,DRAM_A[24:23]};	//  32 MB
-		  3'bx11 : adram = {2'd0,DRAM_A[25:23]};	//  64 MB
-		  3'b100 : adram = {1'd0,DRAM_A[26:23]};	// 128 MB
-		  3'b101 : adram =       DRAM_A[27:23] ;	// 256 MB
-		endcase
-
-	assign ADR_EQU = {TAGDAT,RADR[11:4]} == {adram,DRAM_A[22:4]};
-
-endmodule
+//module FILTCMP ( DRAMSZ, RADR, DRAM_A, ADR_EQU, TAGDAT );
+//
+//	input	 [2:0]	DRAMSZ;
+//	input	[27:4]	RADR,DRAM_A;
+//	
+//	output			ADR_EQU;
+//	output reg	[27:12]	TAGDAT;
+//
+//	reg	   [27:23]	adram;
+//	
+//	always @(DRAMSZ or RADR)
+//		casex (DRAMSZ)
+//		  3'b00x : TAGDAT = {5'd0,RADR[22:12]};	//   8 MB
+//		  3'bx10 : TAGDAT = {3'd0,RADR[24:12]};	//  32 MB
+//		  3'bx11 : TAGDAT = {2'd0,RADR[25:12]};	//  64 MB
+//		  3'b100 : TAGDAT = {1'd0,RADR[26:12]};	// 128 MB
+//		  3'b101 : TAGDAT =       RADR[27:12] ;	// 256 MB
+//		endcase
+//		
+//	always @(DRAMSZ or DRAM_A)	// The address comparator is only used in the data cache.
+//		casex (DRAMSZ)
+//		  3'b00x : adram =  5'd0;					//   8 MB
+//		  3'bx10 : adram = {3'd0,DRAM_A[24:23]};	//  32 MB
+//		  3'bx11 : adram = {2'd0,DRAM_A[25:23]};	//  64 MB
+//		  3'b100 : adram = {1'd0,DRAM_A[26:23]};	// 128 MB
+//		  3'b101 : adram =       DRAM_A[27:23] ;	// 256 MB
+//		endcase
+//
+//	assign ADR_EQU = {TAGDAT,RADR[11:4]} == {adram,DRAM_A[22:4]};
+//
+//endmodule
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //

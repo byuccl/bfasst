@@ -3,6 +3,7 @@
 if [ $# -ne 3 ]; then
 
 	echo "usage: gather_all_sources <list-of-successful-designs> <path-to-ooc-directory> <remote-host>"
+	exit -1
 fi
 
 LIST=$1

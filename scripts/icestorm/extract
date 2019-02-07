@@ -2,6 +2,7 @@
 
 if [ "$#" -ne 3 ]; then
 	echo "usgage: extract <ooc directory> <design list> <failure file>"
+	exit -1
 fi
 
 globdir=$1
@@ -62,7 +63,7 @@ extractVerilogNetlist () {
 	local netlistName="${design#*_}_extracted.v"
 	echo "extracting netlist to ${netlistName}..."
 	local netlist="${icedir}/${netlistName}"
-	icebox_vlog -p "${icedir}/$constraints" -s $asciiRep > $netlist
+	icebox_vlog -P "${icedir}/$constraints" -s $asciiRep > $netlist
 }
 
 lines=`cat $infile`
