@@ -63,6 +63,7 @@ extractVerilogNetlist () {
 	local netlistName="${design#*_}_extracted.v"
 	echo "extracting netlist to ${netlistName}..."
 	local netlist="${icedir}/${netlistName}"
+	# like -p, enable some hacks for the PCF files created by the iCEcube2 PLACER
 	icebox_vlog -P "${icedir}/$constraints" -s $asciiRep > $netlist
 }
 

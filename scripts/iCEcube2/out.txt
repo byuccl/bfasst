@@ -1,6 +1,7 @@
-ooc_mips_16
 ooc_uart2spi
 ooc_counter
+ooc_mips_16
+ooc_lfsr_randgen
 ooc_natalius_8bit_risc
 ooc_random_pulse_generator
 ooc_bcd_adder
@@ -15,5 +16,5 @@ ooc_atahost
 ooc_pid_simple
 ooc_pid
 ooc_big_counter
-ooc_graphiti
 ooc_neo430
+ooc_graphiti
