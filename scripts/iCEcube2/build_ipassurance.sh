@@ -39,9 +39,10 @@ for d in $( ls ); do
     echo "Starting Synthesis"
     source $SCRIPTS_DIR/iCEcube2/synp_config.sh
     $ICECUBE2_DIR/sbt_backend/bin/linux/opt/synpwrap/synpwrap -prj "$proj_name.prj" -log "$proj_name_syn.log"
-    echo "Exit status $?"
+    exit_status=$?
+    echo "Exit status $exit_status"
     # Don't try to do implementation if we failed synthesis
-    if [ $? != 0 ]; then
+    if [ $exit_status != 0 ]; then
 	echo "Aborting before implementation"
 	cd ../
 	#rm -rf build

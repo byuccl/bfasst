@@ -54,9 +54,10 @@ def main():
                 for src in srcs:
                     if src[-4:] == ".vhd":
                         # Yosys doesn't natively support VHDL. 
-                        print("Ignoring VHDL file", src, " -- VHDL not supported")
+                        #print("Ignoring VHDL file", src, " -- VHDL not supported")
+                        print_or_write(of, "read_vhdl " + src + '\n')
                     elif src[-2:] == ".v":
-                        print_or_write(of, "read_verilog " + src + '\n');
+                        print_or_write(of, "read_verilog " + src + '\n')
                     else:
                         print("Unrecognized file type", src)
     print_or_write(of, '\n');
