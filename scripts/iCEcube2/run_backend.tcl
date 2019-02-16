@@ -11,7 +11,7 @@ set device [lindex $argv 2]
 set top_module [lindex $argv 3]
 set iCEcube2_dir [lindex $argv 4]
 # maybe pin permutations are causing failures?
-set tool_options ":placer --no_autolutcascade :router --no_pin_permutation"
+set tool_options ":placer --no_autolutcascade :router --no_pin_permutation --no_timing_driven"
 #set tool_options ""
 
 #set device iCE40HX8K-CT256

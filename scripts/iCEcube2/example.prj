@@ -24,7 +24,7 @@ set_option -write_vhdl 0
 
 # Silicon Blue iCE40
 set_option -maxfan 10000
-set_option -disable_io_insertion 1
+set_option -disable_io_insertion 0
 set_option -pipe 0
 set_option -retiming 0
 set_option -update_models_cp 0
