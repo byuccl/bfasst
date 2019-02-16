@@ -55,6 +55,9 @@ build_design () {
 	bash gather_sources $OOC_DIR
 	srcs=$(cat "${OOC_DIR}/source_list")
 
+	# appy syn_preserve to sources
+	python constrainOptimizer.py $srcs
+
 	# set up the .prj file
 	echo "Creating .prj file"
 	local synlog=$proj_name"_syn.log"
