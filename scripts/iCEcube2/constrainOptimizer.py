@@ -141,7 +141,7 @@ def constrainVHDL(srcFile):
                     writeAttr = False
 
                     # add attribute line 
-                    newFile.write("attribute syn_keep : boolean\n")
+                    newFile.write("attribute syn_keep : boolean;\n")
 
     # remove old file
     remove(srcFile)
@@ -163,7 +163,7 @@ def main():
     
         elif ".v" in rtlFile:
     
-            constrainVerilog(srcFile)
+            constrainVerilog(rtlFile)
     
         else:
     
