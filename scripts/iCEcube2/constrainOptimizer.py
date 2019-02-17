@@ -37,10 +37,10 @@ def constrainVerilog(srcFile):
                     if "reg" in line or "wire" in line:
 
                         # if the declaration hasn't been constrained
-                        if "syn_keep" not in line:
+                        if "syn_preserve" not in line:
 
                             # do the deed
-                            newFile.write(line.replace(";", " /* synthesis syn_keep = 1 */;"))
+                            newFile.write(line.replace(";", " /* synthesis syn_preserve=1 */;"))
                     # don't change the line, but make sure it gets copied
                     else:
                         newFile.write(line)
@@ -68,8 +68,7 @@ def constrainVHDL(srcFile):
         with open(srcFile) as oldFile:
 
             # tracking architecture blocks and signal names
-            inArchBlock = False
-            writeAttr = False
+            inEntity = False
             signals = []
 
             # consider each line in file
@@ -78,70 +77,88 @@ def constrainVHDL(srcFile):
                 # because VHDL is case-insensitive, convert line to lowercase
                 line = line.lower()
 
+                # strip comments
+                line = line.split("--", 1)[0]
+
                 # if line contains architecture declaration, start tracking signal names
                 #if "architecture" in line and not "--" in line:
-                if "architecture" in line:
+                if "entity" in line:
 
-                    # make sure comments come after "architecture" (we're not IN a comment... why would use architecture as a keyword???)
-                    if not "--" in line or line.find("architecture") < line.find("--"):
-
-                        # set arch block flag
-                        print "entering arch block"
-                        inArchBlock = True
-                        writeAttr = True
+                    # set arch block flag
+                    print "entering entity"
+                    inEntity = True
 
                 # if we're in an arch block and we find this, the file is already done
-                if inArchBlock and "syn_keep" in line:
+                if inEntity and "syn_preserve" in line:
                     alreadyDone = True
                     print "already done"
                     return
 
                 # if in an architecture block and we find the word "begin", drop the line
-                if inArchBlock and "begin" in line:
-                    print "leaving arch block"
-                    inArchBlock = False;
+                if inEntity and "end" in line:
+                    print "leaving entity"
+                    inEntity = False;
 
-                    # start new line
-                    newFile.write("attribute syn_keep of ")
+                    # make sure there were new signals
+                    if signals:
 
-                    # add each signal name
-                    first = True
-                    for signal in signals:
-
-                        if first:
-                            first = False
-
-                        else:
-                            newFile.write(", ")
-                            
-                        newFile.write(signal)
-
-                    newFile.write(" : signal is true;\n")
+                        # add attribute
+                        newFile.write("\tattribute syn_preserve : boolean;\n")
+                        # start new line
+                        newFile.write("\tattribute syn_preserve of ")
+    
+                        # add each signal name
+                        first = True
+    
+                        for signal in signals:
+    
+                            if first:
+                                first = False
+    
+                            else:
+                                newFile.write(", ")
+                                
+                            newFile.write(signal)
+    
+                        newFile.write(" : signal is true;\n")
 
                 # when in an arch block, look for the word "signal"
-                if inArchBlock and "signal" in line:
+                #if inEntity and ":" in line:
+                if inEntity:
 
-                    # split line on whitespace
-                    splitSignals = line.split()
+                    # trim everything after the first occurence of ":"
+                    signalLine = line.split(":", 1)[0]
 
-                    # collect signal name (should be second word)
-                    signals.append(splitSignals[1])
+                    # remove occurrences of keywords
+                    dontRead = ["entity", "function", "alias", "component", "generic", "constant", "port"]
+                    if all(reservedWord not in signalLine for reservedWord in dontRead):
 
-                    print "adding signal", splitSignals[1]
+                        # split line on whitespace and collect signal names
+                        for maybeSignal in signalLine.split():
 
-                # pass line to new file without changing it
-                newFile.write(line)
+                            # don't include reserved words
+                            reservedWords = ["signal",  "is", "of", "attribute", "variable", "process", "procedure"]
+                            if all(maybeSignal != reservedWord for reservedWord in reservedWords):
 
-                # if we just entered an attribute block
-                if inArchBlock and writeAttr:
+                                # strip commas, semicolons, and close parenthesis
+                                signal = maybeSignal.split(",", 1)[0]
+                                signal = signal.split(";", 1)[0]
+                                signal = signal.split(")", 1)[0]
 
-                    print "adding syn_keep attribute"
+                                if signal.strip():
+                                    print "adding signal", signal
+                                    signals.append(signal)
 
-                    # don't come back here until we go out and back in
-                    writeAttr = False
+                # pass non-empty line to new file without otherwise changing it
+                if line.strip():
 
-                    # add attribute line 
-                    newFile.write("attribute syn_keep : boolean;\n")
+                    if line.endswith("\n"):
+
+                        newFile.write(line)
+
+                    else:
+
+                        newFile.write(line + "\n")
 
     # remove old file
     remove(srcFile)
