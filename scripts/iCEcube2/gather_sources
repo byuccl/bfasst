@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+if [ $# -ne 1 ]; then
+	echo "usage gather_sources <path-to-ooc-directory>"
+fi
+
+OOC_DIR=$1 
+
+# gather RTL sources 
+srcs=$( find $OOC_DIR -name "*.v" )
+srcs=$( printf "$srcs\n$( find $OOC_DIR -name "*.vhd" )" )
+
+# delete file if already there
+srcPath="${OOC_DIR}/source_list"
+if [ -f "$srcPath" ]; then 
+	
+	rm $srcPath
+fi
+
+# write sources to file
+echo "writing sources to: ${srcPath}..."
+
+for src in $srcs; do 
+
+	if [[ $src != *extracted* && $src != *sbt* && $src != *_tb* && $src != *_bench* ]]; then
+
+		echo $src >> $srcPath
+	fi
+done
