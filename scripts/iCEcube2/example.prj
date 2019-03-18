@@ -19,7 +19,7 @@ set_option -part_companion ""
 
 # mapper_options
 set_option -frequency 1.000000
-set_option -write_verilog 0
+set_option -write_verilog 1
 set_option -write_vhdl 0
 
 # Silicon Blue iCE40

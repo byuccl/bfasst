@@ -69,6 +69,7 @@ def constrainVHDL(srcFile):
 
             # tracking architecture blocks and signal names
             inEntity = False
+            inGeneric = False
             signals = []
 
             # consider each line in file
@@ -87,6 +88,10 @@ def constrainVHDL(srcFile):
                     # set arch block flag
                     print "entering entity"
                     inEntity = True
+
+                if "generic" in line:
+
+                    inGeneric = True
 
                 # if we're in an arch block and we find this, the file is already done
                 if inEntity and "syn_preserve" in line:
