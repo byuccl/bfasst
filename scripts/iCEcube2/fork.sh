@@ -56,7 +56,7 @@ build_design () {
 	srcs=$(cat "${OOC_DIR}/source_list")
 
 	# appy syn_preserve to sources
-	python constrainOptimizer.py $srcs
+	#python constrainOptimizer.py $srcs
 
 	# set up the .prj file
 	echo "Creating .prj file"
