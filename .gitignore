@@ -7,3 +7,6 @@
 **/build
 **/icestorm
 **/source_list
+
+# text files
+*.txt
