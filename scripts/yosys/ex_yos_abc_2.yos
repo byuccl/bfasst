@@ -1,0 +1,6 @@
+# This script is part of the RTL --> Yosys --> ABC flow
+# Because ABC does weird things when writing verilog (specifically, it
+#   makes a new clock signal), we read the ABC output back to yosys
+#   and let yosys create the output verilog
+read_blif abc_out.blif
+write_verilog yosys_abc_out.v

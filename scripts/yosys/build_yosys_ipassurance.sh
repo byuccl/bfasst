@@ -51,7 +51,7 @@ for d in $( ls $TARG_DIR -d */ ); do
  #   fi
     
     # Make the yosys script file
-    python3 $SCRIPTS_DIR/yosys/createYosScript.py -s "$srcs" -o "$yosys_proj_dir/script.yos" 
+    python3 $SCRIPTS_DIR/yosys/createYosScript.py -s "$srcs" -o "$yosys_proj_dir/script.yos" -i "$SCRIPTS_DIR/yosys/example_yosys.yos"
 done
     
 # Loop through the created yosys directory and run yosys with the generated

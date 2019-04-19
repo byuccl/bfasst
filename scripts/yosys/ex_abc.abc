@@ -1,0 +1,6 @@
+read_blif yosys_out.blif
+strash
+lcorr
+scleanup
+ssweep
+write_blif abc_out.blif

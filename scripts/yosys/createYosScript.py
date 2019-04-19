@@ -3,10 +3,7 @@ import sys
 import getopt
 import os
 
-example_yos = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                           "example_yosys.yos")
-
-usage_str = "createPrjFile.py -s <source files> -o <yos file>\n\
+usage_str = "createPrjFile.py -s <source files> -o <yos file> -i <input yos file>\n\
 Multiple source files must be enclosed in quotes \n\
   ex createPrjFile.py -s \"src1.v src2.v\"\
 If -o is not specified, prints to stdout"
@@ -21,8 +18,9 @@ def main():
     # Read and parse args
     outfile = None
     srcs = None
+    inyos = None
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "-hs:o:",["help"])
+        opts, args = getopt.getopt(sys.argv[1:], "-hs:o:i:",["help"])
     except getopt.GetoptError as err:
         print(err)
         print(usage_str)
@@ -34,6 +32,8 @@ def main():
             srcs = a.split()
         elif o == '-o':
             outfile = a
+        elif o == '-i':
+            inyos = a
         else:
             assert False, "unhandled option"
             
@@ -47,7 +47,7 @@ def main():
             print("Could not open output file!")
             sys.exit(2)
             
-    with open(example_yos) as prj_file:
+    with open(inyos) as prj_file:
         for line in prj_file:
             print_or_write(of, line)
             if line.strip() == "# Read verilog input files":
@@ -56,7 +56,7 @@ def main():
                         # Yosys doesn't natively support VHDL. 
                         #print("Ignoring VHDL file", src, " -- VHDL not supported")
                         print_or_write(of, "read_vhdl " + src + '\n')
-                    elif src[-2:] == ".v":
+                    elif src[-2:] == ".v" or src[-3:] == ".vh":
                         print_or_write(of, "read_verilog " + src + '\n')
                     else:
                         print("Unrecognized file type", src)

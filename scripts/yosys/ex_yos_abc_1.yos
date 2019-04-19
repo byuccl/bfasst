@@ -1,5 +1,6 @@
 # Simple example yosys script
 # Used to generate yosys scripts to build specific projects
+# This script is used in the RTL --> Yosys --> ABC flow
 
 # Read verilog input files
 # read_verilog file.v
@@ -25,8 +26,8 @@ wreduce
 #cleanup
 clean
 
-# Write the output (non-techmapped) netlist
-write_verilog yosys_synth.v
+# Run synth so we can generate meaningful blif
+synth
 
-# At some point, this script could be extended to allow techmapping;
-#   let's not worry about that for now, though.
+# Now create the blif output
+write_blif yosys_out.blif
