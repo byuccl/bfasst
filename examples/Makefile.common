@@ -2,6 +2,8 @@ include $(LEVEL)/Makefile.config
 
 all: edif
 
+VERILOG_FILE := $(NAME).v
+
 ############## Intermediate Files ###################
 TEMP_DIR := temp
 EDIF_FILE = $(TEMP_DIR)/$(NAME).edf
@@ -9,6 +11,7 @@ EDIF_FILE_NO_EXT = $(TEMP_DIR)/$(NAME)
 BITMAP_FILE = $(TEMP_DIR)/$(NAME).bin
 REVERSE_NETLIST_FILE = $(TEMP_DIR)/$(NAME)_reversed.v
 CONSTRAINT_FILE = $(TEMP_DIR)/$(NAME).pcf
+CONFORMAL_LOG = $(TEMP_DIR)/conformal.log
 
 $(TEMP_DIR):
 	mkdir $@
@@ -18,6 +21,8 @@ edif: $(EDIF_FILE)
 bit: $(BITMAP_FILE) $(CONSTRAINT_FILE)
 
 reverse: $(REVERSE_NETLIST_FILE)
+
+compare: $(CONFORMAL_LOG)
 
 ############## iCEcube2 flow ###################
 IC2_PROJ_DIR := ic2_proj
@@ -45,7 +50,6 @@ $(EDIF_FILE): $(IC2_PROJ_FILE) | $(IC2_PROJ_DIR)
 	export SBT_DIR=$(IC2_DIR)/sbt_backend/; \
 	cd $(IC2_PROJ_DIR) && $(IC2_DIR)/LSE/bin/lin64/synthesis -f $(NAME)_lse.prj
 
-
 $(IC2_PROJ_DIR):
 	mkdir $@
 
@@ -70,7 +74,7 @@ $(CONSTRAINT_FILE): $(IC2_PLACEMENT_CONSTRAINT_FILE)
 ICESTORM_PROJ_DIR := icestorm
 ICESTORM_BIT_ASC_FILE = $(ICESTORM_PROJ_DIR)/$(NAME).asc
 
-$(REVERSE_NETLIST_FILE): $(ICESTORM_BIT_ASC_FILE)
+$(REVERSE_NETLIST_FILE): $(ICESTORM_BIT_ASC_FILE) $(CONSTRAINT_FILE)
 	$(ICESTORM_DIR)/icebox/icebox_vlog.py -p $(CONSTRAINT_FILE) -s $< > $@
 
 $(ICESTORM_BIT_ASC_FILE): $(BITMAP_FILE) | $(ICESTORM_PROJ_DIR)
@@ -79,8 +83,39 @@ $(ICESTORM_BIT_ASC_FILE): $(BITMAP_FILE) | $(ICESTORM_PROJ_DIR)
 $(ICESTORM_PROJ_DIR):
 	mkdir $(ICESTORM_PROJ_DIR)
 
+############## Conformal flow #################
+CONFORMAL_PROJ_DIR := conformal
+CONFORMAL_DO_FILE = $(CONFORMAL_PROJ_DIR)/compare.do
+
+$(CONFORMAL_LOG): conformal_compare
+	scp caedm:$(CONFORMAL_WORK_DIR)/log.txt $@
+
+conformal_compare: conformal_send_files
+	ssh caedm "source /ee2/Cadence/local/designkits/ee451/cdssetup/bashrc_cadence && \
+		cd $(CONFORMAL_WORK_DIR) && \
+		/ee2/Cadence/CONFRML152/bin/lec -Dofile compare.do -Logfile log.txt -NOGui" || true
+
+conformal_send_files: $(CONFORMAL_DO_FILE) $(REVERSE_NETLIST_FILE)
+	scp $(VERILOG_FILE) caedm:$(CONFORMAL_WORK_DIR)/
+	scp $(REVERSE_NETLIST_FILE) caedm:$(CONFORMAL_WORK_DIR)/
+	scp $< caedm:$(CONFORMAL_WORK_DIR)
+
+$(CONFORMAL_DO_FILE): $(MAKEFILES) | $(CONFORMAL_PROJ_DIR)
+	echo "" > $@
+	echo "read library -Golden -Replace -sensitive -Verilog $(CONFORMAL_LIBS_DIR)/sb_ice_syn.v -nooptimize" >> $@
+	echo "read design $(CONFORMAL_WORK_DIR)/$(NAME).v -Verilog -Golden -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply" >> $@
+	echo "read design $(CONFORMAL_WORK_DIR)/$(NAME)_reversed.v -Verilog -Revised -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply" >> $@
+	echo "set system mode lec" >> $@
+	echo "add compared points -all" >> $@
+	echo "compare" >> $@
+	echo "exit -Force" >> $@
+
+
+$(CONFORMAL_PROJ_DIR):
+	mkdir $@
+
 ############## Misc Targets ###################
-.PHONY: clean
+.PHONY: clean conformal_send_files
 
 clean:
-	rm -rf $(IC2_PROJ_DIR) $(TEMP_DIR) $(ICESTORM_PROJ_DIR)
+	rm -rf $(IC2_PROJ_DIR) $(TEMP_DIR) $(ICESTORM_PROJ_DIR) $(CONFORMAL_PROJ_DIR)
