@@ -1,15 +1,5 @@
 #!/usr/bin/env tclsh
 
-set numArgs 6
-
-if { $argc != $numArgs } {
-
-	puts "expected $numArgs arguments, got $argc"
-	exit -1
-}
-
-puts "hello from cMonster"
-
 set device iCE40HX1K-TQ144
 set top_module [lindex $argv 0]
 set proj_dir [pwd]
