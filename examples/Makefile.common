@@ -1,0 +1,54 @@
+include $(LEVEL)/Makefile.config
+
+all: edif
+
+############## Intermediate Files ###################
+TEMP_DIR := temp
+EDIF_FILE = $(TEMP_DIR)/$(NAME).edif
+
+$(TEMP_DIR):
+	mkdir $@
+
+edif: $(EDIF_FILE)
+
+############## iCEcube2 flow ###################
+IC2_PROJ_DIR := ic2_proj
+IC2_PROJ_FILE := $(IC2_PROJ_DIR)/$(NAME)_lse.prj
+IC2_TCL_FILE := $(IC2_PROJ_DIR)/$(NAME)_run.tcl
+IC2_RESOURCES = $(RESOURCES)/iCEcube2
+IC2_LOG = $(IC2_PROJ_DIR)/log.txt
+
+bit: $(IC2_TCL_FILE) $(EDIF_FILE)
+	cd $(IC2_PROJ_DIR) && tclsh $(NAME)_run.tcl \
+		$(NAME) $(IC2_PROJ_DIR) ../$(EDIF_FILE)
+
+$(EDIF_FILE): $(IC2_PROJ_FILE) | $(IC2_PROJ_DIR)
+	#$(IC2_PATH)
+	# export LD_LIBRARY_PATH=$(IC2_DIR)/sbt_backend/bin/linux/opt/synpwrap/:$(LD_LIBRARY_PATH); \
+	# export SYNPLIFY_PATH=$(IC2_DIR)/synpbase; \
+	# export SBT_DIR=$(IC2_DIR)/sbt_backend/; \
+	# $(IC2_DIR)/sbt_backend/bin/linux/opt/synpwrap/synpwrap -prj $(IC2_PROJ_FILE) -log $(IC2_LOG)
+
+	export LD_LIBRARY_PATH=$(IC2_DIR)/LSE/bin/lin64/:$(LD_LIBRARY_PATH); \
+	export FOUNDRY=$(IC2_DIR)/LSE; \
+	export SBT_DIR=$(IC2_DIR)/sbt_backend/; \
+	cd $(IC2_PROJ_DIR) && $(IC2_DIR)/LSE/bin/lin64/synthesis -f $(NAME)_lse.prj
+
+
+$(IC2_PROJ_DIR):
+	mkdir $@
+
+$(IC2_PROJ_FILE): $(MAKEFILES) | $(IC2_PROJ_DIR) $(TEMP_DIR)
+	cp $(IC2_RESOURCES)/template.prj $@
+	echo "-p .." >> $@
+	echo "-ver $(NAME).v" >> $@
+	echo "-output_edif ../$(EDIF_FILE)" >> $@
+	echo "-logfile log.txt" >> $@
+	
+$(IC2_TCL_FILE):
+	cp $(IC2_RESOURCES)/template.tcl $@
+
+clean:
+	rm -rf $(IC2_PROJ_DIR)
+	
+
