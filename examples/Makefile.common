@@ -4,6 +4,13 @@ all: edif
 
 VERILOG_FILE := $(NAME).v
 
+############## Relative Paths ###################
+RESOURCES = $(ICEMACHINE_PATH)/resources
+SCRIPTS = $(ICEMACHINE_PATH)/scripts
+
+MAKEFILES = Makefile $(LEVEL)/Makefile.common
+
+
 ############## Intermediate Files ###################
 TEMP_DIR := temp
 EDIF_FILE = $(TEMP_DIR)/$(NAME).edf
@@ -75,7 +82,7 @@ ICESTORM_PROJ_DIR := icestorm
 ICESTORM_BIT_ASC_FILE = $(ICESTORM_PROJ_DIR)/$(NAME).asc
 
 $(REVERSE_NETLIST_FILE): $(ICESTORM_BIT_ASC_FILE) $(CONSTRAINT_FILE)
-	$(ICESTORM_DIR)/icebox/icebox_vlog.py -p $(CONSTRAINT_FILE) -s $< > $@
+	$(ICESTORM_DIR)/icebox/icebox_vlog.py -P $(CONSTRAINT_FILE) -s $< > $@
 
 $(ICESTORM_BIT_ASC_FILE): $(BITMAP_FILE) | $(ICESTORM_PROJ_DIR)
 	$(ICESTORM_DIR)/icepack/iceunpack $< > $@
@@ -86,6 +93,7 @@ $(ICESTORM_PROJ_DIR):
 ############## Conformal flow #################
 CONFORMAL_PROJ_DIR := conformal
 CONFORMAL_DO_FILE = $(CONFORMAL_PROJ_DIR)/compare.do
+CONFORMAL_DO_FILE_GUI = $(CONFORMAL_PROJ_DIR)/compare_gui.do
 
 $(CONFORMAL_LOG): conformal_compare
 	scp caedm:$(CONFORMAL_WORK_DIR)/log.txt $@
@@ -95,23 +103,48 @@ conformal_compare: conformal_send_files
 		cd $(CONFORMAL_WORK_DIR) && \
 		/ee2/Cadence/CONFRML152/bin/lec -Dofile compare.do -Logfile log.txt -NOGui" || true
 
+conformal_compare_gui: conformal_send_files_gui
+	ssh caedm "source /ee2/Cadence/local/designkits/ee451/cdssetup/bashrc_cadence && \
+		cd $(CONFORMAL_WORK_DIR) && \
+		/ee2/Cadence/CONFRML152/bin/lec -Dofile compare_gui.do -Logfile log.txt" || true
+
 conformal_send_files: $(CONFORMAL_DO_FILE) $(REVERSE_NETLIST_FILE)
 	scp $(VERILOG_FILE) caedm:$(CONFORMAL_WORK_DIR)/
 	scp $(REVERSE_NETLIST_FILE) caedm:$(CONFORMAL_WORK_DIR)/
 	scp $< caedm:$(CONFORMAL_WORK_DIR)
 
+conformal_send_files_gui: $(CONFORMAL_DO_FILE_GUI) $(REVERSE_NETLIST_FILE)
+	scp $(VERILOG_FILE) caedm:$(CONFORMAL_WORK_DIR)/
+	scp $(REVERSE_NETLIST_FILE) caedm:$(CONFORMAL_WORK_DIR)/
+	scp $< caedm:$(CONFORMAL_WORK_DIR)
+
 $(CONFORMAL_DO_FILE): $(MAKEFILES) | $(CONFORMAL_PROJ_DIR)
+	echo "" > $@	
+	echo "read library -Golden -Replace -sensitive -Verilog $(CONFORMAL_LIBS_DIR)/sb_ice_syn.v -nooptimize" >> $@
+	echo "read design $(CONFORMAL_WORK_DIR)/$(NAME).v -Verilog -Golden -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply" >> $@
+	echo "read design $(CONFORMAL_WORK_DIR)/$(NAME)_reversed.v -Verilog -Revised -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply" >> $@
+	echo "add renaming rule vector_expand %s\[%d\] @1_@2  -Both -map" >> $@
+	echo "set system mode lec" >> $@
+	echo "add compared points -all" >> $@
+	echo "compare" >> $@
+	echo "report verification" >> $@
+	echo "exit -Force" >> $@
+
+$(CONFORMAL_DO_FILE_GUI): $(MAKEFILES) | $(CONFORMAL_PROJ_DIR)
 	echo "" > $@
 	echo "read library -Golden -Replace -sensitive -Verilog $(CONFORMAL_LIBS_DIR)/sb_ice_syn.v -nooptimize" >> $@
 	echo "read design $(CONFORMAL_WORK_DIR)/$(NAME).v -Verilog -Golden -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply" >> $@
 	echo "read design $(CONFORMAL_WORK_DIR)/$(NAME)_reversed.v -Verilog -Revised -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply" >> $@
+	echo "add renaming rule vector_expand %s\[%d\] @1_@2  -Both -map" >> $@
 	echo "set system mode lec" >> $@
-	echo "add compared points -all" >> $@
+	echo "add compared points -all" >> $@	
 	echo "compare" >> $@
-	echo "exit -Force" >> $@
+	echo "report verification" >> $@
 
+extract_equivalence: $(CONFORMAL_LOG)
+	$(SCRIPTS)/parse_conformal_output.py $<
 
-$(CONFORMAL_PROJ_DIR):
+$(CONFORMAL_PROJ_DIR): 
 	mkdir $@
 
 ############## Misc Targets ###################
