@@ -3,8 +3,8 @@
 
 #device
 -a SBTiCE40
--d iCE40HX1K
--t TQ144
+-d iCE40HX8K
+-t CT256
 
 #options
 -frequency 200

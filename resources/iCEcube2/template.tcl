@@ -1,6 +1,6 @@
 #!/usr/bin/env tclsh
 
-set device iCE40HX1K-TQ144
+set device iCE40HX8K-CT256
 set top_module [lindex $argv 0]
 set proj_dir [pwd]
 set output_dir [lindex $argv 1]
