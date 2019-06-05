@@ -8,26 +8,32 @@ EXAMPLES = $(BFASST_PATH)/examples
 include $(RESOURCES)/Makefile_colors.inc
 MAKEFLAGS += --no-print-directory
 
+
 ################## Paths ################
 TEMP_DIR := temp
 
-TEMP_DESIGNS_DIRS = $(foreach design, $(sort $(DESIGNS)), $(design).log)
+DESIGNS_LOGS = $(foreach design, $(sort $(DESIGNS)), $(design).log)
 
-all: $(TEMP_DESIGNS_DIRS) 
+all: $(DESIGNS_LOGS) 
 	
-%.log:
+print:
+	@echo $(DESIGNS)
+
+$(DESIGNS_LOGS): %.log:
 	@printf $(COLOR_GREEN)%-30s$(NO_COLOR) $*
-	@printf %-20s $@
+	@mkdir -p $(dir $@)
 	@cd $(EXAMPLES)/$* && make compare > $(realpath ./)/$@ 2>&1 || true
 	@cd $(EXAMPLES)/$* && make report_status
 	@echo
 
 clean:
-	rm -f *.log
+	@echo -e $(COLOR_RED) Cleaning log files $(NO_COLOR)
+	@rm -f *.log
+	@$(foreach design, $(DESIGNS_LOGS), rm -rf $(dir $(design));)
 
 clean_deep:
 	$(foreach dir, $(DESIGNS), cd $(EXAMPLES)/$(dir) && make clean;)
 
-.PHONY:all
+.PHONY: all $(DESIGNS_LOGS)
 
 # .PRECIOUS: %.log

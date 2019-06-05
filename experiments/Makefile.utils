@@ -1,0 +1,8 @@
+##############  Paths ###################
+BFASST_PATH := $(realpath $(LEVEL)/..)
+EXAMPLES = $(BFASST_PATH)/examples
+
+define all_designs_in_dir
+    $(addprefix $1/,$(filter-out Makefile.inc,$(notdir $(wildcard $(EXAMPLES)/$1/*))))
+endef
+

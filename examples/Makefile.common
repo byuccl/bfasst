@@ -31,7 +31,8 @@ CONSTRAINT_FILE = $(TEMP_DIR)/$(NAME).pcf
 CONFORMAL_LOG = $(TEMP_DIR)/conformal.log
 
 compare_and_report_status:
-	@make compare 2>/dev/null || true
+	@make compare || true
+# @make compare 2>/dev/null || true
 	@make report_status; echo ""
 	
 report_status:
@@ -51,14 +52,17 @@ $(TEMP_DIR):
 
 ############## iCEcube2 flow ###################
 IC2_PROJ_DIR := ic2
-IC2_PROJ_FILE := $(IC2_PROJ_DIR)/$(NAME)_lse.prj
+IC2_LSE_PROJ_FILE := $(IC2_PROJ_DIR)/$(NAME)_lse.prj
+IC2_SP_PROJ_FILE := $(IC2_PROJ_DIR)/$(NAME)_sp.prj
 IC2_TCL_FILE := $(IC2_PROJ_DIR)/$(NAME)_run.tcl
 IC2_RESOURCES = $(RESOURCES)/iCEcube2
-IC2_SYNTH_LOG = $(IC2_PROJ_DIR)/synth_log.txt
-IC2_IMPL_LOG = $(IC2_PROJ_DIR)/impl_log.txt
+IC2_SYNTH_LOG = $(IC2_PROJ_DIR)/synth.log
+IC2_IMPL_LOG = $(IC2_PROJ_DIR)/impl.log
 IC2_BITMAP_FILE = $(IC2_PROJ_DIR)/sbt/outputs/bitmap/$(NAME)_bitmap.bin
 IC2_PLACEMENT_CONSTRAINT_FILE = $(IC2_PROJ_DIR)/sbt/outputs/placer/$(NAME)_sbt.pcf
+IC2_USE_LSE_FLOW = 0
 
+### Implementation
 $(IC2_BITMAP_FILE): $(IC2_TCL_FILE) $(EDIF_FILE)
 	@echo -e $(COLOR_YELLOW) Running iCEcube2 Implementation \> $(IC2_IMPL_LOG) $(NO_COLOR)
 	@export SBT_DIR=$(IC2_DIR)/sbt_backend/; \
@@ -66,20 +70,37 @@ $(IC2_BITMAP_FILE): $(IC2_TCL_FILE) $(EDIF_FILE)
 		$(NAME) . ../$(EDIF_FILE_NO_EXT) > ../$(IC2_IMPL_LOG)
 	@$(SCRIPTS)/check_ic2_design_fit.py $(IC2_IMPL_LOG)
 
+### Synthesis flow
+ifeq ($(IC2_USE_LSE_FLOW), 1)
+IC2_PROJ_FILE = $(IC2_LSE_PROJ_FILE)
+else
+IC2_PROJ_FILE = $(IC2_SP_PROJ_FILE)
+endif
+
+# Synthesis with LSE or Synplify-Pro
 $(EDIF_FILE): $(IC2_PROJ_FILE) | $(IC2_PROJ_DIR)
-	@echo -e $(COLOR_YELLOW) Running iCEcube2 Synthesis \> $(IC2_SYNTH_LOG) $(NO_COLOR)
+ifeq ($(IC2_USE_LSE_FLOW), 1)
+	@echo -e $(COLOR_YELLOW) Running Lattice LSE Synthesis \> $(IC2_SYNTH_LOG) $(NO_COLOR)
 	@export LD_LIBRARY_PATH=$(IC2_DIR)/LSE/bin/lin64/:$(LD_LIBRARY_PATH); \
 	export FOUNDRY=$(IC2_DIR)/LSE; \
 	export SBT_DIR=$(IC2_DIR)/sbt_backend/; \
 	cd $(IC2_PROJ_DIR); \
-	$(IC2_DIR)/LSE/bin/lin64/synthesis -f $(NAME)_lse.prj > ../$(IC2_SYNTH_LOG)
+	$(IC2_DIR)/LSE/bin/lin64/synthesis -f $< > ../$(IC2_SYNTH_LOG)
+else
+	@echo -e $(COLOR_YELLOW) Running Synplify-Pro Synthesis \> $(IC2_SYNTH_LOG) $(NO_COLOR)
+	@export LD_LIBRARY_PATH=$(IC2_DIR)/sbt_backend/bin/linux/opt/synpwrap; \
+	export SYNPLIFY_PATH=$(IC2_DIR)/synpbase; \
+	export SBT_DIR=$(IC2_DIR)/sbt_backend/; \
+	cd $(IC2_PROJ_DIR); \
+	$(IC2_DIR)/sbt_backend/bin/linux/opt/synpwrap/synpwrap -prj ../$< > ../$(IC2_SYNTH_LOG) 
+endif
 
 $(IC2_PROJ_DIR):
 	@echo -e $(COLOR_GREEN) Creating iCEcube2 Project Directory $(NO_COLOR)
 	@mkdir $@
 
-$(IC2_PROJ_FILE): $(IC2_RESOURCES)/template.prj | $(IC2_PROJ_DIR)
-	@echo -e $(COLOR_GREEN) Creating iCEcube2 Project File $(NO_COLOR)
+$(IC2_LSE_PROJ_FILE): $(IC2_RESOURCES)/template_lse.prj | $(IC2_PROJ_DIR)
+	@echo -e $(COLOR_GREEN) Creating Lattice LSE Project File $(NO_COLOR)
 	@cp $< $@
 	@echo "-p .." >> $@
 ifeq ($(TOP_IS_VERILOG), 1)
@@ -91,6 +112,20 @@ endif
 	@$(foreach var, $(VHDL_SUPPORT_FILES), echo "-vhd $(var)" >> $@;)	
 	@echo "-top $(NAME)" >> $@
 	@echo "-output_edif ../$(EDIF_FILE)" >> $@
+
+$(IC2_SP_PROJ_FILE): $(IC2_RESOURCES)/template_sp.prj | $(IC2_PROJ_DIR)
+	@echo -e $(COLOR_GREEN) Creating Synplify-Pro Project File $(NO_COLOR)
+# @echo $(VHDL_SUPPORT_FILES)
+	@cp $< $@
+ifeq ($(TOP_IS_VERILOG), 1)
+	@echo "add_file -verilog -lib work ../$(TOP_SRC)" >> $@
+else
+	@echo "add_file -vhdl -lib work ../$(TOP_SRC)" >> $@
+endif
+	@$(foreach var, $(VERILOG_SUPPORT_FILES), echo "add_file -verilog -lib work ../$(var)" >> $@;)
+	@$(foreach var, $(VHDL_SUPPORT_FILES), echo "add_file -vhdl -lib work ../$(var)" >> $@;)	
+	@echo "project -result_file ../$(EDIF_FILE)" >> $@
+	
 	
 $(IC2_TCL_FILE):  $(IC2_RESOURCES)/template.tcl | $(IC2_PROJ_DIR)
 	@echo -e $(COLOR_GREEN) Creating iCEcube2 Implementation TCL file $(NO_COLOR)
