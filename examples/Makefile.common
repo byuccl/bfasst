@@ -36,7 +36,7 @@ compare_and_report_status:
 	@make report_status; echo ""
 	
 report_status:
-	@$(SCRIPTS)/report_status.py .
+	@$(SCRIPTS)/report_status.py . $(NAME)
 
 netlist: $(EDIF_FILE)
 
@@ -165,7 +165,7 @@ CONFORMAL_SCP_LOG = $(CONFORMAL_PROJ_DIR)/scp_log.txt
 # : conformal_compare	
 # scp caedm:$(CONFORMAL_WORK_DIR)/log.txt $@
 
-$(CONFORMAL_LOG): conformal_send_files
+$(CONFORMAL_LOG): $(CONFORMAL_SCP_LOG)
 	@echo -e $(COLOR_YELLOW) Running conformal compare \> $(CONFORMAL_LOG) $(NO_COLOR)
 	@ssh caedm "source /ee2/Cadence/local/designkits/ee451/cdssetup/bashrc_cadence && \
 		cd $(CONFORMAL_WORK_DIR) && \
@@ -177,14 +177,14 @@ conformal_gui: conformal_send_files_gui
 		/ee2/Cadence/CONFRML152/bin/lec -Dofile compare_gui.do -Logfile log.txt" || true
 
 
-conformal_send_files: $(CONFORMAL_DO_FILE) $(REVERSE_NETLIST_FILE)
-	@echo -e $(COLOR_GREEN) Sending conformal files to CAEDM server \> $(CONFORMAL_SCP_LOG) $(NO_COLOR)
-	@scp $(SCRIPTS)/run_conformal_and_monitor.py caedm:$(CONFORMAL_WORK_DIR) >> $(CONFORMAL_SCP_LOG);
-	@scp $(TOP_SRC) caedm:$(CONFORMAL_WORK_DIR) >> $(CONFORMAL_SCP_LOG);
-	@$(foreach var, $(VERILOG_SUPPORT_FILES),scp $(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $(CONFORMAL_SCP_LOG);)	
-	@$(foreach var, $(VHDL_SUPPORT_FILES),scp $(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $(CONFORMAL_SCP_LOG);)	
-	@scp $(REVERSE_NETLIST_FILE) caedm:$(CONFORMAL_WORK_DIR)/ >> $(CONFORMAL_SCP_LOG)
-	@scp $< caedm:$(CONFORMAL_WORK_DIR) >> $(CONFORMAL_SCP_LOG)
+$(CONFORMAL_SCP_LOG): $(CONFORMAL_DO_FILE) $(REVERSE_NETLIST_FILE)
+	@echo -e $(COLOR_GREEN) Sending conformal files to CAEDM server \> $@ $(NO_COLOR)
+	@scp $(SCRIPTS)/run_conformal_and_monitor.py caedm:$(CONFORMAL_WORK_DIR) >> $@;
+	@scp $(TOP_SRC) caedm:$(CONFORMAL_WORK_DIR) >> $@;
+	@$(foreach var, $(VERILOG_SUPPORT_FILES),scp $(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $@;)	
+	@$(foreach var, $(VHDL_SUPPORT_FILES),scp $(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $@;)	
+	@scp $(REVERSE_NETLIST_FILE) caedm:$(CONFORMAL_WORK_DIR)/ >> $@
+	@scp $< caedm:$(CONFORMAL_WORK_DIR) >> $@
 
 conformal_send_files_gui: $(CONFORMAL_DO_FILE_GUI) $(REVERSE_NETLIST_FILE)
 	@echo -e $(COLOR_GREEN) Sending conformal files to CAEDM server \> $(CONFORMAL_SCP_LOG) $(NO_COLOR)
@@ -197,7 +197,7 @@ conformal_send_files_gui: $(CONFORMAL_DO_FILE_GUI) $(REVERSE_NETLIST_FILE)
 $(CONFORMAL_DO_FILE): $(MAKEFILES) | $(CONFORMAL_PROJ_DIR)
 	@echo -e $(COLOR_GREEN) Creating Conformal do script \($@\) $(NO_COLOR)
 	@echo "" > $@	
-	@echo "read library -Golden -Replace -sensitive -Verilog $(CONFORMAL_LIBS_DIR)/sb_ice_syn.v -nooptimize" >> $@
+	@echo "read library -Both -Replace -sensitive -Verilog $(CONFORMAL_LIBS_DIR)/sb_ice_syn.v -nooptimize" >> $@
 
 ifeq ($(TOP_IS_VERILOG), 1)
 	@echo "read design $(TOP_SRC) $(VERILOG_SUPPORT_FILES) -Verilog -Golden -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply" >> $@

@@ -38,23 +38,66 @@ def impl_error_exists(log_path):
     if too_large_str:            
         err_str += "Design does not fit. " + too_large_str
 
+    # Invalid primitives
+    m = re.search("^Error: (Module.*?is not a valid primitive.)", text, re.M)
+    if (m):
+        err_str += m.group(1)
+
     if (err_str):
         sys.stdout.write(err_str)
         return True
 
 
+    return False
+
+def synth_error_exists(design_name, log_path, temp_dir):
+    text = open(log_path).read()
+
+    err_str = ""
+
+
+    m = re.search("^compiler exited with errors$", text, re.M)
+    if m:
+        err_str += "***Synthesis compiler error***"
+    
+    m = re.search("^fpga_mapper exited with errors$", text, re.M)
+    if m:
+
+        mapper_file = os.path.join(temp_dir, "synlog", design_name + "_fpga_mapper.srr")
+        text = open(mapper_file).read()
+
+        m = re.search("^@E:.*?\|(.*?)$", text, re.M)
+        if m:
+            err_str += m.group(1)
+        else:
+            err_str += "***Mapper compiler error***"
+
+    if (err_str):
+        sys.stdout.write(err_str)
+        return True
+    
+    return False
+
 def main():
 
     design_dir = sys.argv[1]
+    design_name = sys.argv[2]
+    design_dir = os.path.abspath(design_dir)
+    # print(design_dir)   
 
     temp_dir = os.path.join(design_dir, "temp")
     conformal_log = os.path.join(temp_dir, "conformal.log")
-    impl_log = os.path.join(design_dir, "ic2", "impl_log.txt" )
+    impl_log = os.path.join(design_dir, "ic2", "impl.log" )
+    synth_log = os.path.join(design_dir, "ic2", "synth.log")
+
 
     if os.path.isfile(conformal_log):
         handle_conformal_log(conformal_log)
     elif os.path.isfile(impl_log) and impl_error_exists(impl_log):
         pass
+    elif os.path.isfile(synth_log) and synth_error_exists(design_name, synth_log, temp_dir):
+        pass
+     
 
         
 if __name__ == "__main__":
