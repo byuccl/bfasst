@@ -1,15 +1,19 @@
-include $(LEVEL)/Makefile.config
+##############  Options ###################
+USE_LSE_SYNTHESIZER := 0
 
 ##############  Paths ###################
-BFASST_PATH := $(realpath $(LEVEL)/..)
+BFASST_PATH = $(realpath $(DESIGN_DIR)/$(LEVEL)/..)
 RESOURCES = $(BFASST_PATH)/resources
 SCRIPTS = $(BFASST_PATH)/scripts
+EXAMPLES = $(BFASST_PATH)/examples
+
+include $(EXAMPLES)/Makefile.config
 
 include $(RESOURCES)/Makefile_colors.inc
 MAKEFLAGS += --no-print-directory
 
 ##############  Source Files ###################
-ifneq ("$(wildcard $(NAME).v)","")
+ifneq ("$(wildcard $(DESIGN_DIR)/$(NAME).v)","")
     TOP_IS_VERILOG = 1
 	TOP_SRC = $(NAME).v
 else
@@ -17,8 +21,8 @@ else
 	TOP_SRC = $(NAME).vhd
 endif
 
-VERILOG_SUPPORT_FILES = $(filter-out $(NAME).v,$(wildcard *.v))
-VHDL_SUPPORT_FILES = $(filter-out $(NAME).vhd, $(wildcard *.vhd))
+VERILOG_SUPPORT_FILES = $(filter-out $(DESIGN_DIR)/$(NAME).v,$(wildcard $(DESIGN_DIR)/*.v))
+VHDL_SUPPORT_FILES = $(filter-out $(DESIGN_DIR)/$(NAME).vhd, $(wildcard $(DESIGN_DIR)/*.vhd))
 
 
 ############## Intermediate Files ###################
@@ -31,9 +35,9 @@ CONSTRAINT_FILE = $(TEMP_DIR)/$(NAME).pcf
 CONFORMAL_LOG = $(TEMP_DIR)/conformal.log
 
 compare_and_report_status:
-	@make compare || true
+	@make -f $(DESIGN_DIR)/Makefile compare || true
 # @make compare 2>/dev/null || true
-	@make report_status; echo ""
+	@make -f $(DESIGN_DIR)/Makefile report_status; echo ""
 	
 report_status:
 	@$(SCRIPTS)/report_status.py . $(NAME)
@@ -47,7 +51,7 @@ reverse: $(REVERSE_NETLIST_FILE)
 compare: $(CONFORMAL_LOG)
 
 $(TEMP_DIR):
-	mkdir $@
+	@mkdir $@
 
 
 ############## iCEcube2 flow ###################
@@ -60,7 +64,7 @@ IC2_SYNTH_LOG = $(IC2_PROJ_DIR)/synth.log
 IC2_IMPL_LOG = $(IC2_PROJ_DIR)/impl.log
 IC2_BITMAP_FILE = $(IC2_PROJ_DIR)/sbt/outputs/bitmap/$(NAME)_bitmap.bin
 IC2_PLACEMENT_CONSTRAINT_FILE = $(IC2_PROJ_DIR)/sbt/outputs/placer/$(NAME)_sbt.pcf
-IC2_USE_LSE_FLOW = 0
+IC2_EDIF_FILE = $(IC2_PROJ_DIR)/$(NAME).edf
 
 ### Implementation
 $(IC2_BITMAP_FILE): $(IC2_TCL_FILE) $(EDIF_FILE)
@@ -71,22 +75,27 @@ $(IC2_BITMAP_FILE): $(IC2_TCL_FILE) $(EDIF_FILE)
 	@$(SCRIPTS)/check_ic2_design_fit.py $(IC2_IMPL_LOG)
 
 ### Synthesis flow
-ifeq ($(IC2_USE_LSE_FLOW), 1)
+ifeq ($(USE_LSE_SYNTHESIZER), 1)
 IC2_PROJ_FILE = $(IC2_LSE_PROJ_FILE)
 else
 IC2_PROJ_FILE = $(IC2_SP_PROJ_FILE)
 endif
 
+$(EDIF_FILE): $(IC2_EDIF_FILE) | $(TEMP_DIR)
+	@cp $< $@
+
 # Synthesis with LSE or Synplify-Pro
-$(EDIF_FILE): $(IC2_PROJ_FILE) | $(IC2_PROJ_DIR)
-ifeq ($(IC2_USE_LSE_FLOW), 1)
+$(IC2_EDIF_FILE): $(IC2_PROJ_FILE) | $(IC2_PROJ_DIR)
+ifeq ($(USE_LSE_SYNTHESIZER), 1)
+# LSE
 	@echo -e $(COLOR_YELLOW) Running Lattice LSE Synthesis \> $(IC2_SYNTH_LOG) $(NO_COLOR)
 	@export LD_LIBRARY_PATH=$(IC2_DIR)/LSE/bin/lin64/:$(LD_LIBRARY_PATH); \
 	export FOUNDRY=$(IC2_DIR)/LSE; \
 	export SBT_DIR=$(IC2_DIR)/sbt_backend/; \
 	cd $(IC2_PROJ_DIR); \
-	$(IC2_DIR)/LSE/bin/lin64/synthesis -f $< > ../$(IC2_SYNTH_LOG)
+	$(IC2_DIR)/LSE/bin/lin64/synthesis -f ../$< > ../$(IC2_SYNTH_LOG)
 else
+# Synplify-Pro
 	@echo -e $(COLOR_YELLOW) Running Synplify-Pro Synthesis \> $(IC2_SYNTH_LOG) $(NO_COLOR)
 	@export LD_LIBRARY_PATH=$(IC2_DIR)/sbt_backend/bin/linux/opt/synpwrap; \
 	export SYNPLIFY_PATH=$(IC2_DIR)/synpbase; \
@@ -102,7 +111,7 @@ $(IC2_PROJ_DIR):
 $(IC2_LSE_PROJ_FILE): $(IC2_RESOURCES)/template_lse.prj | $(IC2_PROJ_DIR)
 	@echo -e $(COLOR_GREEN) Creating Lattice LSE Project File $(NO_COLOR)
 	@cp $< $@
-	@echo "-p .." >> $@
+	@echo "-p $(DESIGN_DIR)" >> $@
 ifeq ($(TOP_IS_VERILOG), 1)
 	@echo "-ver $(TOP_SRC)" >> $@;
 else
@@ -111,20 +120,20 @@ endif
 	@$(foreach var, $(VERILOG_SUPPORT_FILES), echo "-ver $(var)" >> $@;)
 	@$(foreach var, $(VHDL_SUPPORT_FILES), echo "-vhd $(var)" >> $@;)	
 	@echo "-top $(NAME)" >> $@
-	@echo "-output_edif ../$(EDIF_FILE)" >> $@
+	@echo "-output_edif ../$(IC2_EDIF_FILE)" >> $@
 
 $(IC2_SP_PROJ_FILE): $(IC2_RESOURCES)/template_sp.prj | $(IC2_PROJ_DIR)
 	@echo -e $(COLOR_GREEN) Creating Synplify-Pro Project File $(NO_COLOR)
 # @echo $(VHDL_SUPPORT_FILES)
 	@cp $< $@
 ifeq ($(TOP_IS_VERILOG), 1)
-	@echo "add_file -verilog -lib work ../$(TOP_SRC)" >> $@
+	@echo "add_file -verilog -lib work $(DESIGN_DIR)/$(TOP_SRC)" >> $@
 else
-	@echo "add_file -vhdl -lib work ../$(TOP_SRC)" >> $@
+	@echo "add_file -vhdl -lib work $(DESIGN_DIR)/$(TOP_SRC)" >> $@
 endif
 	@$(foreach var, $(VERILOG_SUPPORT_FILES), echo "add_file -verilog -lib work ../$(var)" >> $@;)
 	@$(foreach var, $(VHDL_SUPPORT_FILES), echo "add_file -vhdl -lib work ../$(var)" >> $@;)	
-	@echo "project -result_file ../$(EDIF_FILE)" >> $@
+	@echo "project -result_file $(DESIGN_DIR)/$(IC2_EDIF_FILE)" >> $@
 	
 	
 $(IC2_TCL_FILE):  $(IC2_RESOURCES)/template.tcl | $(IC2_PROJ_DIR)
@@ -180,7 +189,7 @@ conformal_gui: conformal_send_files_gui
 $(CONFORMAL_SCP_LOG): $(CONFORMAL_DO_FILE) $(REVERSE_NETLIST_FILE)
 	@echo -e $(COLOR_GREEN) Sending conformal files to CAEDM server \> $@ $(NO_COLOR)
 	@scp $(SCRIPTS)/run_conformal_and_monitor.py caedm:$(CONFORMAL_WORK_DIR) >> $@;
-	@scp $(TOP_SRC) caedm:$(CONFORMAL_WORK_DIR) >> $@;
+	@scp $(DESIGN_DIR)/$(TOP_SRC) caedm:$(CONFORMAL_WORK_DIR) >> $@;
 	@$(foreach var, $(VERILOG_SUPPORT_FILES),scp $(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $@;)	
 	@$(foreach var, $(VHDL_SUPPORT_FILES),scp $(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $@;)	
 	@scp $(REVERSE_NETLIST_FILE) caedm:$(CONFORMAL_WORK_DIR)/ >> $@
@@ -188,7 +197,7 @@ $(CONFORMAL_SCP_LOG): $(CONFORMAL_DO_FILE) $(REVERSE_NETLIST_FILE)
 
 conformal_send_files_gui: $(CONFORMAL_DO_FILE_GUI) $(REVERSE_NETLIST_FILE)
 	@echo -e $(COLOR_GREEN) Sending conformal files to CAEDM server \> $(CONFORMAL_SCP_LOG) $(NO_COLOR)
-	@scp $(TOP_SRC) caedm:$(CONFORMAL_WORK_DIR) >> $(CONFORMAL_SCP_LOG);
+	@scp $(DESIGN_DIR)/$(TOP_SRC) caedm:$(CONFORMAL_WORK_DIR) >> $(CONFORMAL_SCP_LOG);
 	@$(foreach var, $(VERILOG_SUPPORT_FILES),scp $(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $(CONFORMAL_SCP_LOG);)	
 	@$(foreach var, $(VHDL_SUPPORT_FILES),scp $(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $(CONFORMAL_SCP_LOG);)	
 	@scp $(REVERSE_NETLIST_FILE) caedm:$(CONFORMAL_WORK_DIR)/ >> $(CONFORMAL_SCP_LOG)

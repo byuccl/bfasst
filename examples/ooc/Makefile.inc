@@ -1,2 +1,3 @@
 LEVEL = ../..
-include $(LEVEL)/Makefile.common
+
+include $(DESIGN_DIR)/$(LEVEL)/Makefile.common

@@ -1,9 +1,6 @@
 ###########################
 ## top_design_syn.prj ##
 ###########################
-#project files
-#add_file -verilog -lib work "../src/top_design.v"
-#add_file -constraint -lib work "../src/top_design.sdc"
 
 #implementation: "rev_1"
 impl -add rev_1 -type fpga
@@ -42,5 +39,4 @@ set_option -resource_sharing 1
 set_option -write_apr_constraint 1
 #set result format/file last
 project -result_format "edif"
-#project -result_file ./rev_1/top_design.edf
 impl -active rev_1

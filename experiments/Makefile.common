@@ -13,27 +13,36 @@ MAKEFLAGS += --no-print-directory
 TEMP_DIR := temp
 
 DESIGNS_LOGS = $(foreach design, $(sort $(DESIGNS)), $(design).log)
+BUILD_DIRS = $(foreach design, $(sort $(DESIGNS)), _BUILD_$(design))
+CLEAN_BUILD_DIRS = $(foreach design, $(sort $(DESIGNS)), _CLEAN_$(design))
 
-all: $(DESIGNS_LOGS) 
+all: $(BUILD_DIRS) 
 	
 print:
 	@echo $(DESIGNS)
 
+$(BUILD_DIRS): _BUILD_%:
+	@printf $(COLOR_GREEN)%-30s$(NO_COLOR) $*
+	@mkdir -p $*
+	@cd $*; make -f $(EXAMPLES)/$*/Makefile $(FLOW_ARGS) compare > make.log 2>&1; make -f $(EXAMPLES)/$*/Makefile report_status
+	@printf "\n"
+	
+$(CLEAN_BUILD_DIRS): _CLEAN_%:
+	@printf $(COLOR_RED)'Cleaning %-30s\n'$(NO_COLOR) $*
+	@rm -rf $*
+	@rm -rf $(firstword $(subst /, ,$*))
+
 $(DESIGNS_LOGS): %.log:
 	@printf $(COLOR_GREEN)%-30s$(NO_COLOR) $*
-	@mkdir -p $(dir $@)
-	@cd $(EXAMPLES)/$* && make compare > $(realpath ./)/$@ 2>&1 || true
-	@cd $(EXAMPLES)/$* && make report_status
+	echo $@
+	mkdir -p $(dir $@)
+#@cd $(EXAMPLES)/$* && make compare > $(realpath ./)/$@ 2>&1 || true
+	
+#@cd $(EXAMPLES)/$* && make report_status
 	@echo
 
-clean:
-	@echo -e $(COLOR_RED) Cleaning log files $(NO_COLOR)
-	@rm -f *.log
-	@$(foreach design, $(DESIGNS_LOGS), rm -rf $(dir $(design));)
+clean: $(CLEAN_BUILD_DIRS)
 
-clean_deep:
-	$(foreach dir, $(DESIGNS), cd $(EXAMPLES)/$(dir) && make clean;)
-
-.PHONY: all $(DESIGNS_LOGS)
+.PHONY: all $(DESIGNS_LOGS) $(BUILD_DIRS)
 
 # .PRECIOUS: %.log

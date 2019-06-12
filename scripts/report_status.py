@@ -5,15 +5,13 @@ import re
 import os
 
 def handle_conformal_log(log_path):
-    lines = open(log_path).readlines()
+    text = open(log_path).read()
 
-    for l in lines:
-        line = l.strip()
-
-        m = re.match("6\. Compare Results:\s+(.*)$", line)
-        if m:
-            sys.stdout.write("Equivalence: " + m.group(1))
-            return
+    m = re.search("^6\. Compare Results:\s+(.*)$", text, re.M)
+    if m:
+        sys.stdout.write("Equivalence: " + m.group(1))
+    else:
+        sys.stdout.write("***Conformal error***")
 
 def impl_error_exists(log_path):
     text = open(log_path).read()
@@ -50,7 +48,7 @@ def impl_error_exists(log_path):
 
     return False
 
-def synth_error_exists(design_name, log_path, temp_dir):
+def synth_error_exists(design_name, log_path, ic2_dir):
     text = open(log_path).read()
 
     err_str = ""
@@ -58,12 +56,19 @@ def synth_error_exists(design_name, log_path, temp_dir):
 
     m = re.search("^compiler exited with errors$", text, re.M)
     if m:
-        err_str += "***Synthesis compiler error***"
+        synth_file = os.path.join(ic2_dir, "synlog", design_name + "_compiler.srr")
+        text = open(synth_file).read()
+
+        m = re.search("^@E:(.*?)$", text, re.M)
+        if m: 
+            err_str += m.group(1)
+        else:
+            err_str += "***Synthesis compiler error***"
     
     m = re.search("^fpga_mapper exited with errors$", text, re.M)
     if m:
 
-        mapper_file = os.path.join(temp_dir, "synlog", design_name + "_fpga_mapper.srr")
+        mapper_file = os.path.join(ic2_dir, "synlog", design_name + "_fpga_mapper.srr")
         text = open(mapper_file).read()
 
         m = re.search("^@E:.*?\|(.*?)$", text, re.M)
@@ -83,19 +88,22 @@ def main():
     design_dir = sys.argv[1]
     design_name = sys.argv[2]
     design_dir = os.path.abspath(design_dir)
+    build_dir = os.getcwd()
     # print(design_dir)   
 
-    temp_dir = os.path.join(design_dir, "temp")
+    temp_dir = os.path.join(build_dir, "temp")
+    ic2_dir = os.path.join(build_dir, "ic2")
     conformal_log = os.path.join(temp_dir, "conformal.log")
-    impl_log = os.path.join(design_dir, "ic2", "impl.log" )
-    synth_log = os.path.join(design_dir, "ic2", "synth.log")
+    impl_log = os.path.join(ic2_dir, "impl.log" )
+    synth_log = os.path.join(ic2_dir, "synth.log")
 
 
     if os.path.isfile(conformal_log):
+        print(conformal_log, " is a file")
         handle_conformal_log(conformal_log)
     elif os.path.isfile(impl_log) and impl_error_exists(impl_log):
         pass
-    elif os.path.isfile(synth_log) and synth_error_exists(design_name, synth_log, temp_dir):
+    elif os.path.isfile(synth_log) and synth_error_exists(design_name, synth_log, ic2_dir):
         pass
      
 

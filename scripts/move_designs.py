@@ -37,7 +37,8 @@ def main():
 
         if not hierarchy:
             for f in os.listdir(design_src_dir):
-                shutil.copyfile(os.path.join(design_src_dir, f), os.path.join(new_design_dir, f))
+                pass
+                #shutil.copyfile(os.path.join(design_src_dir, f), os.path.join(new_design_dir, f))
         else:
             print(design_name)
                 
@@ -46,11 +47,13 @@ def main():
 
 
 def create_makefile(name, file_path):
+    print("Creating makefile", file_path)
     with open(file_path, 'w') as fp:
         fp.write("NAME=" + name + "\n")
         # fp.write("LEVEL=../..\n")
         fp.write("\n")
-        fp.write("include ../Makefile.inc\n")
+        fp.write("DESIGN_DIR=$(dir $(abspath $(firstword $(MAKEFILE_LIST))))\n")
+        fp.write("include $(DESIGN_DIR)/../Makefile.inc\n")
 
 
 
