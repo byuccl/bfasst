@@ -59,7 +59,7 @@ def synth_error_exists(design_name, log_path, ic2_dir):
         synth_file = os.path.join(ic2_dir, "synlog", design_name + "_compiler.srr")
         text = open(synth_file).read()
 
-        m = re.search("^@E:(.*?)$", text, re.M)
+        m = re.search("^@E:\s*(.*?)$", text, re.M)
         if m: 
             err_str += m.group(1)
         else:
@@ -99,7 +99,7 @@ def main():
 
 
     if os.path.isfile(conformal_log):
-        print(conformal_log, " is a file")
+        # print(conformal_log, " is a file")
         handle_conformal_log(conformal_log)
     elif os.path.isfile(impl_log) and impl_error_exists(impl_log):
         pass

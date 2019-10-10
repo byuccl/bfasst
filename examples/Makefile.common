@@ -15,14 +15,14 @@ MAKEFLAGS += --no-print-directory
 ##############  Source Files ###################
 ifneq ("$(wildcard $(DESIGN_DIR)/$(NAME).v)","")
     TOP_IS_VERILOG = 1
-	TOP_SRC = $(NAME).v
+	TOP_SRC := $(NAME).v
 else
-    TOP_IS_VHDL = 0
-	TOP_SRC = $(NAME).vhd
+    TOP_IS_VHDL = 1
+	TOP_SRC := $(NAME).vhd
 endif
 
-VERILOG_SUPPORT_FILES = $(filter-out $(DESIGN_DIR)/$(NAME).v,$(wildcard $(DESIGN_DIR)/*.v))
-VHDL_SUPPORT_FILES = $(filter-out $(DESIGN_DIR)/$(NAME).vhd, $(wildcard $(DESIGN_DIR)/*.vhd))
+VERILOG_SUPPORT_FILES := $(notdir $(filter-out $(DESIGN_DIR)/$(NAME).v,$(wildcard $(DESIGN_DIR)/*.v)))
+VHDL_SUPPORT_FILES := $(notdir $(filter-out $(DESIGN_DIR)/$(NAME).vhd, $(wildcard $(DESIGN_DIR)/*.vhd)))
 
 
 ############## Intermediate Files ###################
@@ -131,9 +131,9 @@ ifeq ($(TOP_IS_VERILOG), 1)
 else
 	@echo "add_file -vhdl -lib work $(DESIGN_DIR)/$(TOP_SRC)" >> $@
 endif
-	@$(foreach var, $(VERILOG_SUPPORT_FILES), echo "add_file -verilog -lib work ../$(var)" >> $@;)
-	@$(foreach var, $(VHDL_SUPPORT_FILES), echo "add_file -vhdl -lib work ../$(var)" >> $@;)	
-	@echo "project -result_file $(DESIGN_DIR)/$(IC2_EDIF_FILE)" >> $@
+	@$(foreach var, $(VERILOG_SUPPORT_FILES), echo "add_file -verilog -lib work $(DESIGN_DIR)/$(var)" >> $@;)
+	@$(foreach var, $(VHDL_SUPPORT_FILES), echo "add_file -vhdl -lib work $(DESIGN_DIR)/$(var)" >> $@;)	
+	@echo "project -result_file ../$(IC2_EDIF_FILE)" >> $@
 	
 	
 $(IC2_TCL_FILE):  $(IC2_RESOURCES)/template.tcl | $(IC2_PROJ_DIR)
@@ -190,16 +190,16 @@ $(CONFORMAL_SCP_LOG): $(CONFORMAL_DO_FILE) $(REVERSE_NETLIST_FILE)
 	@echo -e $(COLOR_GREEN) Sending conformal files to CAEDM server \> $@ $(NO_COLOR)
 	@scp $(SCRIPTS)/run_conformal_and_monitor.py caedm:$(CONFORMAL_WORK_DIR) >> $@;
 	@scp $(DESIGN_DIR)/$(TOP_SRC) caedm:$(CONFORMAL_WORK_DIR) >> $@;
-	@$(foreach var, $(VERILOG_SUPPORT_FILES),scp $(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $@;)	
-	@$(foreach var, $(VHDL_SUPPORT_FILES),scp $(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $@;)	
+	@$(foreach var, $(VERILOG_SUPPORT_FILES),scp $(DESIGN_DIR)/$(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $@;)	
+	@$(foreach var, $(VHDL_SUPPORT_FILES),scp $(DESIGN_DIR)/$(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $@;)	
 	@scp $(REVERSE_NETLIST_FILE) caedm:$(CONFORMAL_WORK_DIR)/ >> $@
 	@scp $< caedm:$(CONFORMAL_WORK_DIR) >> $@
 
 conformal_send_files_gui: $(CONFORMAL_DO_FILE_GUI) $(REVERSE_NETLIST_FILE)
 	@echo -e $(COLOR_GREEN) Sending conformal files to CAEDM server \> $(CONFORMAL_SCP_LOG) $(NO_COLOR)
 	@scp $(DESIGN_DIR)/$(TOP_SRC) caedm:$(CONFORMAL_WORK_DIR) >> $(CONFORMAL_SCP_LOG);
-	@$(foreach var, $(VERILOG_SUPPORT_FILES),scp $(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $(CONFORMAL_SCP_LOG);)	
-	@$(foreach var, $(VHDL_SUPPORT_FILES),scp $(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $(CONFORMAL_SCP_LOG);)	
+	@$(foreach var, $(VERILOG_SUPPORT_FILES),scp $(DESIGN_DIR)/$(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $(CONFORMAL_SCP_LOG);)	
+	@$(foreach var, $(VHDL_SUPPORT_FILES),scp $(DESIGN_DIR)/$(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $(CONFORMAL_SCP_LOG);)	
 	@scp $(REVERSE_NETLIST_FILE) caedm:$(CONFORMAL_WORK_DIR)/ >> $(CONFORMAL_SCP_LOG)
 	@scp $< caedm:$(CONFORMAL_WORK_DIR) >> $(CONFORMAL_SCP_LOG)
 
