@@ -10,6 +10,10 @@ hierarchy -check -auto-top
 
 proc; opt; fsm; opt; memory; opt
 
+# This techmap call replaces asynchronous resets with synchronous resets
+# This allows us to export the design with BLIF for ABC optimizations
+techmap -map +/adff2dff.v
+
 # Remove any source attributes
 setattr -unset src *
 setattr -mod -unset src *
