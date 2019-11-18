@@ -53,7 +53,6 @@ def synth_error_exists(design_name, log_path, ic2_dir):
 
     err_str = ""
 
-
     m = re.search("^compiler exited with errors$", text, re.M)
     if m:
         synth_file = os.path.join(ic2_dir, "synlog", design_name + "_compiler.srr")
@@ -77,6 +76,10 @@ def synth_error_exists(design_name, log_path, ic2_dir):
         else:
             err_str += "***Mapper compiler error***"
 
+    m = re.search("^ERROR - synthesis:(.*)$", text, re.M)
+    if m:
+        err_str += "***Synthesis compiler error***" + " " + m.group(1).strip()
+
     if (err_str):
         sys.stdout.write(err_str)
         return True
@@ -95,7 +98,9 @@ def main():
     ic2_dir = os.path.join(build_dir, "ic2")
     conformal_log = os.path.join(temp_dir, "conformal.log")
     impl_log = os.path.join(ic2_dir, "impl.log" )
+    
     synth_log = os.path.join(ic2_dir, "synth.log")
+    synth_timeout = os.path.join(ic2_dir, "synth_timeout")
 
 
     if os.path.isfile(conformal_log):
@@ -103,6 +108,9 @@ def main():
         handle_conformal_log(conformal_log)
     elif os.path.isfile(impl_log) and impl_error_exists(impl_log):
         pass
+
+    elif os.path.isfile(synth_timeout):
+        sys.stdout.write("***Synthesis timeout***")
     elif os.path.isfile(synth_log) and synth_error_exists(design_name, synth_log, ic2_dir):
         pass
      
