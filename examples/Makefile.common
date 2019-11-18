@@ -1,5 +1,6 @@
 ##############  Options ###################
 USE_LSE_SYNTHESIZER := 0
+LSE_TIMEOUT := 300
 
 ##############  Paths ###################
 BFASST_PATH = $(realpath $(DESIGN_DIR)/$(LEVEL)/..)
@@ -65,6 +66,7 @@ IC2_IMPL_LOG = $(IC2_PROJ_DIR)/impl.log
 IC2_BITMAP_FILE = $(IC2_PROJ_DIR)/sbt/outputs/bitmap/$(NAME)_bitmap.bin
 IC2_PLACEMENT_CONSTRAINT_FILE = $(IC2_PROJ_DIR)/sbt/outputs/placer/$(NAME)_sbt.pcf
 IC2_EDIF_FILE = $(IC2_PROJ_DIR)/$(NAME).edf
+IC2_SYNTH_TIMEOUT_FILE = $(IC2_PROJ_DIR)/synth_timeout
 
 ### Implementation
 $(IC2_BITMAP_FILE): $(IC2_TCL_FILE) $(EDIF_FILE)
@@ -86,14 +88,15 @@ $(EDIF_FILE): $(IC2_EDIF_FILE) | $(TEMP_DIR)
 
 # Synthesis with LSE or Synplify-Pro
 $(IC2_EDIF_FILE): $(IC2_PROJ_FILE) | $(IC2_PROJ_DIR)
+	@if [ -f $(IC2_SYNTH_TIMEOUT_FILE) ]; then echo "Synthesis previously timed out"; exit 1; fi
 ifeq ($(USE_LSE_SYNTHESIZER), 1)
 # LSE
 	@echo -e $(COLOR_YELLOW) Running Lattice LSE Synthesis \> $(IC2_SYNTH_LOG) $(NO_COLOR)
-	@export LD_LIBRARY_PATH=$(IC2_DIR)/LSE/bin/lin64/:$(LD_LIBRARY_PATH); \
+	export LD_LIBRARY_PATH=$(IC2_DIR)/LSE/bin/lin64/:$(LD_LIBRARY_PATH); \
 	export FOUNDRY=$(IC2_DIR)/LSE; \
 	export SBT_DIR=$(IC2_DIR)/sbt_backend/; \
 	cd $(IC2_PROJ_DIR); \
-	$(IC2_DIR)/LSE/bin/lin64/synthesis -f ../$< > ../$(IC2_SYNTH_LOG)
+	timeout $(LSE_TIMEOUT) $(IC2_DIR)/LSE/bin/lin64/synthesis -f ../$< > ../$(IC2_SYNTH_LOG) 2>&1 || test $$? -eq 124 && echo "Synthesis Timeout" >> ../$(IC2_SYNTH_TIMEOUT_FILE)
 else
 # Synplify-Pro
 	@echo -e $(COLOR_YELLOW) Running Synplify-Pro Synthesis \> $(IC2_SYNTH_LOG) $(NO_COLOR)

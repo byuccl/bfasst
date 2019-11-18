@@ -12,3 +12,7 @@
 *.txt
 
 .vscode
+
+ic2/
+temp/
+conformal/
