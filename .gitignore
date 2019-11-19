@@ -2,3 +2,17 @@
 *~
 \#*
 .#*
+
+# extra stuff
+**/build
+**/icestorm
+**/source_list
+
+# text files
+*.txt
+
+.vscode
+
+ic2/
+temp/
+conformal/

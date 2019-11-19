@@ -1,0 +1,48 @@
+##############  Paths ###################
+BFASST_PATH := $(realpath $(LEVEL)/..)
+RESOURCES = $(BFASST_PATH)/resources
+SCRIPTS = $(BFASST_PATH)/scripts
+EXPERIMENTS = $(BFASST_PATH)/experiments
+EXAMPLES = $(BFASST_PATH)/examples
+
+include $(RESOURCES)/Makefile_colors.inc
+MAKEFLAGS += --no-print-directory
+
+
+################## Paths ################
+TEMP_DIR := temp
+
+DESIGNS_LOGS = $(foreach design, $(sort $(DESIGNS)), $(design).log)
+BUILD_DIRS = $(foreach design, $(sort $(DESIGNS)), _BUILD_$(design))
+CLEAN_BUILD_DIRS = $(foreach design, $(sort $(DESIGNS)), _CLEAN_$(design))
+
+all: $(BUILD_DIRS) 
+	
+print:
+	@echo $(DESIGNS)
+
+$(BUILD_DIRS): _BUILD_%:
+	@printf $(COLOR_GREEN)%-30s$(NO_COLOR) $*
+	@mkdir -p $*
+	@cd $*; make -f $(EXAMPLES)/$*/Makefile $(FLOW_ARGS) compare > make.log 2>&1; make -f $(EXAMPLES)/$*/Makefile report_status
+	@printf "\n"
+	
+$(CLEAN_BUILD_DIRS): _CLEAN_%:
+	@printf $(COLOR_RED)'Cleaning %-30s\n'$(NO_COLOR) $*
+	@rm -rf $*
+	@rm -rf $(firstword $(subst /, ,$*))
+
+$(DESIGNS_LOGS): %.log:
+	@printf $(COLOR_GREEN)%-30s$(NO_COLOR) $*
+	echo $@
+	mkdir -p $(dir $@)
+#@cd $(EXAMPLES)/$* && make compare > $(realpath ./)/$@ 2>&1 || true
+	
+#@cd $(EXAMPLES)/$* && make report_status
+	@echo
+
+clean: $(CLEAN_BUILD_DIRS)
+
+.PHONY: all $(DESIGNS_LOGS) $(BUILD_DIRS)
+
+# .PRECIOUS: %.log

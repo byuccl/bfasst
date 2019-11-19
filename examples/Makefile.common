@@ -1,0 +1,252 @@
+##############  Options ###################
+USE_LSE_SYNTHESIZER := 0
+LSE_TIMEOUT := 300
+
+##############  Paths ###################
+BFASST_PATH = $(realpath $(DESIGN_DIR)/$(LEVEL)/..)
+RESOURCES = $(BFASST_PATH)/resources
+SCRIPTS = $(BFASST_PATH)/scripts
+EXAMPLES = $(BFASST_PATH)/examples
+
+include $(EXAMPLES)/Makefile.config
+
+include $(RESOURCES)/Makefile_colors.inc
+MAKEFLAGS += --no-print-directory
+
+##############  Source Files ###################
+ifneq ("$(wildcard $(DESIGN_DIR)/$(NAME).v)","")
+    TOP_IS_VERILOG = 1
+	TOP_SRC := $(NAME).v
+else
+    TOP_IS_VHDL = 1
+	TOP_SRC := $(NAME).vhd
+endif
+
+VERILOG_SUPPORT_FILES := $(notdir $(filter-out $(DESIGN_DIR)/$(NAME).v,$(wildcard $(DESIGN_DIR)/*.v)))
+VHDL_SUPPORT_FILES := $(notdir $(filter-out $(DESIGN_DIR)/$(NAME).vhd, $(wildcard $(DESIGN_DIR)/*.vhd)))
+
+
+############## Intermediate Files ###################
+TEMP_DIR := temp
+EDIF_FILE = $(TEMP_DIR)/$(NAME).edf
+EDIF_FILE_NO_EXT = $(TEMP_DIR)/$(NAME)
+BITMAP_FILE = $(TEMP_DIR)/$(NAME).bin
+REVERSE_NETLIST_FILE = $(TEMP_DIR)/$(NAME)_reversed.v
+CONSTRAINT_FILE = $(TEMP_DIR)/$(NAME).pcf
+CONFORMAL_LOG = $(TEMP_DIR)/conformal.log
+
+compare_and_report_status:
+	@make -f $(DESIGN_DIR)/Makefile compare || true
+# @make compare 2>/dev/null || true
+	@make -f $(DESIGN_DIR)/Makefile report_status; echo ""
+	
+report_status:
+	@$(SCRIPTS)/report_status.py . $(NAME)
+
+netlist: $(EDIF_FILE)
+
+bit: $(BITMAP_FILE) $(CONSTRAINT_FILE)
+
+reverse: $(REVERSE_NETLIST_FILE)
+
+compare: $(CONFORMAL_LOG)
+
+$(TEMP_DIR):
+	@mkdir $@
+
+
+############## iCEcube2 flow ###################
+IC2_PROJ_DIR := ic2
+IC2_LSE_PROJ_FILE := $(IC2_PROJ_DIR)/$(NAME)_lse.prj
+IC2_SP_PROJ_FILE := $(IC2_PROJ_DIR)/$(NAME)_sp.prj
+IC2_TCL_FILE := $(IC2_PROJ_DIR)/$(NAME)_run.tcl
+IC2_RESOURCES = $(RESOURCES)/iCEcube2
+IC2_SYNTH_LOG = $(IC2_PROJ_DIR)/synth.log
+IC2_IMPL_LOG = $(IC2_PROJ_DIR)/impl.log
+IC2_BITMAP_FILE = $(IC2_PROJ_DIR)/sbt/outputs/bitmap/$(NAME)_bitmap.bin
+IC2_PLACEMENT_CONSTRAINT_FILE = $(IC2_PROJ_DIR)/sbt/outputs/placer/$(NAME)_sbt.pcf
+IC2_EDIF_FILE = $(IC2_PROJ_DIR)/$(NAME).edf
+IC2_SYNTH_TIMEOUT_FILE = $(IC2_PROJ_DIR)/synth_timeout
+
+### Implementation
+$(IC2_BITMAP_FILE): $(IC2_TCL_FILE) $(EDIF_FILE)
+	@echo -e $(COLOR_YELLOW) Running iCEcube2 Implementation \> $(IC2_IMPL_LOG) $(NO_COLOR)
+	@export SBT_DIR=$(IC2_DIR)/sbt_backend/; \
+	cd $(IC2_PROJ_DIR) && tclsh $(NAME)_run.tcl \
+		$(NAME) . ../$(EDIF_FILE_NO_EXT) > ../$(IC2_IMPL_LOG)
+	@$(SCRIPTS)/check_ic2_design_fit.py $(IC2_IMPL_LOG)
+
+### Synthesis flow
+ifeq ($(USE_LSE_SYNTHESIZER), 1)
+IC2_PROJ_FILE = $(IC2_LSE_PROJ_FILE)
+else
+IC2_PROJ_FILE = $(IC2_SP_PROJ_FILE)
+endif
+
+$(EDIF_FILE): $(IC2_EDIF_FILE) | $(TEMP_DIR)
+	@cp $< $@
+
+# Synthesis with LSE or Synplify-Pro
+$(IC2_EDIF_FILE): $(IC2_PROJ_FILE) | $(IC2_PROJ_DIR)
+	@if [ -f $(IC2_SYNTH_TIMEOUT_FILE) ]; then echo "Synthesis previously timed out"; exit 1; fi
+ifeq ($(USE_LSE_SYNTHESIZER), 1)
+# LSE
+	@echo -e $(COLOR_YELLOW) Running Lattice LSE Synthesis \> $(IC2_SYNTH_LOG) $(NO_COLOR)
+	export LD_LIBRARY_PATH=$(IC2_DIR)/LSE/bin/lin64/:$(LD_LIBRARY_PATH); \
+	export FOUNDRY=$(IC2_DIR)/LSE; \
+	export SBT_DIR=$(IC2_DIR)/sbt_backend/; \
+	cd $(IC2_PROJ_DIR); \
+	timeout $(LSE_TIMEOUT) $(IC2_DIR)/LSE/bin/lin64/synthesis -f ../$< > ../$(IC2_SYNTH_LOG) 2>&1 || test $$? -eq 124 && echo "Synthesis Timeout" >> ../$(IC2_SYNTH_TIMEOUT_FILE)
+else
+# Synplify-Pro
+	@echo -e $(COLOR_YELLOW) Running Synplify-Pro Synthesis \> $(IC2_SYNTH_LOG) $(NO_COLOR)
+	@export LD_LIBRARY_PATH=$(IC2_DIR)/sbt_backend/bin/linux/opt/synpwrap; \
+	export SYNPLIFY_PATH=$(IC2_DIR)/synpbase; \
+	export SBT_DIR=$(IC2_DIR)/sbt_backend/; \
+	cd $(IC2_PROJ_DIR); \
+	$(IC2_DIR)/sbt_backend/bin/linux/opt/synpwrap/synpwrap -prj ../$< > ../$(IC2_SYNTH_LOG) 
+endif
+
+$(IC2_PROJ_DIR):
+	@echo -e $(COLOR_GREEN) Creating iCEcube2 Project Directory $(NO_COLOR)
+	@mkdir $@
+
+$(IC2_LSE_PROJ_FILE): $(IC2_RESOURCES)/template_lse.prj | $(IC2_PROJ_DIR)
+	@echo -e $(COLOR_GREEN) Creating Lattice LSE Project File $(NO_COLOR)
+	@cp $< $@
+	@echo "-p $(DESIGN_DIR)" >> $@
+ifeq ($(TOP_IS_VERILOG), 1)
+	@echo "-ver $(TOP_SRC)" >> $@;
+else
+	@echo "-vhd $(TOP_SRC)" >> $@;
+endif
+	@$(foreach var, $(VERILOG_SUPPORT_FILES), echo "-ver $(var)" >> $@;)
+	@$(foreach var, $(VHDL_SUPPORT_FILES), echo "-vhd $(var)" >> $@;)	
+	@echo "-top $(NAME)" >> $@
+	@echo "-output_edif ../$(IC2_EDIF_FILE)" >> $@
+
+$(IC2_SP_PROJ_FILE): $(IC2_RESOURCES)/template_sp.prj | $(IC2_PROJ_DIR)
+	@echo -e $(COLOR_GREEN) Creating Synplify-Pro Project File $(NO_COLOR)
+# @echo $(VHDL_SUPPORT_FILES)
+	@cp $< $@
+ifeq ($(TOP_IS_VERILOG), 1)
+	@echo "add_file -verilog -lib work $(DESIGN_DIR)/$(TOP_SRC)" >> $@
+else
+	@echo "add_file -vhdl -lib work $(DESIGN_DIR)/$(TOP_SRC)" >> $@
+endif
+	@$(foreach var, $(VERILOG_SUPPORT_FILES), echo "add_file -verilog -lib work $(DESIGN_DIR)/$(var)" >> $@;)
+	@$(foreach var, $(VHDL_SUPPORT_FILES), echo "add_file -vhdl -lib work $(DESIGN_DIR)/$(var)" >> $@;)	
+	@echo "project -result_file ../$(IC2_EDIF_FILE)" >> $@
+	
+	
+$(IC2_TCL_FILE):  $(IC2_RESOURCES)/template.tcl | $(IC2_PROJ_DIR)
+	@echo -e $(COLOR_GREEN) Creating iCEcube2 Implementation TCL file $(NO_COLOR)
+	@cp $< $@
+
+$(BITMAP_FILE): $(IC2_BITMAP_FILE)
+	@echo -e $(COLOR_GREEN) Copying bitstream to $@ $(NO_COLOR)
+	@cp $< $@
+
+$(CONSTRAINT_FILE): $(IC2_PLACEMENT_CONSTRAINT_FILE)
+	@echo -e $(COLOR_GREEN) Copying placement constraints to $@ $(NO_COLOR)
+	@cp $< $@
+
+
+############## Icestorm flow ###################
+ICESTORM_PROJ_DIR := icestorm
+ICESTORM_BIT_ASC_FILE = $(ICESTORM_PROJ_DIR)/$(NAME).asc
+
+$(REVERSE_NETLIST_FILE): $(ICESTORM_BIT_ASC_FILE) $(CONSTRAINT_FILE)
+	@echo -e $(COLOR_YELLOW) Running bitstream to netlist \> $@ $(NO_COLOR)
+	@$(ICESTORM_DIR)/icebox/icebox_vlog.py -P $(CONSTRAINT_FILE) -s $< > $@
+
+$(ICESTORM_BIT_ASC_FILE): $(BITMAP_FILE) | $(ICESTORM_PROJ_DIR)
+	@echo -e $(COLOR_YELLOW) Running bitstream extraction \> $@ $(NO_COLOR)
+	@$(ICESTORM_DIR)/icepack/iceunpack $< > $@
+
+$(ICESTORM_PROJ_DIR):
+	@echo -e $(COLOR_GREEN) Creating Icestorm folder \($@\) $(NO_COLOR)
+	@mkdir $(ICESTORM_PROJ_DIR)
+
+############## Conformal flow #################
+CONFORMAL_PROJ_DIR := conformal
+CONFORMAL_DO_FILE = $(CONFORMAL_PROJ_DIR)/compare.do
+CONFORMAL_DO_FILE_GUI = $(CONFORMAL_PROJ_DIR)/compare_gui.do
+CONFORMAL_SCP_LOG = $(CONFORMAL_PROJ_DIR)/scp_log.txt
+
+# : conformal_compare	
+# scp caedm:$(CONFORMAL_WORK_DIR)/log.txt $@
+
+$(CONFORMAL_LOG): $(CONFORMAL_SCP_LOG)
+	@echo -e $(COLOR_YELLOW) Running conformal compare \> $(CONFORMAL_LOG) $(NO_COLOR)
+	@ssh caedm "source /ee2/Cadence/local/designkits/ee451/cdssetup/bashrc_cadence && \
+		cd $(CONFORMAL_WORK_DIR) && \
+		python run_conformal_and_monitor.py" > $(CONFORMAL_LOG) 2>&1
+
+conformal_gui: conformal_send_files_gui
+	@ssh caedm "source /ee2/Cadence/local/designkits/ee451/cdssetup/bashrc_cadence && \
+		cd $(CONFORMAL_WORK_DIR) && \
+		/ee2/Cadence/CONFRML152/bin/lec -Dofile compare_gui.do -Logfile log.txt" || true
+
+
+$(CONFORMAL_SCP_LOG): $(CONFORMAL_DO_FILE) $(REVERSE_NETLIST_FILE)
+	@echo -e $(COLOR_GREEN) Sending conformal files to CAEDM server \> $@ $(NO_COLOR)
+	@scp $(SCRIPTS)/run_conformal_and_monitor.py caedm:$(CONFORMAL_WORK_DIR) >> $@;
+	@scp $(DESIGN_DIR)/$(TOP_SRC) caedm:$(CONFORMAL_WORK_DIR) >> $@;
+	@$(foreach var, $(VERILOG_SUPPORT_FILES),scp $(DESIGN_DIR)/$(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $@;)	
+	@$(foreach var, $(VHDL_SUPPORT_FILES),scp $(DESIGN_DIR)/$(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $@;)	
+	@scp $(REVERSE_NETLIST_FILE) caedm:$(CONFORMAL_WORK_DIR)/ >> $@
+	@scp $< caedm:$(CONFORMAL_WORK_DIR) >> $@
+
+conformal_send_files_gui: $(CONFORMAL_DO_FILE_GUI) $(REVERSE_NETLIST_FILE)
+	@echo -e $(COLOR_GREEN) Sending conformal files to CAEDM server \> $(CONFORMAL_SCP_LOG) $(NO_COLOR)
+	@scp $(DESIGN_DIR)/$(TOP_SRC) caedm:$(CONFORMAL_WORK_DIR) >> $(CONFORMAL_SCP_LOG);
+	@$(foreach var, $(VERILOG_SUPPORT_FILES),scp $(DESIGN_DIR)/$(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $(CONFORMAL_SCP_LOG);)	
+	@$(foreach var, $(VHDL_SUPPORT_FILES),scp $(DESIGN_DIR)/$(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $(CONFORMAL_SCP_LOG);)	
+	@scp $(REVERSE_NETLIST_FILE) caedm:$(CONFORMAL_WORK_DIR)/ >> $(CONFORMAL_SCP_LOG)
+	@scp $< caedm:$(CONFORMAL_WORK_DIR) >> $(CONFORMAL_SCP_LOG)
+
+$(CONFORMAL_DO_FILE): $(MAKEFILES) | $(CONFORMAL_PROJ_DIR)
+	@echo -e $(COLOR_GREEN) Creating Conformal do script \($@\) $(NO_COLOR)
+	@echo "" > $@	
+	@echo "read library -Both -Replace -sensitive -Verilog $(CONFORMAL_LIBS_DIR)/sb_ice_syn.v -nooptimize" >> $@
+
+ifeq ($(TOP_IS_VERILOG), 1)
+	@echo "read design $(TOP_SRC) $(VERILOG_SUPPORT_FILES) -Verilog -Golden -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply" >> $@
+else
+	@echo "read design $(TOP_SRC) $(VHDL_SUPPORT_FILES) -Vhdl -Golden -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply" >> $@
+endif	
+# @$(foreach var, $(VERILOG_SUPPORT_FILES), echo "read design $(CONFORMAL_WORK_DIR)/$(var) -Verilog -Golden -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply -noelaborate" >> $@;)
+# @$(foreach var, $(VHDL_SUPPORT_FILES), echo "read design $(CONFORMAL_WORK_DIR)/$(var) -Vhdl -Golden -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply -noelaborate" >> $@;)
+
+	@echo "read design $(CONFORMAL_WORK_DIR)/$(NAME)_reversed.v -Verilog -Revised -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply" >> $@
+	@echo "add renaming rule vector_expand %s\[%d\] @1_@2  -Both -map" >> $@
+	@echo "set system mode lec" >> $@
+	@echo "add compared points -all" >> $@
+	@echo "compare" >> $@
+	@echo "report verification" >> $@
+	@echo "exit" >> $@
+
+$(CONFORMAL_DO_FILE_GUI): $(MAKEFILES) | $(CONFORMAL_PROJ_DIR)
+	@echo "" > $@
+	@echo "read library -Golden -Replace -sensitive -Verilog $(CONFORMAL_LIBS_DIR)/sb_ice_syn.v -nooptimize" >> $@
+	# echo "read design $(VHDL_FILES) -Vhdl -Golden -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply\n" >> $@;
+	@$(foreach var, $(VERILOG_FILES), echo "read design $(CONFORMAL_WORK_DIR)/$(var) -noelaborate -Verilog -Golden -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply\n" >> $@;)
+	@$(foreach var, $(VHDL_FILES), echo "read design $(CONFORMAL_WORK_DIR)/$(var)  -noelaborate -Vhdl -Golden -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply" >> $@;)
+	@echo "read design $(CONFORMAL_WORK_DIR)/$(NAME)_reversed.v -Verilog -Revised -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply" >> $@
+	@echo "add renaming rule vector_expand %s\[%d\] @1_@2  -Both -map" >> $@
+	@echo "set system mode lec" >> $@
+	@echo "add compared points -all" >> $@	
+	@echo "compare" >> $@
+	@echo "report verification" >> $@
+
+$(CONFORMAL_PROJ_DIR): 
+	@echo -e $(COLOR_GREEN) Creating Conformal folder \($@\) $(NO_COLOR)
+	@mkdir $@
+
+############## Misc Targets ###################
+.PHONY: clean conformal_send_files
+.PRECIOUS: $(CONFORMAL_LOG)
+
+clean:
+	rm -rf $(IC2_PROJ_DIR) $(TEMP_DIR) $(ICESTORM_PROJ_DIR) $(CONFORMAL_PROJ_DIR)

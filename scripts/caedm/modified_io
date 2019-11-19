@@ -1,0 +1,27 @@
+ooc_atahost	732	80	
+ooc_bcd_adder	67	
+ooc_big_counter	3400	
+ooc_control_unit	66	
+ooc_counter	33	
+ooc_cpu8080	29	293	
+ooc_data_path	97	12	
+ooc_EX_stage	64	15	
+ooc_graphiti	151	7	
+ooc_ID_stage	149	
+ooc_IF_stage	16	16	
+ooc_lfsr_randgen	8	
+ooc_MEM_stage	46	16	
+ooc_mips_16	16	
+ooc_natalius_8bit_risc	26	3	
+ooc_natalius_processor	18	
+ooc_neo430	640	348	
+ooc_pic	97	10	
+ooc_pid	457	
+ooc_pid_simple	457	
+ooc_pwm	94	5	
+ooc_quadratic_func	142	
+ooc_sap	66	4	
+ooc_simon_core	9	279	
+ooc_vga	483	169	
+ooc_wb_lcd	88	8	
+ooc_WB_stage	23	

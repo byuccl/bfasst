@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+if [ $# -ne 3 ]; then
+
+	echo "usage: gather_all_sources <list-of-successful-designs> <path-to-ooc-directory> <remote-host>"
+	exit -1
+fi
+
+LIST=$1
+WORKDIR=$2
+REMOTE=$3
+
+# consider each design
+designs=`cat $LIST`
+for design in $designs; do
+
+	# build directory variables
+	localDir="${WORKDIR}${design}"
+	extractedPath="${localDir}/icestorm/${design#"ooc_"}_extracted.v"
+	echo "extracted netlist: ${extractedPath}"
+
+	# gather the design sources
+	../iCEcube2/gather_sources $localDir
+
+	remoteDir="research/a1/${design}"
+	remoteSrcDir="${remoteDir}/src"
+	echo "making directory: ${remoteSrcDir}"
+
+	# make the landing zone
+	ssh ${REMOTE} mkdir -p $remoteSrcDir
+	
+	# transfer design sources
+	scp -q $(cat "${localDir}/source_list") "${REMOTE}:${remoteSrcDir}"
+
+	# transfer
+	scp $extractedPath "${REMOTE}:${remoteDir}"
+
+	
+
+
+done
