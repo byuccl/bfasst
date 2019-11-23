@@ -18,16 +18,24 @@ def run_flow(design, flow_type, build_dir):
     return flow_fcn_map[flow_type](design, build_dir)
 
 def flow_ic2_lse_conformal(design, build_dir):
-    synth_tool = bfasst.synth.ic2_lse.IC2_LSE_SynthesisTool()
-    (netlist_path, status) = synth_tool.create_netlist(design, build_dir)
+    # Run Icecube2 LSE synthesis
+    synth_tool = bfasst.synth.ic2_lse.IC2_LSE_SynthesisTool(build_dir)
+    status = synth_tool.create_netlist(design)
     if status.error:
         return status
 
-    impl_tool = bfasst.impl.ic2.IC2_ImplementationTool()
-    (bitstream, status) = impl_tool.implement_bitstream(design, netlist_path, build_dir)
+    # Run Icecube2 implementations
+    impl_tool = bfasst.impl.ic2.IC2_ImplementationTool(build_dir)
+    status = impl_tool.implement_bitstream(design)
     if status.error:
         return status
 
-    # Still need to implement the icestorm + conformal part of my original makefile
+    # Run icestorm bitstream reversal
+    reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(build_dir)
+    status = reverse_bit_tool.reverse_bitstream(design)
+    if status.error:
+        return status
+
+    # Still need to implement the conformal part of my original makefile
     
     return status

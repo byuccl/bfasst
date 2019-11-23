@@ -1,7 +1,12 @@
 import abc
 
-class ImplementationTool(abc.ABC):    
-    # This method should run implementation.  It should return 
+
+class ImplementationTool(abc.ABC):
+    # Save directory in which to run the tool
+    def __init__(self, cwd):
+        self.cwd = cwd
+
+    # This method should run implementation.  It should return
     # (bitstream, status), where:
     #   - bitstream is the path to the produced netlist file
     #   - status is a Status object from bfasst.status

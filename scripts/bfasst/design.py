@@ -13,6 +13,12 @@ class Design():
         self.top = None
         self.top_file = None
 
+        # Flow paths
+        self.netlist_path = None
+        self.bitstream_path = None
+        self.constraints_path = None
+        self.reverse_netlist_path = None
+
         if not os.path.isdir(self.full_dir):
             bfasst.utils.error("Design folder", self.full_dir, " does not exist.")
         if not os.path.isfile(self.yaml_path):
