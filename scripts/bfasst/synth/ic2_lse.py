@@ -26,6 +26,8 @@ class IC2_LSE_SynthesisTool(SynthesisTool):
         status = self.run_sythesis(prj_path, proj_dir)
         
         # Copy edif netlist out of project directory3
+        if not os.path.isfile(edif_path_temp):
+            return Status(SynthStatus.ERROR)
         shutil.copyfile(edif_path_temp, design.netlist_path)
 
         return status

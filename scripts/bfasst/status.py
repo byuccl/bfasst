@@ -9,6 +9,9 @@ class SynthStatus(enum.Enum):
 class ImplStatus(enum.Enum):
     SUCCESS = 0
     ERROR = 1
+    TOO_MANY_LUTS = 2
+    TOO_MANY_FF = 3
+    TOO_MANY_IO = 4
 
 
 class BitReverseStatus(enum.Enum):
@@ -28,15 +31,27 @@ class Status():
 
     def __str__(self):
         if self.status == SynthStatus.SUCCESS:
-            return "Synth Success"
+            s = "Synth Success"
         elif self.status == SynthStatus.ERROR:
-            return "Synth Error"
+            s = "Synth Error"
         elif self.status == ImplStatus.SUCCESS:
-            return "Impl Success"
+            s = "Impl Success"
         elif self.status == ImplStatus.ERROR:
-            return "Impl Error"
+            s = "Impl Error"
+        elif self.status == ImplStatus.TOO_MANY_FF:
+            s = "Too many FFs"
+        elif self.status == ImplStatus.TOO_MANY_IO:
+            s = "Too many IOs"
+        elif self.status == ImplStatus.TOO_MANY_LUTS:
+            s = "Too many LUTs"
         elif self.status == BitReverseStatus.SUCCESS:
-            return "Bitstream Reversal Success"
+            s = "Bitstream Reversal Success"
         elif self.status == BitReverseStatus.ERROR:
-            return "Bitstream Reversal Error"
-        raise NotImplementedError
+            s = "Bitstream Reversal Error"
+        else:
+            print(self.status)
+            raise NotImplementedError
+
+        if self.msg is not None:
+            s += " (" + self.msg + ")"
+        return s
