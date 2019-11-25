@@ -3,6 +3,7 @@ import bfasst
 import paramiko
 import scp
 import sys
+import re
 
 from bfasst.compare.base import CompareTool
 from bfasst.status import Status, CompareStatus
@@ -23,13 +24,20 @@ class Conformal_CompareTool(CompareTool):
         # Copy files to remote machine
         self.copy_files_to_remote_machine(client, design, do_file_path)
 
+        # Run conformal remotely
         status = self.run_conformal(client)
         if status.error:
             return status
         
-        # self.copy_log_from_remote_machine(client)
-
+        # Copy back conformal log file
+        self.copy_log_from_remote_machine(client)
         client.close()
+
+        # Check conformal log
+        status = self.check_compare_status()
+        if status.error:
+            return status
+
         return Status(CompareStatus.SUCCESS)
 
     def connect_to_remote_machine(self):
@@ -39,11 +47,22 @@ class Conformal_CompareTool(CompareTool):
         return client
 
     def run_conformal(self, client):
-        cmd = bfasst.config.CONFORMAL_REMOTE_SOURCE_SCRIPT + ";" + \
+        cmd = "source " + bfasst.config.CONFORMAL_REMOTE_SOURCE_SCRIPT + ";" + \
                 "cd " + bfasst.config.CONFORMAL_REMOTE_WORK_DIR + ";" + \
                 bfasst.config.CONFORMAL_REMOTE_PATH + " -Dofile " + self.DO_FILE_NAME + " -Logfile " + self.LOG_FILE_NAME + " -NOGui"
         
         (stdin, stdout, stderr) = client.exec_command(cmd)
+        stdin.write("yes\n")
+
+        stdout.channel.recv_exit_status()
+        # for line in stdout:
+        #     print(line)
+        # for line in stderr:
+        #     print(line)
+
+        # stdout = stdout.read().decode()
+        # print("stdout:", stdout)
+
         stderr = stderr.read().decode()
         if "License check failed" in stderr:
             return Status(CompareStatus.NO_LICENSE)
@@ -62,10 +81,8 @@ class Conformal_CompareTool(CompareTool):
                 src_type = "-Vhdl"
             fp.write("read design " + design.top_file + " " + " ".join(design.get_support_files()) + " " + src_type + " -Golden -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply\n")
 
-            print(design.reversed_netlist_path)
-            print(os.path.basename(design.reversed_netlist_path))
             fp.write("read design " + design.reversed_netlist_filename() + " -Verilog -Revised -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply\n")
-            fp.write("add renaming rule vector_expand %s\[%d\] @1_@2 -Both -map\n")
+            fp.write(r"add renaming rule vector_expand %s\[%d\] @1_@2 -Both -map" + "\n")
             fp.write("set system mode lec\n")
             fp.write("add compared points -all\n")
             fp.write("compare\n")
@@ -95,8 +112,20 @@ class Conformal_CompareTool(CompareTool):
 
     def copy_log_from_remote_machine(self, client):
         scpClient = scp.SCPClient(client.get_transport())
-        scpClient.get(os.path.join(bfasst.config.CONFORMAL_REMOTE_PATH, self.LOG_FILE_NAME), os.path.join(self.work_dir, self.LOG_FILE_NAME))
+        scpClient.get(os.path.join(bfasst.config.CONFORMAL_REMOTE_WORK_DIR, self.LOG_FILE_NAME), self.work_dir)
         scpClient.close()
+
+    def check_compare_status(self):
+        log_path = os.path.join(self.work_dir, self.LOG_FILE_NAME)
+
+        log_text = open(log_path).read()
+
+        # Regex search for result
+        m = re.search(r"^6\. Compare Results:\s+(.*)$", log_text, re.M)
+        if m.group(1) == "PASS":
+            return Status(CompareStatus.SUCCESS)
+        else:
+            return Status(CompareStatus.NOT_EQUIVALENT, m.group(1))
 
 # for line in execute([, "-Dofile", "compare.do", "-Logfile", "log.txt", "-NOGui"]):
 #     sys.stdout.write(line)

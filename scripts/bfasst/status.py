@@ -22,6 +22,7 @@ class CompareStatus(enum.Enum):
     SUCCESS = 0
     ERROR = 1
     NO_LICENSE = 2
+    NOT_EQUIVALENT = 3
 
 msg_map = {
     SynthStatus.SUCCESS: "Synth Success",
@@ -36,9 +37,10 @@ msg_map = {
     BitReverseStatus.SUCCESS: "Bitstream Reversal Success",
     BitReverseStatus.ERROR: "Bitstream Reversal Error",
 
-    CompareStatus.SUCCESS: "Compare Success",
+    CompareStatus.SUCCESS: "Equivalent",
     CompareStatus.ERROR: "Compare Error",
-    CompareStatus.NO_LICENSE: "No license for comparison tool"
+    CompareStatus.NO_LICENSE: "No license for comparison tool",
+    CompareStatus.NOT_EQUIVALENT: "Not equivalent"
 }
 
 class Status():
