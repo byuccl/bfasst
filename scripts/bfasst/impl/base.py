@@ -1,10 +1,9 @@
 import abc
 
+import bfasst.flow
 
-class ImplementationTool(abc.ABC):
-    # Save directory in which to run the tool
-    def __init__(self, cwd):
-        self.cwd = cwd
+
+class ImplementationTool(bfasst.flow.Tool):
 
     # This method should run implementation.  It should return
     # (bitstream, status), where:

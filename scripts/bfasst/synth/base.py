@@ -1,9 +1,8 @@
 import abc
 
-class SynthesisTool(abc.ABC):
-    # Save directory in which to run the tool
-    def __init__(self, cwd):
-        self.cwd = cwd
+import bfasst.flow
+
+class SynthesisTool(bfasst.flow.Tool):
 
     # This method should run synthesis.  It should return 
     # (netlist, status), where:

@@ -18,6 +18,28 @@ class BitReverseStatus(enum.Enum):
     SUCCESS = 0
     ERROR = 1
 
+class CompareStatus(enum.Enum):
+    SUCCESS = 0
+    ERROR = 1
+    NO_LICENSE = 2
+
+msg_map = {
+    SynthStatus.SUCCESS: "Synth Success",
+    SynthStatus.ERROR: "Synth Error",
+
+    ImplStatus.SUCCESS: "Impl Success",
+    ImplStatus.ERROR: "Impl Error",
+    ImplStatus.TOO_MANY_FF: "Too many FFs",
+    ImplStatus.TOO_MANY_LUTS: "Too many LUTs",
+    ImplStatus.TOO_MANY_IO: "Too many IOs",
+
+    BitReverseStatus.SUCCESS: "Bitstream Reversal Success",
+    BitReverseStatus.ERROR: "Bitstream Reversal Error",
+
+    CompareStatus.SUCCESS: "Compare Success",
+    CompareStatus.ERROR: "Compare Error",
+    CompareStatus.NO_LICENSE: "No license for comparison tool"
+}
 
 class Status():
     def __init__(self, status, msg=None):
@@ -30,28 +52,7 @@ class Status():
         self.msg = msg
 
     def __str__(self):
-        if self.status == SynthStatus.SUCCESS:
-            s = "Synth Success"
-        elif self.status == SynthStatus.ERROR:
-            s = "Synth Error"
-        elif self.status == ImplStatus.SUCCESS:
-            s = "Impl Success"
-        elif self.status == ImplStatus.ERROR:
-            s = "Impl Error"
-        elif self.status == ImplStatus.TOO_MANY_FF:
-            s = "Too many FFs"
-        elif self.status == ImplStatus.TOO_MANY_IO:
-            s = "Too many IOs"
-        elif self.status == ImplStatus.TOO_MANY_LUTS:
-            s = "Too many LUTs"
-        elif self.status == BitReverseStatus.SUCCESS:
-            s = "Bitstream Reversal Success"
-        elif self.status == BitReverseStatus.ERROR:
-            s = "Bitstream Reversal Error"
-        else:
-            print(self.status)
-            raise NotImplementedError
-
+        s = msg_map[self.status]
         if self.msg is not None:
             s += " (" + self.msg + ")"
         return s

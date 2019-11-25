@@ -4,6 +4,7 @@ import bfasst
 
 def error(*msg):
     print("!!!! ERROR:", " ".join(str(item) for item in msg))
+    assert False
     sys.exit(-1)
 
 def create_build_dir(dir):

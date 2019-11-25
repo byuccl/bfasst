@@ -1,10 +1,8 @@
 import abc
 
+import bfasst.flow
 
-class ReverseBitTool(abc.ABC):
-    # Save directory in which to run the tool
-    def __init__(self, cwd):
-        self.cwd = cwd
+class ReverseBitTool(bfasst.flow.Tool):
 
     # This method should run bitstream reversal.  It should return
     # (netlist, status), where:
