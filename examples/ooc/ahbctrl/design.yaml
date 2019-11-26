@@ -1,1 +1,8 @@
 top: ahbctrl
+
+vhdl_libs:
+  - lib/esa
+  - lib/eth
+  - lib/gaisler
+  - lib/grlib
+  - lib/techmap
