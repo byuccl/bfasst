@@ -4,6 +4,11 @@ import paramiko
 import scp
 import sys
 import re
+import cryptography
+
+# Suppress paramiko warning
+import warnings
+warnings.filterwarnings(action='ignore',module='.*paramiko.*')
 
 from bfasst.compare.base import CompareTool
 from bfasst.status import Status, CompareStatus
@@ -15,23 +20,27 @@ class Conformal_CompareTool(CompareTool):
     DO_FILE_NAME = "compare.do"
 
     def compare_netlists(self, design):
-        # Connect to remote machine
-        client = self.connect_to_remote_machine()
-        
-        # Create do file
-        do_file_path = self.create_do_file(design)
+        # Skip if comparison log already exists
+        log_file = os.path.join(self.work_dir, self.LOG_FILE_NAME)
+        if not os.path.isfile(log_file):
 
-        # Copy files to remote machine
-        self.copy_files_to_remote_machine(client, design, do_file_path)
+            # Connect to remote machine
+            client = self.connect_to_remote_machine()
+            
+            # Create do file
+            do_file_path = self.create_do_file(design)
 
-        # Run conformal remotely
-        status = self.run_conformal(client)
-        if status.error:
-            return status
-        
-        # Copy back conformal log file
-        self.copy_log_from_remote_machine(client)
-        client.close()
+            # Copy files to remote machine
+            self.copy_files_to_remote_machine(client, design, do_file_path)
+
+            # Run conformal remotely
+            status = self.run_conformal(client)
+            if status.error:
+                return status
+            
+            # Copy back conformal log file
+            self.copy_log_from_remote_machine(client)
+            client.close()
 
         # Check conformal log
         status = self.check_compare_status()
@@ -51,7 +60,40 @@ class Conformal_CompareTool(CompareTool):
                 "cd " + bfasst.config.CONFORMAL_REMOTE_WORK_DIR + ";" + \
                 bfasst.config.CONFORMAL_REMOTE_PATH + " -Dofile " + self.DO_FILE_NAME + " -Logfile " + self.LOG_FILE_NAME + " -NOGui"
         
+        # print("here")
         (stdin, stdout, stderr) = client.exec_command(cmd)
+
+        # while True:
+        #     l = stdout.readline()
+        #     print(l)
+
+        #     # l = stderr.readline()
+        #     # print(l)
+        #     # print(stdout.channel.exit_status_ready)
+        #     if stdout.channel.exit_status_ready():
+        #         break
+
+        #     m = re.match("// Command: exit", l)
+        #     if m:
+        #         break
+
+        # while True:
+        #     l = stderr.readline()
+        #     print(l)
+        # print("Error")
+
+
+        # stdout_text = stdout.read().decode()
+        # print("stdout:", stdout_text)
+        # if re.search("// Error", stdout_text, re.M):
+        #     print("match")
+
+        # stderr_text = stderr.read().decode()
+        # if re.search("// Error", stderr_text, re.M):
+        #     print("match")
+        
+
+
         stdin.write("yes\n")
 
         stdout.channel.recv_exit_status()

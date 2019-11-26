@@ -13,8 +13,14 @@ class IC2_LSE_SynthesisTool(SynthesisTool):
     TOOL_WORK_DIR = "ic2_synth"
 
     def create_netlist(self, design):
+        # print("Running Synth")
+        
         # Save edif netlist path to design object
         design.netlist_path = os.path.join(self.cwd, design.top + ".edf")
+
+        # If netlist already exists, exit early
+        if os.path.isfile(design.netlist_path):
+            return Status(SynthStatus.SUCCESS)
 
         # Create Icecube 2 LSE synthesis project file
         edif_path_temp = os.path.join(self.work_dir, design.top + ".edf")
@@ -61,6 +67,8 @@ class IC2_LSE_SynthesisTool(SynthesisTool):
             elif design.top_is_vhdl():
                 fp.write("-lib work -vhd " + design.top_file + "\n")
 
+            for verilog_file in design.verilog_files:
+                fp.write("-ver " + verilog_file + "\n")
     # 	@$(foreach var, $(VERILOG_SUPPORT_FILES), echo "-ver $(var)" >> $@;)
     # 	@# @$(foreach var, $(VHDL_SUPPORT_FILES), echo "-lib $(firstword $(subst /, ,$(var))) -vhd $(var)" >> $@;)	
         

@@ -12,8 +12,23 @@ class Flows(enum.Enum):
 
 # This uses a lambda so that I don't have to define all of the functions before this point
 flow_fcn_map = {
-    Flows.IC2_LSE_CONFORMAL: lambda design, build_dir: flow_ic2_lse_conformal(design, build_dir),
+    Flows.IC2_LSE_CONFORMAL: lambda: flow_ic2_lse_conformal,
 }
+
+def get_flow_fcn_by_name(flow_name):
+    invalid_flow = False
+
+    try:
+        flow_enum = Flows(flow_name)
+    except ValueError:
+        invalid_flow = True
+        
+    if invalid_flow:
+        bfasst.utils.error(flow_name, "is not a valid flow name")
+
+    fcn = flow_fcn_map[flow_enum]()
+    return fcn
+
 
 
 class Tool(abc.ABC):
@@ -34,7 +49,7 @@ class Tool(abc.ABC):
 
         if not os.path.isdir(work_dir):
             os.mkdir(work_dir)
-            return work_dir
+        return work_dir
 
 def run_flow(design, flow_type, build_dir):
     assert type(design) is bfasst.design.Design

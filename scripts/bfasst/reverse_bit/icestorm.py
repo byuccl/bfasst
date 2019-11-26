@@ -14,6 +14,13 @@ class Icestorm_ReverseBitTool(ReverseBitTool):
     TOOL_WORK_DIR = "icestorm"
 
     def reverse_bitstream(self, design):
+        # print("Running ReverseBit")
+
+        # Set reversed netlist path and exit if it already exists
+        design.reversed_netlist_path = os.path.join(
+            self.cwd, design.top + "_reversed.v")
+        if (os.path.isfile(design.reversed_netlist_path)):
+            return Status(BitReverseStatus.SUCCESS)
 
         # Bitstream to ascii file
         asc_path = os.path.join(self.work_dir, design.top + ".asc")
@@ -23,8 +30,6 @@ class Icestorm_ReverseBitTool(ReverseBitTool):
             return status
 
         # Ascii to netlist
-        design.reversed_netlist_path = os.path.join(
-            self.cwd, design.top + "_reversed.v")
         status = self.convert_asc_to_netlist(
             asc_path, design.constraints_path, design.reversed_netlist_path)
         if status.error:

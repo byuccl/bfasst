@@ -12,6 +12,8 @@ class Design():
 
         self.top = None
         self.top_file = None
+        self.verilog_files = []
+        self.vhdl_files = []
 
         # Flow paths
         self.netlist_path = None
@@ -27,12 +29,12 @@ class Design():
         with open(self.yaml_path) as fp:
             design_props = yaml.safe_load(fp)
 
-            if "top" not in design_props:
-                bfasst.utils.error(self.yaml_path, "missing <top> property.")
-            self.top = design_props["top"]
+        if "top" not in design_props:
+            bfasst.utils.error(self.yaml_path, "missing <top> property.")
+        self.top = design_props["top"]
 
-            if "top_file" in design_props:
-                self.top_file = design_props["top_file"]
+        if "top_file" in design_props:
+            self.top_file = design_props["top_file"]
 
         # Verify top file
         if self.top_file is None:
@@ -48,6 +50,12 @@ class Design():
         if not os.path.isfile(self.top_path()):
             bfasst.utils.error("Top file", self.top_file, "does not exist.")
     
+        # Find other source files
+        if "include_all_verilog_files" in design_props and design_props["include_all_verilog_files"]:
+            for dir_item in os.listdir(self.full_dir):
+                if os.path.isfile(os.path.join(self.full_dir, dir_item)) and os.path.splitext(dir_item)[1] == ".v" and dir_item != self.top_file:
+                    self.verilog_files.append(dir_item)
+
     def top_is_verilog(self):
         return (os.path.splitext(self.top_file)[1]).lower() == ".v"
 

@@ -21,13 +21,14 @@ def main():
     design = bfasst.design.Design(args.design_path)
 
     # Create temp folder
-    build_dir = os.path.join(os.getcwd(), "build", args.design_path, args.flow)
+    build_dir = os.path.join(os.getcwd(), "build", args.flow, args.design_path)
     if not os.path.isdir(build_dir):
         os.makedirs(build_dir)
     elif not args.force:
         bfasst.utils.error("Build directory", build_dir, "already exists.  Use --force to overwrite")
     else:
-        bfasst.utils.clean_folder(build_dir)
+        pass
+        # bfasst.utils.clean_folder(build_dir)
 
 
     # Run the design
