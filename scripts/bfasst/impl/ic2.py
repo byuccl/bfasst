@@ -14,26 +14,24 @@ class IC2_ImplementationTool(ImplementationTool):
     def implement_bitstream(self, design):
         # print("Running Impl")
         
-        # Set final bitstream path, and exit early if it already exists
-        design.bitstream_path = os.path.join(self.cwd, design.top + ".bit")
-        if os.path.isfile(design.bitstream_path):
-            return Status(ImplStatus.SUCCESS)
-
-        # Create impl tcl script
-        tcl_path = self.create_run_tcl()
-
-        # Copy netlist into impl working folder
-        new_netlist_path = os.path.join(
-            self.work_dir, os.path.basename(design.netlist_path))
-        shutil.copyfile(design.netlist_path, new_netlist_path)
-
-        # Run implementation
+        # Check if implementation has been run previously, and skip 
+        # implementation if it has
         impl_log_path = os.path.join(
-            self.work_dir, bfasst.config.IMPL_LOG_NAME)
-        status = self.run_implement(
-            design, new_netlist_path, tcl_path, impl_log_path)
-        if status.error:
-            return status
+            self.work_dir, bfasst.config.IMPL_LOG_NAME)        
+        if not os.path.isfile(impl_log_path):
+            # Create impl tcl script
+            tcl_path = self.create_run_tcl()
+
+            # Copy netlist into impl working folder
+            new_netlist_path = os.path.join(
+                self.work_dir, os.path.basename(design.netlist_path))
+            shutil.copyfile(design.netlist_path, new_netlist_path)
+
+            # Run implementation
+            status = self.run_implement(
+                design, new_netlist_path, tcl_path, impl_log_path)
+            if status.error:
+                return status
 
         # Check implementation log
         status = self.check_impl_status(impl_log_path)
@@ -41,6 +39,7 @@ class IC2_ImplementationTool(ImplementationTool):
             return status
 
         # Copy bitstream out of working directory
+        design.bitstream_path = os.path.join(self.cwd, design.top + ".bit")
         bitstream_proj_path = os.path.join(
             self.work_dir, "sbt", "outputs", "bitmap", design.top + "_bitmap.bin")
         try:

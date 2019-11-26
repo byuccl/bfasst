@@ -1,6 +1,5 @@
 import os, logging
 
-import bfasst.experiments
 import bfasst.utils
 import bfasst.config
 import bfasst.flow

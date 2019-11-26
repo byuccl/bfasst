@@ -4,6 +4,7 @@ import enum
 class SynthStatus(enum.Enum):
     SUCCESS = 0
     ERROR = 1
+    TIMEOUT = 2
 
 
 class ImplStatus(enum.Enum):
@@ -27,6 +28,7 @@ class CompareStatus(enum.Enum):
 msg_map = {
     SynthStatus.SUCCESS: "Synth Success",
     SynthStatus.ERROR: "Synth Error",
+    SynthStatus.TIMEOUT: "Synth Timeout",
 
     ImplStatus.SUCCESS: "Impl Success",
     ImplStatus.ERROR: "Impl Error",

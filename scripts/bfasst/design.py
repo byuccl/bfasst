@@ -70,3 +70,6 @@ class Design():
 
     def reversed_netlist_filename(self):
         return os.path.basename(self.reversed_netlist_path)
+
+    def last_modified_time(self):
+        return max([os.path.getmtime(f) for f in (self.yaml_path, self.top_path())])
