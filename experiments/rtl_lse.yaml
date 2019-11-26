@@ -7,8 +7,8 @@ designs:
     - "ooc/a25_wishbone"
     - "ooc/a25_write_back"
 
-# design_dirs:
-#     - ooc/a25_
+design_dirs:
+    - ooc/
 
 flow: IC2_lse_conformal 
 
