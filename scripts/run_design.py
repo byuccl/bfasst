@@ -1,6 +1,6 @@
 import argparse
-import os
 import glob
+import pathlib
 
 import bfasst
 
@@ -8,9 +8,9 @@ def main():
     parser = argparse.ArgumentParser()
 
     designs = []
-    for directory in glob.iglob(bfasst.EXAMPLES_PATH + "/**", recursive=True):
-        if os.path.isfile(os.path.join(directory, "design.yaml")):
-            designs.append(os.path.relpath(directory, bfasst.EXAMPLES_PATH))
+    for directory in bfasst.EXAMPLES_PATH.rglob('*'):
+        if (directory / "design.yaml").is_file():
+            designs.append(str(directory.relative_to(bfasst.EXAMPLES_PATH)))
 
     parser.add_argument("design_path", choices = designs, help = "Path to design, relative to examples directory.")
     parser.add_argument("flow", choices=[e.value for e in bfasst.flow.Flows])
@@ -21,9 +21,9 @@ def main():
     design = bfasst.design.Design(args.design_path)
 
     # Create temp folder
-    build_dir = os.path.join(os.getcwd(), "build", args.flow, args.design_path)
-    if not os.path.isdir(build_dir):
-        os.makedirs(build_dir)
+    build_dir = pathlib.Path.cwd() / "build" / args.flow / args.design_path
+    if not build_dir.is_dir():
+        build_dir.mkdir(build_dir, parents=True)
     elif not args.force:
         bfasst.utils.error("Build directory", build_dir, "already exists.  Use --force to overwrite")
     else:

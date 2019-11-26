@@ -1,4 +1,3 @@
-import os
 import bfasst
 import paramiko
 import scp
@@ -21,16 +20,16 @@ class Conformal_CompareTool(CompareTool):
 
     def compare_netlists(self, design):
 
-        log_path = os.path.join(self.work_dir, self.LOG_FILE_NAME)
+        log_path = self.work_dir / self.LOG_FILE_NAME
 
         # Check if compare needs to be run
         need_to_run = False
 
         # Run if there is no log file
-        need_to_run |= not os.path.isfile(log_path)
+        need_to_run |= not log_path.is_file()
 
         # Run if last compare is out of date
-        need_to_run |= os.path.getmtime(design.bitstream_path) > os.path.getmtime(log_path)
+        need_to_run |= (not need_to_run) and (design.bitstream_path.stat().st_mtime > log_path.stat().st_mtime)
 
         if need_to_run:
 
@@ -70,9 +69,9 @@ class Conformal_CompareTool(CompareTool):
         return client
 
     def run_conformal(self, client):
-        cmd = "source " + bfasst.config.CONFORMAL_REMOTE_SOURCE_SCRIPT + ";" + \
-                "cd " + bfasst.config.CONFORMAL_REMOTE_WORK_DIR + ";" + \
-                bfasst.config.CONFORMAL_REMOTE_PATH + " -Dofile " + self.DO_FILE_NAME + " -Logfile " + self.LOG_FILE_NAME + " -NOGui"
+        cmd = "source " + str(bfasst.config.CONFORMAL_REMOTE_SOURCE_SCRIPT) + ";" + \
+                "cd " + str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR) + ";" + \
+                str(bfasst.config.CONFORMAL_REMOTE_PATH) + " -Dofile " + self.DO_FILE_NAME + " -Logfile " + self.LOG_FILE_NAME + " -NOGui"
         
         # print("here")
         (stdin, stdout, stderr) = client.exec_command(cmd, timeout = bfasst.config.CONFORMAL_TIMEOUT)
@@ -131,10 +130,10 @@ class Conformal_CompareTool(CompareTool):
         return Status(CompareStatus.SUCCESS)
 
     def create_do_file(self, design):
-        do_file_path = os.path.join(self.work_dir, self.DO_FILE_NAME)
+        do_file_path = self.work_dir / self.DO_FILE_NAME
 
         with open(do_file_path, 'w') as fp:
-            fp.write("read library -Both -Replace -sensitive -Verilog " + bfasst.config.CONFORMAL_REMOTE_LIBS_DIR + "/sb_ice_syn.v -nooptimize\n")
+            fp.write("read library -Both -Replace -sensitive -Verilog " + str(bfasst.config.CONFORMAL_REMOTE_LIBS_DIR) + "/sb_ice_syn.v -nooptimize\n")
 
             if design.top_is_verilog():
                 src_type = "-Verilog"
@@ -156,30 +155,30 @@ class Conformal_CompareTool(CompareTool):
         scpClient = scp.SCPClient(client.get_transport())
         
         # Copy do script
-        scpClient.put(do_file_path, os.path.join(bfasst.config.CONFORMAL_REMOTE_WORK_DIR, self.DO_FILE_NAME))
+        scpClient.put(str(do_file_path), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR / self.DO_FILE_NAME))
         
         # Copy top
-        scpClient.put(design.top_path(), bfasst.config.CONFORMAL_REMOTE_WORK_DIR)
+        scpClient.put(str(design.top_path()), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
 
         # Copy all support files
         # Todo
         for verilog_file in design.verilog_files:
-            scpClient.put(os.path.join(design.full_dir, verilog_file), bfasst.config.CONFORMAL_REMOTE_WORK_DIR)
+            scpClient.put(str(design.full_path / verilog_file), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
         # @$(foreach var, $(VERILOG_SUPPORT_FILES),scp $(DESIGN_DIR)/$(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $@;)	
         # @$(foreach var, $(VHDL_SUPPORT_FILES),scp $(DESIGN_DIR)/$(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $@;)	
 
         # Copy reverse netlist file
-        scpClient.put(design.reversed_netlist_path, bfasst.config.CONFORMAL_REMOTE_WORK_DIR)
+        scpClient.put(str(design.reversed_netlist_path), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
 
         scpClient.close()
 
     def copy_log_from_remote_machine(self, client):
         scpClient = scp.SCPClient(client.get_transport())
-        scpClient.get(os.path.join(bfasst.config.CONFORMAL_REMOTE_WORK_DIR, self.LOG_FILE_NAME), self.work_dir)
+        scpClient.get(str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR / self.LOG_FILE_NAME), str(self.work_dir))
         scpClient.close()
 
     def check_compare_status(self):
-        log_path = os.path.join(self.work_dir, self.LOG_FILE_NAME)
+        log_path = self.work_dir / self.LOG_FILE_NAME
 
         log_text = open(log_path).read()
 

@@ -45,15 +45,17 @@ class Tool(abc.ABC):
         raise NotImplementedError
 
     def make_work_dir(self):
-        work_dir = os.path.join(self.cwd, self.TOOL_WORK_DIR)
+        work_dir = self.cwd / self.TOOL_WORK_DIR
 
-        if not os.path.isdir(work_dir):
-            os.mkdir(work_dir)
+        if not work_dir.is_dir():
+            work_dir.mkdir()
         return work_dir
 
 def run_flow(design, flow_type, build_dir):
     assert type(design) is bfasst.design.Design
-    return flow_fcn_map[flow_type](design, build_dir)
+
+    flow_fcn = bfasst.flow.get_flow_fcn_by_name(flow_type)
+    return flow_fcn(design, build_dir)
 
 
 def flow_ic2_lse_conformal(design, build_dir):

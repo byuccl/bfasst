@@ -1,7 +1,7 @@
 import argparse
-import os
 import glob
 import sys
+import pathlib
 
 import bfasst
 
@@ -11,9 +11,9 @@ def main():
 
     # Find all experiments in the experiments/ directory
     experiments = []
-    for dir_item in os.listdir(bfasst.EXPERIMENTS_PATH):
-        if os.path.isfile(os.path.join(bfasst.EXPERIMENTS_PATH, dir_item)) and os.path.splitext(dir_item)[1] == ".yaml":
-            experiments.append(os.path.splitext(dir_item)[0])
+    for dir_item in bfasst.EXPERIMENTS_PATH.glob('*'):
+        if (bfasst.EXPERIMENTS_PATH / dir_item).is_file() and dir_item.suffix == ".yaml":
+            experiments.append(dir_item.stem)
 
     # Set up command line arguments
     parser.add_argument("experiment_name", choices=experiments,
@@ -25,9 +25,9 @@ def main():
     experiment = bfasst.experiment.Experiment(args.experiment_name)
 
     # Create temp folder
-    build_dir = os.path.join(os.getcwd(), "build", args.experiment_name)
-    if not os.path.isdir(build_dir):
-        os.makedirs(build_dir)
+    build_dir = pathlib.Path.cwd() / "build" / args.experiment_name
+    if not build_dir.is_dir():
+        build_dir.mkdir(parents = True)
     elif not args.force:
         bfasst.utils.error("Build directory", build_dir, "already exists.  Use --force to overwrite")
     else:
@@ -39,9 +39,9 @@ def main():
     for design in experiment.designs:
 
         # Create a per-design build directory
-        design_dir = os.path.join(build_dir, design.top)
+        design_dir = build_dir / design.top
         try:
-            os.mkdir(design_dir)
+            design_dir.mkdir()
         except FileExistsError:
             pass
 

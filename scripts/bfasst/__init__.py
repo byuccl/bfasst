@@ -1,4 +1,4 @@
-import os, logging
+import os, logging, pathlib
 
 import bfasst.utils
 import bfasst.config
@@ -11,10 +11,10 @@ import bfasst.reverse_bit
 import bfasst.compare
 import bfasst.experiment
 
-BFASST_REPO_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, os.pardir))
+BFASST_REPO_PATH = pathlib.Path(__file__).resolve().parent.parent.parent
 
-EXAMPLES_PATH = os.path.join(BFASST_REPO_PATH, "examples")
-EXPERIMENTS_PATH = os.path.join(BFASST_REPO_PATH, "experiments")
-RESOURCES_PATH = os.path.join(BFASST_REPO_PATH, "resources")
+EXAMPLES_PATH = BFASST_REPO_PATH / "examples"
+EXPERIMENTS_PATH = BFASST_REPO_PATH / "experiments"
+RESOURCES_PATH = BFASST_REPO_PATH / "resources"
 
-I2C_RESOURCES = os.path.join(RESOURCES_PATH, "iCEcube2")
+I2C_RESOURCES = RESOURCES_PATH / "iCEcube2"
