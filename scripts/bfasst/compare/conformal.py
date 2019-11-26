@@ -4,7 +4,7 @@ import paramiko
 import scp
 import sys
 import re
-import cryptography
+import socket
 
 # Suppress paramiko warning
 import warnings
@@ -20,9 +20,19 @@ class Conformal_CompareTool(CompareTool):
     DO_FILE_NAME = "compare.do"
 
     def compare_netlists(self, design):
-        # Skip if comparison log already exists
-        log_file = os.path.join(self.work_dir, self.LOG_FILE_NAME)
-        if not os.path.isfile(log_file):
+
+        log_path = os.path.join(self.work_dir, self.LOG_FILE_NAME)
+
+        # Check if compare needs to be run
+        need_to_run = False
+
+        # Run if there is no log file
+        need_to_run |= not os.path.isfile(log_path)
+
+        # Run if last compare is out of date
+        need_to_run |= os.path.getmtime(design.bitstream_path) > os.path.getmtime(log_path)
+
+        if need_to_run:
 
             # Connect to remote machine
             client = self.connect_to_remote_machine()
@@ -35,12 +45,16 @@ class Conformal_CompareTool(CompareTool):
 
             # Run conformal remotely
             status = self.run_conformal(client)
-            if status.error:
+            if status.error and not status.status == CompareStatus.TIMEOUT:
                 return status
             
             # Copy back conformal log file
             self.copy_log_from_remote_machine(client)
             client.close()
+
+            if status.status == CompareStatus.TIMEOUT:
+                with open(log_path, 'a') as fp:
+                    fp.write("\nTimeout\n")
 
         # Check conformal log
         status = self.check_compare_status()
@@ -61,7 +75,7 @@ class Conformal_CompareTool(CompareTool):
                 bfasst.config.CONFORMAL_REMOTE_PATH + " -Dofile " + self.DO_FILE_NAME + " -Logfile " + self.LOG_FILE_NAME + " -NOGui"
         
         # print("here")
-        (stdin, stdout, stderr) = client.exec_command(cmd)
+        (stdin, stdout, stderr) = client.exec_command(cmd, timeout = bfasst.config.CONFORMAL_TIMEOUT)
 
         # while True:
         #     l = stdout.readline()
@@ -96,7 +110,12 @@ class Conformal_CompareTool(CompareTool):
 
         stdin.write("yes\n")
 
-        stdout.channel.recv_exit_status()
+        try:
+            stdout.read()
+            stdout.channel.recv_exit_status()
+        except socket.timeout:
+            return Status(CompareStatus.TIMEOUT)
+        
         # for line in stdout:
         #     print(line)
         # for line in stderr:
@@ -144,6 +163,8 @@ class Conformal_CompareTool(CompareTool):
 
         # Copy all support files
         # Todo
+        for verilog_file in design.verilog_files:
+            scpClient.put(os.path.join(design.full_dir, verilog_file), bfasst.config.CONFORMAL_REMOTE_WORK_DIR)
         # @$(foreach var, $(VERILOG_SUPPORT_FILES),scp $(DESIGN_DIR)/$(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $@;)	
         # @$(foreach var, $(VHDL_SUPPORT_FILES),scp $(DESIGN_DIR)/$(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $@;)	
 
@@ -161,6 +182,10 @@ class Conformal_CompareTool(CompareTool):
         log_path = os.path.join(self.work_dir, self.LOG_FILE_NAME)
 
         log_text = open(log_path).read()
+
+        # Check for timeout
+        if re.search(r"^Timeout$", log_text, re.M):
+            return Status(CompareStatus.TIMEOUT)
 
         # Regex search for result
         m = re.search(r"^6\. Compare Results:\s+(.*)$", log_text, re.M)

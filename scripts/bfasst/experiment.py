@@ -23,15 +23,15 @@ class Experiment():
                 design_paths.append(d)
 
         if "design_dirs" in experiment_props:
-            for d in experiment_props["design_dirs"]:
-                design_dir = os.path.join(bfasst.EXAMPLES_PATH, d)
-                if not (os.path.isdir(design_dir)):
-                    bfasst.utils.error(design_dir, "is not a directory" )
+            for design_dir in experiment_props["design_dirs"]:
+                design_dir_path = os.path.join(bfasst.EXAMPLES_PATH, design_dir)
+                if not (os.path.isdir(design_dir_path)):
+                    bfasst.utils.error(design_dir_path, "is not a directory" )
                 
-                for dir_item in os.listdir(design_dir):
-                    item_path = os.path.join(design_dir, dir_item)
+                for dir_item in os.listdir(design_dir_path):
+                    item_path = os.path.join(design_dir_path, dir_item)
                     if os.path.isdir(item_path):
-                        design_paths.append(item_path)
+                        design_paths.append(os.path.join(design_dir, dir_item))
 
 
 

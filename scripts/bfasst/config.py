@@ -10,6 +10,7 @@ CONFORMAL_REMOTE_LIBS_DIR = "/fsj/squallzz/ice_libs"
 CONFORMAL_REMOTE_PATH = "/ee2/Cadence/CONFRML152/bin/lec"
 
 I2C_LSE_TIMEOUT = 60.0
+CONFORMAL_TIMEOUT = 10.0
 
 BUILD_DIR = "build"
 

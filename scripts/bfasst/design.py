@@ -46,7 +46,7 @@ class Design():
                 self.top_file = vhdlTop
         
         if self.top_file is None:
-            bfasst.utils.error("Cannot find a top file", verilogTop, "or", vhdlTop)
+            bfasst.utils.error("Cannot find a top file", verilogTop, "or", vhdlTop, "for design", self.design_dir)
         if not os.path.isfile(self.top_path()):
             bfasst.utils.error("Top file", self.top_file, "does not exist.")
     
@@ -66,7 +66,7 @@ class Design():
         return os.path.join(self.full_dir, self.top_file)
 
     def get_support_files(self):
-        return []
+        return self.verilog_files + self.vhdl_files
 
     def reversed_netlist_filename(self):
         return os.path.basename(self.reversed_netlist_path)

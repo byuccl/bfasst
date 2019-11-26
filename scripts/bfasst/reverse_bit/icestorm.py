@@ -16,26 +16,32 @@ class Icestorm_ReverseBitTool(ReverseBitTool):
     def reverse_bitstream(self, design):
         # print("Running ReverseBit")
 
-        # Set reversed netlist path and exit if it already exists
         design.reversed_netlist_path = os.path.join(
             self.cwd, design.top + "_reversed.v")
-        if (os.path.isfile(design.reversed_netlist_path)):
-            return Status(BitReverseStatus.SUCCESS)
 
-        # Bitstream to ascii file
-        asc_path = os.path.join(self.work_dir, design.top + ".asc")
-        status = self.convert_bit_to_asc(
-            design.bitstream_path, asc_path)
-        if status.error:
-            return status
+        # Decide if this needs to be run
+        need_to_run = False
 
-        # Ascii to netlist
-        status = self.convert_asc_to_netlist(
-            asc_path, design.constraints_path, design.reversed_netlist_path)
-        if status.error:
-            return status
+        # Run if reverse netlist file does not exist
+        need_to_run |= not os.path.isfile(design.reversed_netlist_path)
 
-        return status
+        # Run if reverse netlist file is out of date
+        need_to_run |= os.path.getmtime(design.reversed_netlist_path) < os.path.getmtime(design.bitstream_path)
+
+        if need_to_run:
+            # Bitstream to ascii file
+            asc_path = os.path.join(self.work_dir, design.top + ".asc")
+            status = self.convert_bit_to_asc(design.bitstream_path, asc_path)
+            if status.error:
+                return status
+
+            # Ascii to netlist
+            status = self.convert_asc_to_netlist(
+                asc_path, design.constraints_path, design.reversed_netlist_path)
+            if status.error:
+                return status
+
+        return Status(BitReverseStatus.SUCCESS)
 
     def convert_bit_to_asc(self, bitstream_path, asc_path):
         cmd = [os.path.join(bfasst.config.ICESTORM_INSTALL_DIR,

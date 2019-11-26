@@ -20,35 +20,45 @@ class IC2_LSE_SynthesisTool(SynthesisTool):
         # Save edif netlist path to design object
         design.netlist_path = os.path.join(self.cwd, design.top + ".edf")
 
-        synth_log_file = os.path.join(
+        log_path = os.path.join(
             self.work_dir, bfasst.config.SYNTH_LOG_NAME)
         edif_path_temp = os.path.join(self.work_dir, design.top + ".edf")
 
-        # Check if synthesis has already been run, and is up to date.
-        # If it is, no need to run again
-        if not os.path.isfile(synth_log_file) or design.last_modified_time() > os.path.getmtime(synth_log_file):
+        # Check if synthesis needs to be run
+        need_to_run = False
 
+        # Run if there is no log file
+        need_to_run |= not os.path.isfile(log_path)
+
+        # Run if there is no netlist, and no error message in the log file
+        need_to_run |= (not os.path.isfile(design.netlist_path) and not self.check_synth_log(log_path).error)
+
+        # Run if last run is out of date
+        need_to_run |= design.last_modified_time() > os.path.getmtime(log_path)
+
+        if need_to_run:
             # Create Icecube 2 LSE synthesis project file
             prj_path = self.create_ic2_lse_project_file(design, edif_path_temp)
 
             # Run Icecube 2 LSE synthesis
-            status = self.run_sythesis(prj_path, synth_log_file)
+            status = self.run_sythesis(prj_path, log_path)
             if status.error:
                 return status
 
         # Parse synthesis log for errors
-        status = self.check_synth_log(synth_log_file)
+        status = self.check_synth_log(log_path)
         if status.error:
             return status
 
-        # Copy edif netlist out of project directory3
-        if not os.path.isfile(edif_path_temp):
-            return Status(SynthStatus.ERROR)
-        shutil.copyfile(edif_path_temp, design.netlist_path)
+        if need_to_run:
+            # Copy edif netlist out of project directory3
+            if not os.path.isfile(edif_path_temp):
+                return Status(SynthStatus.ERROR)
+            shutil.copyfile(edif_path_temp, design.netlist_path)
 
         return Status(SynthStatus.SUCCESS)
 
-    def run_sythesis(self, prj_path, synth_log_file):
+    def run_sythesis(self, prj_path, log_path):
 
         cmd = [os.path.join(bfasst.config.IC2_INSTALL_DIR,
                             "LSE", "bin", "lin64", "synthesis"), "-f", prj_path]
@@ -58,7 +68,7 @@ class IC2_LSE_SynthesisTool(SynthesisTool):
         env["FOUNDRY"] = os.path.join(bfasst.config.IC2_INSTALL_DIR, "LSE")
         env["SBT_DIR"] = os.path.join(
             bfasst.config.IC2_INSTALL_DIR, "sbt_backend")
-        with open(synth_log_file, 'w') as fp:
+        with open(log_path, 'w') as fp:
             try:
                 p = subprocess.run(
                     cmd, stdout=fp, stderr=subprocess.STDOUT, cwd=self.work_dir, env=env, timeout=bfasst.config.I2C_LSE_TIMEOUT)

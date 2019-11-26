@@ -24,6 +24,7 @@ class CompareStatus(enum.Enum):
     ERROR = 1
     NO_LICENSE = 2
     NOT_EQUIVALENT = 3
+    TIMEOUT = 4
 
 msg_map = {
     SynthStatus.SUCCESS: "Synth Success",
@@ -42,7 +43,8 @@ msg_map = {
     CompareStatus.SUCCESS: "Equivalent",
     CompareStatus.ERROR: "Compare Error",
     CompareStatus.NO_LICENSE: "No license for comparison tool",
-    CompareStatus.NOT_EQUIVALENT: "Not equivalent"
+    CompareStatus.NOT_EQUIVALENT: "Not equivalent",
+    CompareStatus.TIMEOUT: "Compare timeout"
 }
 
 class Status():

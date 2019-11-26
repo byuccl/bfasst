@@ -13,12 +13,23 @@ class IC2_ImplementationTool(ImplementationTool):
 
     def implement_bitstream(self, design):
         # print("Running Impl")
-        
-        # Check if implementation has been run previously, and skip 
-        # implementation if it has
-        impl_log_path = os.path.join(
-            self.work_dir, bfasst.config.IMPL_LOG_NAME)        
-        if not os.path.isfile(impl_log_path):
+
+        log_path = os.path.join(self.work_dir, bfasst.config.IMPL_LOG_NAME)
+        design.bitstream_path = os.path.join(self.cwd, design.top + ".bit")
+
+        # Check if implementation needs to be run
+        need_to_run = False
+
+        # Run if there is no log file
+        need_to_run |= not os.path.isfile(log_path)
+
+        # Run if there is no bitstream, and no error message in the log file
+        need_to_run |= (not os.path.isfile(design.bitstream_path) and not self.check_impl_status(log_path).error)
+
+        # Run if last run is out of date
+        need_to_run |= os.path.getmtime(design.netlist_path) > os.path.getmtime(log_path)
+
+        if need_to_run:
             # Create impl tcl script
             tcl_path = self.create_run_tcl()
 
@@ -29,43 +40,43 @@ class IC2_ImplementationTool(ImplementationTool):
 
             # Run implementation
             status = self.run_implement(
-                design, new_netlist_path, tcl_path, impl_log_path)
+                design, new_netlist_path, tcl_path, log_path)
             if status.error:
                 return status
 
         # Check implementation log
-        status = self.check_impl_status(impl_log_path)
+        status = self.check_impl_status(log_path)
         if status.error:
             return status
 
-        # Copy bitstream out of working directory
-        design.bitstream_path = os.path.join(self.cwd, design.top + ".bit")
-        bitstream_proj_path = os.path.join(
-            self.work_dir, "sbt", "outputs", "bitmap", design.top + "_bitmap.bin")
-        try:
-            shutil.copyfile(bitstream_proj_path, design.bitstream_path)
-        except FileNotFoundError:
-            return Status(ImplStatus.ERROR)
+        if need_to_run:
+            # Copy bitstream out of working directory        
+            bitstream_proj_path = os.path.join(
+                self.work_dir, "sbt", "outputs", "bitmap", design.top + "_bitmap.bin")
+            try:
+                shutil.copyfile(bitstream_proj_path, design.bitstream_path)
+            except FileNotFoundError:
+                return Status(ImplStatus.ERROR)
 
-        # Copy constraints out of working directory
-        constraints_proj_path = os.path.join(
-            self.work_dir, "sbt", "outputs", "placer", design.top + "_sbt.pcf")
-        design.constraints_path = os.path.join(self.cwd, design.top + ".pcf")
-        try:
-            shutil.copyfile(constraints_proj_path, design.constraints_path)
-        except FileNotFoundError:
-            return Status(ImplStatus.ERROR)
+            # Copy constraints out of working directory
+            constraints_proj_path = os.path.join(
+                self.work_dir, "sbt", "outputs", "placer", design.top + "_sbt.pcf")
+            design.constraints_path = os.path.join(self.cwd, design.top + ".pcf")
+            try:
+                shutil.copyfile(constraints_proj_path, design.constraints_path)
+            except FileNotFoundError:
+                return Status(ImplStatus.ERROR)
 
-        return status
+        return Status(ImplStatus.SUCCESS)
 
-    def run_implement(self, design, netlist_path, tcl_path, impl_log_path):
+    def run_implement(self, design, netlist_path, tcl_path, log_path):
         netlist_no_ext = os.path.splitext(os.path.basename(netlist_path))[0]
 
         cmd = ["tclsh", tcl_path, design.top, ".", netlist_no_ext]
         env = os.environ.copy()
         env["SBT_DIR"] = os.path.join(
             bfasst.config.IC2_INSTALL_DIR, "sbt_backend")
-        with open(impl_log_path, 'w') as fp:
+        with open(log_path, 'w') as fp:
             p = subprocess.run(
                 cmd, stdout=fp, stderr=subprocess.STDOUT, cwd=self.work_dir, env=env)
             if p.returncode != 0:
