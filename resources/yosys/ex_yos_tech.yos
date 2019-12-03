@@ -9,4 +9,4 @@
 synth_ice40
 
 # Now write the verilog output
-write_verilog yosys_out.v
+# write_verilog yosys_out.v

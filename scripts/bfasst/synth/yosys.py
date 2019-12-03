@@ -23,7 +23,7 @@ class Yosys_Tech_SynthTool(SynthesisTool):
         # Run Yosys on the design
         # This assumes that the VHDL module *is* installed!
         cmd = [os.path.join(bfasst.config.YOSYS_INSTALL_DIR, "yosys"), "-m", "vhdl", "-s", YOSYS_SCRIPT_FILE, "-l", YOSYS_LOG_FILE]
-        p = subprocess.run(cmd, cwd = self.work_dir)
+        p = subprocess.run(cmd, cwd = self.work_dir, stdout = subprocess.DEVNULL)
 
         if p.returncode != 0:
             return Status(SynthStatus.ERROR)
@@ -40,5 +40,5 @@ class Yosys_Tech_SynthTool(SynthesisTool):
         # TODO: Change this so we can have multiple file projects
         #       (currently only runs on top file)
         file_paths = os.path.join(design.full_dir, design.top_file)
-        subprocess.run(["python3", path_to_script_builder,"-s " + file_paths,"-i" + script_template_file,"-o" + yosys_script_file])
+        subprocess.run(["python3", path_to_script_builder,"-s " + file_paths,"-i" + script_template_file,"-o" + yosys_script_file, "-v" + netlist_path])
         

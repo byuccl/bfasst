@@ -3,7 +3,7 @@ import sys
 import getopt
 import os
 
-usage_str = "createPrjFile.py -s <source files> -o <yos file> -i <input yos file>\n\
+usage_str = "createPrjFile.py -s <source files> -o <yos file> -i <input yos file> -v <output netlist name>\n\
 Multiple source files must be enclosed in quotes \n\
   ex createPrjFile.py -s \"src1.v src2.v\"\
 If -o is not specified, prints to stdout"
@@ -19,8 +19,9 @@ def main():
     outfile = None
     srcs = None
     inyos = None
+    out_netlist = None
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "-hs:o:i:",["help"])
+        opts, args = getopt.getopt(sys.argv[1:], "-hs:o:i:v:",["help"])
     except getopt.GetoptError as err:
         print(err)
         print(usage_str)
@@ -34,6 +35,8 @@ def main():
             outfile = a
         elif o == '-i':
             inyos = a
+        elif o == '-v':
+            out_netlist = a
         else:
             assert False, "unhandled option"
             
@@ -60,6 +63,8 @@ def main():
                         print_or_write(of, "read_verilog " + src + '\n')
                     else:
                         print("Unrecognized file type", src)
+            if line.strip() == "# Now write the verilog output":
+                print_or_write(of, "write_verilog " + out_netlist + '\n')
     print_or_write(of, '\n');
 
 if __name__ == "__main__":
