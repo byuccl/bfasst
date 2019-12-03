@@ -44,7 +44,7 @@ msg_map = {
     CompareStatus.ERROR: "!! Compare Error",
     CompareStatus.NO_LICENSE: "No license for comparison tool",
     CompareStatus.NOT_EQUIVALENT: "Not equivalent",
-    CompareStatus.TIMEOUT: "Compare timeout"
+    CompareStatus.TIMEOUT: "!! Compare timeout"
 }
 
 class Status():
