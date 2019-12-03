@@ -1,1 +1,9 @@
 top: leon3s
+
+vhdl_libs:
+  - lib/esa
+  - lib/eth
+  - lib/techmap
+  - lib/gaisler
+  - lib/grlib
+

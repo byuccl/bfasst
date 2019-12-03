@@ -1,1 +1,21 @@
 top: jpegencode
+
+verilog_files: 
+  - cb_dct.v
+  - ff_checker.v
+  - fifo_out.v
+  - pre_fifo.v
+  - rgb2ycbcr.v
+  - crd_q_h.v
+  - cr_dct.v
+  - cr_quantizer.v
+  - cr_huff.v
+  - cbd_q_h.v
+  - cb_quantizer.v
+  - cb_huff.v
+  - yd_q_h.v
+  - y_dct.v
+  - y_quantizer.v
+  - y_huff.v
+  - sync_fifo_32.v
+  - sync_fifo_ff.v
