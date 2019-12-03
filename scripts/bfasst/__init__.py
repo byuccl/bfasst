@@ -15,5 +15,7 @@ BFASST_REPO_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(
 
 EXAMPLES_PATH = os.path.join(BFASST_REPO_PATH, "examples")
 RESOURCES_PATH = os.path.join(BFASST_REPO_PATH, "resources")
+SCRIPTS_PATH = os.path.join(BFASST_REPO_PATH, "scripts")
 
 I2C_RESOURCES = os.path.join(RESOURCES_PATH, "iCEcube2")
+YOSYS_RESOURCES = os.path.join(RESOURCES_PATH, "yosys")

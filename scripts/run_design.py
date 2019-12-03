@@ -29,9 +29,15 @@ def main():
     else:
         bfasst.utils.clean_folder(build_dir)
 
-
+    # Get the flow object
+    for flow_itr in bfasst.flow.Flows:
+        if args.flow == flow_itr.value:
+            flow = flow_itr
+            break
+    
     # Run the design
-    status = bfasst.flow.run_flow(design, bfasst.flow.Flows.IC2_LSE_CONFORMAL, build_dir)
+    #status = bfasst.flow.run_flow(design, bfasst.flow.Flows.IC2_LSE_CONFORMAL, build_dir)
+    status = bfasst.flow.run_flow(design, flow, build_dir)
 
     print(status)
 

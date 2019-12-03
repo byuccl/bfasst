@@ -8,11 +8,13 @@ import bfasst
 @enum.unique
 class Flows(enum.Enum):
     IC2_LSE_CONFORMAL = "IC2_lse_conformal"
+    YOSYS_TECH = "yosys_tech"
 
 
 # This uses a lambda so that I don't have to define all of the functions before this point
 flow_fcn_map = {
     Flows.IC2_LSE_CONFORMAL: lambda design, build_dir: flow_ic2_lse_conformal(design, build_dir),
+    Flows.YOSYS_TECH: lambda design, build_dir: flow_yosys_tech(design, build_dir)
 }
 
 
@@ -67,4 +69,16 @@ def flow_ic2_lse_conformal(design, build_dir):
     if status.error:
         return status
 
+    return status
+
+def flow_yosys_tech(design, build_dir):
+    # Run the Yosys synthesizer
+    yosys_synth_tool = bfasst.synth.yosys.Yosys_Tech_SynthTool(build_dir)
+    status = yosys_synth_tool.create_netlist(design)
+    if status.error:
+        return status
+
+    # Now run the LSE synthesizer on the Yosys output
+    
+    
     return status
