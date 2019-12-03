@@ -93,7 +93,9 @@ class IC2_LSE_SynthesisTool(SynthesisTool):
                 fp.write("-lib work -vhd " + design.top_file + "\n")
 
             for verilog_file in design.verilog_files:
-                fp.write("-ver " + verilog_file + "\n")
+                fp.write("-lib work -ver " + verilog_file + "\n")
+            for vhdl_file in design.vhdl_files:
+                fp.write("-lib work -vhd " + vhdl_file + "\n")
     # 	@$(foreach var, $(VERILOG_SUPPORT_FILES), echo "-ver $(var)" >> $@;)
     # 	@# @$(foreach var, $(VHDL_SUPPORT_FILES), echo "-lib $(firstword $(subst /, ,$(var))) -vhd $(var)" >> $@;)
 

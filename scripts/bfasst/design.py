@@ -57,8 +57,12 @@ class Design():
                 if os.path.isfile(os.path.join(self.full_path, dir_item)) and os.path.splitext(dir_item)[1] == ".v" and dir_item != self.top_file:
                     self.verilog_files.append(dir_item)
         
-        # VHDL libraries
+        if "include_all_vhdl_files" in design_props and design_props["include_all_vhdl_files"]:
+            for dir_item in os.listdir(self.full_path):
+                if os.path.isfile(os.path.join(self.full_path, dir_item)) and os.path.splitext(dir_item)[1] == ".vhd" and dir_item != self.top_file:
+                    self.vhdl_files.append(dir_item)
 
+        # VHDL libraries
         if "vhdl_libs" in design_props:
             for vhdl_lib in design_props["vhdl_libs"]:
                 vhdl_lib_path = self.full_path / vhdl_lib
