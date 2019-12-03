@@ -1,1 +1,3 @@
 top: data_path
+
+include_all_verilog_files: True

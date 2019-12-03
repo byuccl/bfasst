@@ -1,1 +1,3 @@
 top: atahost
+
+include_all_vhdl_files: True
