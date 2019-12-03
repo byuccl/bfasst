@@ -79,6 +79,15 @@ def flow_yosys_tech(design, build_dir):
         return status
 
     # Now run the LSE synthesizer on the Yosys output
+    # Because our script to run the LSE synthesizer uses our configs to
+    #   know where to find its sources, we can change them to point it
+    #   to the yosys output
+    # This is *super* hacky, we should probably do this differently
+    old_full_path = design.full_path
+    old_top_file = design.top_file
+    old_verilog_files = design.verilog_files
+    old_vhdl_files = design.vhdl_files
+    print(build_dir)
     
     
     return status
