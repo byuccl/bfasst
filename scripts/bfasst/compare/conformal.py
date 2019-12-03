@@ -164,6 +164,8 @@ class Conformal_CompareTool(CompareTool):
         # Todo
         for verilog_file in design.verilog_files:
             scpClient.put(str(design.full_path / verilog_file), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
+        for vhdl_file in design.vhdl_files:
+            scpClient.put(str(design.full_path / vhdl_file), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
         # @$(foreach var, $(VERILOG_SUPPORT_FILES),scp $(DESIGN_DIR)/$(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $@;)	
         # @$(foreach var, $(VHDL_SUPPORT_FILES),scp $(DESIGN_DIR)/$(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $@;)	
 
