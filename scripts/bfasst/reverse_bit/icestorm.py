@@ -1,4 +1,3 @@
-import os
 import shutil
 import subprocess
 
@@ -14,27 +13,37 @@ class Icestorm_ReverseBitTool(ReverseBitTool):
     TOOL_WORK_DIR = "icestorm"
 
     def reverse_bitstream(self, design):
+        # print("Running ReverseBit")
 
-        # Bitstream to ascii file
-        asc_path = os.path.join(self.work_dir, design.top + ".asc")
-        status = self.convert_bit_to_asc(
-            design.bitstream_path, asc_path)
-        if status.error:
-            return status
+        design.reversed_netlist_path = self.cwd / (design.top + "_reversed.v")
 
-        # Ascii to netlist
-        design.reversed_netlist_path = os.path.join(
-            self.cwd, design.top + "_reversed.v")
-        status = self.convert_asc_to_netlist(
-            asc_path, design.constraints_path, design.reversed_netlist_path)
-        if status.error:
-            return status
+        # Decide if this needs to be run
+        need_to_run = False
 
-        return status
+        # Run if reverse netlist file does not exist
+        need_to_run |= not design.reversed_netlist_path.is_file()
+
+        # Run if reverse netlist file is out of date
+        need_to_run |= (not need_to_run) and (
+            design.reversed_netlist_path.stat().st_mtime < design.bitstream_path.stat().st_mtime)
+
+        if need_to_run:
+            # Bitstream to ascii file
+            asc_path = self.work_dir / (design.top + ".asc")
+            status = self.convert_bit_to_asc(design.bitstream_path, asc_path)
+            if status.error:
+                return status
+
+            # Ascii to netlist
+            status = self.convert_asc_to_netlist(
+                asc_path, design.constraints_path, design.reversed_netlist_path)
+            if status.error:
+                return status
+
+        return Status(BitReverseStatus.SUCCESS)
 
     def convert_bit_to_asc(self, bitstream_path, asc_path):
-        cmd = [os.path.join(bfasst.config.ICESTORM_INSTALL_DIR,
-                            "icepack", "iceunpack"), bitstream_path]
+        cmd = [bfasst.config.ICESTORM_INSTALL_DIR/"icepack"/"iceunpack", bitstream_path]
 
         with open(asc_path, 'w') as fp:
             p = subprocess.run(
@@ -46,8 +55,8 @@ class Icestorm_ReverseBitTool(ReverseBitTool):
         return Status(BitReverseStatus.SUCCESS)
 
     def convert_asc_to_netlist(self, asc_path, constraints_path, netlist_path):
-        cmd = [os.path.join(bfasst.config.ICESTORM_INSTALL_DIR, "icebox",
-                            "icebox_vlog.py"), "-P", constraints_path, "-s", asc_path]
+        cmd = [bfasst.config.ICESTORM_INSTALL_DIR/"icebox" /
+               "icebox_vlog.py", "-P", constraints_path, "-s", asc_path]
 
         with open(netlist_path, 'w') as fp:
             p = subprocess.run(
@@ -57,4 +66,3 @@ class Icestorm_ReverseBitTool(ReverseBitTool):
                 return Status(BitReverseStatus.ERROR)
 
         return Status(BitReverseStatus.SUCCESS)
-

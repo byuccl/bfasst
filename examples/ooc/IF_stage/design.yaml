@@ -1,0 +1,3 @@
+top: IF_stage
+
+include_all_verilog_files: yes

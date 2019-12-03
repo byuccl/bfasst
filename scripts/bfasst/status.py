@@ -4,6 +4,7 @@ import enum
 class SynthStatus(enum.Enum):
     SUCCESS = 0
     ERROR = 1
+    TIMEOUT = 2
 
 
 class ImplStatus(enum.Enum):
@@ -23,13 +24,15 @@ class CompareStatus(enum.Enum):
     ERROR = 1
     NO_LICENSE = 2
     NOT_EQUIVALENT = 3
+    TIMEOUT = 4
 
 msg_map = {
     SynthStatus.SUCCESS: "Synth Success",
-    SynthStatus.ERROR: "Synth Error",
+    SynthStatus.ERROR: "!! Synth Error",
+    SynthStatus.TIMEOUT: "Synth Timeout",
 
     ImplStatus.SUCCESS: "Impl Success",
-    ImplStatus.ERROR: "Impl Error",
+    ImplStatus.ERROR: "!! Impl Error",
     ImplStatus.TOO_MANY_FF: "Too many FFs",
     ImplStatus.TOO_MANY_LUTS: "Too many LUTs",
     ImplStatus.TOO_MANY_IO: "Too many IOs",
@@ -38,9 +41,10 @@ msg_map = {
     BitReverseStatus.ERROR: "Bitstream Reversal Error",
 
     CompareStatus.SUCCESS: "Equivalent",
-    CompareStatus.ERROR: "Compare Error",
+    CompareStatus.ERROR: "!! Compare Error",
     CompareStatus.NO_LICENSE: "No license for comparison tool",
-    CompareStatus.NOT_EQUIVALENT: "Not equivalent"
+    CompareStatus.NOT_EQUIVALENT: "Not equivalent",
+    CompareStatus.TIMEOUT: "!! Compare timeout"
 }
 
 class Status():

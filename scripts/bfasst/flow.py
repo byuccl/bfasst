@@ -13,9 +13,24 @@ class Flows(enum.Enum):
 
 # This uses a lambda so that I don't have to define all of the functions before this point
 flow_fcn_map = {
-    Flows.IC2_LSE_CONFORMAL: lambda design, build_dir: flow_ic2_lse_conformal(design, build_dir),
-    Flows.YOSYS_TECH: lambda design, build_dir: flow_yosys_tech(design, build_dir)
+    Flows.IC2_LSE_CONFORMAL: lambda: flow_ic2_lse_conformal,
+    Flows.YOSYS_TECH: lambda: flow_yosys_tech(design, build_dir)
 }
+
+def get_flow_fcn_by_name(flow_name):
+    invalid_flow = False
+
+    try:
+        flow_enum = Flows(flow_name)
+    except ValueError:
+        invalid_flow = True
+        
+    if invalid_flow:
+        bfasst.utils.error(flow_name, "is not a valid flow name")
+
+    fcn = flow_fcn_map[flow_enum]()
+    return fcn
+
 
 
 class Tool(abc.ABC):
@@ -32,15 +47,17 @@ class Tool(abc.ABC):
         raise NotImplementedError
 
     def make_work_dir(self):
-        work_dir = os.path.join(self.cwd, self.TOOL_WORK_DIR)
+        work_dir = self.cwd / self.TOOL_WORK_DIR
 
-        if not os.path.isdir(work_dir):
-            os.mkdir(work_dir)
-            return work_dir
+        if not work_dir.is_dir():
+            work_dir.mkdir()
+        return work_dir
 
 def run_flow(design, flow_type, build_dir):
     assert type(design) is bfasst.design.Design
-    return flow_fcn_map[flow_type](design, build_dir)
+
+    flow_fcn = bfasst.flow.get_flow_fcn_by_name(flow_type)
+    return flow_fcn(design, build_dir)
 
 
 def flow_ic2_lse_conformal(design, build_dir):
@@ -69,25 +86,4 @@ def flow_ic2_lse_conformal(design, build_dir):
     if status.error:
         return status
 
-    return status
-
-def flow_yosys_tech(design, build_dir):
-    # Run the Yosys synthesizer
-    yosys_synth_tool = bfasst.synth.yosys.Yosys_Tech_SynthTool(build_dir)
-    status = yosys_synth_tool.create_netlist(design)
-    if status.error:
-        return status
-
-    # Now run the LSE synthesizer on the Yosys output
-    # Because our script to run the LSE synthesizer uses our configs to
-    #   know where to find its sources, we can change them to point it
-    #   to the yosys output
-    # This is *super* hacky, we should probably do this differently
-    old_full_path = design.full_path
-    old_top_file = design.top_file
-    old_verilog_files = design.verilog_files
-    old_vhdl_files = design.vhdl_files
-    print(build_dir)
-    
-    
     return status

@@ -1,0 +1,3 @@
+top: basicrsa
+
+include_all_vhdl_files: True
