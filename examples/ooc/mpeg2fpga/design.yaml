@@ -1,1 +1,53 @@
 top: mpeg2fpga
+
+verilog_files:
+  # - fifo_size.v
+  - framestore_request.v
+  - framestore_response.v
+  - framestore.v
+  - fwft.v
+  - getbits.v
+  - idct.v
+  - iquant.v
+  - mem_addr.v
+  # - mem_codes.v
+  - mixer.v
+  # - modeline.v
+  - motcomp_addrgen.v
+  # - motcomp_dctcodes.v
+  - motcomp_dcttype.v
+  - motcomp_motvec.v
+  - motcomp_picbuf.v
+  - motcomp_recon.v
+  - motcomp.v
+  - osd.v
+  - pixel_queue.v
+  - probe.v
+  - read_write.v
+  # - regfile_codes.v
+  - regfile.v
+  - resample_addrgen.v
+  - resample_bilinear.v
+  # - resample_codes.v
+  - resample_dta.v
+  - resample.v
+  - reset.v
+  - rld.v
+  - syncgen_intf.v
+  - syncgen.v
+  - synchronizer.v
+  - timescale.v
+  - vbuf.v
+  # - vlc_tables.v
+  # - vld_codes.v
+  - vld.v
+  - watchdog.v
+  - wrappers.v
+  - xfifo_sc.v
+  - xilinx_fifo144.v
+  - xilinx_fifo216.v
+  - xilinx_fifo_dc.v
+  - xilinx_fifo_sc.v
+  - xilinx_fifo.v
+  - yuv2rgb.v
+  # - zigzag_table.v

@@ -91,7 +91,7 @@ ARCHITECTURE struct OF sap IS
       LDA : IN     std_logic ;
       O   : IN     std_logic ;
       SUB : IN     std_logic ;
-      con : OUT    std_logic_vector (11 DOWNTO 0)
+      CON : OUT    std_logic_vector (11 DOWNTO 0)
    );
    END COMPONENT;
    COMPONENT IR
@@ -210,7 +210,7 @@ BEGIN
          LDA => lda,
          O   => output,
          SUB => sub,
-         con => con
+         CON => con
       );
    IRReg : IR
       PORT MAP (

@@ -4,6 +4,7 @@ vhdl_libs:
   - lib/esa
   - lib/eth
   - lib/techmap
-  - lib/gaisler
   - lib/grlib
-
+  - lib/gaisler
+  
+include_all_vhdl_files: True

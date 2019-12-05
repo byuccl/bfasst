@@ -1,1 +1,3 @@
 top: vga
+
+include_all_vhdl_files: True

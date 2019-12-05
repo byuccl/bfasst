@@ -1,2 +1,4 @@
 top: pid_simple
 top_file: PID.v
+
+include_all_verilog_files: True
