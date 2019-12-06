@@ -16,7 +16,7 @@ BFASST_REPO_PATH = pathlib.Path(__file__).resolve().parent.parent.parent
 EXAMPLES_PATH = BFASST_REPO_PATH / "examples"
 EXPERIMENTS_PATH = BFASST_REPO_PATH / "experiments"
 RESOURCES_PATH = BFASST_REPO_PATH / "resources"
-SCRIPTS_PATH = os.path.join(BFASST_REPO_PATH, "scripts")
+SCRIPTS_PATH = BFASST_REPO_PATH / "scripts"
 
 I2C_RESOURCES = RESOURCES_PATH / "iCEcube2"
-YOSYS_RESOURCES = os.path.join(RESOURCES_PATH, "yosys")
+YOSYS_RESOURCES = RESOURCES_PATH / "yosys"

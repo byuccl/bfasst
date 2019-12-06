@@ -1,3 +1,5 @@
+#!/usr/bin/python3.6
+
 import argparse
 import glob
 import pathlib
@@ -22,8 +24,9 @@ def main():
 
     # Create temp folder
     build_dir = pathlib.Path.cwd() / "build" / args.flow / args.design_path
+    print(build_dir)
     if not build_dir.is_dir():
-        build_dir.mkdir(build_dir, parents=True)
+        build_dir.mkdir(parents=True)
     elif not args.force:
         bfasst.utils.error("Build directory", build_dir, "already exists.  Use --force to overwrite")
     else:
