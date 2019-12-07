@@ -4,6 +4,7 @@ import bfasst.utils
 import bfasst.config
 import bfasst.flow
 import bfasst.synth
+import bfasst.opt
 import bfasst.design
 import bfasst.status
 import bfasst.impl

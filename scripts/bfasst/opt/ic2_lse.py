@@ -2,26 +2,26 @@ import shutil
 import subprocess
 import re
 import os
+import os.path
 
 import bfasst
-from bfasst.synth.base import SynthesisTool
-from bfasst.status import Status, SynthStatus
 from bfasst.opt.base import OptTool
+from bfasst.status import Status, SynthStatus
 
 PROJECT_TEMPLATE_FILE = 'template_lse.prj'
 IC2_LSE_PROJ_FILE = 'lse_project.prj'
 
 
-class IC2_LSE_SynthesisTool(SynthesisTool):
-    TOOL_WORK_DIR = "ic2_synth"
+class IC2_LSE_OptTool(OptTool):
+    TOOL_WORK_DIR = "ic2_opt"
 
-    def create_netlist(self, design):
+    def create_netlist(self, design, in_files, lib_files):
         # print("Running Synth")
 
         # Save edif netlist path to design object
         design.netlist_path = self.cwd / (design.top + ".edf")
 
-        log_path = self.work_dir / bfasst.config.SYNTH_LOG_NAME
+        log_path = self.work_dir / bfasst.config.OPT_LOG_NAME
         edif_path_temp = self.work_dir / (design.top + ".edf")
 
         # Check if synthesis needs to be run
@@ -37,27 +37,14 @@ class IC2_LSE_SynthesisTool(SynthesisTool):
         need_to_run |= (not need_to_run) and (design.last_modified_time() > log_path.stat().st_mtime)
 
         if need_to_run:
-            # Call the LSE optimizer -- it will perform the functions of our
-            # synthesizer
-
-            # build a list of files and libs
-            design_files = [design.top_file]
-            design_files.extend(design.verilog_files)
-            design_files.extend(design.vhdl_files)
-            lib_files = design.vhdl_libs.items()
-
-            # call the lse optimizer
-            opt_tool = bfasst.opt.ic2_lse.IC2_LSE_OptTool(self.cwd)
-            status = opt_tool.create_netlist(design, design_files, lib_files)
-            return status
-            
             # Create Icecube 2 LSE synthesis project file
-            #prj_path = self.create_ic2_lse_project_file(design, edif_path_temp)
+            prj_path = self.create_ic2_lse_project_file(design, edif_path_temp, \
+                                                        in_files, lib_files)
 
             # Run Icecube 2 LSE synthesis
-            #status = self.run_sythesis(prj_path, log_path)
-            #if status.error:
-            #    return status
+            status = self.run_sythesis(prj_path, log_path)
+            if status.error:
+                return status
 
         # Parse synthesis log for errors
         status = self.check_synth_log(log_path)
@@ -92,7 +79,7 @@ class IC2_LSE_SynthesisTool(SynthesisTool):
 
             return Status(SynthStatus.SUCCESS)
 
-    def create_ic2_lse_project_file(self, design, edif_path):
+    def create_ic2_lse_project_file(self, design, edif_path, in_files, lib_files):
         assert type(design) is bfasst.design.Design
 
         template_file = bfasst.I2C_RESOURCES / PROJECT_TEMPLATE_FILE
@@ -102,21 +89,14 @@ class IC2_LSE_SynthesisTool(SynthesisTool):
         with open(project_file, 'a') as fp:
             fp.write("-p " + str(design.full_path) + "\n")
 
-            if design.top_is_verilog():
-                fp.write("-lib work -ver " + design.top_file + "\n")
-            elif design.top_is_vhdl():
-                fp.write("-lib work -vhd " + design.top_file + "\n")
+            for design_file in in_files:
+                if os.path.splitext(design_file)[1].lower() == ".v":
+                    fp.write("-lib work -ver " + design_file + "\n")
+                elif os.path.splitext(design_file)[1].lower() == ".vhd":
+                    fp.write("-lib work -vhd " + design_file + "\n")
 
-            for verilog_file in design.verilog_files:
-                fp.write("-lib work -ver " + verilog_file + "\n")
-            for vhdl_file in design.vhdl_files:
-                fp.write("-lib work -vhd " + vhdl_file + "\n")
-    # 	@$(foreach var, $(VERILOG_SUPPORT_FILES), echo "-ver $(var)" >> $@;)
-    # 	@# @$(foreach var, $(VHDL_SUPPORT_FILES), echo "-lib $(firstword $(subst /, ,$(var))) -vhd $(var)" >> $@;)
-
-            for (vhdl_lib_file_path, vhdl_lib) in design.vhdl_libs.items():
+            for (vhdl_lib_file_path, vhdl_lib) in lib_files:
                 fp.write("-lib " + vhdl_lib + " -vhd " + str(vhdl_lib_file_path) + "\n")
-    # 	@$(foreach var, $(VHDL_LIB_FILES), echo "-lib $(firstword $(subst /, ,$(var))) -vhd $(VHDL_LIBS_DIR)/$(var)" >> $@;)
             fp.write("-top " + design.top + "\n")
             fp.write("-output_edif " + str(edif_path) + "\n")
 
