@@ -15,7 +15,11 @@ class Yosys_Tech_SynthTool(SynthesisTool):
 
     def create_netlist(self, design):
         # Target netlist output
-        design.netlist_path = os.path.join(self.cwd, design.top + "_yosys_tech.v")
+        design.netlist_path = self.cwd / (design.top + "_yosys_tech.v")
+
+        log_path = self.work_dir / YOSYS_LOG_FILE
+
+        # TODO: Add "need to run" checks
 
         # Create the yosys script that generates the netlist
         self.create_yosys_script(design, design.netlist_path)
@@ -33,12 +37,13 @@ class Yosys_Tech_SynthTool(SynthesisTool):
     def create_yosys_script(self, design, netlist_path):
         # It's a little messy, but I want to just call my existing script that
         #   does this
-        path_to_script_builder = os.path.join(bfasst.SCRIPTS_PATH, "yosys", "createYosScript.py")
-        script_template_file = os.path.join(bfasst.YOSYS_RESOURCES, YOSYS_SCRIPT_TEMPLATE)
-        yosys_script_file = os.path.join(self.work_dir, YOSYS_SCRIPT_FILE)
+        path_to_script_builder = bfasst.SCRIPTS_PATH / "yosys" / "createYosScript.py"
+        script_template_file = bfasst.YOSYS_RESOURCES / YOSYS_SCRIPT_TEMPLATE
+        yosys_script_file = self.work_dir / YOSYS_SCRIPT_FILE
         
         # TODO: Change this so we can have multiple file projects
         #       (currently only runs on top file)
-        file_paths = os.path.join(design.full_dir, design.top_file)
-        subprocess.run(["python3", path_to_script_builder,"-s " + file_paths,"-i" + script_template_file,"-o" + yosys_script_file, "-v" + netlist_path])
+        file_paths = design.full_path / design.top_file
+        # TODO: Add the same error handling as in other synth flows
+        subprocess.run(["python3", str(path_to_script_builder),"-s " + str(file_paths),"-i" + str(script_template_file),"-o" + str(yosys_script_file), "-v" + str(netlist_path)])
         
