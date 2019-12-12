@@ -49,6 +49,11 @@ class IC2_LSE_SynthesisTool(SynthesisTool):
             # call the lse optimizer
             opt_tool = bfasst.opt.ic2_lse.IC2_LSE_OptTool(self.cwd)
             status = opt_tool.create_netlist(design, design_files, lib_files)
+
+            # Copy the log file so it can be used by this front-end
+            opt_log_path = opt_tool.work_dir / bfasst.config.OPT_LOG_NAME
+            shutil.copy(opt_log_path, log_path)
+            
             return status
             
             # Create Icecube 2 LSE synthesis project file
@@ -91,38 +96,6 @@ class IC2_LSE_SynthesisTool(SynthesisTool):
                     return Status(SynthStatus.ERROR)
 
             return Status(SynthStatus.SUCCESS)
-
-    def create_ic2_lse_project_file(self, design, edif_path):
-        assert type(design) is bfasst.design.Design
-
-        template_file = bfasst.I2C_RESOURCES / PROJECT_TEMPLATE_FILE
-        project_file = self.work_dir / IC2_LSE_PROJ_FILE
-        shutil.copyfile(template_file, project_file)
-
-        with open(project_file, 'a') as fp:
-            fp.write("-p " + str(design.full_path) + "\n")
-
-            if design.top_is_verilog():
-                fp.write("-lib work -ver " + design.top_file + "\n")
-            elif design.top_is_vhdl():
-                fp.write("-lib work -vhd " + design.top_file + "\n")
-
-            for verilog_file in design.verilog_files:
-                fp.write("-lib work -ver " + verilog_file + "\n")
-            for vhdl_file in design.vhdl_files:
-                fp.write("-lib work -vhd " + vhdl_file + "\n")
-    # 	@$(foreach var, $(VERILOG_SUPPORT_FILES), echo "-ver $(var)" >> $@;)
-    # 	@# @$(foreach var, $(VHDL_SUPPORT_FILES), echo "-lib $(firstword $(subst /, ,$(var))) -vhd $(var)" >> $@;)
-
-            for (vhdl_lib_file_path, vhdl_lib) in design.vhdl_libs.items():
-                fp.write("-lib " + vhdl_lib + " -vhd " + str(vhdl_lib_file_path) + "\n")
-    # 	@$(foreach var, $(VHDL_LIB_FILES), echo "-lib $(firstword $(subst /, ,$(var))) -vhd $(VHDL_LIBS_DIR)/$(var)" >> $@;)
-            fp.write("-top " + design.top + "\n")
-            fp.write("-output_edif " + str(edif_path) + "\n")
-
-    # 	@echo "-top $(NAME)" >> $@
-    # 	@echo "-output_edif ../../$(IC2_EDIF_FILE)" >> $@
-        return project_file
 
     def check_synth_log(self, synth_log):
         text = open(synth_log).read()
