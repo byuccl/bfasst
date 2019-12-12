@@ -77,26 +77,6 @@ class IC2_LSE_SynthesisTool(SynthesisTool):
 
         return Status(SynthStatus.SUCCESS)
 
-    def run_sythesis(self, prj_path, log_path):
-
-        cmd = [bfasst.config.IC2_INSTALL_DIR /"LSE"/"bin"/"lin64"/"synthesis", "-f", prj_path]
-        env = os.environ.copy()
-        env["LD_LIBRARY_PATH"] = bfasst.config.IC2_INSTALL_DIR/"LSE"/"bin"/"lin64"
-        env["FOUNDRY"] = bfasst.config.IC2_INSTALL_DIR/"LSE"
-        env["SBT_DIR"] = bfasst.config.IC2_INSTALL_DIR/"sbt_backend"
-        with open(log_path, 'w') as fp:
-            try:
-                p = subprocess.run(
-                    cmd, stdout=fp, stderr=subprocess.STDOUT, cwd=self.work_dir, env=env, timeout=bfasst.config.I2C_LSE_TIMEOUT)
-            except subprocess.TimeoutExpired:
-                fp.write("\nTimeout\n")
-                return Status(SynthStatus.TIMEOUT)
-            else:
-                if p.returncode != 0:
-                    return Status(SynthStatus.ERROR)
-
-            return Status(SynthStatus.SUCCESS)
-
     def check_synth_log(self, synth_log):
         text = open(synth_log).read()
         if re.search("^Timeout$", text, re.M):
