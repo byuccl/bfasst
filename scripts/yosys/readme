@@ -1,0 +1,12 @@
+Yosys build scripts
+
+build_yosys_ipassurance.sh -- Bash script to take a target dir tree, compile it to a netlist with yosys, and call the build_ipassurance.sh script on it to compile it to a binary with the iCECube2 flow.
+
+createYosScript.py -- Helper script to build_yosys_ipassurance.sh. Creates the .yos yosys script file to be used for yosys compilation.
+
+example_yosys.yos -- Sample yosys script used by createYosScript.py to make customized yosys scripts.
+
+
+Notes:
+ - In order to build VHDL files using Yosys, install the yosys-vhdl plugin found here: https://github.com/YosysHQ/yosys-plugins/tree/master/vhdl
+     - To use, clone the repo and run make in the vhdl directory. Then copy the vhdl.so file to your yosys plugins directory (likely yosys/share/plugins/). 

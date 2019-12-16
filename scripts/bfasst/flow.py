@@ -8,11 +8,13 @@ import bfasst
 @enum.unique
 class Flows(enum.Enum):
     IC2_LSE_CONFORMAL = "IC2_lse_conformal"
+    YOSYS_TECH_LSE_CONFORMAL = "yosys_tech_lse_conformal"
 
 
 # This uses a lambda so that I don't have to define all of the functions before this point
 flow_fcn_map = {
     Flows.IC2_LSE_CONFORMAL: lambda: flow_ic2_lse_conformal,
+    Flows.YOSYS_TECH_LSE_CONFORMAL: lambda: flow_yosys_tech_lse_conformal
 }
 
 def get_flow_fcn_by_name(flow_name):
@@ -85,3 +87,21 @@ def flow_ic2_lse_conformal(design, build_dir):
         return status
 
     return status
+
+def flow_yosys_tech_lse_conformal(design, build_dir):
+    # Run the Yosys synthesizer
+    yosys_synth_tool = bfasst.synth.yosys.Yosys_Tech_SynthTool(build_dir)
+    status = yosys_synth_tool.create_netlist(design)
+    if status.error:
+        return status
+
+    # Now run the LSE synthesizer on the Yosys output
+    # Because our script to run the LSE synthesizer uses our configs to
+    #   know where to find its sources, we can change them to point it
+    #   to the yosys output
+    # This is *super* hacky, we should probably do this differently
+    old_full_path = design.full_path
+    old_top_file = design.top_file
+    old_verilog_files = design.verilog_files
+    old_vhdl_files = design.vhdl_files
+    print(build_dir)

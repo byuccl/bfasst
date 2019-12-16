@@ -1,10 +1,8 @@
 #! /usr/bin/env bash
-# Builds designs from the ipassureance_designs directory in icemachine/examples
-
-# Call from ipassureance_designs/ooc or /base directory.
+# Builds designs from a target directory tree in icemachine/examples
 
 # Call with the icemachine base directory and directory to target
-# ex
+# ex: build_ipassurance.sh ~/icemachine ~/icemachine/examples/oop ~/iCEcube2
 
 # TODO: Consider adding a text file that can track compilation statuses
 

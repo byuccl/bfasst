@@ -1,0 +1,37 @@
+# Simple example yosys script
+# Used to generate yosys scripts to build specific projects
+# This script is used in the RTL --> Yosys --> ABC flow
+
+# Read verilog input files
+# read_verilog file.v
+
+# Set up a hierarchy so parametric modules work
+hierarchy -check -auto-top
+
+proc; opt; fsm; opt; memory; opt
+
+# This techmap call replaces asynchronous resets with synchronous resets
+# This allows us to export the design with BLIF for ABC optimizations
+techmap -map +/adff2dff.v
+
+# Remove any source attributes
+setattr -unset src *
+setattr -mod -unset src *
+
+# Flatten the design to remove parameterized modules
+flatten
+
+# Do some optimization passes
+# Functional reduction w/ inverted signals
+freduce -inv
+# Reduce word sizes
+wreduce
+
+#cleanup
+clean
+
+# Run synth so we can generate meaningful blif
+synth
+
+# Now create the blif output
+write_blif yosys_out.blif
