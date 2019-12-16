@@ -7,7 +7,7 @@ import bfasst
 from bfasst.synth.base import SynthesisTool
 from bfasst.status import Status, SynthStatus
 
-class IC2_LSE_SynthesisTool(SynthesisTool):
+class IC2_Synplify_SynthesisTool(SynthesisTool):
     TOOL_WORK_DIR = "ic2_synth"
 
     def create_netlist(self, design):
@@ -21,7 +21,7 @@ class IC2_LSE_SynthesisTool(SynthesisTool):
             fp.write("Running ic2_synplify opt tool for synthesis")
         
         # Use the LSE optimizer -- it will perform the functions of our synthesis
-        opt_tool = bfasst.opt.ic2_synplify.IC2_LSE_OptTool(self.cwd)
+        opt_tool = bfasst.opt.ic2_synplify.IC2_Synplify_OptTool(self.cwd)
 
         # The opt tool just takes a list of input files, it doesn't know if the design has
         # been modified (ie the design.yaml file), so we add this check here

@@ -6,6 +6,11 @@ class SynthStatus(enum.Enum):
     ERROR = 1
     TIMEOUT = 2
 
+class OptStatus(enum.Enum):
+    SUCCESS = 0
+    ERROR = 1
+    TIMEOUT = 2
+    TOO_MANY_FF = 3
 
 class ImplStatus(enum.Enum):
     SUCCESS = 0
@@ -30,6 +35,11 @@ msg_map = {
     SynthStatus.SUCCESS: "Synth Success",
     SynthStatus.ERROR: "!! Synth Error",
     SynthStatus.TIMEOUT: "Synth Timeout",
+
+    OptStatus.SUCCESS: "Opt Success",
+    OptStatus.ERROR: "!! Opt Error",
+    OptStatus.TIMEOUT: "Opt Timeout",
+    OptStatus.TOO_MANY_FF: "Too many FFs (Opt)",
 
     ImplStatus.SUCCESS: "Impl Success",
     ImplStatus.ERROR: "!! Impl Error",

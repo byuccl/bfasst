@@ -8,12 +8,14 @@ import bfasst
 @enum.unique
 class Flows(enum.Enum):
     IC2_LSE_CONFORMAL = "IC2_lse_conformal"
+    IC2_SYNPLIFY_CONFORMAL = "IC2_synplify_conformal"
     YOSYS_TECH_LSE_CONFORMAL = "yosys_tech_lse_conformal"
 
 
 # This uses a lambda so that I don't have to define all of the functions before this point
 flow_fcn_map = {
     Flows.IC2_LSE_CONFORMAL: lambda: flow_ic2_lse_conformal,
+    Flows.IC2_SYNPLIFY_CONFORMAL: lambda: flow_ic2_synplify_conformal,
     Flows.YOSYS_TECH_LSE_CONFORMAL: lambda: flow_yosys_tech_lse_conformal
 }
 
@@ -87,6 +89,35 @@ def flow_ic2_lse_conformal(design, build_dir):
         return status
 
     return status
+
+def flow_ic2_synplify_conformal(design, build_dir):
+    # Run Icecube2 Synplify synthesis
+    synth_tool = bfasst.synth.ic2_synplify.IC2_Synplify_SynthesisTool(build_dir)
+    status = synth_tool.create_netlist(design)
+    if status.error:
+        return status
+
+    # Run Icecube2 implementations
+    impl_tool = bfasst.impl.ic2.IC2_ImplementationTool(build_dir)
+    status = impl_tool.implement_bitstream(design)
+    if status.error:
+        return status
+
+    # Run icestorm bitstream reversal
+    reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(
+        build_dir)
+    status = reverse_bit_tool.reverse_bitstream(design)
+    if status.error:
+        return status
+
+    # Run conformal
+    compare_tool = bfasst.compare.conformal.Conformal_CompareTool(build_dir)
+    status = compare_tool.compare_netlists(design)
+    if status.error:
+        return status
+
+    return status
+
 
 def flow_yosys_tech_lse_conformal(design, build_dir):
     # Run the Yosys synthesizer

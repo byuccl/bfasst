@@ -8,11 +8,10 @@ import bfasst
 from bfasst.opt.base import OptTool
 from bfasst.status import Status, OptStatus
 
-PROJECT_TEMPLATE_FILE = 'template_lse.prj'
-IC2_LSE_PROJ_FILE = 'lse_project.prj'
+PROJECT_TEMPLATE_FILE = 'template_sp.prj'
+IC2_SYNPLIFY_PROJ_FILE = 'synplify_project.prj'
 
-
-class IC2_LSE_OptTool(OptTool):
+class IC2_Synplify_OptTool(OptTool):
     TOOL_WORK_DIR = "ic2_opt"
 
     def get_log_path(self):
@@ -47,7 +46,7 @@ class IC2_LSE_OptTool(OptTool):
 
         if need_to_run:
             # Create Icecube 2 LSE synthesis project file
-            prj_path = self.create_ic2_lse_project_file(design, edif_path_temp, \
+            prj_path = self.create_ic2_synplify_project_file(design, edif_path_temp, \
                                                         in_files, lib_files)
 
             # Run Icecube 2 LSE synthesis
@@ -74,11 +73,10 @@ class IC2_LSE_OptTool(OptTool):
         return Status(OptStatus.SUCCESS)
 
     def run_sythesis(self, prj_path, log_path):
-
-        cmd = [bfasst.config.IC2_INSTALL_DIR /"LSE"/"bin"/"lin64"/"synthesis", "-f", prj_path]
+        cmd = [bfasst.config.IC2_INSTALL_DIR /"sbt_backend"/"bin"/"linux"/"opt"/"synpwrap"/"synpwrap", "-prj", prj_path]
         env = os.environ.copy()
-        env["LD_LIBRARY_PATH"] = bfasst.config.IC2_INSTALL_DIR/"LSE"/"bin"/"lin64"
-        env["FOUNDRY"] = bfasst.config.IC2_INSTALL_DIR/"LSE"
+        env["LD_LIBRARY_PATH"] = bfasst.config.IC2_INSTALL_DIR/"sbt_backend"/"bin"/"linux"/"opt"/"synpwrap"
+        env["SYNPLIFY_PATH"] = bfasst.config.IC2_INSTALL_DIR/"synpbase"
         env["SBT_DIR"] = bfasst.config.IC2_INSTALL_DIR/"sbt_backend"
         with open(log_path, 'w') as fp:
             try:
@@ -93,26 +91,23 @@ class IC2_LSE_OptTool(OptTool):
 
             return Status(OptStatus.SUCCESS)
 
-    def create_ic2_lse_project_file(self, design, edif_path, in_files, lib_files):
+    def create_ic2_synplify_project_file(self, design, edif_path, in_files, lib_files):
         assert type(design) is bfasst.design.Design
 
         template_file = bfasst.I2C_RESOURCES / PROJECT_TEMPLATE_FILE
-        project_file = self.work_dir / IC2_LSE_PROJ_FILE
+        project_file = self.work_dir / IC2_SYNPLIFY_PROJ_FILE
         shutil.copyfile(template_file, project_file)
 
         with open(project_file, 'a') as fp:
-            fp.write("-p " + str(design.full_path) + "\n")
-
             for design_file in in_files:
                 if os.path.splitext(design_file)[1].lower() == ".v":
-                    fp.write("-lib work -ver " + design_file + "\n")
+                    fp.write("add_file -verilog -lib work " + str(design.full_path / design_file) + "\n")
                 elif os.path.splitext(design_file)[1].lower() == ".vhd":
-                    fp.write("-lib work -vhd " + design_file + "\n")
+                    fp.write("add_file -vhdl -lib work " + str(design.full_path / design_file) + "\n")
 
             for (vhdl_lib_file_path, vhdl_lib) in lib_files:
-                fp.write("-lib " + vhdl_lib + " -vhd " + str(vhdl_lib_file_path) + "\n")
-            fp.write("-top " + design.top + "\n")
-            fp.write("-output_edif " + str(edif_path) + "\n")
+                fp.write("add_file -vhdl -lib " + vhdl_lib + " " + str(vhdl_lib_file_path) + "\n")
+            fp.write("project -result_file " + str(edif_path) + "\n")
 
     # 	@echo "-top $(NAME)" >> $@
     # 	@echo "-output_edif ../../$(IC2_EDIF_FILE)" >> $@
@@ -120,7 +115,15 @@ class IC2_LSE_OptTool(OptTool):
 
     def check_opt_log(self, synth_log):
         text = open(synth_log).read()
+
         if re.search("^Timeout$", text, re.M):
             return Status(OptStatus.TIMEOUT)
+
+        # if re.search(r'Job: "fpga_mapper', text, re.M):
+        m = re.search(r'Job: "fpga_mapper" terminated with error status: \d+\nSee log file: "(.*?)"', text, re.M)
+        if m:
+            text = open(m.group(1)).read()
+            if re.search(r'^@E:.*?larger than the total number of registers available', text, re.M):
+                return Status(OptStatus.TOO_MANY_FF)
 
         return Status(OptStatus.SUCCESS)
