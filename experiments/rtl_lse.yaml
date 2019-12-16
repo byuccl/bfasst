@@ -1,12 +1,3 @@
-designs:
-    - "ooc/a25_coprocessor"
-    - "ooc/a25_decode"
-    - "ooc/a25_execute"
-    - "ooc/a25_fetch"
-    - "ooc/a25_mem"
-    - "ooc/a25_wishbone"
-    - "ooc/a25_write_back"
-
 design_dirs:
     - ooc/
 
