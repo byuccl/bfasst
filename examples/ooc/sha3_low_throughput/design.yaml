@@ -1,0 +1,3 @@
+top: sha3_low_throughput
+
+include_all_verilog_files: True

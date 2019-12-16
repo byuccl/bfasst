@@ -1,0 +1,10 @@
+top: leon3s
+
+vhdl_libs:
+  - lib/esa
+  - lib/eth
+  - lib/techmap
+  - lib/grlib
+  - lib/gaisler
+  
+include_all_vhdl_files: True

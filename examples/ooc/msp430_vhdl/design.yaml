@@ -1,0 +1,3 @@
+top: msp430_vhdl
+
+include_all_vhdl_files: True

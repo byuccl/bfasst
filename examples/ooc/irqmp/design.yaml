@@ -1,0 +1,11 @@
+top: irqmp
+
+vhdl_libs:
+  - lib/esa
+  - lib/eth
+  - lib/techmap
+  - lib/gaisler
+  - lib/grlib
+
+  
+include_all_vhdl_files: True

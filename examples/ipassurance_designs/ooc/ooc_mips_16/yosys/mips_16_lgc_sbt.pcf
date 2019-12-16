@@ -1,0 +1,10 @@
+set_io rst M3
+set_io pc[7] N4
+set_io pc[6] M5
+set_io pc[5] P2
+set_io pc[4] M4
+set_io pc[3] P1
+set_io pc[2] N3
+set_io pc[1] L5
+set_io pc[0] R1
+set_io clk G1
