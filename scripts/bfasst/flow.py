@@ -116,6 +116,11 @@ def flow_ic2_synplify_conformal(design, build_dir):
         return status
 
     # Run conformal
+    design.compare_golden_files.append(design.top_file)
+    design.compare_golden_files.extend(design.get_support_files())
+    design.compare_golden_files_paths.append(design.full_path / design.top_file)
+    design.compare_golden_files_paths.extend([design.full_path / f for f in design.get_support_files()])
+    design.golden_is_verilog = design.top_is_verilog()
     compare_tool = bfasst.compare.conformal.Conformal_CompareTool(build_dir)
     status = compare_tool.compare_netlists(design)
     if status.error:
