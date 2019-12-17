@@ -24,7 +24,6 @@ def main():
 
     # Create temp folder
     build_dir = pathlib.Path.cwd() / "build" / args.flow / args.design_path
-    print(build_dir)
     if not build_dir.is_dir():
         build_dir.mkdir(parents=True)
     elif not args.force:

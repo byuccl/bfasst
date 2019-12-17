@@ -1,4 +1,4 @@
-import os, yaml, pathlib
+import os, yaml, pathlib, collections
 
 import bfasst
 
@@ -14,7 +14,7 @@ class Design():
         self.top_file = None
         self.verilog_files = []
         self.vhdl_files = []
-        self.vhdl_libs = {}
+        self.vhdl_libs = collections.OrderedDict()
         self.compare_golden_files = []
         self.golden_is_verilog = None
         # I don't like having two golden file lists...
@@ -71,11 +71,21 @@ class Design():
                 self.verilog_files.append(verilog_file)
 
         # VHDL libraries
+        if "vhdl_lib_files" in design_props:
+            for vhdl_lib in design_props["vhdl_lib_files"]:
+                for (lib, files) in vhdl_lib.items():
+                    for f in files:
+                        self.vhdl_libs[self.full_path / f] = lib
+
         if "vhdl_libs" in design_props:
             for vhdl_lib in design_props["vhdl_libs"]:
                 vhdl_lib_path = self.full_path / vhdl_lib
                 for vhdl_file in vhdl_lib_path.rglob('*.vhd'):
                     self.vhdl_libs[vhdl_file] = pathlib.Path(vhdl_lib).name
+        
+        
+        # for f, l in self.vhdl_libs.items():
+        #     print(str(f).ljust(100) + l)
 
     def top_is_verilog(self):
         return (os.path.splitext(self.top_file)[1]).lower() == ".v"

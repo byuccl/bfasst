@@ -99,6 +99,7 @@ class IC2_Synplify_OptTool(OptTool):
         shutil.copyfile(template_file, project_file)
 
         with open(project_file, 'a') as fp:
+            fp.write("set_option -top_module " + design.top + "\n")
             for design_file in in_files:
                 if os.path.splitext(design_file)[1].lower() == ".v":
                     fp.write("add_file -verilog -lib work " + str(design.full_path / design_file) + "\n")
