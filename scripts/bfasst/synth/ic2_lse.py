@@ -6,7 +6,6 @@ import os
 import bfasst
 from bfasst.synth.base import SynthesisTool
 from bfasst.status import Status, SynthStatus
-from bfasst.opt.base import OptTool
 
 PROJECT_TEMPLATE_FILE = 'template_lse.prj'
 IC2_LSE_PROJ_FILE = 'lse_project.prj'

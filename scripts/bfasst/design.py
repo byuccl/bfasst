@@ -15,6 +15,10 @@ class Design():
         self.verilog_files = []
         self.vhdl_files = []
         self.vhdl_libs = {}
+        self.compare_golden_files = []
+        self.golden_is_verilog = None
+        # I don't like having two golden file lists...
+        self.compare_golden_files_paths = []
 
         # Flow paths
         self.netlist_path = None
