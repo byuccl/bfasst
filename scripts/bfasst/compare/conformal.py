@@ -135,11 +135,12 @@ class Conformal_CompareTool(CompareTool):
         with open(do_file_path, 'w') as fp:
             fp.write("read library -Both -Replace -sensitive -Verilog " + str(bfasst.config.CONFORMAL_REMOTE_LIBS_DIR) + "/sb_ice_syn.v -nooptimize\n")
 
-            if design.top_is_verilog():
+            if design.golden_is_verilog:
                 src_type = "-Verilog"
             else:
                 src_type = "-Vhdl"
-            fp.write("read design " + design.top_file + " " + " ".join(design.get_support_files()) + " " + src_type + " -Golden -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply\n")
+            fp.write("read design " + " ".join(design.compare_golden_files) + " " + src_type + " -Golden -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply\n")
+            #fp.write("read design " + design.top_file + " " + " ".join(design.get_support_files()) + " " + src_type + " -Golden -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply\n")
 
             fp.write("read design " + design.reversed_netlist_filename() + " -Verilog -Revised -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply\n")
             fp.write(r"add renaming rule vector_expand %s\[%d\] @1_@2 -Both -map" + "\n")
@@ -158,14 +159,18 @@ class Conformal_CompareTool(CompareTool):
         scpClient.put(str(do_file_path), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR / self.DO_FILE_NAME))
         
         # Copy top
-        scpClient.put(str(design.top_path()), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
+        #scpClient.put(str(design.top_path()), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
 
         # Copy all support files
         # Todo
-        for verilog_file in design.verilog_files:
-            scpClient.put(str(design.full_path / verilog_file), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
-        for vhdl_file in design.vhdl_files:
-            scpClient.put(str(design.full_path / vhdl_file), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
+        #for verilog_file in design.verilog_files:
+        #    scpClient.put(str(design.full_path / verilog_file), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
+        #for vhdl_file in design.vhdl_files:
+        #    scpClient.put(str(design.full_path / vhdl_file), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
+
+        for design_file in design.compare_golden_files_paths:
+            scpClient.put(str(design.full_path / design_file), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
+        
         # @$(foreach var, $(VERILOG_SUPPORT_FILES),scp $(DESIGN_DIR)/$(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $@;)	
         # @$(foreach var, $(VHDL_SUPPORT_FILES),scp $(DESIGN_DIR)/$(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $@;)	
 

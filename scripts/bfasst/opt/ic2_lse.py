@@ -11,6 +11,7 @@ from bfasst.status import Status, OptStatus
 PROJECT_TEMPLATE_FILE = 'template_lse.prj'
 IC2_LSE_PROJ_FILE = 'lse_project.prj'
 
+# TODO: Change this to use Opt Statuses, not Synth
 
 class IC2_LSE_OptTool(OptTool):
     TOOL_WORK_DIR = "ic2_opt"
@@ -83,7 +84,7 @@ class IC2_LSE_OptTool(OptTool):
         with open(log_path, 'w') as fp:
             try:
                 p = subprocess.run(
-                    cmd, stdout=fp, stderr=subprocess.STDOUT, cwd=self.work_dir, env=env, timeout=bfasst.config.I2C_LSE_TIMEOUT)
+                    cmd, stdout=fp, stderr=subprocess.STDOUT, cwd=self.work_dir, env=env, timeout=bfasst.config.YOSYS_TIMEOUT)
             except subprocess.TimeoutExpired:
                 fp.write("\nTimeout\n")
                 return Status(OptStatus.TIMEOUT)

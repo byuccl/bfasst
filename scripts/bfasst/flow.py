@@ -83,6 +83,11 @@ def flow_ic2_lse_conformal(design, build_dir):
         return status
 
     # Run conformal
+    design.compare_golden_files.append(design.top_file)
+    design.compare_golden_files.extend(design.get_support_files())
+    design.compare_golden_files_paths.append(design.full_path / design.top_file)
+    design.compare_golden_files_paths.extend([design.full_path / f for f in design.get_support_files()])
+    design.golden_is_verilog = design.top_is_verilog()
     compare_tool = bfasst.compare.conformal.Conformal_CompareTool(build_dir)
     status = compare_tool.compare_netlists(design)
     if status.error:
@@ -127,12 +132,34 @@ def flow_yosys_tech_lse_conformal(design, build_dir):
         return status
 
     # Now run the LSE synthesizer on the Yosys output
-    # Because our script to run the LSE synthesizer uses our configs to
-    #   know where to find its sources, we can change them to point it
-    #   to the yosys output
-    # This is *super* hacky, we should probably do this differently
-    old_full_path = design.full_path
-    old_top_file = design.top_file
-    old_verilog_files = design.verilog_files
-    old_vhdl_files = design.vhdl_files
+    yosys_netlist_path = design.netlist_path
+    design.compare_golden_files.append(yosys_netlist_path.name)
+    design.compare_golden_files_paths.append(yosys_netlist_path)
+    design.golden_is_verilog = True
+    lse_opt_tool = bfasst.opt.ic2_lse.IC2_LSE_OptTool(build_dir)
+    status = lse_opt_tool.create_netlist(design, [str(yosys_netlist_path)], [])
+    if (status.error):
+        return status
+
+    # Run IC2 Implementation
+    impl_tool = bfasst.impl.ic2.IC2_ImplementationTool(build_dir)
+    status = impl_tool.implement_bitstream(design)
+    if status.error:
+        return status
+
+    # Run icestorm bitstream reversal
+    reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(
+        build_dir)
+    status = reverse_bit_tool.reverse_bitstream(design)
+    if status.error:
+        return status
+
+    # Run conformal
+    compare_tool = bfasst.compare.conformal.Conformal_CompareTool(build_dir)
+    status = compare_tool.compare_netlists(design)
+    if status.error:
+        return status
+
+    return status
+    
     print(build_dir)
