@@ -141,6 +141,10 @@ def flow_yosys_tech_lse_conformal(design, build_dir):
     if (status.error):
         return status
 
+    # Try fixing the netlist LUT inits (there's some issue with how LSE
+    #   generates them)
+    lse_opt_tool.fix_lut_inits(design)
+    
     # Run IC2 Implementation
     impl_tool = bfasst.impl.ic2.IC2_ImplementationTool(build_dir)
     status = impl_tool.implement_bitstream(design)

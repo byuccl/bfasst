@@ -3,6 +3,7 @@ import subprocess
 import re
 import os
 import os.path
+import in_place
 
 import bfasst
 from bfasst.opt.base import OptTool
@@ -84,7 +85,7 @@ class IC2_LSE_OptTool(OptTool):
         with open(log_path, 'w') as fp:
             try:
                 p = subprocess.run(
-                    cmd, stdout=fp, stderr=subprocess.STDOUT, cwd=self.work_dir, env=env, timeout=bfasst.config.YOSYS_TIMEOUT)
+                    cmd, stdout=fp, stderr=subprocess.STDOUT, cwd=self.work_dir, env=env, timeout=bfasst.config.I2C_LSE_TIMEOUT)
             except subprocess.TimeoutExpired:
                 fp.write("\nTimeout\n")
                 return Status(OptStatus.TIMEOUT)
@@ -125,3 +126,37 @@ class IC2_LSE_OptTool(OptTool):
             return Status(OptStatus.TIMEOUT)
 
         return Status(OptStatus.SUCCESS)
+
+    # This function goes through the generated netlist and changes binary
+    #   LUT inits to hex. Apparently LSE generates binary LUT inits under
+    #   some conditions, and the IC2 backend doesn't like that.
+    # TODO: I *ONLY* want to run this if the init strings are wrong.
+    #       The init strings may have already been fixed if this isn't the first
+    #       time running
+    def fix_lut_inits(self, design):
+        with in_place.InPlace(design.netlist_path) as n_f:
+            found_first_init = False
+            for line in n_f:
+                if line.strip().split()[0:2] == ["(property", "LUT_INIT"]:
+                    # Skip the first LUT init (it's formatted correctly for
+                    #    some reason)
+                    if not found_first_init:
+                        found_first_init = True
+                        continue
+                    # Try to grab the binary string
+                    bin_string = line.strip().split()[3][1:-3]
+                    # Convert the string to hex
+                    hex_string = hex(int(bin_string, 2))[2:]
+                    # Form a new line using the hex string
+                    line_list = line.split()
+                    line_list[3] = "\"" + hex_string + "\"))"
+                    new_line = " ".join(line_list)
+                    # Grab the indenting from the old line
+                    indent = line.split("(")[0]
+                    new_line = indent + new_line + '\n'
+                    # Write the new line back into the file
+                    n_f.write(new_line)
+                else:
+                    n_f.write(line)
+                    
+                

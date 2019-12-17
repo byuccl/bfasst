@@ -27,7 +27,14 @@ class Yosys_Tech_SynthTool(SynthesisTool):
         # Run Yosys on the design
         # This assumes that the VHDL module *is* installed!
         cmd = [os.path.join(bfasst.config.YOSYS_INSTALL_DIR, "yosys"), "-m", "vhdl", "-s", YOSYS_SCRIPT_FILE, "-l", YOSYS_LOG_FILE]
-        p = subprocess.run(cmd, cwd = self.work_dir, stdout = subprocess.DEVNULL)
+        try:
+            p = subprocess.run(cmd, cwd = self.work_dir, stdout = subprocess.DEVNULL, timeout=bfasst.config.YOSYS_TIMEOUT)
+        except subprocess.TimeoutExpired:
+            # TODO: Write to logs here
+            return Status(SynthStatus.TIMEOUT)
+        else:
+            if p.returncode != 0:
+                return Status(SynthStatus.ERROR)
 
         if p.returncode != 0:
             return Status(SynthStatus.ERROR)
