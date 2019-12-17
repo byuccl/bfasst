@@ -195,6 +195,8 @@ class Conformal_CompareTool(CompareTool):
 
         # Regex search for result
         m = re.search(r"^6\. Compare Results:\s+(.*)$", log_text, re.M)
+        if not m:            
+            return Status(CompareStatus.PARSE_PROBLEM)
         if m.group(1) == "PASS":
             return Status(CompareStatus.SUCCESS)
         else:
