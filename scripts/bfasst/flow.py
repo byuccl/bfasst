@@ -201,6 +201,9 @@ def flow_yosys_tech_synplify_conformal(design, build_dir):
     # Run icestorm bitstream reversal
     reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(
         build_dir)
+    # Before actually running this, fix up the PCF file
+    reverse_bit_tool.fix_pcf_names(design)
+    # Now actually reverse the bitstream
     status = reverse_bit_tool.reverse_bitstream(design)
     if status.error:
         return status

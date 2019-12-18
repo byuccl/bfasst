@@ -1,5 +1,6 @@
 import shutil
 import subprocess
+import re
 
 import bfasst
 from bfasst.reverse_bit.base import ReverseBitTool
@@ -66,3 +67,27 @@ class Icestorm_ReverseBitTool(ReverseBitTool):
                 return Status(BitReverseStatus.ERROR)
 
         return Status(BitReverseStatus.SUCCESS)
+
+    # Sometimes IC2 implementation can add stuff to signal names in PCF files
+    #   (e.x. clk_i becomes clk_i_ibuf). This function removes those extra
+    #   suffixes/prefixes. This also removes all location information from the
+    #   PCF. For our purposes, we only need the set_io statements to infer
+    #   the I/O signal names.
+    # TODO: Ideally, this function should probably check against the top-level
+    #       I/O on the original RTL to make sure that none of the signals have
+    #       the suffixes we're removing (i.e. they weren't added by IC2). For
+    #       now, though, we'll assume that all suf/prefixes are not in the RTL.
+    def fix_pcf_names(self, design):
+        set_io_lines = []
+        with open(design.constraints_path, 'r') as pcf:
+            for line in pcf:
+                if line.split()[0] == "set_io":
+                    set_io_lines.append(line)
+        with open(design.constraints_path, 'w') as pcf:
+            for line in set_io_lines:
+                new_line = re.sub("_ibuf", "", line)
+                new_line = re.sub("ibuf_", "", new_line)
+                new_line = re.sub("_obuf", "", new_line)
+                new_line = re.sub("obuf_", "", new_line)
+                new_line = re.sub("_gb_io", "", new_line)
+                pcf.write(new_line)
