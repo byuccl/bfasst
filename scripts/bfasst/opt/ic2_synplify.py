@@ -120,11 +120,22 @@ class IC2_Synplify_OptTool(OptTool):
         if re.search("^Timeout$", text, re.M):
             return Status(OptStatus.TIMEOUT)
 
-        # if re.search(r'Job: "fpga_mapper', text, re.M):
+        m = re.search(r'Job: "compiler" terminated with error status: \d+\nSee log file: "(.*?)"', text, re.M)
+        if m:
+            text = open(m.group(1)).read()
+            m = re.search(r'^@E:\s*(.*?)$', text, re.M)
+            if m:
+                return Status(OptStatus.COMPILE_ERROR, m.group(1))
+            else:
+                return Status(OptStatus.COMPILE_ERROR)
+
         m = re.search(r'Job: "fpga_mapper" terminated with error status: \d+\nSee log file: "(.*?)"', text, re.M)
         if m:
             text = open(m.group(1)).read()
-            if re.search(r'^@E:.*?larger than the total number of registers available', text, re.M):
-                return Status(OptStatus.TOO_MANY_FF)
+            m = re.search(r'^@E:\s*(.*?)$', text, re.M)
+            if m:
+                return Status(OptStatus.MAPPER_ERROR, m.group(1))
+            else:
+                return Status(OptStatus.MAPPER_ERROR)
 
         return Status(OptStatus.SUCCESS)

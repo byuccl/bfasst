@@ -37,6 +37,7 @@ def main():
 
     # For each design
     ljust = experiment.get_longest_design_name() + 5
+    statuses = []
 
     for design in experiment.designs:
 
@@ -53,8 +54,34 @@ def main():
         
         # Run the design
         status = experiment.flow_fcn(design, design_dir)
+        statuses.append(status)
         sys.stdout.write(str(status))
         sys.stdout.write("\n")
+
+    print("")
+    print("-" * 80)
+    print("Status By Type")
+    print("-" * 80)
+
+    # types_to_print = [  bfasst.status.SynthStatus,
+    #                     bfasst.status.OptStatus,
+    #                     bfasst.status.ImplStatus,
+    #                     bfasst.status.BitReverseStatus,
+    #                     bfasst.status.CompareStatus]
+    
+    j = 30
+    print("Synth Error:".ljust(j), len([s for s in statuses if type(s.status) == bfasst.status.SynthStatus and s.error]))
+    print("Opt Error:".ljust(j), len([s for s in statuses if type(s.status) == bfasst.status.OptStatus and s.error]))
+    print("Impl Error:".ljust(j), len([s for s in statuses if type(s.status) == bfasst.status.ImplStatus and s.error]))
+    print("Bit Reverse Error:".ljust(j), len([s for s in statuses if type(s.status) == bfasst.status.BitReverseStatus and s.error]))
+    print("Compare Error:".ljust(j), len([s for s in statuses if type(s.status) == bfasst.status.CompareStatus and s.error and s.status != bfasst.status.CompareStatus.NOT_EQUIVALENT]))
+    print("Compare Not Equivalent:".ljust(j), len([s for s in statuses if s.status == bfasst.status.CompareStatus.NOT_EQUIVALENT]))
+    print("Compare Equivalent:".ljust(j), len([s for s in statuses if s.status == bfasst.status.CompareStatus.SUCCESS]))
+
+
+    # print(types)
+
+    print("-" * 80)
 
 
 if __name__ == "__main__":
