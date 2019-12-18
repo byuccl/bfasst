@@ -113,6 +113,7 @@ def flow_ic2_synplify_conformal(design, build_dir):
     # Run icestorm bitstream reversal
     reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(
         build_dir)
+    reverse_bit_tool.fix_pcf_names(design)
     status = reverse_bit_tool.reverse_bitstream(design)
     if status.error:
         return status
