@@ -18,10 +18,10 @@ class IC2_LSE_SynthesisTool(SynthesisTool):
         # Write to the log file
         log_path = self.work_dir / bfasst.config.SYNTH_LOG_NAME
         with open(log_path, 'w') as fp:
-            fp.write("Running ic2_synplify opt tool for synthesis")
+            fp.write("Running ic2_lse opt tool for synthesis")
         
         # Use the LSE optimizer -- it will perform the functions of our synthesis
-        opt_tool = bfasst.opt.ic2_synplify.IC2_LSE_OptTool(self.cwd)
+        opt_tool = bfasst.opt.ic2_lse.IC2_LSE_OptTool(self.cwd)
 
         # The opt tool just takes a list of input files, it doesn't know if the design has
         # been modified (ie the design.yaml file), so we add this check here

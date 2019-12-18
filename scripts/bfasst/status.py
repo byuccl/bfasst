@@ -10,7 +10,8 @@ class OptStatus(enum.Enum):
     SUCCESS = 0
     ERROR = 1
     TIMEOUT = 2
-    TOO_MANY_FF = 3
+    MAPPER_ERROR = 3
+    COMPILE_ERROR = 4
 
 class ImplStatus(enum.Enum):
     SUCCESS = 0
@@ -40,7 +41,8 @@ msg_map = {
     OptStatus.SUCCESS: "Opt Success",
     OptStatus.ERROR: "!! Opt Error",
     OptStatus.TIMEOUT: "Opt Timeout",
-    OptStatus.TOO_MANY_FF: "Too many FFs (Opt)",
+    OptStatus.MAPPER_ERROR: "Opt Mapper Error",
+    OptStatus.COMPILE_ERROR: "Opt Compile Error",
 
     ImplStatus.SUCCESS: "Impl Success",
     ImplStatus.ERROR: "!! Impl Error",
