@@ -29,6 +29,8 @@ class Icestorm_ReverseBitTool(ReverseBitTool):
             design.reversed_netlist_path.stat().st_mtime < design.bitstream_path.stat().st_mtime)
 
         if need_to_run:
+            # First go through and remove any added stuff from pcf port names
+            self.fix_pcf_names(design)
             # Bitstream to ascii file
             asc_path = self.work_dir / (design.top + ".asc")
             status = self.convert_bit_to_asc(design.bitstream_path, asc_path)

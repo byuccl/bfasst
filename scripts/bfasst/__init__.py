@@ -21,3 +21,7 @@ SCRIPTS_PATH = BFASST_REPO_PATH / "scripts"
 
 I2C_RESOURCES = RESOURCES_PATH / "iCEcube2"
 YOSYS_RESOURCES = RESOURCES_PATH / "yosys"
+
+# This is probably not the best place to put this
+from threading import Lock
+conformal_lock = Lock()

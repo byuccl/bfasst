@@ -4,6 +4,8 @@ import argparse
 import glob
 import sys
 import pathlib
+from threading import Thread
+import time
 
 import bfasst
 
@@ -38,9 +40,16 @@ def main():
     # For each design
     ljust = experiment.get_longest_design_name() + 5
     statuses = []
+    thread_rets = [None] * len(experiment.designs)
+    threads = [None] * len(experiment.designs)
 
-    for design in experiment.designs:
+    def flow_fcn_wrapper(design, design_dir, ret_array, ind):
+        status = experiment.flow_fcn(design, design_dir)
+        ret_array[ind] = (design, status)
+    
+    for i in range(len(experiment.designs)):
 
+        design = experiment.designs[i]
         # Create a per-design build directory
         design_dir = build_dir / design.top
         try:
@@ -49,14 +58,34 @@ def main():
             pass
 
 
-        sys.stdout.write(design.design_dir.ljust(ljust))
-        sys.stdout.flush()
+        #sys.stdout.write(design.design_dir.ljust(ljust))
+        #sys.stdout.flush()
         
         # Run the design
-        status = experiment.flow_fcn(design, design_dir)
-        statuses.append(status)
-        sys.stdout.write(str(status))
-        sys.stdout.write("\n")
+        #status = experiment.flow_fcn(design, design_dir)
+        #statuses.append(status)
+        #sys.stdout.write(str(status))
+        #sys.stdout.write("\n")
+
+        threads[i] = Thread(target = flow_fcn_wrapper, args=(design, design_dir, thread_rets, i))
+        threads[i].start()
+
+    all_threads_done = False
+    done_threads = [False] * len(threads)
+    while not all_threads_done:
+        all_threads_done = True
+        for i in range(len(threads)):
+            if threads[i].is_alive():
+                all_threads_done = False
+            if (not threads[i].is_alive()) and (done_threads[i] == False):
+                done_threads[i] = True
+                design, status = thread_rets[i]
+                sys.stdout.write(design.design_dir.ljust(ljust))
+                sys.stdout.flush()
+                sys.stdout.write(str(status))
+                sys.stdout.write("\n")
+                statuses.append(status)
+        time.sleep(1)
 
     print("")
     print("-" * 80)

@@ -91,7 +91,9 @@ def flow_ic2_lse_conformal(design, build_dir):
     design.compare_golden_files_paths.extend([design.full_path / f for f in design.get_support_files()])
     design.golden_is_verilog = design.top_is_verilog()
     compare_tool = bfasst.compare.conformal.Conformal_CompareTool(build_dir)
-    status = compare_tool.compare_netlists(design)
+    status = None
+    with bfasst.conformal_lock:
+        status = compare_tool.compare_netlists(design)
     if status.error:
         return status
 
@@ -113,7 +115,6 @@ def flow_ic2_synplify_conformal(design, build_dir):
     # Run icestorm bitstream reversal
     reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(
         build_dir)
-    reverse_bit_tool.fix_pcf_names(design)
     status = reverse_bit_tool.reverse_bitstream(design)
     if status.error:
         return status
@@ -125,7 +126,8 @@ def flow_ic2_synplify_conformal(design, build_dir):
     design.compare_golden_files_paths.extend([design.full_path / f for f in design.get_support_files()])
     design.golden_is_verilog = design.top_is_verilog()
     compare_tool = bfasst.compare.conformal.Conformal_CompareTool(build_dir)
-    status = compare_tool.compare_netlists(design)
+    with bfasst.conformal_lock:
+        status = compare_tool.compare_netlists(design)
     if status.error:
         return status
 
@@ -168,7 +170,8 @@ def flow_yosys_tech_lse_conformal(design, build_dir):
 
     # Run conformal
     compare_tool = bfasst.compare.conformal.Conformal_CompareTool(build_dir)
-    status = compare_tool.compare_netlists(design)
+    with bfasst.conformal_lock:
+        status = compare_tool.compare_netlists(design)
     if status.error:
         return status
 
@@ -202,8 +205,6 @@ def flow_yosys_tech_synplify_conformal(design, build_dir):
     # Run icestorm bitstream reversal
     reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(
         build_dir)
-    # Before actually running this, fix up the PCF file
-    reverse_bit_tool.fix_pcf_names(design)
     # Now actually reverse the bitstream
     status = reverse_bit_tool.reverse_bitstream(design)
     if status.error:
@@ -211,7 +212,8 @@ def flow_yosys_tech_synplify_conformal(design, build_dir):
 
     # Run conformal
     compare_tool = bfasst.compare.conformal.Conformal_CompareTool(build_dir)
-    status = compare_tool.compare_netlists(design)
+    with bfasst.conformal_lock:
+        status = compare_tool.compare_netlists(design)
     if status.error:
         return status
 
