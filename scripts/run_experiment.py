@@ -6,6 +6,7 @@ import sys
 import pathlib
 from threading import Thread
 import time
+import queue
 
 import bfasst
 
@@ -23,6 +24,7 @@ def main():
     parser.add_argument("experiment_name", choices=experiments,
                         help="Name of folder in experiments directory (with experiment.yaml file).")
     parser.add_argument("--force", action='store_true')
+    parser.add_argument("-j", "--threads", type=int, help="Number of threads")
     args = parser.parse_args()
 
     # Build experiment object
@@ -37,15 +39,22 @@ def main():
     else:
         pass
 
+    # Don't run with less than one thread
+    if args.threads < 1:
+        no_threads = 1
+    else:
+        no_threads = args.threads
+
     # For each design
     ljust = experiment.get_longest_design_name() + 5
     statuses = []
-    thread_rets = [None] * len(experiment.designs)
-    threads = [None] * len(experiment.designs)
+    threads = [None] * no_threads
+    experiment_queue = queue.Queue()
+    results_queue = queue.Queue()
 
-    def flow_fcn_wrapper(design, design_dir, ret_array, ind):
+    def flow_fcn_wrapper(design, design_dir, res_q):
         status = experiment.flow_fcn(design, design_dir)
-        ret_array[ind] = (design, status)
+        res_q.put((design, status))
     
     for i in range(len(experiment.designs)):
 
@@ -56,20 +65,37 @@ def main():
             design_dir.mkdir()
         except FileExistsError:
             pass
-
-
-        #sys.stdout.write(design.design_dir.ljust(ljust))
-        #sys.stdout.flush()
         
-        # Run the design
-        #status = experiment.flow_fcn(design, design_dir)
-        #statuses.append(status)
-        #sys.stdout.write(str(status))
-        #sys.stdout.write("\n")
+        experiment_queue.put((design, design_dir))
 
-        threads[i] = Thread(target = flow_fcn_wrapper, args=(design, design_dir, thread_rets, i))
-        threads[i].start()
+    t_start = time.perf_counter()
+    while(experiment_queue.qsize()):
+        # loop through the list of threads and look for any that are done
+        for i in range(len(threads)):
+            if threads[i] == None:
+                # Start a thread in this slot
+                design, design_dir = experiment_queue.get()
+                threads[i] = Thread(target = flow_fcn_wrapper, args=(design, design_dir, results_queue))
+                threads[i].start()
+                if not experiment_queue.qsize(): break
+            elif not threads[i].is_alive():
+                # There is a thread here, but it's finished running
+                # Print results and start a new thread (if there is one)
+                design, status = results_queue.get()
+                sys.stdout.write(design.design_dir.ljust(ljust))
+                sys.stdout.flush()
+                sys.stdout.write(str(status))
+                sys.stdout.write("\n")
+                statuses.append(status)
+                # start the new thread
+                design, design_dir = experiment_queue.get()
+                threads[i] = Thread(target = flow_fcn_wrapper, args=(design, design_dir, results_queue))
+                threads[i].start()
+                if not experiment_queue.qsize(): break
+        time.sleep(1)
 
+    # By now all of our experiments either have run or are running
+    # Wait for the rest of them to finish
     all_threads_done = False
     done_threads = [False] * len(threads)
     while not all_threads_done:
@@ -79,13 +105,14 @@ def main():
                 all_threads_done = False
             if (not threads[i].is_alive()) and (done_threads[i] == False):
                 done_threads[i] = True
-                design, status = thread_rets[i]
+                design, status = results_queue.get()
                 sys.stdout.write(design.design_dir.ljust(ljust))
                 sys.stdout.flush()
                 sys.stdout.write(str(status))
                 sys.stdout.write("\n")
                 statuses.append(status)
         time.sleep(1)
+    t_end = time.perf_counter()
 
     print("")
     print("-" * 80)
@@ -111,6 +138,7 @@ def main():
     # print(types)
 
     print("-" * 80)
+    print("Execution took", t_end - t_start, "seconds")
 
 
 if __name__ == "__main__":
