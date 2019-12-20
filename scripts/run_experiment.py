@@ -24,7 +24,7 @@ def main():
     parser.add_argument("experiment_name", choices=experiments,
                         help="Name of folder in experiments directory (with experiment.yaml file).")
     parser.add_argument("--force", action='store_true')
-    parser.add_argument("-j", "--threads", type=int, help="Number of threads")
+    parser.add_argument("-j", "--threads", type=int, default=1, help="Number of threads")
     args = parser.parse_args()
 
     # Build experiment object
