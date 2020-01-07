@@ -12,8 +12,6 @@ from bfasst.status import Status, OptStatus
 PROJECT_TEMPLATE_FILE = 'template_lse.prj'
 IC2_LSE_PROJ_FILE = 'lse_project.prj'
 
-# TODO: Change this to use Opt Statuses, not Synth
-
 class IC2_LSE_OptTool(OptTool):
     TOOL_WORK_DIR = "ic2_opt"
 
@@ -130,9 +128,6 @@ class IC2_LSE_OptTool(OptTool):
     # This function goes through the generated netlist and changes binary
     #   LUT inits to hex. Apparently LSE generates binary LUT inits under
     #   some conditions, and the IC2 backend doesn't like that.
-    # TODO: I *ONLY* want to run this if the init strings are wrong.
-    #       The init strings may have already been fixed if this isn't the first
-    #       time running
     def fix_lut_inits(self, design):
         with in_place.InPlace(design.netlist_path) as n_f:
             found_first_init = False
@@ -146,16 +141,21 @@ class IC2_LSE_OptTool(OptTool):
                     # Try to grab the binary string
                     bin_string = line.strip().split()[3][1:-3]
                     # Convert the string to hex
-                    hex_string = hex(int(bin_string, 2))[2:]
-                    # Form a new line using the hex string
-                    line_list = line.split()
-                    line_list[3] = "\"" + hex_string + "\"))"
-                    new_line = " ".join(line_list)
-                    # Grab the indenting from the old line
-                    indent = line.split("(")[0]
-                    new_line = indent + new_line + '\n'
-                    # Write the new line back into the file
-                    n_f.write(new_line)
+                    # Use a try block so we only do this if the string is
+                    #   actually binary
+                    try:
+                        hex_string = hex(int(bin_string, 2))[2:]
+                        # Form a new line using the hex string
+                        line_list = line.split()
+                        line_list[3] = "\"" + hex_string + "\"))"
+                        new_line = " ".join(line_list)
+                        # Grab the indenting from the old line
+                        indent = line.split("(")[0]
+                        new_line = indent + new_line + '\n'
+                        # Write the new line back into the file
+                        n_f.write(new_line)
+                    except ValueError:
+                        n_f.write(line)
                 else:
                     n_f.write(line)
                     
