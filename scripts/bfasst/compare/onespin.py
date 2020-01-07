@@ -11,8 +11,8 @@ class OneSpin_CompareTool(CompareTool):
     def compare_netlists(self, design):
         yaml_data = {}
 
-        for f in design.compare_golden_files:
-            shutil.copyfile(design.full_path / f, self.work_dir / f)
+        for f in design.compare_golden_files_paths:
+            shutil.copyfile(f, self.work_dir / f.name)
         shutil.copyfile(design.reversed_netlist_path, self.work_dir / design.reversed_netlist_filename())
 
 
