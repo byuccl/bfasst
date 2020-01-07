@@ -11,6 +11,7 @@ class Design():
         self.yaml_path = os.path.join(self.full_path, DESIGN_YAML_NAME)
 
         self.top = None
+        self.top_architecture = None
         self.top_file = None
         self.verilog_files = []
         self.vhdl_files = []
@@ -54,6 +55,9 @@ class Design():
             bfasst.utils.error("Cannot find a top file", verilogTop, "or", vhdlTop, "for design", self.design_dir)
         if not os.path.isfile(self.top_path()):
             bfasst.utils.error("Top file", self.top_file, "does not exist.")
+
+        if "top_architecture" in design_props:
+            self.top_architecture = design_props["top_architecture"]
     
         # Find other source files
         if "include_all_verilog_files" in design_props and design_props["include_all_verilog_files"]:

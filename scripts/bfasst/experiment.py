@@ -1,11 +1,15 @@
-import os, yaml
+import yaml
+import zipfile
+import pathlib
 
 import bfasst
 
+
 class Experiment():
     def __init__(self, exp_name):
+        self.post_run = None
         
-        yaml_path = os.path.join(bfasst.EXPERIMENTS_PATH, exp_name + ".yaml")
+        yaml_path = bfasst.EXPERIMENTS_PATH / (exp_name + ".yaml")
         
         # Read experiment YAML
         with open(yaml_path) as fp:
@@ -17,35 +21,37 @@ class Experiment():
         self.flow_fcn = bfasst.flow.get_flow_fcn_by_name(experiment_props["flow"])
         
         # Create design objects for all designs
-        design_paths = []
+        self.design_paths = []
         if "designs" in experiment_props:
             for d in experiment_props["designs"]:
-                design_paths.append(d)
+                self.design_paths.append(pathlib.Path(d))
 
         if "design_dirs" in experiment_props:
             for design_dir in experiment_props["design_dirs"]:
-                design_dir_path = os.path.join(bfasst.EXAMPLES_PATH, design_dir)
-                if not (os.path.isdir(design_dir_path)):
+                design_dir_path = bfasst.EXAMPLES_PATH / design_dir
+                if not design_dir_path.is_dir():
                     bfasst.utils.error(design_dir_path, "is not a directory" )
                 
-                for dir_item in os.listdir(design_dir_path):
-                    item_path = os.path.join(design_dir_path, dir_item)
-                    if os.path.isdir(item_path):
-                        design_paths.append(os.path.join(design_dir, dir_item))
+                for dir_item in design_dir_path.iterdir():
+                    item_path = design_dir_path / dir_item
+                    if item_path.is_dir():                
+                        self.design_paths.append(pathlib.Path(design_dir) / dir_item.name)
 
+        if "post_run" in experiment_props:
+            self.post_run = getattr(self, experiment_props["post_run"])
 
 
         # Uniquify
-        design_paths = list(set(design_paths))
-        design_paths.sort()
+        self.design_paths = list(set(self.design_paths))
+        self.design_paths.sort()
 
         self.designs = []
-        for design_path in design_paths:    
+        for design_path in self.design_paths:    
             design = bfasst.design.Design(design_path)
             self.designs.append(design)
 
     def get_longest_design_name(self):
-        return max([len(d.design_dir) for d in self.designs])
+        return max([len(str(d.design_dir)) for d in self.designs])
         # # Validate that designs exist
         # build_dir = bfasst.utils.create_build_dir(exp_dir)
         # design_build_dirs = {}
@@ -59,3 +65,19 @@ class Experiment():
         #     bfasst.flow.flow_fcns[flow_type]()(design, build_dir)
         #     sys.stdout.write('\n')
 
+
+    def export_to_onespin(self, build_dir):
+        i = 0
+        with zipfile.ZipFile(build_dir / "onespin.zip", 'w') as z:
+            for p in self.design_paths:
+                onespin_path = build_dir / p.name / bfasst.compare.onespin.OneSpin_CompareTool.TOOL_WORK_DIR
+                if not onespin_path.is_dir():
+                    continue
+                
+                i += 1
+                for f in onespin_path.iterdir():
+                    # print(f)
+                    z.write(f, arcname=(p.name + "/" + f.name))
+
+        print("onespin.zip created with", i, "designs")
+                

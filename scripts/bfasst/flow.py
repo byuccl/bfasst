@@ -9,6 +9,7 @@ import bfasst
 class Flows(enum.Enum):
     IC2_LSE_CONFORMAL = "IC2_lse_conformal"
     IC2_SYNPLIFY_CONFORMAL = "IC2_synplify_conformal"
+    SYNPLIFY_IC2_ONESPIN = "synplify_IC2_icestorm_onespin"
     YOSYS_TECH_LSE_CONFORMAL = "yosys_tech_lse_conformal"
     YOSYS_TECH_SYNPLIFY_CONFORMAL = "yosys_tech_synplify_conformal"
 
@@ -18,7 +19,8 @@ flow_fcn_map = {
     Flows.IC2_LSE_CONFORMAL: lambda: flow_ic2_lse_conformal,
     Flows.IC2_SYNPLIFY_CONFORMAL: lambda: flow_ic2_synplify_conformal,
     Flows.YOSYS_TECH_LSE_CONFORMAL: lambda: flow_yosys_tech_lse_conformal,
-    Flows.YOSYS_TECH_SYNPLIFY_CONFORMAL: lambda: flow_yosys_tech_synplify_conformal
+    Flows.YOSYS_TECH_SYNPLIFY_CONFORMAL: lambda: flow_yosys_tech_synplify_conformal,
+    Flows.SYNPLIFY_IC2_ONESPIN: lambda: flow_synplify_ic2_icestorm_onespin
 }
 
 def get_flow_fcn_by_name(flow_name):
@@ -127,6 +129,41 @@ def flow_ic2_synplify_conformal(design, build_dir):
     design.golden_is_verilog = design.top_is_verilog()
     compare_tool = bfasst.compare.conformal.Conformal_CompareTool(build_dir)
     with bfasst.conformal_lock:
+        status = compare_tool.compare_netlists(design)
+    if status.error:
+        return status
+
+    return status
+
+def flow_synplify_ic2_icestorm_onespin(design, build_dir):
+    # Run Icecube2 Synplify synthesis
+    synth_tool = bfasst.synth.ic2_synplify.IC2_Synplify_SynthesisTool(build_dir)
+    status = synth_tool.create_netlist(design)
+    if status.error:
+        return status
+
+    # Run Icecube2 implementations
+    impl_tool = bfasst.impl.ic2.IC2_ImplementationTool(build_dir)
+    status = impl_tool.implement_bitstream(design)
+    if status.error:
+        return status
+
+    # Run icestorm bitstream reversal
+    reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(
+        build_dir)
+    status = reverse_bit_tool.reverse_bitstream(design)
+    if status.error:
+        return status
+
+    # Run conformal
+    design.compare_golden_files.append(design.top_file)
+    design.compare_golden_files.extend(design.get_support_files())
+    design.compare_golden_files_paths.append(design.full_path / design.top_file)
+    design.compare_golden_files_paths.extend([design.full_path / f for f in design.get_support_files()])
+    design.golden_is_verilog = design.top_is_verilog()
+
+    compare_tool = bfasst.compare.onespin.OneSpin_CompareTool(build_dir)
+    with bfasst.onespin_lock:
         status = compare_tool.compare_netlists(design)
     if status.error:
         return status
