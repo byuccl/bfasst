@@ -17,6 +17,7 @@ class Conformal_CompareTool(CompareTool):
 
     LOG_FILE_NAME = "log.txt"
     DO_FILE_NAME = "compare.do"
+    GUI_FILE_NAME = "run_conformal_gui.sh"
 
     def compare_netlists(self, design):
 
@@ -150,6 +151,14 @@ class Conformal_CompareTool(CompareTool):
             fp.write("report verification\n")
             fp.write("exit\n")
         
+
+        # Create script to run GUI on caedm
+        run_gui_path = self.work_dir / self.GUI_FILE_NAME
+        with open(run_gui_path, 'w') as fp:
+            fp.write("source " + str(bfasst.config.CONFORMAL_REMOTE_SOURCE_SCRIPT) + ";\n")
+            fp.write(str(bfasst.config.CONFORMAL_REMOTE_PATH) + " -Dofile " + self.DO_FILE_NAME + "\n")
+
+
         return do_file_path
 
     def copy_files_to_remote_machine(self, client, design, do_file_path):
@@ -158,6 +167,10 @@ class Conformal_CompareTool(CompareTool):
         # Copy do script
         scpClient.put(str(do_file_path), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR / self.DO_FILE_NAME))
         
+        # Copy gui script
+        run_gui_path = self.work_dir / self.GUI_FILE_NAME
+        scpClient.put(str(run_gui_path), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR/ self.GUI_FILE_NAME))
+
         # Copy top
         #scpClient.put(str(design.top_path()), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
 

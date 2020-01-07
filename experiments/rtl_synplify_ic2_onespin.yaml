@@ -1,0 +1,12 @@
+design_dirs:
+    - ooc/
+
+# designs:
+#     - ooc/EX_stage
+#     - ooc/ID_stage
+
+flow: synplify_IC2_icestorm_onespin
+
+post_run: export_to_onespin
+
+

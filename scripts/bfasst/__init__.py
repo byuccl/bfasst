@@ -25,3 +25,4 @@ YOSYS_RESOURCES = RESOURCES_PATH / "yosys"
 # This is probably not the best place to put this
 from threading import Lock
 conformal_lock = Lock()
+onespin_lock = Lock()

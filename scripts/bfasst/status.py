@@ -32,6 +32,7 @@ class CompareStatus(enum.Enum):
     NOT_EQUIVALENT = 3
     TIMEOUT = 4
     PARSE_PROBLEM = 5
+    NEED_TO_RUN_ONESPIN = 6
 
 msg_map = {
     SynthStatus.SUCCESS: "Synth Success",
@@ -58,7 +59,8 @@ msg_map = {
     CompareStatus.NO_LICENSE: "No license for comparison tool",
     CompareStatus.NOT_EQUIVALENT: "Not equivalent",
     CompareStatus.TIMEOUT: "!! Compare timeout",
-    CompareStatus.PARSE_PROBLEM: "!! Parse error"
+    CompareStatus.PARSE_PROBLEM: "!! Parse error",
+    CompareStatus.NEED_TO_RUN_ONESPIN: "Exported to Onespin"
 }
 
 class Status():

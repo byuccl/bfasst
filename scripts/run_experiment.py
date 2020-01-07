@@ -1,7 +1,6 @@
 #!/usr/bin/python3.6
 
 import argparse
-import glob
 import sys
 import pathlib
 from threading import Thread
@@ -16,7 +15,7 @@ def main():
 
     # Find all experiments in the experiments/ directory
     experiments = []
-    for dir_item in bfasst.EXPERIMENTS_PATH.glob('*'):
+    for dir_item in bfasst.EXPERIMENTS_PATH.iterdir():
         if (bfasst.EXPERIMENTS_PATH / dir_item).is_file() and dir_item.suffix == ".yaml":
             experiments.append(dir_item.stem)
 
@@ -82,7 +81,7 @@ def main():
                 # There is a thread here, but it's finished running
                 # Print results and start a new thread (if there is one)
                 design, status = results_queue.get()
-                sys.stdout.write(design.design_dir.ljust(ljust))
+                sys.stdout.write(str(design.design_dir).ljust(ljust))
                 sys.stdout.flush()
                 sys.stdout.write(str(status))
                 sys.stdout.write("\n")
@@ -106,13 +105,16 @@ def main():
             if (not threads[i].is_alive()) and (done_threads[i] == False):
                 done_threads[i] = True
                 design, status = results_queue.get()
-                sys.stdout.write(design.design_dir.ljust(ljust))
+                sys.stdout.write(str(design.design_dir).ljust(ljust))
                 sys.stdout.flush()
                 sys.stdout.write(str(status))
                 sys.stdout.write("\n")
                 statuses.append(status)
         time.sleep(1)
     t_end = time.perf_counter()
+
+    if experiment.post_run is not None:
+        experiment.post_run(build_dir)
 
     print("")
     print("-" * 80)

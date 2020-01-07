@@ -1,3 +1,4 @@
 top: graphiti
+top_architecture: behaviour
 
 include_all_vhdl_files: True

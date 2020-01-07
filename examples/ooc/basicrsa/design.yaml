@@ -1,3 +1,4 @@
 top: basicrsa
+top_architecture: behavioral
 
 include_all_vhdl_files: True
