@@ -78,6 +78,12 @@ class Experiment():
                 for f in onespin_path.iterdir():
                     # print(f)
                     z.write(f, arcname=(p.name + "/" + f.name))
+                    # This isn't fully recursive, and will only copy the 1st
+                    #   subdirectory
+                    if f.is_dir():
+                        for sub_f in f.iterdir():
+                            z.write(sub_f, arcname=(p.name + "/" + f.name + "/" + sub_f.name))
+                        
 
         print("onespin.zip created with", i, "designs")
                 
