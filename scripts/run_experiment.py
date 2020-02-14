@@ -59,12 +59,12 @@ def main():
 
         design = experiment.designs[i]
         # Create a per-design build directory
-        design_dir = build_dir / design.top
+        design_dir = build_dir / design.design_dir.name
         try:
             design_dir.mkdir()
         except FileExistsError:
             pass
-        
+
         experiment_queue.put((design, design_dir))
 
     t_start = time.perf_counter()
