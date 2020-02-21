@@ -1,0 +1,6 @@
+top: top
+
+include_all_vhdl_files: True
+
+include_all_verilog_files: True
+

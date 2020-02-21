@@ -1,0 +1,16 @@
+top: testbench
+
+vhdl_libs:
+  - lib/esa
+  - lib/eth
+  - lib/fmf
+  - lib/gaisler
+  - lib/grlib
+  - lib/gsi
+  - lib/micron
+  - lib/opencores
+  - lib/techmap
+  - lib/work
+
+include_all_vhdl_files: True
+
