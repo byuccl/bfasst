@@ -23,6 +23,7 @@ class Yosys_Tech_SynthTool(SynthesisTool):
 
         # Create the yosys script that generates the netlist
         self.create_yosys_script(design, design.netlist_path)
+        design.yosys_netlist_path = design.netlist_path
 
         # Run Yosys on the design
         # This assumes that the VHDL module *is* installed!

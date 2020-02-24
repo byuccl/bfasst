@@ -1,0 +1,5 @@
+error_injection_flows:
+  -
+    name: single_bit_flip
+    passes:
+      - [LUT_bit_flip, 1]

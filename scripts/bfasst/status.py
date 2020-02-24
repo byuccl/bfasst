@@ -34,6 +34,13 @@ class CompareStatus(enum.Enum):
     PARSE_PROBLEM = 5
     NEED_TO_RUN_ONESPIN = 6
 
+class ErrorInjectionStatus(enum.Enum):
+    SUCCESS = 0
+    ERROR = 1
+    NO_YAML = 2
+    FCN_SUCCESS = 3
+    FCN_ERROR = 4
+
 msg_map = {
     SynthStatus.SUCCESS: "Synth Success",
     SynthStatus.ERROR: "!! Synth Error",

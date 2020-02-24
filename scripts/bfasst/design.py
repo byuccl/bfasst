@@ -23,10 +23,14 @@ class Design():
 
         # Flow paths
         self.netlist_path = None
+        self.yosys_netlist_path = None
         self.bitstream_path = None
         self.constraints_path = None
         self.reversed_netlist_path = None
 
+        # Error flow related stuff
+        self.error_flow_yaml = None
+        
         if not os.path.isdir(self.full_path):
             bfasst.utils.error("Design folder", self.full_path, " does not exist.")
         if not os.path.isfile(self.yaml_path):
