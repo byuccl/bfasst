@@ -20,6 +20,7 @@ class ErrorInjector_ErrorInjectionTool (ErrorInjectionTool):
     #   separate class system for error injection flows if they end up being
     #   very complicated (which they well could be)
     def __init__(self, build_dir):
+        super().__init__(build_dir)
         self.flow_fcn_map = {
             self.Errors.LUT_BIT_FLIP : lambda: self.lut_bit_flip_fcn
         }
@@ -47,37 +48,54 @@ class ErrorInjector_ErrorInjectionTool (ErrorInjectionTool):
 
         corrupt_netlists = []
         for flow in error_flow_info["error_injection_flows"]:
-            corrupt_netlist_path = design.netlist_path.stem + "_" \
-                                   + flow["name"] + ".v"
+            corrupt_netlist_path = self.work_dir / (design.top + "_" \
+                                   + flow["name"] + ".v")
             corrupt_netlist_path = design.netlist_path.parent / corrupt_netlist_path
+            netlist_buffer = self.read_netlist_to_buffer(design.yosys_netlist_path)
             for p in flow["passes"]:
                 flow_name = p[0]
                 num_iterations = p[1]
                 flow_fcn = self.get_flow_fcn_from_name(flow_name)
                 for itr in range(num_iterations):
-                    flow_ret = flow_fcn(design.yosys_netlist_path,
-                                        corrupt_netlist_path)
-                    if flow_ret == Status(ErrorInjectionStatus.FCN_ERROR):
+                    flow_ret = flow_fcn(netlist_buffer)
+                    if flow_ret[0] == Status(ErrorInjectionStatus.FCN_ERROR):
                         return (None, Status(ErrorInjectionStatus.FCN_ERROR))
+                    netlist_buffer = flow_ret[1]
+            self.write_buffer_to_netlist(netlist_buffer, corrupt_netlist_path)
             corrupt_netlists.append(corrupt_netlist_path)
-        return(Status(ErrorInjectionStatus.SUCCESS), corrupt_netlists)
-                    
+        design.corrupt_netlist_paths = corrupt_netlists
+        # Get a list of the names of flows we're using to return as well
+        flow_name_list = [flow["name"] for flow in
+                          error_flow_info["error_injection_flows"]]
+        tuple_list = list(zip(corrupt_netlists, flow_name_list))
+        return(Status(ErrorInjectionStatus.SUCCESS), tuple_list)
 
-    def lut_bit_flip_fcn(self, golden_netlist, output_netlist):
+    def read_netlist_to_buffer(self, netlist):
+        lines = []
+        with open(netlist) as fp:
+            for line in fp:
+                lines.append(line)
+        return lines
+
+    def write_buffer_to_netlist(self, lines, netlist):
+        with open(netlist, 'w') as fp:
+            for line in lines:
+                fp.write(line)
+
+    def lut_bit_flip_fcn(self, netlist_buffer):
         # Go through the golden file. Copy everything to an internal buffer,
         #   and note where LUT inits happen.
         #   Once the whole thing is read, pick a random lut and change 1 bit
         #   Then write the file out to output_netlist
-        lines = []
         init_linenos = []
-        with open(golden_netlist) as gold_fp:
-            for line in gold_fp:
-                lines.append(line)
-                if line.strip()[:9] == ".LUT_INIT":
-                    init_linenos.append(len(lines) - 1)
+        lineno = 0
+        for line in netlist_buffer:
+            if line.strip()[:9] == ".LUT_INIT":
+                init_linenos.append(lineno)
+            lineno += 1
         # Pick a random LUT to flip
         lut_to_change_idx = random.randint(0, len(init_linenos) - 1)
-        lut_to_change = lines[init_linenos[lut_to_change_idx]]
+        lut_to_change = netlist_buffer[init_linenos[lut_to_change_idx]]
         # Should I change based on the entire init string (i.e. 16 bits) or
         #   just whatever is currently used (which varies w/ input count)
         # Extract the LUT init value (hex)
@@ -92,13 +110,8 @@ class ErrorInjector_ErrorInjectionTool (ErrorInjectionTool):
         new_init_hex = hex(new_init)[2:]
         # I'm not going to worry about correct indentation...
         new_init_str = ".LUT_INIT(16'h" + new_init_hex + ")\n"
-        lines[init_linenos[lut_to_change_idx]] = new_init_str
+        netlist_buffer[init_linenos[lut_to_change_idx]] = new_init_str
         print("Corrupted lut init", lut_to_change.strip(), "to", new_init_str[:-1],
               "on line", init_linenos[lut_to_change_idx] + 1)
-        # Now write to the output file
-        print(output_netlist)
-        with open(output_netlist, 'w') as corrupt_fp:
-            for line in lines:
-                corrupt_fp.write(line)
-        return Status(ErrorInjectionStatus.FCN_SUCCESS)
+        return (Status(ErrorInjectionStatus.FCN_SUCCESS), netlist_buffer)
     

@@ -14,7 +14,12 @@ class OneSpin_CompareTool(CompareTool):
 
         for f in design.compare_golden_files_paths:
             shutil.copyfile(f, self.work_dir / f.name)
+        print("copying reversed netlist", design.reversed_netlist_path)
         shutil.copyfile(design.reversed_netlist_path, self.work_dir / design.reversed_netlist_filename())
+
+        if design.corrupt_netlist_paths is not None:
+            for netlist in design.corrupt_netlist_paths:
+                shutil.copyfile(netlist, self.work_dir / netlist.name)
 
         pathlib.Path(self.work_dir / "rtl").mkdir(exist_ok=True);
         rtl_paths = [design.full_path / f for f in design.get_support_files()]

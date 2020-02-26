@@ -30,6 +30,8 @@ class Design():
 
         # Error flow related stuff
         self.error_flow_yaml = None
+        self.cur_error_flow_name = None
+        self.corrupt_netlist_paths = None
         
         if not os.path.isdir(self.full_path):
             bfasst.utils.error("Design folder", self.full_path, " does not exist.")

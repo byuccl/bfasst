@@ -308,6 +308,14 @@ def flow_yosys_synplify_error_onespin(design, build_dir):
     if status.error:
         return status
 
+    # Run error injection
+    error_inj_tool = bfasst.error_injection.error_injector.ErrorInjector_ErrorInjectionTool(build_dir)
+    ret = error_inj_tool.run_error_flows(design)
+    status = ret[0]
+    if status.error:
+        return status
+
+    # Run Synth, impl, and icestorm on the original netlist
     # Now run the Synplify synthesizer on the Yosys output
     yosys_netlist_path = design.netlist_path
     design.compare_golden_files.append(yosys_netlist_path.name)
@@ -315,13 +323,6 @@ def flow_yosys_synplify_error_onespin(design, build_dir):
     design.golden_is_verilog = True
     synp_opt_tool = bfasst.opt.ic2_synplify.IC2_Synplify_OptTool(build_dir)
     status = synp_opt_tool.create_netlist(design, [str(yosys_netlist_path)], [])
-    if status.error:
-        return status
-
-    # Run error injection
-    error_inj_tool = bfasst.error_injection.error_injector.ErrorInjector_ErrorInjectionTool(build_dir)
-    ret = error_inj_tool.run_error_flows(design)
-    status = ret[0]
     if status.error:
         return status
     
@@ -339,11 +340,39 @@ def flow_yosys_synplify_error_onespin(design, build_dir):
     if status.error:
         return status
     
-    compare_tool = bfasst.compare.onespin.OneSpin_CompareTool(build_dir)
-    with bfasst.onespin_lock:
-        status = compare_tool.compare_netlists(design)
-    if status.error:
-        return status
+    # Run synth, impl, icestorm, and onespin on each corrupted netlist
+    for netlist_name_tuple in ret[1]:
+        netlist = netlist_name_tuple[0]
+        error_flow_name = netlist_name_tuple[1]
+        design.cur_error_flow_name = error_flow_name
+
+        # Now run the Synplify synthesizer on the Yosys output
+        design.golden_is_verilog = True
+        synp_opt_tool = bfasst.opt.ic2_synplify.IC2_Synplify_OptTool(build_dir)
+        status = synp_opt_tool.create_netlist(design, [str(netlist)], [])
+        if status.error:
+            return status
+    
+        # Run IC2 Implementation
+        impl_tool = bfasst.impl.ic2.IC2_ImplementationTool(build_dir)
+        status = impl_tool.implement_bitstream(design)
+        if status.error:
+            return status
+
+        # Run icestorm bitstream reversal
+        reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(
+            build_dir)
+        # Now actually reverse the bitstream
+        status = reverse_bit_tool.reverse_bitstream(design)
+        if status.error:
+            return status
+    
+        compare_tool = bfasst.compare.onespin.OneSpin_CompareTool(build_dir)
+        with bfasst.onespin_lock:
+            status = compare_tool.compare_netlists(design)
+        if status.error:
+            print("Error status in compare tool!")
+            # return status
 
     return status
     

@@ -16,7 +16,10 @@ class Icestorm_ReverseBitTool(ReverseBitTool):
     def reverse_bitstream(self, design):
         # print("Running ReverseBit")
 
-        design.reversed_netlist_path = self.cwd / (design.top + "_reversed.v")
+        if design.cur_error_flow_name == None:
+            design.reversed_netlist_path = self.cwd / (design.top + "_reversed.v")
+        else:
+            design.reversed_netlist_path = self.cwd / (design.top + "_" + design.cur_error_flow_name + "_reversed.v")
 
         # Decide if this needs to be run
         need_to_run = False
