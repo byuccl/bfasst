@@ -51,6 +51,7 @@ class ErrorInjector_ErrorInjectionTool (ErrorInjectionTool):
             corrupt_netlist_path = self.work_dir / (design.top + "_" \
                                    + flow["name"] + ".v")
             corrupt_netlist_path = design.netlist_path.parent / corrupt_netlist_path
+            print(design.yosys_netlist_path)
             netlist_buffer = self.read_netlist_to_buffer(design.yosys_netlist_path)
             for p in flow["passes"]:
                 flow_name = p[0]
@@ -67,6 +68,7 @@ class ErrorInjector_ErrorInjectionTool (ErrorInjectionTool):
         # Get a list of the names of flows we're using to return as well
         flow_name_list = [flow["name"] for flow in
                           error_flow_info["error_injection_flows"]]
+        design.error_flow_names = flow_name_list
         tuple_list = list(zip(corrupt_netlists, flow_name_list))
         return(Status(ErrorInjectionStatus.SUCCESS), tuple_list)
 
@@ -93,6 +95,9 @@ class ErrorInjector_ErrorInjectionTool (ErrorInjectionTool):
             if line.strip()[:9] == ".LUT_INIT":
                 init_linenos.append(lineno)
             lineno += 1
+        if len(init_linenos) == 0:
+            print("No inits in netlist!")
+            return (Status(ErrorInjectionStatus.FCN_ERROR), netlist_buffer)
         # Pick a random LUT to flip
         lut_to_change_idx = random.randint(0, len(init_linenos) - 1)
         lut_to_change = netlist_buffer[init_linenos[lut_to_change_idx]]

@@ -20,6 +20,7 @@ class Design():
         self.golden_is_verilog = None
         # I don't like having two golden file lists...
         self.compare_golden_files_paths = []
+        self.compare_revised_file = None
 
         # Flow paths
         self.netlist_path = None
@@ -32,6 +33,7 @@ class Design():
         self.error_flow_yaml = None
         self.cur_error_flow_name = None
         self.corrupt_netlist_paths = None
+        self.error_flow_names = []
         
         if not os.path.isdir(self.full_path):
             bfasst.utils.error("Design folder", self.full_path, " does not exist.")

@@ -23,6 +23,7 @@ ERROR_FLOW_PATH = BFASST_REPO_PATH / "error_flows"
 
 I2C_RESOURCES = RESOURCES_PATH / "iCEcube2"
 YOSYS_RESOURCES = RESOURCES_PATH / "yosys"
+ONESPIN_RESOURCES = RESOURCES_PATH / "onespin"
 
 # This is probably not the best place to put this
 from threading import Lock

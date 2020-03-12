@@ -1,6 +1,7 @@
 import yaml
 import zipfile
 import pathlib
+import shutil
 
 import bfasst
 
@@ -50,6 +51,11 @@ class Experiment():
             design = bfasst.design.Design(design_path)
             self.designs.append(design)
 
+        for design in self.designs:
+            if "error_flow" in experiment_props:
+                design.error_flow_yaml = experiment_props["error_flow"] + ".yaml"
+            
+
     def get_longest_design_name(self):
         return max([len(str(d.design_dir)) for d in self.designs])
         # # Validate that designs exist
@@ -69,6 +75,8 @@ class Experiment():
     def export_to_onespin(self, build_dir):
         i = 0
         with zipfile.ZipFile(build_dir / "onespin.zip", 'w') as z:
+            onespin_bash_path = bfasst.ONESPIN_RESOURCES / "run_onespin.bash"
+            z.write(onespin_bash_path, arcname=(onespin_bash_path.name))
             for p in self.design_paths:
                 onespin_path = build_dir / p.name / bfasst.compare.onespin.OneSpin_CompareTool.TOOL_WORK_DIR
                 if not onespin_path.is_dir():

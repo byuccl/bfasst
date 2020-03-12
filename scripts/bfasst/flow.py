@@ -1,6 +1,8 @@
 import enum
 import abc
 import os
+import pathlib
+import shutil
 
 import bfasst
 
@@ -293,6 +295,7 @@ def flow_yosys_tech_synplify_onespin(design, build_dir):
     if status.error:
         return status
     
+    design.compare_revised_file = design.reversed_netlist_filename()
     compare_tool = bfasst.compare.onespin.OneSpin_CompareTool(build_dir)
     with bfasst.onespin_lock:
         status = compare_tool.compare_netlists(design)
@@ -340,14 +343,44 @@ def flow_yosys_synplify_error_onespin(design, build_dir):
     if status.error:
         return status
     
+    compare_tool = bfasst.compare.onespin.OneSpin_CompareTool(build_dir)
+    design.compare_revised_file = design.reversed_netlist_filename()
+    with bfasst.onespin_lock:
+        status = compare_tool.compare_netlists(design)
+    if status.error:
+        print("Error status in compare tool!")
+        # return status
+
+    # Also use the compare tool to make a compare script for rtl to yosys
+    design.compare_revised_file = yosys_netlist_path.name
+    design.compare_golden_files = design.get_support_files()
+    design.compare_golden_files.append(pathlib.Path(design.top_path()).name)
+    print(design.compare_golden_files)
+    print(design.get_support_files())
+    print(design.compare_golden_files_paths)
+    print(design.verilog_files)
+    compare_tool = bfasst.compare.onespin.OneSpin_CompareTool(build_dir)
+    design.compare_revised_file = design.reversed_netlist_filename()
+    with bfasst.onespin_lock:
+        status = compare_tool.compare_netlists(design)
+    if status.error:
+        print("Error status in compare tool!")
+        # return status
+    
     # Run synth, impl, icestorm, and onespin on each corrupted netlist
+    # For all of these, we compare the corrupt netlist to the yosys one,
+    #   so set that as golden
+    design.compare_golden_files = [yosys_netlist_path.name]
+    design.compare_golden_files_paths = [yosys_netlist_path]
     for netlist_name_tuple in ret[1]:
         netlist = netlist_name_tuple[0]
         error_flow_name = netlist_name_tuple[1]
         design.cur_error_flow_name = error_flow_name
 
         # Now run the Synplify synthesizer on the Yosys output
+        
         design.golden_is_verilog = True
+        # Blow away the opt dir so we know we're getting a fresh build
         synp_opt_tool = bfasst.opt.ic2_synplify.IC2_Synplify_OptTool(build_dir)
         status = synp_opt_tool.create_netlist(design, [str(netlist)], [])
         if status.error:
@@ -368,11 +401,15 @@ def flow_yosys_synplify_error_onespin(design, build_dir):
             return status
     
         compare_tool = bfasst.compare.onespin.OneSpin_CompareTool(build_dir)
+        design.compare_revised_file = design.reversed_netlist_filename()
         with bfasst.onespin_lock:
             status = compare_tool.compare_netlists(design)
         if status.error:
             print("Error status in compare tool!")
             # return status
+
+    # Write the python script to run all of the compare tcl scripts
+    compare_tool.write_compare_script(design)
 
     return status
     
