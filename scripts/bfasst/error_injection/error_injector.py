@@ -110,14 +110,17 @@ class ErrorInjector_ErrorInjectionTool (ErrorInjectionTool):
         match_obj = re.search("'h[0-9A-Fa-f]*\)$", lut_to_change.strip())
         init_value = match_obj.group(0)[2:-1]
         init_int = int(init_value, 16)
+        # Find the LUT size
+        lut_size_str = re.findall("[1-9][0-9]?'h", lut_to_change.strip())[0]
+        lut_size = int(lut_size_str[:-2])
         # Pick a bit to flip and flip it
-        bit_to_flip = random.randint(0, 15)
+        bit_to_flip = random.randint(0, lut_size)
         flip_mask = 1 << bit_to_flip
         new_init = init_int ^ flip_mask
         # Replace the old LUT init with this new value
         new_init_hex = hex(new_init)[2:]
         # I'm not going to worry about correct indentation...
-        new_init_str = ".LUT_INIT(16'h" + new_init_hex + ")\n"
+        new_init_str = ".LUT_INIT(" + str(lut_size) + "'h" + new_init_hex + ")\n"
         netlist_buffer[init_linenos[lut_to_change_idx]] = new_init_str
         print("Corrupted lut init", lut_to_change.strip(), "to", new_init_str[:-1],
               "on line", init_linenos[lut_to_change_idx] + 1)
