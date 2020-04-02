@@ -332,6 +332,7 @@ def flow_yosys_synplify_error_onespin(design, build_dir):
     # Run IC2 Implementation
     impl_tool = bfasst.impl.ic2.IC2_ImplementationTool(build_dir)
     status = impl_tool.implement_bitstream(design)
+    print(status)
     if status.error:
         return status
 
@@ -342,7 +343,7 @@ def flow_yosys_synplify_error_onespin(design, build_dir):
     status = reverse_bit_tool.reverse_bitstream(design)
     if status.error:
         return status
-    
+
     compare_tool = bfasst.compare.onespin.OneSpin_CompareTool(build_dir)
     design.compare_revised_file = design.reversed_netlist_filename()
     with bfasst.onespin_lock:
@@ -355,12 +356,7 @@ def flow_yosys_synplify_error_onespin(design, build_dir):
     design.compare_revised_file = yosys_netlist_path.name
     design.compare_golden_files = design.get_support_files()
     design.compare_golden_files.append(pathlib.Path(design.top_path()).name)
-    print(design.compare_golden_files)
-    print(design.get_support_files())
-    print(design.compare_golden_files_paths)
-    print(design.verilog_files)
     compare_tool = bfasst.compare.onespin.OneSpin_CompareTool(build_dir)
-    design.compare_revised_file = design.reversed_netlist_filename()
     with bfasst.onespin_lock:
         status = compare_tool.compare_netlists(design)
     if status.error:
@@ -368,8 +364,6 @@ def flow_yosys_synplify_error_onespin(design, build_dir):
         # return status
     
     # Run synth, impl, icestorm, and onespin on each corrupted netlist
-    # For all of these, we compare the corrupt netlist to the yosys one,
-    #   so set that as golden
     design.compare_golden_files = [yosys_netlist_path.name]
     design.compare_golden_files_paths = [yosys_netlist_path]
     for netlist_name_tuple in ret[1]:
@@ -381,25 +375,29 @@ def flow_yosys_synplify_error_onespin(design, build_dir):
         
         design.golden_is_verilog = True
         # Blow away the opt dir so we know we're getting a fresh build
+        shutil.rmtree(synp_opt_tool.work_dir)
         synp_opt_tool = bfasst.opt.ic2_synplify.IC2_Synplify_OptTool(build_dir)
         status = synp_opt_tool.create_netlist(design, [str(netlist)], [])
         if status.error:
             return status
     
         # Run IC2 Implementation
+        shutil.rmtree(impl_tool.work_dir)
         impl_tool = bfasst.impl.ic2.IC2_ImplementationTool(build_dir)
         status = impl_tool.implement_bitstream(design)
         if status.error:
             return status
 
         # Run icestorm bitstream reversal
+        shutil.rmtree(reverse_bit_tool.work_dir)
         reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(
             build_dir)
         # Now actually reverse the bitstream
         status = reverse_bit_tool.reverse_bitstream(design)
         if status.error:
             return status
-    
+
+        # Run compare to create a onespin tcl for yosys->corrupt reversed netlist
         compare_tool = bfasst.compare.onespin.OneSpin_CompareTool(build_dir)
         design.compare_revised_file = design.reversed_netlist_filename()
         with bfasst.onespin_lock:
@@ -407,6 +405,16 @@ def flow_yosys_synplify_error_onespin(design, build_dir):
         if status.error:
             print("Error status in compare tool!")
             # return status
+
+        # Run compare again so we can check yosys netlist -> corrupt yosys
+        #   netlist
+        # This lets us make sure that any compare errors are because of the
+        #   netlist corruption, and not some other issue
+        design.compare_revised_file = netlist.name
+        with bfasst.onespin_lock:
+            status = compare_tool.compare_netlists(design)
+        if status.error:
+            print("Error status in compare tool!")
 
     # Write the python script to run all of the compare tcl scripts
     compare_tool.write_compare_script(design)

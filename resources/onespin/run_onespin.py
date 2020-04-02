@@ -2,6 +2,7 @@
 
 import subprocess
 import re
+import glob
 
 def main():
 
@@ -13,13 +14,15 @@ def main():
   # Create list of flow names here
   # flow_names = ["rtl", "yosys", "single_bit_flip"]
 
-  for name in flow_names:
+  tcl_list = glob.glob('*.tcl')
+
+  for tcl in tcl_list:
     timeout = False
-    log_file = "onespin_" + name + ".log"
+    #log_file = "onespin_" + name + ".log"
+    log_file = tcl[4:-4] + ".log"
     with open(log_file, 'w') as fp:
-      onespin_tcl = "run_onespin_" + name + ".tcl"
-      print(onespin_tcl)
-      cmd = ["onespin", onespin_tcl] 
+      print(tcl)
+      cmd = ["onespin", tcl] 
       try:
 	p = subprocess.Popen(cmd, stdout = fp, stderr = subprocess.STDOUT)
         p.communicate(timeout = 5*60)
@@ -36,7 +39,7 @@ def main():
         print("Equivalent")
 	equiv += 1
       else:
-        m = re.search("^-R- The designs are not .*? equivalent.$", text, re.M)
+        m = re.search("^-R- The designs are not.*? equivalent.*.$", text, re.M)
 	if m:
           print("Not equivalent")
 	  not_equiv += 1

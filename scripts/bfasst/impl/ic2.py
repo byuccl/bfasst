@@ -68,6 +68,9 @@ class IC2_ImplementationTool(ImplementationTool):
             except FileNotFoundError:
                 return Status(ImplStatus.ERROR)
 
+        # Always set the constraints path since we need it later
+        design.constraints_path = self.cwd/(design.top + ".pcf")
+
         return Status(ImplStatus.SUCCESS)
 
     def run_implement(self, design, netlist_path, tcl_path, log_path):

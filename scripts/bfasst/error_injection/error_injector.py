@@ -42,7 +42,7 @@ class ErrorInjector_ErrorInjectionTool (ErrorInjectionTool):
     def run_error_flows(self, design):
         # Open the YAML file (if there is one) and read the flow information
         if design.error_flow_yaml is None:
-            return (None, Status(ErrorInjectionStatus.NO_YAML))
+            return (Status(ErrorInjectionStatus.NO_YAML), None)
         with open(bfasst.ERROR_FLOW_PATH / design.error_flow_yaml) as fp:
             error_flow_info = yaml.safe_load(fp)
 
@@ -60,7 +60,7 @@ class ErrorInjector_ErrorInjectionTool (ErrorInjectionTool):
                 for itr in range(num_iterations):
                     flow_ret = flow_fcn(netlist_buffer)
                     if flow_ret[0] == Status(ErrorInjectionStatus.FCN_ERROR):
-                        return (None, Status(ErrorInjectionStatus.FCN_ERROR))
+                        return (Status(ErrorInjectionStatus.FCN_ERROR), None)
                     netlist_buffer = flow_ret[1]
             self.write_buffer_to_netlist(netlist_buffer, corrupt_netlist_path)
             corrupt_netlists.append(corrupt_netlist_path)
@@ -103,6 +103,9 @@ class ErrorInjector_ErrorInjectionTool (ErrorInjectionTool):
         lut_to_change = netlist_buffer[init_linenos[lut_to_change_idx]]
         # Should I change based on the entire init string (i.e. 16 bits) or
         #   just whatever is currently used (which varies w/ input count)
+        # TODO: Only change init string based on actual init size! We're not
+        #       going to meaningfully change the design if we're changing bits
+        #       that aren't used!
         # Extract the LUT init value (hex)
         match_obj = re.search("'h[0-9A-Fa-f]*\)$", lut_to_change.strip())
         init_value = match_obj.group(0)[2:-1]
