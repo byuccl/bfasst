@@ -34,18 +34,24 @@ def main():
       error += 1
     else:
       text = open(log_file, 'r').read()
-      m = re.search("^-R- The designs are equivalent.$", text, re.M)
-      if m:
+      m1 = re.search("^-R- The designs are equivalent.$", text, re.M)
+      m2 = re.search("^-R- The designs are not.*? equivalent.*.$", text, re.M)
+      m3 = re.search("^-E- Constraints and mapping are not satisfiable in initial state!$", text, re.M)
+      m4 = re.search("^-R- Outputs: OPEN=[1-9][0-9]*\n[^\n]*$\n\Z", text, re.M) #try to match an open statement one line before EOF
+      m5 = re.search("^-R- Internal: HOLD=[0-9]* OPEN=[1-9][0-9]*$\n\Z", text, re.M)
+      m6 = re.search("^-R- The designs are not fully equivalent as there are unmapped outputs in the revised design.$", text, re.M)
+      if m1:
         print("Equivalent")
-	equiv += 1
+      elif m2:
+        print("Not equivalent")
+      elif m3:
+        print("Not equivalent (mapping not satisifable in initial state)")
+      elif m4 or m5:
+        print("Error -- open compare points")
+      elif m6:
+        print("Not fully equivalent -- unmapped outputs in revised")
       else:
-        m = re.search("^-R- The designs are not.*? equivalent.*.$", text, re.M)
-	if m:
-          print("Not equivalent")
-	  not_equiv += 1
-	else:
-          print("Error")
-	  error += 1
+        print("Error")
 
   #print(str(equiv) +  " of " + str(len(designs)) + " are equivalent (golden --> revised)")
   #print(str(not_equiv) +  " of " + str(len(designs)) + " are NOT equivalent (golden --> revised)")

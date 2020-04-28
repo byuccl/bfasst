@@ -34,6 +34,7 @@ class Design():
         self.cur_error_flow_name = None
         self.corrupt_netlist_paths = None
         self.error_flow_names = []
+        self.nets_to_remove_from_pcf = set()
         
         if not os.path.isdir(self.full_path):
             bfasst.utils.error("Design folder", self.full_path, " does not exist.")

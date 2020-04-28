@@ -50,26 +50,26 @@ class IC2_ImplementationTool(ImplementationTool):
         if status.error:
             return status
 
-        if need_to_run:
-            # Copy bitstream out of working directory
-            bitstream_proj_path = self.work_dir/"sbt" / \
-                "outputs"/"bitmap"/(design.top + "_bitmap.bin")
-            try:
-                shutil.copyfile(bitstream_proj_path, design.bitstream_path)
-            except FileNotFoundError:
-                return Status(ImplStatus.ERROR)
-
-            # Copy constraints out of working directory
-            constraints_proj_path = self.work_dir/"sbt" / \
-                "outputs"/"placer"/(design.top + "_sbt.pcf")
-            design.constraints_path = self.cwd/(design.top + ".pcf")
-            try:
-                shutil.copyfile(constraints_proj_path, design.constraints_path)
-            except FileNotFoundError:
-                return Status(ImplStatus.ERROR)
+        #if need_to_run:
+        # Copy bitstream out of working directory
+        bitstream_proj_path = self.work_dir/"sbt" / \
+                              "outputs"/"bitmap"/(design.top + "_bitmap.bin")
+        try:
+            shutil.copyfile(bitstream_proj_path, design.bitstream_path)
+        except FileNotFoundError:
+            return Status(ImplStatus.ERROR)
+        
+        # Copy constraints out of working directory
+        constraints_proj_path = self.work_dir/"sbt" / \
+                                "outputs"/"placer"/(design.top + "_sbt.pcf")
+        design.constraints_path = self.cwd/(design.top + ".pcf")
+        try:
+            shutil.copyfile(constraints_proj_path, design.constraints_path)
+        except FileNotFoundError:
+            return Status(ImplStatus.ERROR)
 
         # Always set the constraints path since we need it later
-        design.constraints_path = self.cwd/(design.top + ".pcf")
+        #design.constraints_path = self.cwd/(design.top + ".pcf")
 
         return Status(ImplStatus.SUCCESS)
 

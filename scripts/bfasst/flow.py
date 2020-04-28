@@ -372,7 +372,6 @@ def flow_yosys_synplify_error_onespin(design, build_dir):
         design.cur_error_flow_name = error_flow_name
 
         # Now run the Synplify synthesizer on the Yosys output
-        
         design.golden_is_verilog = True
         # Blow away the opt dir so we know we're getting a fresh build
         shutil.rmtree(synp_opt_tool.work_dir)

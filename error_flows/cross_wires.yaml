@@ -1,0 +1,5 @@
+error_injection_flows:
+  -
+    name: singe_wire_cross
+    passes:
+      - [cross_LUT_wires, 1]

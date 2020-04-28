@@ -95,4 +95,11 @@ class Icestorm_ReverseBitTool(ReverseBitTool):
                 new_line = re.sub("_obuf", "", new_line)
                 new_line = re.sub("obuf_", "", new_line)
                 new_line = re.sub("_gb_io", "", new_line)
-                pcf.write(new_line)
+                # While we're at it, if any lines match the wires we don't want
+                #   in the pcf (because of a signal tap), don't write the new
+                #   line.
+                do_write = True
+                for tap in design.nets_to_remove_from_pcf:
+                    if re.search(tap, new_line): do_write = False
+                if do_write:
+                    pcf.write(new_line)
