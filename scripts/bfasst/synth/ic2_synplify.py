@@ -21,11 +21,11 @@ class IC2_Synplify_SynthesisTool(SynthesisTool):
             fp.write("Running ic2_synplify opt tool for synthesis")
         
         # Use the LSE optimizer -- it will perform the functions of our synthesis
-        opt_tool = bfasst.opt.ic2_synplify.IC2_Synplify_OptTool(self.cwd)
+        self.opt_tool = bfasst.opt.ic2_synplify.IC2_Synplify_OptTool(self.cwd)
 
         # The opt tool just takes a list of input files, it doesn't know if the design has
         # been modified (ie the design.yaml file), so we add this check here
-        force_new_opt_run = (opt_tool.get_last_runtime() is not None) and (opt_tool.get_last_runtime() < design.last_modified_time())
+        force_new_opt_run = (self.opt_tool.get_last_runtime() is not None) and (self.opt_tool.get_last_runtime() < design.last_modified_time())
 
         # build a list of files and libs
         design_files = [design.top_file]
@@ -34,6 +34,6 @@ class IC2_Synplify_SynthesisTool(SynthesisTool):
         lib_files = design.vhdl_libs.items()
 
         # call the lse optimizer
-        status = opt_tool.create_netlist(design, design_files, lib_files, force_run=force_new_opt_run)
+        status = self.opt_tool.create_netlist(design, design_files, lib_files, force_run=force_new_opt_run)
             
         return status

@@ -1,6 +1,7 @@
 import os
 import shutil
 import subprocess
+import time
 
 import bfasst
 from bfasst.synth.base import SynthesisTool
@@ -40,6 +41,7 @@ class Yosys_Tech_SynthTool(SynthesisTool):
         if p.returncode != 0:
             return Status(SynthStatus.ERROR)
         else:
+            self.write_to_results_file(design, log_path)
             return Status(SynthStatus.SUCCESS)
 
     def create_yosys_script(self, design, netlist_path):
@@ -66,4 +68,18 @@ class Yosys_Tech_SynthTool(SynthesisTool):
                 return Status(SynthStatus.ERROR)
 
         return Status(SynthStatus.SUCCESS)
+
+    def write_to_results_file(self, design, log_path):
+        with open(design.results_summary_path, 'a') as res_f:
+            time_modified = time.ctime(os.path.getmtime(log_path))
+            res_f.write("Results Summary (Yosys) (" + time_modified + ")\n")
+            with open(log_path, 'r') as log_f:
+                for line in log_f:
+                    if line.strip()[:16] == "Number of wires:":
+                        res_f.write(line)
+                        res_line = next(log_f)
+                        while res_line.strip() != "":
+                            res_f.write(res_line)
+                            res_line = next(log_f)
+            res_f.write('\n')
         

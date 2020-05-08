@@ -2,6 +2,7 @@ import shutil
 import subprocess
 import re
 import os
+import time
 
 import bfasst
 from bfasst.impl.base import ImplementationTool
@@ -49,6 +50,9 @@ class IC2_ImplementationTool(ImplementationTool):
         status = self.check_impl_status(log_path)
         if status.error:
             return status
+
+        # Update a file in the main directory with info about impl results
+        self.write_to_results_file(design, log_path, need_to_run)
 
         #if need_to_run:
         # Copy bitstream out of working directory
@@ -122,3 +126,24 @@ class IC2_ImplementationTool(ImplementationTool):
         #     return True
 
         return Status(ImplStatus.SUCCESS)
+
+    def write_to_results_file(self, design, log_path, need_to_run):
+        if design.results_summary_path is None:
+            print("No results path set!")
+        else:
+            with open(design.results_summary_path, "a") as res_f:
+                time_modified = time.ctime(os.path.getmtime(log_path))
+                res_f.write("Results summary (IC2) (" + time_modified + ")\n")
+                # How can I differentiate between different versions of the design?
+                if not need_to_run:
+                    res_f.write("Note: need_to_run is false, design stats may be out of date\n")
+                with open(log_path, "r") as log_f:
+                    # Look for the results summary line
+                    for line in log_f:
+                        if line.strip() == "Final Design Statistics":
+                            # There's 11 results summay lines, copy all of them
+                            for itr in range(11):
+                                res_line = next(log_f)
+                                res_f.write(res_line)
+                res_f.write('\n')
+    

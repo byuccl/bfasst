@@ -1,6 +1,8 @@
 import shutil
 import subprocess
 import re
+import time
+import os
 
 import bfasst
 from bfasst.reverse_bit.base import ReverseBitTool
@@ -46,6 +48,8 @@ class Icestorm_ReverseBitTool(ReverseBitTool):
             if status.error:
                 return status
 
+        self.write_to_results_file(design, design.reversed_netlist_path, need_to_run)
+        
         return Status(BitReverseStatus.SUCCESS)
 
     def convert_bit_to_asc(self, bitstream_path, asc_path):
@@ -103,3 +107,28 @@ class Icestorm_ReverseBitTool(ReverseBitTool):
                     if re.search(tap, new_line): do_write = False
                 if do_write:
                     pcf.write(new_line)
+
+    def write_to_results_file(self, design, netlist_path, need_to_run):
+        if design.results_summary_path is None:
+            print("No results path set!")
+            return
+        with open(design.results_summary_path, 'a') as res_f:
+            time_modified = time.ctime(os.path.getmtime(netlist_path))
+            res_f.write("Results from icestorm netlist (" + time_modified + "):\n")
+            if not need_to_run:
+                res_f.write("need_to_run is false, results may be out of date\n")
+            with open(netlist_path, 'r') as net_f:
+                netlist = net_f.read()
+                num_luts = netlist.count('/* LUT')
+                num_carries = netlist.count('/* CARRY')
+                num_ffs = netlist.count('/* FF')
+                num_always_ffs = netlist.count('always @')
+                num_assign_ffs = num_ffs - num_always_ffs
+                num_ram40s = netlist.count('SB_RAM40_4K')
+                res_f.write("  Number of LUTs: " + str(num_luts) + '\n')
+                res_f.write("  Number of carry cells: " + str(num_carries) + '\n')
+                res_f.write("  Number of flip flops: " + str(num_ffs) + '\n')
+                res_f.write("    Flops w/ assign statements: " + str(num_assign_ffs) + '\n')
+                res_f.write("    Flops w/ always statements: " + str(num_always_ffs) + '\n')
+                res_f.write("  Number of RAM40Ks: " + str(num_ram40s) + '\n')
+            res_f.write("\n")

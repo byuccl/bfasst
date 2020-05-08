@@ -11,3 +11,5 @@ class SynthesisTool(bfasst.flow.Tool):
     @abc.abstractmethod
     def create_netlist(self, design, build_dir):
         pass
+
+    opt_tool = None

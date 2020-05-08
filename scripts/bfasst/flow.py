@@ -16,6 +16,7 @@ class Flows(enum.Enum):
     YOSYS_TECH_SYNPLIFY_CONFORMAL = "yosys_tech_synplify_conformal"
     YOSYS_TECH_SYNPLIFY_ONESPIN = "yosys_tech_synplify_onespin"
     YOSYS_SYNPLIFY_ERROR_ONESPIN = "yosys_synplify_error_onespin"
+    GATHER_IMPL_DATA = "gather_impl_data"
 
 
 # This uses a lambda so that I don't have to define all of the functions before this point
@@ -26,7 +27,8 @@ flow_fcn_map = {
     Flows.YOSYS_TECH_SYNPLIFY_CONFORMAL: lambda: flow_yosys_tech_synplify_conformal,
     Flows.SYNPLIFY_IC2_ONESPIN: lambda: flow_synplify_ic2_icestorm_onespin,
     Flows.YOSYS_TECH_SYNPLIFY_ONESPIN: lambda: flow_yosys_tech_synplify_onespin,
-    Flows.YOSYS_SYNPLIFY_ERROR_ONESPIN: lambda: flow_yosys_synplify_error_onespin
+    Flows.YOSYS_SYNPLIFY_ERROR_ONESPIN: lambda: flow_yosys_synplify_error_onespin,
+    Flows.GATHER_IMPL_DATA: lambda: flow_gather_impl_data
 }
 
 def get_flow_fcn_by_name(flow_name):
@@ -305,6 +307,9 @@ def flow_yosys_tech_synplify_onespin(design, build_dir):
     return status
 
 def flow_yosys_synplify_error_onespin(design, build_dir):
+    # Set the results file path so it can be used in the different tools
+    design.results_summary_path = build_dir / "results_summary.txt"
+    
     # Run the Yosys synthesizer
     yosys_synth_tool = bfasst.synth.yosys.Yosys_Tech_SynthTool(build_dir)
     status = yosys_synth_tool.create_netlist(design)
@@ -419,4 +424,130 @@ def flow_yosys_synplify_error_onespin(design, build_dir):
     compare_tool.write_compare_script(design)
 
     return status
+
+
+def flow_gather_impl_data(design, build_dir):
+    # This flow is mainly to try running the tools with different synthesis/
+    #   implementation (e.g. synplify vs yosys, etc.) options to compare their
+    #   physical results (e.g. LUT counts, FF counts, etc)
     
+    # Set the results file path so it can be used in the different tools
+    design.results_summary_path = build_dir / "results_summary.txt"
+
+    # Start with an RTL->Synplify->IC2->Icestorm flow
+    # Run Icecube2 Synplify synthesis
+    synth_tool = bfasst.synth.ic2_synplify.IC2_Synplify_SynthesisTool(build_dir)
+    status = synth_tool.create_netlist(design)
+    if status.error:
+        return status
+
+    # Run Icecube2 implementations
+    impl_tool = bfasst.impl.ic2.IC2_ImplementationTool(build_dir)
+    status = impl_tool.implement_bitstream(design)
+    if status.error:
+        return status
+
+    # Run icestorm bitstream reversal
+    reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(
+        build_dir)
+    status = reverse_bit_tool.reverse_bitstream(design)
+    if status.error:
+        return status
+
+    # Clean up project directories so we get fresh results later
+    if synth_tool.opt_tool is not None: shutil.rmtree(synth_tool.opt_tool.work_dir)
+    shutil.rmtree(synth_tool.work_dir)
+    shutil.rmtree(impl_tool.work_dir)
+    shutil.rmtree(reverse_bit_tool.work_dir)
+     
+    # Now do RTL->LSE->IC2->Icestorm
+    # Run Icecube2 LSE synthesis
+    synth_tool = bfasst.synth.ic2_lse.IC2_LSE_SynthesisTool(build_dir)
+    status = synth_tool.create_netlist(design)
+    if status.error:
+        return status
+     
+    # Run Icecube2 implementations
+    impl_tool = bfasst.impl.ic2.IC2_ImplementationTool(build_dir)
+    status = impl_tool.implement_bitstream(design)
+    if status.error:
+        return status
+     
+    # Run icestorm bitstream reversal
+    reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(
+        build_dir)
+    status = reverse_bit_tool.reverse_bitstream(design)
+    if status.error:
+        return status
+     
+    # Clean up project directories so we get fresh results later
+    if synth_tool.opt_tool is not None: shutil.rmtree(synth_tool.opt_tool.work_dir)
+    shutil.rmtree(synth_tool.work_dir)
+    shutil.rmtree(impl_tool.work_dir)
+    shutil.rmtree(reverse_bit_tool.work_dir)
+     
+    # Now do Yosys->Synplify->IC2->Icestorm
+    # Run the Yosys synthesizer
+    yosys_synth_tool = bfasst.synth.yosys.Yosys_Tech_SynthTool(build_dir)
+    status = yosys_synth_tool.create_netlist(design)
+    if status.error:
+        return status
+     
+    # Now run the Synplify synthesizer on the Yosys output
+    yosys_netlist_path = design.netlist_path
+    synp_opt_tool = bfasst.opt.ic2_synplify.IC2_Synplify_OptTool(build_dir)
+    status = synp_opt_tool.create_netlist(design, [str(yosys_netlist_path)], [])
+    if (status.error):
+        return status
+     
+    # Run IC2 Implementation
+    impl_tool = bfasst.impl.ic2.IC2_ImplementationTool(build_dir)
+    status = impl_tool.implement_bitstream(design)
+    if status.error:
+        return status
+     
+    # Run icestorm bitstream reversal
+    reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(
+        build_dir)
+    # Now actually reverse the bitstream
+    status = reverse_bit_tool.reverse_bitstream(design)
+    if status.error:
+        return status
+     
+    # Clean up project directories so we get fresh results later
+    shutil.rmtree(synp_opt_tool.work_dir)
+    shutil.rmtree(impl_tool.work_dir)
+    shutil.rmtree(reverse_bit_tool.work_dir)
+     
+    # Now do Yosys->LSE->IC2->Icestorm
+    # Run the Yosys synthesizer
+    yosys_synth_tool = bfasst.synth.yosys.Yosys_Tech_SynthTool(build_dir)
+    status = yosys_synth_tool.create_netlist(design)
+    if status.error:
+        return status
+     
+    # Now run the LSE synthesizer on the Yosys output
+    yosys_netlist_path = design.netlist_path
+    lse_opt_tool = bfasst.opt.ic2_lse.IC2_LSE_OptTool(build_dir)
+    status = lse_opt_tool.create_netlist(design, [str(yosys_netlist_path)], [])
+    if (status.error):
+        return status
+     
+    # Try fixing the netlist LUT inits (there's some issue with how LSE
+    #   generates them)
+    lse_opt_tool.fix_lut_inits(design)
+     
+    # Run IC2 Implementation
+    impl_tool = bfasst.impl.ic2.IC2_ImplementationTool(build_dir)
+    status = impl_tool.implement_bitstream(design)
+    if status.error:
+        return status
+     
+    # Run icestorm bitstream reversal
+    reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(
+        build_dir)
+    status = reverse_bit_tool.reverse_bitstream(design)
+    if status.error:
+        return status
+
+    return status

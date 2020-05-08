@@ -70,6 +70,7 @@ class IC2_Synplify_OptTool(OptTool):
                 return Status(OptStatus.ERROR)
             shutil.copyfile(edif_path_temp, design.netlist_path)
 
+        self.write_result_file(design)
         return Status(OptStatus.SUCCESS)
 
     def run_sythesis(self, prj_path, log_path):
@@ -139,3 +140,26 @@ class IC2_Synplify_OptTool(OptTool):
                 return Status(OptStatus.MAPPER_ERROR)
 
         return Status(OptStatus.SUCCESS)
+
+    def write_result_file(self, design):
+        if design.results_summary_path is None:
+            print("No results path set!")
+            return
+        with open(design.results_summary_path, 'a') as res_f:
+            res_f.write("Synplify results summary:\n")
+            with open(design.netlist_path, 'r') as net_f:
+                netlist = net_f.read()
+                num_luts = netlist.count("cellRef SB_LUT4")
+                num_carrys = netlist.count("cellRef SB_CARRY")
+                num_flops = netlist.count("cellRef SB_DFF")
+                num_rams = netlist.count("cellRef SB_RAM")
+                # num_roms ?
+                num_ios = netlist.count("cellRef SB_IO")
+                num_gb_ios = netlist.count("cellRef SB_GB_IO")
+                res_f.write("  # LUTs: " + str(num_luts) + '\n')
+                res_f.write("  # carrys: " + str(num_carrys) + '\n')
+                res_f.write("  # DFFs: " + str(num_flops) + '\n')
+                res_f.write("  # RAMs: " + str(num_rams) + '\n')
+                res_f.write("  # IOs: " + str(num_ios) + '\n')
+                res_f.write("  # GB IOs: " + str(num_gb_ios) + '\n')    
+                res_f.write('\n')

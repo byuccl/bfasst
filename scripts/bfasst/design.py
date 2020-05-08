@@ -28,6 +28,7 @@ class Design():
         self.bitstream_path = None
         self.constraints_path = None
         self.reversed_netlist_path = None
+        self.results_summary_path = None
 
         # Error flow related stuff
         self.error_flow_yaml = None

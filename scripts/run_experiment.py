@@ -100,6 +100,7 @@ def main():
     while not all_threads_done:
         all_threads_done = True
         for i in range(len(threads)):
+            if threads[i] is None: continue
             if threads[i].is_alive():
                 all_threads_done = False
             if (not threads[i].is_alive()) and (done_threads[i] == False):
