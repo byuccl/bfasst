@@ -121,6 +121,11 @@ def flow_xilinx_conformal(design, build_dir):
     if status.error:
         return status
 
+    impl_tool = bfasst.impl.vivado.Vivado_ImplementationTool(build_dir)
+    status = impl_tool.implement_bitstream(design)
+    if status.error:
+        return status
+
     return None
 
 
