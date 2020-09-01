@@ -4,7 +4,8 @@ import bfasst
 
 DESIGN_YAML_NAME = "design.yaml"
 
-class Design():
+
+class Design:
     def __init__(self, design_dir):
         self.design_dir = design_dir
         self.full_path = bfasst.EXAMPLES_PATH / self.design_dir
@@ -36,12 +37,12 @@ class Design():
         self.corrupt_netlist_paths = None
         self.error_flow_names = []
         self.nets_to_remove_from_pcf = set()
-        
+
         if not os.path.isdir(self.full_path):
             bfasst.utils.error("Design folder", self.full_path, " does not exist.")
         if not os.path.isfile(self.yaml_path):
             bfasst.utils.error("Design YAML file", self.yaml_path, "does not exist")
-        
+
         with open(self.yaml_path) as fp:
             design_props = yaml.safe_load(fp)
 
@@ -60,24 +61,37 @@ class Design():
                 self.top_file = verilogTop
             elif os.path.isfile(os.path.join(self.full_path, vhdlTop)):
                 self.top_file = vhdlTop
-        
+
         if self.top_file is None:
-            bfasst.utils.error("Cannot find a top file", verilogTop, "or", vhdlTop, "for design", self.design_dir)
+            bfasst.utils.error(
+                "Cannot find a top file", verilogTop, "or", vhdlTop, "for design", self.design_dir
+            )
         if not os.path.isfile(self.top_path()):
             bfasst.utils.error("Top file", self.top_file, "does not exist.")
 
         if "top_architecture" in design_props:
             self.top_architecture = design_props["top_architecture"]
-    
+
         # Find other source files
-        if "include_all_verilog_files" in design_props and design_props["include_all_verilog_files"]:
+        if (
+            "include_all_verilog_files" in design_props
+            and design_props["include_all_verilog_files"]
+        ):
             for dir_item in os.listdir(self.full_path):
-                if os.path.isfile(os.path.join(self.full_path, dir_item)) and os.path.splitext(dir_item)[1] == ".v" and dir_item != self.top_file:
+                if (
+                    os.path.isfile(os.path.join(self.full_path, dir_item))
+                    and os.path.splitext(dir_item)[1] == ".v"
+                    and dir_item != self.top_file
+                ):
                     self.verilog_files.append(dir_item)
-        
+
         if "include_all_vhdl_files" in design_props and design_props["include_all_vhdl_files"]:
             for dir_item in os.listdir(self.full_path):
-                if os.path.isfile(os.path.join(self.full_path, dir_item)) and os.path.splitext(dir_item)[1] == ".vhd" and dir_item != self.top_file:
+                if (
+                    os.path.isfile(os.path.join(self.full_path, dir_item))
+                    and os.path.splitext(dir_item)[1] == ".vhd"
+                    and dir_item != self.top_file
+                ):
                     self.vhdl_files.append(dir_item)
 
         if "verilog_files" in design_props:
@@ -94,10 +108,9 @@ class Design():
         if "vhdl_libs" in design_props:
             for vhdl_lib in design_props["vhdl_libs"]:
                 vhdl_lib_path = self.full_path / vhdl_lib
-                for vhdl_file in vhdl_lib_path.rglob('*.vhd'):
+                for vhdl_file in vhdl_lib_path.rglob("*.vhd"):
                     self.vhdl_libs[vhdl_file] = pathlib.Path(vhdl_lib).name
-        
-        
+
         # for f, l in self.vhdl_libs.items():
         #     print(str(f).ljust(100) + l)
 

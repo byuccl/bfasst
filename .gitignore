@@ -12,6 +12,7 @@
 *.txt
 
 .vscode
+.Xil
 
 ic2/
 temp/

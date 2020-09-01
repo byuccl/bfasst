@@ -11,6 +11,8 @@ CONFORMAL_REMOTE_WORK_DIR = Path("/fsj/squallzz/ice")
 CONFORMAL_REMOTE_LIBS_DIR = Path("/fsj/squallzz/ice_libs")
 CONFORMAL_REMOTE_PATH = Path("/ee2/Cadence/CONFRML152/bin/lec")
 
+VIVADO_BIN_PATH = Path("/opt/Xilinx/Vivado/2019.2/bin/vivado")
+
 I2C_LSE_TIMEOUT = 600.0
 YOSYS_TIMEOUT = 600.0
 CONFORMAL_TIMEOUT = 600.0
