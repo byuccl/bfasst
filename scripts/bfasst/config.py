@@ -21,7 +21,6 @@ BUILD_DIR = "build"
 
 PART = "xc7a200tfbg676-2"
 
-
 SYNTH_LOG_NAME = "synth.log"
 OPT_LOG_NAME = "opt.log"
 IMPL_LOG_NAME = "impl.log"

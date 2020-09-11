@@ -1,14 +1,19 @@
 import os, yaml, pathlib, collections
 
 import bfasst
+from bfasst import paths
+from bfasst.utils import error
 
 DESIGN_YAML_NAME = "design.yaml"
 
 
 class Design:
     def __init__(self, design_dir):
+        if not design_dir.is_dir():
+            error("Design folder", design_dir, " does not exist.")
+
         self.design_dir = design_dir
-        self.full_path = bfasst.EXAMPLES_PATH / self.design_dir
+        self.full_path = self.design_dir
         self.yaml_path = os.path.join(self.full_path, DESIGN_YAML_NAME)
 
         self.top = None
@@ -38,8 +43,6 @@ class Design:
         self.error_flow_names = []
         self.nets_to_remove_from_pcf = set()
 
-        if not os.path.isdir(self.full_path):
-            bfasst.utils.error("Design folder", self.full_path, " does not exist.")
         if not os.path.isfile(self.yaml_path):
             bfasst.utils.error("Design YAML file", self.yaml_path, "does not exist")
 
