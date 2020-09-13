@@ -14,6 +14,15 @@ from bfasst import paths, config
 class XRay_ReverseBitTool(ReverseBitTool):
     TOOL_WORK_DIR = "xray"
 
+    def __init__(self, cwd):
+        super().__init__(cwd)
+
+        self.fasm2bels_path = paths.root_path / "third_party" / "fasm2bels"
+        self.fasm2bels_python_path = self.fasm2bels_path / "env" / "bin" / "python3"
+        self.xray_path = self.fasm2bels_path / "third_party" / "prjxray"
+        self.xray_db_path = self.fasm2bels_path / "third_party" / "prjxray-db"
+        self.db_root = self.xray_db_path / config.PART_FAMILY
+
     def reverse_bitstream(self, design):
         design.reversed_netlist_path = self.cwd / (design.top + "_reversed.v")
         if design.cur_error_flow_name is not None:
@@ -40,14 +49,20 @@ class XRay_ReverseBitTool(ReverseBitTool):
 
             # Bitstream to fasm file
             fasm_path = self.work_dir / (design.top + ".fasm")
-            to_fasm_log = self.work_dir / "to_fasm.log"
-            status = self.convert_bit_to_fasm(design.bitstream_path, fasm_path, to_fasm_log)
+            # to_fasm_log = self.work_dir / "to_fasm.log"
+            self.to_netlist_log = self.work_dir / "to_netlist.log"
+
+            status = self.convert_bit_to_fasm(
+                design.bitstream_path,
+                fasm_path,
+            )
             if status.error:
                 return status
 
             # fasm to netlist
+            xdc_path = self.work_dir / (design.top + "_reversed.xdc")
             status = self.convert_fasm_to_netlist(
-                fasm_path, design.constraints_path, design.reversed_netlist_path
+                fasm_path, design.constraints_path, design.reversed_netlist_path, xdc_path
             )
             if status.error:
                 return status
@@ -58,57 +73,64 @@ class XRay_ReverseBitTool(ReverseBitTool):
 
         return Status(BitReverseStatus.SUCCESS)
 
-    def convert_bit_to_fasm(self, bitstream_path, fasm_path, log_path):
-        fasm2bels_path = paths.root_path / "third_party" / "fasm2bels"
-        fasm2bels_python_path = fasm2bels_path / "env" / "bin" / "python3"
-
-        xray_path = fasm2bels_path / "third_party" / "prjxray"
-        xray_db_path = fasm2bels_path / "third_party" / "prjxray-db"
+    def convert_bit_to_fasm(self, bitstream_path, fasm_path):
 
         my_env = os.environ.copy()
-        my_env["PATH"] = str(xray_path / "build" / "bin" / "tools") + my_env["PATH"]
+        my_env["PATH"] = str(self.xray_path / "build" / "bin" / "tools") + my_env["PATH"]
 
         cmd = [
-            fasm2bels_python_path,
-            xray_path / "utils" / "bit2fasm.py",
+            self.fasm2bels_python_path,
+            self.xray_path / "utils" / "bit2fasm.py",
             "--db-root",
-            xray_db_path / config.PART_FAMILY,
+            self.db_root,
             "--part",
             config.PART,
             bitstream_path,
         ]
 
         with open(fasm_path, "w") as fp:
-            proc = subprocess.Popen(
+            proc = subprocess.run(
                 cmd,
-                stdout=subprocess.PIPE,
+                stdout=fp,
                 stderr=subprocess.STDOUT,
                 cwd=self.work_dir,
-                universal_newlines=True,
                 env=my_env,
             )
-            for line in proc.stdout:
-                sys.stdout.write(line)
-                fp.write(line)
-            proc.communicate()
             if proc.returncode:
                 return Status(BitReverseStatus.ERROR)
 
         return Status(BitReverseStatus.SUCCESS)
 
-    def convert_asc_to_netlist(self, asc_path, constraints_path, netlist_path):
+    def convert_fasm_to_netlist(self, fasm_path, constraints_path, netlist_path, xdc_path):
         cmd = [
-            bfasst.config.ICESTORM_INSTALL_DIR / "icebox" / "icebox_vlog.py",
-            "-P",
-            constraints_path,
-            "-s",
-            asc_path,
+            self.fasm2bels_python_path,
+            "-mfasm2bels",
+            "--connection_database",
+            config.PART + "_db",
+            "--db_root",
+            self.db_root,
+            "--part",
+            config.PART,
+            "--fasm_file",
+            fasm_path,
+            netlist_path,
+            xdc_path,
         ]
 
-        with open(netlist_path, "w") as fp:
-            p = subprocess.run(cmd, stdout=fp, stderr=subprocess.STDOUT, cwd=self.work_dir)
+        with open(self.to_netlist_log, "w") as fp:
+            proc = subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                cwd=self.fasm2bels_path,
+                universal_newlines=True,
+            )
+            for line in proc.stdout:
+                sys.stdout.write(line)
+                fp.write(line)
+            proc.communicate()
 
-            if p.returncode:
+            if proc.returncode:
                 return Status(BitReverseStatus.ERROR)
 
         return Status(BitReverseStatus.SUCCESS)
