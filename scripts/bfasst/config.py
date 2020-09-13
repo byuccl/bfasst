@@ -19,7 +19,8 @@ CONFORMAL_TIMEOUT = 600.0
 
 BUILD_DIR = "build"
 
-PART = "xc7a200tfbg676-2"
+PART_FAMILY = "artix7"
+PART = "xc7a200tsbg484-1"
 
 SYNTH_LOG_NAME = "synth.log"
 OPT_LOG_NAME = "opt.log"

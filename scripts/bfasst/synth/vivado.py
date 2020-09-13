@@ -2,6 +2,7 @@ import shutil
 import subprocess
 import re
 import os
+import sys
 
 import bfasst
 from bfasst.synth.base import SynthesisTool
@@ -15,6 +16,8 @@ class Vivado_SynthesisTool(SynthesisTool):
     PART = "xc7a200tfbg676-2"
 
     def create_netlist(self, design):
+        log_path = self.work_dir / bfasst.config.SYNTH_LOG_NAME
+
         # Save edif netlist path to design object
         design.netlist_path = self.cwd / (design.top + ".edf")
         design.constraints_path = self.cwd / "contraints.xdc"
@@ -31,17 +34,21 @@ class Vivado_SynthesisTool(SynthesisTool):
         )
 
         if need_to_run:
+            self.print_running_synth()
+
             report_io_path = self.work_dir / "report_io.txt"
 
             # Run synthesis
-            self.run_synth(design, report_io_path)
+            self.run_synth(design, log_path, report_io_path)
 
             # Extract contraint file from Vivado-assigned pins
             self.extract_contraints(design, report_io_path)
+        else:
+            self.print_skipping_synth()
 
         return Status(SynthStatus.SUCCESS)
 
-    def run_synth(self, design, report_io_path):
+    def run_synth(self, design, log_path, report_io_path):
         tcl_path = self.work_dir / ("synth.tcl")
 
         with open(tcl_path, "w") as fp:
@@ -60,8 +67,21 @@ class Vivado_SynthesisTool(SynthesisTool):
 
                 fp.write("exit\n")
 
-        cmd = [str(VIVADO_BIN_PATH), "-mode", "tcl", "-source", str(tcl_path)]
-        subprocess.run(cmd, cwd=self.work_dir)
+        with open(log_path, "w") as fp:
+            cmd = [str(VIVADO_BIN_PATH), "-mode", "tcl", "-source", str(tcl_path)]
+            proc = subprocess.Popen(
+                cmd,
+                cwd=self.work_dir,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                universal_newlines=True,
+            )
+            for line in proc.stdout:
+                sys.stdout.write(line)
+                fp.write(line)
+            proc.communicate()
+            if proc.returncode:
+                return Status(SynthStatus.ERROR)
 
     def extract_contraints(self, design, report_io_path):
         with open(report_io_path, "r") as fp:

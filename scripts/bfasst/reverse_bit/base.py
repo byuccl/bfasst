@@ -1,6 +1,8 @@
 import abc
 
 import bfasst.flow
+from bfasst.utils import print_color
+
 
 class ReverseBitTool(bfasst.flow.Tool):
 
@@ -9,5 +11,11 @@ class ReverseBitTool(bfasst.flow.Tool):
     #   - netlist is the path to the produced netlist file
     #   - status is a Status object from bfasst.status
     @abc.abstractmethod
-    def reverse_bitstream(self, bitstream_path, build_dir):
+    def reverse_bitstream(self, design):
         pass
+
+    def print_running_reverse_bit(self):
+        print_color(self.TERM_COLOR_STAGE, "Running bitstream reversal")
+
+    def print_skipping_reverse_bit(self):
+        print_color(self.TERM_COLOR_STAGE, "Bitstream reversal already run")

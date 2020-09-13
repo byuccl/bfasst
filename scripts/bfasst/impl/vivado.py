@@ -3,6 +3,7 @@ import subprocess
 import re
 import os
 import time
+import sys
 
 import bfasst
 from bfasst.impl.base import ImplementationTool
@@ -34,10 +35,14 @@ class Vivado_ImplementationTool(ImplementationTool):
         )
 
         if need_to_run:
+            self.print_running_impl()
+
             # Run implementation
-            status = self.run_implementation(design)
+            status = self.run_implementation(design, log_path)
             if status.error:
                 return status
+        else:
+            self.print_skipping_impl()
 
         # Check implementation log
         status = self.check_impl_status(log_path)
@@ -49,7 +54,7 @@ class Vivado_ImplementationTool(ImplementationTool):
 
         return Status(ImplStatus.SUCCESS)
 
-    def run_implementation(self, design):
+    def run_implementation(self, design, log_path):
         tcl_path = self.work_dir / ("impl.tcl")
 
         with open(tcl_path, "w") as fp:
@@ -75,8 +80,21 @@ class Vivado_ImplementationTool(ImplementationTool):
                 # fp.write("write_edif -force {" + str(design.netlist_path) + "}\n")
                 fp.write("exit\n")
 
-        cmd = [str(VIVADO_BIN_PATH), "-mode", "tcl", "-source", str(tcl_path)]
-        subprocess.run(cmd, cwd=self.work_dir)
+        with open(log_path, "w") as fp:
+            cmd = [str(VIVADO_BIN_PATH), "-mode", "tcl", "-source", str(tcl_path)]
+            proc = subprocess.Popen(
+                cmd,
+                cwd=self.work_dir,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                universal_newlines=True,
+            )
+            for line in proc.stdout:
+                sys.stdout.write(line)
+                fp.write(line)
+            proc.communicate()
+            if proc.returncode:
+                return Status(ImplStatus.ERROR)
 
         return Status(ImplStatus.SUCCESS)
 

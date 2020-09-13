@@ -5,6 +5,7 @@ import pathlib
 import shutil
 
 import bfasst
+from bfasst.utils import TermColor
 
 
 @enum.unique
@@ -50,6 +51,8 @@ def get_flow_fcn_by_name(flow_name):
 
 
 class Tool(abc.ABC):
+    TERM_COLOR_STAGE = TermColor.PURPLE
+
     def __init__(self, cwd):
         super().__init__()
         self.cwd = cwd
@@ -123,6 +126,11 @@ def flow_xilinx_conformal(design, build_dir):
 
     impl_tool = bfasst.impl.vivado.Vivado_ImplementationTool(build_dir)
     status = impl_tool.implement_bitstream(design)
+    if status.error:
+        return status
+
+    reverse_bit_tool = bfasst.reverse_bit.xray.XRay_ReverseBitTool(build_dir)
+    status = reverse_bit_tool.reverse_bitstream(design)
     if status.error:
         return status
 
