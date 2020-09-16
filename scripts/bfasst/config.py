@@ -7,8 +7,8 @@ ICESTORM_INSTALL_DIR = Path("/home/jgoeders/icestorm")
 CONFORMAL_REMOTE_MACHINE = "ssh.et.byu.edu"
 CONFORMAL_REMOTE_MACHINE_USER = "squallzz"
 CONFORMAL_REMOTE_SOURCE_SCRIPT = Path("/ee2/Cadence/local/designkits/ee451/cdssetup/bashrc_cadence")
-CONFORMAL_REMOTE_WORK_DIR = Path("/fsj/squallzz/ice")
-CONFORMAL_REMOTE_LIBS_DIR = Path("/fsj/squallzz/ice_libs")
+CONFORMAL_REMOTE_WORK_DIR = Path("/fsj/squallzz/bfasst_work")
+CONFORMAL_REMOTE_LIBS_DIR = Path("/fsj/squallzz/bfasst_libs")
 CONFORMAL_REMOTE_PATH = Path("/ee2/Cadence/CONFRML152/bin/lec")
 
 VIVADO_BIN_PATH = Path("/opt/Xilinx/Vivado/2019.2/bin/vivado")
