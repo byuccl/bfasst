@@ -69,15 +69,14 @@ class XRay_ReverseBitTool(ReverseBitTool):
         else:
             self.print_skipping_reverse_bit()
 
-        self.write_to_results_file(design, design.reversed_netlist_path, need_to_run)
+        # self.write_to_results_file(design, design.reversed_netlist_path, need_to_run)
 
         return Status(BitReverseStatus.SUCCESS)
 
     def convert_bit_to_fasm(self, bitstream_path, fasm_path):
 
         my_env = os.environ.copy()
-        my_env["PATH"] = str(self.xray_path / "build" / "bin" / "tools") + my_env["PATH"]
-
+        my_env["PATH"] = str(self.xray_path / "build" / "tools") + os.pathsep + my_env["PATH"]
         cmd = [
             self.fasm2bels_python_path,
             self.xray_path / "utils" / "bit2fasm.py",
@@ -115,6 +114,8 @@ class XRay_ReverseBitTool(ReverseBitTool):
             fasm_path,
             netlist_path,
             xdc_path,
+            "--xdc",
+            constraints_path,
         ]
 
         with open(self.to_netlist_log, "w") as fp:
@@ -135,39 +136,9 @@ class XRay_ReverseBitTool(ReverseBitTool):
 
         return Status(BitReverseStatus.SUCCESS)
 
-    # Sometimes IC2 implementation can add stuff to signal names in PCF files
-    #   (e.x. clk_i becomes clk_i_ibuf). This function removes those extra
-    #   suffixes/prefixes. This also removes all location information from the
-    #   PCF. For our purposes, we only need the set_io statements to infer
-    #   the I/O signal names.
-    # TODO: Ideally, this function should probably check against the top-level
-    #       I/O on the original RTL to make sure that none of the signals have
-    #       the suffixes we're removing (i.e. they weren't added by IC2). For
-    #       now, though, we'll assume that all suf/prefixes are not in the RTL.
-    def fix_pcf_names(self, design):
-        set_io_lines = []
-        with open(design.constraints_path, "r") as pcf:
-            for line in pcf:
-                if line.split()[0] == "set_io":
-                    set_io_lines.append(line)
-        with open(design.constraints_path, "w") as pcf:
-            for line in set_io_lines:
-                new_line = re.sub("_ibuf", "", line)
-                new_line = re.sub("ibuf_", "", new_line)
-                new_line = re.sub("_obuf", "", new_line)
-                new_line = re.sub("obuf_", "", new_line)
-                new_line = re.sub("_gb_io", "", new_line)
-                # While we're at it, if any lines match the wires we don't want
-                #   in the pcf (because of a signal tap), don't write the new
-                #   line.
-                do_write = True
-                for tap in design.nets_to_remove_from_pcf:
-                    if re.search(tap, new_line):
-                        do_write = False
-                if do_write:
-                    pcf.write(new_line)
-
     def write_to_results_file(self, design, netlist_path, need_to_run):
+        raise NotImplementedError
+
         if design.results_summary_path is None:
             print("No results path set!")
             return
