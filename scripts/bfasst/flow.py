@@ -34,6 +34,10 @@ flow_fcn_map = {
     Flows.GATHER_IMPL_DATA: lambda: flow_gather_impl_data,
 }
 
+class Vendor (enum.Enum):
+    LATTICE = 1
+    XILINX = 2
+
 
 def get_flow_fcn_by_name(flow_name):
     invalid_flow = False
@@ -134,7 +138,21 @@ def flow_xilinx_conformal(design, build_dir):
     if status.error:
         return status
 
-    return None
+    # Run conformal
+    design.compare_golden_files.append(design.top_file)
+    design.compare_golden_files.extend(design.get_support_files())
+    design.compare_golden_files_paths.append(design.full_path / design.top_file)
+    design.compare_golden_files_paths.extend(
+        [design.full_path / f for f in design.get_support_files()]
+    )
+    design.golden_is_verilog = design.top_is_verilog()
+    compare_tool = bfasst.compare.conformal.Conformal_CompareTool(build_dir, Vendor.XILINX)
+    with bfasst.conformal_lock:
+        status = compare_tool.compare_netlists(design)
+    if status.error:
+        return status
+
+    return status
 
 
 def flow_ic2_synplify_conformal(design, build_dir):

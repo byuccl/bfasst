@@ -11,6 +11,7 @@ warnings.filterwarnings(action='ignore',module='.*paramiko.*')
 
 from bfasst.compare.base import CompareTool
 from bfasst.status import Status, CompareStatus
+from bfasst import flow, paths
 
 class Conformal_CompareTool(CompareTool):
     TOOL_WORK_DIR = "conformal"    
@@ -18,6 +19,12 @@ class Conformal_CompareTool(CompareTool):
     LOG_FILE_NAME = "log.txt"
     DO_FILE_NAME = "compare.do"
     GUI_FILE_NAME = "run_conformal_gui.sh"
+
+    def __init__(self, cwd, vendor):
+        super().__init__(cwd)
+
+        assert type(vendor) is flow.Vendor
+        self.vendor = vendor
 
     def compare_netlists(self, design):
 
@@ -33,6 +40,7 @@ class Conformal_CompareTool(CompareTool):
         need_to_run |= (not need_to_run) and (design.bitstream_path.stat().st_mtime > log_path.stat().st_mtime)
 
         if need_to_run:
+            self.print_running_compare()
 
             # Connect to remote machine
             client = self.connect_to_remote_machine()
@@ -55,6 +63,8 @@ class Conformal_CompareTool(CompareTool):
             if status.status == CompareStatus.TIMEOUT:
                 with open(log_path, 'a') as fp:
                     fp.write("\nTimeout\n")
+        else:
+            self.print_skipping_compare()
 
         # Check conformal log
         status = self.check_compare_status()
@@ -74,56 +84,20 @@ class Conformal_CompareTool(CompareTool):
                 "cd " + str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR) + ";" + \
                 str(bfasst.config.CONFORMAL_REMOTE_PATH) + " -Dofile " + self.DO_FILE_NAME + " -Logfile " + self.LOG_FILE_NAME + " -NOGui"
         
-        # print("here")
+        print(cmd)
         (stdin, stdout, stderr) = client.exec_command(cmd, timeout = bfasst.config.CONFORMAL_TIMEOUT)
 
-        # while True:
-        #     l = stdout.readline()
-        #     print(l)
-
-        #     # l = stderr.readline()
-        #     # print(l)
-        #     # print(stdout.channel.exit_status_ready)
-        #     if stdout.channel.exit_status_ready():
-        #         break
-
-        #     m = re.match("// Command: exit", l)
-        #     if m:
-        #         break
-
-        # while True:
-        #     l = stderr.readline()
-        #     print(l)
-        # print("Error")
-
-
-        # stdout_text = stdout.read().decode()
-        # print("stdout:", stdout_text)
-        # if re.search("// Error", stdout_text, re.M):
-        #     print("match")
-
-        # stderr_text = stderr.read().decode()
-        # if re.search("// Error", stderr_text, re.M):
-        #     print("match")
-        
-
-
+            
         stdin.write("yes\n")
 
         try:
-            stdout.read()
+            print("hi1")
+            s = stdout.read()
+            print("hi2")
             stdout.channel.recv_exit_status()
         except socket.timeout:
             return Status(CompareStatus.TIMEOUT)
-        
-        # for line in stdout:
-        #     print(line)
-        # for line in stderr:
-        #     print(line)
-
-        # stdout = stdout.read().decode()
-        # print("stdout:", stdout)
-
+      
         stderr = stderr.read().decode()
         if "License check failed" in stderr:
             return Status(CompareStatus.NO_LICENSE)
@@ -134,7 +108,16 @@ class Conformal_CompareTool(CompareTool):
         do_file_path = self.work_dir / self.DO_FILE_NAME
 
         with open(do_file_path, 'w') as fp:
-            fp.write("read library -Both -Replace -sensitive -Verilog " + str(bfasst.config.CONFORMAL_REMOTE_LIBS_DIR) + "/sb_ice_syn.v -nooptimize\n")
+            if self.vendor == flow.Vendor.XILINX:
+                remote_libs_dir_path = bfasst.config.CONFORMAL_REMOTE_LIBS_DIR / "xilinx"
+                local_libs_dir_path = paths.resources_path / "conformal" / "libraries" / "xilinx"
+            elif self.vendor == flow.Vendor.LATTICE:
+                remote_libs_dir_path =  bfasst.config.CONFORMAL_REMOTE_LIBS_DIR / "lattice"
+                local_libs_dir_path = paths.resources_path / "conformal" / "libraries" / "xilinx"
+            else:
+                assert False, self.vendor
+
+            fp.write("read library -Both -sensitive -Verilog " + " ".join(str(remote_libs_dir_path / f.name) for f in local_libs_dir_path.glob("*")) + " -nooptimize\n")
 
             if design.golden_is_verilog:
                 src_type = "-Verilog"
@@ -149,7 +132,7 @@ class Conformal_CompareTool(CompareTool):
             fp.write("add compared points -all\n")
             fp.write("compare\n")
             fp.write("report verification\n")
-            fp.write("exit\n")
+            fp.write("exit -f\n")
         
 
         # Create script to run GUI on caedm
