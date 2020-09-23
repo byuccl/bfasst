@@ -17,13 +17,15 @@ class XRay_ReverseBitTool(ReverseBitTool):
     def __init__(self, cwd):
         super().__init__(cwd)
 
-        self.fasm2bels_path = paths.root_path / "third_party" / "fasm2bels"
+        self.fasm2bels_path = paths.ROOT_PATH / "third_party" / "fasm2bels"
         self.fasm2bels_python_path = self.fasm2bels_path / "env" / "bin" / "python3"
         self.xray_path = self.fasm2bels_path / "third_party" / "prjxray"
         self.xray_db_path = self.fasm2bels_path / "third_party" / "prjxray-db"
         self.db_root = self.xray_db_path / config.PART_FAMILY
 
-    def reverse_bitstream(self, design):
+    def reverse_bitstream(self, design, print_to_stdout = True):
+        self.print_to_stdout = print_to_stdout
+
         design.reversed_netlist_path = self.cwd / (design.top + "_reversed.v")
         if design.cur_error_flow_name is not None:
             design.reversed_netlist_path = self.cwd / (
@@ -42,7 +44,8 @@ class XRay_ReverseBitTool(ReverseBitTool):
         )
 
         if need_to_run:
-            self.print_running_reverse_bit()
+            if self.print_to_stdout:
+                self.print_running_reverse_bit()
 
             # First go through and remove any added stuff from pcf port names
             # self.fix_pcf_names(design)
@@ -66,7 +69,8 @@ class XRay_ReverseBitTool(ReverseBitTool):
             )
             if status.error:
                 return status
-        else:
+
+        elif self.print_to_stdout:
             self.print_skipping_reverse_bit()
 
         # self.write_to_results_file(design, design.reversed_netlist_path, need_to_run)
@@ -114,7 +118,7 @@ class XRay_ReverseBitTool(ReverseBitTool):
             fasm_path,
             netlist_path,
             xdc_path,
-            "--xdc",
+            "--input_xdc",
             constraints_path,
         ]
 
@@ -127,8 +131,11 @@ class XRay_ReverseBitTool(ReverseBitTool):
                 universal_newlines=True,
             )
             for line in proc.stdout:
-                sys.stdout.write(line)
+                if self.print_to_stdout:
+                    sys.stdout.write(line)
+                    sys.stdout.flush()
                 fp.write(line)
+                fp.flush()
             proc.communicate()
 
             if proc.returncode:

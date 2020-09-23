@@ -26,7 +26,8 @@ class Conformal_CompareTool(CompareTool):
         assert type(vendor) is flow.Vendor
         self.vendor = vendor
 
-    def compare_netlists(self, design):
+    def compare_netlists(self, design, print_to_stdout = True):
+        self.print_to_stdout = print_to_stdout
 
         log_path = self.work_dir / self.LOG_FILE_NAME
 
@@ -40,7 +41,8 @@ class Conformal_CompareTool(CompareTool):
         need_to_run |= (not need_to_run) and (design.bitstream_path.stat().st_mtime > log_path.stat().st_mtime)
 
         if need_to_run:
-            self.print_running_compare()
+            if self.print_to_stdout:
+                self.print_running_compare()
 
             # Connect to remote machine
             client = self.connect_to_remote_machine()
@@ -63,7 +65,7 @@ class Conformal_CompareTool(CompareTool):
             if status.status == CompareStatus.TIMEOUT:
                 with open(log_path, 'a') as fp:
                     fp.write("\nTimeout\n")
-        else:
+        elif self.print_to_stdout:
             self.print_skipping_compare()
 
         # Check conformal log
@@ -91,9 +93,7 @@ class Conformal_CompareTool(CompareTool):
         stdin.write("yes\n")
 
         try:
-            print("hi1")
             s = stdout.read()
-            print("hi2")
             stdout.channel.recv_exit_status()
         except socket.timeout:
             return Status(CompareStatus.TIMEOUT)
@@ -110,20 +110,20 @@ class Conformal_CompareTool(CompareTool):
         with open(do_file_path, 'w') as fp:
             if self.vendor == flow.Vendor.XILINX:
                 remote_libs_dir_path = bfasst.config.CONFORMAL_REMOTE_LIBS_DIR / "xilinx"
-                local_libs_dir_path = paths.resources_path / "conformal" / "libraries" / "xilinx"
+                local_libs_dir_path = paths.RESOURCES_PATH / "conformal" / "libraries" / "xilinx"
             elif self.vendor == flow.Vendor.LATTICE:
                 remote_libs_dir_path =  bfasst.config.CONFORMAL_REMOTE_LIBS_DIR / "lattice"
-                local_libs_dir_path = paths.resources_path / "conformal" / "libraries" / "xilinx"
+                local_libs_dir_path = paths.RESOURCES_PATH / "conformal" / "libraries" / "xilinx"
             else:
                 assert False, self.vendor
 
             fp.write("read library -Both -sensitive -Verilog " + " ".join(str(remote_libs_dir_path / f.name) for f in local_libs_dir_path.glob("*")) + " -nooptimize\n")
 
-            if design.golden_is_verilog:
+            if design.top_is_verilog():
                 src_type = "-Verilog"
             else:
                 src_type = "-Vhdl"
-            fp.write("read design " + " ".join(design.compare_golden_files) + " " + src_type + " -Golden -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply\n")
+            fp.write("read design " + " ".join([golden.name for golden in design.get_golden_files()]) + " " + src_type + " -Golden -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply\n")
             #fp.write("read design " + design.top_file + " " + " ".join(design.get_support_files()) + " " + src_type + " -Golden -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply\n")
 
             fp.write("read design " + design.reversed_netlist_filename() + " -Verilog -Revised -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply\n")
@@ -165,7 +165,7 @@ class Conformal_CompareTool(CompareTool):
         #    scpClient.put(str(design.full_path / vhdl_file), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
 
         for design_file in design.compare_golden_files_paths:
-            scpClient.put(str(design.full_path / design_file), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
+            scpClient.put(str(design_file), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
         
         # @$(foreach var, $(VERILOG_SUPPORT_FILES),scp $(DESIGN_DIR)/$(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $@;)	
         # @$(foreach var, $(VHDL_SUPPORT_FILES),scp $(DESIGN_DIR)/$(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $@;)	

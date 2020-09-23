@@ -14,7 +14,9 @@ from bfasst.config import VIVADO_BIN_PATH
 class Vivado_ImplementationTool(ImplementationTool):
     TOOL_WORK_DIR = "vivado_impl"
 
-    def implement_bitstream(self, design):
+    def implement_bitstream(self, design, print_to_stdout = True):
+        self.print_to_stdout = print_to_stdout
+
         log_path = self.work_dir / bfasst.config.IMPL_LOG_NAME
         design.bitstream_path = self.cwd / (design.top + ".bit")
 
@@ -35,13 +37,15 @@ class Vivado_ImplementationTool(ImplementationTool):
         )
 
         if need_to_run:
-            self.print_running_impl()
+            if self.print_to_stdout:
+                self.print_running_impl()
 
             # Run implementation
             status = self.run_implementation(design, log_path)
             if status.error:
                 return status
-        else:
+
+        elif self.print_to_stdout:
             self.print_skipping_impl()
 
         # Check implementation log
@@ -90,8 +94,13 @@ class Vivado_ImplementationTool(ImplementationTool):
                 universal_newlines=True,
             )
             for line in proc.stdout:
-                sys.stdout.write(line)
+                if self.print_to_stdout:
+                    sys.stdout.write(line)
+                    sys.stdout.flush()
                 fp.write(line)
+                fp.flush()
+                if re.match("\s*ERROR:", line):                    
+                    proc.kill()
             proc.communicate()
             if proc.returncode:
                 return Status(ImplStatus.ERROR)
@@ -99,9 +108,15 @@ class Vivado_ImplementationTool(ImplementationTool):
         return Status(ImplStatus.SUCCESS)
 
     def check_impl_status(self, log_path):
+        text = open(log_path).read()
+
+        m = re.search(r"^ERROR:\s*(.*?)$", text, re.M)
+        if m:
+            return Status(ImplStatus.ERROR, m.group(1))
+            
         return Status(ImplStatus.SUCCESS)
 
-        text = open(log_path).read()
+
 
         m = re.search(
             r"^Design LUT Count \((\d+)\) exceeded Device LUT Count \((\d+)\)$", text, re.M

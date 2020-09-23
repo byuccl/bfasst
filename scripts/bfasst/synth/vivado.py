@@ -15,7 +15,7 @@ class Vivado_SynthesisTool(SynthesisTool):
 
     PART = "xc7a200tfbg676-2"
 
-    def create_netlist(self, design, print_to_stdout = False):
+    def create_netlist(self, design, print_to_stdout = True):
         self.print_to_stdout = print_to_stdout
         log_path = self.work_dir / bfasst.config.SYNTH_LOG_NAME
 
@@ -41,10 +41,13 @@ class Vivado_SynthesisTool(SynthesisTool):
             report_io_path = self.work_dir / "report_io.txt"
 
             # Run synthesis
-            self.run_synth(design, log_path, report_io_path)
+            status = self.run_synth(design, log_path, report_io_path)
+            if status.error:
+                return status
 
             # Extract contraint file from Vivado-assigned pins
             self.extract_contraints(design, report_io_path)
+
         elif self.print_to_stdout:
             self.print_skipping_synth()
 
@@ -56,9 +59,9 @@ class Vivado_SynthesisTool(SynthesisTool):
         with open(tcl_path, "w") as fp:
             if design.top_is_verilog:
                 fp.write("set_part " + bfasst.config.PART + "\n")
-                fp.write("read_verilog " + str(design.top_path()) + "\n")
-                # for vf in design.verilog_files:
-                #     fp.write("read_verilog " + str(design.))
+                fp.write("read_verilog " + str(design.top_file_path) + "\n")
+                for vf in design.verilog_file_paths:
+                    fp.write("read_verilog " + str(vf) + "\n")
 
                 fp.write("synth_design -top " + design.top + "\n")
                 fp.write("place_ports\n")
@@ -66,7 +69,6 @@ class Vivado_SynthesisTool(SynthesisTool):
 
                 # Save IO
                 fp.write("report_io -file " + str(report_io_path) + "\n")
-
                 fp.write("exit\n")
 
         with open(log_path, "w") as fp:
@@ -83,9 +85,13 @@ class Vivado_SynthesisTool(SynthesisTool):
                     sys.stdout.write(line)
                 fp.write(line)
                 fp.flush()
+                if re.match("\s*ERROR:", line):                    
+                    proc.kill()
+                    return Status(SynthStatus.ERROR)
             proc.communicate()
             if proc.returncode:
                 return Status(SynthStatus.ERROR)
+        return Status(SynthStatus.SUCCESS)
 
     def extract_contraints(self, design, report_io_path):
         with open(report_io_path, "r") as fp:

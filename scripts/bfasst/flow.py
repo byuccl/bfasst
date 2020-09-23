@@ -34,7 +34,8 @@ flow_fcn_map = {
     Flows.GATHER_IMPL_DATA: lambda: flow_gather_impl_data,
 }
 
-class Vendor (enum.Enum):
+
+class Vendor(enum.Enum):
     LATTICE = 1
     XILINX = 2
 
@@ -77,11 +78,11 @@ class Tool(abc.ABC):
         return work_dir
 
 
-def run_flow(design, flow_type, build_dir):
+def run_flow(design, flow_type, build_dir, print_to_stdout = True):
     assert type(design) is bfasst.design.Design
 
     flow_fcn = bfasst.flow.get_flow_fcn_by_name(flow_type)
-    return flow_fcn(design, build_dir)
+    return flow_fcn(design, build_dir, print_to_stdout)
 
 
 def flow_ic2_lse_conformal(design, build_dir):
@@ -121,7 +122,7 @@ def flow_ic2_lse_conformal(design, build_dir):
     return status
 
 
-def flow_xilinx_conformal(design, build_dir, print_to_stdout= False):
+def flow_xilinx_conformal(design, build_dir, print_to_stdout = True):
     # Run Xilinx synthesis and implementation
     synth_tool = bfasst.synth.vivado.Vivado_SynthesisTool(build_dir)
     status = synth_tool.create_netlist(design, print_to_stdout)
@@ -139,16 +140,16 @@ def flow_xilinx_conformal(design, build_dir, print_to_stdout= False):
         return status
 
     # Run conformal
-    design.compare_golden_files.append(design.top_file)
-    design.compare_golden_files.extend(design.get_support_files())
-    design.compare_golden_files_paths.append(design.full_path / design.top_file)
-    design.compare_golden_files_paths.extend(
-        [design.full_path / f for f in design.get_support_files()]
-    )
-    design.golden_is_verilog = design.top_is_verilog()
+    # design.compare_golden_files.append(design.top_file_path)
+    # design.compare_golden_files.extend(design.get_support_files())
+    # design.compare_golden_files_paths.append(design.top_file_path)
+    # design.compare_golden_files_paths.extend(
+    #     [design.path / f for f in design.get_support_files()]
+    # )
+    # design.golden_is_verilog = design.top_is_verilog()
     compare_tool = bfasst.compare.conformal.Conformal_CompareTool(build_dir, Vendor.XILINX)
     with bfasst.conformal_lock:
-        status = compare_tool.compare_netlists(design)
+        status = compare_tool.compare_netlists(design, print_to_stdout)
     if status.error:
         return status
 
