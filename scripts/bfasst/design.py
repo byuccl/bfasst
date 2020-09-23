@@ -13,6 +13,7 @@ class Design:
             error("Design folder", design_dir, " does not exist.")
 
         self.design_dir = design_dir
+        self.rel_path = self.design_dir.relative_to(paths.EXAMPLES_PATH)
         self.full_path = self.design_dir
         self.yaml_path = os.path.join(self.full_path, DESIGN_YAML_NAME)
 

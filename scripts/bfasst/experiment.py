@@ -4,13 +4,14 @@ import pathlib
 import shutil
 
 import bfasst
+from bfasst import paths
 
 
 class Experiment():
-    def __init__(self, exp_name):
+    def __init__(self, yaml_path):
         self.post_run = None
-        
-        yaml_path = bfasst.EXPERIMENTS_PATH / (exp_name + ".yaml")
+        self.yaml_path = yaml_path
+        self.name = yaml_path.stem
         
         # Read experiment YAML
         with open(yaml_path) as fp:
@@ -29,7 +30,7 @@ class Experiment():
 
         if "design_dirs" in experiment_props:
             for design_dir in experiment_props["design_dirs"]:
-                design_dir_path = bfasst.EXAMPLES_PATH / design_dir
+                design_dir_path = paths.EXAMPLES_PATH / design_dir
                 if not design_dir_path.is_dir():
                     bfasst.utils.error(design_dir_path, "is not a directory" )
                 
@@ -47,8 +48,8 @@ class Experiment():
         self.design_paths.sort()
 
         self.designs = []
-        for design_path in self.design_paths:    
-            design = bfasst.design.Design(design_path)
+        for design_path in self.design_paths:            
+            design = bfasst.design.Design(paths.EXAMPLES_PATH / design_path)
             self.designs.append(design)
 
         for design in self.designs:
@@ -57,7 +58,7 @@ class Experiment():
             
 
     def get_longest_design_name(self):
-        return max([len(str(d.design_dir)) for d in self.designs])
+        return max([len(str(d.rel_path)) for d in self.designs])
         # # Validate that designs exist
         # build_dir = bfasst.utils.create_build_dir(exp_dir)
         # design_build_dirs = {}

@@ -1,0 +1,6 @@
+design_dirs:
+    - ooc/
+
+flow: xilinx_conformal 
+
+

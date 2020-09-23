@@ -121,20 +121,20 @@ def flow_ic2_lse_conformal(design, build_dir):
     return status
 
 
-def flow_xilinx_conformal(design, build_dir):
+def flow_xilinx_conformal(design, build_dir, print_to_stdout= False):
     # Run Xilinx synthesis and implementation
     synth_tool = bfasst.synth.vivado.Vivado_SynthesisTool(build_dir)
-    status = synth_tool.create_netlist(design)
+    status = synth_tool.create_netlist(design, print_to_stdout)
     if status.error:
         return status
 
     impl_tool = bfasst.impl.vivado.Vivado_ImplementationTool(build_dir)
-    status = impl_tool.implement_bitstream(design)
+    status = impl_tool.implement_bitstream(design, print_to_stdout)
     if status.error:
         return status
 
     reverse_bit_tool = bfasst.reverse_bit.xray.XRay_ReverseBitTool(build_dir)
-    status = reverse_bit_tool.reverse_bitstream(design)
+    status = reverse_bit_tool.reverse_bitstream(design, print_to_stdout)
     if status.error:
         return status
 

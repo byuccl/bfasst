@@ -15,7 +15,8 @@ class Vivado_SynthesisTool(SynthesisTool):
 
     PART = "xc7a200tfbg676-2"
 
-    def create_netlist(self, design):
+    def create_netlist(self, design, print_to_stdout = False):
+        self.print_to_stdout = print_to_stdout
         log_path = self.work_dir / bfasst.config.SYNTH_LOG_NAME
 
         # Save edif netlist path to design object
@@ -34,7 +35,8 @@ class Vivado_SynthesisTool(SynthesisTool):
         )
 
         if need_to_run:
-            self.print_running_synth()
+            if self.print_to_stdout:
+                self.print_running_synth()
 
             report_io_path = self.work_dir / "report_io.txt"
 
@@ -43,7 +45,7 @@ class Vivado_SynthesisTool(SynthesisTool):
 
             # Extract contraint file from Vivado-assigned pins
             self.extract_contraints(design, report_io_path)
-        else:
+        elif self.print_to_stdout:
             self.print_skipping_synth()
 
         return Status(SynthStatus.SUCCESS)
@@ -77,8 +79,10 @@ class Vivado_SynthesisTool(SynthesisTool):
                 universal_newlines=True,
             )
             for line in proc.stdout:
-                sys.stdout.write(line)
+                if self.print_to_stdout:
+                    sys.stdout.write(line)
                 fp.write(line)
+                fp.flush()
             proc.communicate()
             if proc.returncode:
                 return Status(SynthStatus.ERROR)

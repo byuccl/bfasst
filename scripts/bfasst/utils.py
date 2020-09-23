@@ -26,6 +26,7 @@ def error(*msg, returncode=-1):
     """ Print an error message and exit program """
 
     print_color(TermColor.RED, "ERROR:", " ".join(str(item) for item in msg))
+    assert False
     sys.exit(returncode)
 
 

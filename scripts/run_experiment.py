@@ -1,42 +1,90 @@
 #!/usr/bin/python3
 
 import argparse
-import sys
 import pathlib
-from threading import Thread
-import time
 import queue
+import sys
+import time
+import multiprocessing
+from threading import Thread
+import random
+
 
 import bfasst
 
+# Globals
+ljust = 0
+statuses = []
+running_list = None
+print_lock = None
+
+
+def print_running_list():
+    global running_list
+    global print_lock
+
+    print_lock.acquire()
+    print("Running:", *running_list, end ="\r")
+    print_lock.release()
+
+def run_design(design, design_dir, flow_fcn):
+    global running_list
+
+    running_list.append(str(design.rel_path))
+    print_running_list() 
+
+    # time.sleep(random.randint(1,3))
+    # status = None
+
+    status = flow_fcn(design, design_dir)
+    return (design,status)
+
+def on_error(e, pool):
+    pool.terminate()
+    raise e
+
+def job_done(retval):
+    global running_list
+    global print_lock
+
+    design = retval[0]
+    status = retval[1]
+
+    print_lock.acquire()
+    sys.stdout.write("\033[K")
+    sys.stdout.write(str(design.rel_path).ljust(ljust))
+    sys.stdout.flush()
+    sys.stdout.write(str(status))
+    sys.stdout.write("\n")
+    print_lock.release()
+
+    running_list.remove(str(design.rel_path))
+    print_running_list() 
+
+    statuses.append(status)
 
 def main():
+    global ljust
+    global statuses
+    global running_list
+    global print_lock
+
     parser = argparse.ArgumentParser()
 
-    # Find all experiments in the experiments/ directory
-    experiments = []
-    for dir_item in bfasst.EXPERIMENTS_PATH.iterdir():
-        if (bfasst.EXPERIMENTS_PATH / dir_item).is_file() and dir_item.suffix == ".yaml":
-            experiments.append(dir_item.stem)
-
     # Set up command line arguments
-    parser.add_argument("experiment_name", choices=experiments,
-                        help="Name of folder in experiments directory (with experiment.yaml file).")
-    parser.add_argument("--force", action='store_true')
+    parser.add_argument("experiment_yaml", help="Experiment yaml file.")
     parser.add_argument("-j", "--threads", type=int, default=1, help="Number of threads")
     args = parser.parse_args()
 
+    experiment_yaml_path = pathlib.Path(args.experiment_yaml)
+
     # Build experiment object
-    experiment = bfasst.experiment.Experiment(args.experiment_name)
+    experiment = bfasst.experiment.Experiment(experiment_yaml_path)
 
     # Create temp folder
-    build_dir = pathlib.Path.cwd() / "build" / args.experiment_name
+    build_dir = pathlib.Path.cwd() / "build" / experiment.name
     if not build_dir.is_dir():
-        build_dir.mkdir(parents = True)
-    elif not args.force:
-        bfasst.utils.error("Build directory", build_dir, "already exists.  Use --force to overwrite")
-    else:
-        pass
+        build_dir.mkdir(parents=True)
 
     # Don't run with less than one thread
     if args.threads < 1:
@@ -51,67 +99,25 @@ def main():
     experiment_queue = queue.Queue()
     results_queue = queue.Queue()
 
-    def flow_fcn_wrapper(design, design_dir, res_q):
-        status = experiment.flow_fcn(design, design_dir)
-        res_q.put((design, status))
-    
-    for i in range(len(experiment.designs)):
-
-        design = experiment.designs[i]
+    # Build a list of work items
+    designs_to_run = []
+    for design in experiment.designs:
         # Create a per-design build directory
-        design_dir = build_dir / design.design_dir.name
-        try:
-            design_dir.mkdir()
-        except FileExistsError:
-            pass
+        design_dir = build_dir / design.rel_path
+        design_dir.mkdir(parents=True, exist_ok = True)
+        designs_to_run.append((design, design_dir, experiment.flow_fcn))
 
-        experiment_queue.put((design, design_dir))
+
+    manager = multiprocessing.Manager()
+    running_list = manager.list()
+    print_lock = manager.Lock()
 
     t_start = time.perf_counter()
-    while(experiment_queue.qsize()):
-        # loop through the list of threads and look for any that are done
-        for i in range(len(threads)):
-            if threads[i] == None:
-                # Start a thread in this slot
-                design, design_dir = experiment_queue.get()
-                threads[i] = Thread(target = flow_fcn_wrapper, args=(design, design_dir, results_queue))
-                threads[i].start()
-                if not experiment_queue.qsize(): break
-            elif not threads[i].is_alive():
-                # There is a thread here, but it's finished running
-                # Print results and start a new thread (if there is one)
-                design, status = results_queue.get()
-                sys.stdout.write(str(design.design_dir).ljust(ljust))
-                sys.stdout.flush()
-                sys.stdout.write(str(status))
-                sys.stdout.write("\n")
-                statuses.append(status)
-                # start the new thread
-                design, design_dir = experiment_queue.get()
-                threads[i] = Thread(target = flow_fcn_wrapper, args=(design, design_dir, results_queue))
-                threads[i].start()
-                if not experiment_queue.qsize(): break
-        time.sleep(1)
-
-    # By now all of our experiments either have run or are running
-    # Wait for the rest of them to finish
-    all_threads_done = False
-    done_threads = [False] * len(threads)
-    while not all_threads_done:
-        all_threads_done = True
-        for i in range(len(threads)):
-            if threads[i] is None: continue
-            if threads[i].is_alive():
-                all_threads_done = False
-            if (not threads[i].is_alive()) and (done_threads[i] == False):
-                done_threads[i] = True
-                design, status = results_queue.get()
-                sys.stdout.write(str(design.design_dir).ljust(ljust))
-                sys.stdout.flush()
-                sys.stdout.write(str(status))
-                sys.stdout.write("\n")
-                statuses.append(status)
-        time.sleep(1)
+    with multiprocessing.Pool(processes=no_threads) as pool:
+        for design_to_run in designs_to_run:
+            pool.apply_async(run_design, design_to_run, callback=job_done, error_callback=lambda e: on_error(e, pool))
+        pool.close()
+        pool.join()
     t_end = time.perf_counter()
 
     if experiment.post_run is not None:
@@ -127,16 +133,44 @@ def main():
     #                     bfasst.status.ImplStatus,
     #                     bfasst.status.BitReverseStatus,
     #                     bfasst.status.CompareStatus]
-    
-    j = 30
-    print("Synth Error:".ljust(j), len([s for s in statuses if type(s.status) == bfasst.status.SynthStatus and s.error]))
-    print("Opt Error:".ljust(j), len([s for s in statuses if type(s.status) == bfasst.status.OptStatus and s.error]))
-    print("Impl Error:".ljust(j), len([s for s in statuses if type(s.status) == bfasst.status.ImplStatus and s.error]))
-    print("Bit Reverse Error:".ljust(j), len([s for s in statuses if type(s.status) == bfasst.status.BitReverseStatus and s.error]))
-    print("Compare Error:".ljust(j), len([s for s in statuses if type(s.status) == bfasst.status.CompareStatus and s.error and s.status != bfasst.status.CompareStatus.NOT_EQUIVALENT]))
-    print("Compare Not Equivalent:".ljust(j), len([s for s in statuses if s.status == bfasst.status.CompareStatus.NOT_EQUIVALENT]))
-    print("Compare Equivalent:".ljust(j), len([s for s in statuses if s.status == bfasst.status.CompareStatus.SUCCESS]))
 
+    j = 30
+    print(
+        "Synth Error:".ljust(j),
+        len([s for s in statuses if type(s.status) == bfasst.status.SynthStatus and s.error]),
+    )
+    print(
+        "Opt Error:".ljust(j),
+        len([s for s in statuses if type(s.status) == bfasst.status.OptStatus and s.error]),
+    )
+    print(
+        "Impl Error:".ljust(j),
+        len([s for s in statuses if type(s.status) == bfasst.status.ImplStatus and s.error]),
+    )
+    print(
+        "Bit Reverse Error:".ljust(j),
+        len([s for s in statuses if type(s.status) == bfasst.status.BitReverseStatus and s.error]),
+    )
+    print(
+        "Compare Error:".ljust(j),
+        len(
+            [
+                s
+                for s in statuses
+                if type(s.status) == bfasst.status.CompareStatus
+                and s.error
+                and s.status != bfasst.status.CompareStatus.NOT_EQUIVALENT
+            ]
+        ),
+    )
+    print(
+        "Compare Not Equivalent:".ljust(j),
+        len([s for s in statuses if s.status == bfasst.status.CompareStatus.NOT_EQUIVALENT]),
+    )
+    print(
+        "Compare Equivalent:".ljust(j),
+        len([s for s in statuses if s.status == bfasst.status.CompareStatus.SUCCESS]),
+    )
 
     # print(types)
 
