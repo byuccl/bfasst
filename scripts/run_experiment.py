@@ -143,8 +143,12 @@ def main():
     with multiprocessing.Pool(processes=no_threads) as pool:
         for design_to_run in designs_to_run:
             pool.apply_async(run_design, design_to_run, callback=job_done, error_callback=lambda e: on_error(e, pool, update_process))
-        pool.close()
-        pool.join()
+        try:
+            pool.close()
+            pool.join()
+        except:
+            pool.terminate()
+            update_process.terminate()
     update_process.join()
     t_end = time.perf_counter()
 

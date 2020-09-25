@@ -14,7 +14,7 @@ from bfasst.config import VIVADO_BIN_PATH
 class Vivado_ImplementationTool(ImplementationTool):
     TOOL_WORK_DIR = "vivado_impl"
 
-    def implement_bitstream(self, design, print_to_stdout = True):
+    def implement_bitstream(self, design, print_to_stdout=True):
         self.print_to_stdout = print_to_stdout
 
         log_path = self.work_dir / bfasst.config.IMPL_LOG_NAME
@@ -99,7 +99,7 @@ class Vivado_ImplementationTool(ImplementationTool):
                     sys.stdout.flush()
                 fp.write(line)
                 fp.flush()
-                if re.match("\s*ERROR:", line):                    
+                if re.match("\s*ERROR:", line):
                     proc.kill()
             proc.communicate()
             if proc.returncode:
@@ -113,10 +113,8 @@ class Vivado_ImplementationTool(ImplementationTool):
         m = re.search(r"^ERROR:\s*(.*?)$", text, re.M)
         if m:
             return Status(ImplStatus.ERROR, m.group(1))
-            
+
         return Status(ImplStatus.SUCCESS)
-
-
 
         m = re.search(
             r"^Design LUT Count \((\d+)\) exceeded Device LUT Count \((\d+)\)$", text, re.M

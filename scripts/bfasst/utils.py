@@ -55,3 +55,7 @@ def clean_folder(folder_path):
             os.unlink(file_object_path)
         else:
             shutil.rmtree(file_object_path)
+
+
+def print_tcl_cmd_catch(fp, cmd, return_code=1):
+    fp.write("if { [catch { " + cmd + " } ] } { exit " + str(return_code) + " }\n")

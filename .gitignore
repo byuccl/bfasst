@@ -12,6 +12,8 @@
 *.txt
 
 .Xil
+*.log
+*.jou
 
 ic2/
 temp/

@@ -85,8 +85,8 @@ class Conformal_CompareTool(CompareTool):
         cmd = "source " + str(bfasst.config.CONFORMAL_REMOTE_SOURCE_SCRIPT) + ";" + \
                 "cd " + str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR) + ";" + \
                 str(bfasst.config.CONFORMAL_REMOTE_PATH) + " -Dofile " + self.DO_FILE_NAME + " -Logfile " + self.LOG_FILE_NAME + " -NOGui"
-        
-        print(cmd)
+        if self.print_to_stdout:
+            print(cmd)
         (stdin, stdout, stderr) = client.exec_command(cmd, timeout = bfasst.config.CONFORMAL_TIMEOUT)
 
             

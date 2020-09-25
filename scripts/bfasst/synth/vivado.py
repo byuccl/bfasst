@@ -5,6 +5,7 @@ import os
 import sys
 
 import bfasst
+from bfasst import utils
 from bfasst.synth.base import SynthesisTool
 from bfasst.status import Status, SynthStatus
 from bfasst.config import VIVADO_BIN_PATH
@@ -15,7 +16,7 @@ class Vivado_SynthesisTool(SynthesisTool):
 
     PART = "xc7a200tfbg676-2"
 
-    def create_netlist(self, design, print_to_stdout = True):
+    def create_netlist(self, design, print_to_stdout=True):
         self.print_to_stdout = print_to_stdout
         log_path = self.work_dir / bfasst.config.SYNTH_LOG_NAME
 
@@ -26,12 +27,21 @@ class Vivado_SynthesisTool(SynthesisTool):
         # Check if this is already run and up to date
         need_to_run = False
 
-        # Run if there is no netlist, or if the netlist is out of date
-        need_to_run |= (not need_to_run) and (not design.netlist_path.is_file())
+        # Run if there is no log file
+        need_to_run |= not log_path.is_file()
+
+        # Run if there is no netlist, and no error message in the log file
+        need_to_run |= (
+            (not need_to_run)
+            and (not design.netlist_path.is_file())
+            and (not self.check_synth_log(log_path).error)
+        )
 
         # Run if last run is out of date
-        need_to_run |= (not need_to_run) and (
-            design.last_modified_time() > design.netlist_path.stat().st_mtime
+        need_to_run |= (
+            (not need_to_run)
+            and (design.netlist_path.is_file())
+            and (design.last_modified_time() > design.netlist_path.stat().st_mtime)
         )
 
         if need_to_run:
@@ -43,6 +53,13 @@ class Vivado_SynthesisTool(SynthesisTool):
             # Run synthesis
             status = self.run_synth(design, log_path, report_io_path)
             if status.error:
+                # See if the log parser can find an error message
+                if log_path.is_file():
+                    status_log = self.check_synth_log(log_path)
+                    if status_log.error:
+                        return status_log
+
+                # Otherwise, synth failed, but we don't know why.  So just return this status
                 return status
 
             # Extract contraint file from Vivado-assigned pins
@@ -51,6 +68,11 @@ class Vivado_SynthesisTool(SynthesisTool):
         elif self.print_to_stdout:
             self.print_skipping_synth()
 
+        # Check synthesis log
+        status = self.check_synth_log(log_path)
+        if status.error:
+            return status
+
         return Status(SynthStatus.SUCCESS)
 
     def run_synth(self, design, log_path, report_io_path):
@@ -58,17 +80,20 @@ class Vivado_SynthesisTool(SynthesisTool):
 
         with open(tcl_path, "w") as fp:
             if design.top_is_verilog:
+                fp.write("if { [ catch {\n")
                 fp.write("set_part " + bfasst.config.PART + "\n")
                 fp.write("read_verilog " + str(design.top_file_path) + "\n")
                 for vf in design.verilog_file_paths:
                     fp.write("read_verilog " + str(vf) + "\n")
 
-                fp.write("synth_design -top " + design.top + "\n")
+                fp.write("synth_design -top " + design.top + '\n')
                 fp.write("place_ports\n")
                 fp.write("write_edif -force {" + str(design.netlist_path) + "}\n")
 
                 # Save IO
                 fp.write("report_io -file " + str(report_io_path) + "\n")
+
+                fp.write("} ] } { exit 1 }\n")
                 fp.write("exit\n")
 
         with open(log_path, "w") as fp:
@@ -85,9 +110,9 @@ class Vivado_SynthesisTool(SynthesisTool):
                     sys.stdout.write(line)
                 fp.write(line)
                 fp.flush()
-                if re.match("\s*ERROR:", line):                    
-                    proc.kill()
-                    return Status(SynthStatus.ERROR)
+                # if re.match("\s*ERROR:", line):
+                #     proc.kill()
+                #     return Status(SynthStatus.ERROR)
             proc.communicate()
             if proc.returncode:
                 return Status(SynthStatus.ERROR)
@@ -111,3 +136,12 @@ class Vivado_SynthesisTool(SynthesisTool):
                         + m.group(2)
                         + " }];\n"
                     )
+
+    def check_synth_log(self, log_path):
+        text = open(log_path).read()
+
+        m = re.search(r"^ERROR:\s*(.*?)$", text, re.M)
+        if m:
+            return Status(SynthStatus.ERROR, m.group(1))
+
+        return Status(SynthStatus.SUCCESS)
