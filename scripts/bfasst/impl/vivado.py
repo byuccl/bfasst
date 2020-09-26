@@ -1,9 +1,9 @@
-import shutil
 import subprocess
 import re
 import os
 import time
 import sys
+import pathlib
 
 import bfasst
 from bfasst.impl.base import ImplementationTool
@@ -33,7 +33,8 @@ class Vivado_ImplementationTool(ImplementationTool):
 
         # Run if last run is out of date
         need_to_run |= (not need_to_run) and (
-            design.netlist_path.stat().st_mtime > log_path.stat().st_mtime
+            design.netlist_path.stat().st_mtime > log_path.stat().st_mtime 
+            or pathlib.Path(__file__).stat().st_mtime > log_path.stat().st_mtime
         )
 
         if need_to_run:

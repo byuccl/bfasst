@@ -1,8 +1,7 @@
-import shutil
 import subprocess
 import re
-import os
 import sys
+import pathlib
 
 import bfasst
 from bfasst import utils
@@ -26,7 +25,7 @@ class Vivado_SynthesisTool(SynthesisTool):
 
         # Check if this is already run and up to date
         need_to_run = False
-
+        
         # Run if there is no log file
         need_to_run |= not log_path.is_file()
 
@@ -39,9 +38,9 @@ class Vivado_SynthesisTool(SynthesisTool):
 
         # Run if last run is out of date
         need_to_run |= (
-            (not need_to_run)
-            and (design.netlist_path.is_file())
-            and (design.last_modified_time() > design.netlist_path.stat().st_mtime)
+            (not need_to_run)            
+            and (design.last_modified_time() > log_path.stat().st_mtime or 
+            pathlib.Path(__file__).stat().st_mtime > log_path.stat().st_mtime)
         )
 
         if need_to_run:

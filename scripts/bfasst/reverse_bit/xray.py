@@ -25,6 +25,7 @@ class XRay_ReverseBitTool(ReverseBitTool):
 
     def reverse_bitstream(self, design, print_to_stdout = True):
         self.print_to_stdout = print_to_stdout
+        self.to_netlist_log = self.work_dir / "to_netlist.log"
 
         design.reversed_netlist_path = self.cwd / (design.top + "_reversed.v")
         if design.cur_error_flow_name is not None:
@@ -35,10 +36,13 @@ class XRay_ReverseBitTool(ReverseBitTool):
         # Decide if this needs to be run
         need_to_run = False
 
+        # Run if log file does not exist
+        need_to_run |= not self.to_netlist_log.is_file()
+
         # Run if reverse netlist file does not exist
         need_to_run |= not design.reversed_netlist_path.is_file()
 
-        # Run if reverse netlist file is out of date
+        # Run if last run is out of date
         need_to_run |= (not need_to_run) and (
             design.reversed_netlist_path.stat().st_mtime < design.bitstream_path.stat().st_mtime
         )
@@ -53,7 +57,7 @@ class XRay_ReverseBitTool(ReverseBitTool):
             # Bitstream to fasm file
             fasm_path = self.work_dir / (design.top + ".fasm")
             # to_fasm_log = self.work_dir / "to_fasm.log"
-            self.to_netlist_log = self.work_dir / "to_netlist.log"
+            
 
             status = self.convert_bit_to_fasm(
                 design.bitstream_path,

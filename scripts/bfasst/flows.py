@@ -5,7 +5,7 @@ import pathlib
 import shutil
 
 import bfasst
-from bfasst.utils import TermColor
+from bfasst.utils import TermColor, error
 
 
 @enum.unique
@@ -41,41 +41,13 @@ class Vendor(enum.Enum):
 
 
 def get_flow_fcn_by_name(flow_name):
-    invalid_flow = False
-
     try:
         flow_enum = Flows(flow_name)
     except ValueError:
-        invalid_flow = True
-
-    if invalid_flow:
-        bfasst.utils.error(flow_name, "is not a valid flow name")
+        error(flow_name, "is not a valid flow name")
 
     fcn = flow_fcn_map[flow_enum]()
     return fcn
-
-
-class Tool(abc.ABC):
-    TERM_COLOR_STAGE = TermColor.PURPLE
-
-    def __init__(self, cwd):
-        super().__init__()
-        self.cwd = cwd
-
-        self.work_dir = self.make_work_dir()
-
-    @property
-    @classmethod
-    @abc.abstractclassmethod
-    def TOOL_WORK_DIR(self):
-        raise NotImplementedError
-
-    def make_work_dir(self):
-        work_dir = self.cwd / self.TOOL_WORK_DIR
-
-        if not work_dir.is_dir():
-            work_dir.mkdir()
-        return work_dir
 
 
 def run_flow(design, flow_type, build_dir, print_to_stdout = True):
@@ -271,8 +243,6 @@ def flow_yosys_tech_lse_conformal(design, build_dir):
 
     return status
 
-    print(build_dir)
-
 
 def flow_yosys_tech_synplify_conformal(design, build_dir):
     # Run the Yosys synthesizer
@@ -312,8 +282,6 @@ def flow_yosys_tech_synplify_conformal(design, build_dir):
         return status
 
     return status
-
-    print(build_dir)
 
 
 def flow_yosys_tech_synplify_onespin(design, build_dir):
