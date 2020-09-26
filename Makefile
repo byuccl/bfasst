@@ -1,9 +1,11 @@
 install:
 	sudo apt install -y \
+		make \
 		python3.8-dev \
+		python3-pip \
 		virtualenv
 	
-	python3 -m pip install -r requirements.txt
+	sudo python3 -m pip install -r requirements.txt
 
 	git submodule init
 	git submodule update

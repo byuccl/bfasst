@@ -29,11 +29,14 @@ def print_running_list():
 
     print_lock.acquire()
     sys.stdout.write("\r\033[K")
+    # sys.stdout.write("\033[u")
     sys.stdout.write("Running: ")
-    for k,v in running_list.items():
+    for k,v in running_list.items()[:6]:
         sys.stdout.write(k + " (")    
         sys.stdout.write(str(datetime.datetime.now() - v).split(".")[0])
         sys.stdout.write(") ")
+    if len(running_list) > 6:
+        sys.stdout.write("...")
     sys.stdout.flush()
     print_lock.release()
 
@@ -55,7 +58,7 @@ def run_design(design, design_dir, flow_fcn):
 
     global running_list
 
-    running_list[str(design.rel_path)] = datetime.datetime.now()
+    running_list[str(design.path.name)[:8]] = datetime.datetime.now()
     print_running_list() 
 
     # time.sleep(random.randint(1,2))
@@ -80,14 +83,17 @@ def job_done(retval):
 
     print_lock.acquire()
     sys.stdout.write("\r\033[K")
+    # sys.stdout.write("\033[u")
     sys.stdout.write(str(design.rel_path).ljust(ljust))
     sys.stdout.flush()
     sys.stdout.write(str(status))
     sys.stdout.write("\n")
+    # sys.stdout.write("\033[s")
     print_lock.release()
 
-    del running_list[str(design.rel_path)]
+    del running_list[str(design.path.name)[:8]]
     print_running_list() 
+
 
     statuses.append(status)
 
@@ -138,6 +144,7 @@ def main():
     print_lock = manager.Lock()
 
     t_start = time.perf_counter()
+    sys.stdout.write("\033[s")
     update_process = multiprocessing.Process(target=update_runtimes_thread, args = [len(designs_to_run),])
     update_process.start()
     with multiprocessing.Pool(processes=no_threads) as pool:
@@ -149,7 +156,7 @@ def main():
         except:
             pool.terminate()
             update_process.terminate()
-    update_process.join()
+    update_process.terminate()
     t_end = time.perf_counter()
 
     if experiment.post_run is not None:

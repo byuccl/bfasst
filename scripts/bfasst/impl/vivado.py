@@ -64,6 +64,7 @@ class Vivado_ImplementationTool(ImplementationTool):
         with open(tcl_path, "w") as fp:
             if design.top_is_verilog:
                 # fp.write("set_part " + bfasst.config.PART + "\n")
+                fp.write("if { [ catch {\n")
                 fp.write("read_edif " + str(design.netlist_path) + "\n")
 
                 # for vf in design.verilog_files:
@@ -80,8 +81,10 @@ class Vivado_ImplementationTool(ImplementationTool):
                 fp.write("opt_design\n")
                 fp.write("place_design\n")
                 fp.write("route_design\n")
+                fp.write("write_checkpoint -file " + str(self.work_dir / "design.dcp") + "\n")
                 fp.write("write_bitstream -force " + str(design.bitstream_path) + "\n")
                 # fp.write("write_edif -force {" + str(design.netlist_path) + "}\n")
+                fp.write("} ] } { exit 1 }\n")
                 fp.write("exit\n")
 
         with open(log_path, "w") as fp:
@@ -112,7 +115,7 @@ class Vivado_ImplementationTool(ImplementationTool):
 
         m = re.search(r"^ERROR:\s*(.*?)$", text, re.M)
         if m:
-            return Status(ImplStatus.ERROR, m.group(1))
+            return Status(ImplStatus.ERROR, m.group(1).strip())
 
         return Status(ImplStatus.SUCCESS)
 

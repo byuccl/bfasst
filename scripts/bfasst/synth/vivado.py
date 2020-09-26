@@ -142,6 +142,6 @@ class Vivado_SynthesisTool(SynthesisTool):
 
         m = re.search(r"^ERROR:\s*(.*?)$", text, re.M)
         if m:
-            return Status(SynthStatus.ERROR, m.group(1))
+            return Status(SynthStatus.ERROR, m.group(1).strip())
 
         return Status(SynthStatus.SUCCESS)
