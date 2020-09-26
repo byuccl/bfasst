@@ -2,9 +2,13 @@ import abc
 
 import bfasst.flow
 from bfasst.utils import print_color
+from bfasst.status import SynthStatus, Status
 
 
 class SynthesisTool(bfasst.flow.Tool):
+    def __init__(self, cwd) -> None:
+        super().__init__(cwd)
+        self.success_status = Status(SynthStatus.SUCCESS)
 
     # This method should run synthesis.  It should return
     # (netlist, status), where:

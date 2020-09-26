@@ -8,6 +8,7 @@ from bfasst import utils
 from bfasst.synth.base import SynthesisTool
 from bfasst.status import Status, SynthStatus
 from bfasst.config import VIVADO_BIN_PATH
+from bfasst.tool import ToolProduct
 
 
 class Vivado_SynthesisTool(SynthesisTool):
@@ -23,56 +24,49 @@ class Vivado_SynthesisTool(SynthesisTool):
         design.netlist_path = self.cwd / (design.top + ".edf")
         design.constraints_path = self.cwd / "contraints.xdc"
 
-        # Check if this is already run and up to date
-        need_to_run = False
-        
-        # Run if there is no log file
-        need_to_run |= not log_path.is_file()
+        generate_netlist = ToolProduct(design.netlist_path, log_path, self.check_synth_log)
+        generate_constraints = ToolProduct(design.constraints_path)
+        tool_products = [generate_netlist, generate_constraints]
 
-        # Run if there is no netlist, and no error message in the log file
-        need_to_run |= (
-            (not need_to_run)
-            and (not design.netlist_path.is_file())
-            and (not self.check_synth_log(log_path).error)
+        status = self.get_prev_run_status(
+            tool_products,
+            dependency_modified_time=max(
+                pathlib.Path(__file__).state().st_mtime, design.last_modified_time()
+            ),
         )
 
-        # Run if last run is out of date
-        need_to_run |= (
-            (not need_to_run)            
-            and (design.last_modified_time() > log_path.stat().st_mtime or 
-            pathlib.Path(__file__).stat().st_mtime > log_path.stat().st_mtime)
-        )
-
-        if need_to_run:
+        if status is not None:
             if self.print_to_stdout:
-                self.print_running_synth()
+                self.print_skipping_synth()
+            return status
 
-            report_io_path = self.work_dir / "report_io.txt"
+        # Run synthesis flow
+        if self.print_to_stdout:
+            self.print_running_synth()
 
-            # Run synthesis
-            status = self.run_synth(design, log_path, report_io_path)
-            if status.error:
-                # See if the log parser can find an error message
-                if log_path.is_file():
-                    status_log = self.check_synth_log(log_path)
-                    if status_log.error:
-                        return status_log
+        report_io_path = self.work_dir / "report_io.txt"
 
-                # Otherwise, synth failed, but we don't know why.  So just return this status
-                return status
+        # Run synthesis
+        status = self.run_synth(design, log_path, report_io_path)
+        if status.error:
+            # See if the log parser can find an error message
+            if log_path.is_file():
+                status_log = self.check_synth_log(log_path)
+                if status_log.error:
+                    return status_log
 
-            # Extract contraint file from Vivado-assigned pins
-            self.extract_contraints(design, report_io_path)
+            # Otherwise, synth failed, but we don't know why.  So just return this status
+            return status
 
-        elif self.print_to_stdout:
-            self.print_skipping_synth()
+        # Extract contraint file from Vivado-assigned pins
+        self.extract_contraints(design, report_io_path)
 
         # Check synthesis log
         status = self.check_synth_log(log_path)
         if status.error:
             return status
 
-        return Status(SynthStatus.SUCCESS)
+        return self.success_status
 
     def run_synth(self, design, log_path, report_io_path):
         tcl_path = self.work_dir / ("synth.tcl")
@@ -85,7 +79,7 @@ class Vivado_SynthesisTool(SynthesisTool):
                 for vf in design.verilog_file_paths:
                     fp.write("read_verilog " + str(vf) + "\n")
 
-                fp.write("synth_design -top " + design.top + '\n')
+                fp.write("synth_design -top " + design.top + "\n")
                 fp.write("place_ports\n")
                 fp.write("write_edif -force {" + str(design.netlist_path) + "}\n")
 
@@ -143,4 +137,4 @@ class Vivado_SynthesisTool(SynthesisTool):
         if m:
             return Status(SynthStatus.ERROR, m.group(1).strip())
 
-        return Status(SynthStatus.SUCCESS)
+        return self.success_status
