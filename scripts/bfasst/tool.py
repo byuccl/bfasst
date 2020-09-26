@@ -1,7 +1,7 @@
-
 import abc
 
 from bfasst.utils import TermColor
+
 
 class Tool(abc.ABC):
     TERM_COLOR_STAGE = TermColor.PURPLE
@@ -25,12 +25,12 @@ class Tool(abc.ABC):
             work_dir.mkdir()
         return work_dir
 
-    def needs_to_run(self, log_file_paths, py_script_file):
+    def needs_to_run(self, log_file_paths, output_files_and_parser_fcns, py_script_file):
         # Run if a log file is missing
         for log_file_path in log_file_paths:
             if not log_file_path.is_file():
                 return True
 
-        #
-
+        # 
+        return False
 
