@@ -11,6 +11,7 @@ YOSYS_SCRIPT_TEMPLATE = "ex_yos_tech.yos"
 YOSYS_SCRIPT_FILE = "script.yos"
 YOSYS_LOG_FILE = "yosys.log"
 
+
 class Yosys_Tech_SynthTool(SynthesisTool):
     TOOL_WORK_DIR = "yosys_synth"
 
@@ -28,9 +29,22 @@ class Yosys_Tech_SynthTool(SynthesisTool):
 
         # Run Yosys on the design
         # This assumes that the VHDL module *is* installed!
-        cmd = [os.path.join(bfasst.config.YOSYS_INSTALL_DIR, "yosys"), "-m", "vhdl", "-s", YOSYS_SCRIPT_FILE, "-l", YOSYS_LOG_FILE]
+        cmd = [
+            os.path.join(bfasst.config.YOSYS_INSTALL_DIR, "yosys"),
+            "-m",
+            "vhdl",
+            "-s",
+            YOSYS_SCRIPT_FILE,
+            "-l",
+            YOSYS_LOG_FILE,
+        ]
         try:
-            p = subprocess.run(cmd, cwd = self.work_dir, stdout = subprocess.DEVNULL, timeout=bfasst.config.YOSYS_TIMEOUT)
+            p = subprocess.run(
+                cmd,
+                cwd=self.work_dir,
+                stdout=subprocess.DEVNULL,
+                timeout=bfasst.config.YOSYS_TIMEOUT,
+            )
         except subprocess.TimeoutExpired:
             # TODO: Write to logs here
             return Status(SynthStatus.TIMEOUT)
@@ -50,7 +64,7 @@ class Yosys_Tech_SynthTool(SynthesisTool):
         path_to_script_builder = bfasst.SCRIPTS_PATH / "yosys" / "createYosScript.py"
         script_template_file = bfasst.YOSYS_RESOURCES / YOSYS_SCRIPT_TEMPLATE
         yosys_script_file = self.work_dir / YOSYS_SCRIPT_FILE
-        
+
         # TODO: Figure out how to add VHDL library files to the yosys vhdl flow
         file_paths = str(design.full_path / design.top_file)
         for design_file in design.verilog_files:
@@ -59,7 +73,18 @@ class Yosys_Tech_SynthTool(SynthesisTool):
             file_paths += " " + str(design.full_path / design_file)
         # TODO: Add the same error handling as in other synth flows
         try:
-            p = subprocess.run(["python3", str(path_to_script_builder),"-s " + str(file_paths),"-i" + str(script_template_file),"-o" + str(yosys_script_file), "-v" + str(netlist_path)], cwd=self.work_dir, timeout=bfasst.config.I2C_LSE_TIMEOUT)
+            p = subprocess.run(
+                [
+                    "python3",
+                    str(path_to_script_builder),
+                    "-s " + str(file_paths),
+                    "-i" + str(script_template_file),
+                    "-o" + str(yosys_script_file),
+                    "-v" + str(netlist_path),
+                ],
+                cwd=self.work_dir,
+                timeout=bfasst.config.I2C_LSE_TIMEOUT,
+            )
         except subprocess.TimeoutExpired:
             fp.write("\nTimeout\n")
             return Status(SynthStatus.TIMEOUT)
@@ -70,10 +95,10 @@ class Yosys_Tech_SynthTool(SynthesisTool):
         return Status(SynthStatus.SUCCESS)
 
     def write_to_results_file(self, design, log_path):
-        with open(design.results_summary_path, 'a') as res_f:
+        with open(design.results_summary_path, "a") as res_f:
             time_modified = time.ctime(os.path.getmtime(log_path))
             res_f.write("Results Summary (Yosys) (" + time_modified + ")\n")
-            with open(log_path, 'r') as log_f:
+            with open(log_path, "r") as log_f:
                 for line in log_f:
                     if line.strip()[:16] == "Number of wires:":
                         res_f.write(line)
@@ -81,5 +106,4 @@ class Yosys_Tech_SynthTool(SynthesisTool):
                         while res_line.strip() != "":
                             res_f.write(res_line)
                             res_line = next(log_f)
-            res_f.write('\n')
-        
+            res_f.write("\n")

@@ -12,3 +12,6 @@ install:
 	cd third_party/fasm2bels && make env
 	cd third_party/fasm2bels && make build
 	cd third_party/fasm2bels && make test-py
+
+format:
+	find ./scripts -iname "*.py" -exec black -l 100 {} \;

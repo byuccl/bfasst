@@ -1,11 +1,11 @@
 import abc
 
-import bfasst.flow
+from bfasst import tool
 from bfasst.utils import print_color
 from bfasst.status import SynthStatus, Status
 
 
-class SynthesisTool(bfasst.flow.Tool):
+class SynthesisTool(tool.Tool):
     def __init__(self, cwd) -> None:
         super().__init__(cwd)
         self.success_status = Status(SynthStatus.SUCCESS)

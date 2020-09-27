@@ -5,13 +5,14 @@ from tempfile import mkstemp
 from shutil import move
 from os import fdopen, remove
 
+
 def constrainVerilog(srcFile):
 
     # create temporary file
     fh, absPath = mkstemp()
 
     # open new file for writing
-    with fdopen(fh, 'w') as newFile:
+    with fdopen(fh, "w") as newFile:
 
         # open old file for reading
         with open(srcFile) as oldFile:
@@ -44,11 +45,10 @@ def constrainVerilog(srcFile):
                     # don't change the line, but make sure it gets copied
                     else:
                         newFile.write(line)
-    
+
                 # don't change the line, but make sure it gets copied
                 else:
                     newFile.write(line)
-
 
     # remove old file
     remove(srcFile)
@@ -56,13 +56,14 @@ def constrainVerilog(srcFile):
     # move temp file to current directory
     move(absPath, srcFile)
 
+
 def constrainVHDL(srcFile):
 
     # create temporary file
     fh, absPath = mkstemp()
 
     # open new file for writing
-    with fdopen(fh, 'w') as newFile:
+    with fdopen(fh, "w") as newFile:
 
         # open old file for reading
         with open(srcFile) as oldFile:
@@ -82,7 +83,7 @@ def constrainVHDL(srcFile):
                 line = line.split("--", 1)[0]
 
                 # if line contains architecture declaration, start tracking signal names
-                #if "architecture" in line and not "--" in line:
+                # if "architecture" in line and not "--" in line:
                 if "entity" in line:
 
                     # set arch block flag
@@ -102,7 +103,7 @@ def constrainVHDL(srcFile):
                 # if in an architecture block and we find the word "begin", drop the line
                 if inEntity and "end" in line:
                     print "leaving entity"
-                    inEntity = False;
+                    inEntity = False
 
                     # make sure there were new signals
                     if signals:
@@ -111,38 +112,54 @@ def constrainVHDL(srcFile):
                         newFile.write("\tattribute syn_preserve : boolean;\n")
                         # start new line
                         newFile.write("\tattribute syn_preserve of ")
-    
+
                         # add each signal name
                         first = True
-    
+
                         for signal in signals:
-    
+
                             if first:
                                 first = False
-    
+
                             else:
                                 newFile.write(", ")
-                                
+
                             newFile.write(signal)
-    
+
                         newFile.write(" : signal is true;\n")
 
                 # when in an arch block, look for the word "signal"
-                #if inEntity and ":" in line:
+                # if inEntity and ":" in line:
                 if inEntity:
 
                     # trim everything after the first occurence of ":"
                     signalLine = line.split(":", 1)[0]
 
                     # remove occurrences of keywords
-                    dontRead = ["entity", "function", "alias", "component", "generic", "constant", "port"]
+                    dontRead = [
+                        "entity",
+                        "function",
+                        "alias",
+                        "component",
+                        "generic",
+                        "constant",
+                        "port",
+                    ]
                     if all(reservedWord not in signalLine for reservedWord in dontRead):
 
                         # split line on whitespace and collect signal names
                         for maybeSignal in signalLine.split():
 
                             # don't include reserved words
-                            reservedWords = ["signal",  "is", "of", "attribute", "variable", "process", "procedure"]
+                            reservedWords = [
+                                "signal",
+                                "is",
+                                "of",
+                                "attribute",
+                                "variable",
+                                "process",
+                                "procedure",
+                            ]
                             if all(maybeSignal != reservedWord for reservedWord in reservedWords):
 
                                 # strip commas, semicolons, and close parenthesis
@@ -171,25 +188,27 @@ def constrainVHDL(srcFile):
     # move temp file to current directory
     move(absPath, srcFile)
 
+
 def main():
 
-    # say hello 
+    # say hello
     print "applying optimizer constraints..."
 
     # identify source file
     for rtlFile in sys.argv[1:]:
 
         if ".vhd" in rtlFile:
-            
+
             constrainVHDL(rtlFile)
-    
+
         elif ".v" in rtlFile:
-    
+
             constrainVerilog(rtlFile)
-    
+
         else:
-    
+
             print "bad file name!"
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     main()

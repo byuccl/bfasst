@@ -1,10 +1,14 @@
 import abc
 
-import bfasst.flow
+from bfasst.tool import Tool
 from bfasst.utils import print_color
+from bfasst.status import Status, BitReverseStatus
 
 
-class ReverseBitTool(bfasst.flow.Tool):
+class ReverseBitTool(Tool):
+    def __init__(self, cwd) -> None:
+        super().__init__(cwd)
+        self.success_status = Status(BitReverseStatus.SUCCESS)
 
     # This method should run bitstream reversal.  It should return
     # (netlist, status), where:

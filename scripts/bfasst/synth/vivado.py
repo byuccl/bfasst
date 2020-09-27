@@ -2,9 +2,9 @@ import subprocess
 import re
 import sys
 import pathlib
+import time
 
 import bfasst
-from bfasst import utils
 from bfasst.synth.base import SynthesisTool
 from bfasst.status import Status, SynthStatus
 from bfasst.config import VIVADO_BIN_PATH
@@ -31,7 +31,7 @@ class Vivado_SynthesisTool(SynthesisTool):
         status = self.get_prev_run_status(
             tool_products,
             dependency_modified_time=max(
-                pathlib.Path(__file__).state().st_mtime, design.last_modified_time()
+                pathlib.Path(__file__).stat().st_mtime, design.last_modified_time()
             ),
         )
 
@@ -43,6 +43,7 @@ class Vivado_SynthesisTool(SynthesisTool):
         # Run synthesis flow
         if self.print_to_stdout:
             self.print_running_synth()
+            time.sleep(10)
 
         report_io_path = self.work_dir / "report_io.txt"
 

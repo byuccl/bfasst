@@ -1,8 +1,9 @@
 import abc
 
-import bfasst.flow
+from bfasst.tool import Tool
 
-class ErrorInjectionTool(bfasst.flow.Tool):
+
+class ErrorInjectionTool(Tool):
 
     # run_error_flows
     # If one or more error flows are specified with an error flow YAML,

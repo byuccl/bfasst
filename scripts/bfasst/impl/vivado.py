@@ -9,6 +9,7 @@ import bfasst
 from bfasst.impl.base import ImplementationTool
 from bfasst.status import Status, ImplStatus
 from bfasst.config import VIVADO_BIN_PATH
+from bfasst.tool import ToolProduct
 
 
 class Vivado_ImplementationTool(ImplementationTool):
@@ -20,34 +21,28 @@ class Vivado_ImplementationTool(ImplementationTool):
         log_path = self.work_dir / bfasst.config.IMPL_LOG_NAME
         design.bitstream_path = self.cwd / (design.top + ".bit")
 
-        # Check if implementation needs to be run
-        need_to_run = False
-
-        # Run if there is no log file
-        need_to_run |= not log_path.is_file()
-
-        # Run if there is no bitstream, and no error message in the log file
-        need_to_run |= (not need_to_run) and (
-            not design.bitstream_path.is_file() and not self.check_impl_status(log_path).error
+        # Check for up to date previous run
+        status = self.get_prev_run_status(
+            tool_products=[
+                ToolProduct(design.bitstream_path, log_path, self.check_impl_status),
+            ],
+            dependency_modified_time=max(
+                pathlib.Path(__file__).stat().st_mtime, design.netlist_path.stat().st_mtime
+            ),
         )
 
-        # Run if last run is out of date
-        need_to_run |= (not need_to_run) and (
-            design.netlist_path.stat().st_mtime > log_path.stat().st_mtime 
-            or pathlib.Path(__file__).stat().st_mtime > log_path.stat().st_mtime
-        )
-
-        if need_to_run:
+        if status is not None:
             if self.print_to_stdout:
-                self.print_running_impl()
+                self.print_skipping_impl()
+            return status
 
-            # Run implementation
-            status = self.run_implementation(design, log_path)
-            if status.error:
-                return status
+        if self.print_to_stdout:
+            self.print_running_impl()
 
-        elif self.print_to_stdout:
-            self.print_skipping_impl()
+        # Run implementation
+        status = self.run_implementation(design, log_path)
+        if status.error:
+            return status
 
         # Check implementation log
         status = self.check_impl_status(log_path)
@@ -57,7 +52,7 @@ class Vivado_ImplementationTool(ImplementationTool):
         # Update a file in the main directory with info about impl results
         # self.write_to_results_file(design, log_path, need_to_run)
 
-        return Status(ImplStatus.SUCCESS)
+        return self.success_status
 
     def run_implementation(self, design, log_path):
         tcl_path = self.work_dir / ("impl.tcl")
@@ -109,7 +104,7 @@ class Vivado_ImplementationTool(ImplementationTool):
             if proc.returncode:
                 return Status(ImplStatus.ERROR)
 
-        return Status(ImplStatus.SUCCESS)
+        return self.success_status
 
     def check_impl_status(self, log_path):
         text = open(log_path).read()
@@ -118,7 +113,7 @@ class Vivado_ImplementationTool(ImplementationTool):
         if m:
             return Status(ImplStatus.ERROR, m.group(1).strip())
 
-        return Status(ImplStatus.SUCCESS)
+        return self.success_status
 
         m = re.search(
             r"^Design LUT Count \((\d+)\) exceeded Device LUT Count \((\d+)\)$", text, re.M

@@ -2,8 +2,9 @@ import abc
 
 import bfasst
 
-from bfasst.flow import Tool
+from bfasst.tool import Tool
 from bfasst.utils import print_color
+
 
 class CompareTool(Tool):
     # This method should run netlist comparison.  It should return

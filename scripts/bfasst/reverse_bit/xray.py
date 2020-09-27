@@ -1,14 +1,14 @@
-import shutil
 import subprocess
-import re
 import time
 import os
 import sys
+import re
+import pathlib
 
-import bfasst
 from bfasst.reverse_bit.base import ReverseBitTool
 from bfasst.status import Status, BitReverseStatus
 from bfasst import paths, config
+from bfasst.tool import ToolProduct
 
 
 class XRay_ReverseBitTool(ReverseBitTool):
@@ -23,63 +23,59 @@ class XRay_ReverseBitTool(ReverseBitTool):
         self.xray_db_path = self.fasm2bels_path / "third_party" / "prjxray-db"
         self.db_root = self.xray_db_path / config.PART_FAMILY
 
-    def reverse_bitstream(self, design, print_to_stdout = True):
+    def reverse_bitstream(self, design, print_to_stdout=True):
         self.print_to_stdout = print_to_stdout
-        self.to_netlist_log = self.work_dir / "to_netlist.log"
 
+        # To fasm process
+        fasm_path = self.work_dir / (design.top + ".fasm")
+        generate_fasm = ToolProduct(fasm_path)
+
+        # To reversed netlist process
         design.reversed_netlist_path = self.cwd / (design.top + "_reversed.v")
+        self.to_netlist_log = self.work_dir / "to_netlist.log"
+        generate_netlist = ToolProduct(
+            design.reversed_netlist_path, self.to_netlist_log, self.to_netlist_log_parser
+        )
+
         if design.cur_error_flow_name is not None:
             design.reversed_netlist_path = self.cwd / (
                 design.top + "_" + design.cur_error_flow_name + "_reversed.v"
             )
 
-        # Decide if this needs to be run
-        need_to_run = False
-
-        # Run if log file does not exist
-        need_to_run |= not self.to_netlist_log.is_file()
-
-        # Run if reverse netlist file does not exist
-        need_to_run |= not design.reversed_netlist_path.is_file()
-
-        # Run if last run is out of date
-        need_to_run |= (not need_to_run) and (
-            design.reversed_netlist_path.stat().st_mtime < design.bitstream_path.stat().st_mtime
+        status = self.get_prev_run_status(
+            [generate_fasm, generate_netlist],
+            dependency_modified_time=max(
+                pathlib.Path(__file__).stat().st_mtime, design.bitstream_path.stat().st_mtime
+            ),
         )
 
-        if need_to_run:
+        if status is not None:
             if self.print_to_stdout:
-                self.print_running_reverse_bit()
+                self.print_skipping_reverse_bit()
+            return status
 
-            # First go through and remove any added stuff from pcf port names
-            # self.fix_pcf_names(design)
+        if self.print_to_stdout:
+            self.print_running_reverse_bit()
 
-            # Bitstream to fasm file
-            fasm_path = self.work_dir / (design.top + ".fasm")
-            # to_fasm_log = self.work_dir / "to_fasm.log"
-            
+        # Bitstream to fasm file
+        status = self.convert_bit_to_fasm(design.bitstream_path, fasm_path)
+        if status.error:
+            return status
 
-            status = self.convert_bit_to_fasm(
-                design.bitstream_path,
-                fasm_path,
-            )
-            if status.error:
-                return status
+        # fasm to netlist
+        xdc_path = self.work_dir / (design.top + "_reversed.xdc")
+        status = self.convert_fasm_to_netlist(
+            fasm_path, design.constraints_path, design.reversed_netlist_path, xdc_path
+        )
+        if status.error:
+            # See if the log parser can find an error message
+            if self.to_netlist_log.is_file():
+                status_log = self.to_netlist_log_parser(self.to_netlist_log)
+                if status_log.error:
+                    return status_log
+            return status
 
-            # fasm to netlist
-            xdc_path = self.work_dir / (design.top + "_reversed.xdc")
-            status = self.convert_fasm_to_netlist(
-                fasm_path, design.constraints_path, design.reversed_netlist_path, xdc_path
-            )
-            if status.error:
-                return status
-
-        elif self.print_to_stdout:
-            self.print_skipping_reverse_bit()
-
-        # self.write_to_results_file(design, design.reversed_netlist_path, need_to_run)
-
-        return Status(BitReverseStatus.SUCCESS)
+        return self.to_netlist_log_parser(self.to_netlist_log)
 
     def convert_bit_to_fasm(self, bitstream_path, fasm_path):
 
@@ -147,6 +143,14 @@ class XRay_ReverseBitTool(ReverseBitTool):
             if proc.returncode:
                 return Status(BitReverseStatus.ERROR)
 
+        return Status(BitReverseStatus.SUCCESS)
+
+    def to_netlist_log_parser(self, log_path):
+        text = open(log_path).read()
+
+        m = re.search(r"^\s*(assert .*?)$", text, re.M)
+        if m:
+            return Status(BitReverseStatus.ERROR, m.group(1).strip())
         return Status(BitReverseStatus.SUCCESS)
 
     def write_to_results_file(self, design, netlist_path, need_to_run):

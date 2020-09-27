@@ -5,6 +5,7 @@ import pathlib
 import shutil
 
 import bfasst
+from bfasst import flows
 from bfasst.utils import TermColor, error
 
 
@@ -50,10 +51,10 @@ def get_flow_fcn_by_name(flow_name):
     return fcn
 
 
-def run_flow(design, flow_type, build_dir, print_to_stdout = True):
+def run_flow(design, flow_type, build_dir, print_to_stdout=True):
     assert type(design) is bfasst.design.Design
 
-    flow_fcn = bfasst.flow.get_flow_fcn_by_name(flow_type)
+    flow_fcn = flows.get_flow_fcn_by_name(flow_type)
     return flow_fcn(design, build_dir, print_to_stdout)
 
 
@@ -94,7 +95,7 @@ def flow_ic2_lse_conformal(design, build_dir):
     return status
 
 
-def flow_xilinx_conformal(design, build_dir, print_to_stdout = True):
+def flow_xilinx_conformal(design, build_dir, print_to_stdout=True):
     # Run Xilinx synthesis and implementation
     synth_tool = bfasst.synth.vivado.Vivado_SynthesisTool(build_dir)
     status = synth_tool.create_netlist(design, print_to_stdout)

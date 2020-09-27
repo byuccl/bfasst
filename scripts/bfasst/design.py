@@ -85,15 +85,26 @@ class Design:
             self.top_architecture = design_props["top_architecture"]
 
         # Handle 'include_all_verilog_files' option
-        if "include_all_verilog_files" in design_props and design_props["include_all_verilog_files"]:
+        if (
+            "include_all_verilog_files" in design_props
+            and design_props["include_all_verilog_files"]
+        ):
             for dir_item in self.path.iterdir():
-                if dir_item.is_file() and dir_item.suffix == ".v" and dir_item != self.top_file_path:
+                if (
+                    dir_item.is_file()
+                    and dir_item.suffix == ".v"
+                    and dir_item != self.top_file_path
+                ):
                     self.verilog_file_paths.append(dir_item)
 
         # Handle 'include_all_vhdl_files'
         if "include_all_vhdl_files" in design_props and design_props["include_all_vhdl_files"]:
             for dir_item in self.path.iterdir():
-                if dir_item.is_file() and dir_item.suffix == ".vhd" and dir_item != self.top_file_path:
+                if (
+                    dir_item.is_file()
+                    and dir_item.suffix == ".vhd"
+                    and dir_item != self.top_file_path
+                ):
                     self.vhdl_file_paths.append(dir_item)
 
         # Add user-specified individual verilog files
@@ -135,4 +146,6 @@ class Design:
         return max([os.path.getmtime(f) for f in (self.yaml_path, self.top_file_path)])
 
     def get_golden_files(self):
-        return [self.top_file_path,] + self.get_support_files()
+        return [
+            self.top_file_path,
+        ] + self.get_support_files()

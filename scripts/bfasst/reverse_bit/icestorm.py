@@ -21,7 +21,9 @@ class Icestorm_ReverseBitTool(ReverseBitTool):
         if design.cur_error_flow_name == None:
             design.reversed_netlist_path = self.cwd / (design.top + "_reversed.v")
         else:
-            design.reversed_netlist_path = self.cwd / (design.top + "_" + design.cur_error_flow_name + "_reversed.v")
+            design.reversed_netlist_path = self.cwd / (
+                design.top + "_" + design.cur_error_flow_name + "_reversed.v"
+            )
 
         # Decide if this needs to be run
         need_to_run = False
@@ -31,7 +33,8 @@ class Icestorm_ReverseBitTool(ReverseBitTool):
 
         # Run if reverse netlist file is out of date
         need_to_run |= (not need_to_run) and (
-            design.reversed_netlist_path.stat().st_mtime < design.bitstream_path.stat().st_mtime)
+            design.reversed_netlist_path.stat().st_mtime < design.bitstream_path.stat().st_mtime
+        )
 
         if need_to_run:
             # First go through and remove any added stuff from pcf port names
@@ -44,20 +47,20 @@ class Icestorm_ReverseBitTool(ReverseBitTool):
 
             # Ascii to netlist
             status = self.convert_asc_to_netlist(
-                asc_path, design.constraints_path, design.reversed_netlist_path)
+                asc_path, design.constraints_path, design.reversed_netlist_path
+            )
             if status.error:
                 return status
 
         self.write_to_results_file(design, design.reversed_netlist_path, need_to_run)
-        
+
         return Status(BitReverseStatus.SUCCESS)
 
     def convert_bit_to_asc(self, bitstream_path, asc_path):
-        cmd = [bfasst.config.ICESTORM_INSTALL_DIR/"icepack"/"iceunpack", bitstream_path]
+        cmd = [bfasst.config.ICESTORM_INSTALL_DIR / "icepack" / "iceunpack", bitstream_path]
 
-        with open(asc_path, 'w') as fp:
-            p = subprocess.run(
-                cmd, stdout=fp, stderr=subprocess.STDOUT, cwd=self.work_dir)
+        with open(asc_path, "w") as fp:
+            p = subprocess.run(cmd, stdout=fp, stderr=subprocess.STDOUT, cwd=self.work_dir)
 
             if p.returncode:
                 return Status(BitReverseStatus.ERROR)
@@ -65,12 +68,16 @@ class Icestorm_ReverseBitTool(ReverseBitTool):
         return Status(BitReverseStatus.SUCCESS)
 
     def convert_asc_to_netlist(self, asc_path, constraints_path, netlist_path):
-        cmd = [bfasst.config.ICESTORM_INSTALL_DIR/"icebox" /
-               "icebox_vlog.py", "-P", constraints_path, "-s", asc_path]
+        cmd = [
+            bfasst.config.ICESTORM_INSTALL_DIR / "icebox" / "icebox_vlog.py",
+            "-P",
+            constraints_path,
+            "-s",
+            asc_path,
+        ]
 
-        with open(netlist_path, 'w') as fp:
-            p = subprocess.run(
-                cmd, stdout=fp, stderr=subprocess.STDOUT, cwd=self.work_dir)
+        with open(netlist_path, "w") as fp:
+            p = subprocess.run(cmd, stdout=fp, stderr=subprocess.STDOUT, cwd=self.work_dir)
 
             if p.returncode:
                 return Status(BitReverseStatus.ERROR)
@@ -88,11 +95,11 @@ class Icestorm_ReverseBitTool(ReverseBitTool):
     #       now, though, we'll assume that all suf/prefixes are not in the RTL.
     def fix_pcf_names(self, design):
         set_io_lines = []
-        with open(design.constraints_path, 'r') as pcf:
+        with open(design.constraints_path, "r") as pcf:
             for line in pcf:
                 if line.split()[0] == "set_io":
                     set_io_lines.append(line)
-        with open(design.constraints_path, 'w') as pcf:
+        with open(design.constraints_path, "w") as pcf:
             for line in set_io_lines:
                 new_line = re.sub("_ibuf", "", line)
                 new_line = re.sub("ibuf_", "", new_line)
@@ -104,7 +111,8 @@ class Icestorm_ReverseBitTool(ReverseBitTool):
                 #   line.
                 do_write = True
                 for tap in design.nets_to_remove_from_pcf:
-                    if re.search(tap, new_line): do_write = False
+                    if re.search(tap, new_line):
+                        do_write = False
                 if do_write:
                     pcf.write(new_line)
 
@@ -112,23 +120,23 @@ class Icestorm_ReverseBitTool(ReverseBitTool):
         if design.results_summary_path is None:
             print("No results path set!")
             return
-        with open(design.results_summary_path, 'a') as res_f:
+        with open(design.results_summary_path, "a") as res_f:
             time_modified = time.ctime(os.path.getmtime(netlist_path))
             res_f.write("Results from icestorm netlist (" + time_modified + "):\n")
             if not need_to_run:
                 res_f.write("need_to_run is false, results may be out of date\n")
-            with open(netlist_path, 'r') as net_f:
+            with open(netlist_path, "r") as net_f:
                 netlist = net_f.read()
-                num_luts = netlist.count('/* LUT')
-                num_carries = netlist.count('/* CARRY')
-                num_ffs = netlist.count('/* FF')
-                num_always_ffs = netlist.count('always @')
+                num_luts = netlist.count("/* LUT")
+                num_carries = netlist.count("/* CARRY")
+                num_ffs = netlist.count("/* FF")
+                num_always_ffs = netlist.count("always @")
                 num_assign_ffs = num_ffs - num_always_ffs
-                num_ram40s = netlist.count('SB_RAM40_4K')
-                res_f.write("  Number of LUTs: " + str(num_luts) + '\n')
-                res_f.write("  Number of carry cells: " + str(num_carries) + '\n')
-                res_f.write("  Number of flip flops: " + str(num_ffs) + '\n')
-                res_f.write("    Flops w/ assign statements: " + str(num_assign_ffs) + '\n')
-                res_f.write("    Flops w/ always statements: " + str(num_always_ffs) + '\n')
-                res_f.write("  Number of RAM40Ks: " + str(num_ram40s) + '\n')
+                num_ram40s = netlist.count("SB_RAM40_4K")
+                res_f.write("  Number of LUTs: " + str(num_luts) + "\n")
+                res_f.write("  Number of carry cells: " + str(num_carries) + "\n")
+                res_f.write("  Number of flip flops: " + str(num_ffs) + "\n")
+                res_f.write("    Flops w/ assign statements: " + str(num_assign_ffs) + "\n")
+                res_f.write("    Flops w/ always statements: " + str(num_always_ffs) + "\n")
+                res_f.write("  Number of RAM40Ks: " + str(num_ram40s) + "\n")
             res_f.write("\n")

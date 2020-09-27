@@ -1,10 +1,14 @@
 import abc
 
-import bfasst.flow
+from bfasst.status import ImplStatus, Status
 from bfasst.utils import print_color
+from bfasst.tool import Tool
 
 
-class ImplementationTool(bfasst.flow.Tool):
+class ImplementationTool(Tool):
+    def __init__(self, cwd) -> None:
+        super().__init__(cwd)
+        self.success_status = Status(ImplStatus.SUCCESS)
 
     # This method should run implementation.  It should return
     # (bitstream, status), where:

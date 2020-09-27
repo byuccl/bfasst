@@ -21,6 +21,7 @@ statuses = []
 running_list = None
 print_lock = None
 
+
 def print_running_list():
     """ This function prints the list of jobs that are currently executing, and how long they have been running for """
 
@@ -31,14 +32,15 @@ def print_running_list():
     sys.stdout.write("\r\033[K")
     # sys.stdout.write("\033[u")
     sys.stdout.write("Running: ")
-    for k,v in running_list.items()[:6]:
-        sys.stdout.write(k + " (")    
+    for k, v in running_list.items()[:6]:
+        sys.stdout.write(k + " (")
         sys.stdout.write(str(datetime.datetime.now() - v).split(".")[0])
         sys.stdout.write(") ")
     if len(running_list) > 6:
         sys.stdout.write("...")
     sys.stdout.flush()
     print_lock.release()
+
 
 def update_runtimes_thread(num_jobs):
     """ This function, designed to run in its own thread, calls print_running_list() periodically, until all jobs are done, or it is terminated. """
@@ -51,7 +53,14 @@ def update_runtimes_thread(num_jobs):
         print("All done")
         return
     print_running_list()
-    threading.Timer(inverval_seconds, update_runtimes_thread, [num_jobs,]).start()
+    threading.Timer(
+        inverval_seconds,
+        update_runtimes_thread,
+        [
+            num_jobs,
+        ],
+    ).start()
+
 
 def run_design(design, design_dir, flow_fcn):
     """ This function runs a single job, running the selected CAD flow for one design """
@@ -59,12 +68,13 @@ def run_design(design, design_dir, flow_fcn):
     global running_list
 
     running_list[str(design.path.name)[:8]] = datetime.datetime.now()
-    print_running_list() 
+    print_running_list()
 
     # time.sleep(random.randint(1,2))
     # status = None
-    status = flow_fcn(design, design_dir, print_to_stdout = False)
-    return (design,status)
+    status = flow_fcn(design, design_dir, print_to_stdout=False)
+    return (design, status)
+
 
 def on_error(e, pool, update_process):
     """ This should be called when a job process raises an exception.  This shuts down all jobs in the pool, as well as the update_process. """
@@ -72,6 +82,7 @@ def on_error(e, pool, update_process):
     if update_process is not None:
         update_process.terminate()
     raise e
+
 
 def job_done(retval):
     """ Callback on job completion.  Removes job from the running_list, prints the job completion status, and saves the return status."""
@@ -92,10 +103,10 @@ def job_done(retval):
     print_lock.release()
 
     del running_list[str(design.path.name)[:8]]
-    print_running_list() 
-
+    print_running_list()
 
     statuses.append(status)
+
 
 def main():
     global ljust
@@ -135,9 +146,8 @@ def main():
     for design in experiment.designs:
         # Create a per-design build directory
         design_dir = build_dir / design.rel_path
-        design_dir.mkdir(parents=True, exist_ok = True)
+        design_dir.mkdir(parents=True, exist_ok=True)
         designs_to_run.append((design, design_dir, experiment.flow_fcn))
-
 
     manager = multiprocessing.Manager()
     running_list = manager.dict()
@@ -145,11 +155,21 @@ def main():
 
     t_start = time.perf_counter()
     sys.stdout.write("\033[s")
-    update_process = multiprocessing.Process(target=update_runtimes_thread, args = [len(designs_to_run),])
+    update_process = multiprocessing.Process(
+        target=update_runtimes_thread,
+        args=[
+            len(designs_to_run),
+        ],
+    )
     update_process.start()
     with multiprocessing.Pool(processes=no_threads) as pool:
         for design_to_run in designs_to_run:
-            pool.apply_async(run_design, design_to_run, callback=job_done, error_callback=lambda e: on_error(e, pool, update_process))
+            pool.apply_async(
+                run_design,
+                design_to_run,
+                callback=job_done,
+                error_callback=lambda e: on_error(e, pool, update_process),
+            )
         try:
             pool.close()
             pool.join()

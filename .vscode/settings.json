@@ -2,5 +2,8 @@
     "[python]": {
         "editor.formatOnSave": false,
     },
-    "python.analysis.extraPaths": ["scripts"]
+    "python.analysis.extraPaths": [
+        "scripts"
+    ],
+    "python.pythonPath": "/usr/bin/python3.8"
 }
