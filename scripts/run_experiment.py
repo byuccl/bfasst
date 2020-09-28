@@ -14,10 +14,11 @@ import os
 
 
 import bfasst
+from bfasst.utils import TermColor, print_color
 
 # Globals
 ljust = 0
-statuses = []
+statuses = None
 running_list = None
 print_lock = None
 
@@ -32,9 +33,9 @@ def print_running_list():
     sys.stdout.write("\r\033[K")
     # sys.stdout.write("\033[u")
     sys.stdout.write("Running: ")
-    for k, v in running_list.items()[:6]:
-        sys.stdout.write(k + " (")
-        sys.stdout.write(str(datetime.datetime.now() - v).split(".")[0])
+    for design_rel_path, start_time in running_list.items()[:6]:
+        sys.stdout.write(design_rel_path.name[:8] + " (")
+        sys.stdout.write(str(datetime.datetime.now() - start_time).split(".")[0])
         sys.stdout.write(") ")
     if len(running_list) > 6:
         sys.stdout.write("...")
@@ -67,7 +68,7 @@ def run_design(design, design_dir, flow_fcn):
 
     global running_list
 
-    running_list[str(design.path.name)[:8]] = datetime.datetime.now()
+    running_list[design.rel_path] = datetime.datetime.now()
     print_running_list()
 
     # time.sleep(random.randint(1,2))
@@ -102,7 +103,7 @@ def job_done(retval):
     # sys.stdout.write("\033[s")
     print_lock.release()
 
-    del running_list[str(design.path.name)[:8]]
+    del running_list[design.rel_path]
     print_running_list()
 
     statuses.append(status)
@@ -139,7 +140,6 @@ def main():
 
     # For each design
     ljust = experiment.get_longest_design_name() + 5
-    statuses = []
 
     # Build a list of work items
     designs_to_run = []
@@ -150,8 +150,11 @@ def main():
         designs_to_run.append((design, design_dir, experiment.flow_fcn))
 
     manager = multiprocessing.Manager()
+    statuses = manager.list()
     running_list = manager.dict()
     print_lock = manager.Lock()
+
+    print_color(TermColor.BLUE, "Running", len(designs_to_run), "designs")
 
     t_start = time.perf_counter()
     sys.stdout.write("\033[s")
@@ -182,6 +185,7 @@ def main():
     if experiment.post_run is not None:
         experiment.post_run(build_dir)
 
+    print_color(TermColor.BLUE, "\nRan", len(statuses), "jobs")
     print("")
     print("-" * 80)
     print("Status By Type")

@@ -151,6 +151,12 @@ class XRay_ReverseBitTool(ReverseBitTool):
         m = re.search(r"^\s*(assert .*?)$", text, re.M)
         if m:
             return Status(BitReverseStatus.ERROR, m.group(1).strip())
+
+        m = re.search(r"^\s*KeyError: 'DSP_L'\s*$", text, re.M)
+        if m:
+            return Status(BitReverseStatus.UNSUPPORTED_PRIMITVE, "DSP_L")
+            
+        #KeyError: 'DSP_L'
         return Status(BitReverseStatus.SUCCESS)
 
     def write_to_results_file(self, design, netlist_path, need_to_run):

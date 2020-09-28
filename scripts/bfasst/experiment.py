@@ -20,7 +20,7 @@ class Experiment:
         # Get the flow fcn pointer
         if not "flow" in experiment_props:
             bfasst.utils.error("'flow' property missing from experiment YAML", yaml_path)
-        self.flow_fcn = bfasst.flow.get_flow_fcn_by_name(experiment_props["flow"])
+        self.flow_fcn = bfasst.flows.get_flow_fcn_by_name(experiment_props["flow"])
 
         # Create design objects for all designs
         self.design_paths = []

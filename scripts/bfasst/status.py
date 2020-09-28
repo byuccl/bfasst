@@ -26,6 +26,7 @@ class ImplStatus(enum.Enum):
 class BitReverseStatus(enum.Enum):
     SUCCESS = 0
     ERROR = 1
+    UNSUPPORTED_PRIMITVE = 2
 
 
 class CompareStatus(enum.Enum):
@@ -62,6 +63,7 @@ msg_map = {
     ImplStatus.TOO_MANY_IO: "Too many IOs",
     BitReverseStatus.SUCCESS: "Bitstream Reversal Success",
     BitReverseStatus.ERROR: "Bitstream Reversal Error",
+    BitReverseStatus.UNSUPPORTED_PRIMITVE:"Unsupported Primitive",
     CompareStatus.SUCCESS: "Equivalent",
     CompareStatus.ERROR: "!! Compare Error",
     CompareStatus.NO_LICENSE: "No license for comparison tool",
