@@ -76,15 +76,33 @@ class Vivado_SynthesisTool(SynthesisTool):
             if design.top_is_verilog:
                 fp.write("if { [ catch {\n")
                 fp.write("set_part " + bfasst.config.PART + "\n")
-                fp.write("read_verilog " + str(design.top_file_path) + "\n")
+
+                if design.top_is_verilog():
+                    fp.write("read_verilog " + str(design.top_file_path) + "\n")
+                else:
+                    fp.write("read_vhdl " + str(design.top_file_path) + "\n")
+                
+                # Add verilog files
                 for vf in design.verilog_file_paths:
                     fp.write("read_verilog " + str(vf) + "\n")
+                
+                # Add VHDL files
+                for vf in design.vhdl_file_paths:
+                    fp.write("read_vhdl " + str(vf) + "\n")
 
+                # Add vhdl library files
+                for vf, libname in design.vhdl_libs.items():
+                    fp.write("read_vhdl -library " + libname + " " + str(vf) + "\n")
+
+                # Synthesize
                 fp.write("synth_design -top " + design.top + "\n")
+
+                # Auto-place ports
                 fp.write("place_ports\n")
                 fp.write("write_edif -force {" + str(design.netlist_path) + "}\n")
+                fp.write("write_checkpoint -file " + str(self.work_dir / "design.dcp") + "\n")
 
-                # Save IO
+                # Save IO to determine where auto port placement occurred
                 fp.write("report_io -file " + str(report_io_path) + "\n")
 
                 fp.write("} ] } { exit 1 }\n")

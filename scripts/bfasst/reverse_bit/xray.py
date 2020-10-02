@@ -152,9 +152,9 @@ class XRay_ReverseBitTool(ReverseBitTool):
         if m:
             return Status(BitReverseStatus.ERROR, m.group(1).strip())
 
-        m = re.search(r"^\s*KeyError: 'DSP_L'\s*$", text, re.M)
+        m = re.search(r"^\s*KeyError: '(DSP_[LR])'\s*$", text, re.M)
         if m:
-            return Status(BitReverseStatus.UNSUPPORTED_PRIMITVE, "DSP_L")
+            return Status(BitReverseStatus.UNSUPPORTED_PRIMITVE, m.group(1).strip())
             
         #KeyError: 'DSP_L'
         return Status(BitReverseStatus.SUCCESS)
