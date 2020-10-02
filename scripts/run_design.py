@@ -31,8 +31,8 @@ def main():
     args = parser.parse_args()
 
     design_path = pathlib.Path(args.design_path)
-    if not design_path.is_dir() and (paths.examples_path / design_path).is_dir():
-        design_path = paths.examples_path / design_path
+    if not design_path.is_dir() and (paths.EXAMPLES_PATH / design_path).is_dir():
+        design_path = paths.EXAMPLES_PATH / design_path
     design_path = design_path.absolute()
 
     # Load the design
