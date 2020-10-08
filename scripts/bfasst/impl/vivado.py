@@ -77,7 +77,7 @@ class Vivado_ImplementationTool(ImplementationTool):
                 fp.write("opt_design\n")
                 fp.write("place_design\n")
                 fp.write("route_design\n")
-                fp.write("write_checkpoint -file " + str(self.work_dir / "design.dcp") + "\n")
+                fp.write("write_checkpoint -force -file " + str(self.work_dir / "design.dcp") + "\n")
                 fp.write("write_bitstream -force " + str(design.bitstream_path) + "\n")
                 # fp.write("write_edif -force {" + str(design.netlist_path) + "}\n")
                 fp.write("} ] } { exit 1 }\n")

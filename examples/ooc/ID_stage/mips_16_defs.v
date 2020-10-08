@@ -11,7 +11,7 @@
  `ifndef _MIPS_16_DEFS
  `define _MIPS_16_DEFS
  	
-	//`define CODE_FOR_SYNTHESIS				// uncomment this macro will remove all non-systhesis code
+	`define CODE_FOR_SYNTHESIS				// uncomment this macro will remove all non-systhesis code
 	`define USE_SIMULATION_CODE					// uncomment this to use simulation instruction memory
 	
 	`define PC_WIDTH				8

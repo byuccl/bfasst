@@ -43,7 +43,6 @@ class Vivado_SynthesisTool(SynthesisTool):
         # Run synthesis flow
         if self.print_to_stdout:
             self.print_running_synth()
-            time.sleep(10)
 
         report_io_path = self.work_dir / "report_io.txt"
 
@@ -100,10 +99,10 @@ class Vivado_SynthesisTool(SynthesisTool):
                 # Auto-place ports
                 fp.write("place_ports\n")
                 fp.write("write_edif -force {" + str(design.netlist_path) + "}\n")
-                fp.write("write_checkpoint -file " + str(self.work_dir / "design.dcp") + "\n")
+                fp.write("write_checkpoint -force -file " + str(self.work_dir / "design.dcp") + "\n")
 
                 # Save IO to determine where auto port placement occurred
-                fp.write("report_io -file " + str(report_io_path) + "\n")
+                fp.write("report_io -force -file " + str(report_io_path) + "\n")
 
                 fp.write("} ] } { exit 1 }\n")
                 fp.write("exit\n")
@@ -128,6 +127,7 @@ class Vivado_SynthesisTool(SynthesisTool):
             proc.communicate()
             if proc.returncode:
                 return Status(SynthStatus.ERROR)
+
         return Status(SynthStatus.SUCCESS)
 
     def extract_contraints(self, design, report_io_path):

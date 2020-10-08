@@ -178,8 +178,10 @@ def main():
             pool.join()
         except:
             pool.terminate()
+            pool.join()
             update_process.terminate()
     update_process.terminate()
+    update_process.join()
     t_end = time.perf_counter()
 
     if experiment.post_run is not None:

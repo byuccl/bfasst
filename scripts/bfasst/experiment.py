@@ -2,10 +2,11 @@ import yaml
 import zipfile
 import pathlib
 import shutil
+import sys
 
 import bfasst
 from bfasst import paths
-
+from bfasst.utils import error
 
 class Experiment:
     def __init__(self, yaml_path):
@@ -24,20 +25,40 @@ class Experiment:
 
         # Create design objects for all designs
         self.design_paths = []
+
         if "designs" in experiment_props:
             for d in experiment_props["designs"]:
-                self.design_paths.append(pathlib.Path(d))
+                d_path = paths.EXAMPLES_PATH / d
+                if not d_path.is_dir():
+                    error("Provided design directory", d_path, "does not exist")
 
-        if "design_dirs" in experiment_props:
-            for design_dir in experiment_props["design_dirs"]:
-                design_dir_path = paths.EXAMPLES_PATH / design_dir
-                if not design_dir_path.is_dir():
-                    bfasst.utils.error(design_dir_path, "is not a directory")
+                # Check if provided directory contains a design
+                if (d_path / "design.yaml").is_file():
+                    self.design_paths.append(d_path)
+                    continue
 
-                for dir_item in design_dir_path.iterdir():
-                    item_path = design_dir_path / dir_item
-                    if item_path.is_dir():
-                        self.design_paths.append(pathlib.Path(design_dir) / dir_item.name)
+                # Otherwise this is a directory of designs, and include them all
+                for d_child in d_path.rglob("*"):
+                    if not d_child.is_dir():
+                        continue
+                    elif (d_child / "design.yaml").is_file():
+                        self.design_paths.append(d_child)
+
+
+        # if "designs" in experiment_props:
+        #     for d in experiment_props["designs"]:
+        #         self.design_paths.append(pathlib.Path(d))
+
+        # if "design_dirs" in experiment_props:
+        #     for design_dir in experiment_props["design_dirs"]:
+        #         design_dir_path = paths.EXAMPLES_PATH / design_dir
+        #         if not design_dir_path.is_dir():
+        #             error(design_dir_path, "is not a directory")
+
+        #         for dir_item in design_dir_path.iterdir():
+        #             item_path = design_dir_path / dir_item
+        #             if item_path.is_dir():
+        #                 self.design_paths.append(pathlib.Path(design_dir) / dir_item.name)
 
         if "post_run" in experiment_props:
             self.post_run = getattr(self, experiment_props["post_run"])
