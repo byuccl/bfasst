@@ -63,7 +63,7 @@ msg_map = {
     ImplStatus.TOO_MANY_IO: "Too many IOs",
     BitReverseStatus.SUCCESS: "Bitstream Reversal Success",
     BitReverseStatus.ERROR: "Bitstream Reversal Error",
-    BitReverseStatus.UNSUPPORTED_PRIMITVE:"Unsupported Primitive",
+    BitReverseStatus.UNSUPPORTED_PRIMITVE:"!! Bit Reverse: Unsupported Primitive",
     CompareStatus.SUCCESS: "Equivalent",
     CompareStatus.ERROR: "!! Compare Error",
     CompareStatus.NO_LICENSE: "No license for comparison tool",
