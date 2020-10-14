@@ -49,10 +49,7 @@ def main():
         design.error_flow_yaml = args.error_flow + ".yaml"
 
     # Get the flow object
-    for flow_itr in flows.Flows:
-        if args.flow == flow_itr.value:
-            flow = flow_itr
-            break
+    flow = flows.Flows(args.flow)
 
     # Run the design
     # status = bfasst.flow.run_flow(design, bfasst.flow.Flows.IC2_LSE_CONFORMAL, build_dir)

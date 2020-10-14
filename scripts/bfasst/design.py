@@ -1,4 +1,5 @@
 import os, yaml, pathlib, collections
+import enum
 
 import bfasst
 from bfasst import paths
@@ -6,6 +7,10 @@ from bfasst.utils import error
 
 DESIGN_YAML_NAME = "design.yaml"
 
+class HdlType(enum.Enum):
+    VERILOG = 1
+    VHDL = 2
+    MIXED = 3
 
 class Design:
     def __init__(self, dir_path):
@@ -22,15 +27,20 @@ class Design:
         self.verilog_file_paths = []
         self.vhdl_file_paths = []
         self.vhdl_libs = collections.OrderedDict()
-        self.compare_golden_files = []
-        self.golden_is_verilog = None
-        # I don't like having two golden file lists...
-        self.compare_golden_files_paths = []
-        self.compare_revised_file = None
 
-        # Flow paths
+        # self.compare_golden_files = []        
+        # self.golden_is_verilog = None
+        # I don't like having two golden file lists...
+        # self.compare_golden_files_paths = []
+        # self.compare_revised_file = None
+
+        # Golden
+        self.golden_sources = None
+
+        ############## Flow paths ###############
         self.netlist_path = None
         self.yosys_netlist_path = None
+        self.impl_netlist_path = None
         self.bitstream_path = None
         self.constraints_path = None
         self.reversed_netlist_path = None
@@ -127,11 +137,14 @@ class Design:
                 for vhdl_file_path in vhdl_lib_path.rglob("*.vhd"):
                     self.vhdl_libs[vhdl_file_path] = vhdl_lib_path.name
 
-    def top_is_verilog(self):
-        return self.top_file_path.suffix == ".v"
+    # def top_is_verilog(self):
+    #     return self.top_file_path.suffix == ".v"
 
-    def top_is_vhdl(self):
-        return self.top_file_path.suffix == ".vhd"
+    # def top_is_vhdl(self):
+    #     return self.top_file_path.suffix == ".vhd"
+
+    def get_top_hdl_type(self):
+        return get_hdl_type(self.top_file_path)
 
     # def top_path(self):
     #     return os.path.join(self.full_path, self.top_file)
@@ -145,7 +158,37 @@ class Design:
     def last_modified_time(self):
         return max([os.path.getmtime(f) for f in (self.yaml_path, self.top_file_path)])
 
+    def get_golden_hdl_type(self):
+        if self.golden_sources is None:
+            return self.get_top_hdl_type()
+        else:
+            return get_hdl_type(self.get_golden_files())
+
     def get_golden_files(self):
-        return [
-            self.top_file_path,
-        ] + self.get_support_files()
+        if self.golden_sources is None:
+            return [
+                self.top_file_path,
+            ] + self.get_support_files()
+        else:
+            return self.golden_sources
+
+def get_hdl_type(files):
+    # Listify
+    if type(files) not in [list, tuple]:
+        files = (files,)
+
+    hdl_type = None
+    for f in files:
+        if f.suffix == ".v":
+            if hdl_type is None:
+                hdl_type = HdlType.VERILOG
+            elif hdl_type == HdlType.VHDL:
+                hdl_type == HdlType.MIXED
+        elif f.suffix == ".vhd":
+            if hdl_type is None:
+                hdl_type = HdlType.VHDL
+            elif hdl_type == HdlType.VERILOG:
+                hdl_type == HdlType.MIXED
+    
+    assert hdl_type is not None
+    return hdl_type

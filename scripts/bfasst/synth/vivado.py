@@ -5,6 +5,7 @@ import pathlib
 import time
 
 import bfasst
+from bfasst.design import HdlType
 from bfasst.synth.base import SynthesisTool
 from bfasst.status import Status, SynthStatus
 from bfasst.config import VIVADO_BIN_PATH
@@ -72,11 +73,11 @@ class Vivado_SynthesisTool(SynthesisTool):
         tcl_path = self.work_dir / ("synth.tcl")
 
         with open(tcl_path, "w") as fp:
-            if design.top_is_verilog:
+            if design:
                 fp.write("if { [ catch {\n")
                 fp.write("set_part " + bfasst.config.PART + "\n")
 
-                if design.top_is_verilog():
+                if design.get_top_hdl_type() == HdlType.VERILOG:
                     fp.write("read_verilog " + str(design.top_file_path) + "\n")
                 else:
                     fp.write("read_vhdl " + str(design.top_file_path) + "\n")

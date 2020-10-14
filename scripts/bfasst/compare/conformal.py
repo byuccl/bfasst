@@ -1,9 +1,12 @@
 import bfasst
+from bfasst.design import HdlType
+from bfasst.tool import ToolProduct
 import paramiko
 import scp
 import sys
 import re
 import socket
+import pathlib
 
 # Suppress paramiko warning
 import warnings
@@ -13,6 +16,7 @@ warnings.filterwarnings(action="ignore", module=".*paramiko.*")
 from bfasst.compare.base import CompareTool
 from bfasst.status import Status, CompareStatus
 from bfasst import flows, paths
+from bfasst.utils import error
 
 
 class Conformal_CompareTool(CompareTool):
@@ -33,51 +37,51 @@ class Conformal_CompareTool(CompareTool):
 
         log_path = self.work_dir / self.LOG_FILE_NAME
 
-        # Check if compare needs to be run
-        need_to_run = False
-
-        # Run if there is no log file
-        need_to_run |= not log_path.is_file()
-
-        # Run if last compare is out of date
-        need_to_run |= (not need_to_run) and (
-            design.bitstream_path.stat().st_mtime > log_path.stat().st_mtime
+        generate_comparison = ToolProduct(None, log_path, self.check_compare_status)
+        status = self.get_prev_run_status(
+            tool_products=(generate_comparison,),
+            dependency_modified_time=max(
+                pathlib.Path(__file__).stat().st_mtime, design.bitstream_path.stat().st_mtime
+            ),
         )
 
-        if need_to_run:
+        if status is not None:
             if self.print_to_stdout:
-                self.print_running_compare()
+                self.print_skipping_compare()
+            return status
 
-            # Connect to remote machine
-            client = self.connect_to_remote_machine()
 
-            # Create do file
-            do_file_path = self.create_do_file(design)
+        if self.print_to_stdout:
+            self.print_running_compare()
 
-            # Copy files to remote machine
-            self.copy_files_to_remote_machine(client, design, do_file_path)
+        # Connect to remote machine
+        client = self.connect_to_remote_machine()
 
-            # Run conformal remotely
-            status = self.run_conformal(client)
-            if status.error and not status.status == CompareStatus.TIMEOUT:
-                return status
+        # Create do file
+        do_file_path = self.create_do_file(design)
 
-            # Copy back conformal log file
-            self.copy_log_from_remote_machine(client)
-            client.close()
+        # Copy files to remote machine
+        self.copy_files_to_remote_machine(client, design, do_file_path)
 
-            if status.status == CompareStatus.TIMEOUT:
-                with open(log_path, "a") as fp:
-                    fp.write("\nTimeout\n")
-        elif self.print_to_stdout:
-            self.print_skipping_compare()
+        # Run conformal remotely
+        status = self.run_conformal(client)
+        if status.error and not status.status == CompareStatus.TIMEOUT:
+            return status
+
+        # Copy back conformal log file
+        self.copy_log_from_remote_machine(client)
+        client.close()
+
+        if status.status == CompareStatus.TIMEOUT:
+            with open(log_path, "a") as fp:
+                fp.write("\nTimeout\n")
 
         # Check conformal log
-        status = self.check_compare_status()
+        status = self.check_compare_status(log_path)
         if status.error:
             return status
 
-        return Status(CompareStatus.SUCCESS)
+        return self.success_status
 
     def connect_to_remote_machine(self):
         client = paramiko.SSHClient()
@@ -142,10 +146,13 @@ class Conformal_CompareTool(CompareTool):
                 + " -nooptimize\n"
             )
 
-            if design.top_is_verilog():
+            if design.get_golden_hdl_type() == HdlType.VERILOG:
                 src_type = "-Verilog"
-            else:
+            elif design.get_golden_hdl_type() == HdlType.VHDL:
                 src_type = "-Vhdl"
+            else:
+                error("Unsupported golden HDL type: ",design.get_golden_hdl_type() )
+
             fp.write(
                 "read design "
                 + " ".join([golden.name for golden in design.get_golden_files()])
@@ -201,7 +208,7 @@ class Conformal_CompareTool(CompareTool):
         # for vhdl_file in design.vhdl_files:
         #    scpClient.put(str(design.full_path / vhdl_file), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
 
-        for design_file in design.compare_golden_files_paths:
+        for design_file in design.get_golden_files():
             scpClient.put(str(design_file), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
 
         # @$(foreach var, $(VERILOG_SUPPORT_FILES),scp $(DESIGN_DIR)/$(var) caedm:$(CONFORMAL_WORK_DIR)/ >> $@;)
@@ -221,9 +228,7 @@ class Conformal_CompareTool(CompareTool):
         )
         scpClient.close()
 
-    def check_compare_status(self):
-        log_path = self.work_dir / self.LOG_FILE_NAME
-
+    def check_compare_status(self, log_path):
         log_text = open(log_path).read()
 
         # Check for timeout

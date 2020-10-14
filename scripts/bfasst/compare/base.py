@@ -1,12 +1,17 @@
 import abc
 
 import bfasst
+from bfasst.status import CompareStatus, Status
 
 from bfasst.tool import Tool
 from bfasst.utils import print_color
 
 
 class CompareTool(Tool):
+    def __init__(self, cwd) -> None:
+        super().__init__(cwd)
+        self.success_status = Status(CompareStatus.SUCCESS)
+
     # This method should run netlist comparison.  It should return
     # a status
     @abc.abstractmethod

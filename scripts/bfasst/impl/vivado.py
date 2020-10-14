@@ -19,6 +19,7 @@ class Vivado_ImplementationTool(ImplementationTool):
         self.print_to_stdout = print_to_stdout
 
         log_path = self.work_dir / bfasst.config.IMPL_LOG_NAME
+        design.impl_netlist_path = self.cwd / (design.top + "_impl.v")
         design.bitstream_path = self.cwd / (design.top + ".bit")
 
         # Check for up to date previous run
@@ -58,30 +59,30 @@ class Vivado_ImplementationTool(ImplementationTool):
         tcl_path = self.work_dir / ("impl.tcl")
 
         with open(tcl_path, "w") as fp:
-            if design.top_is_verilog:
-                # fp.write("set_part " + bfasst.config.PART + "\n")
-                fp.write("if { [ catch {\n")
-                fp.write("read_edif " + str(design.netlist_path) + "\n")
+            # fp.write("set_part " + bfasst.config.PART + "\n")
+            fp.write("if { [ catch {\n")
+            fp.write("read_edif " + str(design.netlist_path) + "\n")
 
-                # for vf in design.verilog_files:
-                #     fp.write("read_verilog " + str(design.))
+            # for vf in design.verilog_files:
+            #     fp.write("read_verilog " + str(design.))
 
-                fp.write("set_property design_mode GateLvl [current_fileset]\n")
-                fp.write(
-                    "set_property edif_top_file "
-                    + str(design.netlist_path)
-                    + " [current_fileset]\n"
-                )
-                fp.write("link_design -part " + bfasst.config.PART + "\n")
-                fp.write("read_xdc " + str(design.constraints_path) + "\n")
-                fp.write("opt_design\n")
-                fp.write("place_design\n")
-                fp.write("route_design\n")
-                fp.write("write_checkpoint -force -file " + str(self.work_dir / "design.dcp") + "\n")
-                fp.write("write_bitstream -force " + str(design.bitstream_path) + "\n")
-                # fp.write("write_edif -force {" + str(design.netlist_path) + "}\n")
-                fp.write("} ] } { exit 1 }\n")
-                fp.write("exit\n")
+            fp.write("set_property design_mode GateLvl [current_fileset]\n")
+            fp.write(
+                "set_property edif_top_file "
+                + str(design.netlist_path)
+                + " [current_fileset]\n"
+            )
+            fp.write("link_design -part " + bfasst.config.PART + "\n")
+            fp.write("read_xdc " + str(design.constraints_path) + "\n")
+            fp.write("opt_design\n")
+            fp.write("place_design\n")
+            fp.write("route_design\n")
+            fp.write("write_checkpoint -force -file " + str(self.work_dir / "design.dcp") + "\n")
+            fp.write("write_verilog -force -file " + str(design.impl_netlist_path) + "\n")
+            fp.write("write_bitstream -force " + str(design.bitstream_path) + "\n")
+            # fp.write("write_edif -force {" + str(design.netlist_path) + "}\n")
+            fp.write("} ] } { exit 1 }\n")
+            fp.write("exit\n")
 
         with open(log_path, "w") as fp:
             cmd = [str(VIVADO_BIN_PATH), "-mode", "tcl", "-source", str(tcl_path)]

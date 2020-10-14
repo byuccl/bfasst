@@ -56,8 +56,8 @@ class Tool(abc.ABC):
                 if status.error:
                     return status
 
-                # If log file doesn't have an error, but output file is missing, re-run
-                elif not tool_product.file_path.is_file():
+                # If log file doesn't have an error, but output file is expected and missing, re-run
+                elif (tool_product.file_path is not None) and (not tool_product.file_path.is_file()):
                     return None
             else:
                 # This ToolProduct doesn't produce a log file
