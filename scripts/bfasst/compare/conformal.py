@@ -41,7 +41,7 @@ class Conformal_CompareTool(CompareTool):
         status = self.get_prev_run_status(
             tool_products=(generate_comparison,),
             dependency_modified_time=max(
-                pathlib.Path(__file__).stat().st_mtime, design.bitstream_path.stat().st_mtime
+                pathlib.Path(__file__).stat().st_mtime, design.reversed_netlist_path.stat().st_mtime
             ),
         )
 
@@ -56,6 +56,16 @@ class Conformal_CompareTool(CompareTool):
 
         # Connect to remote machine
         client = self.connect_to_remote_machine()
+
+        # Handle libraries
+        if self.vendor == flows.Vendor.XILINX:
+            self.remote_libs_dir_path = bfasst.config.CONFORMAL_REMOTE_LIBS_DIR / "xilinx"
+            self.local_libs_dir_path = paths.RESOURCES_PATH / "conformal" / "libraries" / "xilinx"
+        elif self.vendor == flows.Vendor.LATTICE:
+            self.remote_libs_dir_path = bfasst.config.CONFORMAL_REMOTE_LIBS_DIR / "lattice"
+            self.local_libs_dir_path = paths.RESOURCES_PATH / "conformal" / "libraries" / "xilinx"
+        else:
+            assert False, self.vendor
 
         # Create do file
         do_file_path = self.create_do_file(design)
@@ -129,19 +139,12 @@ class Conformal_CompareTool(CompareTool):
         do_file_path = self.work_dir / self.DO_FILE_NAME
 
         with open(do_file_path, "w") as fp:
-            if self.vendor == flows.Vendor.XILINX:
-                remote_libs_dir_path = bfasst.config.CONFORMAL_REMOTE_LIBS_DIR / "xilinx"
-                local_libs_dir_path = paths.RESOURCES_PATH / "conformal" / "libraries" / "xilinx"
-            elif self.vendor == flows.Vendor.LATTICE:
-                remote_libs_dir_path = bfasst.config.CONFORMAL_REMOTE_LIBS_DIR / "lattice"
-                local_libs_dir_path = paths.RESOURCES_PATH / "conformal" / "libraries" / "xilinx"
-            else:
-                assert False, self.vendor
+           
 
             fp.write(
                 "read library -Both -sensitive -Verilog "
                 + " ".join(
-                    str(remote_libs_dir_path / f.name) for f in local_libs_dir_path.glob("*")
+                    str(self.remote_libs_dir_path / f.name) for f in self.local_libs_dir_path.glob("*")
                 )
                 + " -nooptimize\n"
             )
@@ -164,7 +167,7 @@ class Conformal_CompareTool(CompareTool):
 
             fp.write(
                 "read design "
-                + design.reversed_netlist_filename()
+                + design.reversed_netlist_path.name
                 + " -Verilog -Revised -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply\n"
             )
             fp.write(r"add renaming rule vector_expand %s\[%d\] @1_@2 -Both -map" + "\n")
@@ -187,6 +190,11 @@ class Conformal_CompareTool(CompareTool):
     def copy_files_to_remote_machine(self, client, design, do_file_path):
         scpClient = scp.SCPClient(client.get_transport())
 
+        # Copy library files
+        for f in self.local_libs_dir_path.iterdir():
+            scpClient.put(str(f), str(self.remote_libs_dir_path / f.name))
+        print("Done copying")
+
         # Copy do script
         scpClient.put(
             str(do_file_path), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR / self.DO_FILE_NAME)
@@ -197,6 +205,7 @@ class Conformal_CompareTool(CompareTool):
         scpClient.put(
             str(run_gui_path), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR / self.GUI_FILE_NAME)
         )
+
 
         # Copy top
         # scpClient.put(str(design.top_path()), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
@@ -243,23 +252,3 @@ class Conformal_CompareTool(CompareTool):
             return Status(CompareStatus.SUCCESS)
         else:
             return Status(CompareStatus.NOT_EQUIVALENT, m.group(1))
-
-
-# for line in execute([, "-Dofile", "compare.do", "-Logfile", "log.txt", "-NOGui"]):
-#     sys.stdout.write(line)
-#     sys.stdout.flush()
-#     if re.search("'dofile .*compare.do' is aborted", line):
-#         sys.exit(1)
-#     if re.match("// Command: exit", line):
-#         sys.exit(0)
-
-
-# sftp = client.open_sftp()
-# sftp.put
-# $(CONFORMAL_LOG): $(CONFORMAL_SCP_LOG)
-# @echo -e $(COLOR_YELLOW) Running conformal compare \> $(CONFORMAL_LOG) $(NO_COLOR)
-# @ssh caedm "source /ee2/Cadence/local/designkits/ee451/cdssetup/bashrc_cadence && \
-#     cd $(CONFORMAL_WORK_DIR) && \
-
-
-#     python run_conformal_and_monitor.py" > $(CONFORMAL_LOG) 2>&1
