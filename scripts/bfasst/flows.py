@@ -21,6 +21,7 @@ class Flows(enum.Enum):
     XILINX_CONFORMAL_RTL = "xilinx_conformal"
     XILINX_CONFORMAL_IMPL = "xilinx_conformal_impl"
     GATHER_IMPL_DATA = "gather_impl_data"
+    CONFORMAL_ONLY = "conformal_only"
 
 
 # This uses a lambda so that I don't have to define all of the functions before this point
@@ -35,6 +36,7 @@ flow_fcn_map = {
     Flows.XILINX_CONFORMAL_RTL: lambda: flow_xilinx_conformal,
     Flows.XILINX_CONFORMAL_IMPL: lambda: flow_xilinx_conformal_impl,
     Flows.GATHER_IMPL_DATA: lambda: flow_gather_impl_data,
+    Flows.CONFORMAL_ONLY: lambda: flow_conformal_only,
 }
 
 
@@ -96,6 +98,19 @@ def flow_ic2_lse_conformal(design, build_dir):
 
     return status
 
+
+def flow_conformal_only(design, build_dir, print_to_stdout=True):
+    assert(design.netlist_path is not None)
+    assert(design.reversed_netlist_path is not None)
+
+    design.golden_sources = [design.netlist_path,]
+    compare_tool = bfasst.compare.conformal.Conformal_CompareTool(build_dir, Vendor.XILINX)
+    with bfasst.conformal_lock:
+        status = compare_tool.compare_netlists(design, print_to_stdout)
+    if status.error:
+        return status
+
+    return status
 
 def flow_xilinx_conformal(design, build_dir, print_to_stdout=True):
     # Run Xilinx synthesis and implementation
