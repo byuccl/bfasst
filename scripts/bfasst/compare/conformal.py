@@ -60,10 +60,14 @@ class Conformal_CompareTool(CompareTool):
         # Handle libraries
         if self.vendor == flows.Vendor.XILINX:
             self.remote_libs_dir_path = bfasst.config.CONFORMAL_REMOTE_LIBS_DIR / "xilinx"
-            self.local_libs_dir_path = paths.RESOURCES_PATH / "conformal" / "libraries" / "xilinx"
+            self.local_libs_paths = list((paths.RESOURCES_PATH / "conformal" / "libraries" / "xilinx").iterdir())
+
+            self.local_libs_paths = []
+            yosys_xilinx_libs_path = paths.ROOT_PATH / "third_party/fasm2bels/third_party/prjxray/third_party/yosys/techlibs/xilinx/"            
+            self.local_libs_paths.append(yosys_xilinx_libs_path / "cells_sim.v")
         elif self.vendor == flows.Vendor.LATTICE:
             self.remote_libs_dir_path = bfasst.config.CONFORMAL_REMOTE_LIBS_DIR / "lattice"
-            self.local_libs_dir_path = paths.RESOURCES_PATH / "conformal" / "libraries" / "xilinx"
+            self.local_libs_paths = (paths.RESOURCES_PATH / "conformal" / "libraries" / "lattice" / "sb_ice_syn.v",)
         else:
             assert False, self.vendor
 
@@ -144,7 +148,7 @@ class Conformal_CompareTool(CompareTool):
             fp.write(
                 "read library -Both -sensitive -Verilog "
                 + " ".join(
-                    str(self.remote_libs_dir_path / f.name) for f in self.local_libs_dir_path.glob("*")
+                    str(self.remote_libs_dir_path / f.name) for f in self.local_libs_paths
                 )
                 + " -nooptimize\n"
             )
@@ -191,9 +195,8 @@ class Conformal_CompareTool(CompareTool):
         scpClient = scp.SCPClient(client.get_transport())
 
         # Copy library files
-        for f in self.local_libs_dir_path.iterdir():
+        for f in self.local_libs_paths:
             scpClient.put(str(f), str(self.remote_libs_dir_path / f.name))
-        print("Done copying")
 
         # Copy do script
         scpClient.put(
