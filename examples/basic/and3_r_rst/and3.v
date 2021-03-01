@@ -3,11 +3,15 @@ module and3(
     input b,
     input c,
     input clk,
+    input rst,
     output reg o
 );
 
 always @ (posedge clk) begin
-    o <= a & b & c;
+    if (rst)
+        o <= 1'b0;
+    else
+        o <= a & b & c;
 end
 
 endmodule
