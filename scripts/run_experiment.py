@@ -240,7 +240,7 @@ def main():
     # print(types)
 
     print("-" * 80)
-    print("Execution took", t_end - t_start, "seconds")
+    print("Execution took", round(t_end - t_start,1), "seconds")
 
 
 if __name__ == "__main__":
