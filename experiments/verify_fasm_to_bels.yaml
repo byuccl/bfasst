@@ -1,0 +1,7 @@
+designs:
+    - basic/
+    # - base/
+    
+flow: xilinx_conformal_impl 
+
+

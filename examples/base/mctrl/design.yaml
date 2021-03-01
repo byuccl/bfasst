@@ -1,4 +1,5 @@
 top: testbench
+top_architecture: behav
 
 vhdl_libs:
   - lib/esa
