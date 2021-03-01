@@ -3,7 +3,10 @@ install:
 		make \
 		python3.8-dev \
 		python3-pip \
-		virtualenv
+		virtualenv \
+		libncurses5 \
+		swig \
+		python3-venv
 	
 	sudo python3 -m pip install -r requirements.txt
 
@@ -15,3 +18,5 @@ install:
 
 format:
 	find ./scripts -iname "*.py" -exec black -l 100 {} \;
+
+
