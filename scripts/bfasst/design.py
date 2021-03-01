@@ -59,6 +59,9 @@ class Design:
         with open(self.yaml_path) as fp:
             design_props = yaml.safe_load(fp)
 
+        if design_props is None:
+            error(self.yaml_path, "has no properties.  At minimum, design needs a 'top' property.")
+
         for k,v in design_props.items():
             # Get top module name
             if k == "top":
@@ -153,7 +156,7 @@ class Design:
 
         # For VHDL designs, we need the name of the 'architecture' of the top-level entity
         if self.is_source_hdl() and self.get_top_hdl_type() == HdlType.VHDL and self.top_architecture is None:
-            error("top_architecture not specified for VHDL design")
+            error(self.rel_path, "top_architecture not specified for VHDL design")
         
     def is_source_hdl(self):
         return self.top_file_path is not None
