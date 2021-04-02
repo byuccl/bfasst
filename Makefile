@@ -31,7 +31,8 @@ capnproto_java:
 rapidwright:
 	cd third_party && wget http://www.rapidwright.io/docs/_downloads/rapidwright-installer.jar
 	source third_party/rapidwright.sh
-	cd third_party/Rapidwright/interchange
+	cd third_party/RapidWright/interchange && make
+	cd third_party/RapidWright && make
 
 install_fasm2bels:
 	git submodule init
@@ -40,6 +41,9 @@ install_fasm2bels:
 	cd third_party/fasm2bels && make build
 	cd third_party/fasm2bels && make test-py
 
+env:
+	echo "source `pwd`/third_party/rapidwright.sh" > "env.sh"
+	echo "export INTERCHANGE_SCHEMA_PATH=`pwd`/third_party/RapidWright/interchange/fpga-interchange-schema/interchange" >> "env.sh"
 
 install_yosys:
 	# Yosys

@@ -21,3 +21,7 @@ conformal/
 
 
 __pycache__
+
+env.sh
+
+/third_party/rapidwright*
