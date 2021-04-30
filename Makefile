@@ -30,7 +30,7 @@ capnproto_java:
 
 rapidwright:
 	cd third_party && wget http://www.rapidwright.io/docs/_downloads/rapidwright-installer.jar
-	source third_party/rapidwright.sh
+	cd third_party && java -jar rapidwright-installer.jar -t
 	cd third_party/RapidWright/interchange && make
 	cd third_party/RapidWright && make
 
