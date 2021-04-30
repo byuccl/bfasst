@@ -1,10 +1,16 @@
 import abc
+from bfasst.status import OptStatus
 
-import bfasst.flow
+from bfasst.tool import Tool
+from bfasst.status import Status
 
-class OptTool(bfasst.flow.Tool):
 
-    # This method should run an optimizer.  It should return 
+class OptTool(Tool):
+    def __init__(self, cwd) -> None:
+        super().__init__(cwd)
+        self.success_status = Status(OptStatus.SUCCESS)
+
+    # This method should run an optimizer.  It should return
     # (netlist, status), where:
     #   - netlist is the path to the produced netlist file
     #   - status is a Status object from bfasst.status

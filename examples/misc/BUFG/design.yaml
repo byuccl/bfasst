@@ -1,0 +1,4 @@
+top: "top"
+
+synthesized_netlist: "top_synth.v"
+reversed_netlist: "top_reversed.v"

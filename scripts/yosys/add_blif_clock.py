@@ -7,6 +7,7 @@
 import sys
 import fileinput
 
+
 def main():
     if len(sys.argv) != 3:
         print("Usage: add_blif_clock.py yosys_out.blif abc_out.blif")
@@ -15,7 +16,8 @@ def main():
     clk = None
     with open(sys.argv[1]) as yos:
         for line in yos:
-            if (len(line.split()) == 0): continue
+            if len(line.split()) == 0:
+                continue
             if line.split()[0] == ".latch":
                 clk = line.split()[4]
                 print("Identified clock signal", clk)
@@ -25,18 +27,19 @@ def main():
     with fileinput.input(files=sys.argv[2], inplace=True) as abc:
         for line in abc:
             line = line.strip()
-            if (len(line.split()) == 0):
+            if len(line.split()) == 0:
                 print(line)
                 continue
             if line.split()[0] == ".latch":
                 line_arr = line.split()
                 line_arr.insert(3, "re")
                 line_arr.insert(4, clk)
-                new_line = ' '.join(line_arr)
+                new_line = " ".join(line_arr)
                 print(new_line)
                 continue
             else:
                 print(line)
+
 
 if __name__ == "__main__":
     main()

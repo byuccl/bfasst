@@ -13,5 +13,3 @@ for l in lines:
     m = re.match("6\. Compare Results:\s+(.*)$", line)
     if m:
         sys.stdout.write(m.group(1))
-    
-

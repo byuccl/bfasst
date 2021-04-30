@@ -12,24 +12,26 @@ import os
 
 example_prj = os.path.join(os.path.dirname(os.path.realpath(__file__)), "example.prj")
 
-usage_str = "createPrjFile.py -s <source files> -o <prj file> -n <project name>\n\
+usage_str = 'createPrjFile.py -s <source files> -o <prj file> -n <project name>\n\
 Multiple source files must be enclosed in quotes \n\
-  ex createPrjFile.py -s \"src1.v src2.v\"\
-If -o is not specified, prints to stdout"
+  ex createPrjFile.py -s "src1.v src2.v"\
+If -o is not specified, prints to stdout'
+
 
 def print_or_write(outfile, string):
     if outfile != None:
         outfile.write(string)
     else:
-        print(string, end='')
+        print(string, end="")
+
 
 def main():
     # Read and parse args
     outfile = None
     srcs = None
-    name = "proj" # Default name for project
+    name = "proj"  # Default name for project
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "-hs:o:n:",["help"])
+        opts, args = getopt.getopt(sys.argv[1:], "-hs:o:n:", ["help"])
     except getopt.GetoptError as err:
         print(err)
         print(usage_str)
@@ -37,11 +39,11 @@ def main():
     for o, a in opts:
         if o in ("-h", "--help"):
             print(usage_str)
-        elif o == '-s':
+        elif o == "-s":
             srcs = a.split()
-        elif o == '-o':
+        elif o == "-o":
             outfile = a
-        elif o == '-n':
+        elif o == "-n":
             name = a
         else:
             assert False, "unhandled option"
@@ -51,7 +53,7 @@ def main():
     of = None
     if outfile != None:
         try:
-            of = open(outfile, 'w')
+            of = open(outfile, "w")
         except IOError:
             print("Could not open output file!")
             sys.exit(2)
@@ -66,25 +68,21 @@ def main():
                         filetype = "-verilog"
                     elif src[-4:] == ".vhd":
                         filetype = "-vhdl"
-                    outstr = "add_file " + filetype + " -lib work " + src + '\n'
+                    outstr = "add_file " + filetype + " -lib work " + src + "\n"
                     print_or_write(of, outstr)
             elif line.strip() == '#implementation: "test_Implmnt"':
                 outstr = "impl -add " + name + "_Implmnt -type fpga\n"
                 print_or_write(of, outstr)
-            elif line.strip() == '#set result format/file last':
+            elif line.strip() == "#set result format/file last":
                 print_or_write(of, 'project -result_format "edif"\n')
-                outstr = 'project -result_file ./' + name + '_Implmnt/' \
-                         + name + '.edf\n'
+                outstr = "project -result_file ./" + name + "_Implmnt/" + name + ".edf\n"
                 print_or_write(of, outstr)
-                outstr = 'project -log_file ./' + name + '_Implmnt/' \
-                         + name + '.srr\n'
+                outstr = "project -log_file ./" + name + "_Implmnt/" + name + ".srr\n"
                 print_or_write(of, outstr)
                 outstr = 'impl -active "' + name + '_Implmnt"\n'
                 print_or_write(of, outstr)
                 print_or_write(of, "project -run synthesis -clean\n")
-                
-                
-            
-    
+
+
 if __name__ == "__main__":
     main()

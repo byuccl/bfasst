@@ -7,7 +7,8 @@ import bfasst
 from bfasst.error_injection.base import ErrorInjectionTool
 from bfasst.status import Status, ErrorInjectionStatus
 
-class ErrorInjector_ErrorInjectionTool (ErrorInjectionTool):
+
+class ErrorInjector_ErrorInjectionTool(ErrorInjectionTool):
     TOOL_WORK_DIR = "injection"
 
     # This picks enum and map pick a flow function to run, very similar (i.e.
@@ -24,19 +25,19 @@ class ErrorInjector_ErrorInjectionTool (ErrorInjectionTool):
     def __init__(self, build_dir):
         super().__init__(build_dir)
         self.flow_fcn_map = {
-            self.Errors.LUT_BIT_FLIP : lambda: self.lut_bit_flip_fcn,
-            self.Errors.CROSS_LUT_WIRES : lambda: self.cross_lut_wires_fcn,
-            self.Errors.ADD_SIGNAL_TAP : lambda: self.add_signal_tap
+            self.Errors.LUT_BIT_FLIP: lambda: self.lut_bit_flip_fcn,
+            self.Errors.CROSS_LUT_WIRES: lambda: self.cross_lut_wires_fcn,
+            self.Errors.ADD_SIGNAL_TAP: lambda: self.add_signal_tap,
         }
 
     def get_flow_fcn_from_name(self, flow_name):
         invalid_flow = False
-        
+
         try:
             flow_enum = self.Errors(flow_name)
         except ValueError:
             invalid_flow = True
-        
+
         if invalid_flow:
             bfasst.utils.error(flow_name, "is not a valid error flow name")
 
@@ -45,7 +46,7 @@ class ErrorInjector_ErrorInjectionTool (ErrorInjectionTool):
 
     def run_error_flows(self, design):
         design.nets_to_remove_from_pcf.clear()
-        
+
         # Open the YAML file (if there is one) and read the flow information
         if design.error_flow_yaml is None:
             return (Status(ErrorInjectionStatus.NO_YAML), None)
@@ -54,8 +55,7 @@ class ErrorInjector_ErrorInjectionTool (ErrorInjectionTool):
 
         corrupt_netlists = []
         for flow in error_flow_info["error_injection_flows"]:
-            corrupt_netlist_path = self.work_dir / (design.top + "_" \
-                                   + flow["name"] + ".v")
+            corrupt_netlist_path = self.work_dir / (design.top + "_" + flow["name"] + ".v")
             corrupt_netlist_path = design.netlist_path.parent / corrupt_netlist_path
             print(design.yosys_netlist_path)
             netlist_buffer = self.read_netlist_to_buffer(design.yosys_netlist_path)
@@ -72,11 +72,10 @@ class ErrorInjector_ErrorInjectionTool (ErrorInjectionTool):
             corrupt_netlists.append(corrupt_netlist_path)
         design.corrupt_netlist_paths = corrupt_netlists
         # Get a list of the names of flows we're using to return as well
-        flow_name_list = [flow["name"] for flow in
-                          error_flow_info["error_injection_flows"]]
+        flow_name_list = [flow["name"] for flow in error_flow_info["error_injection_flows"]]
         design.error_flow_names = flow_name_list
         tuple_list = list(zip(corrupt_netlists, flow_name_list))
-        return(Status(ErrorInjectionStatus.SUCCESS), tuple_list)
+        return (Status(ErrorInjectionStatus.SUCCESS), tuple_list)
 
     def read_netlist_to_buffer(self, netlist):
         lines = []
@@ -86,7 +85,7 @@ class ErrorInjector_ErrorInjectionTool (ErrorInjectionTool):
         return lines
 
     def write_buffer_to_netlist(self, lines, netlist):
-        with open(netlist, 'w') as fp:
+        with open(netlist, "w") as fp:
             for line in lines:
                 fp.write(line)
 
@@ -123,8 +122,14 @@ class ErrorInjector_ErrorInjectionTool (ErrorInjectionTool):
         # I'm not going to worry about correct indentation...
         new_init_str = ".LUT_INIT(" + str(lut_size) + "'h" + new_init_hex + ")\n"
         netlist_buffer[init_linenos[lut_to_change_idx]] = new_init_str
-        print("Corrupted lut init", lut_to_change.strip(), "to", new_init_str[:-1],
-              "on line", init_linenos[lut_to_change_idx] + 1)
+        print(
+            "Corrupted lut init",
+            lut_to_change.strip(),
+            "to",
+            new_init_str[:-1],
+            "on line",
+            init_linenos[lut_to_change_idx] + 1,
+        )
         return (Status(ErrorInjectionStatus.FCN_SUCCESS), netlist_buffer)
 
     def cross_lut_wires_fcn(self, netlist_buffer, design):
@@ -137,7 +142,7 @@ class ErrorInjector_ErrorInjectionTool (ErrorInjectionTool):
         # if there's fewer than 2 LUTs, don't do anything.
         # TODO: probably return a different status
         if len(lut_out_linenos) < 2:
-            return(Status(ErrorInjectionStatus.FCN_SUCCESS), netlist_buffer)
+            return (Status(ErrorInjectionStatus.FCN_SUCCESS), netlist_buffer)
         # select two to swap
         random.shuffle(lut_out_linenos)
         lut1_lineno = lut_out_linenos[0]
@@ -151,7 +156,7 @@ class ErrorInjector_ErrorInjectionTool (ErrorInjectionTool):
         netlist_buffer[lut1_lineno] = new_lut1_out
         netlist_buffer[lut2_lineno] = new_lut2_out
         print("Swapped LUT outputs on lines", lut1_lineno, "and", lut2_lineno)
-        return(Status(ErrorInjectionStatus.FCN_SUCCESS), netlist_buffer)
+        return (Status(ErrorInjectionStatus.FCN_SUCCESS), netlist_buffer)
 
     def add_signal_tap(self, netlist_buffer, design):
         # Find where the module declaration, wire statements, output
@@ -162,7 +167,8 @@ class ErrorInjector_ErrorInjectionTool (ErrorInjectionTool):
         wire_list = []
         for line_idx in range(len(netlist_buffer)):
             line = netlist_buffer[line_idx]
-            if len(line.split()) == 0: continue
+            if len(line.split()) == 0:
+                continue
             if line.split()[0] == "module":
                 module_decl_line = line_idx
             elif line.split()[0] == "output":
@@ -175,9 +181,14 @@ class ErrorInjector_ErrorInjectionTool (ErrorInjectionTool):
                 # If we hit the end and can't find an assign statement, just put
                 #   it at the end
                 assign_statement_line = line_idx - 1
-        if module_decl_line == None or output_decl_line == None or assign_statement_line == None or len(wire_list) == 0:
+        if (
+            module_decl_line == None
+            or output_decl_line == None
+            or assign_statement_line == None
+            or len(wire_list) == 0
+        ):
             print("Couldn't find one or more of module, output, assign, or wires in design!\n")
-            return(Status(ErrorInjectionStatus.FCN_SUCCESS), netlist_buffer)
+            return (Status(ErrorInjectionStatus.FCN_SUCCESS), netlist_buffer)
         # Select a random wire to tap
         random.shuffle(wire_list)
         print("tapping line", wire_list[0])
@@ -185,17 +196,21 @@ class ErrorInjector_ErrorInjectionTool (ErrorInjectionTool):
         wire_to_tap = netlist_buffer[wire_list[0]].split()[-1][0:-1]
         if wire_to_tap == "":
             wire_to_tap = netlist_buffer[wire_list[0]].split()[-2]
-        if wire_to_tap[0] == '\\': escaped_name = True
-        else: escaped_name = False
-        print('tapping', wire_to_tap)
+        if wire_to_tap[0] == "\\":
+            escaped_name = True
+        else:
+            escaped_name = False
+        print("tapping", wire_to_tap)
         # Also grab the bus declaration, if there is one
-        #m = re.search("\[.*\]", netlist_buffer[wire_list[0]])
+        # m = re.search("\[.*\]", netlist_buffer[wire_list[0]])
         m = re.match("\[.*\]", netlist_buffer[wire_list[0]].split()[1])
         bus = None
-        if m: bus = m.group(0)
+        if m:
+            bus = m.group(0)
         # make a new output statement
         new_out = "output "
-        if bus: new_out += bus + " "
+        if bus:
+            new_out += bus + " "
         new_out += wire_to_tap + "_tap_out ;\n"
         # Make a new module declaration to replace the old one
         new_module_decl = netlist_buffer[module_decl_line][:-3]
@@ -215,7 +230,5 @@ class ErrorInjector_ErrorInjectionTool (ErrorInjectionTool):
             design.nets_to_remove_from_pcf.add(wire_to_tap[1:])
         else:
             design.nets_to_remove_from_pcf.add(wire_to_tap)
-            
-        return(Status(ErrorInjectionStatus.FCN_SUCCESS), netlist_buffer)
-                
-    
+
+        return (Status(ErrorInjectionStatus.FCN_SUCCESS), netlist_buffer)

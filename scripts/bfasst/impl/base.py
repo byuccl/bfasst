@@ -1,9 +1,14 @@
 import abc
 
-import bfasst.flow
+from bfasst.status import ImplStatus, Status
+from bfasst.utils import print_color
+from bfasst.tool import Tool
 
 
-class ImplementationTool(bfasst.flow.Tool):
+class ImplementationTool(Tool):
+    def __init__(self, cwd) -> None:
+        super().__init__(cwd)
+        self.success_status = Status(ImplStatus.SUCCESS)
 
     # This method should run implementation.  It should return
     # (bitstream, status), where:
@@ -12,3 +17,9 @@ class ImplementationTool(bfasst.flow.Tool):
     @abc.abstractmethod
     def implement_bitstream(self, netlist_path, build_dir):
         pass
+
+    def print_running_impl(self):
+        print_color(self.TERM_COLOR_STAGE, "Running Implementation")
+
+    def print_skipping_impl(self):
+        print_color(self.TERM_COLOR_STAGE, "Implementation already run")

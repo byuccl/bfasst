@@ -1,0 +1,31 @@
+///////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 1995/2015 Xilinx, Inc.
+// All Right Reserved.
+///////////////////////////////////////////////////////////////////////////////
+//   ____  ____
+//  /   /\/   /
+// /___/  \  /    Vendor : Xilinx
+// \   \   \/     Version : 2015.4
+//  \   \         Description : Xilinx Formal Library Component
+//  /   /                  Bi-Directional IO
+// /___/   /\     Filename : BIBUF.v
+// \   \  /  \
+//  \___\/\___\
+//
+///////////////////////////////////////////////////////////////////////////////
+// Revision:
+// End Revision
+///////////////////////////////////////////////////////////////////////////////
+
+`timescale  1 ps / 1 ps
+
+`celldefine
+
+module BIBUF (PAD, IO);
+
+    inout  PAD;
+    inout  IO;
+
+endmodule
+
+`endcelldefine

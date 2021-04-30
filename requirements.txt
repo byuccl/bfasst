@@ -1,0 +1,6 @@
+black
+in_place
+paramiko
+scp
+cryptography
+cmake
