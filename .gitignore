@@ -25,5 +25,3 @@ __pycache__
 env.sh
 
 /third_party/rapidwright*
-
-/scripts/bfasst/config.py

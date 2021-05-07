@@ -92,20 +92,16 @@ class XRay_ReverseBitTool(ReverseBitTool):
             bitstream_path,
         ]
 
-        with open(fasm_path, "w") as fp:
+        with open(fasm_path, "w") as fp, open(self.to_fasm_log, "w") as fp_err:
             proc = subprocess.run(
                 cmd,
                 stdout=fp,
-                stderr=subprocess.PIPE,
-                text=True,
+                stderr=fp_err,
                 cwd=self.work_dir,
                 env=my_env,
             )
             if proc.returncode:
                 return Status(BitReverseStatus.ERROR)
-                
-        with open(self.to_fasm_log, "w") as fp:     
-            fp.write(proc.stderr)
 
         return Status(BitReverseStatus.SUCCESS)
 
