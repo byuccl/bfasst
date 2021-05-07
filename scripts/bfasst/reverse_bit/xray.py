@@ -33,6 +33,7 @@ class XRay_ReverseBitTool(ReverseBitTool):
         # To reversed netlist process
         design.reversed_netlist_path = self.cwd / (design.top + "_reversed.v")
         self.to_netlist_log = self.work_dir / "to_netlist.log"
+        self.to_fasm_log = self.work_dir / "to_fasm.log"
         generate_netlist = ToolProduct(
             design.reversed_netlist_path, self.to_netlist_log, self.to_netlist_log_parser
         )
@@ -91,11 +92,11 @@ class XRay_ReverseBitTool(ReverseBitTool):
             bitstream_path,
         ]
 
-        with open(fasm_path, "w") as fp:
+        with open(fasm_path, "w") as fp, open(self.to_fasm_log, "w") as fp_err:
             proc = subprocess.run(
                 cmd,
                 stdout=fp,
-                stderr=subprocess.STDOUT,
+                stderr=fp_err,
                 cwd=self.work_dir,
                 env=my_env,
             )
