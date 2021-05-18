@@ -1,0 +1,5 @@
+designs:
+    - basic/
+    # - base/
+    
+flow: xilinx_yosys_impl 
