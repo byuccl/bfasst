@@ -3,6 +3,9 @@
 \#*
 .#*
 
+# Python virtual environment
+/.venv
+
 # extra stuff
 **/build
 **/icestorm
