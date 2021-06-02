@@ -3,7 +3,7 @@
         "editor.formatOnSave": false,
     },
     "python.analysis.extraPaths": [
-        "scripts"
+        "scripts", "third_party/fasm2bels/fasm2bels"
     ],
     "python.pythonPath": ".venv/bin/python3"
 }
