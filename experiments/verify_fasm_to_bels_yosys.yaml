@@ -2,4 +2,4 @@ designs:
     - basic/
     # - base/
     
-flow: xilinx_yosys_impl 
+flow: xilinx_yosys_impl_edalize

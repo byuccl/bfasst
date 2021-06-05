@@ -8,6 +8,7 @@ import bfasst
 from bfasst import flows
 from bfasst.utils import TermColor, error
 
+from edalize import *
 
 @enum.unique
 class Flows(enum.Enum):
@@ -21,6 +22,7 @@ class Flows(enum.Enum):
     XILINX_CONFORMAL_RTL = "xilinx_conformal"
     XILINX_CONFORMAL_IMPL = "xilinx_conformal_impl"
     XILINX_YOSYS_IMPL = "xilinx_yosys_impl"
+    XILINX_YOSYS_IMPL_EDALIZE = "xilinx_yosys_impl_edalize"
     GATHER_IMPL_DATA = "gather_impl_data"
     CONFORMAL_ONLY = "conformal_only"
 
@@ -37,6 +39,7 @@ flow_fcn_map = {
     Flows.XILINX_CONFORMAL_RTL: lambda: flow_xilinx_conformal,
     Flows.XILINX_CONFORMAL_IMPL: lambda: flow_xilinx_conformal_impl,
     Flows.XILINX_YOSYS_IMPL: lambda: flow_xilinx_yosys_impl,
+    Flows.XILINX_YOSYS_IMPL_EDALIZE: lambda: flow_xilinx_yosys_impl_edalize,
     Flows.GATHER_IMPL_DATA: lambda: flow_gather_impl_data,
     Flows.CONFORMAL_ONLY: lambda: flow_conformal_only,
 }
@@ -190,6 +193,57 @@ def flow_xilinx_yosys_impl(design, build_dir, print_to_stdout=True):
     
     return status
 
+# INCOMPLETE
+def flow_xilinx_yosys_impl_edalize(design, build_dir, print_to_stdout=True):
+    # Write a constraints.xdc that assigns pins to default locations
+    constraints_path = build_dir / ('constraints.xdc')
+    with open(constraints_path, "w") as fp:
+        fp.write('set_property BITSTREAM.General.UnconstrainedPins {Allow} [current_design]')
+
+    # write tcl script to generate post implementation netlist
+    tcl_path = build_dir / ("gen_netlist.tcl")
+    with open(tcl_path, "w") as fp:
+        fp.write('open_checkpoint ' + str(build_dir) + '/project.runs/impl_1/' + str(design.top) + '_routed.dcp' + '\n')
+        fp.write('write_verilog -force -file ' + str(design.top) + '_impl.v' + '\n')
+        fp.write('close_design' + '\n')
+        fp.write('exit' + '\n')
+
+    # Prepare files to be put into edalize
+    files = [
+    {'name' : os.path.relpath(design.top_file_path, build_dir),  # FIXME needs to make a for loop that loops through all the HDL files and adds them to the "file" dictionary
+    'file_type' : 'verilogSource'},
+    {'name' : os.path.relpath(constraints_path, build_dir),
+    'file_type' : 'xdc'},
+    ]
+
+    tool = 'vivado'
+
+    # select part defined in config.py
+    tool_options = {'vivado' : {'part' : bfasst.config.PART}}
+
+    # command to run a tcl script that will generate a netlist from the post routing checkpoint. This script is run after bitstream is generated.
+    hooks = {'post_build' : [{'name': 'Netlist Script', 'cmd' : ['vivado', '-mode', 'tcl', '-source', str(tcl_path)]}]}
+
+    # these are just things that will be used to build the tool wrapper object
+    edam = {
+    'files'        : files,
+    'name'         : 'project',
+    'tool_options' : tool_options,
+    'toplevel'     : design.top,
+    'hooks'         : hooks
+    }
+
+    # Tool wrapper object is built
+    backend = get_edatool(tool)(edam=edam,
+                                work_root=str(build_dir))
+    backend.configure()
+
+    # This is where synthesis and implementation happen
+    backend.build()
+
+    # FIXME: Add script for xray into edalize and then add comparison using yosys
+
+    return True   # I'll figure this out later
 
 def flow_ic2_synplify_conformal(design, build_dir):
     # Run Icecube2 Synplify synthesis
