@@ -6,9 +6,13 @@ import shutil
 
 import bfasst
 from bfasst import flows
+from bfasst.config import VIVADO_BIN_PATH, PART
+from bfasst.design import HdlType
 from bfasst.utils import TermColor, error
 
 from edalize import *
+
+VIVADO_SETTINGS = str(VIVADO_BIN_PATH).replace("bin/vivado", "settings64.sh")
 
 @enum.unique
 class Flows(enum.Enum):
@@ -208,21 +212,35 @@ def flow_xilinx_yosys_impl_edalize(design, build_dir, print_to_stdout=True):
         fp.write('close_design' + '\n')
         fp.write('exit' + '\n')
 
-    # Prepare files to be put into edalize
-    files = [
-    {'name' : os.path.relpath(design.top_file_path, build_dir),  # FIXME needs to make a for loop that loops through all the HDL files and adds them to the "file" dictionary
-    'file_type' : 'verilogSource'},
-    {'name' : os.path.relpath(constraints_path, build_dir),
-    'file_type' : 'xdc'},
-    ]
+    # Add top file
+    files = []
+    if design.get_top_hdl_type() == HdlType.VERILOG:
+        files.append({'name' : os.path.relpath(design.top_file_path, build_dir), 'file_type' : 'verilogSource'})
+    else:
+        files.append({'name' : os.path.relpath(design.top_file_path, build_dir), 'file_type' : 'vhdlSource'})
+    
+    # Add verilog files
+    for vf in design.verilog_file_paths:
+        files.append({'name' : os.path.relpath(vf, build_dir), 'file_type' : 'verilogSource'})
+    
+    # Add VHDL files
+    for vf in design.vhdl_file_paths:
+        files.append({'name' : os.path.relpath(vf, build_dir), 'file_type' : 'vhdlSource'})
+
+    # Add vhdl library files - I'm not sure how to do this with edalize
+    # for vf, libname in design.vhdl_libs.items():
+    #     fp.write("read_vhdl -library " + libname + " " + str(vf) + "\n")
+
+    # Add constraints
+    files.append({'name' : os.path.relpath(constraints_path, build_dir), 'file_type' : 'xdc'})
 
     tool = 'vivado'
 
-    # select part defined in config.py
-    tool_options = {'vivado' : {'part' : bfasst.config.PART}}
+    # select part defined in config.py and select the settings64.sh script for running vivado
+    tool_options = {'vivado' : {'part' : PART, 'vivado-settings' : VIVADO_SETTINGS}}
 
     # command to run a tcl script that will generate a netlist from the post routing checkpoint. This script is run after bitstream is generated.
-    hooks = {'post_build' : [{'name': 'Netlist Script', 'cmd' : ['vivado', '-mode', 'tcl', '-source', str(tcl_path)]}]}
+    hooks = {'post_build' : [{'name': 'Netlist Script', 'cmd' : [str(VIVADO_BIN_PATH), '-mode', 'tcl', '-source', str(tcl_path)]}]}
 
     # these are just things that will be used to build the tool wrapper object
     edam = {
