@@ -1,6 +1,6 @@
 designs:
-    - basic/
-    # - base/
+    #- basic/
+    - base/
     
 flow: xilinx_conformal_impl 
 
