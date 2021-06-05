@@ -1,0 +1,56 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "fasm2bels-add32",
+            "type": "python",
+            "request": "launch",
+            "python": "${workspaceFolder}/third_party/fasm2bels/env/bin/python3",
+            "module": "fasm2bels",
+            "args": [
+                "--connection_database",
+                "xc7a200tsbg484-1_db",
+                "--db_root",
+                "${workspaceFolder}/third_party/fasm2bels/third_party/prjxray-db/artix7",
+                "--part",
+                "xc7a200tsbg484-1",
+                "--fasm_file",
+                "${workspaceFolder}/build/xilinx_yosys_impl/basic/add32_r_rst/xray/add32.fasm",
+                "--verilog_file",
+                "${workspaceFolder}/build/xilinx_yosys_impl/basic/add32_r_rst/add32_reversed.v",
+                "--xdc_file",
+                "${workspaceFolder}/build/xilinx_yosys_impl/basic/add32_r_rst/xray/add32_reversed.xdc",
+                "--input_xdc",
+                "${workspaceFolder}/build/xilinx_yosys_impl/basic/add32_r_rst/contraints.xdc"
+            ],
+            "cwd": "${workspaceFolder}/third_party/fasm2bels"
+        },
+        {
+            "name": "fasm2bels-and3",
+            "type": "python",
+            "request": "launch",
+            "python": "${workspaceFolder}/third_party/fasm2bels/env/bin/python3",
+            "module": "fasm2bels",
+            "args": [
+                "--connection_database",
+                "xc7a200tsbg484-1_db",
+                "--db_root",
+                "${workspaceFolder}/third_party/fasm2bels/third_party/prjxray-db/artix7",
+                "--part",
+                "xc7a200tsbg484-1",
+                "--fasm_file",
+                "${workspaceFolder}/build/xilinx_yosys_impl/basic/and3/xray/and3.fasm",
+                "--verilog_file",
+                "${workspaceFolder}/build/xilinx_yosys_impl/basic/and3/and3_reversed.v",
+                "--xdc_file",
+                "${workspaceFolder}/build/xilinx_yosys_impl/basic/and3/xray/and3_reversed.xdc",
+                "--input_xdc",
+                "${workspaceFolder}/build/xilinx_yosys_impl/basic/and3/contraints.xdc"
+            ],
+            "cwd": "${workspaceFolder}/third_party/fasm2bels"
+        }
+    ]
+}

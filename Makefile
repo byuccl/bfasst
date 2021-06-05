@@ -1,9 +1,16 @@
-install: packages install_fasm2bels install_yosys
+IN_ENV = if [ -e env/bin/activate ]; then . env/bin/activate; fi;
+
+
+install: packages venv python_packages install_fasm2bels install_yosys
+
+venv:
+	python3.8 -m venv .venv
 
 packages:
-	sudo apt install -y \
+	sudo apt-get install -y \
 		make \
 		python3.8-dev \
+		python3.8-venv \
 		python3-pip \
 		virtualenv \
 		libncurses5 \
@@ -13,7 +20,8 @@ packages:
 		uuid-dev \
 		libantlr4-runtime-dev
 	
-	sudo python3 -m pip install -r requirements.txt
+python_packages:
+	$(IN_ENV) python3 -m pip install -r requirements.txt
 
 capnproto:
 	cd /tmp && curl -O https://capnproto.org/capnproto-c++-0.8.0.tar.gz
@@ -47,7 +55,7 @@ env:
 
 install_yosys:
 	# Yosys
-	sudo apt install -y \
+	sudo apt-get install -y \
 		build-essential \
 		clang \
 		bison \
