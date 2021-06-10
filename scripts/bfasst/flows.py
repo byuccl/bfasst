@@ -3,6 +3,7 @@ import abc
 import os
 import pathlib
 import shutil
+import subprocess
 
 import bfasst
 from bfasst import flows
@@ -27,6 +28,7 @@ class Flows(enum.Enum):
     XILINX_CONFORMAL_IMPL = "xilinx_conformal_impl"
     XILINX_YOSYS_IMPL = "xilinx_yosys_impl"
     XILINX_YOSYS_IMPL_EDALIZE = "xilinx_yosys_impl_edalize"
+    XILINX_YOSYS_IMPL_FUSESOC = "xilinx_yosys_impl_fusesoc"
     GATHER_IMPL_DATA = "gather_impl_data"
     CONFORMAL_ONLY = "conformal_only"
 
@@ -44,6 +46,7 @@ flow_fcn_map = {
     Flows.XILINX_CONFORMAL_IMPL: lambda: flow_xilinx_conformal_impl,
     Flows.XILINX_YOSYS_IMPL: lambda: flow_xilinx_yosys_impl,
     Flows.XILINX_YOSYS_IMPL_EDALIZE: lambda: flow_xilinx_yosys_impl_edalize,
+    Flows.XILINX_YOSYS_IMPL_FUSESOC: lambda: flow_xilinx_yosys_impl_fusesoc,
     Flows.GATHER_IMPL_DATA: lambda: flow_gather_impl_data,
     Flows.CONFORMAL_ONLY: lambda: flow_conformal_only,
 }
@@ -109,6 +112,8 @@ def flow_ic2_lse_conformal(design, build_dir):
 
 
 def flow_conformal_only(design, build_dir, print_to_stdout=True):
+    design.netlist_path = pathlib.Path('/home/jaromharris/bfasst/build/xilinx_conformal_impl/basic/add16_r_rst/add16_impl.v')
+    design.reversed_netlist_path = pathlib.Path('/home/jaromharris/bfasst/build/xilinx_conformal_impl/basic/add16_r_rst/add16_reversed.v')
     assert(design.netlist_path is not None)
     assert(design.reversed_netlist_path is not None)
 
@@ -197,6 +202,15 @@ def flow_xilinx_yosys_impl(design, build_dir, print_to_stdout=True):
     
     return status
 
+def flow_xilinx_yosys_impl_fusesoc(design, build_dir, print_to_stdout=True):
+    os.mkdir
+    # write a fusesoc .conf file
+    conf_path = build_dir / ("fusesoc.conf")
+    with open(conf_path, "w") as fp:
+        fp.write()
+    cmd = ["fusesoc", "run", "--tool=vivado", "--target=synth", design.top]
+    subprocess.run(cmd)
+
 # INCOMPLETE
 def flow_xilinx_yosys_impl_edalize(design, build_dir, print_to_stdout=True):
     # Write a constraints.xdc that assigns pins to default locations
@@ -212,8 +226,9 @@ def flow_xilinx_yosys_impl_edalize(design, build_dir, print_to_stdout=True):
         fp.write('close_design' + '\n')
         fp.write('exit' + '\n')
 
-    # Add top file
     files = []
+
+    # Add top file
     if design.get_top_hdl_type() == HdlType.VERILOG:
         files.append({'name' : os.path.relpath(design.top_file_path, build_dir), 'file_type' : 'verilogSource'})
     else:
@@ -237,7 +252,9 @@ def flow_xilinx_yosys_impl_edalize(design, build_dir, print_to_stdout=True):
     tool = 'vivado'
 
     # select part defined in config.py and select the settings64.sh script for running vivado
-    tool_options = {'vivado' : {'part' : PART, 'vivado-settings' : VIVADO_SETTINGS}}
+    # add 'pnr' : 'none' to just run synthesis
+    tool_options = {'vivado' : {'part' : PART, 
+                                'vivado-settings' : VIVADO_SETTINGS}}
 
     # command to run a tcl script that will generate a netlist from the post routing checkpoint. This script is run after bitstream is generated.
     hooks = {'post_build' : [{'name': 'Netlist Script', 'cmd' : [str(VIVADO_BIN_PATH), '-mode', 'tcl', '-source', str(tcl_path)]}]}
