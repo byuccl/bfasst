@@ -5,6 +5,7 @@ install: packages venv python_packages install_fasm2bels install_yosys
 
 venv:
 	python3.8 -m venv .venv
+	$(IN_ENV) python -m pip install -U pip
 
 packages:
 	sudo apt-get install -y \
