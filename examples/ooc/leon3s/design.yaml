@@ -1,4 +1,5 @@
 top: leon3s
+top_architecture: rtl
 
 vhdl_libs:
   - lib/esa

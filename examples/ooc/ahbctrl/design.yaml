@@ -1,4 +1,5 @@
 top: ahbctrl
+top_architecture: rtl
 
 vhdl_libs:
   - lib/esa
