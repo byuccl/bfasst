@@ -23,7 +23,7 @@ class Vivado_SynthesisTool(SynthesisTool):
 
         # Save edif netlist path to design object
         design.netlist_path = self.cwd / (design.top + ".edf")
-        design.constraints_path = self.cwd / "contraints.xdc"
+        design.constraints_path = self.cwd / "constraints.xdc"
 
         generate_netlist = ToolProduct(design.netlist_path, log_path, self.check_synth_log)
         generate_constraints = ToolProduct(design.constraints_path)

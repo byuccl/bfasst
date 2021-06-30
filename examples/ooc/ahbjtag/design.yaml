@@ -1,4 +1,5 @@
 top: ahbjtag
+top_architecture: struct
 
 vhdl_libs:
   - lib/esa

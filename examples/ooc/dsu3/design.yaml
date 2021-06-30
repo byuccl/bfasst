@@ -1,4 +1,5 @@
 top: dsu3
+top_architecture: rtl
 
 vhdl_libs:
   - lib/esa

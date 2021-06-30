@@ -1,3 +1,4 @@
 top: neo430
+top_architecture: neo430_top_rtl
 
 include_all_vhdl_files: True

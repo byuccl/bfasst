@@ -1,4 +1,5 @@
 top: grethm
+top_architecture: rtl
 
 vhdl_libs:
   - lib/esa
