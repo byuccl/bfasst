@@ -4,3 +4,6 @@
 [submodule "third_party/yosys"]
 	path = third_party/yosys
 	url = https://github.com/YosysHQ/yosys.git
+[submodule "third_party/edalize"]
+	path = third_party/edalize
+	url = https://github.com/olofk/edalize.git
