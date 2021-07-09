@@ -11,6 +11,7 @@ class HdlType(enum.Enum):
     VERILOG = 1
     VHDL = 2
     MIXED = 3
+    SYSTEM_VERILOG = 4
 
 class Design:
     def __init__(self, dir_path):
@@ -25,6 +26,7 @@ class Design:
         self.top_architecture = None
         self.top_file_path = None
         self.verilog_file_paths = []
+        self.system_verilog_file_paths = []
         self.vhdl_file_paths = []
         self.vhdl_libs = collections.OrderedDict()
 
@@ -99,6 +101,17 @@ class Design:
                             and dir_item != self.top_file_path
                         ):
                             self.verilog_file_paths.append(dir_item)
+
+            # Handle 'include_all_system_verilog_files' option
+            elif k == "include_all_system_verilog_files":
+                if v:
+                    for dir_item in self.path.iterdir():
+                        if (
+                            dir_item.is_file()
+                            and dir_item.suffix == ".sv"
+                            and dir_item != self.top_file_path
+                        ):
+                            self.system_verilog_file_paths.append(dir_item)
             
             # Handle 'include_all_vhdl_files'
             elif k == "include_all_vhdl_files":
@@ -138,9 +151,12 @@ class Design:
         # If no top_file given, find one 
         if self.top_file_path is None and not self.netlist_path:
             verilog_top_path = self.path / (self.top + ".v")
+            system_verilog_top_path = self.path / (self.top + ".sv")
             vhdl_top_path = self.path / (self.top + ".vhd")
             if verilog_top_path.is_file():
                 self.top_file_path = self.path / (self.top + ".v")
+            elif system_verilog_top_path.is_file():
+                self.top_file_path = self.path / (self.top + ".sv")
             elif vhdl_top_path.is_file():
                 self.top_file_path = self.path / (self.top + ".vhd")
 
@@ -148,6 +164,8 @@ class Design:
                 error(
                     "Cannot find a top file",
                     verilog_top_path.name,
+                    "or",
+                    system_verilog_top_path.name,
                     "or",
                     vhdl_top_path.name,
                     "for design",
@@ -165,7 +183,7 @@ class Design:
         return get_hdl_type(self.top_file_path)
 
     def get_support_files(self):
-        return self.verilog_file_paths + self.vhdl_file_paths
+        return self.verilog_file_paths + self.vhdl_file_paths + self.system_verilog_file_paths
 
     # def reversed_netlist_filename(self):
     #     return os.path.basename(self.reversed_netlist_path)
@@ -197,6 +215,11 @@ def get_hdl_type(files):
         if f.suffix == ".v":
             if hdl_type is None:
                 hdl_type = HdlType.VERILOG
+            elif hdl_type == HdlType.VHDL:
+                hdl_type == HdlType.MIXED
+        elif f.suffix == ".sv":
+            if hdl_type is None:
+                hdl_type = HdlType.SYSTEM_VERILOG
             elif hdl_type == HdlType.VHDL:
                 hdl_type == HdlType.MIXED
         elif f.suffix == ".vhd":
