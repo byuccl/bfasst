@@ -1,0 +1,3 @@
+top: sev_seg
+
+include_all_system_verilog_files: True

@@ -1,0 +1,3 @@
+top: clean_signal_maker
+
+include_all_system_verilog_files: True
