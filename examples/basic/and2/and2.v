@@ -1,4 +1,4 @@
-module pudc_and2(
+module and2(
     input a,
     input b,
     output o
