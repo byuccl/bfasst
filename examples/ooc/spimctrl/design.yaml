@@ -1,4 +1,5 @@
 top: spimctrl
+top_architecture: rtl
 
 vhdl_libs:
   - lib/esa

@@ -1,3 +1,4 @@
 top: msp430_vhdl
+top_architecture: rtl
 
 include_all_vhdl_files: True

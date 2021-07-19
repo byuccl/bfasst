@@ -1,4 +1,5 @@
 top: irqmp
+top_architecture: rtl
 
 vhdl_libs:
   - lib/esa
