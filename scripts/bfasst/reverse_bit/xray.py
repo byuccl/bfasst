@@ -125,6 +125,10 @@ class XRay_ReverseBitTool(ReverseBitTool):
             constraints_path,
         ]
 
+        if self.print_to_stdout:
+            # Print the command that is run
+            print(" ".join((str(s) for s in cmd)))
+
         with open(self.to_netlist_log, "w") as fp:
             proc = subprocess.Popen(
                 cmd,
