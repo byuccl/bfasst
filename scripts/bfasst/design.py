@@ -97,7 +97,8 @@ class Design:
                     for dir_item in self.path.iterdir():
                         if (
                             dir_item.is_file()
-                            and dir_item.suffix == ".v"
+                            and (dir_item.suffix == ".v"
+                            or dir_item.suffix == ".vh")
                             and dir_item != self.top_file_path
                         ):
                             self.verilog_file_paths.append(dir_item)
