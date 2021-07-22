@@ -79,12 +79,18 @@ class Vivado_SynthesisTool(SynthesisTool):
 
                 if design.get_top_hdl_type() == HdlType.VERILOG:
                     fp.write("read_verilog " + str(design.top_file_path) + "\n")
+                elif design.get_top_hdl_type() == HdlType.SYSTEM_VERILOG:
+                    fp.write("read_verilog -sv " + str(design.top_file_path) + "\n")
                 else:
                     fp.write("read_vhdl " + str(design.top_file_path) + "\n")
                 
                 # Add verilog files
                 for vf in design.verilog_file_paths:
                     fp.write("read_verilog " + str(vf) + "\n")
+                
+                # Add system verilog files
+                for vf in design.system_verilog_file_paths:
+                    fp.write("read_verilog -sv " + str(vf) + "\n")
                 
                 # Add VHDL files
                 for vf in design.vhdl_file_paths:
