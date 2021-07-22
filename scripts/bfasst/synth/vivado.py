@@ -94,8 +94,8 @@ class Vivado_SynthesisTool(SynthesisTool):
                 for vf, libname in design.vhdl_libs.items():
                     fp.write("read_vhdl -library " + libname + " " + str(vf) + "\n")
 
-                # Synthesize
-                fp.write("synth_design -top " + design.top + "\n")
+                # Synthesize - do not include any DSP modules in the synthesized design
+                fp.write("synth_design -top " + design.top + " -max_dsp 0" + "\n")
 
                 # Auto-place ports
                 fp.write("place_ports\n")
