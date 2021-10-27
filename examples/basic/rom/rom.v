@@ -1,7 +1,7 @@
 // ROMs Using Block RAM Resources.
 // File: rom.v
 
-module rom(
+/*module rom(
     clk, 
     en, 
     addr, 
@@ -56,4 +56,18 @@ end
 
 assign dout = data;
 
+endmodule*/
+
+module rom (clk, addr, data);
+
+input clk;
+input [1:0] addr;
+output [1:0] data;
+always @(posedge clk)
+case (addr)
+2‘b00: data <= 2‘b01;
+2‘b01: data <= 2‘b10;
+2‘b10: data <= 2‘b11;
+2‘b11: data <= 2‘b00;
+endcase
 endmodule
