@@ -50,7 +50,31 @@
                 "--input_xdc",
                 "${workspaceFolder}/build/xilinx_yosys_impl/basic/and3/contraints.xdc"
             ],
-            "cwd": "${workspaceFolder}/third_party/fasm2bels"
+            "cwd": "${workspaceFolder}/third_party/fasm2bels",
+        },
+        {
+            "name": "fasm2bels-add16",
+            "type": "python",
+            "request": "launch",
+            "python": "${workspaceFolder}/third_party/fasm2bels/env/bin/python3",
+            "module": "fasm2bels",
+            "args": [
+                "--connection_database",
+                "xc7a200tsbg484-1_db",
+                "--db_root",
+                "${workspaceFolder}/third_party/fasm2bels/third_party/prjxray-db/artix7",
+                "--part",
+                "xc7a200tsbg484-1",
+                "--fasm_file",
+                "${workspaceFolder}/build/xilinx_yosys_impl/basic/add16_r_rst/xray/add16.fasm",
+                "--verilog_file",
+                "${workspaceFolder}/build/xilinx_yosys_impl/basic/add16_r_rst/add16_reversed.v",
+                "--xdc_file",
+                "${workspaceFolder}/build/xilinx_yosys_impl/basic/add16_r_rst/xray/and16_reversed.xdc",
+                "--input_xdc",
+                "${workspaceFolder}/build/xilinx_yosys_impl/basic/add16_r_rst/contraints.xdc"
+            ],
+            "cwd": "${workspaceFolder}/third_party/fasm2bels",
         }
     ]
 }
