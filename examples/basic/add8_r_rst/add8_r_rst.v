@@ -1,9 +1,9 @@
-module add16(
-    input [15:0] a,
-    input [15:0] b,
+module add8_r_rst(
+    input [7:0] a,
+    input [7:0] b,
     input clk,
     input rst,
-    output reg [15:0] o
+    output reg [3:0] o
 );
 
 always @ (posedge clk) begin

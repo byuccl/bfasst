@@ -1,4 +1,4 @@
-module and3(
+module and3_r_rst(
     input a,
     input b,
     input c,
