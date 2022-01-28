@@ -1,9 +1,9 @@
-module add4(
-    input [3:0] a,
-    input [3:0] b,
+module add32_r_rst(
+    input [31:0] a,
+    input [31:0] b,
     input clk,
     input rst,
-    output reg [3:0] o
+    output reg [31:0] o
 );
 
 always @ (posedge clk) begin

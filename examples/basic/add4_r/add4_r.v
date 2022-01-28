@@ -1,4 +1,4 @@
-module add4(
+module add4_r(
     input [3:0] a,
     input [3:0] b,
     input clk,
