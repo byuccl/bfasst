@@ -1,0 +1,4 @@
+design_dirs:
+    - basic/
+
+flow: xilinx_conformal_impl
