@@ -23,6 +23,7 @@ class Flows(enum.Enum):
     XILINX_YOSYS_IMPL = "xilinx_yosys_impl"
     GATHER_IMPL_DATA = "gather_impl_data"
     CONFORMAL_ONLY = "conformal_only"
+    XILINX = "xilinx"
 
 
 # This uses a lambda so that I don't have to define all of the functions before this point
@@ -39,6 +40,7 @@ flow_fcn_map = {
     Flows.XILINX_YOSYS_IMPL: lambda: flow_xilinx_yosys_impl,
     Flows.GATHER_IMPL_DATA: lambda: flow_gather_impl_data,
     Flows.CONFORMAL_ONLY: lambda: flow_conformal_only,
+    Flows.XILINX: lambda: flow_xilinx,
 }
 
 
@@ -113,6 +115,18 @@ def flow_conformal_only(design, build_dir, print_to_stdout=True):
         return status
 
     return status
+
+def flow_xilinx(design, build_dir, print_to_stdout=True):
+    # Run Xilinx synthesis and implementation
+    synth_tool = bfasst.synth.vivado.Vivado_SynthesisTool(build_dir)
+    status = synth_tool.create_netlist(design, print_to_stdout)
+    if status.error:
+        return status
+
+    impl_tool = bfasst.impl.vivado.Vivado_ImplementationTool(build_dir)
+    status = impl_tool.implement_bitstream(design, print_to_stdout)
+    if status.error:
+        return status
 
 def flow_xilinx_conformal(design, build_dir, print_to_stdout=True):
     # Run Xilinx synthesis and implementation
