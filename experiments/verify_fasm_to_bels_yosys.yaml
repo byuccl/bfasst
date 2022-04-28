@@ -1,5 +1,14 @@
 designs:
+    - base/
     - basic/
-    # - base/
+    - byu/
+    #- ipassurance_designs/
+    #- lfsr_randgen/
+    #- memories/
+    #- misc/
+    #- ooc/
+    #- riscv/
+    #- simple/
+    #- uart/
     
 flow: xilinx_yosys_impl 
