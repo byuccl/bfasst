@@ -1,7 +1,7 @@
 designs:
+    - base/
     - basic/
-    # - base/
+    - byu/
+    
     
 flow: xilinx_conformal_impl 
-
-

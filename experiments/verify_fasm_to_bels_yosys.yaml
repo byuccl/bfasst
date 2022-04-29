@@ -1,5 +1,7 @@
 designs:
+    - base/
     - basic/
-    # - base/
+    - byu/
+   
     
 flow: xilinx_yosys_impl 
