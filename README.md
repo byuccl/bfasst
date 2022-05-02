@@ -34,7 +34,8 @@ run_experiment.py: error: the following arguments are required: experiment_yaml
 
 * Confirm that the version of Vivado in _config.py_ is the version installed on your computer. If not, change it to the version you have.
 
-Note: As you perform each of the following steps, if you receive an error saying that you do not have the required package or app to complete the process, try using the command ```sudo apt install``` to install whichever package or app you are missing.https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account
+Note: As you perform each of the following steps, if you receive an error saying that you do not have the required package or app to complete the process, try using the command ```sudo apt install``` to install whichever package or app you are missing.
+
 * Use ```make capnproto_java``` (May give error if it already exists and not empty)
 
 * Use ```make rapidwright```
@@ -49,11 +50,12 @@ Note: As you perform each of the following steps, if you receive an error saying
 
 * Use ```make install``` 
 
-* Enter your caedm. From the home directory of your caedm, use ```mkdir bfasst_libs && mkdir bfasst_libs/xilinx && touch bfasst_libs/xilinx/cells_sim.v```
+* Use ```ssh caedm```. From the home directory of your caedm, use ```mkdir bfasst_libs && mkdir bfasst_libs/xilinx && touch bfasst_libs/xilinx/cells_sim.v```
 
 * From the home directory of your caedm, use ```mkdir bfasst_work && touch bfasst_work/compare.do```
 
-Finally, test to confirm that everything worked correctly! Run ```./scripts/run_experiment.py experiments/verify_fasm_to_bels.yaml``` from the bfasst directory to check if everything works correctly. If you want to double-check, run ```./scripts/run_experiment.py experiments/verify_fasm_to_bels_yosys.yaml``` from the same directory. 
+
+Finally, test to confirm that everything worked correctly! Run ```source env.sh``` and ```./scripts/run_experiment.py experiments/verify_fasm_to_bels.yaml``` from the bfasst directory to check if everything works correctly. If you want to double-check, run ```./scripts/run_experiment.py experiments/verify_fasm_to_bels_yosys.yaml``` from the same directory. 
 
 
 
