@@ -7,6 +7,9 @@ import sys
 import re
 import socket
 import pathlib
+import os
+from pathlib import Path
+import subprocess
 
 # Suppress paramiko warning
 import warnings
@@ -74,6 +77,19 @@ class Conformal_CompareTool(CompareTool):
         # Create do file
         do_file_path = self.create_do_file(design)
 
+        # Create remote machine folders
+        cmd = (
+            "mkdir -p bfasst_libs;"
+            + "mkdir -p bfasst_libs/xilinx;"
+            + "touch bfasst_libs/xilinx/cells_sim.v;"
+            + "mkdir -p bfasst_work;"
+            + "touch bfasst_work/compare.do;" 
+            )
+
+        if self.print_to_stdout:
+            print(cmd)
+        (stdin, stdout, stderr) = client.exec_command(cmd, timeout=bfasst.config.CONFORMAL_TIMEOUT)
+
         # Copy files to remote machine
         self.copy_files_to_remote_machine(client, design, do_file_path)
 
@@ -107,6 +123,7 @@ class Conformal_CompareTool(CompareTool):
         return client
 
     def run_conformal(self, client):
+     
         cmd = (
             "source "
             + str(bfasst.config.CONFORMAL_REMOTE_SOURCE_SCRIPT)

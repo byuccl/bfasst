@@ -34,11 +34,6 @@ run_experiment.py: error: the following arguments are required: experiment_yaml
 
 * Use ```make install``` 
 
-* Use ```ssh caedm```. From the home directory of your caedm, use ```mkdir bfasst_libs && mkdir bfasst_libs/xilinx && touch bfasst_libs/xilinx/cells_sim.v```
-
-* From the home directory of your caedm, use ```mkdir bfasst_work && touch bfasst_work/compare.do```
-
-
 Finally, test to confirm that everything worked correctly! Run ```source env.sh``` and ```./scripts/run_experiment.py experiments/verify_fasm_to_bels.yaml``` from the bfasst directory to check if everything works correctly.
 
 **For those using CAEDM Servers**
