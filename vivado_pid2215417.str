@@ -1,0 +1,261 @@
+/*
+
+Xilinx Vivado v2020.2 (64-bit) [Major: 2020, Minor: 2]
+SW Build: 3064766 on Wed Nov 18 09:12:47 MST 2020
+IP Build: 3064653 on Wed Nov 18 14:17:31 MST 2020
+
+Process ID (PID): 2215417
+License: Customer
+Mode: GUI Mode
+
+Current time: 	Fri Apr 29 12:39:32 MDT 2022
+Time zone: 	Mountain Standard Time (America/Denver)
+
+OS: Ubuntu
+OS Version: 5.13.0-39-generic
+OS Architecture: amd64
+Available processors (cores): 8
+
+Display: 0
+Screen size: 1680x1050
+Screen resolution (DPI): 100
+Available screens: 2
+Default font: family=Dialog,name=Dialog,style=plain,size=12
+Scale size: 12
+
+Java version: 	11.0.2 64-bit
+Java home: 	/tools/Xilinx/Vivado/2020.2/tps/lnx64/jre11.0.2
+Java executable location: 	/tools/Xilinx/Vivado/2020.2/tps/lnx64/jre11.0.2/bin/java
+Java initial memory (-Xms): 	128 MB
+Java maximum memory (-Xmx):	 3 GB
+
+
+User name: 	palm9727
+User home directory: /home/palm9727
+User working directory: /home/palm9727/bfasst
+User country: 	US
+User language: 	en
+User locale: 	en_US
+
+RDI_BASEROOT: /tools/Xilinx/Vivado
+HDI_APPROOT: /tools/Xilinx/Vivado/2020.2
+RDI_DATADIR: /tools/Xilinx/Vivado/2020.2/data
+RDI_BINDIR: /tools/Xilinx/Vivado/2020.2/bin
+
+Vivado preferences file location: /home/palm9727/.Xilinx/Vivado/2020.2/vivado.xml
+Vivado preferences directory: /home/palm9727/.Xilinx/Vivado/2020.2/
+Vivado layouts directory: /home/palm9727/.Xilinx/Vivado/2020.2/data/layouts
+PlanAhead jar file location: 	/tools/Xilinx/Vivado/2020.2/lib/classes/planAhead.jar
+Vivado log file location: 	/home/palm9727/bfasst/vivado.log
+Vivado journal file location: 	/home/palm9727/bfasst/vivado.jou
+Engine tmp dir: 	./.Xil/Vivado-2215417-CCL3
+
+Xilinx Environment Variables
+----------------------------
+XILINX: /tools/Xilinx/Vivado/2020.2/ids_lite/ISE
+XILINX_DSP: /tools/Xilinx/Vivado/2020.2/ids_lite/ISE
+XILINX_HLS: /tools/Xilinx/Vitis_HLS/2020.2
+XILINX_PLANAHEAD: /tools/Xilinx/Vivado/2020.2
+XILINX_SDK: /tools/Xilinx/Vitis/2020.2
+XILINX_VITIS: /tools/Xilinx/Vitis/2020.2
+XILINX_VIVADO: /tools/Xilinx/Vivado/2020.2
+XILINX_VIVADO_HLS: /tools/Xilinx/Vivado/2020.2
+
+
+GUI allocated memory:	154 MB
+GUI max memory:		3,072 MB
+Engine allocated memory: 1,556 MB
+
+Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
+
+*/
+
+// TclEventType: START_GUI
+// Tcl Message: start_gui 
+// Tcl Command: 'rdi::info_commands {device::*}'
+// Tcl Command: 'rdi::info_commands {debug::*}'
+// Tcl Command: 'rdi::info_commands {*}'
+// HMemoryUtils.trashcanNow. Engine heap size: 1,588 MB. GUI used memory: 65 MB. Current time: 4/29/22, 12:39:33 PM MDT
+// WARNING: HEventQueue.dispatchEvent() is taking  1001 ms.
+selectButton(PAResourceEtoH.GettingStartedView_CREATE_NEW_PROJECT, "Create Project"); // y
+// Run Command: PAResourceCommand.PACommandNames_NEW_PROJECT
+// [GUI Memory]: 79 MB (+79940kb) [00:00:44]
+// [Engine Memory]: 1,592 MB (+1517705kb) [00:00:44]
+// [GUI Memory]: 100 MB (+17945kb) [00:00:45]
+// [GUI Memory]: 122 MB (+17744kb) [00:00:45]
+// f (cr): New Project: addNotify
+selectButton("NEXT", "Next >"); // JButton
+selectButton(PAResourceOtoP.ProjectNameChooser_CHOOSE_PROJECT_LOCATION, (String) null); // t
+dismissFolderChooser();
+// WARNING: HEventQueue.dispatchEvent() is taking  1001 ms.
+// WARNING: HEventQueue.dispatchEvent() is taking  1001 ms.
+// WARNING: HEventQueue.dispatchEvent() is taking  1001 ms.
+// WARNING: HEventQueue.dispatchEvent() is taking  1001 ms.
+// Elapsed time: 42 seconds
+selectButton(PAResourceOtoP.ProjectNameChooser_CHOOSE_PROJECT_LOCATION, (String) null); // t
+setFolderChooser("/home/palm9727/projects/digital_designs");
+setText(PAResourceOtoP.ProjectNameChooser_PROJECT_NAME, "tx", true); // aa
+selectButton("NEXT", "Next >"); // JButton
+selectButton("NEXT", "Next >"); // JButton
+selectButton("NEXT", "Next >"); // JButton
+selectButton("NEXT", "Next >"); // JButton
+// WARNING: HEventQueue.dispatchEvent() is taking  1001 ms.
+// WARNING: HEventQueue.dispatchEvent() is taking  1001 ms.
+// WARNING: HEventQueue.dispatchEvent() is taking  1001 ms.
+// Elapsed time: 72 seconds
+setText("PAResourceEtoH.FPGAChooser_FPGA_TABLE_SEARCH_FIELD", "xc7a35tcpg236-1"); // OverlayTextField
+selectTable(PAResourceEtoH.FPGAChooser_FPGA_TABLE, "xc7a35tcpg236-1 ; 236 ; 106 ; 20800 ; 41600 ; 50 ; 0 ; 90 ; 2 ; 2 ; 0 ; 0 ; 0 ; 0 ; 0 ; 0 ; 0 ; 0 ; 0 ; 0 ; 0 ; 1 ; 5 ;  ;  ;  ;  ;  ; 0.95 ; 0.95 ; 1.05", 0, "xc7a35tcpg236-1", 0); // w
+selectButton("NEXT", "Next >"); // JButton
+// bz (cr):  Create Project : addNotify
+// TclEventType: DEBUG_PROBE_SET_CHANGE
+// TclEventType: FILE_SET_NEW
+// TclEventType: RUN_ADD
+// TclEventType: RUN_CURRENT
+// TclEventType: PROJECT_DASHBOARD_NEW
+// TclEventType: PROJECT_DASHBOARD_GADGET_NEW
+// TclEventType: PROJECT_DASHBOARD_GADGET_CHANGE
+// TclEventType: PROJECT_DASHBOARD_GADGET_NEW
+// TclEventType: PROJECT_DASHBOARD_GADGET_CHANGE
+// TclEventType: PROJECT_DASHBOARD_GADGET_NEW
+// TclEventType: PROJECT_DASHBOARD_GADGET_CHANGE
+// TclEventType: PROJECT_DASHBOARD_GADGET_NEW
+// TclEventType: PROJECT_DASHBOARD_GADGET_CHANGE
+// TclEventType: PROJECT_DASHBOARD_GADGET_NEW
+// TclEventType: PROJECT_DASHBOARD_GADGET_CHANGE
+// TclEventType: PROJECT_DASHBOARD_GADGET_NEW
+// TclEventType: PROJECT_DASHBOARD_GADGET_CHANGE
+// TclEventType: PROJECT_NEW
+// WARNING: HEventQueue.dispatchEvent() is taking  1590 ms.
+// TclEventType: FILE_SET_OPTIONS_CHANGE
+// Tcl Message: create_project tx /home/palm9727/projects/digital_designs/tx -part xc7a35tcpg236-1 
+// Tcl Message: INFO: [IP_Flow 19-234] Refreshing IP repositories INFO: [IP_Flow 19-1704] No user IP repositories specified INFO: [IP_Flow 19-2313] Loaded Vivado IP repository '/tools/Xilinx/Vivado/2020.2/data/ip'. 
+// TclEventType: FILE_SET_OPTIONS_CHANGE
+// [GUI Memory]: 131 MB (+3449kb) [00:03:18]
+// TclEventType: FILE_SET_OPTIONS_CHANGE
+// Tcl Message: INFO: [IP_Flow 19-3899] Cannot get the environment domain name variable for the component vendor name. Setting the vendor name to 'user.org'. 
+// TclEventType: FILE_SET_OPTIONS_CHANGE
+// HMemoryUtils.trashcanNow. Engine heap size: 1,659 MB. GUI used memory: 88 MB. Current time: 4/29/22, 12:42:43 PM MDT
+// TclEventType: FILE_SET_OPTIONS_CHANGE
+selectButton("FINISH", "Finish"); // JButton
+// 'g' command handler elapsed time: 154 seconds
+dismissDialog("Create Project"); // bz
+dismissDialog("New Project"); // f
+// [Engine Memory]: 1,677 MB (+5905kb) [00:03:19]
+expandTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Constraints]", 1); // D
+collapseTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Constraints]", 1); // D
+expandTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Constraints]", 1); // D
+selectButton(PAResourceCommand.PACommandNames_ADD_SOURCES, "Sources_add_sources"); // E
+// Run Command: PAResourceCommand.PACommandNames_ADD_SOURCES
+// c (cr): Add Sources: addNotify
+selectButton("NEXT", "Next >"); // JButton
+selectButton(PAResourceQtoS.SrcChooserPanel_ADD_HDL_AND_NETLIST_FILES_TO_YOUR_PROJECT, "Add Files"); // a
+// Elapsed time: 16 seconds
+setFileChooser("/home/palm9727/bfasst/examples/byu/tx/tx.sv");
+selectButton("FINISH", "Finish"); // JButton
+// 'g' command handler elapsed time: 24 seconds
+dismissDialog("Add Sources"); // c
+// TclEventType: DG_GRAPH_STALE
+// TclEventType: FILE_SET_CHANGE
+// Tcl Message: add_files -norecurse /home/palm9727/bfasst/examples/byu/tx/tx.sv 
+// [GUI Memory]: 143 MB (+5694kb) [00:03:51]
+// TclEventType: FILE_SET_CHANGE
+// TclEventType: DG_GRAPH_STALE
+// TclEventType: FILE_SET_CHANGE
+// TclEventType: DG_GRAPH_STALE
+// Tcl Message: update_compile_order -fileset sources_1 
+// HMemoryUtils.trashcanNow. Engine heap size: 1,717 MB. GUI used memory: 76 MB. Current time: 4/29/22, 12:43:18 PM MDT
+// Elapsed time: 10 seconds
+expandTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources]", 0); // D
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, tx (tx.sv)]", 1, false); // D
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, tx (tx.sv)]", 1, false, false, false, false, false, true); // D - Double Click
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, tx (tx.sv)]", 1, false); // D
+selectCodeEditor("tx.sv", 347, 147); // bP
+selectCodeEditor("tx.sv", 299, 96); // bP
+selectCodeEditor("tx.sv", 246, 48); // bP
+// Elapsed time: 12 seconds
+selectTree(PAResourceEtoH.FlowNavigatorTreePanel_FLOW_NAVIGATOR_TREE, "[, Synthesis, Run Synthesis]", 14, false); // u
+// Run Command: PAResourceCommand.PACommandNames_RUN_SYNTHESIS
+// f (cr): Launch Runs: addNotify
+selectButton(RDIResource.BaseDialog_CANCEL, "Cancel"); // a
+// 'k' command handler elapsed time: 3 seconds
+dismissDialog("Launch Runs"); // f
+selectCodeEditor("tx.sv", 129, 414); // bP
+selectCodeEditor("tx.sv", 130, 449); // bP
+selectCodeEditor("tx.sv", 125, 461); // bP
+selectCodeEditor("tx.sv", 111, 430); // bP
+selectCodeEditor("tx.sv", 112, 447); // bP
+selectCodeEditor("tx.sv", 107, 433); // bP
+// Elapsed time: 62 seconds
+selectTree(PAResourceEtoH.FlowNavigatorTreePanel_FLOW_NAVIGATOR_TREE, "[, Synthesis, Run Synthesis]", 14, false); // u
+// Run Command: PAResourceCommand.PACommandNames_RUN_SYNTHESIS
+// am (cr): Save Project: addNotify
+selectButton(PAResourceQtoS.SaveProjectUtils_CANCEL, "Cancel"); // a
+dismissDialog("Save Project"); // am
+selectTree(PAResourceEtoH.FlowNavigatorTreePanel_FLOW_NAVIGATOR_TREE, "[, Implementation, Run Implementation]", 17, false); // u
+// Run Command: PAResourceCommand.PACommandNames_RUN_IMPLEMENTATION
+// am (cr): Save Project: addNotify
+selectButton("OptionPane.button", "OK"); // JButton
+selectButton(PAResourceQtoS.SaveProjectUtils_SAVE, "Save"); // a
+// bz (cr):  Save Constraints : addNotify
+// TclEventType: DG_GRAPH_STALE
+// f (cr): Launch Runs: addNotify
+dismissDialog("Save Project"); // am
+// TclEventType: DG_GRAPH_STALE
+// TclEventType: FILE_SET_CHANGE
+// HMemoryUtils.trashcanNow. Engine heap size: 1,750 MB. GUI used memory: 80 MB. Current time: 4/29/22, 12:44:58 PM MDT
+selectButton(RDIResource.BaseDialog_OK, "OK"); // a
+// bz (cr):  Starting Design Runs : addNotify
+dismissDialog("Launch Runs"); // f
+// TclEventType: RUN_LAUNCH
+// TclEventType: RUN_MODIFY
+// TclEventType: RUN_STATUS_CHANGE
+// TclEventType: RUN_MODIFY
+// Tcl Message: launch_runs impl_1 -jobs 4 
+// Tcl Message: [Fri Apr 29 12:44:58 2022] Launched synth_1... Run output will be captured here: /home/palm9727/projects/digital_designs/tx/tx.runs/synth_1/runme.log [Fri Apr 29 12:44:58 2022] Launched impl_1... Run output will be captured here: /home/palm9727/projects/digital_designs/tx/tx.runs/impl_1/runme.log 
+// 'c' command handler elapsed time: 8 seconds
+dismissDialog("Starting Design Runs"); // bz
+// TclEventType: RUN_STATUS_CHANGE
+// TclEventType: RUN_COMPLETED
+// TclEventType: RUN_STATUS_CHANGE
+// TclEventType: RUN_STEP_COMPLETED
+// TclEventType: RUN_STATUS_CHANGE
+// TclEventType: RUN_STEP_COMPLETED
+// TclEventType: RUN_COMPLETED
+// TclEventType: RUN_STATUS_CHANGE
+// TclEventType: RUN_STEP_COMPLETED
+// ag (cr): Implementation Completed: addNotify
+// Elapsed time: 72 seconds
+selectRadioButton(PAResourceCommand.PACommandNames_RUN_BITGEN, "Generate Bitstream"); // a
+selectButton(RDIResource.BaseDialog_OK, "OK"); // a
+// Run Command: PAResourceCommand.PACommandNames_RUN_BITGEN
+// cD (cr): Launch Runs: addNotify
+selectButton(RDIResource.BaseDialog_OK, "OK"); // a
+dismissDialog("Launch Runs"); // cD
+// TclEventType: RUN_LAUNCH
+// TclEventType: RUN_MODIFY
+// Tcl Message: launch_runs impl_1 -to_step write_bitstream -jobs 4 
+// Tcl Message: [Fri Apr 29 12:46:14 2022] Launched impl_1... Run output will be captured here: /home/palm9727/projects/digital_designs/tx/tx.runs/impl_1/runme.log 
+// TclEventType: RUN_STATUS_CHANGE
+// TclEventType: RUN_FAILED
+// TclEventType: RUN_STATUS_CHANGE
+// ag (cr): Bitstream Generation Failed: addNotify
+// Elapsed time: 25 seconds
+selectButton(RDIResource.BaseDialog_OK, "OK"); // a
+// Run Command: PAResourceCommand.PACommandNames_LOG_WINDOW
+dismissDialog("Bitstream Generation Failed"); // ag
+// Elapsed time: 15 seconds
+selectTab((HResource) null, (HResource) null, "Messages", 1); // aK
+collapseTree(PAResourceItoN.MsgTreePanel_MESSAGE_VIEW_TREE, "[, Implementation]", 0); // ah
+selectTab((HResource) null, (HResource) null, "Tcl Console", 0); // aK
+selectCodeEditor("tx.sv", 343, 353); // bP
+selectCodeEditor("tx.sv", 110, 206); // bP
+selectCodeEditor("tx.sv", 113, 226); // bP
+selectCodeEditor("tx.sv", 108, 223); // bP
+selectCodeEditor("tx.sv", 101, 160); // bP
+selectCodeEditor("tx.sv", 228, 70); // bP
+// HMemoryUtils.trashcanNow. Engine heap size: 1,760 MB. GUI used memory: 83 MB. Current time: 4/29/22, 1:14:58 PM MDT
+// HMemoryUtils.trashcanNow. Engine heap size: 1,760 MB. GUI used memory: 73 MB. Current time: 4/29/22, 1:44:58 PM MDT
+// HMemoryUtils.trashcanNow. Engine heap size: 1,760 MB. GUI used memory: 73 MB. Current time: 4/29/22, 2:14:58 PM MDT
+// HMemoryUtils.trashcanNow. Engine heap size: 1,760 MB. GUI used memory: 73 MB. Current time: 4/29/22, 2:44:58 PM MDT
+// HMemoryUtils.trashcanNow. Engine heap size: 1,760 MB. GUI used memory: 73 MB. Current time: 4/29/22, 3:14:58 PM MDT
+// WARNING: HEventQueue.dispatchEvent() is taking  1041 ms.
