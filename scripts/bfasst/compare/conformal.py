@@ -78,9 +78,7 @@ class Conformal_CompareTool(CompareTool):
         cmd = (
             "mkdir -p bfasst_libs;"
             + "mkdir -p bfasst_libs/xilinx;"
-            + "touch bfasst_libs/xilinx/cells_sim.v;"
             + "mkdir -p bfasst_work;"
-            + "touch bfasst_work/compare.do;" 
             )
 
         if self.print_to_stdout:
