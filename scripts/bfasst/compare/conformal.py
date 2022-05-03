@@ -7,9 +7,6 @@ import sys
 import re
 import socket
 import pathlib
-import os
-from pathlib import Path
-import subprocess
 
 # Suppress paramiko warning
 import warnings
