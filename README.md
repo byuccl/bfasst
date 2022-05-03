@@ -22,13 +22,11 @@ run_experiment.py: error: the following arguments are required: experiment_yaml
 
 * Clone the github repository into your home directory in linux. Repository is found at https://github.com/byuccl/bfasst. Use ```git clone https://github.com/byuccl/bfasst.git.``` (Note: if Git is not installed on your device, use ```sudo apt install git``` first.) 
 
-* Confirm that the version of Vivado in _config.py_ is the version installed on your computer. If not, change it to the version you have.
+* Confirm that the version of Vivado in _/bfasst/scripts/bfasst/config.py_ is the version installed on your computer. If not, change it to the version you have.
 
-* Use ```make capnproto_java``` (May give error if it already exists and not empty)
+* Use ```make capnproto_java``` 
 
 * Use ```make rapidwright```
-
-* Use ```sudo apt-get install openjdk-8-jdk```
 
 * Use ```make env```
 
