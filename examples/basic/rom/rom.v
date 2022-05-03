@@ -1,5 +1,4 @@
-// ROMs Using Block RAM Resources.
-// File: rom.v
+// ROMs Using Block RAM Resources
 
 module rom(
     clk, 
@@ -55,5 +54,6 @@ begin
 end
 
 assign dout = data;
+
 
 endmodule

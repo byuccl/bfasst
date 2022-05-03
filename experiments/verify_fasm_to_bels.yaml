@@ -1,7 +1,10 @@
 designs:
+    - base/bubblesort/
+    - base/counter/
+    - base/des3_perf/
+    - base/wb_lcd/
     - basic/
-    # - base/
+    - byu/
     
-flow: xilinx_conformal_impl 
-
-
+    
+flow: xilinx_conformal_impl
