@@ -120,7 +120,6 @@ class Conformal_CompareTool(CompareTool):
         return client
 
     def run_conformal(self, client):
-     
         cmd = (
             "source "
             + str(bfasst.config.CONFORMAL_REMOTE_SOURCE_SCRIPT)
