@@ -10,7 +10,11 @@
 // Description: A simple toplevel design for the ALU
 // 
 // Dependencies: None
-// 
+//
+// LUT: 170
+// FF: 18
+// IO: 38
+// BUFG: 1 
 //////////////////////////////////////////////////////////////////////////////////
 
 module calc(clk,btnc,btnl,btnu,btnr,btnd,sw,led);

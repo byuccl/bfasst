@@ -10,6 +10,10 @@
 // 
 // Dependencies: None
 // 
+// LUT: 48
+// FF: 24
+// IO: 38
+// BUFG: 1
 //////////////////////////////////////////////////////////////////////////////////
 
 module UpDownButtonCount(clk, btnc, btnu, btnd, btnr, btnl, led, sw);
