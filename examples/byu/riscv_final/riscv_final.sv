@@ -750,13 +750,13 @@ module riscv_final #(parameter INITIAL_PC = 32'h00400000)(
     // 7) Write Back
     // Block used to select between the pipelined ALU result and the memory read signals
     
-    // always_comb                              //! The NON Equivalence is caused by this mux!!!
-    // begin                            
-    //     if (wb_MemtoReg)
-    //         wb_dataToWrite = dReadData;
-    //     else
-    //         wb_dataToWrite = wb_ALUResult;
-    // end
+    always_comb                              //! The NON Equivalence is caused by this mux!!!
+    begin                            
+        if (wb_MemtoReg)
+            wb_dataToWrite = dReadData;
+        else
+            wb_dataToWrite = wb_ALUResult;
+    end
     
     assign WriteBackData = 	wb_dataToWrite;				
     

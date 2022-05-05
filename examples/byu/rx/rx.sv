@@ -99,8 +99,8 @@ module rx(
                                   incBit = 1'b1;
                                   ns = BITS;
                               end
-                        //   else if (timerDone && bitDone)   //! This statement makes it not equivalent
-                        //       ns = STOP;
+                          else if (timerDone && bitDone)   //! This statement makes it not equivalent
+                              ns = STOP;
                           else // Stay in BITS state
                               ns = BITS;
                       end
