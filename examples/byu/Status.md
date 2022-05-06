@@ -1,4 +1,5 @@
 |     **File**     |**Works with Conformal?**|**Works with Yosys?**|**LUTs**|**FFs**|**IOs**|**BUFGs**|               **Errors**                                       |
+|------------------|-------------------------|---------------------|--------|-------|-------|---------|----------------------------------------------------------------|
 |UpDownButtonCount |         Yes             |         Yes         |  48    |   24  |   38  |    1    |                  None                                          |
 |      alu         |         Yes             |         Yes         |  493   |   0   |  101  |    0    |                  None                                          |
 |   buttoncount    |         Yes             |       **No**        |   -    |   -   |   -   |    -    | Has issues getting the proper led values                       |
