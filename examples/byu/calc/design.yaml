@@ -1,0 +1,3 @@
+top: calc
+
+include_all_verilog_files: True
