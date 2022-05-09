@@ -6,5 +6,8 @@
 |      calc        |         Yes             |         Yes         |  178   |   18  |   38  |    1    |                  None                                          |
 |      mux8to1     |         Yes             |         Yes         |   -    |   -   |   -   |    -    |                  None                                          |
 |     oneshot      |         Yes             |         Yes         |   2    |   2   |   2   |    1    |                  None                                          |
-|     regfile      |         Yes             |       **No**        |   -    |   -   |   -   |    -    |  Writedata and the array of registers produce the wrong output.||   sevensegment   |         Yes             |         Yes         |   -    |   -   |   -   |    -    |                  None                                          |
+|     regfile      |         Yes             |       **No**        |   -    |   -   |   -   |    -    |  Writedata and the array of registers produce the wrong output.|
+|  sevensegment    |         Yes             |         Yes         |   -    |   -   |   -   |    -    |                  None                                          |
 |     shiftReg     |         Yes             |         Yes         |   51   |   20  |   36  |    1    |                  None                                          |
+|      debouncer   |         Yes             |       **No**        |    -   |   -   |   -   |    -    |                  None                                          |
+|      stopwatch   |         Yes             |       **No**        |    -   |   -   |   -   |    -    |                  None                                          |
