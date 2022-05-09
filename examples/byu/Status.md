@@ -9,5 +9,5 @@
 |     regfile      |         Yes             |       **No**        |   -    |   -   |   -   |    -    |  Writedata and the array of registers produce the wrong output.|
 |  sevensegment    |         Yes             |         Yes         |   -    |   -   |   -   |    -    |                  None                                          |
 |     shiftReg     |         Yes             |         Yes         |   51   |   20  |   36  |    1    |                  None                                          |
-|      Debouncer   |         Yes             |       **No**        |    -   |   -   |   -   |    -    |                  None                                          |
-|      Stopwatch   |         Yes             |       **No**        |    -   |   -   |   -   |    -    |                  None                                          |
+|      debouncer   |         Yes             |       **No**        |    -   |   -   |   -   |    -    |                  None                                          |
+|      stopwatch   |         Yes             |       **No**        |    -   |   -   |   -   |    -    |                  None                                          |
