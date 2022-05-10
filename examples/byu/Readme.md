@@ -11,3 +11,4 @@
 |     shiftReg     |         Yes             |         Yes         |   51   |   20  |   36  |    1    |                  None                                          |
 |      debouncer   |         Yes             |       **No**        |    -   |   -   |   -   |    -    |                  None                                          |
 |      stopwatch   |         Yes             |       **No**        |    -   |   -   |   -   |    -    |                  None                                          |
+|      lightWave   |         Yes             |         Yes         |   2    |   3   |   19  |    1    |                  None                                          |
