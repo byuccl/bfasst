@@ -12,3 +12,4 @@
 |      debouncer   |         Yes             |       **No**        |    -   |   -   |   -   |    -    |                  None                                          |
 |      stopwatch   |         Yes             |       **No**        |    -   |   -   |   -   |    -    |                  None                                          |
 |      lightWave   |         Yes             |         Yes         |   2    |   3   |   19  |    1    |                  None                                          |
+| riscvSimpleDatapath |      Yes             |       **No**        |  1198  |   32  |   201 |   12    | Relies on regfile, which already doesn't work in yosys         |
