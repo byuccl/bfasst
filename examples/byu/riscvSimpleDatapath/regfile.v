@@ -32,7 +32,7 @@ initial
 
 //A flip flop for reading from registers and writing to a specific
 //register as defined by the input.
-always@(*) begin
+always@(posedge clk) begin
     //checks to be sure we aren't writing to register 0
     if(write && writeReg!=0) begin
         register[writeReg] <= writeData;
