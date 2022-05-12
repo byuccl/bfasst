@@ -1,8 +1,4 @@
 `timescale 1ns / 1ps
-
-//NOT WORKING WITH YOSYS!
-//CURRENTLY ONLY WORKS WITH CONFORMAL
-
 //////////////////////////////////////////////////////////////////////////////////
 // Company: BYU (Brigham Young University)
 // Engineer: Jake Edvenson
@@ -27,49 +23,32 @@ output reg[31:0] readData1, readData2; //The output of the specified register
 
 reg [31:0] register [31:0];
 
+//Initializes all of our registers to 0
 integer i;
 
-initial begin
-    for (i=0; i<32; i=i+1)
+initial
+    for(i=0; i<32; i=i+1)
         register[i] = 0;
-end
-
 
 //A flip flop for reading from registers and writing to a specific
 //register as defined by the input.
 always@(posedge clk) begin
-    case(readReg1)
-        0: readData1 <= register[0];
-        default: readData1 <= register[readReg1];
-    endcase
-
-    case(readReg2)
-        0: readData2 <= register[0]; 
-        default: readData2 <= register[readReg2];
-    endcase
-
     //checks to be sure we aren't writing to register 0
-    case(write && writeReg!=0)
-        1: begin
-            case(writeReg)
-                1: register[1] <= writeData;      
-            default: register[writeReg] <= writeData;
-        endcase
-
+    if(write && writeReg!=0) begin
+        register[writeReg] <= writeData;
         //If we're trying to read from the register we're writing to,
         //we get the updated value as the output
-        case(readReg1 == writeReg)
-            1: readData1 <= writeData;
-            default: register[0] <= 0;
-        endcase
-
-        case(readReg2 == writeReg)
-            1: readData2 <= writeData;
-            default: register[0] <= 0;
-        endcase
-        end
-    default: register[0] <= 0;
-endcase
+        if(readReg1 == writeReg)
+            readData1 <= writeData;
+        else
+            readData1 <= register[readReg1];
+        if(readReg2 == writeReg)
+            readData2 <= writeData;
+        else
+            readData2 <= register[readReg2];
+    end
+    else
+        register[0] <= 0;
 end
 
 endmodule
