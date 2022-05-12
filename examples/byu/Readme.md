@@ -7,7 +7,7 @@
 |      lightWave   |         Yes             |         Yes         |   2    |   3   |   19  |    1    |                  None                                          |
 |      mux8to1     |         Yes             |         Yes         |   -    |   -   |   -   |    -    |                  None                                          |
 |     oneshot      |         Yes             |         Yes         |   2    |   2   |   2   |    1    |                  None                                          |
-|     regfile      |         Yes             |        Yes          |   34   |   32  |   108 |    1    |  Writedata and the array of registers produce the wrong output.|
+|     regfile      |         Yes             |        Yes          |   34   |   32  |   108 |    1    |                  None                                          |
 | riscvSimpleDatapath |      **NO**          |       Yes           |  1198  |   32  |   201 |   12    | Relies on regfile, which already doesn't work in yosys         |
 |  sevensegment    |         Yes             |         Yes         |   -    |   -   |   -   |    -    |                  None                                          |
 |     shiftReg     |         Yes             |         Yes         |   51   |   20  |   36  |    1    |                  None                                          |
