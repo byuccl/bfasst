@@ -27,10 +27,7 @@ output reg[31:0] readData1, readData2; //The output of the specified register
 
 
 reg [31:0] register [31:0];
-
-
 integer i;
-
 
 //A flipflop to set all of our registers equal to zero
 always@(posedge clk) begin
@@ -38,26 +35,25 @@ always@(posedge clk) begin
         for (i=0; i<32; i=i+1)
             register[i] <= 0;
     end
+    else if(write && writeReg!=0)
+        register[writeReg] <= writeData;
 end
 
 //A flip flop for reading from registers and writing to a specific
 //register as defined by the input.
 always@(posedge clk) begin
 
-    if(write && writeReg!=0) begin
-        register[writeReg] <= writeData;
-            if(readReg1 == writeReg)
-                readData1 <= writeData;
-            else
-                readData1 <= register[readReg1];
-            if(readReg2 == writeReg)
-                readData2 <= writeData;
-            else  
-                readData2 <= register[readReg2];    
-    end
-    else   
+    readData1 <= register[readReg1];
+    readData2 <= register[readReg2]; 
+
+    if(readReg1 == writeReg)
+        readData1 <= writeData;
+    else
         readData1 <= register[readReg1];
-        readData2 <= register[readReg2];    
+    if(readReg2 == writeReg)
+        readData2 <= writeData;
+    else 
+        readData2 <= register[readReg2];
 end
 
 endmodule
