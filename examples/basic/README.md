@@ -9,7 +9,7 @@
 |       and3       |         Yes             |         Yes         |   1    |   0   |   4   |    None                       |    None                                         |
 |      and3_r      |         Yes             |         Yes         |   1    |   1   |   5   |    **BUFG:** 1                |    None                                         |
 |    and3_r_rst    |         Yes             |         Yes         |   1    |   1   |   6   |    **BUFG:** 1                |    None                                         |
-|   bram_dp_synch  |         Yes             |       **No**        |   0    |   10  |   24  |    **BUFG:** 1 **RAM32M:** 2  |    Isn't using Block RAM, 8 unproven cells      |
-|   bram_sp_asynch |         Yes             |       **No**        |   0    |   0   |   15  |    **BUFG:** 1 **RAM32X1S:** 4|    Isn't using Block RAM, 4 unproven cells      |
+|   bram_dp_synch  |       **No**            |       **No**        |   0    |   10  |   24  |    **BUFG:** 1 **RAM32M:** 2  |    Uses BRAM now, but has 16 unproven cells     |
+|   bram_sp_wf     |       **No**            |       **No**        |   0    |   0   |   15  |    **BUFG:** 1 **RAM32X1S:** 4|    uses BRAM now, but has 16 unproven cells     |
 |       ff         |         Yes             |         Yes         |   0    |   1   |   3   |    **BUFG:** 1                |    None                                         |
-|       rom        |         Yes             |       **No**        |   0    |   0   |   28  |    **BUFG:** 1 **RAMB18E1:** 1|    20 unproven $equiv cells in Yosys            |
+|       rom        |       **No**            |       **No**        |   0    |   0   |   28  |    **BUFG:** 1 **RAMB18E1:** 1|    20 unproven $equiv cells in Yosys            |

@@ -8,7 +8,7 @@
 |     mux8to1      |         Yes             |         Yes         |   16   |   0   |   75  |    **MUXF7:** 8              |    None                                   |
 |     oneshot      |         Yes             |         Yes         |   3    |   2   |   4   |    **BUFG:** 1               |    None                                   |
 |     regfile      |         Yes             |       **No**        |   612  |   0   |   112 |    **BUFG:** 12 **MUXF7:** 256 **MUXF8:** 128    | Writedata and the array of registers produce the wrong output |
-| riscvSimpleDatapath |      Yes             |       **No**        |  1361  |  1088 |   201 |   **BUFG:** 1 **CARRY4:** 28 **MUXF7:** 258 **MUXF8:** 124    | Relies on regfile, which already doesn't work in Yosys         |
+| riscvSimpleDatapath |    **No**            |       **No**        |  1361  |  1088 |   201 |   **BUFG:** 1 **CARRY4:** 28 **MUXF7:** 258 **MUXF8:** 124    | Relies on regfile, which already doesn't work in Yosys         |
 |   sevensegment   |         Yes             |         Yes         |   7    |   0   |   11  |    None                      |    None                                   |
 |    shiftReg      |         Yes             |         Yes         |   59   |   20  |   36  |    **BUFG:** 1               |    None                                   |
 |    stopwatch     |         Yes             |       **No**        |   45   |   52  |   15  |    **BUFG:** 1 **CARRY4:** 10|    None                                   |
