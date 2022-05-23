@@ -1,0 +1,3 @@
+|     **File**     |**Works with Conformal?**|**Works with Yosys?**|**LUTs**|**FFs**|**IOs**|     **Other Components**     |               **Errors**                  |
+|------------------|-------------------------|---------------------|--------|-------|-------|------------------------------|-------------------------------------------|
+|      regfile     |         Yes             |         **NO**      |        |       |       |                              | Yosys has issues selecting between regfiles |
