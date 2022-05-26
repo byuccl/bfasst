@@ -24,6 +24,7 @@ module bit_num_reg_1(
   input cycles_reg_4__i_1_n_4,
   input cycles_reg_8__i_1_n_7,
   input cycles_reg_8__i_1_n_6,
+  input cycles_0__i_1_n_0,
   output [2:0]bitNum_reg_n_0_
   );
 
@@ -38,7 +39,6 @@ module bit_num_reg_1(
   wire \bitNum[1]_i_3_n_0 ;
   wire clk_IBUF;
   wire clk_IBUF_BUFG;
-  wire \cycles[0]_i_1_n_0 ;
   wire [12:0]cycles_reg;
   wire dataBit;
   wire startBit;
@@ -152,7 +152,7 @@ module bit_num_reg_1(
         .CE(\<const1> ),
         .D(\cycles_reg_0__i_2_n_7 ),
         .Q(cycles_reg[0]),
-        .R(\cycles[0]_i_1_n_0 ));
+        .R(\cycles_0__i_1_n_0 ));
   FDRE #( // G
     .INIT(1'b0)) 
     \cycles_reg[10] 
@@ -160,7 +160,7 @@ module bit_num_reg_1(
         .CE(\<const1> ),
         .D(\cycles_reg_8__i_1_n_5 ),
         .Q(cycles_reg[10]),
-        .R(\cycles[0]_i_1_n_0 ));
+        .R(\cycles_0__i_1_n_0 ));
   FDRE #( // G
     .INIT(1'b0)) 
     \cycles_reg[11] 
@@ -168,7 +168,7 @@ module bit_num_reg_1(
         .CE(\<const1> ),
         .D(\cycles_reg_8__i_1_n_4 ),
         .Q(cycles_reg[11]),
-        .R(\cycles[0]_i_1_n_0 ));
+        .R(\cycles_0__i_1_n_0 ));
   FDRE #( // G
     .INIT(1'b0)) 
     \cycles_reg[12] 
@@ -176,7 +176,7 @@ module bit_num_reg_1(
         .CE(\<const1> ),
         .D(\cycles_reg_12_i_1_n_7 ),
         .Q(cycles_reg[12]),
-        .R(\cycles[0]_i_1_n_0 ));
+        .R(\cycles_0__i_1_n_0 ));
   FDRE #( // G
     .INIT(1'b0)) 
     \cycles_reg[1] 
@@ -184,7 +184,7 @@ module bit_num_reg_1(
         .CE(\<const1> ),
         .D(\cycles_reg_0__i_2_n_6 ),
         .Q(cycles_reg[1]),
-        .R(\cycles[0]_i_1_n_0 ));
+        .R(\cycles_0__i_1_n_0 ));
   FDRE #( // G
     .INIT(1'b0)) 
     \cycles_reg[2] 
@@ -192,7 +192,7 @@ module bit_num_reg_1(
         .CE(\<const1> ),
         .D(\cycles_reg_0__i_2_n_5 ),
         .Q(cycles_reg[2]),
-        .R(\cycles[0]_i_1_n_0 ));
+        .R(\cycles_0__i_1_n_0 ));
   FDRE #( // G
     .INIT(1'b0)) 
     \cycles_reg[3] 
@@ -200,7 +200,7 @@ module bit_num_reg_1(
         .CE(\<const1> ),
         .D(\cycles_reg_0__i_2_n_4 ),
         .Q(cycles_reg[3]),
-        .R(\cycles[0]_i_1_n_0 ));
+        .R(\cycles_0__i_1_n_0 ));
   FDRE #( // G
     .INIT(1'b0)) 
     \cycles_reg[4] 
@@ -208,7 +208,7 @@ module bit_num_reg_1(
         .CE(\<const1> ),
         .D(\cycles_reg_4__i_1_n_7 ),
         .Q(cycles_reg[4]),
-        .R(\cycles[0]_i_1_n_0 ));
+        .R(\cycles_0__i_1_n_0 ));
   FDRE #( // G
     .INIT(1'b0)) 
     \cycles_reg[5] 
@@ -216,7 +216,7 @@ module bit_num_reg_1(
         .CE(\<const1> ),
         .D(\cycles_reg_4__i_1_n_6 ),
         .Q(cycles_reg[5]),
-        .R(\cycles[0]_i_1_n_0 ));
+        .R(\cycles_0__i_1_n_0 ));
   FDRE #( // G
     .INIT(1'b0)) 
     \cycles_reg[6] 
@@ -224,7 +224,7 @@ module bit_num_reg_1(
         .CE(\<const1> ),
         .D(\cycles_reg_4__i_1_n_5 ),
         .Q(cycles_reg[6]),
-        .R(\cycles[0]_i_1_n_0 ));
+        .R(\cycles_0__i_1_n_0 ));
   FDRE #( // G
     .INIT(1'b0)) 
     \cycles_reg[7] 
@@ -232,7 +232,7 @@ module bit_num_reg_1(
         .CE(\<const1> ),
         .D(\cycles_reg_4__i_1_n_4 ),
         .Q(cycles_reg[7]),
-        .R(\cycles[0]_i_1_n_0 ));
+        .R(\cycles_0__i_1_n_0 ));
   FDRE #( // G
     .INIT(1'b0)) 
     \cycles_reg[8] 
@@ -240,7 +240,7 @@ module bit_num_reg_1(
         .CE(\<const1> ),
         .D(\cycles_reg_8__i_1_n_7 ),
         .Q(cycles_reg[8]),
-        .R(\cycles[0]_i_1_n_0 ));
+        .R(\cycles_0__i_1_n_0 ));
   FDRE #( // G
     .INIT(1'b0)) 
     \cycles_reg[9] 
@@ -248,5 +248,5 @@ module bit_num_reg_1(
         .CE(\<const1> ),
         .D(\cycles_reg_8__i_1_n_6 ),
         .Q(cycles_reg[9]),
-        .R(\cycles[0]_i_1_n_0 ));
+        .R(\cycles_0__i_1_n_0 ));
 endmodule
