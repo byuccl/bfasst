@@ -1,0 +1,4 @@
+top: stopwatch_top
+
+include_all_verilog_files: True
+include_all_system_verilog_files: True
