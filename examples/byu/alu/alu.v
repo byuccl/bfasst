@@ -16,7 +16,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 module alu(op1, op2, alu_op, zero, result);
-input wire[31:0] op1, op2; //Op1 = Operand 1. Op2 = Operand 2.
+input wire[31:0] op1;
+input wire[31:0] op2; //Op1 = Operand 1. Op2 = Operand 2.
 input wire[3:0] alu_op; //alu_op determines which operation is done between Op1 & Op2.
 output reg zero; //This output tells us if the operation results in a zero.
 output reg[31:0] result; //This 32 bit output is the resulting value of the operation.
