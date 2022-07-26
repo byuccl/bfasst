@@ -1,43 +1,49 @@
-import bfasst 
-import subprocess
+import bfasst
 import pathlib
-import sys
-import os
+import bfasst.paths
 import re
-import fileinput
+import pathlib
+import numpy as np
+import spydrnet as sdn
+import subprocess
+from pathlib import Path
+from random import randint
 from bfasst.compare.base import CompareTool
 from bfasst.status import Status, CompareStatus
 from bfasst.tool import ToolProduct
-from random import randint
-from os.path import exists
-import numpy as np
-import spydrnet as sdn
+from subprocess import Popen
 
+# A data structure used to store the list of inputs, outputs, and their respective bits.
 data = {
-    "inputList": [],
-    "iBitsList": [],
-    "outputList": [],
-    "oBitsList": [],
-    "totalList": [],
-    "randList": []
+    "input_list": [],
+    "input_bits_list": [],
+    "output_list": [],
+    "output_bits_list": [],
+    "total_list": [],
+    "random_list": [],
 }
 
+"""A function used to referesh all of the data in the data structure."""
+
+
 def refresh(data):
-    data["inputList"].clear()
-    data["iBitsList"].clear()
-    data["outputList"].clear()
-    data["oBitsList"].clear()
-    data["totalList"].clear()
-    data["randList"].clear()
+    data["input_list"].clear()
+    data["input_bits_list"].clear()
+    data["output_list"].clear()
+    data["output_bits_list"].clear()
+    data["total_list"].clear()
+    data["random_list"].clear()
+
+
+"""The main class for comparing the waveforms."""
 
 
 class Waveform_CompareTool(CompareTool):
-
     TOOL_WORK_DIR = "waveform"
     LOG_FILE_NAME = "log.txt"
-    CELLS_SIM = str(pathlib.Path.cwd()) + "/third_party/yosys/techlibs/xilinx/cells_sim.v" + "; "
-    #Note: Impl design = str(design.impl_netlist_path)
-    #Reversed design = str(design.reversed_netlist_path)
+
+    """The function that compares the netlists."""
+
     def compare_netlists(self, design, print_to_stdout=True):
         self.print_to_stdout = print_to_stdout
         log_path = self.work_dir / self.LOG_FILE_NAME
@@ -45,7 +51,8 @@ class Waveform_CompareTool(CompareTool):
         status = self.get_prev_run_status(
             tool_products=(generate_comparison,),
             dependency_modified_time=max(
-                pathlib.Path(__file__).stat().st_mtime, design.reversed_netlist_path.stat().st_mtime
+                pathlib.Path(__file__).stat().st_mtime,
+                design.reversed_netlist_path.stat().st_mtime,
             ),
         )
 
@@ -53,293 +60,390 @@ class Waveform_CompareTool(CompareTool):
             if self.print_to_stdout:
                 self.print_skipping_compare()
             return status
-        
+
         if self.print_to_stdout:
             self.print_running_compare()
 
-        #Create TestBench, TCL, etc. 
-        IMPL_NAME = design.impl_netlist_path.name[0: len(design.impl_netlist_path.name)-2]
-        REVERSED_NAME = design.reversed_netlist_path.name[0: len(design.reversed_netlist_path.name)-2]
-        print("Module 1: " + IMPL_NAME)
-        print("Module 2: " + REVERSED_NAME)
-
+        # Calls the generate_files function to create the testbenches and TCLs necessary for gtkwave.
         self.generate_files(design)
 
-        if(self.runTest(design)):
+        # Checks if the designs are equivalent. If they are, returns success. If not, asserts NOT_EQUIVALENT.
+        if self.run_test(design):
             return self.success_status
         else:
             return Status(CompareStatus.NOT_EQUIVALENT)
 
-    #Returns the sizes of input, output, and the total list.
-    def inputNum(self):
-        return(len(data["inputList"]))
+    """A simple function to return the amount of data stored in the input list."""
 
-    def outputNum(self):
-        return(len(data["outputList"]))
+    def input_num(self):
+        return len(data["input_list"])
 
-    def totalNum(self):
-        return(len(data["inputList"]) + len(data["outputList"]))
+    """A simple function to return the total amount of data being stored as both inputs and outputs."""
 
-    def fix_file(self, PATH, fileName, isReversed):
-        fin = open(PATH + fileName + ".v", "r")
-        fileData = fin.read()
-        if(isReversed):
-            fileData = fileData.replace("module top(", "module " + fileName + "(")
-        else:
-            fileData = fileData.replace("module " + fileName[0:len(fileName)-5] + "\n", "module " + fileName)
-        fin.close()
-        fin = open(PATH + fileName + ".v", "w")
-        fin.write(fileData)
-        fin.close()
+    def total_num(self):
+        return len(data["input_list"]) + len(data["output_list"])
+
+    """A function to fix syntax issues that spydrnet commonly has with xilinx-generated or reverse-generated netlists."""
+
+    def fix_file(self, path, file_name, is_reversed):
+        with path.open("r") as fin:
+            file_data = fin.read()
+            if is_reversed:
+                file_data = file_data.replace(
+                    "module top(", "module " + file_name + "("
+                )
+            else:
+                file_data = file_data.replace(
+                    "module " + file_name[0 : len(file_name) - 5] + "\n",
+                    "module " + file_name,
+                )
+        with path.open("w") as fin:
+            fin.write(file_data)
+
+    """Uses spydrnet to analyze the netlist and add the names of all inputs, outputs, and their respective bit sizes to the data structure."""
 
     def parse(self, file):
         netlist = sdn.parse(file)
         library = netlist.libraries[0]
-        definition = library.definitions[0] #CHANGE THIS FOR MULTIPLE-MODULE DESIGNS.
+        definition = library.definitions[0]  # CHANGE THIS FOR MULTI_MODULE DESIGNS.
+        # Use design.yaml_path to find yaml file. Read to find if more modules exist.
 
-        i = 0
-        while(i < len(definition.ports)):
-            if(str(definition.ports[i].direction) == "Direction.OUT"):
-                data["outputList"].append(definition.ports[i].name)
-                data["totalList"].append(definition.ports[i].name)
-                data["oBitsList"].append(len(definition.ports[i].pins)-1)
-            elif (str(definition.ports[i].direction) == "Direction.IN"):
-                data["inputList"].append(definition.ports[i].name)
-                data["totalList"].append(definition.ports[i].name)
-                data["iBitsList"].append(len(definition.ports[i].pins)-1)
-            i = i + 1
+        for port in definition.ports:
+            if str(port.direction) == "Direction.OUT":
+                data["output_list"].append(port.name)
+                data["total_list"].append(port.name)
+                data["output_bits_list"].append(len(port.pins) - 1)
+            elif str(port.direction) == "Direction.IN":
+                data["input_list"].append(port.name)
+                data["total_list"].append(port.name)
+                data["input_bits_list"].append(len(port.pins) - 1)
 
-    def parseReversed(self, path, file):
-        file = open(file)
-        if(exists(path + "test.v")):
-            os.remove(path + "test.v")
-        newFile = open(path + "test.v", "x")
-        i=0
+    """Due to reversed netlists having incomplete ports that can cause issues with spydrnet, this function removes
+    all of the excess data the spydrnet doesn't need so that the inputs and outputs can still be parsed."""
 
-        for line in file:
-            if "module" in line:
-                newFile.write(line)
-            elif "input" in line:
-                newFile.write(line)
-            elif "output" in line:
-                newFile.write(line)
-            else:
-                if (i == 0):
-                    i = 1
-                    newFile.write(line)
-        file.close()
-        newFile.close()
-        self.parse(newFile.name)
-        os.remove(path + "test.v")
+    def parse_reversed(self, path, build_dir):
+        test_file = build_dir / Path("test.v")
+        with path.open() as file:
+            if test_file.exists():
+                test_file.unlink()
+            with test_file.open("x") as newFile:
+                i = 0
+                # Only includes lines that declare the module, the inputs, or the outputs or the line directly after them.
+                for line in file:
+                    if "module" in line:
+                        newFile.write(line)
+                    elif "input" in line:
+                        newFile.write(line)
+                    elif "output" in line:
+                        newFile.write(line)
+                    else:
+                        if i == 0:
+                            i = 1
+                            newFile.write(line)
+        self.parse(newFile.name)  # Parses this newly-generated simplified netlist.
+        test_file.unlink()
 
-    def generateFirstTestbench(self, tb, line, tests, fileName):
+    """This function creates the initial testbench that will be modified by the reversed-netlist. It reads in a sample testbench
+    and replaces certain variables with the corresponding information from the data structure. It also sets the variables equal
+    to random numbers that are generated to be within the corresponding variable's bit range."""
+
+    def generate_first_testbench(self, tb, line, file_name, test_num):
         if "TB_NAME;" in line:
-            line = ("module " + fileName[0] + "_tb;")
+            line = "module " + file_name[0] + "_tb;"
             tb.write(line)
             line = "\n"
-        
+
         if "TB_NAME)" in line:
-            line=("    $dumpvars(0," + fileName[0] + "_tb);\n")
-        
+            line = "    $dumpvars(0," + file_name[0] + "_tb);\n"
+
         if "INPUTS" in line:
-            i = 0
-            while(i < self.inputNum()):
-                if data["inputList"][i] != "clk":
-                    line = "reg [" + str(data["iBitsList"][i]) + ":0] " + data["inputList"][i] + " = 0;\n"
+            for input, bits in zip(data["input_list"], data["input_bits_list"]):
+                input = str(input)
+                bits = str(bits)
+                if input != "clk":
+                    line = "reg [" + bits + ":0] " + input + " = 0;\n"
                     tb.write(line)
-                i = i+1
             line = ""
 
         if "OUTPUTS" in line:
-            i = 0
-            while(i < self.outputNum()):
-                line = "wire [" + str(data["oBitsList"][i]) + ":0] " + data["outputList"][i] + ";\n"
+            for output, bits in zip(data["output_list"], data["output_bits_list"]):
+                output = str(output)
+                bits = str(bits)
+                line = "wire [" + bits + ":0] " + output + ";\n"
                 tb.write(line)
-                i=i+1
             line = ""
-        
+
         if "MODULE_NAME" in line:
-            i = 0
-            line = fileName[0] + " instanceOf ("
-            while(i < self.totalNum()):
-                if(i == self.totalNum() - 1):
-                    line = line + data["totalList"][i] + ");\n"
+            line = file_name[0] + " instanceOf ("
+            for total, i in zip(data["total_list"], range(self.total_num())):
+                total = str(total)
+                if i == self.total_num() - 1:
+                    line = line + total + ");\n"
                 else:
-                    line = line + data["totalList"][i] + ", "
-                i = i + 1
+                    line = line + total + ", "
 
         if "/*SIGNALS" in line:
-            i = 0
-            while(i < self.inputNum()):
-                if data["iBitsList"][i] == 0:
-                    data["randList"].append(np.random.randint(low = 0, high = 2, size = int(tests)))
+            for bits in data["input_bits_list"]:
+                if bits == 0:
+                    data["random_list"].append(
+                        np.random.randint(low=0, high=2, size=int(test_num))
+                    )
                 else:
-                    data["randList"].append(np.random.randint(low = 0, high = (2**(int(data["iBitsList"][i]) + 1)-1), size = int(tests)))
-                i=i+1
-            i = 0
-            j = 0
-            while(i < int(tests)):
-                while(j < self.inputNum()):
-                    if(j == 0):
-                        line = "    # 5 " + str(data["inputList"][j]) + " = " + str(data["randList"][j][i]) + ";\n"
+                    data["random_list"].append(
+                        np.random.randint(
+                            low=0, high=(2 ** (int(bits) + 1) - 1), size=int(test_num)
+                        )
+                    )
+
+            # The actual logic for adding random numbers to the testbench.
+            for i in range(int(test_num)):
+                for input, j in zip(data["input_list"], range(self.input_num())):
+                    if j == 0:
+                        line = (
+                            "    # 5 "
+                            + str(input)
+                            + " = "
+                            + str(data["random_list"][j][i])
+                            + ";\n"
+                        )
                     else:
-                        line = "    " + str(data["inputList"][j]) + " = " + str(data["randList"][j][i]) + ";\n"
-                    j=j+1
+                        line = (
+                            "    "
+                            + str(input)
+                            + " = "
+                            + str(data["random_list"][j][i])
+                            + ";\n"
+                        )
                     tb.write(line)
-                j=0
-                i=i+1
                 tb.write("\n")
             line = "    # 5 $finish;"
 
         tb.write(line)
 
-    def generateTestbench(self, tb, line, fileName, fileNum):
-        if fileName[fileNum-1] + "_tb;" in line:
-            line = line.replace(fileName[fileNum-1], fileName[fileNum])
-        
-        if fileName[fileNum-1] + "_tb);" in line:
-            line = "    $dumpvars(0," + fileName[fileNum] + "_tb);\n"
-        
-        if fileName[fileNum-1] + " instanceOf (" in line:
-            line = fileName[fileNum] + " instanceOf ("
-            i = 0
-            while(i < self.totalNum()):
-                if(i == self.totalNum() - 1):
-                    line = line + data["totalList"][i] + ");\n"
+    """Rather than generating a whole new testbench, this one takes the first generated testbench and replaces everything that
+    is specific to that module with this module's information."""
+
+    def generate_testbench(self, tb, line, file_name, file_num):
+        if file_name[file_num - 1] + "_tb;" in line:
+            line = line.replace(file_name[file_num - 1], file_name[file_num])
+
+        if file_name[file_num - 1] + "_tb);" in line:
+            line = "    $dumpvars(0," + file_name[file_num] + "_tb);\n"
+
+        if file_name[file_num - 1] + " instanceOf (" in line:
+            line = file_name[file_num] + " instanceOf ("
+
+            for totalData, i in zip(data["total_list"], range(self.total_num())):
+                if i == self.total_num() - 1:
+                    line = line + totalData + ");\n"
                 else:
-                    line = line + data["totalList"][i] + ", "
-                i = i + 1
+                    line = line + totalData + ", "
 
         tb.write(line)
 
-    def generateFirstTCL(self, PATH, fileName, fileNum):
-        if(exists(PATH + fileName[fileNum] + ".tcl")):
-            os.remove(PATH+ fileName[fileNum] + ".tcl")
-        TCL = open(PATH + fileName[fileNum] + ".tcl", "x")
-        i=0
-        line = "set filter [list "
-        while(i < self.totalNum()):
-            line = line + fileName[fileNum] + "_tb." + str(data["totalList"][i]).strip() + " "
-            i=i+1
-        line = line + "]\n"
-        TCL.write(line)
-        TCL.write("gtkwave::addSignalsFromList $filter\n")
-        TCL.write('gtkwave::/File/Export/Write_VCD_File_As "' + str(PATH) + fileName[fileNum] + '.vcd"\n')
-        TCL.write("gtkwave::File/Quit")
+    """Generates the first TCL that will be used in gtkwave to create a VCD output."""
 
-    def generateTCL(self, PATH, fileName, fileNum):
-        if(exists(PATH + fileName[fileNum] + ".tcl")):
-            os.remove(PATH + fileName[fileNum] + ".tcl")   
-        TCL = open(PATH + fileName[fileNum] + ".tcl", "x")
-        sample = open(PATH + fileName[fileNum-1] + ".tcl")
-        for line in sample:
-            if fileName[fileNum-1] in line:
-                line = line.replace(fileName[fileNum-1], fileName[fileNum])
+    def generate_first_TCL(self, build_dir, file_name, file_num):
+        path = build_dir / Path(file_name[file_num] + ".tcl")
+        if path.exists():
+            path.unlink()
+        with path.open("x") as TCL:
+            line = "set filter [list "
+            for totalData in data["total_list"]:
+                line = line + file_name[file_num] + "_tb." + totalData.strip() + " "
+            line = line + "]\n"
             TCL.write(line)
-        
+            TCL.write("gtkwave::addSignalsFromList $filter\n")
+            TCL.write(
+                'gtkwave::/File/Export/Write_VCD_File_As "'
+                + str(build_dir)
+                + "/"
+                + file_name[file_num]
+                + '.vcd"\n'
+            )
+            TCL.write("gtkwave::File/Quit")
+
+    """Replaces information in the last TCL with information specific to this testbench."""
+
+    def generate_TCL(self, build_dir, file_name, file_num):
+        path = build_dir / Path(file_name[file_num] + ".tcl")
+        sample_path = build_dir / Path(file_name[file_num - 1] + ".tcl")
+        if path.exists():
+            path.unlink()
+        with path.open("x") as TCL:
+            with sample_path.open() as sample:
+                for line in sample:
+                    if file_name[file_num - 1] in line:
+                        line = line.replace(
+                            file_name[file_num - 1], file_name[file_num]
+                        )
+                    TCL.write(line)
+
+    """The main function that generates testbenches and TCL files. It begins by calling the parsers for the input & output names, then
+    it calls the testbench generators, finally it calls the TCL generators. It then increments to the next file and clears the data structure."""
 
     def generate_files(self, design):
-        TESTS = 100 #Note: change this number to however many tests the testbench should run.
-        SAMPLE_PATH = str(pathlib.Path.cwd()) + "/scripts/bfasst/compare_waveforms/sample_tb.v"
-        fileName = [design.impl_netlist_path.name[0: len(design.impl_netlist_path.name)-2], 
-        design.reversed_netlist_path.name[0: len(design.reversed_netlist_path.name)-2]]
-        file = [open(design.impl_netlist_path), open(design.reversed_netlist_path)]
-        fileNum = 0
-        PATH = str(design.impl_netlist_path)
-        PATH = PATH[0: len(PATH) - len(design.impl_netlist_path.name)]
+        test_num = 100
+        sample_path = bfasst.paths.ROOT_PATH / Path(
+            "scripts/bfasst/compare_waveforms/sample_tb.v"
+        )
+        impl_path = design.impl_netlist_path
+        reversed_path = design.reversed_netlist_path
+        impl_module = impl_path.name[0 : len(impl_path.name) - 2]
+        reversed_module = reversed_path.name[0 : len(reversed_path.name) - 2]
+        file_name = [impl_module, reversed_module]
 
-        for x in file:
+        # opens both files to be used in generating respective testbenches and TCLs
+        with open(impl_path) as impl_file:
+            with open(reversed_path) as reversed_file:
+                file = [impl_file, reversed_file]
+                build_dir = bfasst.paths.WAVEFORM_BUILD / design.rel_path
+                for f, file_num in zip(file, range(len(file))):
+                    file_path = build_dir / Path(file_name[file_num] + ".v")
+                    tb_path = build_dir / Path(file_name[file_num] + "_tb.v")
 
-            if(x.name.find("reversed") != -1):
-                self.fix_file(PATH, fileName[fileNum], True)
-                self.parseReversed(PATH, x.name)
-            else:
-                self.fix_file(PATH, fileName[fileNum], False)
-                self.parse(x.name)
-            
-            if(exists(PATH + fileName[fileNum] + "_tb.v")):
-                os.remove(PATH + fileName[fileNum] + "_tb.v")
-            
-            if fileNum == 0:
-                sample = open(SAMPLE_PATH)
-            else:
-                sample = open(PATH + fileName[fileNum-1] + "_tb.v")
-            tb = open(PATH + fileName[fileNum] + "_tb.v", "x")
+                    # Checks if the design is a reversed_netlist or not.
+                    if f.name.find("reversed") != -1:
+                        self.fix_file(file_path, file_name[file_num], True)
+                        self.parse_reversed(file_path, build_dir)
+                    else:
+                        self.fix_file(file_path, file_name[file_num], False)
+                        self.parse(f.name)
 
-            for line in sample:
-                if(fileNum == 0):
-                    self.generateFirstTestbench(tb, line, TESTS, fileName)
-                else:
-                    self.generateTestbench(tb, line, fileName, fileNum)
-            
-            sample.close()
-            tb.close()
+                    if tb_path.exists():
+                        tb_path.unlink()
 
-            if (fileNum == 0):
-                self.generateFirstTCL(PATH, fileName, fileNum)
-            else:
-                self.generateTCL(PATH, fileName, fileNum)
+                    if file_num == 0:
+                        compare_path = sample_path
+                    else:
+                        compare_path = build_dir / Path(
+                            file_name[file_num - 1] + "_tb.v"
+                        )
 
-            fileNum = fileNum + 1
-            refresh(data)
+                    # Calls both the testbench and the TCL generators.
+                    with compare_path.open() as sample:
+                        with tb_path.open("x") as tb:
+                            for line in sample:
+                                if file_num == 0:
+                                    self.generate_first_testbench(
+                                        tb, line, file_name, test_num
+                                    )
+                                else:
+                                    self.generate_testbench(
+                                        tb, line, file_name, file_num
+                                    )
 
-    def runTest(self, design):
-        isEquivalent = False
-        IMPL_NAME = design.impl_netlist_path.name[0: len(design.impl_netlist_path.name)-2]
-        PATH = str(design.impl_netlist_path)
-        PATH = PATH[0: len(PATH) - len(design.impl_netlist_path.name)]
-        string = "iverilog -o " + PATH + "dsn " + PATH + IMPL_NAME + "_tb.v " 
-        string = string + PATH + design.impl_netlist_path.name + " " + str(pathlib.Path.cwd()) + "/third_party/yosys/techlibs/xilinx/cells_sim.v"
-        os.system(string)
-        os.system("vvp " + PATH + "dsn")
-        os.system("mv test.vcd " + PATH + IMPL_NAME + "_temp.vcd")
-        #os.system("gtkwave -T " + PATH + IMPL_NAME + ".tcl -o " + PATH + IMPL_NAME + "_temp.vcd")
+                    if file_num == 0:
+                        self.generate_first_TCL(build_dir, file_name, file_num)
+                    else:
+                        self.generate_TCL(build_dir, file_name, file_num)
 
-        REVERSED_NAME = design.reversed_netlist_path.name[0: len(design.reversed_netlist_path.name)-2]
-        string = "iverilog -o " + PATH + "dsn " + PATH + REVERSED_NAME + "_tb.v " 
-        string = string + PATH + design.reversed_netlist_path.name + " " + str(pathlib.Path.cwd()) + "/third_party/yosys/techlibs/xilinx/cells_sim.v"
-        os.system(string)
-        os.system("vvp " + PATH + "dsn")
-        os.system("mv test.vcd " + PATH + REVERSED_NAME + "_temp.vcd")
-        os.system("echo do_initial_zoom_fit 1 >> .gtkwaverc")
-        os.system("gtkwave -T " + PATH + REVERSED_NAME + ".tcl -o " + PATH + REVERSED_NAME + "_temp.vcd & gtkwave -T " + PATH + IMPL_NAME + ".tcl -o " + PATH + IMPL_NAME + "_temp.vcd")
-        os.remove(".gtkwaverc")
-        os.system("diff " + PATH + IMPL_NAME + ".vcd " + PATH + REVERSED_NAME + ".vcd >> " + PATH + "diff.txt")
+                    refresh(data)
 
-        file = open(PATH + "diff.txt")
+    """A simple difference-checker that confirms that both files are the same. Note: Only the module names and perhaps
+    the creation times of these files should be different, thus if the line count is greater than 4, these files
+    must be unequivalent."""
+
+    def check_difference(self, path1, path2, diff):
+        with path1.open("r") as f:
+            with path2.open("r") as j:
+                with diff.open("w") as output:
+                    for line1, line2 in zip(f, j):
+                        if line1 != line2:
+                            output.write(line1)
+                            output.write(line2)
+                            output.write("\n")
+
+    """A function that generates the wavefiles from the testbenches, runs gtkwave w/ the TCLs generated earlier on the wavefiles
+    that have just been generated, then checks the difference between gtkwave's two outputs. If there are more than 4 lines that
+    are different, the designs must be unequivalent. Removes all unnecessary files after testing."""
+
+    def run_test(self, design):
+        is_equivalent = False
+        build_dir = bfasst.paths.WAVEFORM_BUILD / design.rel_path
+        impl_path = design.impl_netlist_path
+        reversed_path = design.reversed_netlist_path
+        impl_module = impl_path.name[0 : len(impl_path.name) - 2]
+        reversed_module = reversed_path.name[0 : len(reversed_path.name) - 2]
+        dsn = build_dir / Path("dsn")
+        impl_tb = build_dir / Path(impl_module + "_tb.v")
+        reversed_tb = build_dir / Path(reversed_module + "_tb.v")
+        impl_tcl = build_dir / Path(impl_module + ".tcl")
+        reversed_tcl = build_dir / Path(reversed_module + ".tcl")
+        impl_temp_vcd = build_dir / Path(impl_module + "_temp.vcd")
+        reversed_temp_vcd = build_dir / Path(reversed_module + "_temp.vcd")
+        impl_vcd = build_dir / Path(impl_module + ".vcd")
+        reversed_vcd = build_dir / Path(reversed_module + ".vcd")
+        impl_fst = build_dir / Path(impl_module + "_temp.vcd.fst")
+        reversed_fst = build_dir / Path(reversed_module + "_temp.vcd.fst")
+        cells_sim = bfasst.paths.ROOT_PATH / Path(
+            "third_party/yosys/techlibs/xilinx/cells_sim.v"
+        )
+        diff_file = build_dir / Path("diff.txt")
+
+        # Generate wavefiles for the golden-file
+        subprocess.run(
+            ["iverilog", "-o", str(dsn), str(impl_tb), impl_path, str(cells_sim)]
+        )
+        subprocess.run(["vvp", str(dsn)])
+        subprocess.run(["mv", "test.vcd", str(impl_temp_vcd)])
+
+        # Generate wavefiles for the reversed-netlist
+        subprocess.run(
+            [
+                "iverilog",
+                "-o",
+                str(dsn),
+                str(reversed_tb),
+                reversed_path,
+                str(cells_sim),
+            ]
+        )
+        subprocess.run(["vvp", str(dsn)])
+        subprocess.run(["mv", "test.vcd", str(reversed_temp_vcd)])
+
+        # Setup gtkwave for the two files
+        commands = [
+            ["gtkwave", "-T", str(impl_tcl), "-o", str(impl_temp_vcd)],
+            ["gtkwave", "-T", str(reversed_tcl), "-o", str(reversed_temp_vcd)],
+        ]
+
+        # Procs is used to run these two wavefiles in parallel so both can be viewed against each other.
+        procs = [Popen(i) for i in commands]
+        for p in procs:
+            p.wait()
+
+        # Finds how many lines are different in the two files.
+        self.check_difference(impl_vcd, reversed_vcd, diff_file)
         lines = 0
-        for line in file:
-            lines = lines + 1
+        with diff_file.open() as file:
+            for line in file:
+                lines = lines + 1
 
-        if(lines > 8):
-            print("NOT EQUIVALENT! See " + PATH + "diff.txt for more info!")
-            os.remove(PATH + IMPL_NAME + "_temp.vcd")
-            os.remove(PATH + REVERSED_NAME + "_temp.vcd")
-            os.remove(PATH + IMPL_NAME + "_temp.vcd.fst")
-            os.remove(PATH + REVERSED_NAME + "_temp.vcd.fst") 
-            os.remove(PATH + IMPL_NAME + ".tcl")
-            os.remove(PATH + REVERSED_NAME + ".tcl")
-            os.system("diff -c " + PATH + IMPL_NAME + ".vcd " + PATH + REVERSED_NAME + ".vcd")
+        # If there are more than 4 lines different, the two designs must be unequivalent. Puts the difference of the two in the console
+        # and returns unequivalent.
+        if lines > 4:
+            print("NOT EQUIVALENT! SEE " + str(diff_file) + " for more info")
+            subprocess.run(["diff", "-c", str(impl_vcd), str(reversed_vcd)])
+
         else:
-            isEquivalent = True
-            print("WAVEFORMS EQUIVALENT!")
-            os.remove(PATH + IMPL_NAME + "_temp.vcd")
-            os.remove(PATH + REVERSED_NAME + "_temp.vcd")
-            os.remove(PATH + IMPL_NAME + ".vcd")
-            os.remove(PATH + REVERSED_NAME + ".vcd")
-            os.remove(PATH + IMPL_NAME + "_temp.vcd.fst")
-            os.remove(PATH + REVERSED_NAME + "_temp.vcd.fst") 
-            os.remove(PATH + IMPL_NAME + ".tcl")
-            os.remove(PATH + REVERSED_NAME + ".tcl")
-            os.remove(PATH + "dsn")
-            os.remove(PATH + "diff.txt")
-        return(isEquivalent)
-
-
-
+            impl_vcd.unlink()
+            reversed_vcd.unlink()
+            dsn.unlink()
+            diff_file.unlink()
+            is_equivalent = True
+        # removes unnecessary files.
+        impl_temp_vcd.unlink()
+        reversed_temp_vcd.unlink()
+        impl_fst.unlink()
+        reversed_fst.unlink()
+        impl_tcl.unlink()
+        reversed_tcl.unlink()
+        return is_equivalent
 
     def check_compare_status(self, log_path):
-        log_text = open(log_path).read()
+        with open(log_path) as log:
+            log_text = log.read()
 
         # Check for timeout
         if re.search(r"^Timeout$", log_text, re.M):
