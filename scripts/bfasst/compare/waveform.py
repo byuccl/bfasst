@@ -402,7 +402,13 @@ class Waveform_CompareTool(CompareTool):
         subprocess.run(["vvp", str(dsn)])
         subprocess.run(["mv", "test.vcd", str(reversed_temp_vcd)])
 
-        # Setup gtkwave for the two files
+        # Setup gtkwave for the two files (creates file .gtkwaverc to set the zoom on the graphs to fit the window.)
+        gtkwave = Path(".gtkwaverc")
+        if(gtkwave.exists()):
+            gtkwave.unlink()
+        with gtkwave.open("x") as wavefile:
+            wavefile.write("do_initial_zoom_fit 1")
+        
         commands = [
             ["gtkwave", "-T", str(impl_tcl), "-o", str(impl_temp_vcd)],
             ["gtkwave", "-T", str(reversed_tcl), "-o", str(reversed_temp_vcd)],
@@ -413,6 +419,7 @@ class Waveform_CompareTool(CompareTool):
         for p in procs:
             p.wait()
 
+        gtkwave.unlink()
         # Finds how many lines are different in the two files.
         self.check_difference(impl_vcd, reversed_vcd, diff_file)
         lines = 0
