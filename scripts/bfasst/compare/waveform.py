@@ -1,5 +1,6 @@
 import bfasst
 import pathlib
+from bfasst.compare import analyze_graph
 import bfasst.paths
 import re
 import pathlib
@@ -64,14 +65,58 @@ class Waveform_CompareTool(CompareTool):
         if self.print_to_stdout:
             self.print_running_compare()
 
-        # Calls the generate_files function to create the testbenches and TCLs necessary for gtkwave.
-        self.generate_files(design)
+        impl_path = design.impl_netlist_path
+        module = impl_path.name[0 : len(impl_path.name) - 7]
+        build_dir = bfasst.paths.WAVEFORM_BUILD / design.rel_path
+        diff = build_dir / "diff.txt"
+        impl_vcd = build_dir / Path(module + "_impl.vcd")
+        reversed_vcd = build_dir / Path(module + "_reversed.vcd")
 
-        # Checks if the designs are equivalent. If they are, returns success. If not, asserts NOT_EQUIVALENT.
-        if self.run_test(design):
-            return self.success_status
+        #This series of if/else statements is used to check if the tests have already been performed. If they have, an option is presented
+        # for the user to view the previously-generated waveforms. If the design was unequivalent previously, the diff output will be
+        # pasted into the linux terminal so they can view specific times in the waveform.
+
+        if(diff.exists()):
+            cont = input("Design has already been tested and came back unequivalent. View Waveforms? Input 1 for yes, 0 for no.")
+            if(cont == "0"):
+                cont = input("Ok. Do you want to generate new testbenches and check equivalence again? Input 1 for yes, 0 for no.")
+                if(cont == "0"):
+                    print("Ok. Ending Tests.")
+                    return Status(CompareStatus.NOT_EQUIVALENT)
+                else:
+                    self.generate_files(design)
+                    if self.run_test(design):
+                        return self.success_status
+                    else:
+                        return Status(CompareStatus.NOT_EQUIVALENT)
+            else:
+                analyze_graph.analyze_graphs(build_dir, module)
+                return Status(CompareStatus.NOT_EQUIVALENT)
+        elif(impl_vcd.exists() & reversed_vcd.exists()):
+            cont = input("Design has already been tested and was equivalent. View Waveforms? Input 1 for yes, 0 for no.")
+            if(cont == "0"):
+                cont = input("Ok. Do you want to generate new testbenches and check equivalence again? Input 1 for yes, 0 for no.")
+                if(cont == "0"):
+                    print("Ok. Ending Tests.")
+                    return self.success_status
+                else:
+                    self.generate_files(design)
+                    if self.run_test(design):
+                        return self.success_status
+                    else:
+                        return Status(CompareStatus.NOT_EQUIVALENT)
+            else:
+                analyze_graph.analyze_graphs(build_dir, module)
+                return self.success_status
         else:
-            return Status(CompareStatus.NOT_EQUIVALENT)
+            # Calls the generate_files function to create the testbenches and TCLs necessary for gtkwave.
+            self.generate_files(design)
+
+            # Checks if the designs are equivalent. If they are, returns success. If not, asserts NOT_EQUIVALENT.
+            if self.run_test(design):
+                return self.success_status
+            else:
+                return Status(CompareStatus.NOT_EQUIVALENT)
 
     """A simple function to return the amount of data stored in the input list."""
 
@@ -341,7 +386,7 @@ class Waveform_CompareTool(CompareTool):
                     refresh(data)
 
     """A simple difference-checker that confirms that both files are the same. Note: Only the module names and perhaps
-    the creation times of these files should be different, thus if the line count is greater than 4, these files
+    the creation times of these files should be different, thus if the line count is greater than 5, these files
     must be unequivalent."""
 
     def check_difference(self, path1, path2, diff):
@@ -355,7 +400,7 @@ class Waveform_CompareTool(CompareTool):
                             output.write("\n")
 
     """A function that generates the wavefiles from the testbenches, runs gtkwave w/ the TCLs generated earlier on the wavefiles
-    that have just been generated, then checks the difference between gtkwave's two outputs. If there are more than 4 lines that
+    that have just been generated, then checks the difference between gtkwave's two outputs. If there are more than 5 lines that
     are different, the designs must be unequivalent. Removes all unnecessary files after testing."""
 
     def run_test(self, design):
@@ -425,17 +470,16 @@ class Waveform_CompareTool(CompareTool):
         lines = 0
         with diff_file.open() as file:
             for line in file:
-                lines = lines + 1
+                if len(line) != 0:
+                    lines = lines + 1
 
-        # If there are more than 4 lines different, the two designs must be unequivalent. Puts the difference of the two in the console
+        # If there are more than 5 lines different, the two designs must be unequivalent. Puts the difference of the two in the console
         # and returns unequivalent.
-        if lines > 4:
+        if lines > 5:
             print("NOT EQUIVALENT! SEE " + str(diff_file) + " for more info")
             subprocess.run(["diff", "-c", str(impl_vcd), str(reversed_vcd)])
 
         else:
-            impl_vcd.unlink()
-            reversed_vcd.unlink()
             dsn.unlink()
             diff_file.unlink()
             is_equivalent = True
@@ -444,8 +488,19 @@ class Waveform_CompareTool(CompareTool):
         reversed_temp_vcd.unlink()
         impl_fst.unlink()
         reversed_fst.unlink()
-        impl_tcl.unlink()
-        reversed_tcl.unlink()
+        lines = []
+        with impl_tcl.open("r") as fp:
+            lines = fp.readlines()
+        with impl_tcl.open("w") as fp:
+            for number, line in enumerate(lines):
+                if number not in [2,3]:
+                    fp.write(line)
+        with reversed_tcl.open("r") as fp:
+            lines = fp.readlines()
+        with reversed_tcl.open("w") as fp:
+            for number, line in enumerate(lines):
+                if number not in [2,3]:
+                    fp.write(line)
         return is_equivalent
 
     def check_compare_status(self, log_path):
