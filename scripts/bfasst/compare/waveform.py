@@ -1,3 +1,10 @@
+#Waveform equivalence checker. Designed by Jake Edvenson.
+#Relies on gtkwave, icarus-verilog, spydrnet, and numpy. 
+#To use this script, use ./scripts/run_design.py (DESIGN_PATH) xilinx_yosys_waveform
+#The rest of the script should be self-explanitory. I've included a lot of user-prompts to make it very user-friendly.
+#If vivado or F4PGA ever change there netlist-generating style, this file may need to be edited.
+#I would check the fix_file function because this file currently alters the netlists so that spydrnet can parse them. 
+
 import bfasst
 import pathlib
 from bfasst.compare import analyze_graph
@@ -7,6 +14,7 @@ import pathlib
 import numpy as np
 import spydrnet as sdn
 import subprocess
+import yaml
 from pathlib import Path
 from random import randint
 from bfasst.compare.base import CompareTool
@@ -71,6 +79,27 @@ class Waveform_CompareTool(CompareTool):
         diff = build_dir / "diff.txt"
         impl_vcd = build_dir / Path(module + "_impl.vcd")
         reversed_vcd = build_dir / Path(module + "_reversed.vcd")
+
+        #Added this in to check if there are multiple verilog files or not. This will present the user with a warning because
+        #currently these can cause strange errors with equivalence checking. 
+        with open(design.yaml_path) as fp:
+            design_props = yaml.safe_load(fp)
+        
+        giveWarning = False
+
+        for k,v in design_props.items():
+            # Handle 'include_all_verilog_files' option
+            if k == "include_all_verilog_files":
+                giveWarning = True
+            # Handle 'include_all_system_verilog_files' option
+            elif k == "include_all_system_verilog_files":
+                giveWarning = True
+
+        if giveWarning:
+            cont = input("Warning: Detected multiple verilog files. Results may be inaccurate.\n Continue anyways? 1 for yes, 0 for no.")
+            if(cont == "0"):
+                print("Ok. Returning non-equivalent status.")
+                return Status(CompareStatus.NOT_EQUIVALENT)
 
         #This series of if/else statements is used to check if the tests have already been performed. If they have, an option is presented
         # for the user to view the previously-generated waveforms. If the design was unequivalent previously, the diff output will be
@@ -385,22 +414,8 @@ class Waveform_CompareTool(CompareTool):
 
                     refresh(data)
 
-    """A simple difference-checker that confirms that both files are the same. Note: Only the module names and perhaps
-    the creation times of these files should be different, thus if the line count is greater than 5, these files
-    must be unequivalent."""
-
-    def check_difference(self, path1, path2, diff):
-        with path1.open("r") as f:
-            with path2.open("r") as j:
-                with diff.open("w") as output:
-                    for line1, line2 in zip(f, j):
-                        if line1 != line2:
-                            output.write(line1)
-                            output.write(line2)
-                            output.write("\n")
-
     """A function that generates the wavefiles from the testbenches, runs gtkwave w/ the TCLs generated earlier on the wavefiles
-    that have just been generated, then checks the difference between gtkwave's two outputs. If there are more than 5 lines that
+    that have just been generated, then checks the difference between gtkwave's two outputs. If there are more than 20 lines that
     are different, the designs must be unequivalent. Removes all unnecessary files after testing."""
 
     def run_test(self, design):
@@ -466,16 +481,21 @@ class Waveform_CompareTool(CompareTool):
 
         gtkwave.unlink()
         # Finds how many lines are different in the two files.
-        self.check_difference(impl_vcd, reversed_vcd, diff_file)
+        dif = subprocess.getoutput(["diff -c " + str(impl_vcd) + " " + str(reversed_vcd)])
+        if diff_file.exists():
+            diff_file.unlink()
+        with diff_file.open("x") as file:
+            for line in dif:
+                file.write(line)
+
         lines = 0
         with diff_file.open() as file:
             for line in file:
                 if len(line) != 0:
                     lines = lines + 1
 
-        # If there are more than 5 lines different, the two designs must be unequivalent. Puts the difference of the two in the console
-        # and returns unequivalent.
-        if lines > 5:
+        # If there are more than 20 lines different, the two designs must be unequivalent.
+        if lines > 20:
             print("NOT EQUIVALENT! SEE " + str(diff_file) + " for more info")
             subprocess.run(["diff", "-c", str(impl_vcd), str(reversed_vcd)])
 
