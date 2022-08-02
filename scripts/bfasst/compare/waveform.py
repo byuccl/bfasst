@@ -15,6 +15,7 @@ import numpy as np
 import spydrnet as sdn
 import subprocess
 import yaml
+import shutil
 from pathlib import Path
 from random import randint
 from bfasst.compare.base import CompareTool
@@ -75,10 +76,15 @@ class Waveform_CompareTool(CompareTool):
 
         impl_path = design.impl_netlist_path
         module = impl_path.name[0 : len(impl_path.name) - 7]
-        build_dir = bfasst.paths.WAVEFORM_BUILD / design.rel_path
+        build_dir = self.work_dir
         diff = build_dir / "diff.txt"
-        impl_vcd = build_dir / Path(module + "_impl.vcd")
-        reversed_vcd = build_dir / Path(module + "_reversed.vcd")
+        impl_vcd = build_dir / (module + "_impl.vcd")
+        reversed_vcd = build_dir / (module + "_reversed.vcd")
+
+        shutil.copyfile(impl_path,build_dir / design.impl_netlist_path.name)
+        shutil.copyfile(design.reversed_netlist_path, build_dir / design.reversed_netlist_path.name)
+
+        #print(self.work_dir)
 
         #Added this in to check if there are multiple verilog files or not. This will present the user with a warning because
         #currently these can cause strange errors with equivalence checking. 
@@ -196,7 +202,7 @@ class Waveform_CompareTool(CompareTool):
     all of the excess data the spydrnet doesn't need so that the inputs and outputs can still be parsed."""
 
     def parse_reversed(self, path, build_dir):
-        test_file = build_dir / Path("test.v")
+        test_file = build_dir / "test.v"
         with path.open() as file:
             if test_file.exists():
                 test_file.unlink()
@@ -318,7 +324,7 @@ class Waveform_CompareTool(CompareTool):
     """Generates the first TCL that will be used in gtkwave to create a VCD output."""
 
     def generate_first_TCL(self, build_dir, file_name, file_num):
-        path = build_dir / Path(file_name[file_num] + ".tcl")
+        path = build_dir / (file_name[file_num] + ".tcl")
         if path.exists():
             path.unlink()
         with path.open("x") as TCL:
@@ -340,8 +346,8 @@ class Waveform_CompareTool(CompareTool):
     """Replaces information in the last TCL with information specific to this testbench."""
 
     def generate_TCL(self, build_dir, file_name, file_num):
-        path = build_dir / Path(file_name[file_num] + ".tcl")
-        sample_path = build_dir / Path(file_name[file_num - 1] + ".tcl")
+        path = build_dir / (file_name[file_num] + ".tcl")
+        sample_path = build_dir / (file_name[file_num - 1] + ".tcl")
         if path.exists():
             path.unlink()
         with path.open("x") as TCL:
@@ -358,7 +364,7 @@ class Waveform_CompareTool(CompareTool):
 
     def generate_files(self, design):
         test_num = 100
-        sample_path = bfasst.paths.ROOT_PATH / Path(
+        sample_path = bfasst.paths.ROOT_PATH / (
             "scripts/bfasst/compare_waveforms/sample_tb.v"
         )
         impl_path = design.impl_netlist_path
@@ -371,10 +377,10 @@ class Waveform_CompareTool(CompareTool):
         with open(impl_path) as impl_file:
             with open(reversed_path) as reversed_file:
                 file = [impl_file, reversed_file]
-                build_dir = bfasst.paths.WAVEFORM_BUILD / design.rel_path
+                build_dir = self.work_dir
                 for f, file_num in zip(file, range(len(file))):
-                    file_path = build_dir / Path(file_name[file_num] + ".v")
-                    tb_path = build_dir / Path(file_name[file_num] + "_tb.v")
+                    file_path = build_dir / (file_name[file_num] + ".v")
+                    tb_path = build_dir / (file_name[file_num] + "_tb.v")
 
                     # Checks if the design is a reversed_netlist or not.
                     if f.name.find("reversed") != -1:
@@ -390,7 +396,7 @@ class Waveform_CompareTool(CompareTool):
                     if file_num == 0:
                         compare_path = sample_path
                     else:
-                        compare_path = build_dir / Path(
+                        compare_path = build_dir / (
                             file_name[file_num - 1] + "_tb.v"
                         )
 
@@ -420,26 +426,26 @@ class Waveform_CompareTool(CompareTool):
 
     def run_test(self, design):
         is_equivalent = False
-        build_dir = bfasst.paths.WAVEFORM_BUILD / design.rel_path
+        build_dir = self.work_dir
         impl_path = design.impl_netlist_path
         reversed_path = design.reversed_netlist_path
         impl_module = impl_path.name[0 : len(impl_path.name) - 2]
         reversed_module = reversed_path.name[0 : len(reversed_path.name) - 2]
-        dsn = build_dir / Path("dsn")
-        impl_tb = build_dir / Path(impl_module + "_tb.v")
-        reversed_tb = build_dir / Path(reversed_module + "_tb.v")
-        impl_tcl = build_dir / Path(impl_module + ".tcl")
-        reversed_tcl = build_dir / Path(reversed_module + ".tcl")
-        impl_temp_vcd = build_dir / Path(impl_module + "_temp.vcd")
-        reversed_temp_vcd = build_dir / Path(reversed_module + "_temp.vcd")
-        impl_vcd = build_dir / Path(impl_module + ".vcd")
-        reversed_vcd = build_dir / Path(reversed_module + ".vcd")
-        impl_fst = build_dir / Path(impl_module + "_temp.vcd.fst")
-        reversed_fst = build_dir / Path(reversed_module + "_temp.vcd.fst")
-        cells_sim = bfasst.paths.ROOT_PATH / Path(
+        dsn = build_dir / ("dsn")
+        impl_tb = build_dir / (impl_module + "_tb.v")
+        reversed_tb = build_dir / (reversed_module + "_tb.v")
+        impl_tcl = build_dir / (impl_module + ".tcl")
+        reversed_tcl = build_dir / (reversed_module + ".tcl")
+        impl_temp_vcd = build_dir / (impl_module + "_temp.vcd")
+        reversed_temp_vcd = build_dir / (reversed_module + "_temp.vcd")
+        impl_vcd = build_dir / (impl_module + ".vcd")
+        reversed_vcd = build_dir / (reversed_module + ".vcd")
+        impl_fst = build_dir / (impl_module + "_temp.vcd.fst")
+        reversed_fst = build_dir / (reversed_module + "_temp.vcd.fst")
+        cells_sim = bfasst.paths.ROOT_PATH / (
             "third_party/yosys/techlibs/xilinx/cells_sim.v"
         )
-        diff_file = build_dir / Path("diff.txt")
+        diff_file = build_dir / ("diff.txt")
 
         # Generate wavefiles for the golden-file
         subprocess.run(
