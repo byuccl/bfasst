@@ -30,6 +30,12 @@ essential to adding support for these kinds of files.
 * Linking to Vivado to compare waveforms with gtkwave.
 * Parsing of diff.txt files to make them easier to read.
 
+**Debugging**
+If a design that has been equivalent in the past comes back unequivalent, here are a few options to check:
+* Analyze the diff.txt file. It will tell you where the two waveforms are different. (Note: A parser to make the diff.txt file more readable is in the works.)
+* Compare the waveforms with simulations in Vivado. (Only test the actual testbenches in Vivado. It doesn't need to use VCD files. A script for this is also in the works.)
+* Modify the testbench to work for the original design, then create waveforms for that design and compare with the golden and reversed-netlist waveforms. Whichever is different is most likely to be incorrect. (This will have to be done by hand, the script for this is complicated because spydrnet can't analyze regular designs.)
+
 
 
 
