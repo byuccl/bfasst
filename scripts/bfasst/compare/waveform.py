@@ -175,7 +175,7 @@ class Waveform_CompareTool(CompareTool):
             else:
                 file_data = file_data.replace(
                     "module " + file_name[0 : len(file_name) - 5] + "\n",
-                    "module " + file_name,
+                    "module " + file_name
                 )
         with path.open("w") as fin:
             fin.write(file_data)
@@ -197,6 +197,9 @@ class Waveform_CompareTool(CompareTool):
                 data["input_list"].append(port.name)
                 data["total_list"].append(port.name)
                 data["input_bits_list"].append(len(port.pins) - 1)
+        if(data["input_list"].__contains__("clk")):
+            if(data["input_list"].index("clk") == 0):
+                data["input_list"].append(data["input_list"].pop(0))
 
     """Due to reversed netlists having incomplete ports that can cause issues with spydrnet, this function removes
     all of the excess data the spydrnet doesn't need so that the inputs and outputs can still be parsed."""
@@ -243,7 +246,10 @@ class Waveform_CompareTool(CompareTool):
                 if input != "clk":
                     line = "reg [" + bits + ":0] " + input + " = 0;\n"
                     tb.write(line)
-            line = ""
+                else:
+                    line = "reg clk = 0;\n"
+                    tb.write(line)
+                line = ""
 
         if "OUTPUTS" in line:
             for output, bits in zip(data["output_list"], data["output_bits_list"]):
@@ -262,6 +268,11 @@ class Waveform_CompareTool(CompareTool):
                 else:
                     line = line + total + ", "
 
+        if "reg clk = 0;" in line:
+            for input in data["input_list"]:
+                if (input == "clk"):
+                    line = ""
+
         if "/*SIGNALS" in line:
             for bits in data["input_bits_list"]:
                 if bits == 0:
@@ -278,23 +289,28 @@ class Waveform_CompareTool(CompareTool):
             # The actual logic for adding random numbers to the testbench.
             for i in range(int(test_num)):
                 for input, j in zip(data["input_list"], range(self.input_num())):
-                    if j == 0:
-                        line = (
-                            "    # 5 "
-                            + str(input)
-                            + " = "
-                            + str(data["random_list"][j][i])
-                            + ";\n"
-                        )
+                    if(input != "clk"):
+                        if j == 0:
+                            line = (
+                                "    # 5 "
+                                + str(input)
+                                + " = "
+                                + str(data["random_list"][j][i])
+                                + ";\n"
+                            )
+                        else:
+                            line = (
+                                "    "
+                                + str(input)
+                                + " = "
+                                + str(data["random_list"][j][i])
+                                + ";\n"
+                            )
                     else:
-                        line = (
-                            "    "
-                            + str(input)
-                            + " = "
-                            + str(data["random_list"][j][i])
-                            + ";\n"
-                        )
+                        if j == 0:
+                            line = "    # 5 "
                     tb.write(line)
+                    line = ""
                 tb.write("\n")
             line = "    # 5 $finish;"
 
@@ -427,8 +443,8 @@ class Waveform_CompareTool(CompareTool):
     def run_test(self, design):
         is_equivalent = False
         build_dir = self.work_dir
-        impl_path = design.impl_netlist_path
-        reversed_path = design.reversed_netlist_path
+        impl_path = self.work_dir / design.impl_netlist_path.name
+        reversed_path = self.work_dir / design.reversed_netlist_path.name
         impl_module = impl_path.name[0 : len(impl_path.name) - 2]
         reversed_module = reversed_path.name[0 : len(reversed_path.name) - 2]
         dsn = build_dir / ("dsn")
