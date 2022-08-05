@@ -1,6 +1,7 @@
 from pathlib import Path
 import subprocess
 
+#For now, make these the paths to your vcd file, diff.txt file, and where you want the parsed_diff.txt file stored.
 vcd_test = Path("/home/edvenson/bfasst/build/xilinx_yosys_waveform/byu/bit_num_reg_1/bit_num_reg_1_impl.vcd")
 diff_test = Path("/home/edvenson/bfasst/build/xilinx_yosys_waveform/byu/bit_num_reg_1/diff.txt")
 parsed_diff = Path("/home/edvenson/bfasst/build/xilinx_yosys_waveform/byu/bit_num_reg_1/parsed_diff.txt")
