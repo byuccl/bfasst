@@ -5,6 +5,7 @@
 #If vivado or F4PGA ever change there netlist-generating style, this file may need to be edited.
 #I would check the fix_file function because this file currently alters the netlists so that spydrnet can parse them. 
 
+from pickle import FALSE
 import bfasst
 import pathlib
 from bfasst.compare import analyze_graph
@@ -119,7 +120,7 @@ class Waveform_CompareTool(CompareTool):
                     print("Ok. Ending Tests.")
                     return Status(CompareStatus.NOT_EQUIVALENT)
                 else:
-                    self.generate_files(design)
+                    self.generate_files(design, giveWarning)
                     if self.run_test(design):
                         return self.success_status
                     else:
@@ -135,7 +136,7 @@ class Waveform_CompareTool(CompareTool):
                     print("Ok. Ending Tests.")
                     return self.success_status
                 else:
-                    self.generate_files(design)
+                    self.generate_files(design, giveWarning)
                     if self.run_test(design):
                         return self.success_status
                     else:
@@ -145,7 +146,7 @@ class Waveform_CompareTool(CompareTool):
                 return self.success_status
         else:
             # Calls the generate_files function to create the testbenches and TCLs necessary for gtkwave.
-            self.generate_files(design)
+            self.generate_files(design, giveWarning)
 
             # Checks if the designs are equivalent. If they are, returns success. If not, asserts NOT_EQUIVALENT.
             if self.run_test(design):
@@ -185,7 +186,8 @@ class Waveform_CompareTool(CompareTool):
     def parse(self, file):
         netlist = sdn.parse(file)
         library = netlist.libraries[0]
-        definition = library.definitions[0]  # CHANGE THIS FOR MULTI_MODULE DESIGNS.
+        definition = library.definitions[0]
+
         # Use design.yaml_path to find yaml file. Read to find if more modules exist.
 
         for port in definition.ports:
@@ -201,10 +203,56 @@ class Waveform_CompareTool(CompareTool):
             if(data["input_list"].index("clk") == 0):
                 data["input_list"].append(data["input_list"].pop(0))
 
+    """A specific parse function in the situation where multiple verilog files exist. The design has multiple layers of ports, so finding the equivalent
+    ports requires comparing the ports in each layer to the ports in the reversed_netlist. Once both have the same equivalence, they are stored."""
+
+    def parse_multiple(self, file, reversed_file):
+        total_reversed = []
+
+        netlist = sdn.parse(reversed_file)
+        library = netlist.libraries[0]
+        definition = library.definitions[0]
+        
+        #Stores the reversed_netlist ports in one array.
+        for port in definition.ports:
+            total_reversed.append(port.name)
+
+        netlist = sdn.parse(file)
+        library = netlist.libraries[0]
+
+        contains_item = False
+        not_port  = False
+
+        for i in library.definitions:
+            for port in i.ports:
+                for item in total_reversed:
+                    if item == port.name:
+                        contains_item = True
+                if(contains_item == False):
+                    not_port = True
+                else:
+                    contains_item = False
+            if(not_port == False):
+                for port in i.ports:
+                    print(port.name)
+                    if str(port.direction) == "Direction.OUT":
+                        data["output_list"].append(port.name)
+                        data["total_list"].append(port.name)
+                        data["output_bits_list"].append(len(port.pins) - 1)
+                    elif str(port.direction) == "Direction.IN":
+                        data["input_list"].append(port.name)
+                        data["total_list"].append(port.name)
+                        data["input_bits_list"].append(len(port.pins) - 1)
+                if(data["input_list"].__contains__("clk")):
+                    if(data["input_list"].index("clk") == 0):
+                        data["input_list"].append(data["input_list"].pop(0))
+            else:
+                not_port = False
+        
     """Due to reversed netlists having incomplete ports that can cause issues with spydrnet, this function removes
     all of the excess data the spydrnet doesn't need so that the inputs and outputs can still be parsed."""
 
-    def parse_reversed(self, path, build_dir):
+    def parse_reversed(self, path, build_dir, multiple_files, file_name, is_impl):
         test_file = build_dir / "test.v"
         with path.open() as file:
             if test_file.exists():
@@ -223,7 +271,10 @@ class Waveform_CompareTool(CompareTool):
                         if i == 0:
                             i = 1
                             newFile.write(line)
-        self.parse(newFile.name)  # Parses this newly-generated simplified netlist.
+        if(multiple_files & is_impl):
+            self.parse_multiple(file_name, newFile.name)
+        else:
+            self.parse(newFile.name)  # Parses this newly-generated simplified netlist.
         test_file.unlink()
 
     """This function creates the initial testbench that will be modified by the reversed-netlist. It reads in a sample testbench
@@ -378,7 +429,7 @@ class Waveform_CompareTool(CompareTool):
     """The main function that generates testbenches and TCL files. It begins by calling the parsers for the input & output names, then
     it calls the testbench generators, finally it calls the TCL generators. It then increments to the next file and clears the data structure."""
 
-    def generate_files(self, design):
+    def generate_files(self, design, multiple_files):
         test_num = 100
         sample_path = bfasst.paths.ROOT_PATH / (
             "scripts/bfasst/compare_waveforms/sample_tb.v"
@@ -401,10 +452,13 @@ class Waveform_CompareTool(CompareTool):
                     # Checks if the design is a reversed_netlist or not.
                     if f.name.find("reversed") != -1:
                         self.fix_file(file_path, file_name[file_num], True)
-                        self.parse_reversed(file_path, build_dir)
+                        self.parse_reversed(file_path, build_dir, multiple_files, f.name, False)
                     else:
                         self.fix_file(file_path, file_name[file_num], False)
-                        self.parse(f.name)
+                        if(multiple_files):
+                            self.parse_reversed((build_dir / (reversed_module + ".v")), build_dir, multiple_files, f.name, True)
+                        else:
+                            self.parse(f.name)
 
                     if tb_path.exists():
                         tb_path.unlink()
@@ -437,7 +491,7 @@ class Waveform_CompareTool(CompareTool):
                     refresh(data)
 
     """A function that generates the wavefiles from the testbenches, runs gtkwave w/ the TCLs generated earlier on the wavefiles
-    that have just been generated, then checks the difference between gtkwave's two outputs. If there are more than 20 lines that
+    that have just been generated, then checks the difference between gtkwave's two outputs. If there are more than 32 lines that
     are different, the designs must be unequivalent. Removes all unnecessary files after testing."""
 
     def run_test(self, design):
@@ -516,8 +570,8 @@ class Waveform_CompareTool(CompareTool):
                 if len(line) != 0:
                     lines = lines + 1
 
-        # If there are more than 20 lines different, the two designs must be unequivalent.
-        if lines > 20:
+        # If there are more than 32 lines different, the two designs must be unequivalent.
+        if lines > 32:
             print("NOT EQUIVALENT! SEE " + str(diff_file) + " for more info")
             subprocess.run(["diff", "-c", str(impl_vcd), str(reversed_vcd)])
 
