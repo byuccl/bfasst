@@ -7,6 +7,20 @@ import shutil
 import bfasst
 from bfasst import flows
 from bfasst.utils import TermColor, error
+from enum import Enum
+
+
+class Args(Enum):
+    SYNTH_STAGE = 0
+    IMPL_STAGE = 1
+    MAP_STAGE = 2
+    EQUIV_STAGE = 3
+
+
+class State(Enum):
+    INIT = 0
+    READING_STAGE = 1
+    READING_TOOL = 2
 
 
 @enum.unique
@@ -59,14 +73,79 @@ def get_flow_fcn_by_name(flow_name):
     return fcn
 
 
-def run_flow(design, flow_type, mapping_algorithm, build_dir, print_to_stdout=True):
+def run_flow(design, flow_type, flow_args, build_dir, print_to_stdout=True):
     assert type(design) is bfasst.design.Design
 
     flow_fcn = flows.get_flow_fcn_by_name(flow_type)
-    return flow_fcn(design, mapping_algorithm, build_dir, print_to_stdout)
+    return flow_fcn(design, flow_args, build_dir, print_to_stdout)
 
 
-def flow_ic2_lse_conformal(design, mapping_algorithm, build_dir):
+def parse_flow_args(flow_args):
+    current_state = State.INIT
+    next_state = State.INIT
+
+    args = []
+    args_num = 4
+
+    # Initializing args values
+    for i in range(args_num):
+        args.append("None")
+
+    # Parse flow arguments to get the stages and tools
+    stage = ""
+    tool = ""
+
+    stages = []
+    tools = []
+
+    for i in range(len(flow_args)):
+        current_state = next_state
+
+        # SM for Transitions and Actions
+        if current_state == State.INIT:
+            if flow_args[i] == '-':
+                next_state = State.READING_STAGE
+            elif flow_args[i] == ' ':
+                next_state = State.READING_TOOL
+
+        elif current_state == State.READING_STAGE:
+            if flow_args[i] == '-':
+                next_state = State.READING_STAGE
+            elif flow_args[i] == ' ':
+                stages.append(stage)
+                stage = ""
+                next_state = State.READING_TOOL
+            else:
+                stage = stage + flow_args[i]
+
+        elif current_state == State.READING_TOOL:
+            if flow_args[i] == '-':
+                next_state = State.READING_STAGE
+            elif flow_args[i] == ' ':
+                tools.append(tool)
+                tool = ""
+                next_state = State.READING_TOOL
+            else:
+                tool = tool + flow_args[i]
+                if i == (len(flow_args) - 1):
+                    tools.append(tool)
+                    tool = ""
+                    next_state = State.INIT
+
+    # Getting args from tools based on the stages
+    for i, stage in enumerate(stages):
+        if stage == "synthesis":
+            args[Args.SYNTH_STAGE.value] = tools[i]
+        elif stage == "implementation":
+            args[Args.IMPL_STAGE.value] = tools[i]
+        elif stage == "mapping":
+            args[Args.MAP_STAGE.value] = tools[i]
+        elif stage == "equivalence":
+            args[Args.EQUIV_STAGE.value] = tools[i]
+    
+    return args
+
+def flow_ic2_lse_conformal(design, flow_args, build_dir):
     # Run Icecube2 LSE synthesis
     synth_tool = bfasst.synth.ic2_lse.IC2_LSE_SynthesisTool(build_dir)
     status = synth_tool.create_netlist(design)
@@ -103,7 +182,7 @@ def flow_ic2_lse_conformal(design, mapping_algorithm, build_dir):
     return status
 
 
-def flow_conformal_only(design, mapping_algorithm, build_dir, print_to_stdout=True):
+def flow_conformal_only(design, flow_args, build_dir, print_to_stdout=True):
     assert(design.netlist_path is not None)
     assert(design.reversed_netlist_path is not None)
 
@@ -116,7 +195,7 @@ def flow_conformal_only(design, mapping_algorithm, build_dir, print_to_stdout=Tr
 
     return status
 
-def flow_xilinx(design, mapping_algorithm, build_dir, print_to_stdout=True):
+def flow_xilinx(design, flow_args, build_dir, print_to_stdout=True):
     # Run Xilinx synthesis and implementation
     synth_tool = bfasst.synth.vivado.Vivado_SynthesisTool(build_dir)
     status = synth_tool.create_netlist(design, print_to_stdout)
@@ -128,7 +207,7 @@ def flow_xilinx(design, mapping_algorithm, build_dir, print_to_stdout=True):
     if status.error:
         return status
 
-def flow_xilinx_conformal(design, mapping_algorithm, build_dir, print_to_stdout=True):
+def flow_xilinx_conformal(design, flow_args, build_dir, print_to_stdout=True):
     # Run Xilinx synthesis and implementation
     synth_tool = bfasst.synth.vivado.Vivado_SynthesisTool(build_dir)
     status = synth_tool.create_netlist(design, print_to_stdout)
@@ -153,7 +232,10 @@ def flow_xilinx_conformal(design, mapping_algorithm, build_dir, print_to_stdout=
 
     return status
 
-def flow_xilinx_conformal_impl(design, mapping_algorithm, build_dir, print_to_stdout=True):
+def flow_xilinx_conformal_impl(design, flow_args, build_dir, print_to_stdout=True):
+    # Parse the arguments used for the different stages of the flow
+    args = parse_flow_args(flow_args)
+
     # Run Xilinx synthesis and implementation
     synth_tool = bfasst.synth.vivado.Vivado_SynthesisTool(build_dir)
     status = synth_tool.create_netlist(design, print_to_stdout)
@@ -174,13 +256,13 @@ def flow_xilinx_conformal_impl(design, mapping_algorithm, build_dir, print_to_st
     design.golden_sources = [design.impl_netlist_path,]
     compare_tool = bfasst.compare.conformal.Conformal_CompareTool(build_dir, Vendor.XILINX)
     with bfasst.conformal_lock:
-        status = compare_tool.compare_netlists(design, mapping_algorithm, print_to_stdout)
+        status = compare_tool.compare_netlists(design, args[Args.MAP_STAGE.value], print_to_stdout)
     if status.error:
         return status
 
     return status
 
-def flow_xilinx_yosys_impl(design, mapping_algorithm, build_dir, print_to_stdout=True):
+def flow_xilinx_yosys_impl(design, flow_args, build_dir, print_to_stdout=True):
     # Run Xilinx synthesis and implementation
     synth_tool = bfasst.synth.vivado.Vivado_SynthesisTool(build_dir)
     status = synth_tool.create_netlist(design, print_to_stdout)
@@ -205,7 +287,7 @@ def flow_xilinx_yosys_impl(design, mapping_algorithm, build_dir, print_to_stdout
     return status
 
 
-def flow_ic2_synplify_conformal(design, mapping_algorithm, build_dir):
+def flow_ic2_synplify_conformal(design, flow_args, build_dir):
     # Run Icecube2 Synplify synthesis
     synth_tool = bfasst.synth.ic2_synplify.IC2_Synplify_SynthesisTool(build_dir)
     status = synth_tool.create_netlist(design)
@@ -241,7 +323,7 @@ def flow_ic2_synplify_conformal(design, mapping_algorithm, build_dir):
     return status
 
 
-def flow_synplify_ic2_icestorm_onespin(design, mapping_algorithm, build_dir):
+def flow_synplify_ic2_icestorm_onespin(design, flow_args, build_dir):
     # Run Icecube2 Synplify synthesis
     synth_tool = bfasst.synth.ic2_synplify.IC2_Synplify_SynthesisTool(build_dir)
     status = synth_tool.create_netlist(design)
@@ -278,7 +360,7 @@ def flow_synplify_ic2_icestorm_onespin(design, mapping_algorithm, build_dir):
     return status
 
 
-def flow_yosys_tech_lse_conformal(design, mapping_algorithm, build_dir):
+def flow_yosys_tech_lse_conformal(design, flow_args, build_dir):
     # Run the Yosys synthesizer
     yosys_synth_tool = bfasst.synth.yosys.Yosys_Tech_SynthTool(build_dir)
     status = yosys_synth_tool.create_netlist(design)
@@ -321,7 +403,7 @@ def flow_yosys_tech_lse_conformal(design, mapping_algorithm, build_dir):
     return status
 
 
-def flow_yosys_tech_synplify_conformal(design, mapping_algorithm, build_dir):
+def flow_yosys_tech_synplify_conformal(design, flow_args, build_dir):
     # Run the Yosys synthesizer
     yosys_synth_tool = bfasst.synth.yosys.Yosys_Tech_SynthTool(build_dir)
     status = yosys_synth_tool.create_netlist(design)
@@ -361,7 +443,7 @@ def flow_yosys_tech_synplify_conformal(design, mapping_algorithm, build_dir):
     return status
 
 
-def flow_yosys_tech_synplify_onespin(design, mapping_algorithm, build_dir):
+def flow_yosys_tech_synplify_onespin(design, flow_args, build_dir):
     # Run the Yosys synthesizer
     yosys_synth_tool = bfasst.synth.yosys.Yosys_Tech_SynthTool(build_dir)
     status = yosys_synth_tool.create_netlist(design)
@@ -401,7 +483,7 @@ def flow_yosys_tech_synplify_onespin(design, mapping_algorithm, build_dir):
     return status
 
 
-def flow_yosys_synplify_error_onespin(design, mapping_algorithm, build_dir):
+def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
     # Set the results file path so it can be used in the different tools
     design.results_summary_path = build_dir / "results_summary.txt"
 
@@ -521,7 +603,7 @@ def flow_yosys_synplify_error_onespin(design, mapping_algorithm, build_dir):
     return status
 
 
-def flow_gather_impl_data(design, mapping_algorithm, build_dir):
+def flow_gather_impl_data(design, flow_args, build_dir):
     # This flow is mainly to try running the tools with different synthesis/
     #   implementation (e.g. synplify vs yosys, etc.) options to compare their
     #   physical results (e.g. LUT counts, FF counts, etc)
