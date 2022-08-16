@@ -7,6 +7,20 @@ import shutil
 import bfasst
 from bfasst import flows
 from bfasst.utils import TermColor, error
+from enum import Enum
+
+
+class Args(Enum):
+    SYNTH_STAGE = 0
+    IMPL_STAGE = 1
+    MAP_STAGE = 2
+    EQUIV_STAGE = 3
+
+
+class State(Enum):
+    INIT = 0
+    READING_STAGE = 1
+    READING_TOOL = 2
 
 
 @enum.unique
@@ -101,7 +115,7 @@ def flow_ic2_lse_conformal(design, build_dir):
     return status
 
 
-def flow_conformal_only(design, build_dir, print_to_stdout=True):
+def flow_conformal_only(design, flow_args, build_dir, print_to_stdout=True):
     assert(design.netlist_path is not None)
     assert(design.reversed_netlist_path is not None)
 
@@ -113,7 +127,7 @@ def flow_conformal_only(design, build_dir, print_to_stdout=True):
 
     return status
 
-def flow_xilinx(design, build_dir, print_to_stdout=True):
+def flow_xilinx(design, flow_args, build_dir, print_to_stdout=True):
     # Run Xilinx synthesis and implementation
     synth_tool = bfasst.synth.vivado.Vivado_SynthesisTool(build_dir)
     status = synth_tool.create_netlist(design, print_to_stdout)
@@ -123,7 +137,7 @@ def flow_xilinx(design, build_dir, print_to_stdout=True):
     status = impl_tool.implement_bitstream(design, print_to_stdout)
     
 
-def flow_xilinx_conformal(design, build_dir, print_to_stdout=True):
+def flow_xilinx_conformal(design, flow_args, build_dir, print_to_stdout=True):
     # Run Xilinx synthesis and implementation
     synth_tool = bfasst.synth.vivado.Vivado_SynthesisTool(build_dir)
     status = synth_tool.create_netlist(design, print_to_stdout)
@@ -144,7 +158,10 @@ def flow_xilinx_conformal(design, build_dir, print_to_stdout=True):
 
     return status
 
-def flow_xilinx_conformal_impl(design, build_dir, print_to_stdout=True):
+def flow_xilinx_conformal_impl(design, flow_args, build_dir, print_to_stdout=True):
+    # Parse the arguments used for the different stages of the flow
+    args = parse_flow_args(flow_args)
+
     # Run Xilinx synthesis and implementation
     synth_tool = bfasst.synth.vivado.Vivado_SynthesisTool(build_dir)
     status = synth_tool.create_netlist(design, print_to_stdout)
@@ -162,12 +179,13 @@ def flow_xilinx_conformal_impl(design, build_dir, print_to_stdout=True):
     design.golden_sources = [design.impl_netlist_path,]
     compare_tool = bfasst.compare.conformal.Conformal_CompareTool(build_dir, Vendor.XILINX)
     with bfasst.conformal_lock:
-        status = compare_tool.compare_netlists(design, print_to_stdout)
-    
+        status = compare_tool.compare_netlists(design, args[Args.MAP_STAGE.value], print_to_stdout)
+    if status.error:
+        return status
 
     return status
 
-def flow_xilinx_yosys_impl(design, build_dir, print_to_stdout=True):
+def flow_xilinx_yosys_impl(design, flow_args, build_dir, print_to_stdout=True):
     # Run Xilinx synthesis and implementation
     synth_tool = bfasst.synth.vivado.Vivado_SynthesisTool(build_dir)
     status = synth_tool.create_netlist(design, print_to_stdout)
@@ -208,7 +226,7 @@ def flow_xilinx_yosys_waveform(design, build_dir, print_to_stdout=True):
     return status
 
 
-def flow_ic2_synplify_conformal(design, build_dir):
+def flow_ic2_synplify_conformal(design, flow_args, build_dir):
     # Run Icecube2 Synplify synthesis
     synth_tool = bfasst.synth.ic2_synplify.IC2_Synplify_SynthesisTool(build_dir)
     status = synth_tool.create_netlist(design)
@@ -240,7 +258,7 @@ def flow_ic2_synplify_conformal(design, build_dir):
     return status
 
 
-def flow_synplify_ic2_icestorm_onespin(design, build_dir):
+def flow_synplify_ic2_icestorm_onespin(design, flow_args, build_dir):
     # Run Icecube2 Synplify synthesis
     synth_tool = bfasst.synth.ic2_synplify.IC2_Synplify_SynthesisTool(build_dir)
     status = synth_tool.create_netlist(design)
@@ -273,7 +291,7 @@ def flow_synplify_ic2_icestorm_onespin(design, build_dir):
     return status
 
 
-def flow_yosys_tech_lse_conformal(design, build_dir):
+def flow_yosys_tech_lse_conformal(design, flow_args, build_dir):
     # Run the Yosys synthesizer
     yosys_synth_tool = bfasst.synth.yosys.Yosys_Tech_SynthTool(build_dir)
     status = yosys_synth_tool.create_netlist(design)
@@ -311,7 +329,7 @@ def flow_yosys_tech_lse_conformal(design, build_dir):
     return status
 
 
-def flow_yosys_tech_synplify_conformal(design, build_dir):
+def flow_yosys_tech_synplify_conformal(design, flow_args, build_dir):
     # Run the Yosys synthesizer
     yosys_synth_tool = bfasst.synth.yosys.Yosys_Tech_SynthTool(build_dir)
     status = yosys_synth_tool.create_netlist(design)
@@ -346,7 +364,7 @@ def flow_yosys_tech_synplify_conformal(design, build_dir):
     return status
 
 
-def flow_yosys_tech_synplify_onespin(design, build_dir):
+def flow_yosys_tech_synplify_onespin(design, flow_args, build_dir):
     # Run the Yosys synthesizer
     yosys_synth_tool = bfasst.synth.yosys.Yosys_Tech_SynthTool(build_dir)
     status = yosys_synth_tool.create_netlist(design)
@@ -381,7 +399,7 @@ def flow_yosys_tech_synplify_onespin(design, build_dir):
     return status
 
 
-def flow_yosys_synplify_error_onespin(design, build_dir):
+def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
     # Set the results file path so it can be used in the different tools
     design.results_summary_path = build_dir / "results_summary.txt"
 
@@ -479,7 +497,7 @@ def flow_yosys_synplify_error_onespin(design, build_dir):
     return status
 
 
-def flow_gather_impl_data(design, build_dir):
+def flow_gather_impl_data(design, flow_args, build_dir):
     # This flow is mainly to try running the tools with different synthesis/
     #   implementation (e.g. synplify vs yosys, etc.) options to compare their
     #   physical results (e.g. LUT counts, FF counts, etc)

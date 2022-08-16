@@ -18,7 +18,7 @@ def main():
 
     parser.add_argument("design_path", help="Path to design in examples directory.")
     parser.add_argument("flow", choices=[e.value for e in flows.Flows])
-    parser.add_argument("-m", dest="mapping", default="conformal", help="Netlist mapping algorithm to be used for equivalence checking.")
+    parser.add_argument("flow_args", help="Arguments to be used in the flow for synthesis, implementation, mapping and equivalence checking")
     parser.add_argument("--quiet", action="store_true")
     error_flows = []
     for dir_item in paths.ERROR_FLOW_PATH.iterdir():
@@ -52,12 +52,12 @@ def main():
     # Get the flow object
     flow = flows.Flows(args.flow)
 
-    # Get the mapping algorithm
-    mapping = args.mapping
+    # Get the flow arguments
+    flow_args = args.flow_args
 
     # Run the design
     # status = bfasst.flow.run_flow(design, bfasst.flow.Flows.IC2_LSE_CONFORMAL, build_dir)
-    status = flows.run_flow(design, flow, mapping, build_dir, print_to_stdout=not args.quiet)
+    status = flows.run_flow(design, flow, flow_args, build_dir, print_to_stdout=not args.quiet)
 
     print(status)
 
