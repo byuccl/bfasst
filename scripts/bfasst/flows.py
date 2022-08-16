@@ -35,6 +35,7 @@ class Flows(enum.Enum):
     XILINX_CONFORMAL_RTL = "xilinx_conformal"
     XILINX_CONFORMAL_IMPL = "xilinx_conformal_impl"
     XILINX_YOSYS_IMPL = "xilinx_yosys_impl"
+    XILINX_YOSYS_WAVEFORM = "xilinx_yosys_waveform"
     GATHER_IMPL_DATA = "gather_impl_data"
     CONFORMAL_ONLY = "conformal_only"
     XILINX = "xilinx"
@@ -52,6 +53,7 @@ flow_fcn_map = {
     Flows.XILINX_CONFORMAL_RTL: lambda: flow_xilinx_conformal,
     Flows.XILINX_CONFORMAL_IMPL: lambda: flow_xilinx_conformal_impl,
     Flows.XILINX_YOSYS_IMPL: lambda: flow_xilinx_yosys_impl,
+    Flows.XILINX_YOSYS_WAVEFORM: lambda: flow_xilinx_yosys_waveform,
     Flows.GATHER_IMPL_DATA: lambda: flow_gather_impl_data,
     Flows.CONFORMAL_ONLY: lambda: flow_conformal_only,
     Flows.XILINX: lambda: flow_xilinx,
@@ -280,6 +282,30 @@ def flow_xilinx_yosys_impl(design, flow_args, build_dir, print_to_stdout=True):
         return status
 
     compare_tool = bfasst.compare.yosys.Yosys_CompareTool(build_dir)
+    status = compare_tool.compare_netlists(design, print_to_stdout)
+    if status.error:
+        return status
+    
+    return status
+
+def flow_xilinx_yosys_waveform(design, build_dir, print_to_stdout=True):
+    # Run Xilinx synthesis and implementation
+    synth_tool = bfasst.synth.vivado.Vivado_SynthesisTool(build_dir)
+    status = synth_tool.create_netlist(design, print_to_stdout)
+    if status.error:
+        return status
+    impl_tool = bfasst.impl.vivado.Vivado_ImplementationTool(build_dir)
+    status = impl_tool.implement_bitstream(design, print_to_stdout)
+    if status.error:
+        return status
+
+    # Run X-ray and fasm2bel
+    reverse_bit_tool = bfasst.reverse_bit.xray.XRay_ReverseBitTool(build_dir)
+    status = reverse_bit_tool.reverse_bitstream(design, print_to_stdout)
+    if status.error:
+        return status
+
+    compare_tool = bfasst.compare.waveform.Waveform_CompareTool(build_dir)
     status = compare_tool.compare_netlists(design, print_to_stdout)
     if status.error:
         return status
