@@ -31,12 +31,12 @@
 | lightWave        |          Yes         |                       None                                   |
 | mux8to1          |          Yes         |                       None                                   |
 | oneshot          |          **No**      |  Oneshot has a clk signal as it's first signal, this may be a potential cause |
-| regfile          | **Cant Simulate**    |  For some reason, the part wont change and it has too many IOs  |
-| riscvSimpleDatapath |  **Cant Simulate** |       Same issue as regfile                                 |
+| regfile          |          Yes         |  For some reason, the part wont change and it has too many IOs  |
+| riscvSimpleDatapath |       **No**      |    Similar to Oneshot                                        |
 | sevensegment     |          Yes         |                       None                                   |
 | shiftReg         |          Yes         |                       None                                   |
 |  stopwatch       |          ???         | It comes back as equivalent, but the anode signal never changes. Needs to be further looked at. |
 | UpDownButtonCount |     **No**          |      Similar issues to oneshot                               |
-| riscv_final      |  **Cant Simulate**   |     See regfile                                              |
+| riscv_final      |  **No**              |     Similar to Oneshot                                       |
 |   rx             |          Yes         |                       None                                   |
 |   tx             |       **No**         |    Requires further analysis                                 |
