@@ -4,7 +4,7 @@
 * Module: tx
 *
 * Author: Pablo Lopez
-* Class: ECEN 220, TA, Fall 2020
+* Class: ECEN 220, Fall 2020
 * Date: 11/9/2020
 *
 * Description: Implementation of a UART Transmitter in SV
