@@ -40,6 +40,8 @@ capnproto_java:
 rapidwright:
 	cd third_party && wget http://www.rapidwright.io/docs/_downloads/rapidwright-installer.jar
 	cd third_party && java -jar rapidwright-installer.jar -t
+	cd third_party/RapidWright && git submodule init
+	cd third_party/RapidWright && git submodule update
 	cd third_party/RapidWright/interchange && make
 	cd third_party/RapidWright && make
 
@@ -49,6 +51,7 @@ install_fasm2bels:
 	cd third_party/fasm2bels && make env
 	cd third_party/fasm2bels && make build
 	cd third_party/fasm2bels && make test-py
+	cd third_party/fasm2bels/env/conda/envs/symbiflow_xc_fasm2bels && cp -r bin ../../../
 
 env:
 	echo "source `pwd`/third_party/rapidwright.sh" > "env.sh"
@@ -78,5 +81,4 @@ install_yosys:
 
 format:
 	find ./scripts -iname "*.py" -exec black -l 100 {} \;
-
 
