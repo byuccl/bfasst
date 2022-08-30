@@ -8,7 +8,8 @@
 from pickle import FALSE
 import bfasst
 import pathlib
-from bfasst.compare import analyze_graph
+from bfasst.compare_waveforms import analyze_graph
+from bfasst.compare_waveforms import parse_diff
 import bfasst.paths
 import re
 import pathlib
@@ -516,6 +517,7 @@ class Waveform_CompareTool(CompareTool):
             "third_party/yosys/techlibs/xilinx/cells_sim.v"
         )
         diff_file = build_dir / ("diff.txt")
+        parsed_diff_file = build_dir / ("parsed_diff.txt")
 
         # Generate wavefiles for the golden-file
         subprocess.run(
@@ -574,6 +576,7 @@ class Waveform_CompareTool(CompareTool):
         if lines > 32:
             print("NOT EQUIVALENT! SEE " + str(diff_file) + " for more info")
             subprocess.run(["diff", "-c", str(impl_vcd), str(reversed_vcd)])
+            parse_diff.parse_diff(impl_vcd, diff_file, parsed_diff_file)
 
         else:
             dsn.unlink()
