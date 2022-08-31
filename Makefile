@@ -20,17 +20,11 @@ packages:
 		default-jre-headless \
 		uuid-dev \
 		libantlr4-runtime-dev \
-		openjdk-8-jdk
+		openjdk-8-jdk \
+		capnproto 
 	
 python_packages:
 	$(IN_ENV) python3 -m pip install -r requirements.txt
-
-capnproto:
-	cd /tmp && curl -O https://capnproto.org/capnproto-c++-0.8.0.tar.gz
-	cd /tmp && tar zxf capnproto-c++-0.8.0.tar.gz
-	cd /tmp/capnproto-c++-0.8.0 && ./configure
-	cd /tmp/capnproto-c++-0.8.0 && make -j6 check
-	cd /tmp/capnproto-c++-0.8.0 && sudo make install
 
 capnproto_java:
 	cd /tmp && git clone https://github.com/capnproto/capnproto-java
