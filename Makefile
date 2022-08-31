@@ -4,14 +4,14 @@ IN_ENV = if [ -e .venv/bin/activate ]; then . .venv/bin/activate; fi;
 install: packages venv python_packages install_fasm2bels install_yosys
 
 venv:
-	python3.8 -m venv .venv
-	$(IN_ENV) python -m pip install -U pip
+	python3 -m venv .venv
+	$(IN_ENV) python3 -m pip install -U pip
 
 packages:
 	sudo apt-get install -y \
 		make \
-		python3.8-dev \
-		python3.8-venv \
+		python3-dev \
+		python3-venv \
 		python3-pip \
 		virtualenv \
 		libncurses5 \
