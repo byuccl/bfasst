@@ -578,7 +578,7 @@ module f_11_proc #(parameter INITIAL_PC = 32'h00400000)(
     //////////////////////////////////////////////////////////////////////	
     
     // Mem to Reg multiplexer
-    assign wb_reg_write_data = wb_MemToReg?dReadData:wb_alu_result;
+    assign wb_reg_write_data = wb_MemToReg?dReadData:wb_alu_result;  //! This mux also makes the circuit not equivalent!!!
     
     //////////////////////////////////////////////////////////////////////
     // Top Level Ports

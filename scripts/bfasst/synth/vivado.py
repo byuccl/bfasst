@@ -15,8 +15,6 @@ from bfasst.tool import ToolProduct
 class Vivado_SynthesisTool(SynthesisTool):
     TOOL_WORK_DIR = "vivado_synth"
 
-    PART = "xc7a200tfbg676-2"
-
     def create_netlist(self, design, print_to_stdout=True):
         self.print_to_stdout = print_to_stdout
         log_path = self.work_dir / bfasst.config.SYNTH_LOG_NAME

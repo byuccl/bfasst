@@ -1,0 +1,3 @@
+top: buttoncount
+
+include_all_verilog_files: True

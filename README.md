@@ -18,3 +18,28 @@ usage: run_experiment.py [-h] [-j THREADS] experiment_yaml
 run_experiment.py: error: the following arguments are required: experiment_yaml
 ```
 
+**How to Install BFASST** 
+
+* Clone the github repository. The repository is found at https://github.com/byuccl/bfasst. Use ```git clone https://github.com/byuccl/bfasst.git.``` (Note: if Git is not installed on your device, use ```sudo apt install git``` first.) 
+
+* Confirm that the version of Vivado in _/bfasst/scripts/bfasst/config.py_ is the version installed on your computer. If not, change it to the version you have.
+
+* Use ```make capnproto_java``` 
+
+* Use ```make rapidwright```
+
+* Use ```make env```
+
+* Use ```source env.sh```
+
+* Use ```make install``` 
+
+Finally, test to confirm that everything worked correctly! Run ```source env.sh``` and ```python scripts/run_design.py examples/basic/add4/ xilinx_conformal_impl```
+
+**For those using CAEDM Servers**
+* Set up your SSH with caedm. You'll know if you set it up correctly when you can use ```ssh caedm``` and log in without having to enter your password. Follow the guide at https://byu-cpe.github.io/ComputingBootCamp/tutorials/linux/ .
+
+* Open _scripts/bfasst/config.py_. Change _fsj/squallz_ to your caedm login info. For instance, if you connect to caedm and enter ```pwd``` and your info is _/hij/username_, change _fsj/squallz_ to _hij/username_.
+
+
+

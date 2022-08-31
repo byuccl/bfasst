@@ -1,5 +1,6 @@
-// ROMs Using Block RAM Resources.
-// File: rom.v
+// ROMs Using Block RAM Resources
+// From Vivado Synthesis Guide, page 176
+// https://www.xilinx.com/content/dam/xilinx/support/documents/sw_manuals/xilinx2022_1/ug901-vivado-synthesis.pdf
 
 module rom(
     clk, 
@@ -15,8 +16,7 @@ output [19:0] dout;
 
 (*rom_style = "block" *) reg [19:0] data;
 
-always @ (posedge clk)
-begin
+always @ (posedge clk) begin
     if (en)
         case(addr)
             6'b000000: data <= 20'h0200A; 6'b100000: data <= 20'h02222;
@@ -55,5 +55,6 @@ begin
 end
 
 assign dout = data;
+
 
 endmodule

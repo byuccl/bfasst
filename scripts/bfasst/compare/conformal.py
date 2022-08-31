@@ -74,6 +74,17 @@ class Conformal_CompareTool(CompareTool):
         # Create do file
         do_file_path = self.create_do_file(design)
 
+        # Create remote machine folders
+        cmd = (
+            "mkdir -p bfasst_libs;"
+            + "mkdir -p bfasst_libs/xilinx;"
+            + "mkdir -p bfasst_work;"
+            )
+
+        if self.print_to_stdout:
+            print(cmd)
+        (stdin, stdout, stderr) = client.exec_command(cmd, timeout=bfasst.config.CONFORMAL_TIMEOUT)
+
         # Copy files to remote machine
         self.copy_files_to_remote_machine(client, design, do_file_path)
 

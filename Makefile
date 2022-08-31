@@ -1,4 +1,4 @@
-IN_ENV = if [ -e env/bin/activate ]; then . env/bin/activate; fi;
+IN_ENV = if [ -e .venv/bin/activate ]; then . .venv/bin/activate; fi;
 
 
 install: packages venv python_packages install_fasm2bels install_yosys
