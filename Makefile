@@ -19,7 +19,8 @@ packages:
 		python3-venv \
 		default-jre-headless \
 		uuid-dev \
-		libantlr4-runtime-dev
+		libantlr4-runtime-dev \
+		openjdk-8-jdk
 	
 python_packages:
 	$(IN_ENV) python3 -m pip install -r requirements.txt
@@ -40,6 +41,8 @@ capnproto_java:
 rapidwright:
 	cd third_party && wget http://www.rapidwright.io/docs/_downloads/rapidwright-installer.jar
 	cd third_party && java -jar rapidwright-installer.jar -t
+	cd third_party/RapidWright && git submodule init
+	cd third_party/RapidWright && git submodule update
 	cd third_party/RapidWright/interchange && make
 	cd third_party/RapidWright && make
 
