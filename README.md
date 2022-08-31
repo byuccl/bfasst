@@ -36,8 +36,7 @@ BFASST can be used to compose different CAD flows from severals tools.  You may 
 1. Update _scripts/bfasst/config.py_ and make sure the path points to your Vivado installation. 
 
 ### Fasm2Bels
-1. Install capnproto:
-    * ```make capnproto```
+1. Install capnproto_java:
     * ```make capnproto_java```
 1. Install Rapidwright
    * ```make rapidwright```
