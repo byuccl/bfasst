@@ -10,22 +10,22 @@ from bfasst.config import VIVADO_BIN_PATH
 '''A function to launch the graphs for designs that have already been tested. Mainly meant
 for checking designs that came back unequivalent to see what was wrong with them.'''
 def analyze_graphs(path, module):
-    impl_v = path / Path(module + "_impl.v")
-    viv_impl_v = path / Path(module + "_temp_impl.v")
-    impl_tb = path / Path(module + "_impl_tb.v")
-    reversed_v = path / Path(module + "_reversed.v")
-    viv_reversed_v = path / Path(module + "_temp_reversed.v")
-    reversed_tb = path / Path(module + "_reversed_tb.v")
-    impl_vcd = path / Path(module + "_impl.vcd")
-    reversed_vcd = path / Path(module + "_reversed.vcd")
-    impl_tcl = path / Path(module + "_impl.tcl")
-    reversed_tcl = path / Path(module + "_reversed.tcl")
-    impl_fst = path / Path(module + "_impl.vcd.fst")
-    reversed_fst = path / Path(module + "_reversed.vcd.fst")
-    diff = path / Path("diff.txt")
-    parsed = path / Path("parsed_diff.txt")
-    run_vivado = bfasst.paths.ROOT_PATH / Path("scripts/bfasst/compare_waveforms/run_vivado.py")
-    base_path = bfasst.paths.ROOT_PATH / Path("scripts/bfasst/compare_waveforms")
+    impl_v = path / module + "_impl.v"
+    viv_impl_v = path / module + "_temp_impl.v"
+    impl_tb = path / module + "_impl_tb.v"
+    reversed_v = path / module + "_reversed.v"
+    viv_reversed_v = path / module + "_temp_reversed.v"
+    reversed_tb = path / module + "_reversed_tb.v"
+    impl_vcd = path / module + "_impl.vcd"
+    reversed_vcd = path / module + "_reversed.vcd"
+    impl_tcl = path / module + "_impl.tcl"
+    reversed_tcl = path / module + "_reversed.tcl"
+    impl_fst = path / module + "_impl.vcd.fst"
+    reversed_fst = path / module + "_reversed.vcd.fst"
+    diff = path / "diff.txt"
+    parsed = path / "parsed_diff.txt"
+    run_vivado = bfasst.paths.ROOT_PATH / "scripts/bfasst/compare_waveforms/run_vivado.py"
+    base_path = bfasst.paths.ROOT_PATH / "scripts/bfasst/compare_waveforms"
 
     gtkwave = Path(".gtkwaverc")
     if(gtkwave.exists()):
