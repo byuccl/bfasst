@@ -21,13 +21,9 @@ def analyze_graphs(path, module):
     impl_fst = path / Path(module + "_impl.vcd.fst")
     reversed_fst = path / Path(module + "_reversed.vcd.fst")
     diff = path / Path("diff.txt")
+    parsed = path / Path("parsed_diff.txt")
     run_vivado = bfasst.paths.ROOT_PATH / Path("scripts/bfasst/compare_waveforms/run_vivado.py")
     base_path = bfasst.paths.ROOT_PATH / Path("scripts/bfasst/compare_waveforms")
-
-    if(diff.exists()):
-        with diff.open() as file:
-            for line in file:
-                print(line)
 
     gtkwave = Path(".gtkwaverc")
     if(gtkwave.exists()):
@@ -49,6 +45,15 @@ def analyze_graphs(path, module):
         vivado = False
         if(choice != "0"):
             vivado=True
+    
+    if (parsed.exists()):
+        with parsed.open() as file:
+            for line in file:
+                print(line)
+    elif(diff.exists()):
+        with diff.open() as file:
+            for line in file:
+                print(line)
 
     if(vivado):
         commands = [

@@ -8,7 +8,8 @@
 from pickle import FALSE
 import bfasst
 import pathlib
-from bfasst.compare import analyze_graph
+from bfasst.compare_waveforms import analyze_graph
+from bfasst.compare_waveforms import parse_diff
 import bfasst.paths
 import re
 import pathlib
@@ -82,7 +83,7 @@ class Waveform_CompareTool(CompareTool):
         impl_vcd = build_dir / (module + "_impl.vcd")
         reversed_vcd = build_dir / (module + "_reversed.vcd")
 
-        shutil.copyfile(impl_path,build_dir / design.impl_netlist_path.name)
+        shutil.copyfile(impl_path, build_dir / design.impl_netlist_path.name)
         shutil.copyfile(design.reversed_netlist_path, build_dir / design.reversed_netlist_path.name)
 
         #print(self.work_dir)
@@ -516,6 +517,7 @@ class Waveform_CompareTool(CompareTool):
             "third_party/yosys/techlibs/xilinx/cells_sim.v"
         )
         diff_file = build_dir / ("diff.txt")
+        parsed_diff_file = build_dir / ("parsed_diff.txt")
 
         # Generate wavefiles for the golden-file
         subprocess.run(
@@ -572,8 +574,14 @@ class Waveform_CompareTool(CompareTool):
 
         # If there are more than 32 lines different, the two designs must be unequivalent.
         if lines > 32:
-            print("NOT EQUIVALENT! SEE " + str(diff_file) + " for more info")
-            subprocess.run(["diff", "-c", str(impl_vcd), str(reversed_vcd)])
+            print("NOT EQUIVALENT! SEE " + str(parsed_diff_file) + " for more info")
+            parse_diff.parse_diff(impl_vcd, diff_file, parsed_diff_file)
+            if(parsed_diff_file.exists()):
+                with parsed_diff_file.open() as file:
+                    for line in file:
+                        print(line)
+            else:
+               subprocess.run(["diff", "-c", str(impl_vcd), str(reversed_vcd)]) 
 
         else:
             dsn.unlink()
