@@ -83,7 +83,7 @@ class Waveform_CompareTool(CompareTool):
         impl_vcd = build_dir / (module + "_impl.vcd")
         reversed_vcd = build_dir / (module + "_reversed.vcd")
 
-        shutil.copyfile(impl_path,build_dir / design.impl_netlist_path.name)
+        shutil.copyfile(impl_path, build_dir / design.impl_netlist_path.name)
         shutil.copyfile(design.reversed_netlist_path, build_dir / design.reversed_netlist_path.name)
 
         #print(self.work_dir)
