@@ -1,14 +1,7 @@
 from pathlib import Path
 import subprocess
 
-
 def parse_diff(vcd_test, diff_test, parsed_diff):
-    #For now, make these the paths to your vcd file, diff.txt file, and where you want the parsed_diff.txt file stored.
-    #This will be automated in the future once this parser has been debugged.
-    #vcd_test = Path("/home/edvenson/bfasst/build/xilinx_yosys_waveform/byu/flipflops/waveform/flipflops_impl.vcd")
-    #diff_test = Path("/home/edvenson/bfasst/build/xilinx_yosys_waveform/byu/flipflops/waveform/diff.txt")
-    #parsed_diff = Path("/home/edvenson/bfasst/build/xilinx_yosys_waveform/byu/flipflops/waveform/parsed_diff.txt")
-
     newWord = False
     words = []
     symbols = []
