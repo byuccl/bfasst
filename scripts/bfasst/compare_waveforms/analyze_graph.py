@@ -11,8 +11,10 @@ from bfasst.config import VIVADO_BIN_PATH
 for checking designs that came back unequivalent to see what was wrong with them.'''
 def analyze_graphs(path, module):
     impl_v = path / Path(module + "_impl.v")
+    viv_impl_v = path / Path(module + "_temp_impl.v")
     impl_tb = path / Path(module + "_impl_tb.v")
     reversed_v = path / Path(module + "_reversed.v")
+    viv_reversed_v = path / Path(module + "_temp_reversed.v")
     reversed_tb = path / Path(module + "_reversed_tb.v")
     impl_vcd = path / Path(module + "_impl.vcd")
     reversed_vcd = path / Path(module + "_reversed.vcd")
@@ -56,11 +58,30 @@ def analyze_graphs(path, module):
                 print(line)
 
     if(vivado):
+
+        if(viv_impl_v.exists()):
+            viv_impl_v.unlink()
+        if(viv_reversed_v.exists()):
+            viv_reversed_v.unlink()
+
+        with impl_v.open() as source:
+            with viv_impl_v.open("x") as output:
+                for line in source:
+                    if module in line:
+                        line = line.replace(module, module + "_impl")
+                    output.write(line)
+        with reversed_v.open() as source:
+            with viv_reversed_v.open("x") as output:
+                for line in source:
+                    if "top" in line:
+                        line = line.replace("top", module + "_reversed")
+                    output.write(line)
+
         commands = [
             ["gtkwave", "-T", str(impl_tcl), "-o", str(impl_vcd)],
             ["gtkwave", "-T", str(reversed_tcl), "-o", str(reversed_vcd)],
-            ["python", str(run_vivado), str(impl_v), 
-            str(impl_tb), module + "_impl_tb", str(reversed_v), str(reversed_tb), module + "_reversed_tb", str(VIVADO_BIN_PATH),
+            ["python", str(run_vivado), str(viv_impl_v), 
+            str(impl_tb), module + "_impl_tb", str(viv_reversed_v), str(reversed_tb), module + "_reversed_tb", str(VIVADO_BIN_PATH),
             str(base_path)]
         ]
     else:
@@ -76,6 +97,10 @@ def analyze_graphs(path, module):
     gtkwave.unlink()
     impl_fst.unlink()
     reversed_fst.unlink()
+    if(viv_impl_v.exists()):
+        viv_impl_v.unlink()
+    if(viv_reversed_v.exists()):
+        viv_reversed_v.unlink()
 
 
 
@@ -112,5 +137,3 @@ def find_resolution():
         return(320, 200)
     
     temp.unlink()
-                    
-
