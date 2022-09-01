@@ -574,9 +574,14 @@ class Waveform_CompareTool(CompareTool):
 
         # If there are more than 32 lines different, the two designs must be unequivalent.
         if lines > 32:
-            print("NOT EQUIVALENT! SEE " + str(diff_file) + " for more info")
-            subprocess.run(["diff", "-c", str(impl_vcd), str(reversed_vcd)])
+            print("NOT EQUIVALENT! SEE " + str(parsed_diff_file) + " for more info")
             parse_diff.parse_diff(impl_vcd, diff_file, parsed_diff_file)
+            if(parsed_diff_file.exists()):
+                with parsed_diff_file.open() as file:
+                    for line in file:
+                        print(line)
+            else:
+               subprocess.run(["diff", "-c", str(impl_vcd), str(reversed_vcd)]) 
 
         else:
             dsn.unlink()

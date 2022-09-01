@@ -28,7 +28,6 @@ def parse_diff(vcd_test, diff_test, parsed_diff):
                             if "[" in word:
                                 word = word[0:word.index("[")]
                             words.append(word)
-                            #print(word)
                             word = ""
                             newWord = False
                         else:
@@ -40,19 +39,14 @@ def parse_diff(vcd_test, diff_test, parsed_diff):
         if j == 0:
             j = j + 1
         elif j == 1:
-            print(i)
             symbols.append(i)
             j = j+1
         elif j == 2:
-            print(i)
             signals.append(i)
             j = 0
 
     if(parsed_diff.exists()):
         parsed_diff.unlink()
-
-    for symbol, signal in zip(symbols, signals):
-        print("Symbol: " + symbol + " is " + signal)
 
     with diff_test.open("r") as file:
         with parsed_diff.open("x") as output:
@@ -72,7 +66,6 @@ def parse_diff(vcd_test, diff_test, parsed_diff):
                             line = line.replace(symbol," " + signal)
                             isParsed = True
                         elif "#" in line:
-                            print(line)
                             if(line[line.index("#") + 1] != ' '):
                                 if(line[len(line)-1] == "\n"):
                                     num = line[line.index("#")+1:line.index("\n")]
