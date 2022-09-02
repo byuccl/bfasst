@@ -21,7 +21,8 @@ packages:
 		uuid-dev \
 		libantlr4-runtime-dev \
 		openjdk-8-jdk \
-		capnproto 
+		capnproto \
+		libcapnp-dev
 	
 python_packages:
 	$(IN_ENV) python3 -m pip install -r requirements.txt
