@@ -19,7 +19,6 @@ import subprocess
 import yaml
 import shutil
 import time
-import psutil
 from pathlib import Path
 from random import randint
 from bfasst.compare.base import CompareTool
@@ -541,13 +540,6 @@ class Waveform_CompareTool(CompareTool):
         )
         subprocess.run(["vvp", str(dsn)])
         subprocess.run(["mv", "test.vcd", str(reversed_temp_vcd)])
-
-        # Setup gtkwave for the two files (creates file .gtkwaverc to set the zoom on the graphs to fit the window.)
-        gtkwave = Path(".gtkwaverc")
-        if(gtkwave.exists()):
-            gtkwave.unlink()
-        with gtkwave.open("x") as wavefile:
-            wavefile.write("do_initial_zoom_fit 1")
             
         #gtkwave is run in the background. If the temporary fst file doesn't exist, then the output we need hasn't been created.
         #The process is killed within 5ms of creating the file so the user doesn't have to physically close gtkwave.
@@ -563,7 +555,6 @@ class Waveform_CompareTool(CompareTool):
         if reversed_fst.exists():
             subprocess.run(["pkill", "gtkwave"])
 
-        gtkwave.unlink()
         # Finds how many lines are different in the two files.
         dif = subprocess.getoutput(["diff -c " + str(impl_vcd) + " " + str(reversed_vcd)])
         if diff_file.exists():
