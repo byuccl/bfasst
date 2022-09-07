@@ -73,19 +73,19 @@ msg_map = {
     CompareStatus.NEED_TO_RUN_ONESPIN: "Exported to Onespin",
 }
 
+class BfasstException(Exception):
+    pass
+
 
 class Status:
     def __init__(self, status, msg=None):
-        self.error = False
-
         self.status = status
-        if status.value:
-            self.error = True
-
         self.msg = msg
+        if status.value:
+            raise BfasstException(f"{msg_map[status]} ({msg})")
 
     def __str__(self):
         s = msg_map[self.status]
         if self.msg is not None:
-            s += " (" + self.msg + ")"
+            s = f"{s} ({self.msg})"
         return s
