@@ -3,7 +3,6 @@ from bfasst.design import HdlType
 from bfasst.tool import ToolProduct
 import paramiko
 import scp
-import sys
 import re
 import socket
 import pathlib
@@ -14,7 +13,7 @@ import warnings
 warnings.filterwarnings(action="ignore", module=".*paramiko.*")
 
 from bfasst.compare.base import CompareTool
-from bfasst.status import Status, CompareStatus
+from bfasst.status import BfasstException, Status, CompareStatus
 from bfasst import flows, paths
 from bfasst.utils import error
 
@@ -49,7 +48,6 @@ class Conformal_CompareTool(CompareTool):
             if self.print_to_stdout:
                 self.print_skipping_compare()
             return status
-
 
         if self.print_to_stdout:
             self.print_running_compare()
@@ -89,9 +87,13 @@ class Conformal_CompareTool(CompareTool):
         self.copy_files_to_remote_machine(client, design, do_file_path)
 
         # Run conformal remotely
-        status = self.run_conformal(client)
-        if status.error and not status.status == CompareStatus.TIMEOUT:
-            return status
+        try:
+            status = self.run_conformal(client)
+        except BfasstException as e:
+            if e.status != CompareStatus.TIMEOUT:
+                raise e
+            else:
+                status = e
 
         # Copy back conformal log file
         self.copy_log_from_remote_machine(client)
@@ -103,8 +105,6 @@ class Conformal_CompareTool(CompareTool):
 
         # Check conformal log
         status = self.check_compare_status(log_path)
-        if status.error:
-            return status
 
         return self.success_status
 

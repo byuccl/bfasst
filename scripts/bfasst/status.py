@@ -79,7 +79,9 @@ msg_map = {
 }
 
 class BfasstException(Exception):
-    pass
+    def __init__(self, err, msg):
+        super().__init__(msg)
+        self.error = err
 
 
 class Status:
@@ -87,7 +89,7 @@ class Status:
         self.status = status
         self.msg = msg
         if status.value:
-            raise BfasstException(f"{msg_map[status]} ({msg})")
+            raise BfasstException(status, f"{msg_map[status]} ({msg})")
 
     def __str__(self):
         s = msg_map[self.status]

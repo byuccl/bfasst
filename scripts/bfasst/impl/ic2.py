@@ -44,13 +44,9 @@ class IC2_ImplementationTool(ImplementationTool):
 
             # Run implementation
             status = self.run_implement(design, new_netlist_path, tcl_path, log_path)
-            if status.error:
-                return status
 
         # Check implementation log
         status = self.check_impl_status(log_path)
-        if status.error:
-            return status
 
         # Update a file in the main directory with info about impl results
         self.write_to_results_file(design, log_path, need_to_run)

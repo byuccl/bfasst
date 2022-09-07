@@ -53,11 +53,9 @@ class Tool(abc.ABC):
 
                 # If log file has an error, return that status
                 status = tool_product.check_log_fcn(tool_product.log_path)
-                if status.error:
-                    return status
 
                 # If log file doesn't have an error, but output file is expected and missing, re-run
-                elif (tool_product.file_path is not None) and (not tool_product.file_path.is_file()):
+                if (tool_product.file_path is not None) and (not tool_product.file_path.is_file()):
                     return None
             else:
                 # This ToolProduct doesn't produce a log file

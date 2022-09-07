@@ -7,7 +7,7 @@ import time
 import bfasst
 from bfasst.design import HdlType
 from bfasst.synth.base import SynthesisTool
-from bfasst.status import Status, SynthStatus
+from bfasst.status import BfasstException, Status, SynthStatus
 from bfasst.config import VIVADO_BIN_PATH
 from bfasst.tool import ToolProduct
 
@@ -46,24 +46,20 @@ class Vivado_SynthesisTool(SynthesisTool):
         report_io_path = self.work_dir / "report_io.txt"
 
         # Run synthesis
-        status = self.run_synth(design, log_path, report_io_path)
-        if status.error:
+        try:
+            status = self.run_synth(design, log_path, report_io_path)
+        except BfasstException as e:
             # See if the log parser can find an error message
             if log_path.is_file():
                 status_log = self.check_synth_log(log_path)
-                if status_log.error:
-                    return status_log
-
-            # Otherwise, synth failed, but we don't know why.  So just return this status
-            return status
+            # Otherwise, synth failed, but we don't know why.  So just raise this status
+            raise e
 
         # Extract contraint file from Vivado-assigned pins
         self.extract_contraints(design, report_io_path)
 
         # Check synthesis log
         status = self.check_synth_log(log_path)
-        if status.error:
-            return status
 
         return self.success_status
 
