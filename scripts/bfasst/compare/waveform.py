@@ -92,15 +92,15 @@ class Waveform_CompareTool(CompareTool):
         with open(design.yaml_path) as fp:
             design_props = yaml.safe_load(fp)
         
-        multipleFiles = False
+        multiple_files = False
 
         for k,v in design_props.items():
             # Handle 'include_all_verilog_files' option
             if k == "include_all_verilog_files":
-                multipleFiles = True
+                multiple_files = True
             # Handle 'include_all_system_verilog_files' option
             elif k == "include_all_system_verilog_files":
-                multipleFiles = True
+                multiple_files = True
 
         #This series of if/else statements is used to check if the tests have already been performed. If they have, an option is presented
         # for the user to view the previously-generated waveforms. If the design was unequivalent previously, the diff output will be
@@ -114,7 +114,7 @@ class Waveform_CompareTool(CompareTool):
                     print("Ok. Ending Tests.")
                     return Status(CompareStatus.NOT_EQUIVALENT)
                 else:
-                    self.generate_files(design, multipleFiles)
+                    self.generate_files(design, multiple_files)
                     if self.run_test(design):
                         return self.success_status
                     else:
@@ -130,7 +130,7 @@ class Waveform_CompareTool(CompareTool):
                     print("Ok. Ending Tests.")
                     return self.success_status
                 else:
-                    self.generate_files(design, multipleFiles)
+                    self.generate_files(design, multiple_files)
                     if self.run_test(design):
                         return self.success_status
                     else:
@@ -140,7 +140,7 @@ class Waveform_CompareTool(CompareTool):
                 return self.success_status
         else:
             # Calls the generate_files function to create the testbenches and TCLs necessary for gtkwave.
-            self.generate_files(design, giveWarning)
+            self.generate_files(design, multiple_files)
 
             # Checks if the designs are equivalent. If they are, returns success. If not, asserts NOT_EQUIVALENT.
             if self.run_test(design):
