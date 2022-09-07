@@ -18,6 +18,8 @@ import spydrnet as sdn
 import subprocess
 import yaml
 import shutil
+import time
+import psutil
 from pathlib import Path
 from random import randint
 from bfasst.compare.base import CompareTool
@@ -546,16 +548,20 @@ class Waveform_CompareTool(CompareTool):
             gtkwave.unlink()
         with gtkwave.open("x") as wavefile:
             wavefile.write("do_initial_zoom_fit 1")
-        
-        commands = [
-            ["gtkwave", "-T", str(impl_tcl), "-o", str(impl_temp_vcd)],
-            ["gtkwave", "-T", str(reversed_tcl), "-o", str(reversed_temp_vcd)],
-        ]
+            
+        #gtkwave is run in the background. If the temporary fst file doesn't exist, then the output we need hasn't been created.
+        #The process is killed within 5ms of creating the file so the user doesn't have to physically close gtkwave.
+        subprocess.Popen(["gtkwave", "-T", str(impl_tcl), "-o", str(impl_temp_vcd)])
+        while not impl_fst.exists():
+            time.sleep(0.005)
+        if impl_fst.exists():
+            subprocess.run(["pkill", "gtkwave"])
 
-        # Procs is used to run these two wavefiles in parallel so both can be viewed against each other.
-        procs = [Popen(i) for i in commands]
-        for p in procs:
-            p.wait()
+        subprocess.Popen(["gtkwave", "-T", str(reversed_tcl), "-o", str(reversed_temp_vcd)])
+        while not reversed_fst.exists():
+            time.sleep(0.005)
+        if reversed_fst.exists():
+            subprocess.run(["pkill", "gtkwave"])
 
         gtkwave.unlink()
         # Finds how many lines are different in the two files.
