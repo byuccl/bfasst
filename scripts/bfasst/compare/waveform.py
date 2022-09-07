@@ -87,28 +87,20 @@ class Waveform_CompareTool(CompareTool):
         shutil.copyfile(impl_path, build_dir / design.impl_netlist_path.name)
         shutil.copyfile(design.reversed_netlist_path, build_dir / design.reversed_netlist_path.name)
 
-        #print(self.work_dir)
-
         #Added this in to check if there are multiple verilog files or not. This will present the user with a warning because
         #currently these can cause strange errors with equivalence checking. 
         with open(design.yaml_path) as fp:
             design_props = yaml.safe_load(fp)
         
-        giveWarning = False
+        multipleFiles = False
 
         for k,v in design_props.items():
             # Handle 'include_all_verilog_files' option
             if k == "include_all_verilog_files":
-                giveWarning = True
+                multipleFiles = True
             # Handle 'include_all_system_verilog_files' option
             elif k == "include_all_system_verilog_files":
-                giveWarning = True
-
-        if giveWarning:
-            cont = input("Warning: Detected multiple verilog files. Results may be inaccurate.\n Continue anyways? 1 for yes, 0 for no.")
-            if(cont == "0"):
-                print("Ok. Returning non-equivalent status.")
-                return Status(CompareStatus.NOT_EQUIVALENT)
+                multipleFiles = True
 
         #This series of if/else statements is used to check if the tests have already been performed. If they have, an option is presented
         # for the user to view the previously-generated waveforms. If the design was unequivalent previously, the diff output will be
@@ -122,7 +114,7 @@ class Waveform_CompareTool(CompareTool):
                     print("Ok. Ending Tests.")
                     return Status(CompareStatus.NOT_EQUIVALENT)
                 else:
-                    self.generate_files(design, giveWarning)
+                    self.generate_files(design, multipleFiles)
                     if self.run_test(design):
                         return self.success_status
                     else:
@@ -138,7 +130,7 @@ class Waveform_CompareTool(CompareTool):
                     print("Ok. Ending Tests.")
                     return self.success_status
                 else:
-                    self.generate_files(design, giveWarning)
+                    self.generate_files(design, multipleFiles)
                     if self.run_test(design):
                         return self.success_status
                     else:
