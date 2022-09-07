@@ -405,7 +405,6 @@ class Waveform_CompareTool(CompareTool):
             TCL.write("gtkwave::File/Quit")
 
     """Replaces information in the last TCL with information specific to this testbench."""
-
     def generate_TCL(self, build_dir, file_name, file_num):
         path = build_dir / (file_name[file_num] + ".tcl")
         sample_path = build_dir / (file_name[file_num - 1] + ".tcl")
@@ -419,6 +418,35 @@ class Waveform_CompareTool(CompareTool):
                             file_name[file_num - 1], file_name[file_num]
                         )
                     TCL.write(line)
+
+    """Uses IVerilog to create a VCD file for viewing waveforms"""
+    def generate_VCD(self, path, tb, tcl, vcd, fst):
+        dsn = self.work_dir/ ("dsn")
+        cells_sim = bfasst.paths.ROOT_PATH / (
+            "third_party/yosys/techlibs/xilinx/cells_sim.v"
+        )
+        # Generate wavefiles
+        subprocess.run(
+            ["iverilog", "-o", str(dsn), str(tb), path, str(cells_sim)]
+        )
+        subprocess.run(["vvp", str(dsn)])
+        subprocess.run(["mv", "test.vcd", str(vcd)])
+        dsn.unlink()
+
+        self.gtkwave(vcd, tcl, fst)
+    
+    """Creates a waveform that only takes into account the inputs/outputs (totally ignores all internal components) and then
+    takes the input/output graph and turns it into a VCD file to be compared against."""
+    def gtkwave(self, vcd, tcl, fst):
+        #gtkwave is run in the background. If the temporary fst file doesn't exist, then the output we need hasn't been created.
+        #The process is killed within 5ms of creating the file so the user doesn't have to physically close gtkwave.
+        subprocess.Popen(["gtkwave", "-T", str(tcl), "-o", str(vcd)])
+        while not fst.exists():
+            time.sleep(0.005)
+        if fst.exists():
+            subprocess.run(["pkill", "gtkwave"])
+        fst.unlink()
+        vcd.unlink()
 
     """The main function that generates testbenches and TCL files. It begins by calling the parsers for the input & output names, then
     it calls the testbench generators, finally it calls the TCL generators. It then increments to the next file and clears the data structure."""
@@ -481,7 +509,8 @@ class Waveform_CompareTool(CompareTool):
                         self.generate_first_TCL(build_dir, file_name, file_num)
                     else:
                         self.generate_TCL(build_dir, file_name, file_num)
-
+                    
+                    self.generate_VCD(file_path, tb_path, build_dir / (file_name[file_num] + ".tcl"), build_dir / (file_name[file_num] + "_temp.vcd"), build_dir / (file_name[file_num] + "_temp.vcd.fst"))
                     refresh(data)
 
     """A function that generates the wavefiles from the testbenches, runs gtkwave w/ the TCLs generated earlier on the wavefiles
@@ -495,57 +524,12 @@ class Waveform_CompareTool(CompareTool):
         reversed_path = self.work_dir / design.reversed_netlist_path.name
         impl_module = impl_path.name[0 : len(impl_path.name) - 2]
         reversed_module = reversed_path.name[0 : len(reversed_path.name) - 2]
-        dsn = build_dir / ("dsn")
-        impl_tb = build_dir / (impl_module + "_tb.v")
-        reversed_tb = build_dir / (reversed_module + "_tb.v")
         impl_tcl = build_dir / (impl_module + ".tcl")
         reversed_tcl = build_dir / (reversed_module + ".tcl")
-        impl_temp_vcd = build_dir / (impl_module + "_temp.vcd")
-        reversed_temp_vcd = build_dir / (reversed_module + "_temp.vcd")
         impl_vcd = build_dir / (impl_module + ".vcd")
         reversed_vcd = build_dir / (reversed_module + ".vcd")
-        impl_fst = build_dir / (impl_module + "_temp.vcd.fst")
-        reversed_fst = build_dir / (reversed_module + "_temp.vcd.fst")
-        cells_sim = bfasst.paths.ROOT_PATH / (
-            "third_party/yosys/techlibs/xilinx/cells_sim.v"
-        )
         diff_file = build_dir / ("diff.txt")
         parsed_diff_file = build_dir / ("parsed_diff.txt")
-
-        # Generate wavefiles for the golden-file
-        subprocess.run(
-            ["iverilog", "-o", str(dsn), str(impl_tb), impl_path, str(cells_sim)]
-        )
-        subprocess.run(["vvp", str(dsn)])
-        subprocess.run(["mv", "test.vcd", str(impl_temp_vcd)])
-
-        # Generate wavefiles for the reversed-netlist
-        subprocess.run(
-            [
-                "iverilog",
-                "-o",
-                str(dsn),
-                str(reversed_tb),
-                reversed_path,
-                str(cells_sim),
-            ]
-        )
-        subprocess.run(["vvp", str(dsn)])
-        subprocess.run(["mv", "test.vcd", str(reversed_temp_vcd)])
-            
-        #gtkwave is run in the background. If the temporary fst file doesn't exist, then the output we need hasn't been created.
-        #The process is killed within 5ms of creating the file so the user doesn't have to physically close gtkwave.
-        subprocess.Popen(["gtkwave", "-T", str(impl_tcl), "-o", str(impl_temp_vcd)])
-        while not impl_fst.exists():
-            time.sleep(0.005)
-        if impl_fst.exists():
-            subprocess.run(["pkill", "gtkwave"])
-
-        subprocess.Popen(["gtkwave", "-T", str(reversed_tcl), "-o", str(reversed_temp_vcd)])
-        while not reversed_fst.exists():
-            time.sleep(0.005)
-        if reversed_fst.exists():
-            subprocess.run(["pkill", "gtkwave"])
 
         # Finds how many lines are different in the two files.
         dif = subprocess.getoutput(["diff -c " + str(impl_vcd) + " " + str(reversed_vcd)])
@@ -573,14 +557,9 @@ class Waveform_CompareTool(CompareTool):
                subprocess.run(["diff", "-c", str(impl_vcd), str(reversed_vcd)]) 
 
         else:
-            dsn.unlink()
             diff_file.unlink()
             is_equivalent = True
-        # removes unnecessary files.
-        impl_temp_vcd.unlink()
-        reversed_temp_vcd.unlink()
-        impl_fst.unlink()
-        reversed_fst.unlink()
+        # Rewrite the TCL script for waveform viewing so it doesn't create new VCD files on re-view.
         lines = []
         with impl_tcl.open("r") as fp:
             lines = fp.readlines()
