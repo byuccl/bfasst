@@ -97,9 +97,6 @@ class Conformal_CompareTool(CompareTool):
                 f"{design.reversed_netlist_path}",
                 self.MAPPED_POINTS_FILE_NAME,
             )
-        else:
-            print("No BYU CCL Mapping > mapped_points.txt")
-            return Status(CompareStatus.ERROR)
 
         mapped_points_file_path = self.MAPPED_POINTS_FILE_NAME
 
