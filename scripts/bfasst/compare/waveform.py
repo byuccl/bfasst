@@ -452,7 +452,7 @@ class Waveform_CompareTool(CompareTool):
     it calls the testbench generators, finally it calls the TCL generators. It then increments to the next file and clears the data structure."""
 
     def generate_files(self, design, multiple_files):
-        test_num = 100
+        test_num = 100 #NOTE: Change this number if you want to run more than 100 tests in the testbench.
         sample_path = bfasst.paths.ROOT_PATH / (
             "scripts/bfasst/compare_waveforms/sample_tb.v"
         )
@@ -519,17 +519,12 @@ class Waveform_CompareTool(CompareTool):
 
     def run_test(self, design):
         is_equivalent = False
-        build_dir = self.work_dir
-        impl_path = self.work_dir / design.impl_netlist_path.name
-        reversed_path = self.work_dir / design.reversed_netlist_path.name
-        impl_module = impl_path.name[0 : len(impl_path.name) - 2]
-        reversed_module = reversed_path.name[0 : len(reversed_path.name) - 2]
-        impl_tcl = build_dir / (impl_module + ".tcl")
-        reversed_tcl = build_dir / (reversed_module + ".tcl")
-        impl_vcd = build_dir / (impl_module + ".vcd")
-        reversed_vcd = build_dir / (reversed_module + ".vcd")
-        diff_file = build_dir / ("diff.txt")
-        parsed_diff_file = build_dir / ("parsed_diff.txt")
+        impl_tcl = self.work_dir / (design.impl_netlist_path.name[0 : len(design.impl_netlist_path.name) - 2] + ".tcl")
+        reversed_tcl = self.work_dir / (design.reversed_netlist_path.name[0 : len(design.reversed_netlist_path.name) - 2] + ".tcl")
+        impl_vcd = self.work_dir / (design.impl_netlist_path.name[0 : len(design.impl_netlist_path.name) - 2] + ".vcd")
+        reversed_vcd = self.work_dir / (design.reversed_netlist_path.name[0 : len(design.reversed_netlist_path.name) - 2] + ".vcd")
+        diff_file = self.work_dir / ("diff.txt")
+        parsed_diff_file = self.work_dir / ("parsed_diff.txt")
 
         # Finds how many lines are different in the two files.
         dif = subprocess.getoutput(["diff -c " + str(impl_vcd) + " " + str(reversed_vcd)])
