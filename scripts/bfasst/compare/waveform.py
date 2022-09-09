@@ -36,6 +36,20 @@ data = {
     "random_list": [],
 }
 
+# A data structure used to store all of the paths so they aren't redefined in multiple functions.
+paths = {
+    "modules": [], #The list of module names (Ex: add4, add4_impl, add4_reversed)
+    "build_dir": "", #The base directory that files are stored in
+    "path": [], #Paths to the implicit and reversed netlists
+    "file": [], #Paths to the output files for the implicit and reversed netlists
+    "diff": "", #Path to the diff and parsed_diff.txt files
+    "parsed_diff": "",
+    "vcd": [], #Paths to the VCD files
+    "tcl": [], #Paths to the TCL files
+    "tb": [],
+    "sample_tb": "", #Path to the sample testbench used for creating the automatic testbench
+}
+
 """A function used to referesh all of the data in the data structure."""
 
 
@@ -77,15 +91,31 @@ class Waveform_CompareTool(CompareTool):
         if self.print_to_stdout:
             self.print_running_compare()
 
-        impl_path = design.impl_netlist_path
-        module = impl_path.name[0 : len(impl_path.name) - 7]
-        build_dir = self.work_dir
-        diff = build_dir / "diff.txt"
-        impl_vcd = build_dir / (module + "_impl.vcd")
-        reversed_vcd = build_dir / (module + "_reversed.vcd")
+        paths["build_dir"] = self.work_dir
+        paths["path"].append(design.impl_netlist_path)
+        paths["path"].append(design.reversed_netlist_path)
+        paths["file"].append(paths["build_dir"] / (paths["path"][0].name))
+        paths["file"].append(paths["build_dir"] / (paths["path"][1].name))
+        paths["modules"].append(paths["path"][0].name[0 : len(paths["path"][0].name) - 7])
+        paths["modules"].append(paths["path"][0].name[0 : len(paths["path"][0].name) - 2])
+        paths["modules"].append(paths["path"][1].name[0 : len(paths["path"][1].name) - 2])
+        paths["diff"] = paths["build_dir"] / "diff.txt"
+        paths["vcd"].append(paths["build_dir"] / (paths["modules"][1] + ".vcd"))
+        paths["vcd"].append(paths["build_dir"] / (paths["modules"][2] + ".vcd"))
+        paths["dsn"] = paths["build_dir"] / ("dsn")
+        paths["cells_sim"] = bfasst.paths.ROOT_PATH / (
+            "third_party/yosys/techlibs/xilinx/cells_sim.v"
+        )
+        paths["sample_tb"]= bfasst.paths.ROOT_PATH / (
+            "scripts/bfasst/compare_waveforms/sample_tb.v"
+        )
+        #paths["tcl"][0] paths["tcl"][1]
+        paths["tcl"].append(self.work_dir / (design.impl_netlist_path.name[0 : len(design.impl_netlist_path.name) - 2] + ".tcl"))
+        paths["tcl"].append(self.work_dir / (design.reversed_netlist_path.name[0 : len(design.reversed_netlist_path.name) - 2] + ".tcl"))
+        paths["parsed_diff_file"] = self.work_dir / ("parsed_diff.txt")
 
-        shutil.copyfile(impl_path, build_dir / design.impl_netlist_path.name)
-        shutil.copyfile(design.reversed_netlist_path, build_dir / design.reversed_netlist_path.name)
+        shutil.copyfile(paths["path"][0], paths["build_dir"] / paths["path"][0].name)
+        shutil.copyfile(paths["path"][1], paths["build_dir"] / paths["path"][1].name)
 
         #Added this in to check if there are multiple verilog files or not. This will present the user with a warning because
         #currently these can cause strange errors with equivalence checking. 
@@ -106,7 +136,7 @@ class Waveform_CompareTool(CompareTool):
         # for the user to view the previously-generated waveforms. If the design was unequivalent previously, the diff output will be
         # pasted into the linux terminal so they can view specific times in the waveform.
 
-        if(diff.exists()):
+        if(paths["diff"].exists()):
             cont = input("Design has already been tested and came back unequivalent. View Waveforms? Input 1 for yes, 0 for no.")
             if(cont == "0"):
                 cont = input("Ok. Do you want to generate new testbenches and check equivalence again? Input 1 for yes, 0 for no.")
@@ -120,9 +150,9 @@ class Waveform_CompareTool(CompareTool):
                     else:
                         return Status(CompareStatus.NOT_EQUIVALENT)
             else:
-                analyze_graph.analyze_graphs(build_dir, module)
+                analyze_graph.analyze_graphs(paths["build_dir"], paths["modules"][0])
                 return Status(CompareStatus.NOT_EQUIVALENT)
-        elif(impl_vcd.exists() & reversed_vcd.exists()):
+        elif( paths["vcd"][0].exists() &  paths["vcd"][1].exists()):
             cont = input("Design has already been tested and was equivalent. View Waveforms? Input 1 for yes, 0 for no.")
             if(cont == "0"):
                 cont = input("Ok. Do you want to generate new testbenches and check equivalence again? Input 1 for yes, 0 for no.")
@@ -130,20 +160,20 @@ class Waveform_CompareTool(CompareTool):
                     print("Ok. Ending Tests.")
                     return self.success_status
                 else:
-                    self.generate_files(design, multiple_files)
-                    if self.run_test(design):
+                    self.generate_files(multiple_files)
+                    if self.run_test():
                         return self.success_status
                     else:
                         return Status(CompareStatus.NOT_EQUIVALENT)
             else:
-                analyze_graph.analyze_graphs(build_dir, module)
+                analyze_graph.analyze_graphs(paths["build_dir"], paths["modules"][0])
                 return self.success_status
         else:
             # Calls the generate_files function to create the testbenches and TCLs necessary for gtkwave.
-            self.generate_files(design, multiple_files)
+            self.generate_files(multiple_files)
 
             # Checks if the designs are equivalent. If they are, returns success. If not, asserts NOT_EQUIVALENT.
-            if self.run_test(design):
+            if self.run_test():
                 return self.success_status
             else:
                 return Status(CompareStatus.NOT_EQUIVALENT)
@@ -246,8 +276,8 @@ class Waveform_CompareTool(CompareTool):
     """Due to reversed netlists having incomplete ports that can cause issues with spydrnet, this function removes
     all of the excess data the spydrnet doesn't need so that the inputs and outputs can still be parsed."""
 
-    def parse_reversed(self, path, build_dir, multiple_files, file_name, is_impl):
-        test_file = build_dir / "test.v"
+    def parse_reversed(self, path, multiple_files, file_name, is_impl):
+        test_file = paths["build_dir"] / "test.v"
         with path.open() as file:
             if test_file.exists():
                 test_file.unlink()
@@ -384,8 +414,8 @@ class Waveform_CompareTool(CompareTool):
 
     """Generates the first TCL that will be used in gtkwave to create a VCD output."""
 
-    def generate_first_TCL(self, build_dir, file_name, file_num):
-        path = build_dir / (file_name[file_num] + ".tcl")
+    def generate_first_TCL(self, file_name, file_num):
+        path = paths["build_dir"] / (file_name[file_num] + ".tcl")
         if path.exists():
             path.unlink()
         with path.open("x") as TCL:
@@ -397,7 +427,7 @@ class Waveform_CompareTool(CompareTool):
             TCL.write("gtkwave::addSignalsFromList $filter\n")
             TCL.write(
                 'gtkwave::/File/Export/Write_VCD_File_As "'
-                + str(build_dir)
+                + str(paths["build_dir"])
                 + "/"
                 + file_name[file_num]
                 + '.vcd"\n'
@@ -405,9 +435,9 @@ class Waveform_CompareTool(CompareTool):
             TCL.write("gtkwave::File/Quit")
 
     """Replaces information in the last TCL with information specific to this testbench."""
-    def generate_TCL(self, build_dir, file_name, file_num):
-        path = build_dir / (file_name[file_num] + ".tcl")
-        sample_path = build_dir / (file_name[file_num - 1] + ".tcl")
+    def generate_TCL(self, file_name, file_num):
+        path =  paths["build_dir"] / (file_name[file_num] + ".tcl")
+        sample_path = paths["build_dir"] / (file_name[file_num - 1] + ".tcl")
         if path.exists():
             path.unlink()
         with path.open("x") as TCL:
@@ -421,17 +451,13 @@ class Waveform_CompareTool(CompareTool):
 
     """Uses IVerilog to create a VCD file for viewing waveforms"""
     def generate_VCD(self, path, tb, tcl, vcd, fst):
-        dsn = self.work_dir/ ("dsn")
-        cells_sim = bfasst.paths.ROOT_PATH / (
-            "third_party/yosys/techlibs/xilinx/cells_sim.v"
-        )
         # Generate wavefiles
         subprocess.run(
-            ["iverilog", "-o", str(dsn), str(tb), path, str(cells_sim)]
+            ["iverilog", "-o", str(paths["dsn"]), str(tb), path, str(paths["cells_sim"])]
         )
-        subprocess.run(["vvp", str(dsn)])
+        subprocess.run(["vvp", str(paths["dsn"])])
         subprocess.run(["mv", "test.vcd", str(vcd)])
-        dsn.unlink()
+        paths["dsn"].unlink()
 
         self.gtkwave(vcd, tcl, fst)
     
@@ -451,34 +477,26 @@ class Waveform_CompareTool(CompareTool):
     """The main function that generates testbenches and TCL files. It begins by calling the parsers for the input & output names, then
     it calls the testbench generators, finally it calls the TCL generators. It then increments to the next file and clears the data structure."""
 
-    def generate_files(self, design, multiple_files):
+    def generate_files(self, multiple_files):
         test_num = 100 #NOTE: Change this number if you want to run more than 100 tests in the testbench.
-        sample_path = bfasst.paths.ROOT_PATH / (
-            "scripts/bfasst/compare_waveforms/sample_tb.v"
-        )
-        impl_path = design.impl_netlist_path
-        reversed_path = design.reversed_netlist_path
-        impl_module = impl_path.name[0 : len(impl_path.name) - 2]
-        reversed_module = reversed_path.name[0 : len(reversed_path.name) - 2]
-        file_name = [impl_module, reversed_module]
+        file_name = [paths["modules"][1], paths["modules"][2]]
 
         # opens both files to be used in generating respective testbenches and TCLs
-        with open(impl_path) as impl_file:
-            with open(reversed_path) as reversed_file:
+        with open(paths["path"][0]) as impl_file:
+            with open(paths["path"][1]) as reversed_file:
                 file = [impl_file, reversed_file]
-                build_dir = self.work_dir
                 for f, file_num in zip(file, range(len(file))):
-                    file_path = build_dir / (file_name[file_num] + ".v")
-                    tb_path = build_dir / (file_name[file_num] + "_tb.v")
+                    file_path = paths["build_dir"] / (file_name[file_num] + ".v")
+                    tb_path = paths["build_dir"] / (file_name[file_num] + "_tb.v")
 
                     # Checks if the design is a reversed_netlist or not.
                     if f.name.find("reversed") != -1:
                         self.fix_file(file_path, file_name[file_num], True)
-                        self.parse_reversed(file_path, build_dir, multiple_files, f.name, False)
+                        self.parse_reversed(file_path, multiple_files, f.name, False)
                     else:
                         self.fix_file(file_path, file_name[file_num], False)
                         if(multiple_files):
-                            self.parse_reversed((build_dir / (reversed_module + ".v")), build_dir, multiple_files, f.name, True)
+                            self.parse_reversed((paths["build_dir"] / (paths["modules"][2] + ".v")), multiple_files, f.name, True)
                         else:
                             self.parse(f.name)
 
@@ -486,9 +504,9 @@ class Waveform_CompareTool(CompareTool):
                         tb_path.unlink()
 
                     if file_num == 0:
-                        compare_path = sample_path
+                        compare_path = paths["sample_tb"]
                     else:
-                        compare_path = build_dir / (
+                        compare_path = paths["build_dir"] / (
                             file_name[file_num - 1] + "_tb.v"
                         )
 
@@ -506,65 +524,60 @@ class Waveform_CompareTool(CompareTool):
                                     )
 
                     if file_num == 0:
-                        self.generate_first_TCL(build_dir, file_name, file_num)
+                        self.generate_first_TCL(file_name, file_num)
                     else:
-                        self.generate_TCL(build_dir, file_name, file_num)
+                        self.generate_TCL(file_name, file_num)
                     
-                    self.generate_VCD(file_path, tb_path, build_dir / (file_name[file_num] + ".tcl"), build_dir / (file_name[file_num] + "_temp.vcd"), build_dir / (file_name[file_num] + "_temp.vcd.fst"))
+                    self.generate_VCD(file_path, tb_path, paths["build_dir"] / (file_name[file_num] + ".tcl"), paths["build_dir"] / (file_name[file_num] + "_temp.vcd"), paths["build_dir"] / (file_name[file_num] + "_temp.vcd.fst"))
                     refresh(data)
 
     """A function that generates the wavefiles from the testbenches, runs gtkwave w/ the TCLs generated earlier on the wavefiles
     that have just been generated, then checks the difference between gtkwave's two outputs. If there are more than 32 lines that
     are different, the designs must be unequivalent. Removes all unnecessary files after testing."""
 
-    def run_test(self, design):
+    def run_test(self):
         is_equivalent = False
-        impl_tcl = self.work_dir / (design.impl_netlist_path.name[0 : len(design.impl_netlist_path.name) - 2] + ".tcl")
-        reversed_tcl = self.work_dir / (design.reversed_netlist_path.name[0 : len(design.reversed_netlist_path.name) - 2] + ".tcl")
-        impl_vcd = self.work_dir / (design.impl_netlist_path.name[0 : len(design.impl_netlist_path.name) - 2] + ".vcd")
-        reversed_vcd = self.work_dir / (design.reversed_netlist_path.name[0 : len(design.reversed_netlist_path.name) - 2] + ".vcd")
-        diff_file = self.work_dir / ("diff.txt")
-        parsed_diff_file = self.work_dir / ("parsed_diff.txt")
+        paths["parsed_diff"]
 
         # Finds how many lines are different in the two files.
-        dif = subprocess.getoutput(["diff -c " + str(impl_vcd) + " " + str(reversed_vcd)])
-        if diff_file.exists():
-            diff_file.unlink()
-        with diff_file.open("x") as file:
+        dif = subprocess.getoutput(["diff -c " + str(paths["vcd"][0]) + " " + str(paths["vcd"][1])])
+        if paths["diff"].exists():
+            paths["diff"].unlink()
+        with paths["diff"].open("x") as file:
             for line in dif:
                 file.write(line)
 
         lines = 0
-        with diff_file.open() as file:
+        with paths["diff"].open() as file:
             for line in file:
                 if len(line) != 0:
                     lines = lines + 1
 
         # If there are more than 32 lines different, the two designs must be unequivalent.
         if lines > 32:
-            print("NOT EQUIVALENT! SEE " + str(parsed_diff_file) + " for more info")
-            parse_diff.parse_diff(impl_vcd, diff_file, parsed_diff_file)
-            if(parsed_diff_file.exists()):
-                with parsed_diff_file.open() as file:
+            print("NOT EQUIVALENT! SEE " + str(paths["parsed_diff"]) + " for more info")
+            parse_diff.parse_diff(str(paths["vcd"][0]), paths["diff"], paths["parsed_diff"])
+            if(paths["parsed_diff"].exists()):
+                with paths["parsed_diff"].open() as file:
                     for line in file:
                         print(line)
             else:
-               subprocess.run(["diff", "-c", str(impl_vcd), str(reversed_vcd)]) 
+               subprocess.run(["diff", "-c", str(paths["vcd"][0]), str(paths["vcd"][1])]) 
 
         else:
-            diff_file.unlink()
+            paths["diff"].unlink()
             is_equivalent = True
         # Rewrite the TCL script for waveform viewing so it doesn't create new VCD files on re-view.
         lines = []
-        with impl_tcl.open("r") as fp:
+        with paths["tcl"][0].open("r") as fp:
             lines = fp.readlines()
-        with impl_tcl.open("w") as fp:
+        with paths["tcl"][0].open("w") as fp:
             for number, line in enumerate(lines):
                 if number not in [2,3]:
                     fp.write(line)
-        with reversed_tcl.open("r") as fp:
+        with paths["tcl"][1].open("r") as fp:
             lines = fp.readlines()
-        with reversed_tcl.open("w") as fp:
+        with paths["tcl"][1].open("w") as fp:
             for number, line in enumerate(lines):
                 if number not in [2,3]:
                     fp.write(line)

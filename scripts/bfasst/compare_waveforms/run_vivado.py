@@ -17,6 +17,8 @@ assert vivado is not None, "VIVADO_PATH environmental variable was not set!"
 
 template = Path(base) / str("template.tcl")
 temp_tcl = Path(base) / str("temp.tcl")
+if(temp_tcl.exists()):
+    temp_tcl.unlink()
 
 with template.open() as file:
         with temp_tcl.open("x") as output:
@@ -30,6 +32,8 @@ with template.open() as file:
                 output.write(line)
 
 temp2_tcl = Path(base) / str("temp2.tcl")
+if(temp2_tcl.exists()):
+    temp2_tcl.unlink()
 
 with template.open() as file:
         with temp2_tcl.open("x") as output:
