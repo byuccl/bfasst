@@ -604,43 +604,7 @@ class Waveform_CompareTool(CompareTool):
     are different, the designs must be unequivalent."""
 
     def run_test(self):
-        is_equivalent = False
-
-        # Finds how many lines are different in the two files.
-        dif = subprocess.getoutput(
-            ["diff -c " + str(paths["vcd"][0]) + " " + str(paths["vcd"][1])]
-        )
-        if paths["diff"].exists():
-            paths["diff"].unlink()
-        with paths["diff"].open("x") as file:
-            for line in dif:
-                file.write(line)
-
-        lines = 0
-        with paths["diff"].open() as file:
-            for line in file:
-                if len(line) != 0:
-                    lines = lines + 1
-
-        # If there are more than 32 lines different, the two designs must be unequivalent.
-        if lines > 32:
-            print("NOT EQUIVALENT! SEE " + str(paths["parsed_diff"]) + " for more info")
-            parse_diff.parse_diff(
-                str(paths["vcd"][0]), paths["diff"], paths["parsed_diff"]
-            )
-            if paths["parsed_diff"].exists():
-                with paths["parsed_diff"].open() as file:
-                    for line in file:
-                        print(line)
-            else:
-                subprocess.run(
-                    ["diff", "-c", str(paths["vcd"][0]), str(paths["vcd"][1])]
-                )
-
-        else:
-            paths["diff"].unlink()
-            is_equivalent = True
-        return is_equivalent
+        return parse_diff.check_diff(paths)
 
     def check_compare_status(self, log_path):
         with open(log_path) as log:
