@@ -42,11 +42,11 @@ paths = {
     "build_dir": "", #The base directory that files are stored in
     "path": [], #Paths to the implicit and reversed netlists
     "file": [], #Paths to the output files for the implicit and reversed netlists
-    "diff": "", #Path to the diff and parsed_diff.txt files
-    "parsed_diff": "",
+    "diff": "", #Path to the diff txt file
+    "parsed_diff": "", #Path to the parsed_diff txt file
     "vcd": [], #Paths to the VCD files
     "tcl": [], #Paths to the TCL files
-    "tb": [],
+    "tb": [], #Paths to the testbench files
     "sample_tb": "", #Path to the sample testbench used for creating the automatic testbench
 }
 
@@ -474,6 +474,22 @@ class Waveform_CompareTool(CompareTool):
         fst.unlink()
         vcd.unlink()
 
+    """Rewrite the TCL script for waveform viewing so it doesn't create new VCD files on re-view."""
+    def rewrite_tcl(self):
+        lines = []
+        with paths["tcl"][0].open("r") as fp:
+            lines = fp.readlines()
+        with paths["tcl"][0].open("w") as fp:
+            for number, line in enumerate(lines):
+                if number not in [2,3]:
+                    fp.write(line)
+        with paths["tcl"][1].open("r") as fp:
+            lines = fp.readlines()
+        with paths["tcl"][1].open("w") as fp:
+            for number, line in enumerate(lines):
+                if number not in [2,3]:
+                    fp.write(line)
+
     """The main function that generates testbenches and TCL files. It begins by calling the parsers for the input & output names, then
     it calls the testbench generators, finally it calls the TCL generators. It then increments to the next file and clears the data structure."""
 
@@ -530,14 +546,14 @@ class Waveform_CompareTool(CompareTool):
                     
                     self.generate_VCD(file_path, tb_path, paths["build_dir"] / (file_name[file_num] + ".tcl"), paths["build_dir"] / (file_name[file_num] + "_temp.vcd"), paths["build_dir"] / (file_name[file_num] + "_temp.vcd.fst"))
                     refresh(data)
+                self.rewrite_tcl()
 
     """A function that generates the wavefiles from the testbenches, runs gtkwave w/ the TCLs generated earlier on the wavefiles
     that have just been generated, then checks the difference between gtkwave's two outputs. If there are more than 32 lines that
-    are different, the designs must be unequivalent. Removes all unnecessary files after testing."""
+    are different, the designs must be unequivalent."""
 
     def run_test(self):
         is_equivalent = False
-        paths["parsed_diff"]
 
         # Finds how many lines are different in the two files.
         dif = subprocess.getoutput(["diff -c " + str(paths["vcd"][0]) + " " + str(paths["vcd"][1])])
@@ -567,21 +583,7 @@ class Waveform_CompareTool(CompareTool):
         else:
             paths["diff"].unlink()
             is_equivalent = True
-        # Rewrite the TCL script for waveform viewing so it doesn't create new VCD files on re-view.
-        lines = []
-        with paths["tcl"][0].open("r") as fp:
-            lines = fp.readlines()
-        with paths["tcl"][0].open("w") as fp:
-            for number, line in enumerate(lines):
-                if number not in [2,3]:
-                    fp.write(line)
-        with paths["tcl"][1].open("r") as fp:
-            lines = fp.readlines()
-        with paths["tcl"][1].open("w") as fp:
-            for number, line in enumerate(lines):
-                if number not in [2,3]:
-                    fp.write(line)
-        return is_equivalent
+        return(is_equivalent)
 
     def check_compare_status(self, log_path):
         with open(log_path) as log:
