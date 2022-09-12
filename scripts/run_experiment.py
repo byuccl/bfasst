@@ -2,18 +2,15 @@
 
 import argparse
 import pathlib
-import queue
 import sys
 import time
 import multiprocessing
 import threading
-from threading import Thread
-import random
 import datetime
-import os
 
 
 import bfasst
+from bfasst.status import BfasstException, Status
 from bfasst.utils import TermColor, print_color
 
 # Globals
@@ -73,7 +70,10 @@ def run_design(design, design_dir, flow_fcn):
 
     # time.sleep(random.randint(1,2))
     # status = None
-    status = flow_fcn(design, design_dir, print_to_stdout=False)
+    try:
+        status = flow_fcn(design, design_dir, print_to_stdout=False)
+    except BfasstException as e:
+        status = Status(status=e.error, msg=str(e), raise_excep=False)
     return (design, status)
 
 
