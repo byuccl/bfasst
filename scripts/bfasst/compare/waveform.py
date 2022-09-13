@@ -133,7 +133,7 @@ class Waveform_CompareTool(CompareTool):
                 + ".tcl"
             )
         )
-        paths["parsed_diff_file"] = self.work_dir / ("parsed_diff.txt")
+        paths["parsed_diff"] = self.work_dir / ("parsed_diff.txt")
 
         shutil.copyfile(paths["path"][0], paths["build_dir"] / paths["path"][0].name)
         shutil.copyfile(paths["path"][1], paths["build_dir"] / paths["path"][1].name)
@@ -169,8 +169,8 @@ class Waveform_CompareTool(CompareTool):
                     print("Ok. Ending Tests.")
                     return Status(CompareStatus.NOT_EQUIVALENT)
                 else:
-                    self.generate_files(design, multiple_files)
-                    if self.run_test(design):
+                    self.generate_files(multiple_files)
+                    if self.run_test():
                         return self.success_status
                     else:
                         return Status(CompareStatus.NOT_EQUIVALENT)
@@ -219,10 +219,12 @@ class Waveform_CompareTool(CompareTool):
 
     """A function to fix syntax issues that spydrnet commonly has with xilinx-generated or reverse-generated netlists."""
 
-    def fix_file(self, path, file_name, is_reversed):
+    def fix_file(self, paths, i):
+        path = paths["file"][i]
+        file_name = paths["modules"][i+1]
         with path.open("r") as fin:
             file_data = fin.read()
-            if is_reversed:
+            if i == 1:
                 file_data = file_data.replace(
                     "module top(", "module " + file_name + "("
                 )
@@ -287,7 +289,6 @@ class Waveform_CompareTool(CompareTool):
                     contains_item = False
             if not_port == False:
                 for port in i.ports:
-                    print(port.name)
                     if str(port.direction) == "Direction.OUT":
                         data["output_list"].append(port.name)
                         data["total_list"].append(port.name)
@@ -305,13 +306,13 @@ class Waveform_CompareTool(CompareTool):
     """Due to reversed netlists having incomplete ports that can cause issues with spydrnet, this function removes
     all of the excess data the spydrnet doesn't need so that the inputs and outputs can still be parsed."""
 
-    def parse_reversed(self, path, multiple_files, file_name, is_impl):
+    def parse_reversed(self, path, multiple_files, file_name, i):
         test_file = paths["build_dir"] / "test.v"
         with path.open() as file:
             if test_file.exists():
                 test_file.unlink()
             with test_file.open("x") as newFile:
-                i = 0
+                j = 0
                 # Only includes lines that declare the module, the inputs, or the outputs or the line directly after them.
                 for line in file:
                     if "module" in line:
@@ -321,10 +322,10 @@ class Waveform_CompareTool(CompareTool):
                     elif "output" in line:
                         newFile.write(line)
                     else:
-                        if i == 0:
-                            i = 1
+                        if j == 0:
+                            j = 1
                             newFile.write(line)
-        if multiple_files & is_impl:
+        if multiple_files & i == 0:
             self.parse_multiple(file_name, newFile.name)
         else:
             self.parse(newFile.name)  # Parses this newly-generated simplified netlist.
@@ -536,68 +537,57 @@ class Waveform_CompareTool(CompareTool):
     def generate_files(self, multiple_files):
         test_num = 100  # NOTE: Change this number if you want to run more than 100 tests in the testbench.
         file_name = [paths["modules"][1], paths["modules"][2]]
+        for i in range(2):
+            with open(paths["path"][i]) as file:
 
-        # opens both files to be used in generating respective testbenches and TCLs
-        with open(paths["path"][0]) as impl_file:
-            with open(paths["path"][1]) as reversed_file:
-                file = [impl_file, reversed_file]
-                for f, file_num in zip(file, range(len(file))):
-                    file_path = paths["build_dir"] / (file_name[file_num] + ".v")
-                    tb_path = paths["build_dir"] / (file_name[file_num] + "_tb.v")
+                if i==1:
+                    self.fix_file(paths, i)
+                    self.parse_reversed(paths["file"][i], multiple_files, file.name, i)
 
-                    # Checks if the design is a reversed_netlist or not.
-                    if f.name.find("reversed") != -1:
-                        self.fix_file(file_path, file_name[file_num], True)
-                        self.parse_reversed(file_path, multiple_files, f.name, False)
+                else:
+                    self.fix_file(paths, i)
+                    if multiple_files:
+                        self.parse_reversed(paths["file"][1], multiple_files, file.name, i)
                     else:
-                        self.fix_file(file_path, file_name[file_num], False)
-                        if multiple_files:
-                            self.parse_reversed(
-                                (paths["build_dir"] / (paths["modules"][2] + ".v")),
-                                multiple_files,
-                                f.name,
-                                True,
-                            )
-                        else:
-                            self.parse(f.name)
+                        self.parse(file.name)
 
-                    if tb_path.exists():
-                        tb_path.unlink()
+                tb_path = (paths["build_dir"] / (file_name[i] + "_tb.v"))   
+                if tb_path.exists():
+                    tb_path.unlink()
+                
+                if i==0:
+                    compare_path = paths["sample_tb"]
 
-                    if file_num == 0:
-                        compare_path = paths["sample_tb"]
-                    else:
-                        compare_path = paths["build_dir"] / (
-                            file_name[file_num - 1] + "_tb.v"
-                        )
+                else:
+                    compare_path = paths["build_dir"] / (file_name[0] + "_tb.v")
 
-                    # Calls both the testbench and the TCL generators.
-                    with compare_path.open() as sample:
-                        with tb_path.open("x") as tb:
-                            for line in sample:
-                                if file_num == 0:
-                                    self.generate_first_testbench(
-                                        tb, line, file_name, test_num
-                                    )
-                                else:
-                                    self.generate_testbench(
-                                        tb, line, file_name, file_num
-                                    )
+                # Calls both the testbench and the TCL generators.
+                with compare_path.open() as sample:
+                    with tb_path.open("x") as tb:
+                        for line in sample:
+                            if i == 0:
+                                self.generate_first_testbench(
+                                    tb, line, file_name, test_num
+                                )
+                            else:
+                                self.generate_testbench(
+                                    tb, line, file_name, i
+                                )
 
-                    if file_num == 0:
-                        self.generate_first_TCL(file_name, file_num)
-                    else:
-                        self.generate_TCL(file_name, file_num)
+                if i == 0:
+                    self.generate_first_TCL(file_name, i)
+                else:
+                    self.generate_TCL(file_name, i)
 
-                    self.generate_VCD(
-                        file_path,
-                        tb_path,
-                        paths["build_dir"] / (file_name[file_num] + ".tcl"),
-                        paths["build_dir"] / (file_name[file_num] + "_temp.vcd"),
-                        paths["build_dir"] / (file_name[file_num] + "_temp.vcd.fst"),
-                    )
-                    refresh(data)
-                self.rewrite_tcl()
+                self.generate_VCD(
+                    paths["file"][i],
+                    tb_path,
+                    paths["build_dir"] / (file_name[i] + ".tcl"),
+                    paths["build_dir"] / (file_name[i] + "_temp.vcd"),
+                    paths["build_dir"] / (file_name[i] + "_temp.vcd.fst"),
+                )
+                refresh(data)
+        self.rewrite_tcl()
 
     """A function that generates the wavefiles from the testbenches, runs gtkwave w/ the TCLs generated earlier on the wavefiles
     that have just been generated, then checks the difference between gtkwave's two outputs. If there are more than 32 lines that

@@ -26,7 +26,7 @@ def check_diff(paths):
     # If there are more than 32 lines different, the two designs must be unequivalent.
     if lines > 32:
         print("NOT EQUIVALENT! SEE " + str(paths["parsed_diff"]) + " for more info")
-        parse_diff.parse_diff(paths)
+        parse_diff(paths)
         if paths["parsed_diff"].exists():
             with paths["parsed_diff"].open() as file:
                 for line in file:
@@ -87,8 +87,8 @@ def parse_diff(paths):
             signals.append(i)
             j = 0
 
-    if paths["parsed_diff"].exists():
-        paths["parsed_diff"].unlink()
+    if Path(paths["parsed_diff"]).exists():
+        Path(paths["parsed_diff"]).unlink()
 
     # A lot of logic here. Essentially, all of the excess information is discarded and everything is renamed so that
     # it can be easier to read for a normal individual. A HOW TO READ: section is added for first-time users.
