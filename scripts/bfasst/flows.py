@@ -1,3 +1,4 @@
+from distutils.command.build import build
 import enum
 import abc
 import os
@@ -8,6 +9,17 @@ import bfasst
 from bfasst import flows
 from bfasst.utils import TermColor, error
 from enum import Enum
+<<<<<<< HEAD
+=======
+from bfasst.synth.ic2_lse import IC2_LSE_SynthesisTool
+from bfasst.synth.vivado import Vivado_SynthesisTool
+from bfasst.impl.ic2 import IC2_ImplementationTool as IC2_Impl
+from bfasst.impl.vivado import Vivado_ImplementationTool
+from bfasst.reverse_bit.xray import XRay_ReverseBitTool
+from bfasst.reverse_bit.icestorm import Icestorm_ReverseBitTool as ice_rev_bit
+from bfasst.compare.conformal import Conformal_CompareTool
+from bfasst.compare.yosys import Yosys_CompareTool
+>>>>>>> Working through flows
 
 
 class Args(Enum):
@@ -75,28 +87,63 @@ def get_flow_fcn_by_name(flow_name):
     return fcn
 
 
-def run_flow(design, flow_type, build_dir, print_to_stdout=True):
+def run_flow(design, flow_type, flow_args, build_dir):
     assert type(design) is bfasst.design.Design
 
     flow_fcn = flows.get_flow_fcn_by_name(flow_type)
-    return flow_fcn(design, build_dir, print_to_stdout)
+    return flow_fcn(design, flow_args, build_dir)
 
 
-def flow_ic2_lse_conformal(design, build_dir):
+def IC2_LSE_synth(design, build_dir, flow_args):
     # Run Icecube2 LSE synthesis
-    synth_tool = bfasst.synth.ic2_lse.IC2_LSE_SynthesisTool(build_dir)
-    status = synth_tool.create_netlist(design)
-    
+    synth_tool = IC2_LSE_synth(build_dir, flow_args)
+    return synth_tool.create_netlist(design)
 
+
+def IC2_impl(design, build_dir, flow_args):
     # Run Icecube2 implementations
-    impl_tool = bfasst.impl.ic2.IC2_ImplementationTool(build_dir)
-    status = impl_tool.implement_bitstream(design)
-    
+    impl_tool = IC2_impl(build_dir, flow_args)
+    return impl_tool.implement_bitstream(design)
+
+
+#TODO determine flow_args
+def icestorm_rev_bit(design, build_dir, flow_args):
+    reverse_bit_tool = ice_rev_bit(build_dir, flow_args)
+    return reverse_bit_tool.reverse_bitstream(design)
+
+
+#TODO determine flow_args
+def conformal_cmp(design, build_dir, vendor, flow_args):
+    compare_tool = Conformal_CompareTool(build_dir, vendor)
+    with bfasst.conformal_lock:
+        return compare_tool.compare_netlists(design)
+
+def vivado_synth(design, build_dir, flow_args):
+    synth_tool = Vivado_SynthesisTool(build_dir, flow_args)
+    return synth_tool.create_netlist(design)
+
+
+def yosys_cmp(design, build_dir, flow_args):
+    compare_tool = Yosys_CompareTool(build_dir)
+    compare_tool.compare_netlists(design)
+
+def vivado_impl(design, build_dir, flow_args):
+    impl_tool = Vivado_ImplementationTool(build_dir, flow_args)
+    return impl_tool.implement_bitstream(design)
+
+#TODO determine flow_args
+def xray_rev(design, build_dir, flow_args):
+    reverse_bit_tool = XRay_ReverseBitTool(build_dir)
+    return reverse_bit_tool.reverse_bitstream(design)
+
+
+def flow_ic2_lse_conformal(design, flow_args, build_dir):
+    status = IC2_LSE_synth(design, build_dir, flow_args[Args.SYNTH])
+
+    status = IC2_impl(design, build_dir, flow_args[Args.IMPL])
 
     # Run icestorm bitstream reversal
-    reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(build_dir)
-    status = reverse_bit_tool.reverse_bitstream(design)
-    
+    status = icestorm_rev_bit(design, build_dir, flow_args)
 
     # Run conformal
     design.compare_golden_files.append(design.top_file)
@@ -106,123 +153,90 @@ def flow_ic2_lse_conformal(design, build_dir):
         [design.full_path / f for f in design.get_support_files()]
     )
     design.golden_is_verilog = design.top_is_verilog()
-    compare_tool = bfasst.compare.conformal.Conformal_CompareTool(build_dir)
-    status = None
-    with bfasst.conformal_lock:
-        status = compare_tool.compare_netlists(design)
-    
-
+    status = conformal_cmp(design, build_dir, Vendor.XILINX, flow_args) # TODO vendor originally was not specified here
     return status
 
 
-def flow_conformal_only(design, flow_args, build_dir, print_to_stdout=True):
-    assert(design.netlist_path is not None)
-    assert(design.reversed_netlist_path is not None)
+def flow_conformal_only(design, flow_args, build_dir):
+    assert design.netlist_path is not None
+    assert design.reversed_netlist_path is not None
 
-    design.golden_sources = [design.netlist_path,]
-    compare_tool = bfasst.compare.conformal.Conformal_CompareTool(build_dir, Vendor.XILINX)
-    with bfasst.conformal_lock:
-        status = compare_tool.compare_netlists(design, print_to_stdout)
-    
-
+    design.golden_sources = [
+        design.netlist_path,
+    ]
+    status = conformal_cmp(design, build_dir, Vendor.XILINX, flow_args)
     return status
 
-def flow_xilinx(design, flow_args, build_dir, print_to_stdout=True):
+
+def flow_xilinx(design, flow_args, build_dir):
     # Run Xilinx synthesis and implementation
-    synth_tool = bfasst.synth.vivado.Vivado_SynthesisTool(build_dir)
-    status = synth_tool.create_netlist(design, print_to_stdout)
-    
-
-    impl_tool = bfasst.impl.vivado.Vivado_ImplementationTool(build_dir)
-    status = impl_tool.implement_bitstream(design, print_to_stdout)
-    
-
-def flow_xilinx_conformal(design, flow_args, build_dir, print_to_stdout=True):
-    # Run Xilinx synthesis and implementation
-    synth_tool = bfasst.synth.vivado.Vivado_SynthesisTool(build_dir)
-    status = synth_tool.create_netlist(design, print_to_stdout)
-    
-
-    impl_tool = bfasst.impl.vivado.Vivado_ImplementationTool(build_dir)
-    status = impl_tool.implement_bitstream(design, print_to_stdout)
-    
-
-    reverse_bit_tool = bfasst.reverse_bit.xray.XRay_ReverseBitTool(build_dir)
-    status = reverse_bit_tool.reverse_bitstream(design, print_to_stdout)
-    
-
-    compare_tool = bfasst.compare.conformal.Conformal_CompareTool(build_dir, Vendor.XILINX)
-    with bfasst.conformal_lock:
-        status = compare_tool.compare_netlists(design, print_to_stdout)
-    
-
+    status = vivado_synth(design, build_dir, flow_args[Args.SYNTH])
+    status = vivado_impl(design, build_dir, flow_args[Args.IMPL])
     return status
 
-def flow_xilinx_conformal_impl(design, flow_args, build_dir, print_to_stdout=True):
-    # Parse the arguments used for the different stages of the flow
-    args = parse_flow_args(flow_args)
 
+def flow_xilinx_conformal(design, flow_args, build_dir):
     # Run Xilinx synthesis and implementation
-    synth_tool = bfasst.synth.vivado.Vivado_SynthesisTool(build_dir)
-    status = synth_tool.create_netlist(design, print_to_stdout)
-    
-    impl_tool = bfasst.impl.vivado.Vivado_ImplementationTool(build_dir)
-    status = impl_tool.implement_bitstream(design, print_to_stdout)
-    
+    status = vivado_synth(design, build_dir, flow_args[Args.SYNTH])
+    status = vivado_impl(design, build_dir, flow_args[Args.IMPL])
+    status = xray_rev(design, build_dir, flow_args)
+    status = conformal_cmp(design, build_dir, Vendor.XILINX, flow_args)
+    return status
+
+
+def flow_xilinx_conformal_impl(design, flow_args, build_dir):
+    # Run Xilinx synthesis and implementation
+    status = vivado_synth(design, build_dir, flow_args[Args.SYNTH])
+    status = vivado_impl(design, build_dir, flow_args[Args.IMPL])
 
     # Run X-ray and fasm2bel
-    reverse_bit_tool = bfasst.reverse_bit.xray.XRay_ReverseBitTool(build_dir)
-    status = reverse_bit_tool.reverse_bitstream(design, print_to_stdout)
-    
+    status = xray_rev(design, build_dir, flow_args)
 
     # Use conformal to compare against IMPL netlist
-    design.golden_sources = [design.impl_netlist_path,]
-    compare_tool = bfasst.compare.conformal.Conformal_CompareTool(build_dir, Vendor.XILINX)
-    with bfasst.conformal_lock:
-        status = compare_tool.compare_netlists(design, args[Args.MAP_STAGE.value], print_to_stdout)
-    if status.error:
-        return status
+    design.golden_sources = [
+        design.impl_netlist_path,
+    ]
 
+
+    #TODO Conformal_CompareTool.compare_netlists does not take a mapping arg
+    """
+    compare_tool = bfasst.compare.conformal.Conformal_CompareTool(
+        build_dir, Vendor.XILINX
+    )
+    with bfasst.conformal_lock:
+        status = compare_tool.compare_netlists(
+            design, args[Args.MAP_STAGE.value]
+        )
+    """
+    status = conformal_cmp(design, build_dir, Vendor.XILINX, flow_args)
     return status
 
-def flow_xilinx_yosys_impl(design, flow_args, build_dir, print_to_stdout=True):
+
+def flow_xilinx_yosys_impl(design, flow_args, build_dir):
     # Run Xilinx synthesis and implementation
-    synth_tool = bfasst.synth.vivado.Vivado_SynthesisTool(build_dir)
-    status = synth_tool.create_netlist(design, print_to_stdout)
-    
-    impl_tool = bfasst.impl.vivado.Vivado_ImplementationTool(build_dir)
-    status = impl_tool.implement_bitstream(design, print_to_stdout)
-    
+    status = vivado_synth(design, build_dir, flow_args[Args.SYNTH])
+    status = vivado_impl(design, build_dir, flow_args[Args.IMPL])
 
     # Run X-ray and fasm2bel
-    reverse_bit_tool = bfasst.reverse_bit.xray.XRay_ReverseBitTool(build_dir)
-    status = reverse_bit_tool.reverse_bitstream(design, print_to_stdout)
-    
+    status = xray_rev(design, build_dir, flow_args)
 
     compare_tool = bfasst.compare.yosys.Yosys_CompareTool(build_dir)
-    status = compare_tool.compare_netlists(design, print_to_stdout)
-    
-    
+    status = compare_tool.compare_netlists(design)
+
     return status
 
-def flow_xilinx_yosys_waveform(design, build_dir, print_to_stdout=True):
+
+def flow_xilinx_yosys_waveform(design, build_dir, flow_args):
     # Run Xilinx synthesis and implementation
-    synth_tool = bfasst.synth.vivado.Vivado_SynthesisTool(build_dir)
-    status = synth_tool.create_netlist(design, print_to_stdout)
-    
-    impl_tool = bfasst.impl.vivado.Vivado_ImplementationTool(build_dir)
-    status = impl_tool.implement_bitstream(design, print_to_stdout)
-    
+    status = vivado_synth(design, build_dir, flow_args[Args.SYNTH])
+    status = vivado_impl(design, build_dir, flow_args[Args.IMPL])
 
     # Run X-ray and fasm2bel
-    reverse_bit_tool = bfasst.reverse_bit.xray.XRay_ReverseBitTool(build_dir)
-    status = reverse_bit_tool.reverse_bitstream(design, print_to_stdout)
-    
+    status = xray_rev(design, build_dir, flow_args)
 
     compare_tool = bfasst.compare.waveform.Waveform_CompareTool(build_dir)
-    status = compare_tool.compare_netlists(design, print_to_stdout)
-    
-    
+    status = compare_tool.compare_netlists(design)
+
     return status
 
 
@@ -230,17 +244,12 @@ def flow_ic2_synplify_conformal(design, flow_args, build_dir):
     # Run Icecube2 Synplify synthesis
     synth_tool = bfasst.synth.ic2_synplify.IC2_Synplify_SynthesisTool(build_dir)
     status = synth_tool.create_netlist(design)
-    
 
     # Run Icecube2 implementations
-    impl_tool = bfasst.impl.ic2.IC2_ImplementationTool(build_dir)
-    status = impl_tool.implement_bitstream(design)
-    
+    status = IC2_impl(design, build_dir, flow_args[Args.IMPL])
 
     # Run icestorm bitstream reversal
-    reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(build_dir)
-    status = reverse_bit_tool.reverse_bitstream(design)
-    
+    status = icestorm_rev_bit(design, build_dir, flow_args)
 
     # Run conformal
     design.compare_golden_files.append(design.top_file)
@@ -250,10 +259,9 @@ def flow_ic2_synplify_conformal(design, flow_args, build_dir):
         [design.full_path / f for f in design.get_support_files()]
     )
     design.golden_is_verilog = design.top_is_verilog()
-    compare_tool = bfasst.compare.conformal.Conformal_CompareTool(build_dir)
-    with bfasst.conformal_lock:
-        status = compare_tool.compare_netlists(design)
-    
+
+    #TODO no vendor was originally specified here
+    status = conformal_cmp(design, build_dir, Vendor.XILINX, flow_args)
 
     return status
 
@@ -262,17 +270,12 @@ def flow_synplify_ic2_icestorm_onespin(design, flow_args, build_dir):
     # Run Icecube2 Synplify synthesis
     synth_tool = bfasst.synth.ic2_synplify.IC2_Synplify_SynthesisTool(build_dir)
     status = synth_tool.create_netlist(design)
-    
 
     # Run Icecube2 implementations
-    impl_tool = bfasst.impl.ic2.IC2_ImplementationTool(build_dir)
-    status = impl_tool.implement_bitstream(design)
-    
+    status = IC2_impl(design, build_dir, flow_args[Args.IMPL])
 
     # Run icestorm bitstream reversal
-    reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(build_dir)
-    status = reverse_bit_tool.reverse_bitstream(design)
-    
+    status = icestorm_rev_bit(design, build_dir, flow_args)
 
     # Run conformal
     design.compare_golden_files.append(design.top_file)
@@ -286,7 +289,6 @@ def flow_synplify_ic2_icestorm_onespin(design, flow_args, build_dir):
     compare_tool = bfasst.compare.onespin.OneSpin_CompareTool(build_dir)
     with bfasst.onespin_lock:
         status = compare_tool.compare_netlists(design)
-    
 
     return status
 
@@ -295,7 +297,6 @@ def flow_yosys_tech_lse_conformal(design, flow_args, build_dir):
     # Run the Yosys synthesizer
     yosys_synth_tool = bfasst.synth.yosys.Yosys_Tech_SynthTool(build_dir)
     status = yosys_synth_tool.create_netlist(design)
-    
 
     # Now run the LSE synthesizer on the Yosys output
     yosys_netlist_path = design.netlist_path
@@ -304,27 +305,20 @@ def flow_yosys_tech_lse_conformal(design, flow_args, build_dir):
     design.golden_is_verilog = True
     lse_opt_tool = bfasst.opt.ic2_lse.IC2_LSE_OptTool(build_dir)
     status = lse_opt_tool.create_netlist(design, [str(yosys_netlist_path)], [])
-    
 
     # Try fixing the netlist LUT inits (there's some issue with how LSE
     #   generates them)
     lse_opt_tool.fix_lut_inits(design)
 
     # Run IC2 Implementation
-    impl_tool = bfasst.impl.ic2.IC2_ImplementationTool(build_dir)
-    status = impl_tool.implement_bitstream(design)
-    
+    status = IC2_impl(design, build_dir, flow_args[Args.IMPL])
 
     # Run icestorm bitstream reversal
-    reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(build_dir)
-    status = reverse_bit_tool.reverse_bitstream(design)
-    
+    status = icestorm_rev_bit(design, build_dir, flow_args)
 
     # Run conformal
-    compare_tool = bfasst.compare.conformal.Conformal_CompareTool(build_dir)
-    with bfasst.conformal_lock:
-        status = compare_tool.compare_netlists(design)
-    
+    #TODO no vendor was originally specified here
+    status = conformal_cmp(design, build_dir, Vendor.XILINX, flow_args)
 
     return status
 
@@ -333,7 +327,6 @@ def flow_yosys_tech_synplify_conformal(design, flow_args, build_dir):
     # Run the Yosys synthesizer
     yosys_synth_tool = bfasst.synth.yosys.Yosys_Tech_SynthTool(build_dir)
     status = yosys_synth_tool.create_netlist(design)
-    
 
     # Now run the Synplify synthesizer on the Yosys output
     yosys_netlist_path = design.netlist_path
@@ -342,24 +335,16 @@ def flow_yosys_tech_synplify_conformal(design, flow_args, build_dir):
     design.golden_is_verilog = True
     synp_opt_tool = bfasst.opt.ic2_synplify.IC2_Synplify_OptTool(build_dir)
     status = synp_opt_tool.create_netlist(design, [str(yosys_netlist_path)], [])
-    
 
     # Run IC2 Implementation
-    impl_tool = bfasst.impl.ic2.IC2_ImplementationTool(build_dir)
-    status = impl_tool.implement_bitstream(design)
-    
+    status = IC2_impl(design, build_dir, flow_args[Args.IMPL])
 
     # Run icestorm bitstream reversal
-    reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(build_dir)
-    # Now actually reverse the bitstream
-    status = reverse_bit_tool.reverse_bitstream(design)
-    
+    status = icestorm_rev_bit(design, build_dir, flow_args)
 
     # Run conformal
-    compare_tool = bfasst.compare.conformal.Conformal_CompareTool(build_dir)
-    with bfasst.conformal_lock:
-        status = compare_tool.compare_netlists(design)
-    
+    #TODO No Vendor was originally specified
+    status = conformal_cmp(design, build_dir, Vendor.XILINX, flow_args)
 
     return status
 
@@ -368,7 +353,6 @@ def flow_yosys_tech_synplify_onespin(design, flow_args, build_dir):
     # Run the Yosys synthesizer
     yosys_synth_tool = bfasst.synth.yosys.Yosys_Tech_SynthTool(build_dir)
     status = yosys_synth_tool.create_netlist(design)
-    
 
     # Now run the Synplify synthesizer on the Yosys output
     yosys_netlist_path = design.netlist_path
@@ -377,24 +361,17 @@ def flow_yosys_tech_synplify_onespin(design, flow_args, build_dir):
     design.golden_is_verilog = True
     synp_opt_tool = bfasst.opt.ic2_synplify.IC2_Synplify_OptTool(build_dir)
     status = synp_opt_tool.create_netlist(design, [str(yosys_netlist_path)], [])
-    
 
     # Run IC2 Implementation
-    impl_tool = bfasst.impl.ic2.IC2_ImplementationTool(build_dir)
-    status = impl_tool.implement_bitstream(design)
-    
+    status = IC2_impl(design, build_dir, flow_args[Args.IMPL])
 
     # Run icestorm bitstream reversal
-    reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(build_dir)
-    # Now actually reverse the bitstream
-    status = reverse_bit_tool.reverse_bitstream(design)
-    
+    status = icestorm_rev_bit(design, build_dir, flow_args)
 
     design.compare_revised_file = design.reversed_netlist_filename()
     compare_tool = bfasst.compare.onespin.OneSpin_CompareTool(build_dir)
     with bfasst.onespin_lock:
         status = compare_tool.compare_netlists(design)
-    
 
     return status
 
@@ -406,7 +383,6 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
     # Run the Yosys synthesizer
     yosys_synth_tool = bfasst.synth.yosys.Yosys_Tech_SynthTool(build_dir)
     status = yosys_synth_tool.create_netlist(design)
-    
 
     # Run error injection
     error_inj_tool = bfasst.error_injection.error_injector.ErrorInjector_ErrorInjectionTool(
@@ -414,7 +390,6 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
     )
     ret = error_inj_tool.run_error_flows(design)
     status = ret[0]
-    
 
     # Run Synth, impl, and icestorm on the original netlist
     # Now run the Synplify synthesizer on the Yosys output
@@ -424,19 +399,12 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
     design.golden_is_verilog = True
     synp_opt_tool = bfasst.opt.ic2_synplify.IC2_Synplify_OptTool(build_dir)
     status = synp_opt_tool.create_netlist(design, [str(yosys_netlist_path)], [])
-    
 
     # Run IC2 Implementation
-    impl_tool = bfasst.impl.ic2.IC2_ImplementationTool(build_dir)
-    status = impl_tool.implement_bitstream(design)
-    print(status)
-    
+    status = IC2_impl(design, build_dir, flow_args[Args.IMPL])
 
     # Run icestorm bitstream reversal
-    reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(build_dir)
-    # Now actually reverse the bitstream
-    status = reverse_bit_tool.reverse_bitstream(design)
-    
+    status = icestorm_rev_bit(design, build_dir, flow_args)
 
     compare_tool = bfasst.compare.onespin.OneSpin_CompareTool(build_dir)
     design.compare_revised_file = design.reversed_netlist_filename()
@@ -467,15 +435,16 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
         status = synp_opt_tool.create_netlist(design, [str(netlist)], [])
 
         # Run IC2 Implementation
-        shutil.rmtree(impl_tool.work_dir)
-        impl_tool = bfasst.impl.ic2.IC2_ImplementationTool(build_dir)
-        status = impl_tool.implement_bitstream(design)
+        shutil.rmtree(build_dir / IC2_Impl.TOOL_WORK_DIR)
+        status = IC2_impl(design, build_dir, flow_args[Args.IMPL])
+        if status.error:
+            return status
 
         # Run icestorm bitstream reversal
-        shutil.rmtree(reverse_bit_tool.work_dir)
-        reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(build_dir)
-        # Now actually reverse the bitstream
-        status = reverse_bit_tool.reverse_bitstream(design)
+        shutil.rmtree(build_dir / ice_rev_bit.TOOL_WORK_DIR)
+        status = icestorm_rev_bit(design, build_dir, flow_args)
+        if status.error:
+            return status
 
         # Run compare to create a onespin tcl for yosys->corrupt reversed netlist
         compare_tool = bfasst.compare.onespin.OneSpin_CompareTool(build_dir)
@@ -509,17 +478,12 @@ def flow_gather_impl_data(design, flow_args, build_dir):
     # Run Icecube2 Synplify synthesis
     synth_tool = bfasst.synth.ic2_synplify.IC2_Synplify_SynthesisTool(build_dir)
     status = synth_tool.create_netlist(design)
-    
 
     # Run Icecube2 implementations
-    impl_tool = bfasst.impl.ic2.IC2_ImplementationTool(build_dir)
-    status = impl_tool.implement_bitstream(design)
-    
+    status = IC2_impl(design, build_dir, flow_args[Args.IMPL])
 
     # Run icestorm bitstream reversal
-    reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(build_dir)
-    status = reverse_bit_tool.reverse_bitstream(design)
-    
+    status = icestorm_rev_bit(design, build_dir, flow_args)
 
     # Clean up project directories so we get fresh results later
     if synth_tool.opt_tool is not None:
@@ -530,19 +494,13 @@ def flow_gather_impl_data(design, flow_args, build_dir):
 
     # Now do RTL->LSE->IC2->Icestorm
     # Run Icecube2 LSE synthesis
-    synth_tool = bfasst.synth.ic2_lse.IC2_LSE_SynthesisTool(build_dir)
-    status = synth_tool.create_netlist(design)
-    
+    status = IC2_LSE_synth(design, build_dir, flow_args[Args.SYNTH])
 
     # Run Icecube2 implementations
-    impl_tool = bfasst.impl.ic2.IC2_ImplementationTool(build_dir)
-    status = impl_tool.implement_bitstream(design)
-    
+    status = IC2_impl(design, build_dir, flow_args[Args.IMPL])
 
     # Run icestorm bitstream reversal
-    reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(build_dir)
-    status = reverse_bit_tool.reverse_bitstream(design)
-    
+    status = icestorm_rev_bit(design, build_dir, flow_args)
 
     # Clean up project directories so we get fresh results later
     if synth_tool.opt_tool is not None:
@@ -555,24 +513,17 @@ def flow_gather_impl_data(design, flow_args, build_dir):
     # Run the Yosys synthesizer
     yosys_synth_tool = bfasst.synth.yosys.Yosys_Tech_SynthTool(build_dir)
     status = yosys_synth_tool.create_netlist(design)
-    
 
     # Now run the Synplify synthesizer on the Yosys output
     yosys_netlist_path = design.netlist_path
     synp_opt_tool = bfasst.opt.ic2_synplify.IC2_Synplify_OptTool(build_dir)
     status = synp_opt_tool.create_netlist(design, [str(yosys_netlist_path)], [])
-    
 
     # Run IC2 Implementation
-    impl_tool = bfasst.impl.ic2.IC2_ImplementationTool(build_dir)
-    status = impl_tool.implement_bitstream(design)
-    
+    status = IC2_impl(design, build_dir, flow_args[Args.IMPL])
 
     # Run icestorm bitstream reversal
-    reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(build_dir)
-    # Now actually reverse the bitstream
-    status = reverse_bit_tool.reverse_bitstream(design)
-    
+    status = icestorm_rev_bit(design, build_dir, flow_args)
 
     # Clean up project directories so we get fresh results later
     shutil.rmtree(synp_opt_tool.work_dir)
@@ -583,26 +534,20 @@ def flow_gather_impl_data(design, flow_args, build_dir):
     # Run the Yosys synthesizer
     yosys_synth_tool = bfasst.synth.yosys.Yosys_Tech_SynthTool(build_dir)
     status = yosys_synth_tool.create_netlist(design)
-    
 
     # Now run the LSE synthesizer on the Yosys output
     yosys_netlist_path = design.netlist_path
     lse_opt_tool = bfasst.opt.ic2_lse.IC2_LSE_OptTool(build_dir)
     status = lse_opt_tool.create_netlist(design, [str(yosys_netlist_path)], [])
-    
 
     # Try fixing the netlist LUT inits (there's some issue with how LSE
     #   generates them)
     lse_opt_tool.fix_lut_inits(design)
 
     # Run IC2 Implementation
-    impl_tool = bfasst.impl.ic2.IC2_ImplementationTool(build_dir)
-    status = impl_tool.implement_bitstream(design)
-    
+    status = IC2_impl(design, build_dir, flow_args[Args.IMPL])
 
     # Run icestorm bitstream reversal
-    reverse_bit_tool = bfasst.reverse_bit.icestorm.Icestorm_ReverseBitTool(build_dir)
-    status = reverse_bit_tool.reverse_bitstream(design)
-    
+    status = icestorm_rev_bit(design, build_dir, flow_args)
 
     return status
