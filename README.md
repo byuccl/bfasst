@@ -25,7 +25,7 @@ run_experiment.py: error: the following arguments are required: experiment_yaml
   * ```make packages```
 * Install the Python virtual environment, activate, and install packages:
   * ```make venv```
-  * ```source .venv/bin/activate```
+  * ```. .venv/bin/activate```
   * ```pip install -r requirements.txt```
 
 BFASST can be used to compose different CAD flows from severals tools.  You may want to install these tools:
@@ -41,7 +41,7 @@ BFASST can be used to compose different CAD flows from severals tools.  You may 
 1. Install Rapidwright
    * ```make rapidwright```
    * ```make env```
-   * ```source env.sh```
+   * ```. ./env.sh```
 1. Install fasm2bels
    * ```make install_fasm2bels```
 
@@ -57,8 +57,8 @@ The conformal plugin is currently designed to run conformal on a remote machine 
 
 ### Check Installation
 Finally, test to confirm that everything worked correctly! Run the following:
-1. Add rapidwright to your path: ```source env.sh```
-1. Activate the virual environment: ```source .venv/bin/activate```
+1. Add rapidwright to your path: ```. ./env.sh```
+1. Activate the virual environment: ```. .venv/bin/activate```
 1. Run the flow: ```python scripts/run_design.py examples/basic/add4/ xilinx_conformal_impl```
 
 
