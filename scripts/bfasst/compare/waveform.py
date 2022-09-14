@@ -10,11 +10,11 @@ import bfasst
 import pathlib
 from bfasst.compare_waveforms import analyze_graph
 from bfasst.compare_waveforms import parse_diff
+from bfasst.compare_waveforms import parse_files
 import bfasst.paths
 import re
 import pathlib
 import numpy as np
-import spydrnet as sdn
 import subprocess
 import yaml
 import shutil
@@ -26,15 +26,7 @@ from bfasst.status import Status, CompareStatus
 from bfasst.tool import ToolProduct
 from subprocess import Popen
 
-"""A data structure used to store the list of inputs, outputs, and their respective bits."""
-data = {
-    "input_list": [],
-    "input_bits_list": [],
-    "output_list": [],
-    "output_bits_list": [],
-    "total_list": [],
-    "random_list": [],
-}
+data = parse_files.data
 
 """A data structure used to store all of the paths so they aren't redefined in multiple functions."""
 paths = {
@@ -209,12 +201,12 @@ class Waveform_CompareTool(CompareTool):
 
     """A simple function to return the amount of data stored in the input list."""
 
-    def input_num(self):
+    def input_num(self, data):
         return len(data["input_list"])
 
     """A simple function to return the total amount of data being stored as both inputs and outputs."""
 
-    def total_num(self):
+    def total_num(self, data):
         return len(data["input_list"]) + len(data["output_list"])
 
     """A function to fix syntax issues that spydrnet commonly has with xilinx-generated or reverse-generated netlists."""
@@ -236,106 +228,11 @@ class Waveform_CompareTool(CompareTool):
         with path.open("w") as fin:
             fin.write(file_data)
 
-    """Uses spydrnet to analyze the netlist and add the names of all inputs, outputs, and their respective bit sizes to the data structure."""
-
-    def parse(self, file):
-        netlist = sdn.parse(file)
-        library = netlist.libraries[0]
-        definition = library.definitions[0]
-
-        # Use design.yaml_path to find yaml file. Read to find if more modules exist.
-
-        for port in definition.ports:
-            if str(port.direction) == "Direction.OUT":
-                data["output_list"].append(port.name)
-                data["total_list"].append(port.name)
-                data["output_bits_list"].append(len(port.pins) - 1)
-            elif str(port.direction) == "Direction.IN":
-                data["input_list"].append(port.name)
-                data["total_list"].append(port.name)
-                data["input_bits_list"].append(len(port.pins) - 1)
-        if data["input_list"].__contains__("clk"):
-            if data["input_list"].index("clk") == 0:
-                data["input_list"].append(data["input_list"].pop(0))
-
-    """A specific parse function in the situation where multiple verilog files exist. The design has multiple layers of ports, so finding the equivalent
-    ports requires comparing the ports in each layer to the ports in the reversed_netlist. Once both have the same equivalence, they are stored."""
-
-    def parse_multiple(self, file, reversed_file):
-        total_reversed = []
-
-        netlist = sdn.parse(reversed_file)
-        library = netlist.libraries[0]
-        definition = library.definitions[0]
-
-        # Stores the reversed_netlist ports in one array.
-        for port in definition.ports:
-            total_reversed.append(port.name)
-
-        netlist = sdn.parse(file)
-        library = netlist.libraries[0]
-
-        contains_item = False
-        not_port = False
-
-        for i in library.definitions:
-            for port in i.ports:
-                for item in total_reversed:
-                    if item == port.name:
-                        contains_item = True
-                if contains_item == False:
-                    not_port = True
-                else:
-                    contains_item = False
-            if not_port == False:
-                for port in i.ports:
-                    if str(port.direction) == "Direction.OUT":
-                        data["output_list"].append(port.name)
-                        data["total_list"].append(port.name)
-                        data["output_bits_list"].append(len(port.pins) - 1)
-                    elif str(port.direction) == "Direction.IN":
-                        data["input_list"].append(port.name)
-                        data["total_list"].append(port.name)
-                        data["input_bits_list"].append(len(port.pins) - 1)
-                if data["input_list"].__contains__("clk"):
-                    if data["input_list"].index("clk") == 0:
-                        data["input_list"].append(data["input_list"].pop(0))
-            else:
-                not_port = False
-
-    """Due to reversed netlists having incomplete ports that can cause issues with spydrnet, this function removes
-    all of the excess data the spydrnet doesn't need so that the inputs and outputs can still be parsed."""
-
-    def parse_reversed(self, path, multiple_files, file_name, i):
-        test_file = paths["build_dir"] / "test.v"
-        with path.open() as file:
-            if test_file.exists():
-                test_file.unlink()
-            with test_file.open("x") as newFile:
-                j = 0
-                # Only includes lines that declare the module, the inputs, or the outputs or the line directly after them.
-                for line in file:
-                    if "module" in line:
-                        newFile.write(line)
-                    elif "input" in line:
-                        newFile.write(line)
-                    elif "output" in line:
-                        newFile.write(line)
-                    else:
-                        if j == 0:
-                            j = 1
-                            newFile.write(line)
-        if multiple_files & i == 0:
-            self.parse_multiple(file_name, newFile.name)
-        else:
-            self.parse(newFile.name)  # Parses this newly-generated simplified netlist.
-        test_file.unlink()
-
     """This function creates the initial testbench that will be modified by the reversed-netlist. It reads in a sample testbench
     and replaces certain variables with the corresponding information from the data structure. It also sets the variables equal
     to random numbers that are generated to be within the corresponding variable's bit range."""
 
-    def generate_first_testbench(self, tb, line, file_name, test_num):
+    def generate_first_testbench(self, tb, line, file_name, test_num, data):
         if "TB_NAME;" in line:
             line = "module " + file_name[0] + "_tb;"
             tb.write(line)
@@ -366,9 +263,9 @@ class Waveform_CompareTool(CompareTool):
 
         if "MODULE_NAME" in line:
             line = file_name[0] + " instanceOf ("
-            for total, i in zip(data["total_list"], range(self.total_num())):
+            for total, i in zip(data["total_list"], range(self.total_num(data))):
                 total = str(total)
-                if i == self.total_num() - 1:
+                if i == self.total_num(data) - 1:
                     line = line + total + ");\n"
                 else:
                     line = line + total + ", "
@@ -393,7 +290,7 @@ class Waveform_CompareTool(CompareTool):
 
             # The actual logic for adding random numbers to the testbench.
             for i in range(int(test_num)):
-                for input, j in zip(data["input_list"], range(self.input_num())):
+                for input, j in zip(data["input_list"], range(self.input_num(data))):
                     if input != "clk":
                         if j == 0:
                             line = (
@@ -424,7 +321,7 @@ class Waveform_CompareTool(CompareTool):
     """Rather than generating a whole new testbench, this one takes the first generated testbench and replaces everything that
     is specific to that module with this module's information."""
 
-    def generate_testbench(self, tb, line, file_name, file_num):
+    def generate_testbench(self, tb, line, file_name, file_num, data):
         if file_name[file_num - 1] + "_tb;" in line:
             line = line.replace(file_name[file_num - 1], file_name[file_num])
 
@@ -434,8 +331,8 @@ class Waveform_CompareTool(CompareTool):
         if file_name[file_num - 1] + " instanceOf (" in line:
             line = file_name[file_num] + " instanceOf ("
 
-            for totalData, i in zip(data["total_list"], range(self.total_num())):
-                if i == self.total_num() - 1:
+            for totalData, i in zip(data["total_list"], range(self.total_num(data))):
+                if i == self.total_num(data) - 1:
                     line = line + totalData + ");\n"
                 else:
                     line = line + totalData + ", "
@@ -542,15 +439,14 @@ class Waveform_CompareTool(CompareTool):
 
                 if i==1:
                     self.fix_file(paths, i)
-                    self.parse_reversed(paths["file"][i], multiple_files, file.name, i)
+                    data = parse_files.parse_reversed(paths["file"][i], multiple_files, file.name, i, paths)
 
                 else:
                     self.fix_file(paths, i)
                     if multiple_files:
-                        self.parse_reversed(paths["file"][1], multiple_files, file.name, i)
+                        data = parse_files.parse_reversed(paths["file"][1], multiple_files, file.name, i, paths)
                     else:
-                        self.parse(file.name)
-
+                        data = parse_files.parse(file.name)
                 tb_path = (paths["build_dir"] / (file_name[i] + "_tb.v"))   
                 if tb_path.exists():
                     tb_path.unlink()
@@ -567,11 +463,11 @@ class Waveform_CompareTool(CompareTool):
                         for line in sample:
                             if i == 0:
                                 self.generate_first_testbench(
-                                    tb, line, file_name, test_num
+                                    tb, line, file_name, test_num, data
                                 )
                             else:
                                 self.generate_testbench(
-                                    tb, line, file_name, i
+                                    tb, line, file_name, i, data
                                 )
 
                 if i == 0:
