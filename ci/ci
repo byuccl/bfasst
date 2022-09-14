@@ -1,0 +1,66 @@
+#!/bin/sh -e
+caedm_uname=djdahl
+caedm_home=fse
+local_home=/home/dallin
+xilinx_dir=/opt/Xilinx
+git_command="git clone https://github.com/byuccl/bfasst --depth 1"
+
+umount -Rq ubuntu-focal/dev ubuntu-focal/proc ubuntu-focal/sys ubuntu-focal/opt/Xilinx || true
+rm -rf ubuntu-focal
+debootstrap --variant=buildd focal ubuntu-focal http://archive.ubuntu.com/ubuntu/
+sed -E "/User$/s/$/ $caedm_uname/
+	/REMOTE_MACHINE_USER/{;s/$/$caedm_uname/;N;s/\n//;}
+	/REMOTE_(WORK|LIBS)_DIR/{
+		s:$:/$caedm_home/$caedm_uname:;N;s/\n//;}
+	/GIT/c$git_command" <<'eof' >ubuntu-focal/bin/begin
+#!/bin/sh -e
+useradd test -ms /bin/sh
+mkdir /home/test/.ssh
+mv /tmp/id* /home/test/.ssh/
+chown -R test:test /home/test/.ssh
+apt -qqy install git sudo wget pkg-config locales
+sed -i '/ubuntu\.com/s/$/ universe/' /etc/apt/sources.list
+apt -qqy update
+echo 'test ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+locale-gen
+exec su test -c 'exec /bin/sh -e'  <<'eosu'
+cd
+GIT
+cd bfasst
+make packages
+make venv
+. .venv/bin/activate
+pip install -r requirements.txt
+sed -i '/^VIVADO_BIN_PATH/s:"[^"]*":"/opt/Xilinx/Vivado/2022.1/bin/vivado":' scripts/bfasst/config.py
+make capnproto_java
+make rapidwright
+make env
+. ./env.sh
+ssh-keyscan -t rsa github.com >> $HOME/.ssh/known_hosts
+make install_fasm2bels
+make install_yosys
+cat <<'eossh' >$HOME/.ssh/config
+Host caedm
+	Hostname ssh.et.byu.edu
+	User
+eossh
+sed -i '/^CONFORMAL_REMOTE_MACHINE_USER/s:"[^"]*":"
+":' scripts/bfasst/config.py
+sed -i '/^CONFORMAL_REMOTE_WORK_DIR/s:"[^"]*":"
+/bfasst_work":' scripts/bfasst/config.py
+sed -i '/^CONFORMAL_REMOTE_LIBS_DIR/s:"[^"]*":"
+/bfasst_libs":' scripts/bfasst/config.py
+. ./env.sh
+. .venv/bin/activate
+exec python scripts/run_design.py examples/basic/add4/ xilinx_conformal_impl
+eosu
+eof
+chmod +x ubuntu-focal/bin/begin
+mount -t proc /proc ubuntu-focal/proc
+mount --rbind /sys ubuntu-focal/sys
+mount --rbind /dev ubuntu-focal/dev
+mkdir ubuntu-focal/opt/Xilinx
+mount --rbind $xilinx_dir ubuntu-focal/opt/Xilinx
+cp $local_home/.ssh/id* ubuntu-focal/tmp/
+exec chroot ubuntu-focal /bin/begin
