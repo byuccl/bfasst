@@ -1,0 +1,4 @@
+#!/bin/sh
+git clone -q --bare --depth=1 https://github.com/byuccl/bfasst
+git -C bfasst.git log --format="%h"
+rm -rf bfasst.git
