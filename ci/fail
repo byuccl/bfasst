@@ -1,0 +1,5 @@
+#!/bin/sh
+read url <slack_webhook
+read commit
+exec curl -X POST -H 'Content-type: application/json' \
+	--data '{"text":"CI failed on commit '$commit'"}' $url
