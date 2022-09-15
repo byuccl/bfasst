@@ -7,3 +7,12 @@ data = {
     "total_list": [],
     "random_list": [],
 }
+
+def clear_data(data):
+    data["input_list"].clear()
+    data["input_bits_list"].clear()
+    data["output_list"].clear()
+    data["output_bits_list"].clear()
+    data["total_list"].clear()
+    data["random_list"].clear()
+    return(data)

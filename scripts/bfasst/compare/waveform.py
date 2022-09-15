@@ -5,26 +5,23 @@
 # If vivado or F4PGA ever change there netlist-generating style, this file may need to be edited.
 # I would check the fix_file function because this file currently alters the netlists so that spydrnet can parse them.
 
-from pickle import FALSE
 import bfasst
 import pathlib
 from bfasst.compare_waveforms import analyze_graph
 from bfasst.compare_waveforms import parse_diff
 from bfasst.compare_waveforms import parse_files
+from bfasst.compare_waveforms.File_Generation import testbench_generator
+from bfasst.compare_waveforms.File_Generation import tcl_generator
+from bfasst.compare_waveforms.File_Generation import waveform_generator
+from bfasst.compare_waveforms.File_Generation import file_rewriter 
 import bfasst.paths
 import re
 import pathlib
-import numpy as np
-import subprocess
 import yaml
 import shutil
-import time
-from pathlib import Path
-from random import randint
 from bfasst.compare.base import CompareTool
 from bfasst.status import Status, CompareStatus
 from bfasst.tool import ToolProduct
-from subprocess import Popen
 
 data = parse_files.data
 
@@ -41,18 +38,6 @@ paths = {
     "tb": [],  # Paths to the testbench files
     "sample_tb": "",  # Path to the sample testbench used for creating the automatic testbench
 }
-
-"""A function used to referesh all of the data in the data structure."""
-
-
-def refresh(data):
-    data["input_list"].clear()
-    data["input_bits_list"].clear()
-    data["output_list"].clear()
-    data["output_bits_list"].clear()
-    data["total_list"].clear()
-    data["random_list"].clear()
-
 
 """The main class for comparing the waveforms."""
 
@@ -199,235 +184,6 @@ class Waveform_CompareTool(CompareTool):
             else:
                 return Status(CompareStatus.NOT_EQUIVALENT)
 
-    """A simple function to return the amount of data stored in the input list."""
-
-    def input_num(self, data):
-        return len(data["input_list"])
-
-    """A simple function to return the total amount of data being stored as both inputs and outputs."""
-
-    def total_num(self, data):
-        return len(data["input_list"]) + len(data["output_list"])
-
-    """A function to fix syntax issues that spydrnet commonly has with xilinx-generated or reverse-generated netlists."""
-
-    def fix_file(self, paths, i):
-        path = paths["file"][i]
-        file_name = paths["modules"][i+1]
-        with path.open("r") as fin:
-            file_data = fin.read()
-            if i == 1:
-                file_data = file_data.replace(
-                    "module top(", "module " + file_name + "("
-                )
-            else:
-                file_data = file_data.replace(
-                    "module " + file_name[0 : len(file_name) - 5] + "\n",
-                    "module " + file_name,
-                )
-        with path.open("w") as fin:
-            fin.write(file_data)
-
-    """This function creates the initial testbench that will be modified by the reversed-netlist. It reads in a sample testbench
-    and replaces certain variables with the corresponding information from the data structure. It also sets the variables equal
-    to random numbers that are generated to be within the corresponding variable's bit range."""
-
-    def generate_first_testbench(self, tb, line, file_name, test_num, data):
-        if "TB_NAME;" in line:
-            line = "module " + file_name[0] + "_tb;"
-            tb.write(line)
-            line = "\n"
-
-        if "TB_NAME)" in line:
-            line = "    $dumpvars(0," + file_name[0] + "_tb);\n"
-
-        if "INPUTS" in line:
-            for input, bits in zip(data["input_list"], data["input_bits_list"]):
-                input = str(input)
-                bits = str(bits)
-                if input != "clk":
-                    line = "reg [" + bits + ":0] " + input + " = 0;\n"
-                    tb.write(line)
-                else:
-                    line = "reg clk = 0;\n"
-                    tb.write(line)
-                line = ""
-
-        if "OUTPUTS" in line:
-            for output, bits in zip(data["output_list"], data["output_bits_list"]):
-                output = str(output)
-                bits = str(bits)
-                line = "wire [" + bits + ":0] " + output + ";\n"
-                tb.write(line)
-            line = ""
-
-        if "MODULE_NAME" in line:
-            line = file_name[0] + " instanceOf ("
-            for total, i in zip(data["total_list"], range(self.total_num(data))):
-                total = str(total)
-                if i == self.total_num(data) - 1:
-                    line = line + total + ");\n"
-                else:
-                    line = line + total + ", "
-
-        if "reg clk = 0;" in line:
-            for input in data["input_list"]:
-                if input == "clk":
-                    line = ""
-
-        if "/*SIGNALS" in line:
-            for bits in data["input_bits_list"]:
-                if bits == 0:
-                    data["random_list"].append(
-                        np.random.randint(low=0, high=2, size=int(test_num))
-                    )
-                else:
-                    data["random_list"].append(
-                        np.random.randint(
-                            low=0, high=(2 ** (int(bits) + 1) - 1), size=int(test_num)
-                        )
-                    )
-
-            # The actual logic for adding random numbers to the testbench.
-            for i in range(int(test_num)):
-                for input, j in zip(data["input_list"], range(self.input_num(data))):
-                    if input != "clk":
-                        if j == 0:
-                            line = (
-                                "    # 5 "
-                                + str(input)
-                                + " = "
-                                + str(data["random_list"][j][i])
-                                + ";\n"
-                            )
-                        else:
-                            line = (
-                                "    "
-                                + str(input)
-                                + " = "
-                                + str(data["random_list"][j][i])
-                                + ";\n"
-                            )
-                    else:
-                        if j == 0:
-                            line = "    # 5 "
-                    tb.write(line)
-                    line = ""
-                tb.write("\n")
-            line = "    # 5 $finish;"
-
-        tb.write(line)
-
-    """Rather than generating a whole new testbench, this one takes the first generated testbench and replaces everything that
-    is specific to that module with this module's information."""
-
-    def generate_testbench(self, tb, line, file_name, file_num, data):
-        if file_name[file_num - 1] + "_tb;" in line:
-            line = line.replace(file_name[file_num - 1], file_name[file_num])
-
-        if file_name[file_num - 1] + "_tb);" in line:
-            line = "    $dumpvars(0," + file_name[file_num] + "_tb);\n"
-
-        if file_name[file_num - 1] + " instanceOf (" in line:
-            line = file_name[file_num] + " instanceOf ("
-
-            for totalData, i in zip(data["total_list"], range(self.total_num(data))):
-                if i == self.total_num(data) - 1:
-                    line = line + totalData + ");\n"
-                else:
-                    line = line + totalData + ", "
-
-        tb.write(line)
-
-    """Generates the first TCL that will be used in gtkwave to create a VCD output."""
-
-    def generate_first_TCL(self, file_name, file_num):
-        path = paths["build_dir"] / (file_name[file_num] + ".tcl")
-        if path.exists():
-            path.unlink()
-        with path.open("x") as TCL:
-            line = "set filter [list "
-            for totalData in data["total_list"]:
-                line = line + file_name[file_num] + "_tb." + totalData.strip() + " "
-            line = line + "]\n"
-            TCL.write(line)
-            TCL.write("gtkwave::addSignalsFromList $filter\n")
-            TCL.write(
-                'gtkwave::/File/Export/Write_VCD_File_As "'
-                + str(paths["build_dir"])
-                + "/"
-                + file_name[file_num]
-                + '.vcd"\n'
-            )
-            TCL.write("gtkwave::File/Quit")
-
-    """Replaces information in the last TCL with information specific to this testbench."""
-
-    def generate_TCL(self, file_name, file_num):
-        path = paths["build_dir"] / (file_name[file_num] + ".tcl")
-        sample_path = paths["build_dir"] / (file_name[file_num - 1] + ".tcl")
-        if path.exists():
-            path.unlink()
-        with path.open("x") as TCL:
-            with sample_path.open() as sample:
-                for line in sample:
-                    if file_name[file_num - 1] in line:
-                        line = line.replace(
-                            file_name[file_num - 1], file_name[file_num]
-                        )
-                    TCL.write(line)
-
-    """Uses IVerilog to create a VCD file for viewing waveforms"""
-
-    def generate_VCD(self, path, tb, tcl, vcd, fst):
-        # Generate wavefiles
-        subprocess.run(
-            [
-                "iverilog",
-                "-o",
-                str(paths["dsn"]),
-                str(tb),
-                path,
-                str(paths["cells_sim"]),
-            ]
-        )
-        subprocess.run(["vvp", str(paths["dsn"])])
-        subprocess.run(["mv", "test.vcd", str(vcd)])
-        paths["dsn"].unlink()
-
-        self.gtkwave(vcd, tcl, fst)
-
-    """Creates a waveform that only takes into account the inputs/outputs (totally ignores all internal components) and then
-    takes the input/output graph and turns it into a VCD file to be compared against."""
-
-    def gtkwave(self, vcd, tcl, fst):
-        # gtkwave is run in the background. If the temporary fst file doesn't exist, then the output we need hasn't been created.
-        # The process is killed within 5ms of creating the file so the user doesn't have to physically close gtkwave.
-        subprocess.Popen(["gtkwave", "-T", str(tcl), "-o", str(vcd)])
-        while not fst.exists():
-            time.sleep(0.005)
-        if fst.exists():
-            subprocess.run(["pkill", "gtkwave"])
-        fst.unlink()
-        vcd.unlink()
-
-    """Rewrite the TCL script for waveform viewing so it doesn't create new VCD files on re-view."""
-
-    def rewrite_tcl(self):
-        lines = []
-        with paths["tcl"][0].open("r") as fp:
-            lines = fp.readlines()
-        with paths["tcl"][0].open("w") as fp:
-            for number, line in enumerate(lines):
-                if number not in [2, 3]:
-                    fp.write(line)
-        with paths["tcl"][1].open("r") as fp:
-            lines = fp.readlines()
-        with paths["tcl"][1].open("w") as fp:
-            for number, line in enumerate(lines):
-                if number not in [2, 3]:
-                    fp.write(line)
-
     """The main function that generates testbenches and TCL files. It begins by calling the parsers for the input & output names, then
     it calls the testbench generators, finally it calls the TCL generators. It then increments to the next file and clears the data structure."""
 
@@ -438,11 +194,11 @@ class Waveform_CompareTool(CompareTool):
             with open(paths["path"][i]) as file:
 
                 if i==1:
-                    self.fix_file(paths, i)
+                    file_rewriter.fix_file(paths, i)
                     data = parse_files.parse_reversed(paths["file"][i], multiple_files, file.name, i, paths)
 
                 else:
-                    self.fix_file(paths, i)
+                    file_rewriter.fix_file(paths, i)
                     if multiple_files:
                         data = parse_files.parse_reversed(paths["file"][1], multiple_files, file.name, i, paths)
                     else:
@@ -462,28 +218,29 @@ class Waveform_CompareTool(CompareTool):
                     with tb_path.open("x") as tb:
                         for line in sample:
                             if i == 0:
-                                self.generate_first_testbench(
+                                testbench_generator.generate_first_testbench(
                                     tb, line, file_name, test_num, data
                                 )
                             else:
-                                self.generate_testbench(
+                                testbench_generator.generate_testbench(
                                     tb, line, file_name, i, data
                                 )
 
                 if i == 0:
-                    self.generate_first_TCL(file_name, i)
+                    tcl_generator.generate_first_TCL(paths, file_name, i, data)
                 else:
-                    self.generate_TCL(file_name, i)
+                    tcl_generator.generate_TCL(paths, file_name, i)
 
-                self.generate_VCD(
+                waveform_generator.generate_VCD(
+                    paths,
                     paths["file"][i],
                     tb_path,
                     paths["build_dir"] / (file_name[i] + ".tcl"),
                     paths["build_dir"] / (file_name[i] + "_temp.vcd"),
                     paths["build_dir"] / (file_name[i] + "_temp.vcd.fst"),
                 )
-                refresh(data)
-        self.rewrite_tcl()
+                data = parse_files.clear_data(data)
+        file_rewriter.rewrite_tcl(paths)
 
     """A function that generates the wavefiles from the testbenches, runs gtkwave w/ the TCLs generated earlier on the wavefiles
     that have just been generated, then checks the difference between gtkwave's two outputs. If there are more than 32 lines that
