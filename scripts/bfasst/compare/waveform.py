@@ -7,9 +7,9 @@
 
 import bfasst
 import pathlib
-from bfasst.compare_waveforms import analyze_graph
-from bfasst.compare_waveforms import parse_diff
-from bfasst.compare_waveforms import parse_files
+from bfasst.compare_waveforms.Tools import analyze_graph
+from bfasst.compare_waveforms.File_Parsing import parse_diff
+from bfasst.compare_waveforms.File_Parsing import parse_files
 from bfasst.compare_waveforms.File_Generation import testbench_generator
 from bfasst.compare_waveforms.File_Generation import tcl_generator
 from bfasst.compare_waveforms.File_Generation import waveform_generator
@@ -90,7 +90,7 @@ class Waveform_CompareTool(CompareTool):
             "third_party/yosys/techlibs/xilinx/cells_sim.v"
         )
         paths["sample_tb"] = bfasst.paths.ROOT_PATH / (
-            "scripts/bfasst/compare_waveforms/sample_tb.v"
+            "scripts/bfasst/compare_waveforms/Templates/sample_tb.v"
         )
         paths["tcl"].append(
             self.work_dir
@@ -195,7 +195,7 @@ class Waveform_CompareTool(CompareTool):
 
                 if i==1:
                     file_rewriter.fix_file(paths, i)
-                    data = parse_files.parse_reversed(paths["file"][i], multiple_files, file.name, i, paths)
+                    data = parse_files.parse_reversed(paths["file"][i], False, file.name, i, paths)
 
                 else:
                     file_rewriter.fix_file(paths, i)

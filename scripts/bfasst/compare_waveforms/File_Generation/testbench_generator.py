@@ -47,6 +47,7 @@ def generate_first_testbench(tb, line, file_name, test_num, data):
     if "MODULE_NAME" in line:
         line = file_name[0] + " instanceOf ("
         for total, i in zip(data["total_list"], range(total_num(data))):
+            print(total)
             total = str(total)
             if i == total_num(data) - 1:
                 line = line + total + ");\n"

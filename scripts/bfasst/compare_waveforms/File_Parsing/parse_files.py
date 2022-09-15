@@ -1,6 +1,6 @@
 import spydrnet as sdn
 import bfasst
-from bfasst.compare_waveforms import structs
+from bfasst.compare_waveforms.Templates import structs
 
 data = structs.data
 clear_data = structs.clear_data
@@ -96,7 +96,7 @@ def parse_reversed(path, multiple_files, file_name, i, paths):
                     if j == 0:
                         j = 1
                         newFile.write(line)
-    if multiple_files & i == 1:
+    if multiple_files:
         return(parse_multiple(file_name, newFile.name))
     else:
         return(parse(newFile.name))  # Parses this newly-generated simplified netlist.
