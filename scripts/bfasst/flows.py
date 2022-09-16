@@ -23,12 +23,13 @@ from bfasst.compare.onespin import OneSpin_CompareTool
 from bfasst.error_injection.error_injector import ErrorInjector_ErrorInjectionTool
 
 
-class Args(Enum):
+class FlowArgs(Enum):
     SYNTH = 0
     IMPL = 1
     MAP = 2
     EQUIV = 3
-    CMP = 4
+    CMP = 4     # Currently only accepts "XILINX" or "LATTICE" for Conformal Comparison
+    ERR = 5
 
 
 class State(Enum):
@@ -119,7 +120,8 @@ def icestorm_rev_bit(design, build_dir, flow_args):
 
 
 #TODO determine flow_args (vendor)
-def conformal_cmp(design, build_dir, vendor, flow_args):
+def conformal_cmp(design, build_dir, flow_args):
+    vendor = Vendor.Xilinx if not flow_args else Vendor[flow_args]
     compare_tool = Conformal_CompareTool(build_dir, vendor)
     with bfasst.conformal_lock:
         return compare_tool.compare_netlists(design)
@@ -177,9 +179,9 @@ def xray_rev(design, build_dir, flow_args):
 
 
 def flow_ic2_lse_conformal(design, flow_args, build_dir):
-    status = IC2_LSE_synth(design, build_dir, flow_args[Args.SYNTH])
+    status = IC2_LSE_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
 
-    status = IC2_impl(design, build_dir, flow_args[Args.IMPL])
+    status = IC2_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
     # Run icestorm bitstream reversal
     status = icestorm_rev_bit(design, build_dir, flow_args)
@@ -192,7 +194,7 @@ def flow_ic2_lse_conformal(design, flow_args, build_dir):
         [design.full_path / f for f in design.get_support_files()]
     )
     design.golden_is_verilog = design.top_is_verilog()
-    status = conformal_cmp(design, build_dir, Vendor.XILINX, flow_args) # TODO vendor originally was not specified here
+    status = conformal_cmp(design, build_dir, flow_args[FlowArgs.CMP])
     return status
 
 
@@ -203,30 +205,30 @@ def flow_conformal_only(design, flow_args, build_dir):
     design.golden_sources = [
         design.netlist_path,
     ]
-    status = conformal_cmp(design, build_dir, Vendor.XILINX, flow_args)
+    status = conformal_cmp(design, build_dir, flow_args[FlowArgs.CMP])
     return status
 
 
 def flow_xilinx(design, flow_args, build_dir):
     # Run Xilinx synthesis and implementation
-    status = vivado_synth(design, build_dir, flow_args[Args.SYNTH])
-    status = vivado_impl(design, build_dir, flow_args[Args.IMPL])
+    status = vivado_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
+    status = vivado_impl(design, build_dir, flow_args[FlowArgs.IMPL])
     return status
 
 
 def flow_xilinx_conformal(design, flow_args, build_dir):
     # Run Xilinx synthesis and implementation
-    status = vivado_synth(design, build_dir, flow_args[Args.SYNTH])
-    status = vivado_impl(design, build_dir, flow_args[Args.IMPL])
+    status = vivado_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
+    status = vivado_impl(design, build_dir, flow_args[FlowArgs.IMPL])
     status = xray_rev(design, build_dir, flow_args)
-    status = conformal_cmp(design, build_dir, Vendor.XILINX, flow_args)
+    status = conformal_cmp(design, build_dir, flow_args[FlowArgs.CMP])
     return status
 
 
 def flow_xilinx_conformal_impl(design, flow_args, build_dir):
     # Run Xilinx synthesis and implementation
-    status = vivado_synth(design, build_dir, flow_args[Args.SYNTH])
-    status = vivado_impl(design, build_dir, flow_args[Args.IMPL])
+    status = vivado_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
+    status = vivado_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
     # Run X-ray and fasm2bel
     status = xray_rev(design, build_dir, flow_args)
@@ -244,42 +246,42 @@ def flow_xilinx_conformal_impl(design, flow_args, build_dir):
     )
     with bfasst.conformal_lock:
         status = compare_tool.compare_netlists(
-            design, args[Args.MAP_STAGE.value]
+            design, args[FlowArgs.MAP_STAGE.value]
         )
     """
-    status = conformal_cmp(design, build_dir, Vendor.XILINX, flow_args)
+    status = conformal_cmp(design, build_dir, flow_args[FlowArgs.CMP])
     return status
 
 
 def flow_xilinx_yosys_impl(design, flow_args, build_dir):
     # Run Xilinx synthesis and implementation
-    status = vivado_synth(design, build_dir, flow_args[Args.SYNTH])
-    status = vivado_impl(design, build_dir, flow_args[Args.IMPL])
+    status = vivado_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
+    status = vivado_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
     # Run X-ray and fasm2bel
     status = xray_rev(design, build_dir, flow_args)
 
-    status = yosys_cmp(design, build_dir, flow_args)
+    status = yosys_cmp(design, build_dir, flow_args[FlowArgs.CMP])
     return status
 
 
 def flow_xilinx_yosys_waveform(design, build_dir, flow_args):
     # Run Xilinx synthesis and implementation
-    status = vivado_synth(design, build_dir, flow_args[Args.SYNTH])
-    status = vivado_impl(design, build_dir, flow_args[Args.IMPL])
+    status = vivado_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
+    status = vivado_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
     # Run X-ray and fasm2bel
     status = xray_rev(design, build_dir, flow_args)
-    status = wave_cmp(design, build_dir, flow_args)
+    status = wave_cmp(design, build_dir, flow_args[FlowArgs.CMP])
 
     return status
 
 
 def flow_ic2_synplify_conformal(design, flow_args, build_dir):
     # Run Icecube2 Synplify synthesis
-    status = IC2_Synplify_synth(design, build_dir, flow_args)
+    status = IC2_Synplify_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
     # Run Icecube2 implementations
-    status = IC2_impl(design, build_dir, flow_args[Args.IMPL])
+    status = IC2_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
     # Run icestorm bitstream reversal
     status = icestorm_rev_bit(design, build_dir, flow_args)
@@ -294,16 +296,16 @@ def flow_ic2_synplify_conformal(design, flow_args, build_dir):
     design.golden_is_verilog = design.top_is_verilog()
 
     #TODO no vendor was originally specified here
-    status = conformal_cmp(design, build_dir, Vendor.XILINX, flow_args)
+    status = conformal_cmp(design, build_dir, flow_args[FlowArgs.CMP])
 
     return status
 
 
 def flow_synplify_ic2_icestorm_onespin(design, flow_args, build_dir):
     # Run Icecube2 Synplify synthesis
-    status = IC2_Synplify_synth(design, build_dir, flow_args)
+    status = IC2_Synplify_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
     # Run Icecube2 implementations
-    status = IC2_impl(design, build_dir, flow_args[Args.IMPL])
+    status = IC2_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
     # Run icestorm bitstream reversal
     status = icestorm_rev_bit(design, build_dir, flow_args)
@@ -317,14 +319,14 @@ def flow_synplify_ic2_icestorm_onespin(design, flow_args, build_dir):
     )
     design.golden_is_verilog = design.top_is_verilog()
 
-    status = onespin_cmp(design, build_dir, flow_args)
+    status = onespin_cmp(design, build_dir, flow_args[FlowArgs.CMP])
 
     return status
 
 
 def flow_yosys_tech_lse_conformal(design, flow_args, build_dir):
     # Run the Yosys synthesizer
-    status = yosys_synth(design, build_dir, flow_args)
+    status = yosys_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
 
     # Now run the LSE synthesizer on the Yosys output
     yosys_netlist_path = design.netlist_path
@@ -334,21 +336,21 @@ def flow_yosys_tech_lse_conformal(design, flow_args, build_dir):
     status = IC2_LSE_opt(design, build_dir, flow_args, [str(yosys_netlist_path)])
 
     # Run IC2 Implementation
-    status = IC2_impl(design, build_dir, flow_args[Args.IMPL])
+    status = IC2_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
     # Run icestorm bitstream reversal
     status = icestorm_rev_bit(design, build_dir, flow_args)
 
     # Run conformal
     #TODO no vendor was originally specified here
-    status = conformal_cmp(design, build_dir, Vendor.XILINX, flow_args)
+    status = conformal_cmp(design, build_dir, flow_args[FlowArgs.CMP])
 
     return status
 
 
 def flow_yosys_tech_synplify_conformal(design, flow_args, build_dir):
     # Run the Yosys synthesizer
-    status = yosys_synth(design, build_dir, flow_args)
+    status = yosys_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
 
     # Now run the Synplify synthesizer on the Yosys output
     yosys_netlist_path = design.netlist_path
@@ -358,21 +360,21 @@ def flow_yosys_tech_synplify_conformal(design, flow_args, build_dir):
     status = IC2_Synplify_opt(design, build_dir, flow_args, [str(yosys_netlist_path)])
     
     # Run IC2 Implementation
-    status = IC2_impl(design, build_dir, flow_args[Args.IMPL])
+    status = IC2_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
     # Run icestorm bitstream reversal
     status = icestorm_rev_bit(design, build_dir, flow_args)
 
     # Run conformal
     #TODO No Vendor was originally specified
-    status = conformal_cmp(design, build_dir, Vendor.XILINX, flow_args)
+    status = conformal_cmp(design, build_dir, flow_args[FlowArgs.CMP])
 
     return status
 
 
 def flow_yosys_tech_synplify_onespin(design, flow_args, build_dir):
     # Run the Yosys synthesizer
-    status = yosys_synth(design, build_dir, flow_args)
+    status = yosys_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
 
     # Now run the Synplify synthesizer on the Yosys output
     yosys_netlist_path = design.netlist_path
@@ -382,13 +384,13 @@ def flow_yosys_tech_synplify_onespin(design, flow_args, build_dir):
     status = IC2_Synplify_opt(design, build_dir, flow_args, [str(yosys_netlist_path)])
     
     # Run IC2 Implementation
-    status = IC2_impl(design, build_dir, flow_args[Args.IMPL])
+    status = IC2_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
     # Run icestorm bitstream reversal
     status = icestorm_rev_bit(design, build_dir, flow_args)
 
     design.compare_revised_file = design.reversed_netlist_filename()
-    status = onespin_cmp(design, build_dir, flow_args)
+    status = onespin_cmp(design, build_dir, flow_args[FlowArgs.CMP])
     return status
 
 
@@ -397,7 +399,7 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
     design.results_summary_path = build_dir / "results_summary.txt"
 
     # Run the Yosys synthesizer
-    status = yosys_synth(design, build_dir, flow_args)
+    status = yosys_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
 
     # Run error injection
     error_inj_tool = ErrorInjector_ErrorInjectionTool(build_dir)
@@ -413,19 +415,19 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
     status = IC2_Synplify_opt(design, build_dir, flow_args, [str(yosys_netlist_path)])
     
     # Run IC2 Implementation
-    status = IC2_impl(design, build_dir, flow_args[Args.IMPL])
+    status = IC2_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
     # Run icestorm bitstream reversal
     status = icestorm_rev_bit(design, build_dir, flow_args)
 
     design.compare_revised_file = design.reversed_netlist_filename()
-    status = onespin_cmp(design, build_dir, flow_args)
+    status = onespin_cmp(design, build_dir, flow_args[FlowArgs.CMP])
 
     # Also use the compare tool to make a compare script for rtl to yosys
     design.compare_revised_file = yosys_netlist_path.name
     design.compare_golden_files = design.get_support_files()
     design.compare_golden_files.append(pathlib.Path(design.top_path()).name)
-    status = onespin_cmp(design, build_dir, flow_args)
+    status = onespin_cmp(design, build_dir, flow_args[FlowArgs.CMP])
 
     # Run synth, impl, icestorm, and onespin on each corrupted netlist
     design.compare_golden_files = [yosys_netlist_path.name]
@@ -443,7 +445,7 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
     
         # Run IC2 Implementation
         shutil.rmtree(build_dir / IC2_ImplementationTool.TOOL_WORK_DIR)
-        status = IC2_impl(design, build_dir, flow_args[Args.IMPL])
+        status = IC2_impl(design, build_dir, flow_args[FlowArgs.IMPL])
         if status.error:
             return status
 
@@ -483,10 +485,10 @@ def flow_gather_impl_data(design, flow_args, build_dir):
 
     # Start with an RTL->Synplify->IC2->Icestorm flow
     # Run Icecube2 Synplify synthesis
-    status = IC2_Synplify_synth(design, build_dir, flow_args)
+    status = IC2_Synplify_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
 
     # Run Icecube2 implementations
-    status = IC2_impl(design, build_dir, flow_args[Args.IMPL])
+    status = IC2_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
     # Run icestorm bitstream reversal
     status = icestorm_rev_bit(design, build_dir, flow_args)
@@ -499,10 +501,10 @@ def flow_gather_impl_data(design, flow_args, build_dir):
     shutil.rmtree(build_dir / Icestorm_ReverseBitTool.TOOL_WORK_DIR)
     # Now do RTL->LSE->IC2->Icestorm
     # Run Icecube2 LSE synthesis
-    status = IC2_LSE_synth(design, build_dir, flow_args[Args.SYNTH])
+    status = IC2_LSE_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
 
     # Run Icecube2 implementations
-    status = IC2_impl(design, build_dir, flow_args[Args.IMPL])
+    status = IC2_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
     # Run icestorm bitstream reversal
     status = icestorm_rev_bit(design, build_dir, flow_args)
@@ -516,13 +518,13 @@ def flow_gather_impl_data(design, flow_args, build_dir):
 
     # Now do Yosys->Synplify->IC2->Icestorm
     # Run the Yosys synthesizer
-    status = yosys_synth(design, build_dir, flow_args)
+    status = yosys_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
     # Now run the Synplify synthesizer on the Yosys output
     yosys_netlist_path = design.netlist_path
     status = IC2_Synplify_opt(design, build_dir, flow_args, [str(yosys_netlist_path)])
     
     # Run IC2 Implementation
-    status = IC2_impl(design, build_dir, flow_args[Args.IMPL])
+    status = IC2_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
     # Run icestorm bitstream reversal
     status = icestorm_rev_bit(design, build_dir, flow_args)
@@ -535,14 +537,14 @@ def flow_gather_impl_data(design, flow_args, build_dir):
 
     # Now do Yosys->LSE->IC2->Icestorm
     # Run the Yosys synthesizer
-    status = yosys_synth(design, build_dir, flow_args)
+    status = yosys_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
 
     # Now run the LSE synthesizer on the Yosys output
     yosys_netlist_path = design.netlist_path
     status = IC2_LSE_opt(design, build_dir, flow_args, [str(yosys_netlist_path)])
 
     # Run IC2 Implementation
-    status = IC2_impl(design, build_dir, flow_args[Args.IMPL])
+    status = IC2_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
     # Run icestorm bitstream reversal
     status = icestorm_rev_bit(design, build_dir, flow_args)
