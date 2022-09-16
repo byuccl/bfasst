@@ -4,6 +4,7 @@ import pathlib
 import shutil
 
 import bfasst
+from bfasst.design import Design
 from bfasst.utils import error
 from bfasst.synth.ic2_lse import IC2_LSE_SynthesisTool
 from bfasst.synth.ic2_synplify import IC2_Synplify_SynthesisTool
@@ -89,7 +90,7 @@ def get_flow_fcn_by_name(flow_name):
 
 
 def run_flow(design, flow_type, flow_args, build_dir):
-    assert type(design) is bfasst.design.Design
+    assert type(design) is Design
 
     flow_fcn = get_flow_fcn_by_name(flow_type)
     return flow_fcn(design, flow_args, build_dir)
