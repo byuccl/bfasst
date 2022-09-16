@@ -1,15 +1,18 @@
 #!/usr/bin/python3
 
 import argparse
+import datetime
+from io import StringIO
+import multiprocessing
 import pathlib
 import sys
-import time
-import multiprocessing
 import threading
-import datetime
+import time
+from werkzeug import local
 
 
 import bfasst
+from bfasst.output_cntrl import redirect, cleanup_redirect, enable_proxy
 from bfasst.status import BfasstException, Status
 from bfasst.utils import TermColor, print_color
 
@@ -70,10 +73,20 @@ def run_design(design, design_dir, flow_fcn):
 
     # time.sleep(random.randint(1,2))
     # status = None
+    buf = redirect()
+    unknown_exception = None
     try:
         status = flow_fcn(design, design_dir)
     except BfasstException as e:
         status = Status(status=e.error, msg=str(e), raise_excep=False)
+    except Exception as unknown_exception:
+        pass
+    finally:
+        with open(f"{design.path.name}.log", "w") as f:
+            f.write(buf.getvalue())
+        cleanup_redirect()
+        if unknown_exception is not None:
+            raise unknown_exception
     return (design, status)
 
 
@@ -116,6 +129,7 @@ def main():
     global print_lock
 
     parser = argparse.ArgumentParser()
+    enable_proxy() # Enable STDOUT redirects
 
     # Set up command line arguments
     parser.add_argument("experiment_yaml", help="Experiment yaml file.")
