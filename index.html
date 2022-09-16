@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html>
+<style>
+table, th, td {
+	border:1px solid black;
+}
+</style>
+<body>
+
+<h2>BFASST Experiment Runs and Results</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Design</th>
+            <th>IC2_lse_conformal</th>
+            <th>IC2_synplify_conformal</th>
+            <th>synplify_IC2_icestorm_onespin</th>
+            <th>yosys_tech_lse_conformal</th>
+            <th>yosys_tech_synplify_conformal</th>
+            <th>yosys_tech_synplify_onespin</th>
+            <th>yosys_synplify_error_onespin</th>
+            <th>xilinx_conformal</th>
+            <th>xilinx_conformal_impl</th>
+            <th>xilinx_yosys_impl</th>
+            <th>xilinx_yosys_waveform</th>
+            <th>gather_impl_data</th>
+            <th>conformal_only</th>
+            <th>xilinx</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>bubblesort</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>counter</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>des3_perf</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>wb_lcd</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>Sout_reg</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>UpDownButtonCount</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>alu</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>buttoncount</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td style="background-color:lightcoral;color:black;">No</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>calc</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>debouncer</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td style="background-color:lightcoral;color:black;">No</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>lightWave</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>mux8to1</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>oneshot</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>regfile</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td style="background-color:lightcoral;color:black;">No</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>riscvSimpleDatapath</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:lightcoral;color:black;">No</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>riscv_final</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:lightcoral;color:black;">No</td>
+            <td style="background-color:lightcoral;color:black;">No</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>rx</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:lightcoral;color:black;">No</td>
+            <td style="background-color:lightcoral;color:black;">No</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>seven_segment</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>shiftReg</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>stopwatch</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td style="background-color:lightcoral;color:black;">No</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>tx</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:lightcoral;color:black;">No</td>
+            <td style="background-color:lightcoral;color:black;">No</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>add16_r_rst</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>add32_r_rst</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>add4</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>add4_r</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>add4_r_rst</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>add8_r_rst</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>and3</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>and3_r</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>and3_r_rst</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>bram_dp_sclk</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:lightcoral;color:black;">No</td>
+            <td style="background-color:lightcoral;color:black;">No</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>bram_sp_wf</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:lightcoral;color:black;">No</td>
+            <td style="background-color:lightcoral;color:black;">No</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>ff</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td style="background-color:darkseagreen;color:black;">Yes</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+        <tr>
+            <td>rom</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td style="background-color:lightcoral;color:black;">No</td>
+            <td style="background-color:lightcoral;color:black;">No</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+            <td>Not Run Yet</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>To run these designs yourself, check out the <a href="https://github.com/byuccl/bfasst">BFASST Github repository</a>.</p>
+
+</body>
+</html>
