@@ -1,18 +1,16 @@
-from distutils.command.build import build
-import enum
-import abc
-import os
+from enum import Enum
+from enum import unique as enum_unique
 import pathlib
 import shutil
 
 import bfasst
-from bfasst import flows
-from bfasst.utils import TermColor, error
-from enum import Enum
+from bfasst.utils import error
 from bfasst.synth.ic2_lse import IC2_LSE_SynthesisTool
 from bfasst.synth.ic2_synplify import IC2_Synplify_SynthesisTool
 from bfasst.synth.vivado import Vivado_SynthesisTool
 from bfasst.synth.yosys import Yosys_Tech_SynthTool
+from bfasst.opt.ic2_lse import IC2_LSE_OptTool
+from bfasst.opt.ic2_synplify import IC2_Synplify_OptTool
 from bfasst.impl.ic2 import IC2_ImplementationTool
 from bfasst.impl.vivado import Vivado_ImplementationTool
 from bfasst.reverse_bit.xray import XRay_ReverseBitTool
@@ -21,8 +19,6 @@ from bfasst.compare.conformal import Conformal_CompareTool
 from bfasst.compare.yosys import Yosys_CompareTool
 from bfasst.compare.waveform import Waveform_CompareTool
 from bfasst.compare.onespin import OneSpin_CompareTool
-from bfasst.opt.ic2_lse import IC2_LSE_OptTool
-from bfasst.opt.ic2_synplify import IC2_Synplify_OptTool
 from bfasst.error_injection.error_injector import ErrorInjector_ErrorInjectionTool
 
 
@@ -40,8 +36,8 @@ class State(Enum):
     READING_TOOL = 2
 
 
-@enum.unique
-class Flows(enum.Enum):
+@enum_unique
+class Flows(Enum):
     IC2_LSE_CONFORMAL = "IC2_lse_conformal"
     IC2_SYNPLIFY_CONFORMAL = "IC2_synplify_conformal"
     SYNPLIFY_IC2_ONESPIN = "synplify_IC2_icestorm_onespin"
@@ -77,7 +73,7 @@ flow_fcn_map = {
 }
 
 
-class Vendor(enum.Enum):
+class Vendor(Enum):
     LATTICE = 1
     XILINX = 2
 
@@ -95,7 +91,7 @@ def get_flow_fcn_by_name(flow_name):
 def run_flow(design, flow_type, flow_args, build_dir):
     assert type(design) is bfasst.design.Design
 
-    flow_fcn = flows.get_flow_fcn_by_name(flow_type)
+    flow_fcn = get_flow_fcn_by_name(flow_type)
     return flow_fcn(design, flow_args, build_dir)
 
 
