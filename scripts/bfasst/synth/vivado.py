@@ -15,8 +15,7 @@ from bfasst.tool import ToolProduct
 class Vivado_SynthesisTool(SynthesisTool):
     TOOL_WORK_DIR = "vivado_synth"
 
-    def create_netlist(self, design, print_to_stdout=True):
-        self.print_to_stdout = print_to_stdout
+    def create_netlist(self, design):
         log_path = self.work_dir / bfasst.config.SYNTH_LOG_NAME
 
         # Save edif netlist path to design object
@@ -35,13 +34,11 @@ class Vivado_SynthesisTool(SynthesisTool):
         )
 
         if status is not None:
-            if self.print_to_stdout:
-                self.print_skipping_synth()
+            self.print_skipping_synth()
             return status
 
         # Run synthesis flow
-        if self.print_to_stdout:
-            self.print_running_synth()
+        self.print_running_synth()
 
         report_io_path = self.work_dir / "report_io.txt"
 
@@ -118,8 +115,7 @@ class Vivado_SynthesisTool(SynthesisTool):
                 universal_newlines=True,
             )
             for line in proc.stdout:
-                if self.print_to_stdout:
-                    sys.stdout.write(line)
+                sys.stdout.write(line)
                 fp.write(line)
                 fp.flush()
                 # if re.match("\s*ERROR:", line):

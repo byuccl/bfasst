@@ -33,9 +33,7 @@ class Conformal_CompareTool(CompareTool):
         assert type(vendor) is flows.Vendor
         self.vendor = vendor
 
-    def compare_netlists(self, design, mapping_algorithm, print_to_stdout=True):
-        self.print_to_stdout = print_to_stdout
-
+    def compare_netlists(self, design, mapping_algorithm):
         log_path = self.work_dir / self.LOG_FILE_NAME
 
         generate_comparison = ToolProduct(None, log_path, self.check_compare_status)
@@ -48,12 +46,10 @@ class Conformal_CompareTool(CompareTool):
         )
 
         if status is not None:
-            if self.print_to_stdout:
-                self.print_skipping_compare()
+            self.print_skipping_compare()
             return status
 
-        if self.print_to_stdout:
-            self.print_running_compare()
+        self.print_running_compare()
 
         # Connect to remote machine
         client = self.connect_to_remote_machine()
@@ -110,8 +106,7 @@ class Conformal_CompareTool(CompareTool):
             + "mkdir -p bfasst_work;"
         )
 
-        if self.print_to_stdout:
-            print(cmd)
+        print(cmd)
         (stdin, stdout, stderr) = client.exec_command(
             cmd, timeout=bfasst.config.CONFORMAL_TIMEOUT
         )
@@ -168,8 +163,7 @@ class Conformal_CompareTool(CompareTool):
             + " -NOGui"
         )
 
-        if self.print_to_stdout:
-            print(cmd)
+        print(cmd)
         (stdin, stdout, stderr) = client.exec_command(
             cmd, timeout=bfasst.config.CONFORMAL_TIMEOUT
         )

@@ -15,8 +15,7 @@ from bfasst.tool import ToolProduct
 class Vivado_ImplementationTool(ImplementationTool):
     TOOL_WORK_DIR = "vivado_impl"
 
-    def implement_bitstream(self, design, print_to_stdout=True):
-        self.print_to_stdout = print_to_stdout
+    def implement_bitstream(self, design):
 
         log_path = self.work_dir / bfasst.config.IMPL_LOG_NAME
         design.impl_netlist_path = self.cwd / (design.top + "_impl.v")
@@ -33,12 +32,10 @@ class Vivado_ImplementationTool(ImplementationTool):
         )
 
         if status is not None:
-            if self.print_to_stdout:
-                self.print_skipping_impl()
+            self.print_skipping_impl()
             return status
 
-        if self.print_to_stdout:
-            self.print_running_impl()
+        self.print_running_impl()
 
         # Run implementation
         status = self.run_implementation(design, log_path)
@@ -91,9 +88,8 @@ class Vivado_ImplementationTool(ImplementationTool):
                 universal_newlines=True,
             )
             for line in proc.stdout:
-                if self.print_to_stdout:
-                    sys.stdout.write(line)
-                    sys.stdout.flush()
+                sys.stdout.write(line)
+                sys.stdout.flush()
                 fp.write(line)
                 fp.flush()
                 if re.match("\s*ERROR:", line):

@@ -31,9 +31,7 @@ class XRay_ReverseBitTool(ReverseBitTool):
         self.xray_db_path = self.fasm2bels_path / "third_party" / "prjxray-db"
         self.db_root = self.xray_db_path / config.PART_FAMILY
 
-    def reverse_bitstream(self, design, print_to_stdout=True):
-        self.print_to_stdout = print_to_stdout
-
+    def reverse_bitstream(self, design):
         # To fasm process
         fasm_path = self.work_dir / (design.top + ".fasm")
         generate_fasm = ToolProduct(fasm_path)
@@ -59,12 +57,10 @@ class XRay_ReverseBitTool(ReverseBitTool):
         )
 
         if status is not None:
-            if self.print_to_stdout:
-                self.print_skipping_reverse_bit()
+            self.print_skipping_reverse_bit()
             return status
 
-        if self.print_to_stdout:
-            self.print_running_reverse_bit()
+        self.print_running_reverse_bit()
 
         # Bitstream to fasm file
         status = self.convert_bit_to_fasm(design.bitstream_path, fasm_path)
@@ -130,9 +126,7 @@ class XRay_ReverseBitTool(ReverseBitTool):
             constraints_path,
         ]
 
-        if self.print_to_stdout:
-            # Print the command that is run
-            print(" ".join((str(s) for s in cmd)))
+        print(" ".join((str(s) for s in cmd)))
 
         with open(self.to_netlist_log, "w") as fp:
             proc = subprocess.Popen(
@@ -143,9 +137,8 @@ class XRay_ReverseBitTool(ReverseBitTool):
                 universal_newlines=True,
             )
             for line in proc.stdout:
-                if self.print_to_stdout:
-                    sys.stdout.write(line)
-                    sys.stdout.flush()
+                sys.stdout.write(line)
+                sys.stdout.flush()
                 fp.write(line)
                 fp.flush()
             proc.communicate()
