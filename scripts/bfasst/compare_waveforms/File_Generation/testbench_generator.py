@@ -17,12 +17,12 @@ to random numbers that are generated to be within the corresponding variable's b
 
 def generate_first_testbench(tb, line, file_name, test_num, data):
     if "TB_NAME;" in line:
-        line = "module " + file_name[0] + "_tb;"
+        line = "module " + file_name + "_tb;"
         tb.write(line)
         line = "\n"
 
     if "TB_NAME)" in line:
-        line = "    $dumpvars(0," + file_name[0] + "_tb);\n"
+        line = "    $dumpvars(0," + file_name + "_tb);\n"
 
     if "INPUTS" in line:
         for input, bits in zip(data["input_list"], data["input_bits_list"]):
@@ -45,9 +45,8 @@ def generate_first_testbench(tb, line, file_name, test_num, data):
         line = ""
 
     if "MODULE_NAME" in line:
-        line = file_name[0] + " instanceOf ("
+        line = file_name + " instanceOf ("
         for total, i in zip(data["total_list"], range(total_num(data))):
-            print(total)
             total = str(total)
             if i == total_num(data) - 1:
                 line = line + total + ");\n"
@@ -105,15 +104,15 @@ def generate_first_testbench(tb, line, file_name, test_num, data):
 """Rather than generating a whole new testbench, this one takes the first generated testbench and replaces everything that
 is specific to that module with this module's information."""
 
-def generate_testbench(tb, line, file_name, file_num, data):
-    if file_name[file_num - 1] + "_tb;" in line:
-        line = line.replace(file_name[file_num - 1], file_name[file_num])
+def generate_testbench(tb, line, i, data, paths):
+    if paths["modules"][1] + "_tb;" in line:
+        line = line.replace(paths["modules"][1], paths["modules"][i+1])
 
-    if file_name[file_num - 1] + "_tb);" in line:
-        line = "    $dumpvars(0," + file_name[file_num] + "_tb);\n"
+    if paths["modules"][1] + "_tb);" in line:
+        line = "    $dumpvars(0," + paths["modules"][i+1] + "_tb);\n"
 
-    if file_name[file_num - 1] + " instanceOf (" in line:
-        line = file_name[file_num] + " instanceOf ("
+    if paths["modules"][1] + " instanceOf (" in line:
+        line =paths["modules"][i+1] + " instanceOf ("
 
         for totalData, i in zip(data["total_list"], range(total_num(data))):
             if i == total_num(data) - 1:
