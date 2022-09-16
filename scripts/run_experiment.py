@@ -71,7 +71,7 @@ def run_design(design, design_dir, flow_fcn):
     # time.sleep(random.randint(1,2))
     # status = None
     try:
-        status = flow_fcn(design, design_dir, print_to_stdout=False)
+        status = flow_fcn(design, design_dir)
     except BfasstException as e:
         status = Status(status=e.error, msg=str(e), raise_excep=False)
     return (design, status)
