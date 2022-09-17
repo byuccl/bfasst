@@ -18,7 +18,15 @@ class XRay_ReverseBitTool(ReverseBitTool):
         super().__init__(cwd)
 
         self.fasm2bels_path = paths.ROOT_PATH / "third_party" / "fasm2bels"
-        self.fasm2bels_python_path = self.fasm2bels_path / "env" / "bin" / "python3"
+        self.fasm2bels_python_path = (
+            self.fasm2bels_path
+            / "env"
+            / "conda"
+            / "envs"
+            / "symbiflow_xc_fasm2bels"
+            / "bin"
+            / "python3"
+        )
         self.xray_path = self.fasm2bels_path / "third_party" / "prjxray"
         self.xray_db_path = self.fasm2bels_path / "third_party" / "prjxray-db"
         self.db_root = self.xray_db_path / config.PART_FAMILY
@@ -160,8 +168,8 @@ class XRay_ReverseBitTool(ReverseBitTool):
         m = re.search(r"^\s*KeyError: '(DSP_[LR])'\s*$", text, re.M)
         if m:
             return Status(BitReverseStatus.UNSUPPORTED_PRIMITVE, m.group(1).strip())
-            
-        #KeyError: 'DSP_L'
+
+        # KeyError: 'DSP_L'
         return Status(BitReverseStatus.SUCCESS)
 
     def write_to_results_file(self, design, netlist_path, need_to_run):

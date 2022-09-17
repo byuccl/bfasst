@@ -4,3 +4,6 @@ paramiko
 scp
 cryptography
 cmake
+pyyaml
+numpy
+spydrnet

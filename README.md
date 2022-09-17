@@ -18,28 +18,49 @@ usage: run_experiment.py [-h] [-j THREADS] experiment_yaml
 run_experiment.py: error: the following arguments are required: experiment_yaml
 ```
 
-**How to Install BFASST** 
+## Install
 
-* Clone the github repository. The repository is found at https://github.com/byuccl/bfasst. Use ```git clone https://github.com/byuccl/bfasst.git.``` (Note: if Git is not installed on your device, use ```sudo apt install git``` first.) 
+* Clone this github repository. 
+* Install necessary packages:
+  * ```make packages```
+* Install the Python virtual environment, activate, and install packages:
+  * ```make venv```
+  * ```. .venv/bin/activate```
+  * ```pip install -r requirements.txt```
 
-* Confirm that the version of Vivado in _/bfasst/scripts/bfasst/config.py_ is the version installed on your computer. If not, change it to the version you have.
+BFASST can be used to compose different CAD flows from severals tools.  You may want to install these tools:
 
-* Use ```make capnproto_java``` 
+### Vivado
 
-* Use ```make rapidwright```
+1. Install Vivado
+1. Update _scripts/bfasst/config.py_ and make sure the path points to your Vivado installation. 
 
-* Use ```make env```
+### Fasm2Bels
+1. Install capnproto_java:
+    * ```make capnproto_java```
+1. Install Rapidwright
+   * ```make rapidwright```
+   * ```make env```
+   * ```. ./env.sh```
+1. Install fasm2bels
+   * ```make install_fasm2bels```
 
-* Use ```source env.sh```
+### Yosys
+1. Install Yosys
+    * ```make install_yosys```
 
-* Use ```make install``` 
+### Conformal
+The conformal plugin is currently designed to run conformal on a remote machine (CAEDM machine at BYU).
+  * Set up your SSH with caedm. You'll know if you set it up correctly when you can use ```ssh caedm``` and log in without having to enter your password. Follow the guide at https://byu-cpe.github.io/ComputingBootCamp/tutorials/linux/ .
+  * Open _scripts/bfasst/config.py_. Change _fsj/squallz_ to your caedm login info. For instance, if you connect to caedm and enter ```pwd``` and your info is _/hij/username_, change _fsj/squallz_ to _hij/username_.
 
-Finally, test to confirm that everything worked correctly! Run ```source env.sh``` and ```python scripts/run_design.py examples/basic/add4/ xilinx_conformal_impl```
 
-**For those using CAEDM Servers**
-* Set up your SSH with caedm. You'll know if you set it up correctly when you can use ```ssh caedm``` and log in without having to enter your password. Follow the guide at https://byu-cpe.github.io/ComputingBootCamp/tutorials/linux/ .
+### Check Installation
+Finally, test to confirm that everything worked correctly! Run the following:
+1. Add rapidwright to your path: ```. ./env.sh```
+1. Activate the virual environment: ```. .venv/bin/activate```
+1. Run the flow: ```python scripts/run_design.py examples/basic/add4/ xilinx_conformal_impl```
 
-* Open _scripts/bfasst/config.py_. Change _fsj/squallz_ to your caedm login info. For instance, if you connect to caedm and enter ```pwd``` and your info is _/hij/username_, change _fsj/squallz_ to _hij/username_.
 
 
 
