@@ -16,10 +16,10 @@ class ToolProduct:
 class Tool(abc.ABC):
     TERM_COLOR_STAGE = TermColor.PURPLE
 
-    def __init__(self, cwd):
+    def __init__(self, cwd, flow_args = ""):
         super().__init__()
         self.cwd = cwd
-
+        self.flow_args = flow_args
         self.work_dir = self.make_work_dir()
 
     @property
