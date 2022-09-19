@@ -1,6 +1,6 @@
 """Generates the first TCL that will be used in gtkwave to create a VCD output."""
 
-def generate_first_TCL(paths, i, data):
+def generate_first_TCL(paths, data, i):
     path = paths["build_dir"] / (paths["modules"][i+1] + ".tcl")
     if path.exists():
         path.unlink()

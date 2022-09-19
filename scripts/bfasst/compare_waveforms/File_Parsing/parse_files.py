@@ -8,7 +8,7 @@ clear_data = structs.clear_data
 
 """Uses spydrnet to analyze the netlist and add the names of all inputs, outputs, and their respective bit sizes to the data structure."""
 def parse(file):
-    netlist = sdn.parse(file)
+    netlist = sdn.parse(str(file))
     library = netlist.libraries[0]
     definition = library.definitions[0]
 
@@ -33,7 +33,7 @@ ports requires comparing the ports in each layer to the ports in the reversed_ne
 def parse_multiple(file, reversed_file):
     total_reversed = []
 
-    netlist = sdn.parse(reversed_file)
+    netlist = sdn.parse(str(reversed_file))
     library = netlist.libraries[0]
     definition = library.definitions[0]
 
@@ -41,7 +41,7 @@ def parse_multiple(file, reversed_file):
     for port in definition.ports:
         total_reversed.append(port.name)
 
-    netlist = sdn.parse(file)
+    netlist = sdn.parse(str(file))
     library = netlist.libraries[0]
 
     contains_item = False
@@ -72,17 +72,17 @@ def parse_multiple(file, reversed_file):
                     data["input_list"].append(data["input_list"].pop(0))
         else:
             not_port = False
+    reversed_file.unlink()
     return(data)
 
 """Due to reversed netlists having incomplete ports that can cause issues with spydrnet, this function removes
 all of the excess data the spydrnet doesn't need so that the inputs and outputs can still be parsed."""
 
-def parse_reversed(path, multiple_files, file_name, i, paths):
-    test_file = paths["build_dir"] / "test.v"
-    with path.open() as file:
-        if test_file.exists():
-            test_file.unlink()
-        with test_file.open("x") as newFile:
+def parse_reversed(paths, i):
+    with paths["file"][1].open() as file:
+        if paths["test"].exists():
+            paths["test"].unlink()
+        with paths["test"].open("x") as newFile:
             j = 0
             # Only includes lines that declare the module, the inputs, or the outputs or the line directly after them.
             for line in file:
@@ -96,7 +96,7 @@ def parse_reversed(path, multiple_files, file_name, i, paths):
                     if j == 0:
                         j = 1
                         newFile.write(line)
-    if multiple_files:
-        return(parse_multiple(file_name, newFile.name))
+    if i==0:
+        return(parse_multiple(paths["path"][i], paths["test"]))
     else:
-        return(parse(newFile.name))  # Parses this newly-generated simplified netlist.
+        return(parse(paths["test"]))  # Parses this newly-generated simplified netlist.

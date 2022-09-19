@@ -17,9 +17,12 @@ paths = {
     "diff": "",  # Path to the diff txt file
     "parsed_diff": "",  # Path to the parsed_diff txt file
     "vcd": [],  # Paths to the VCD files
+    "temp_vcd": [], # Paths to the temporary VCD files (used for verifying the process is complete)
     "tcl": [],  # Paths to the TCL files
     "tb": [],  # Paths to the testbench files
+    "fst": [], # Paths to the fst files (temporary files)
     "sample_tb": "",  # Path to the sample testbench used for creating the automatic testbench
+    "test": "" #Path to the test.v file used in multiple_file parsing
 }
 
 def clear_data(data):
