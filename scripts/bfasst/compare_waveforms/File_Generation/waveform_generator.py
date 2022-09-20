@@ -4,6 +4,7 @@ import time
 
 """Uses IVerilog to create a VCD file for viewing waveforms"""
 
+
 def generate_VCD(paths, i):
     # Generate wavefiles
     subprocess.run(
@@ -22,8 +23,10 @@ def generate_VCD(paths, i):
 
     gtkwave(paths, i)
 
+
 """Creates a waveform that only takes into account the inputs/outputs (totally ignores all internal components) and then
 takes the input/output graph and turns it into a VCD file to be compared against."""
+
 
 def gtkwave(paths, i):
     # gtkwave is run in the background. If the temporary fst file doesn't exist, then the output we need hasn't been created.

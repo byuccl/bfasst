@@ -4,17 +4,22 @@ import numpy as np
 
 """A simple function to return the amount of data stored in the input list."""
 
+
 def input_num(data):
     return len(data["input_list"])
 
+
 """A simple function to return the total amount of data being stored as both inputs and outputs."""
 
+
 def total_num(data):
-        return len(data["input_list"]) + len(data["output_list"])
+    return len(data["input_list"]) + len(data["output_list"])
+
 
 """This function creates the initial testbench that will be modified by the reversed-netlist. It reads in a sample testbench
 and replaces certain variables with the corresponding information from the data structure. It also sets the variables equal
 to random numbers that are generated to be within the corresponding variable's bit range."""
+
 
 def generate_first_testbench(paths, test_num, data, i):
     with paths["sample_tb"].open() as sample:
@@ -41,7 +46,9 @@ def generate_first_testbench(paths, test_num, data, i):
                         line = ""
 
                 if "OUTPUTS" in line:
-                    for output, bits in zip(data["output_list"], data["output_bits_list"]):
+                    for output, bits in zip(
+                        data["output_list"], data["output_bits_list"]
+                    ):
                         output = str(output)
                         bits = str(bits)
                         line = "wire [" + bits + ":0] " + output + ";\n"
@@ -71,7 +78,9 @@ def generate_first_testbench(paths, test_num, data, i):
                         else:
                             data["random_list"].append(
                                 np.random.randint(
-                                    low=0, high=(2 ** (int(bits) + 1) - 1), size=int(test_num)
+                                    low=0,
+                                    high=(2 ** (int(bits) + 1) - 1),
+                                    size=int(test_num),
                                 )
                             )
 
@@ -105,21 +114,23 @@ def generate_first_testbench(paths, test_num, data, i):
 
                 tb.write(line)
 
+
 """Rather than generating a whole new testbench, this one takes the first generated testbench and replaces everything that
 is specific to that module with this module's information."""
+
 
 def generate_testbench(paths, data, i):
     with (paths["tb"][0]).open() as sample:
         with paths["tb"][i].open("x") as tb:
             for line in sample:
                 if paths["modules"][1] + "_tb;" in line:
-                    line = line.replace(paths["modules"][1], paths["modules"][i+1])
+                    line = line.replace(paths["modules"][1], paths["modules"][i + 1])
 
                 if paths["modules"][1] + "_tb);" in line:
-                    line = "    $dumpvars(0," + paths["modules"][i+1] + "_tb);\n"
+                    line = "    $dumpvars(0," + paths["modules"][i + 1] + "_tb);\n"
 
                 if paths["modules"][1] + " instanceOf (" in line:
-                    line =paths["modules"][i+1] + " instanceOf ("
+                    line = paths["modules"][i + 1] + " instanceOf ("
 
                     for totalData, i in zip(data["total_list"], range(total_num(data))):
                         if i == total_num(data) - 1:

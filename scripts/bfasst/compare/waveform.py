@@ -10,18 +10,25 @@ import re
 from bfasst.compare.base import CompareTool
 from bfasst.status import Status, CompareStatus
 from bfasst.tool import ToolProduct
-#Note: All of the tools below cna be found in the compare_waveforms directory. Each covers a part of the waveform toolchain
+
+# Note: All of the tools below cna be found in the compare_waveforms directory. Each covers a part of the waveform toolchain
 from bfasst.compare_waveforms.Tools import analyze_graph
 from bfasst.compare_waveforms.File_Parsing import parse_diff, parse_files
-from bfasst.compare_waveforms.File_Generation import testbench_generator, tcl_generator, waveform_generator, file_rewriter
+from bfasst.compare_waveforms.File_Generation import (
+    testbench_generator,
+    tcl_generator,
+    waveform_generator,
+    file_rewriter,
+)
 from bfasst.compare_waveforms.Templates import get_paths
 from bfasst.compare_waveforms.Interface import waveform_interface
 
-#Data and Paths are structs that contain the parsed data from our design and the paths for all generated files.
+# Data and Paths are structs that contain the parsed data from our design and the paths for all generated files.
 data = parse_files.data
 paths = get_paths.paths
 
 """The main class for comparing the waveforms."""
+
 
 class Waveform_CompareTool(CompareTool):
     TOOL_WORK_DIR = "waveform"
@@ -49,19 +56,29 @@ class Waveform_CompareTool(CompareTool):
         if self.print_to_stdout:
             self.print_running_compare()
 
-        paths = get_paths.get_paths(self, design) #Gets all paths used for file-generation
+        paths = get_paths.get_paths(
+            self, design
+        )  # Gets all paths used for file-generation
 
-        if(runInterface): #If the quick flow is chosen, interface is skipped and so is viewing the actual waveforms.
-            choice = waveform_interface.user_interface(paths) #Runs through the User interface, finds what the user wants to do.
+        if (
+            runInterface
+        ):  # If the quick flow is chosen, interface is skipped and so is viewing the actual waveforms.
+            choice = waveform_interface.user_interface(
+                paths
+            )  # Runs through the User interface, finds what the user wants to do.
         else:
             choice = 1
 
-        multiple_files = waveform_interface.check_multiple_files(design) #Checks if there are multiple verilog files in the design.
+        multiple_files = waveform_interface.check_multiple_files(
+            design
+        )  # Checks if there are multiple verilog files in the design.
 
-        if choice ==  0: #Previous Status was unequivalent and User doesn't want to do any tests.
-            return(Status(CompareStatus.NOT_EQUIVALENT))
-        elif choice == 1: #User wants to re-generate files.
-            #Remove old testbenches and generate new ones
+        if (
+            choice == 0
+        ):  # Previous Status was unequivalent and User doesn't want to do any tests.
+            return Status(CompareStatus.NOT_EQUIVALENT)
+        elif choice == 1:  # User wants to re-generate files.
+            # Remove old testbenches and generate new ones
             for i in range(2):
                 if paths["tb"][i].exists():
                     paths["tb"][i].unlink()
@@ -70,60 +87,92 @@ class Waveform_CompareTool(CompareTool):
                 return self.success_status
             else:
                 return Status(CompareStatus.NOT_EQUIVALENT)
-        elif choice == 2: #User wants to analyze graphs, previous Status was unequivalent
+        elif (
+            choice == 2
+        ):  # User wants to analyze graphs, previous Status was unequivalent
             analyze_graph.analyze_graphs(paths["build_dir"], paths["modules"][0])
             return Status(CompareStatus.NOT_EQUIVALENT)
-        elif choice == 3: #Previous Status was equivalent and User doesn't want to do any tests.
+        elif (
+            choice == 3
+        ):  # Previous Status was equivalent and User doesn't want to do any tests.
             return Status(CompareStatus.SUCCESS)
-        elif choice == 4: #User wants to analyze graphs, previous status was equivalent
+        elif (
+            choice == 4
+        ):  # User wants to analyze graphs, previous status was equivalent
             analyze_graph.analyze_graphs(paths["build_dir"], paths["modules"][0])
             return Status(CompareStatus.SUCCESS)
-
-
 
     """The main function that generates testbenches and TCL files. It begins by calling the parsers for the input & output names, then
     it calls the testbench generators, finally it calls the TCL generators. It then increments to the next file and clears the data structure."""
 
     def generate_files(self, multiple_files):
         test_num = 100  # Change this number if you want to run more or less than 100 tests in the testbench.
-        file_rewriter.copy_files(paths) #Creates copies of the netlists that will be modified by the file_rewriter
+        file_rewriter.copy_files(
+            paths
+        )  # Creates copies of the netlists that will be modified by the file_rewriter
         for i in range(2):
             with open(paths["path"][i]) as file:
 
-                if i==1:
-                    file_rewriter.fix_file(paths, i) #Rewrites the files to have correct module names
-                    data = parse_files.parse_reversed(paths, i) #Finds the IO names and bit sizes
-                    paths["test"].unlink() #Gets rid of the test.v file
+                if i == 1:
+                    file_rewriter.fix_file(
+                        paths, i
+                    )  # Rewrites the files to have correct module names
+                    data = parse_files.parse_reversed(
+                        paths, i
+                    )  # Finds the IO names and bit sizes
+                    paths["test"].unlink()  # Gets rid of the test.v file
 
                 else:
-                    file_rewriter.fix_file(paths, i) #Rewrites the files to have correct module names
-                    if multiple_files: #The logic for how to parse the file depends on whether or not there are multiple verilog files involved in a design
-                        data = parse_files.parse_reversed(paths, i) #Finds the IO names and bit sizes
+                    file_rewriter.fix_file(
+                        paths, i
+                    )  # Rewrites the files to have correct module names
+                    if (
+                        multiple_files
+                    ):  # The logic for how to parse the file depends on whether or not there are multiple verilog files involved in a design
+                        data = parse_files.parse_reversed(
+                            paths, i
+                        )  # Finds the IO names and bit sizes
                     else:
-                        data = parse_files.parse(file.name) #Finds the IO names and bit sizes
+                        data = parse_files.parse(
+                            file.name
+                        )  # Finds the IO names and bit sizes
 
-                if i == 0: #Create the initial testbench with randomized inputs for all input ports (based upon bit-size)
-                    testbench_generator.generate_first_testbench( 
+                if (
+                    i == 0
+                ):  # Create the initial testbench with randomized inputs for all input ports (based upon bit-size)
+                    testbench_generator.generate_first_testbench(
                         paths, test_num, data, i
                     )
-                else: #Build off of the old testbench to keep the same randomized values
+                else:  # Build off of the old testbench to keep the same randomized values
                     testbench_generator.generate_testbench(paths, data, i)
 
                 if i == 0:
-                    tcl_generator.generate_first_TCL(paths, data, i) #The first TCL will be generated based upon the IO port names
+                    tcl_generator.generate_first_TCL(
+                        paths, data, i
+                    )  # The first TCL will be generated based upon the IO port names
                 else:
-                    tcl_generator.generate_TCL(paths, i) #The second TCL just needs to change module names from the first one
+                    tcl_generator.generate_TCL(
+                        paths, i
+                    )  # The second TCL just needs to change module names from the first one
 
-                waveform_generator.generate_VCD(paths, i) #All previously generated files are ran through Icarus and then GTKwave, creating the files we need.
-                data = parse_files.clear_data(data) #Clears the data struct so future tests don't have old data
-        file_rewriter.rewrite_tcl(paths) #TCLs are rewritten to remove VCD generation portions so they can be tested in the future without regenerating VCD files.
+                waveform_generator.generate_VCD(
+                    paths, i
+                )  # All previously generated files are ran through Icarus and then GTKwave, creating the files we need.
+                data = parse_files.clear_data(
+                    data
+                )  # Clears the data struct so future tests don't have old data
+        file_rewriter.rewrite_tcl(
+            paths
+        )  # TCLs are rewritten to remove VCD generation portions so they can be tested in the future without regenerating VCD files.
 
     """A function that generates the wavefiles from the testbenches, runs gtkwave w/ the TCLs generated earlier on the wavefiles
     that have just been generated, then checks the difference between gtkwave's two outputs. If there are more than 32 lines that
     are different, the designs must be unequivalent."""
 
     def run_test(self):
-        return parse_diff.check_diff(paths) #Checks the two VCD files against each other. Returns either equivalent or not depending on how many lines are different.
+        return parse_diff.check_diff(
+            paths
+        )  # Checks the two VCD files against each other. Returns either equivalent or not depending on how many lines are different.
 
     def check_compare_status(self, log_path):
         with open(log_path) as log:

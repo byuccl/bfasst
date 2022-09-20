@@ -7,6 +7,8 @@ clear_data = structs.clear_data
 
 
 """Uses spydrnet to analyze the netlist and add the names of all inputs, outputs, and their respective bit sizes to the data structure."""
+
+
 def parse(file):
     netlist = sdn.parse(str(file))
     library = netlist.libraries[0]
@@ -25,10 +27,12 @@ def parse(file):
     if data["input_list"].__contains__("clk"):
         if data["input_list"].index("clk") == 0:
             data["input_list"].append(data["input_list"].pop(0))
-    return(data)
+    return data
+
 
 """A specific parse function in the situation where multiple verilog files exist. The design has multiple layers of ports, so finding the equivalent
 ports requires comparing the ports in each layer to the ports in the reversed_netlist. Once both have the same equivalence, they are stored."""
+
 
 def parse_multiple(file, reversed_file):
     total_reversed = []
@@ -66,17 +70,19 @@ def parse_multiple(file, reversed_file):
                     data["input_list"].append(port.name)
                     data["total_list"].append(port.name)
                     data["input_bits_list"].append(len(port.pins) - 1)
-                    
+
             if data["input_list"].__contains__("clk"):
                 if data["input_list"].index("clk") == 0:
                     data["input_list"].append(data["input_list"].pop(0))
         else:
             not_port = False
     reversed_file.unlink()
-    return(data)
+    return data
+
 
 """Due to reversed netlists having incomplete ports that can cause issues with spydrnet, this function removes
 all of the excess data the spydrnet doesn't need so that the inputs and outputs can still be parsed."""
+
 
 def parse_reversed(paths, i):
     with paths["file"][1].open() as file:
@@ -96,7 +102,7 @@ def parse_reversed(paths, i):
                     if j == 0:
                         j = 1
                         newFile.write(line)
-    if i==0:
-        return(parse_multiple(paths["path"][i], paths["test"]))
+    if i == 0:
+        return parse_multiple(paths["path"][i], paths["test"])
     else:
-        return(parse(paths["test"]))  # Parses this newly-generated simplified netlist.
+        return parse(paths["test"])  # Parses this newly-generated simplified netlist.
