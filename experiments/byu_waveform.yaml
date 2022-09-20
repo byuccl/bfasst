@@ -1,0 +1,4 @@
+design_dirs:
+    - byu/
+
+flow: xilinx_yosys_waveform_quick

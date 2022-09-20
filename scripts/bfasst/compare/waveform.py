@@ -29,7 +29,7 @@ class Waveform_CompareTool(CompareTool):
 
     """The function that compares the netlists."""
 
-    def compare_netlists(self, design, print_to_stdout=True):
+    def compare_netlists(self, design, runInterface, print_to_stdout=True):
         self.print_to_stdout = print_to_stdout
         log_path = self.work_dir / self.LOG_FILE_NAME
         generate_comparison = ToolProduct(None, log_path, self.check_compare_status)
@@ -51,7 +51,10 @@ class Waveform_CompareTool(CompareTool):
 
         paths = get_paths.get_paths(self, design) #Gets all paths used for file-generation
 
-        choice = waveform_interface.user_interface(paths) #Runs through the User interface, finds what the user wants to do.
+        if(runInterface): #If the quick flow is chosen, interface is skipped and so is viewing the actual waveforms.
+            choice = waveform_interface.user_interface(paths) #Runs through the User interface, finds what the user wants to do.
+        else:
+            choice = 1
 
         multiple_files = waveform_interface.check_multiple_files(design) #Checks if there are multiple verilog files in the design.
 
