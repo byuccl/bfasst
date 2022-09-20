@@ -88,6 +88,7 @@ class Status:
     def __init__(self, status, msg="", raise_excep=True):
         self.status = status
         self.msg = f" ({msg})" if msg else ""
+        self.error = True if status.value else False
         if status.value and raise_excep:
             raise BfasstException(status, f"{msg_map[status]}{self.msg}")
 
