@@ -63,7 +63,7 @@ def update_runtimes_thread(num_jobs):
     ).start()
 
 
-def run_design(design, design_dir, flow_fcn):
+def run_design(design, design_dir, flow_fcn, flow_args):
     """ This function runs a single job, running the selected CAD flow for one design """
 
     global running_list
@@ -74,19 +74,14 @@ def run_design(design, design_dir, flow_fcn):
     # time.sleep(random.randint(1,2))
     # status = None
     buf = redirect()
-    unknown_exception = None
     try:
-        status = flow_fcn(design, design_dir)
+        status = flow_fcn(design=design, build_dir=design_dir, flow_args=flow_args)
     except BfasstException as e:
         status = Status(status=e.error, msg=str(e), raise_excep=False)
-    except Exception as unknown_exception:
-        pass
     finally:
-        with open(f"{design.path.name}.log", "w") as f:
+        with open(f"{design_dir / design.path.name}.log", "w") as f:
             f.write(buf.getvalue())
         cleanup_redirect()
-        if unknown_exception is not None:
-            raise unknown_exception
     return (design, status)
 
 
@@ -161,7 +156,7 @@ def main():
         # Create a per-design build directory
         design_dir = build_dir / design.rel_path
         design_dir.mkdir(parents=True, exist_ok=True)
-        designs_to_run.append((design, design_dir, experiment.flow_fcn))
+        designs_to_run.append((design, design_dir, experiment.flow_fcn, experiment.flow_args))
 
     manager = multiprocessing.Manager()
     statuses = manager.list()

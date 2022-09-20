@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 from argparse import ArgumentParser, Action
 from pathlib import Path
-import sys
 
 from bfasst.design import Design
 from bfasst import paths
