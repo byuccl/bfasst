@@ -63,8 +63,6 @@ if __name__ == "__main__":
                         action=SetFlowArgs, dest="flow_args")
     parser.add_argument("--map", help="Arguments for mapping", 
                         action=SetFlowArgs, dest="flow_args")
-    parser.add_argument("--equiv", help="Arguments for equivalence", 
-                        action=SetFlowArgs, dest="flow_args")
     parser.add_argument("--cmp", help="Arguments for comparison", 
                         action=SetFlowArgs, dest="flow_args")
     parser.add_argument("--err", help="Arguements for error flow", 

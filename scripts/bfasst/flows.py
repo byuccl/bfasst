@@ -27,9 +27,8 @@ class FlowArgs(Enum):
     SYNTH = 0
     IMPL = 1
     MAP = 2
-    EQUIV = 3
-    CMP = 4     # Currently only accepts "XILINX" or "LATTICE" for Conformal Comparison
-    ERR = 5
+    CMP = 3     # Currently only accepts "XILINX" or "LATTICE" for Conformal Comparison
+    ERR = 4
 
 
 class State(Enum):
