@@ -65,8 +65,6 @@ class ErrorInjector_ErrorInjectionTool(ErrorInjectionTool):
                 flow_fcn = self.get_flow_fcn_from_name(flow_name)
                 for itr in range(num_iterations):
                     flow_ret = flow_fcn(netlist_buffer, design)
-                    if flow_ret[0] == Status(ErrorInjectionStatus.FCN_ERROR):
-                        return (Status(ErrorInjectionStatus.FCN_ERROR), None)
                     netlist_buffer = flow_ret[1]
             self.write_buffer_to_netlist(netlist_buffer, corrupt_netlist_path)
             corrupt_netlists.append(corrupt_netlist_path)

@@ -7,7 +7,7 @@ import in_place
 
 import bfasst
 from bfasst.opt.base import OptTool
-from bfasst.status import Status, OptStatus
+from bfasst.status import BfasstException, Status, OptStatus
 from bfasst.utils import error
 
 PROJECT_TEMPLATE_FILE = "template_lse.prj"
@@ -56,19 +56,16 @@ class IC2_LSE_OptTool(OptTool):
             prj_path = self.create_ic2_lse_project_file(design, edif_path_temp, in_files, lib_files)
 
             # Run Icecube 2 LSE synthesis
-            status = self.run_sythesis(prj_path, log_path)
-            if status.error:
+            try:
+                status = self.run_sythesis(prj_path, log_path)
+            except BfasstException as e:
                 # If generic error, see if log has something more specific
-                if status.status == OptStatus.ERROR:
+                if e.status == OptStatus.ERROR:
                     new_status = self.check_opt_log(log_path)
-                    if new_status.error:
-                        return new_status
-                return status
+                raise e
 
         # Parse synthesis log for errors
         status = self.check_opt_log(log_path)
-        if status.error:
-            return status
 
         if need_to_run:
             # Copy edif netlist out of project directory3

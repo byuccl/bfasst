@@ -8,8 +8,8 @@ from bfasst.utils import print_color
 
 
 class CompareTool(Tool):
-    def __init__(self, cwd) -> None:
-        super().__init__(cwd)
+    def __init__(self, cwd, flow_args="") -> None:
+        super().__init__(cwd, flow_args)
         self.success_status = Status(CompareStatus.SUCCESS)
 
     # This method should run netlist comparison.  It should return

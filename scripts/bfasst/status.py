@@ -71,21 +71,26 @@ msg_map = {
     CompareStatus.TIMEOUT: "!! Compare timeout",
     CompareStatus.PARSE_PROBLEM: "!! Parse error",
     CompareStatus.NEED_TO_RUN_ONESPIN: "Exported to Onespin",
+    ErrorInjectionStatus.SUCCESS : "Error Injection Successful",
+    ErrorInjectionStatus.ERROR : "Error Injection Unsuccessful",
+    ErrorInjectionStatus.NO_YAML : "No YAML for Error Injection",
+    ErrorInjectionStatus.FCN_SUCCESS : "FCN Successful",
+    ErrorInjectionStatus.FCN_ERROR : "FCN Error",    
 }
+
+class BfasstException(Exception):
+    def __init__(self, err, msg):
+        super().__init__(msg)
+        self.error = err
 
 
 class Status:
-    def __init__(self, status, msg=None):
-        self.error = False
-
+    def __init__(self, status, msg="", raise_excep=True):
         self.status = status
-        if status.value:
-            self.error = True
-
-        self.msg = msg
+        self.msg = f" ({msg})" if msg else ""
+        self.error = True if status.value else False
+        if status.value and raise_excep:
+            raise BfasstException(status, f"{msg_map[status]}{self.msg}")
 
     def __str__(self):
-        s = msg_map[self.status]
-        if self.msg is not None:
-            s += " (" + self.msg + ")"
-        return s
+        return f"{msg_map[self.status]}{self.msg}"
