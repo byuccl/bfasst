@@ -36,8 +36,7 @@ class Waveform_CompareTool(CompareTool):
 
     """The function that compares the netlists."""
 
-    def compare_netlists(self, design, runInterface, print_to_stdout=True):
-        self.print_to_stdout = print_to_stdout
+    def compare_netlists(self, design, runInterface):
         log_path = self.work_dir / self.LOG_FILE_NAME
         generate_comparison = ToolProduct(None, log_path, self.check_compare_status)
         status = self.get_prev_run_status(
@@ -131,7 +130,7 @@ class Waveform_CompareTool(CompareTool):
                             paths, i
                         )  # Finds the IO names and bit sizes
                     else:
-                            self.parse(f.name)
+                            self.parse(file.name)
 
                 if (
                     i == 0
