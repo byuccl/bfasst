@@ -49,7 +49,7 @@ install_fasm2bels:
 	cd third_party/fasm2bels && make test-py
 
 env:
-	echo "source `pwd`/third_party/rapidwright.sh" > "env.sh"
+	echo ". `pwd`/third_party/rapidwright.sh" > "env.sh"
 	echo "export INTERCHANGE_SCHEMA_PATH=`pwd`/third_party/RapidWright/interchange/fpga-interchange-schema/interchange" >> "env.sh"
 
 install_yosys:

@@ -1,0 +1,5 @@
+#!/bin/sh -e
+mv -f commit commit.old 2>&- || true
+./current >commit
+cmp -s commit commit.old && exit
+./ci || ./fail <commit
