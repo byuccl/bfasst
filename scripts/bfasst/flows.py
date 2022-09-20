@@ -119,9 +119,8 @@ def icestorm_rev_bit(design, build_dir, flow_args):
     return reverse_bit_tool.reverse_bitstream(design)
 
 
-#TODO determine flow_args (vendor)
 def conformal_cmp(design, build_dir, flow_args):
-    vendor = Vendor.Xilinx if not flow_args else Vendor[flow_args]
+    vendor = Vendor.Xilinx if not flow_args else Vendor[flow_args.upper()]
     compare_tool = Conformal_CompareTool(build_dir, vendor)
     with bfasst.conformal_lock:
         return compare_tool.compare_netlists(design)
@@ -132,8 +131,8 @@ def vivado_synth(design, build_dir, flow_args):
     return synth_tool.create_netlist(design)
 
 
-def vivado_impl(design, build_dir, flow_args):
-    impl_tool = Vivado_ImplementationTool(build_dir, flow_args)
+def vivado_impl(design, build_dir, flow_args, ooc=False):
+    impl_tool = Vivado_ImplementationTool(build_dir, flow_args, ooc)
     return impl_tool.implement_bitstream(design)
 
 
@@ -212,7 +211,8 @@ def flow_conformal_only(design, flow_args, build_dir):
 def flow_xilinx(design, flow_args, build_dir):
     # Run Xilinx synthesis and implementation
     status = vivado_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
-    status = vivado_impl(design, build_dir, flow_args[FlowArgs.IMPL])
+    ooc = "out_of_context" in flow_args[FlowArgs.SYNTH]
+    status = vivado_impl(design, build_dir, flow_args[FlowArgs.IMPL], ooc)
     return status
 
 
@@ -446,14 +446,10 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
         # Run IC2 Implementation
         shutil.rmtree(build_dir / IC2_ImplementationTool.TOOL_WORK_DIR)
         status = IC2_impl(design, build_dir, flow_args[FlowArgs.IMPL])
-        if status.error:
-            return status
 
         # Run icestorm bitstream reversal
         shutil.rmtree(build_dir / Icestorm_ReverseBitTool.TOOL_WORK_DIR)
         status = icestorm_rev_bit(design, build_dir, flow_args)
-        if status.error:
-            return status
 
         # Run compare to create a onespin tcl for yosys->corrupt reversed netlist
         design.compare_revised_file = design.reversed_netlist_filename()
