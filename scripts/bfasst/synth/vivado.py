@@ -96,11 +96,11 @@ class Vivado_SynthesisTool(SynthesisTool):
 
                 if not self.flow_args:
                 # Synthesize - do not include any DSP modules in the synthesized design
-                    fp.write(f"synth_design -top " + design.top + " -max_dsp 0" + "\n")
+                    fp.write(f"synth_design -top {design.top} -max_dsp 0\n")
                 else:
                     top = f" -top {design.top} " if "top" not in self.flow_args else ""
-                    dsp = " -max_dsp 0 " if "max_dsp" not in self.flow_args else ""
-                    fp.write(f"synth_design{top}{dsp} {self.flow_args}")
+                    dsp = " -max_dsp 0" if "max_dsp" not in self.flow_args else ""
+                    fp.write(f"synth_design{top}{dsp} {self.flow_args}\n")
 
                 if "out_of_context" not in self.flow_args:
                     # Auto-place ports

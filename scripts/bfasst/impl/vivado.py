@@ -15,8 +15,13 @@ from bfasst.tool import ToolProduct
 class Vivado_ImplementationTool(ImplementationTool):
     TOOL_WORK_DIR = "vivado_impl"
 
-    def implement_bitstream(self, design):
 
+    def __init__(self, cwd, flow_args="", ooc=False):
+        super().__init__(cwd, flow_args)
+        self.ooc = ooc
+
+
+    def implement_bitstream(self, design):
         log_path = self.work_dir / bfasst.config.IMPL_LOG_NAME
         design.impl_netlist_path = self.cwd / (design.top + "_impl.v")
         design.bitstream_path = self.cwd / (design.top + ".bit")
@@ -66,14 +71,16 @@ class Vivado_ImplementationTool(ImplementationTool):
                 + " [current_fileset]\n"
             )
             fp.write("link_design -part " + bfasst.config.PART + "\n")
-            fp.write("read_xdc " + str(design.constraints_path) + "\n")
+            if not self.ooc:
+                fp.write("read_xdc " + str(design.constraints_path) + "\n")
             fp.write("opt_design\n")
             fp.write("place_design\n")
             fp.write("route_design\n")
             fp.write("write_checkpoint -force -file " + str(self.work_dir / "design.dcp") + "\n")
             # fp.write("write_edif -force -file " + str(design.impl_netlist_path.with_suffix(".edf")) + "\n")
             fp.write("write_verilog -force -file " + str(design.impl_netlist_path) + "\n")
-            fp.write("write_bitstream -force " + str(design.bitstream_path) + "\n")
+            if not self.ooc:
+                fp.write("write_bitstream -force " + str(design.bitstream_path) + "\n")
             # fp.write("write_edif -force {" + str(design.netlist_path) + "}\n")
             fp.write("} ] } { exit 1 }\n")
             fp.write("exit\n")
