@@ -266,7 +266,7 @@ def flow_xilinx_yosys_impl(design, flow_args, build_dir):
     return status
 
 
-def flow_xilinx_yosys_waveform(design, build_dir, flow_args):
+def flow_xilinx_yosys_waveform(design, flow_args, build_dir):
     # Run Xilinx synthesis and implementation
     status = vivado_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
     status = vivado_impl(design, build_dir, flow_args[FlowArgs.IMPL])
@@ -274,15 +274,10 @@ def flow_xilinx_yosys_waveform(design, build_dir, flow_args):
     # Run X-ray and fasm2bel
     status = xray_rev(design, build_dir, flow_args)
     status = wave_cmp(design, build_dir, flow_args[FlowArgs.CMP])
-
-    compare_tool = bfasst.compare.waveform.Waveform_CompareTool(build_dir)
-    status = compare_tool.compare_netlists(design, True)
-    if status.error:
-        return status
     
     return status
 
-def flow_xilinx_yosys_waveform_quick(design, build_dir, flow_args):
+def flow_xilinx_yosys_waveform_quick(design, flow_args, build_dir):
     # Run Xilinx synthesis and implementation
     status = vivado_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
     status = vivado_impl(design, build_dir, flow_args[FlowArgs.IMPL])
@@ -290,11 +285,6 @@ def flow_xilinx_yosys_waveform_quick(design, build_dir, flow_args):
     # Run X-ray and fasm2bel
     status = xray_rev(design, build_dir, flow_args)
     status = wave_cmp(design, build_dir, flow_args[FlowArgs.CMP])
-
-    compare_tool = bfasst.compare.waveform.Waveform_CompareTool(build_dir)
-    status = compare_tool.compare_netlists(design, False)
-    if status.error:
-        return status
     
     return status
 
