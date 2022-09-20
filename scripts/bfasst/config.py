@@ -2,13 +2,13 @@ from pathlib import Path
 
 # Tool path locations
 IC2_INSTALL_DIR = Path("/opt/lscc/iCEcube2.2017.08/")
-ICESTORM_INSTALL_DIR = Path("/home/jgoeders/icestorm")
+ICESTORM_INSTALL_DIR = Path("/home/edvenson/icestorm")
 
 CONFORMAL_REMOTE_MACHINE = "ssh.et.byu.edu"
-CONFORMAL_REMOTE_MACHINE_USER = "squallzz"
+CONFORMAL_REMOTE_MACHINE_USER = "edvenson"
 CONFORMAL_REMOTE_SOURCE_SCRIPT = Path("/ee2/Cadence/local/designkits/ee451/cdssetup/bashrc_cadence")
-CONFORMAL_REMOTE_WORK_DIR = Path("/fsj/squallzz/bfasst_work")
-CONFORMAL_REMOTE_LIBS_DIR = Path("/fsj/squallzz/bfasst_libs")
+CONFORMAL_REMOTE_WORK_DIR = Path("/fse/edvenson/bfasst_work")
+CONFORMAL_REMOTE_LIBS_DIR = Path("/fse/edvenson/bfasst_libs")
 CONFORMAL_REMOTE_PATH = Path("/ee2/Cadence/CONFRML152/bin/lec")
 
 VIVADO_BIN_PATH = Path("/tools/Xilinx/Vivado/2019.2/bin/vivado")
