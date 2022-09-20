@@ -42,15 +42,11 @@ class Icestorm_ReverseBitTool(ReverseBitTool):
             # Bitstream to ascii file
             asc_path = self.work_dir / (design.top + ".asc")
             status = self.convert_bit_to_asc(design.bitstream_path, asc_path)
-            if status.error:
-                return status
 
             # Ascii to netlist
             status = self.convert_asc_to_netlist(
                 asc_path, design.constraints_path, design.reversed_netlist_path
             )
-            if status.error:
-                return status
 
         self.write_to_results_file(design, design.reversed_netlist_path, need_to_run)
 

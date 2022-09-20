@@ -1,0 +1,6 @@
+designs:
+  - ooc/
+
+flow: xilinx
+
+synth: "-mode out_of_context"

@@ -49,12 +49,10 @@ class Waveform_CompareTool(CompareTool):
         )
 
         if status is not None:
-            if self.print_to_stdout:
-                self.print_skipping_compare()
+            self.print_skipping_compare()
             return status
 
-        if self.print_to_stdout:
-            self.print_running_compare()
+        self.print_running_compare()
 
         paths = get_paths.get_paths(
             self, design
@@ -133,9 +131,7 @@ class Waveform_CompareTool(CompareTool):
                             paths, i
                         )  # Finds the IO names and bit sizes
                     else:
-                        data = parse_files.parse(
-                            file.name
-                        )  # Finds the IO names and bit sizes
+                            self.parse(f.name)
 
                 if (
                     i == 0

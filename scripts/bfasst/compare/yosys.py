@@ -12,8 +12,7 @@ class Yosys_CompareTool(CompareTool):
     TOOL_WORK_DIR = "yosys"
     LOG_FILE_NAME = "log.txt"
     SCRIPT_FILE_NAME = "compare.ys"
-    def compare_netlists(self, design, print_to_stdout=True):
-        self.print_to_stdout = print_to_stdout
+    def compare_netlists(self, design):
         log_path = self.work_dir / self.LOG_FILE_NAME
 
         generate_comparison = ToolProduct(None, log_path, self.check_compare_status)
@@ -25,13 +24,11 @@ class Yosys_CompareTool(CompareTool):
         )
 
         if status is not None:
-            if self.print_to_stdout:
-                self.print_skipping_compare()
+            self.print_skipping_compare()
             return status
 
 
-        if self.print_to_stdout:
-            self.print_running_compare()
+        self.print_running_compare()
 
         # Create Yosys script
         script_file_path = self.create_script_file(design)
@@ -47,8 +44,7 @@ class Yosys_CompareTool(CompareTool):
                 universal_newlines=True,    
             )
             for line in proc.stdout:
-                if self.print_to_stdout:
-                    sys.stdout.write(line)
+                sys.stdout.write(line)
                 fp.write(line)
                 fp.flush()
             proc.communicate()

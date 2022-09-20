@@ -1,19 +1,18 @@
 #!/usr/bin/python3
 
 import argparse
-import pathlib
-import queue
-import sys
-import time
-import multiprocessing
-import threading
-from threading import Thread
-import random
 import datetime
-import os
+import multiprocessing
+import pathlib
+from shutil import copyfileobj
+import sys
+import threading
+import time
 
 
 import bfasst
+from bfasst.output_cntrl import redirect, cleanup_redirect, enable_proxy
+from bfasst.status import BfasstException, Status
 from bfasst.utils import TermColor, print_color
 
 # Globals
@@ -24,7 +23,7 @@ print_lock = None
 
 
 def print_running_list():
-    """ This function prints the list of jobs that are currently executing, and how long they have been running for """
+    """This function prints the list of jobs that are currently executing, and how long they have been running for"""
 
     global running_list
     global print_lock
@@ -44,7 +43,7 @@ def print_running_list():
 
 
 def update_runtimes_thread(num_jobs):
-    """ This function, designed to run in its own thread, calls print_running_list() periodically, until all jobs are done, or it is terminated. """
+    """This function, designed to run in its own thread, calls print_running_list() periodically, until all jobs are done, or it is terminated."""
 
     inverval_seconds = 1.0
 
@@ -63,8 +62,8 @@ def update_runtimes_thread(num_jobs):
     ).start()
 
 
-def run_design(design, design_dir, flow_fcn):
-    """ This function runs a single job, running the selected CAD flow for one design """
+def run_design(design, design_dir, flow_fcn, flow_args):
+    """This function runs a single job, running the selected CAD flow for one design"""
 
     global running_list
 
@@ -73,12 +72,22 @@ def run_design(design, design_dir, flow_fcn):
 
     # time.sleep(random.randint(1,2))
     # status = None
-    status = flow_fcn(design, design_dir, print_to_stdout=False)
+    buf = redirect()
+    try:
+        status = flow_fcn(design=design, build_dir=design_dir, flow_args=flow_args)
+    except BfasstException as e:
+        status = Status(status=e.error, msg=str(e), raise_excep=False)
+    finally:
+        with open(f"{design_dir / design.path.name}.log", "w") as f:
+            buf.seek(0)
+            copyfileobj(buf, f)
+            # f.write(buf.getvalue())
+        cleanup_redirect()
     return (design, status)
 
 
 def on_error(e, pool, update_process):
-    """ This should be called when a job process raises an exception.  This shuts down all jobs in the pool, as well as the update_process. """
+    """This should be called when a job process raises an exception.  This shuts down all jobs in the pool, as well as the update_process."""
     pool.terminate()
     if update_process is not None:
         update_process.terminate()
@@ -86,7 +95,7 @@ def on_error(e, pool, update_process):
 
 
 def job_done(retval):
-    """ Callback on job completion.  Removes job from the running_list, prints the job completion status, and saves the return status."""
+    """Callback on job completion.  Removes job from the running_list, prints the job completion status, and saves the return status."""
     global running_list
     global print_lock
 
@@ -116,10 +125,13 @@ def main():
     global print_lock
 
     parser = argparse.ArgumentParser()
+    enable_proxy()  # Enable STDOUT redirects
 
     # Set up command line arguments
     parser.add_argument("experiment_yaml", help="Experiment yaml file.")
-    parser.add_argument("-j", "--threads", type=int, default=1, help="Number of threads")
+    parser.add_argument(
+        "-j", "--threads", type=int, default=1, help="Number of threads"
+    )
     args = parser.parse_args()
 
     experiment_yaml_path = pathlib.Path(args.experiment_yaml)
@@ -147,7 +159,9 @@ def main():
         # Create a per-design build directory
         design_dir = build_dir / design.rel_path
         design_dir.mkdir(parents=True, exist_ok=True)
-        designs_to_run.append((design, design_dir, experiment.flow_fcn))
+        designs_to_run.append(
+            (design, design_dir, experiment.flow_fcn, experiment.flow_args)
+        )
 
     manager = multiprocessing.Manager()
     statuses = manager.list()
@@ -202,19 +216,43 @@ def main():
     j = 30
     print(
         "Synth Error:".ljust(j),
-        len([s for s in statuses if type(s.status) == bfasst.status.SynthStatus and s.error]),
+        len(
+            [
+                s
+                for s in statuses
+                if type(s.status) == bfasst.status.SynthStatus and s.error
+            ]
+        ),
     )
     print(
         "Opt Error:".ljust(j),
-        len([s for s in statuses if type(s.status) == bfasst.status.OptStatus and s.error]),
+        len(
+            [
+                s
+                for s in statuses
+                if type(s.status) == bfasst.status.OptStatus and s.error
+            ]
+        ),
     )
     print(
         "Impl Error:".ljust(j),
-        len([s for s in statuses if type(s.status) == bfasst.status.ImplStatus and s.error]),
+        len(
+            [
+                s
+                for s in statuses
+                if type(s.status) == bfasst.status.ImplStatus and s.error
+            ]
+        ),
     )
     print(
         "Bit Reverse Error:".ljust(j),
-        len([s for s in statuses if type(s.status) == bfasst.status.BitReverseStatus and s.error]),
+        len(
+            [
+                s
+                for s in statuses
+                if type(s.status) == bfasst.status.BitReverseStatus and s.error
+            ]
+        ),
     )
     print(
         "Compare Error:".ljust(j),
@@ -230,7 +268,13 @@ def main():
     )
     print(
         "Compare Not Equivalent:".ljust(j),
-        len([s for s in statuses if s.status == bfasst.status.CompareStatus.NOT_EQUIVALENT]),
+        len(
+            [
+                s
+                for s in statuses
+                if s.status == bfasst.status.CompareStatus.NOT_EQUIVALENT
+            ]
+        ),
     )
     print(
         "Compare Equivalent:".ljust(j),
@@ -240,7 +284,7 @@ def main():
     # print(types)
 
     print("-" * 80)
-    print("Execution took", round(t_end - t_start,1), "seconds")
+    print("Execution took", round(t_end - t_start, 1), "seconds")
 
 
 if __name__ == "__main__":
