@@ -7,6 +7,7 @@
 
 import pathlib
 import re
+import bfasst
 from bfasst.compare.base import CompareTool
 from bfasst.status import Status, CompareStatus
 from bfasst.tool import ToolProduct
@@ -27,16 +28,15 @@ from bfasst.compare_waveforms.Interface import waveform_interface
 data = parse_files.data
 paths = get_paths.paths
 
-"""The main class for comparing the waveforms."""
-
 
 class Waveform_CompareTool(CompareTool):
+    """The main class for comparing the waveforms."""
+
     TOOL_WORK_DIR = "waveform"
     LOG_FILE_NAME = "log.txt"
 
-    """The function that compares the netlists."""
-
     def compare_netlists(self, design, runInterface):
+        """The function that compares the netlists."""
         log_path = self.work_dir / self.LOG_FILE_NAME
         generate_comparison = ToolProduct(None, log_path, self.check_compare_status)
         status = self.get_prev_run_status(
@@ -54,7 +54,7 @@ class Waveform_CompareTool(CompareTool):
         self.print_running_compare()
 
         paths = get_paths.get_paths(
-            self, design
+            self.work_dir, bfasst.paths.ROOT_PATH, design
         )  # Gets all paths used for file-generation
 
         if (
@@ -74,7 +74,7 @@ class Waveform_CompareTool(CompareTool):
             choice == 0
         ):  # Previous Status was unequivalent and User doesn't want to do any tests.
             return Status(CompareStatus.NOT_EQUIVALENT)
-        elif choice == 1:  # User wants to re-generate files.
+        if choice == 1:  # User wants to re-generate files.
             # Remove old testbenches and generate new ones
             for i in range(2):
                 if paths["tb"][i].exists():
@@ -82,33 +82,30 @@ class Waveform_CompareTool(CompareTool):
             self.generate_files(multiple_files)
             if self.run_test():
                 return self.success_status
-            else:
-                return Status(CompareStatus.NOT_EQUIVALENT)
-        elif (
+            return Status(CompareStatus.NOT_EQUIVALENT)
+        if (
             choice == 2
         ):  # User wants to analyze graphs, previous Status was unequivalent
             analyze_graph.analyze_graphs(paths["build_dir"], paths["modules"][0])
             return Status(CompareStatus.NOT_EQUIVALENT)
-        elif (
+        if (
             choice == 3
         ):  # Previous Status was equivalent and User doesn't want to do any tests.
             return Status(CompareStatus.SUCCESS)
-        elif (
-            choice == 4
-        ):  # User wants to analyze graphs, previous status was equivalent
+        if choice == 4:  # User wants to analyze graphs, previous status was equivalent
             analyze_graph.analyze_graphs(paths["build_dir"], paths["modules"][0])
             return Status(CompareStatus.SUCCESS)
-
-    """The main function that generates testbenches and TCL files. It begins by calling the parsers for the input & output names, then
-    it calls the testbench generators, finally it calls the TCL generators. It then increments to the next file and clears the data structure."""
+        return Status(CompareStatus.NOT_EQUIVALENT)
 
     def generate_files(self, multiple_files):
+        """The main function that generates testbenches and TCL files. It begins by calling the parsers for the input & output names, then
+        it calls the testbench generators, finally it calls the TCL generators. It then increments to the next file and clears the data structure."""
         test_num = 100  # Change this number if you want to run more or less than 100 tests in the testbench.
         file_rewriter.copy_files(
             paths
         )  # Creates copies of the netlists that will be modified by the file_rewriter
         for i in range(2):
-            with open(paths["path"][i]) as file:
+            with open(paths["path"][i], "r") as file:
 
                 if i == 1:
                     file_rewriter.fix_file(
@@ -130,7 +127,7 @@ class Waveform_CompareTool(CompareTool):
                             paths, i
                         )  # Finds the IO names and bit sizes
                     else:
-                            self.parse(file.name)
+                        data = parse_files.parse(file.name)
 
                 if (
                     i == 0
@@ -160,17 +157,16 @@ class Waveform_CompareTool(CompareTool):
             paths
         )  # TCLs are rewritten to remove VCD generation portions so they can be tested in the future without regenerating VCD files.
 
-    """A function that generates the wavefiles from the testbenches, runs gtkwave w/ the TCLs generated earlier on the wavefiles
-    that have just been generated, then checks the difference between gtkwave's two outputs. If there are more than 32 lines that
-    are different, the designs must be unequivalent."""
-
-    def run_test(self):
+    def run_test(self, default=CompareStatus.NOT_EQUIVALENT):
+        """A function that generates the wavefiles from the testbenches, runs gtkwave w/ the TCLs generated earlier on the wavefiles
+        that have just been generated, then checks the difference between gtkwave's two outputs. If there are more than 32 lines that
+        are different, the designs must be unequivalent."""
         return parse_diff.check_diff(
             paths
         )  # Checks the two VCD files against each other. Returns either equivalent or not depending on how many lines are different.
 
     def check_compare_status(self, log_path):
-        with open(log_path) as log:
+        with open(log_path, "r") as log:
             log_text = log.read()
 
         # Check for timeout

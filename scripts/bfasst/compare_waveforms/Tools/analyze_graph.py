@@ -27,7 +27,7 @@ def analyze_graphs(path, module):
     diff = path / "diff.txt"
     parsed = path / "parsed_diff.txt"
     run_vivado = (
-        bfasst.paths.ROOT_PATH / "scripts/bfasst/compare_waveforms/run_vivado.py"
+        bfasst.paths.ROOT_PATH / "scripts/bfasst/compare_waveforms/Tools/run_vivado.py"
     )
     base_path = bfasst.paths.ROOT_PATH / "scripts/bfasst/compare_waveforms"
 
@@ -55,11 +55,11 @@ def analyze_graphs(path, module):
             vivado = True
 
     if parsed.exists():
-        with parsed.open() as file:
+        with parsed.open("r") as file:
             for line in file:
                 print(line)
     elif diff.exists():
-        with diff.open() as file:
+        with diff.open("r") as file:
             for line in file:
                 print(line)
 
@@ -70,13 +70,13 @@ def analyze_graphs(path, module):
         if viv_reversed_v.exists():
             viv_reversed_v.unlink()
 
-        with impl_v.open() as source:
+        with impl_v.open("r") as source:
             with viv_impl_v.open("x") as output:
                 for line in source:
                     if module in line:
                         line = line.replace(module, module + "_impl")
                     output.write(line)
-        with reversed_v.open() as source:
+        with reversed_v.open("r") as source:
             with viv_reversed_v.open("x") as output:
                 for line in source:
                     if "top" in line:
@@ -138,7 +138,7 @@ def find_resolution():
             if isPrimary:
                 # The user-resolution is indicated by the * character in a line.
                 if "*" in line:
-                    if foundDisplay == False:
+                    if foundDisplay is False:
                         line = line.strip()
                         # The user-resolution is always in the format ____x____, so the width is before the x and the
                         # height is after the x.
@@ -148,7 +148,7 @@ def find_resolution():
                         temp.unlink()
                         return (x, y)
     # If, for whatever reason, the screen resolution can't be found, it defaults to the absolute lowest screen resolution.
-    if foundDisplay == False:
+    if foundDisplay is False:
         temp.unlink()
         return (320, 200)
 

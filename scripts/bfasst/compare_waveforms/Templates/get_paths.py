@@ -1,42 +1,84 @@
-import bfasst
-from bfasst.compare_waveforms.Templates import structs
+paths = {}
 
-paths = structs.paths
 
-def get_paths(self, design):
-    paths["build_dir"] = self.work_dir
-    paths["path"].append(design.impl_netlist_path)
-    paths["path"].append(design.reversed_netlist_path)
-    paths["file"].append(paths["build_dir"] / (paths["path"][0].name))
-    paths["file"].append(paths["build_dir"] / (paths["path"][1].name))
-    paths["modules"].append(
-        paths["path"][0].name[0 : len(paths["path"][0].name) - 7]
+def get_paths(work_dir, root_path, design):
+    # The base directory that files are stored in
+    paths.setdefault("build_dir", work_dir)
+    # Cells sim is used as a reference for any modules that are defined such as IBUF
+    paths.setdefault(
+        "cells_sim", root_path / ("third_party/yosys/techlibs/xilinx/cells_sim.v")
     )
-    paths["modules"].append(
-        paths["path"][0].name[0 : len(paths["path"][0].name) - 2]
+    # Path to the sample testbench used for creating the automatic testbench
+    paths.setdefault(
+        "sample_tb",
+        root_path / ("scripts/bfasst/compare_waveforms/Templates/sample_tb.v"),
     )
-    paths["modules"].append(
-        paths["path"][1].name[0 : len(paths["path"][1].name) - 2]
+    # Paths to the implicit and reversed netlists
+    paths.setdefault("path", [design.impl_netlist_path, design.reversed_netlist_path])
+    # Paths to the output files for the implicit and reversed netlists
+    paths.setdefault(
+        "file",
+        [
+            paths["build_dir"] / (paths["path"][0].name),
+            paths["build_dir"] / (paths["path"][1].name),
+        ],
     )
-    paths["diff"] = paths["build_dir"] / "diff.txt"
-    paths["tb"].append(paths["build_dir"] / (paths["modules"][1] + "_tb.v"))
-    paths["tb"].append(paths["build_dir"] / (paths["modules"][2] + "_tb.v"))
-    paths["vcd"].append(paths["build_dir"] / (paths["modules"][1] + ".vcd"))
-    paths["vcd"].append(paths["build_dir"] / (paths["modules"][2] + ".vcd"))
-    paths["temp_vcd"].append(paths["build_dir"] / (paths["modules"][1] + "_temp.vcd"))
-    paths["temp_vcd"].append(paths["build_dir"] / (paths["modules"][2] + "_temp.vcd"))
-    paths["dsn"] = paths["build_dir"] / ("dsn")
-    paths["cells_sim"] = bfasst.paths.ROOT_PATH / (
-        "third_party/yosys/techlibs/xilinx/cells_sim.v"
+    # The list of module names (Ex: add4, add4_impl, add4_reversed)
+    paths.setdefault(
+        "modules",
+        [
+            paths["path"][0].name[0 : len(paths["path"][0].name) - 7],
+            paths["path"][0].name[0 : len(paths["path"][0].name) - 2],
+            paths["path"][1].name[0 : len(paths["path"][1].name) - 2],
+        ],
     )
-    paths["sample_tb"] = bfasst.paths.ROOT_PATH / (
-        "scripts/bfasst/compare_waveforms/Templates/sample_tb.v"
+    # Path to the diff txt file
+    paths.setdefault("diff", paths["build_dir"] / "diff.txt")
+    # Path to the parsed_diff txt file
+    paths.setdefault("parsed_diff", work_dir / "parsed_diff.txt")
+    # Paths to the testbench files
+    paths.setdefault(
+        "tb",
+        [
+            paths["build_dir"] / (paths["modules"][1] + "_tb.v"),
+            paths["build_dir"] / (paths["modules"][2] + "_tb.v"),
+        ],
     )
-    paths["tcl"].append(paths["build_dir"] / (paths["modules"][1] + ".tcl"))
-    paths["tcl"].append(paths["build_dir"] / (paths["modules"][2] + ".tcl"))
-    paths["fst"].append(paths["build_dir"] / (paths["modules"][1] + "_temp.vcd.fst"))
-    paths["fst"].append(paths["build_dir"] / (paths["modules"][2] + "_temp.vcd.fst"))
-    paths["parsed_diff"] = self.work_dir / ("parsed_diff.txt")
-    paths["test"] = paths["build_dir"] / "test.v"
+    # Paths to the VCD files
+    paths.setdefault(
+        "vcd",
+        [
+            paths["build_dir"] / (paths["modules"][1] + ".vcd"),
+            paths["build_dir"] / (paths["modules"][2] + ".vcd"),
+        ],
+    )
+    # Paths to the temporary VCD files (used for verifying the process is complete)
+    paths.setdefault(
+        "temp_vcd",
+        [
+            paths["build_dir"] / (paths["modules"][1] + "_temp.vcd"),
+            paths["build_dir"] / (paths["modules"][2] + "_temp.vcd"),
+        ],
+    )
+    # Path to the dsn file (A file generated between the TCL and VCD files)
+    paths.setdefault("dsn", paths["build_dir"] / ("dsn"))
+    # Paths to the TCL files
+    paths.setdefault(
+        "tcl",
+        [
+            paths["build_dir"] / (paths["modules"][1] + ".tcl"),
+            paths["build_dir"] / (paths["modules"][2] + ".tcl"),
+        ],
+    )
+    # Paths to the fst files (temporary files)
+    paths.setdefault(
+        "fst",
+        [
+            paths["build_dir"] / (paths["modules"][1] + "_temp.vcd.fst"),
+            paths["build_dir"] / (paths["modules"][2] + "_temp.vcd.fst"),
+        ],
+    )
+    # Path to the test.v file used in multiple_file parsing
+    paths.setdefault("test", paths["build_dir"] / "test.v")
 
-    return(paths)
+    return paths

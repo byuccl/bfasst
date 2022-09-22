@@ -1,15 +1,12 @@
 import spydrnet as sdn
-import bfasst
 from bfasst.compare_waveforms.Templates import structs
 
 data = structs.data
 clear_data = structs.clear_data
 
 
-"""Uses spydrnet to analyze the netlist and add the names of all inputs, outputs, and their respective bit sizes to the data structure."""
-
-
 def parse(file):
+    """Uses spydrnet to analyze the netlist and add the names of all inputs, outputs, and their respective bit sizes to the data structure."""
     netlist = sdn.parse(str(file))
     library = netlist.libraries[0]
     definition = library.definitions[0]
@@ -24,17 +21,15 @@ def parse(file):
             data["input_list"].append(port.name)
             data["total_list"].append(port.name)
             data["input_bits_list"].append(len(port.pins) - 1)
-    if data["input_list"].__contains__("clk"):
+    if "clk" in data["input_list"]:
         if data["input_list"].index("clk") == 0:
             data["input_list"].append(data["input_list"].pop(0))
     return data
 
 
-"""A specific parse function in the situation where multiple verilog files exist. The design has multiple layers of ports, so finding the equivalent
-ports requires comparing the ports in each layer to the ports in the reversed_netlist. Once both have the same equivalence, they are stored."""
-
-
 def parse_multiple(file, reversed_file):
+    """A specific parse function in the situation where multiple verilog files exist. The design has multiple layers of ports, so finding the equivalent
+    ports requires comparing the ports in each layer to the ports in the reversed_netlist. Once both have the same equivalence, they are stored."""
     total_reversed = []
 
     netlist = sdn.parse(str(reversed_file))
@@ -56,11 +51,11 @@ def parse_multiple(file, reversed_file):
             for item in total_reversed:
                 if item == port.name:
                     contains_item = True
-            if contains_item == False:
+            if contains_item is False:
                 not_port = True
             else:
                 contains_item = False
-        if not_port == False:
+        if not_port is False:
             for port in i.ports:
                 if str(port.direction) == "Direction.OUT":
                     data["output_list"].append(port.name)
@@ -71,7 +66,7 @@ def parse_multiple(file, reversed_file):
                     data["total_list"].append(port.name)
                     data["input_bits_list"].append(len(port.pins) - 1)
 
-            if data["input_list"].__contains__("clk"):
+            if "clk" in data["input_list"]:
                 if data["input_list"].index("clk") == 0:
                     data["input_list"].append(data["input_list"].pop(0))
         else:
@@ -80,12 +75,10 @@ def parse_multiple(file, reversed_file):
     return data
 
 
-"""Due to reversed netlists having incomplete ports that can cause issues with spydrnet, this function removes
-all of the excess data the spydrnet doesn't need so that the inputs and outputs can still be parsed."""
-
-
 def parse_reversed(paths, i):
-    with paths["file"][1].open() as file:
+    """Due to reversed netlists having incomplete ports that can cause issues with spydrnet, this function removes
+    all of the excess data the spydrnet doesn't need so that the inputs and outputs can still be parsed."""
+    with paths["file"][1].open("r") as file:
         if paths["test"].exists():
             paths["test"].unlink()
         with paths["test"].open("x") as newFile:
@@ -104,5 +97,4 @@ def parse_reversed(paths, i):
                         newFile.write(line)
     if i == 0:
         return parse_multiple(paths["path"][i], paths["test"])
-    else:
-        return parse(paths["test"])  # Parses this newly-generated simplified netlist.
+    return parse(paths["test"])  # Parses this newly-generated simplified netlist.
