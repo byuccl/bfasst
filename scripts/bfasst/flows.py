@@ -119,7 +119,7 @@ def icestorm_rev_bit(design, build_dir, flow_args):
 
 
 def conformal_cmp(design, build_dir, flow_args):
-    vendor = Vendor.Xilinx if not flow_args else Vendor[flow_args.upper()]
+    vendor = Vendor.XILINX if not flow_args else Vendor[flow_args.upper()]
     compare_tool = Conformal_CompareTool(build_dir, vendor)
     with bfasst.conformal_lock:
         return compare_tool.compare_netlists(design)
