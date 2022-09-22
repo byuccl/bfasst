@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-
-import argparse
+from argparse import ArgumentParser
 import datetime
 import multiprocessing
 import pathlib
@@ -13,6 +12,7 @@ import time
 import bfasst
 from bfasst.output_cntrl import redirect, cleanup_redirect, enable_proxy
 from bfasst.status import BfasstException, Status
+from bfasst.status import SynthStatus, ImplStatus, CompareStatus, OptStatus, BitReverseStatus
 from bfasst.utils import TermColor, print_color
 
 # Globals
@@ -81,7 +81,6 @@ def run_design(design, design_dir, flow_fcn, flow_args):
         with open(f"{design_dir / design.path.name}.log", "w") as f:
             buf.seek(0)
             copyfileobj(buf, f)
-            # f.write(buf.getvalue())
         cleanup_redirect()
     return (design, status)
 
@@ -118,23 +117,15 @@ def job_done(retval):
     statuses.append(status)
 
 
-def main():
+def main(experiment_yaml, threads):
     global ljust
     global statuses
     global running_list
     global print_lock
 
-    parser = argparse.ArgumentParser()
     enable_proxy()  # Enable STDOUT redirects
 
-    # Set up command line arguments
-    parser.add_argument("experiment_yaml", help="Experiment yaml file.")
-    parser.add_argument(
-        "-j", "--threads", type=int, default=1, help="Number of threads"
-    )
-    args = parser.parse_args()
-
-    experiment_yaml_path = pathlib.Path(args.experiment_yaml)
+    experiment_yaml_path = pathlib.Path(experiment_yaml)
 
     # Build experiment object
     experiment = bfasst.experiment.Experiment(experiment_yaml_path)
@@ -145,10 +136,10 @@ def main():
         build_dir.mkdir(parents=True)
 
     # Don't run with less than one thread
-    if args.threads < 1:
+    if threads < 1:
         no_threads = 1
     else:
-        no_threads = args.threads
+        no_threads = threads
 
     # For each design
     ljust = experiment.get_longest_design_name() + 5
@@ -166,7 +157,7 @@ def main():
     manager = multiprocessing.Manager()
     statuses = manager.list()
     running_list = manager.dict()
-    print_lock = manager.Lock()
+    print_lock = manager.Lock()                        #  pylint: disable=E1101
 
     print_color(TermColor.BLUE, "Running", len(designs_to_run), "designs")
 
@@ -174,9 +165,7 @@ def main():
     sys.stdout.write("\033[s")
     update_process = multiprocessing.Process(
         target=update_runtimes_thread,
-        args=[
-            len(designs_to_run),
-        ],
+        args=[len(designs_to_run),],
     )
     update_process.start()
     with multiprocessing.Pool(processes=no_threads) as pool:
@@ -214,71 +203,29 @@ def main():
     #                     bfasst.status.CompareStatus]
 
     j = 30
-    print(
-        "Synth Error:".ljust(j),
-        len(
-            [
-                s
-                for s in statuses
-                if type(s.status) == bfasst.status.SynthStatus and s.error
-            ]
-        ),
+    print("Synth Error:".ljust(j),
+          sum(1 for s in statuses if type(s.status) == SynthStatus and s.error),
     )
-    print(
-        "Opt Error:".ljust(j),
-        len(
-            [
-                s
-                for s in statuses
-                if type(s.status) == bfasst.status.OptStatus and s.error
-            ]
-        ),
+    print("Opt Error:".ljust(j),
+           sum(1 for s in statuses if type(s.status) == OptStatus and s.error),
     )
-    print(
-        "Impl Error:".ljust(j),
-        len(
-            [
-                s
-                for s in statuses
-                if type(s.status) == bfasst.status.ImplStatus and s.error
-            ]
-        ),
+    print("Impl Error:".ljust(j),
+          sum(1 for s in statuses if type(s.status) == ImplStatus and s.error),
     )
-    print(
-        "Bit Reverse Error:".ljust(j),
-        len(
-            [
-                s
-                for s in statuses
-                if type(s.status) == bfasst.status.BitReverseStatus and s.error
-            ]
-        ),
+    print("Bit Reverse Error:".ljust(j),
+          sum(1 for s in statuses if type(s.status) == BitReverseStatus and s.error),
     )
-    print(
-        "Compare Error:".ljust(j),
-        len(
-            [
-                s
-                for s in statuses
-                if type(s.status) == bfasst.status.CompareStatus
-                and s.error
-                and s.status != bfasst.status.CompareStatus.NOT_EQUIVALENT
-            ]
-        ),
+    print("Compare Error:".ljust(j),
+          sum(1 for s in statuses
+                    if type(s.status) == CompareStatus
+                    and s.error
+                    and s.status != CompareStatus.NOT_EQUIVALENT),
     )
-    print(
-        "Compare Not Equivalent:".ljust(j),
-        len(
-            [
-                s
-                for s in statuses
-                if s.status == bfasst.status.CompareStatus.NOT_EQUIVALENT
-            ]
-        ),
+    print("Compare Not Equivalent:".ljust(j),
+          sum(1 for s in statuses if s.status == CompareStatus.NOT_EQUIVALENT),
     )
-    print(
-        "Compare Equivalent:".ljust(j),
-        len([s for s in statuses if s.status == bfasst.status.CompareStatus.SUCCESS]),
+    print("Compare Equivalent:".ljust(j),
+        sum(1 for s in statuses if s.status == CompareStatus.SUCCESS),
     )
 
     # print(types)
@@ -288,4 +235,11 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = ArgumentParser()
+    # Set up command line arguments
+    parser.add_argument("experiment_yaml", help="Experiment yaml file.")
+    parser.add_argument(
+        "-j", "--threads", type=int, default=1, help="Number of threads"
+    )
+    args = parser.parse_args()
+    main(args.experiment_yaml, args.threads)

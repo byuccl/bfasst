@@ -2,7 +2,7 @@ import bfasst
 from bfasst.design import HdlType
 from bfasst.tool import ToolProduct
 from bfasst.status import Status, CompareStatus
-import bfasst.netlist_mapping as netlist_mapping
+from bfasst import netlist_mapping
 import paramiko
 import scp
 import re
@@ -33,7 +33,7 @@ class Conformal_CompareTool(CompareTool):
         assert type(vendor) is flows.Vendor
         self.vendor = vendor
 
-    def compare_netlists(self, design, mapping_algorithm):
+    def compare_netlists(self, design):
         log_path = self.work_dir / self.LOG_FILE_NAME
 
         generate_comparison = ToolProduct(None, log_path, self.check_compare_status)
@@ -84,20 +84,8 @@ class Conformal_CompareTool(CompareTool):
             assert False, self.vendor
 
         # Create do file
-        do_file_path = self.create_do_file(design, mapping_algorithm)
+        do_file_path = self.create_do_file(design)
 
-        # Create or Update the mapped_points file
-        if mapping_algorithm == "ccl":
-            netlist_mapping(
-                f"{design.impl_netlist_path}",
-                f"{design.reversed_netlist_path}",
-                self.MAPPED_POINTS_FILE_NAME,
-            )
-        else:
-            print("No BYU CCL Mapping > mapped_points.txt")
-            return Status(CompareStatus.ERROR)
-
-        mapped_points_file_path = self.MAPPED_POINTS_FILE_NAME
 
         # Create remote machine folders
         cmd = (
@@ -113,14 +101,14 @@ class Conformal_CompareTool(CompareTool):
 
         # Copy files to remote machine
         self.copy_files_to_remote_machine(
-            client, design, do_file_path, mapped_points_file_path
+            client, design, do_file_path
         )
 
         # Run conformal remotely
         try:
             status = self.run_conformal(client)
         except BfasstException as e:
-            if e.status != CompareStatus.TIMEOUT:
+            if e.error != CompareStatus.TIMEOUT:
                 raise e
             else:
                 status = e
@@ -182,7 +170,7 @@ class Conformal_CompareTool(CompareTool):
 
         return Status(CompareStatus.SUCCESS)
 
-    def create_do_file(self, design, mapping_algorithm):
+    def create_do_file(self, design):
         do_file_path = self.work_dir / self.DO_FILE_NAME
 
         with open(do_file_path, "w") as fp:
@@ -221,12 +209,12 @@ class Conformal_CompareTool(CompareTool):
                 r"add renaming rule vector_expand %s\[%d\] @1_@2 -Both -map" + "\n"
             )
 
-            if mapping_algorithm == "ccl":
-                fp.write("set system mode lec -nomap\n")
-                fp.write("REAd MApped Points mapped_points.txt\n")
+            # if mapping_algorithm == "ccl":
+            #     fp.write("set system mode lec -nomap\n")
+            #     fp.write("REAd MApped Points mapped_points.txt\n")
 
-            else:
-                fp.write("set system mode lec\n")
+            # else:
+            fp.write("set system mode lec\n")
 
             fp.write("add compared points -all\n")
             fp.write("compare\n")
@@ -249,7 +237,7 @@ class Conformal_CompareTool(CompareTool):
         return do_file_path
 
     def copy_files_to_remote_machine(
-        self, client, design, do_file_path, mapped_points_file_path
+        self, client, design, do_file_path
     ):
         scpClient = scp.SCPClient(client.get_transport())
 
@@ -271,10 +259,10 @@ class Conformal_CompareTool(CompareTool):
         )
 
         # Copy mapped points
-        scpClient.put(
-            str(mapped_points_file_path),
-            str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR / self.MAPPED_POINTS_FILE_NAME),
-        )
+        # scpClient.put(
+        #     str(mapped_points_file_path),
+        #     str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR / self.MAPPED_POINTS_FILE_NAME),
+        # )
 
         # Copy top
         # scpClient.put(str(design.top_path()), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
