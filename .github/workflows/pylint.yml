@@ -17,7 +17,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pylint spydrnet
+        pip install pylint spydrnet werkzeug
     - name: Analysing the code with pylint
       run: |
         pylint --disable=W,R,C $(git ls-files '*.py')
