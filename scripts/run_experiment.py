@@ -157,7 +157,7 @@ def main(experiment_yaml, threads):
     manager = multiprocessing.Manager()
     statuses = manager.list()
     running_list = manager.dict()
-    print_lock = manager.Lock()
+    print_lock = manager.Lock()                        #  pylint: disable=E1101
 
     print_color(TermColor.BLUE, "Running", len(designs_to_run), "designs")
 
