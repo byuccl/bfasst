@@ -1,9 +1,10 @@
 {
     "[python]": {
-        "editor.formatOnSave": false,
+        "editor.formatOnSave": true,
     },
     "python.analysis.extraPaths": [
-        "scripts", "third_party/fasm2bels/fasm2bels"
+        "scripts",
+        "third_party/fasm2bels/fasm2bels"
     ],
     "python.pythonPath": ".venv/bin/python3",
     "git.enableCommitSigning: true"
