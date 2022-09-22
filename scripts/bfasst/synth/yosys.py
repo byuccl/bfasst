@@ -31,7 +31,7 @@ class Yosys_Tech_SynthTool(SynthesisTool):
         # Run Yosys on the design
         # This assumes that the VHDL module *is* installed!
         cmd = [
-            os.path.join(bfasst.config.YOSYS_INSTALL_DIR, "yosys"),
+            os.path.join(bfasst.config.YOSYS_INSTALL_DIR, "yosys"),     #  pylint: disable=E1101
             "-m",
             "vhdl",
             "-s",
