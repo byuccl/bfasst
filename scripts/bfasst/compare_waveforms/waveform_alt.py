@@ -440,7 +440,7 @@ class Waveform_CompareTool(CompareTool):
                 os.remove(PATH + REVERSED_NAME + ".tcl")
                 os.remove(PATH + "dsn")
                 os.remove(PATH + "diff.txt")
-        Zreturn(isEquivalent)
+        return(isEquivalent)
 
 
 

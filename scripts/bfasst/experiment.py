@@ -2,8 +2,8 @@ import yaml
 import zipfile
 import pathlib
 
-import bfasst
 from bfasst import paths
+from bfasst.compare.onespin import OneSpin_CompareTool
 from bfasst.design import Design
 from bfasst.flows import get_flow_fcn_by_name, FlowArgs
 from bfasst.utils import error
@@ -98,12 +98,10 @@ class Experiment:
     def export_to_onespin(self, build_dir):
         i = 0
         with zipfile.ZipFile(build_dir / "onespin.zip", "w") as z:
-            onespin_bash_path = bfasst.ONESPIN_RESOURCES / "run_onespin.bash"
+            onespin_bash_path = paths.ONESPIN_RESOURCES / "run_onespin.bash"
             z.write(onespin_bash_path, arcname=(onespin_bash_path.name))
             for p in self.design_paths:
-                onespin_path = (
-                    build_dir / p.name / bfasst.compare.onespin.OneSpin_CompareTool.TOOL_WORK_DIR
-                )
+                onespin_path = (build_dir / p.name / OneSpin_CompareTool.TOOL_WORK_DIR)
                 if not onespin_path.is_dir():
                     continue
 

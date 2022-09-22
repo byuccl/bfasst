@@ -28,6 +28,12 @@ class Tool(abc.ABC):
     def TOOL_WORK_DIR(self):
         raise NotImplementedError
 
+    @property
+    @classmethod
+    @abc.abstractclassmethod
+    def success_status(self):
+        raise NotImplementedError
+
     def make_work_dir(self):
         work_dir = self.cwd / self.TOOL_WORK_DIR
 

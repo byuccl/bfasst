@@ -142,7 +142,7 @@ def yosys_synth(design, build_dir, flow_args):
 
 def yosys_cmp(design, build_dir, flow_args):
     compare_tool = Yosys_CompareTool(build_dir)
-    compare_tool.compare_netlists(design)
+    return compare_tool.compare_netlists(design)
 
 
 def wave_cmp(design, build_dir, flow_args):
@@ -439,7 +439,7 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
         # Now run the Synplify synthesizer on the Yosys output
         design.golden_is_verilog = True
         # Blow away the opt dir so we know we're getting a fresh build
-        shutil.rmtree()
+        shutil.rmtree(build_dir / IC2_Synplify_OptTool.TOOL_WORK_DIR)
         status = IC2_Synplify_opt(design, build_dir, flow_args, [str(netlist)])
     
         # Run IC2 Implementation

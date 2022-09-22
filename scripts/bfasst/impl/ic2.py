@@ -5,6 +5,7 @@ import os
 import time
 
 import bfasst
+from bfasst import paths
 from bfasst.impl.base import ImplementationTool
 from bfasst.status import Status, ImplStatus
 
@@ -91,7 +92,7 @@ class IC2_ImplementationTool(ImplementationTool):
 
     def create_run_tcl(self):
         tcl_path = self.work_dir / "run_impl.tcl"
-        shutil.copyfile(bfasst.I2C_RESOURCES / "template.tcl", tcl_path)
+        shutil.copyfile(paths.I2C_RESOURCES / "template.tcl", tcl_path)
         return tcl_path
 
     def check_impl_status(self, log_path):

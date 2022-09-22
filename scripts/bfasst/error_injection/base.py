@@ -5,9 +5,10 @@ from bfasst.status import Status, ErrorInjectionStatus
 
 
 class ErrorInjectionTool(Tool):
+    success_status = Status(ErrorInjectionStatus.SUCCESS)
+
     def __init__(self, cwd, flow_args="") -> None:
         super().__init__(cwd, flow_args)
-        self.success_status = Status(ErrorInjectionStatus.SUCCESS)
 
     # run_error_flows
     # If one or more error flows are specified with an error flow YAML,

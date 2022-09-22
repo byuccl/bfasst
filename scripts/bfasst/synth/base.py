@@ -6,9 +6,10 @@ from bfasst.status import SynthStatus, Status
 
 
 class SynthesisTool(tool.Tool):
+    success_status = Status(SynthStatus.SUCCESS)
+    
     def __init__(self, cwd, flow_args="") -> None:
         super().__init__(cwd, flow_args)
-        self.success_status = Status(SynthStatus.SUCCESS)
 
     # This method should run synthesis.  It should return
     # (netlist, status), where:

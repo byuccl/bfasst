@@ -4,6 +4,7 @@ import pathlib
 import re
 
 import bfasst
+from bfasst import paths
 from bfasst.compare.base import CompareTool
 from bfasst.status import Status, CompareStatus
 
@@ -60,7 +61,7 @@ class OneSpin_CompareTool(CompareTool):
 
     def write_compare_tcl(self, design):
         # Read the sample onespin tcl script from resources
-        sample_onespin_path = bfasst.ONESPIN_RESOURCES / ONESPIN_TCL_TEMPLATE
+        sample_onespin_path = paths.ONESPIN_RESOURCES / ONESPIN_TCL_TEMPLATE
         tcl_template_lines = []
         with open(sample_onespin_path) as fp:
             for line in fp:
@@ -176,7 +177,7 @@ class OneSpin_CompareTool(CompareTool):
     def write_compare_script(self, design):
         # Read the template script from the resources directory
         template_lines = []
-        with open(bfasst.ONESPIN_RESOURCES / ONESPIN_PY_TEMPLATE) as fp:
+        with open(paths.ONESPIN_RESOURCES / ONESPIN_PY_TEMPLATE) as fp:
             for line in fp:
                 template_lines.append(line)
 
