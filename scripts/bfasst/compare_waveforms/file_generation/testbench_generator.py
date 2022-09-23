@@ -18,6 +18,7 @@ def generate_first_testbench(paths, test_num, data, i):
     """This function creates the initial testbench that will be modified by the reversed-netlist. It reads in a sample testbench
     and replaces certain variables with the corresponding information from the data structure. It also sets the variables equal
     to random numbers that are generated to be within the corresponding variable's bit range."""
+    random_list = []
     with paths["sample_tb"].open("r") as sample:
         with paths["tb"][i].open("x") as tb:
             for line in sample:
@@ -70,11 +71,11 @@ def generate_first_testbench(paths, test_num, data, i):
                 if "/*SIGNALS" in line:
                     for bits in data["input_bits_list"]:
                         if bits == 0:
-                            data["random_list"].append(
+                            random_list.append(
                                 np.random.randint(low=0, high=2, size=int(test_num))
                             )
                         else:
-                            data["random_list"].append(
+                            random_list.append(
                                 np.random.randint(
                                     low=0,
                                     high=(2 ** (int(bits) + 1) - 1),
@@ -87,9 +88,9 @@ def generate_first_testbench(paths, test_num, data, i):
                         for input, k in zip(data["input_list"], range(input_num(data))):
                             if input != "clk":
                                 if k == 0:
-                                    line = f"    # 5 {str(input)} = {str(data['random_list'][k][j])};\n"
+                                    line = f"    # 5 {str(input)} = {str(random_list[k][j])};\n"
                                 else:
-                                    line = f"    {str(input)} = {str(data['random_list'][k][j])};\n"
+                                    line = f"    {str(input)} = {str(random_list[k][j])};\n"
                             else:
                                 if k == 0:
                                     line = "    # 5 "

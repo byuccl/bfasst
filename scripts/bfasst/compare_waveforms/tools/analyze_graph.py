@@ -2,28 +2,26 @@ from re import X
 import bfasst
 import bfasst.paths
 import subprocess
-import shutil
 from subprocess import Popen
 from pathlib import Path
 from bfasst.config import VIVADO_BIN_PATH
 
-"""A function to launch the graphs for designs that have already been tested. Mainly meant
-for checking designs that came back unequivalent to see what was wrong with them."""
-
 
 def analyze_graphs(path, module):
-    impl_v = path / (module + "_impl.v")
-    viv_impl_v = path / (module + "_temp_impl.v")
-    impl_tb = path / (module + "_impl_tb.v")
-    reversed_v = path / (module + "_reversed.v")
-    viv_reversed_v = path / (module + "_temp_reversed.v")
-    reversed_tb = path / (module + "_reversed_tb.v")
-    impl_vcd = path / (module + "_impl.vcd")
-    reversed_vcd = path / (module + "_reversed.vcd")
-    impl_tcl = path / (module + "_impl.tcl")
-    reversed_tcl = path / (module + "_reversed.tcl")
-    impl_fst = path / (module + "_impl.vcd.fst")
-    reversed_fst = path / (module + "_reversed.vcd.fst")
+    """A function to launch the graphs for designs that have already been tested. Mainly meant
+    for checking designs that came back unequivalent to see what was wrong with them."""
+    impl_v = path / (f"{module}_impl.v")
+    viv_impl_v = path / (f"{module}_temp_impl.v")
+    impl_tb = path / (f"{module}_impl_tb.v")
+    reversed_v = path / (f"{module}_reversed.v")
+    viv_reversed_v = path / (f"{module}_temp_reversed.v")
+    reversed_tb = path / (f"{module}_reversed_tb.v")
+    impl_vcd = path / (f"{module}_impl.vcd")
+    reversed_vcd = path / (f"{module}_reversed.vcd")
+    impl_tcl = path / (f"{module}_impl.tcl")
+    reversed_tcl = path / (f"{module}_reversed.tcl")
+    impl_fst = path / (f"{module}_impl.vcd.fst")
+    reversed_fst = path / (f"{module}_reversed.vcd.fst")
     diff = path / "diff.txt"
     parsed = path / "parsed_diff.txt"
     run_vivado = (
@@ -46,8 +44,8 @@ def analyze_graphs(path, module):
             (x, y) = find_resolution()
             x = str(x)
             y = str(y)
-            wavefile.write("initial_window_x " + x + "\n")
-            wavefile.write("initial_window_y " + y + "\n")
+            wavefile.write(f"initial_window_x {x}\n")
+            wavefile.write(f"initial_window_y {y}\n")
 
         choice = input("Compare with Vivado? 1 for yes, 0 for no.")
         vivado = False
@@ -74,13 +72,13 @@ def analyze_graphs(path, module):
             with viv_impl_v.open("x") as output:
                 for line in source:
                     if module in line:
-                        line = line.replace(module, module + "_impl")
+                        line = line.replace(module, f"{module}_impl")
                     output.write(line)
         with reversed_v.open("r") as source:
             with viv_reversed_v.open("x") as output:
                 for line in source:
                     if "top" in line:
-                        line = line.replace("top", module + "_reversed")
+                        line = line.replace("top", f"{module}_reversed")
                     output.write(line)
 
         commands = [
@@ -91,10 +89,10 @@ def analyze_graphs(path, module):
                 str(run_vivado),
                 str(viv_impl_v),
                 str(impl_tb),
-                module + "_impl_tb",
+                f"{module}_impl_tb",
                 str(viv_reversed_v),
                 str(reversed_tb),
-                module + "_reversed_tb",
+                f"{module}_reversed_tb",
                 str(VIVADO_BIN_PATH),
                 str(base_path),
             ],
@@ -118,10 +116,8 @@ def analyze_graphs(path, module):
         viv_reversed_v.unlink()
 
 
-"""A function primarily meant to check the user's monitor resolution so gtkwave can launch in full-screen mode."""
-
-
 def find_resolution():
+    """A function primarily meant to check the user's monitor resolution so gtkwave can launch in full-screen mode."""
     output = subprocess.check_output("xrandr")
     output = output.decode()
     temp = Path("temp.txt")

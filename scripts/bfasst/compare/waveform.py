@@ -13,19 +13,19 @@ from bfasst.status import Status, CompareStatus
 from bfasst.tool import ToolProduct
 
 # Note: All of the tools below cna be found in the compare_waveforms directory. Each covers a part of the waveform toolchain
-from bfasst.compare_waveforms.Tools import analyze_graph
-from bfasst.compare_waveforms.File_Parsing import parse_diff, parse_files
-from bfasst.compare_waveforms.File_Generation import (
+from bfasst.compare_waveforms.tools import analyze_graph
+from bfasst.compare_waveforms.file_parsing import parse_diff, parse_files
+from bfasst.compare_waveforms.file_generation import (
     testbench_generator,
     tcl_generator,
     waveform_generator,
     file_rewriter,
 )
-from bfasst.compare_waveforms.Templates import get_paths
-from bfasst.compare_waveforms.Interface import waveform_interface
+from bfasst.compare_waveforms.templates import get_paths
+from bfasst.compare_waveforms.interface import waveform_interface
 
 # Data and Paths are structs that contain the parsed data from our design and the paths for all generated files.
-data = parse_files.data
+data = {}
 paths = get_paths.paths
 
 
@@ -82,12 +82,10 @@ class Waveform_CompareTool(CompareTool):
             self.generate_files(multiple_files)
             if self.run_test():
                 return self.success_status
-            return Status(CompareStatus.NOT_EQUIVALENT)
         if (
             choice == 2
         ):  # User wants to analyze graphs, previous Status was unequivalent
             analyze_graph.analyze_graphs(paths["build_dir"], paths["modules"][0])
-            return Status(CompareStatus.NOT_EQUIVALENT)
         if (
             choice == 3
         ):  # Previous Status was equivalent and User doesn't want to do any tests.
@@ -150,14 +148,12 @@ class Waveform_CompareTool(CompareTool):
                 waveform_generator.generate_VCD(
                     paths, i
                 )  # All previously generated files are ran through Icarus and then GTKwave, creating the files we need.
-                data = parse_files.clear_data(
-                    data
-                )  # Clears the data struct so future tests don't have old data
+                data.clear()
         file_rewriter.rewrite_tcl(
             paths
         )  # TCLs are rewritten to remove VCD generation portions so they can be tested in the future without regenerating VCD files.
 
-    def run_test(self, default=CompareStatus.NOT_EQUIVALENT):
+    def run_test(self):
         """A function that generates the wavefiles from the testbenches, runs gtkwave w/ the TCLs generated earlier on the wavefiles
         that have just been generated, then checks the difference between gtkwave's two outputs. If there are more than 32 lines that
         are different, the designs must be unequivalent."""
@@ -165,7 +161,7 @@ class Waveform_CompareTool(CompareTool):
             paths
         )  # Checks the two VCD files against each other. Returns either equivalent or not depending on how many lines are different.
 
-    def check_compare_status(self, log_path):
+    def check_compare_status(self, log_path, default=CompareStatus.NOT_EQUIVALENT):
         with open(log_path, "r") as log:
             log_text = log.read()
 

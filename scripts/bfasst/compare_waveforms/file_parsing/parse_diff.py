@@ -8,7 +8,7 @@ def check_diff(paths):
 
     # Finds how many lines are different in the two files.
     dif = subprocess.getoutput(
-        ["diff -c " + str(paths["vcd"][0]) + " " + str(paths["vcd"][1])]
+        [f"diff -c {str(paths['vcd'][0])} {str(paths['vcd'][1])}"]
     )
     if paths["diff"].exists():
         paths["diff"].unlink()
@@ -24,7 +24,7 @@ def check_diff(paths):
 
     # If there are more than 32 lines different, the two designs must be unequivalent.
     if lines > 32:
-        print("NOT EQUIVALENT! SEE " + str(paths["parsed_diff"]) + " for more info")
+        print(f"NOT EQUIVALENT! SEE {str(paths['parsed_diff'])} for more info")
         parse_diff(paths)
         if paths["parsed_diff"].exists():
             with paths["parsed_diff"].open("r") as file:
@@ -114,7 +114,7 @@ def parse_diff(paths):
                 for symbol, signal in zip(symbols, signals):
                     if symbol == "#":
                         if "#\n" in line:
-                            line = line.replace(symbol, " " + signal)
+                            line = line.replace(f"{symbol} {signal}")
                             isParsed = True
                         elif "#" in line:
                             if line[line.index("#") + 1] != " ":
@@ -122,13 +122,13 @@ def parse_diff(paths):
                                     num = line[line.index("#") + 1 : line.index("\n")]
                                     num = int(num)
                                     num = int(num / 1000)
-                                    line = " " + str(num) + " ns\n"
+                                    line = f" {str(num)} ns\n"
                                     isParsed = True
                                 else:
                                     num = line[line.index("#") + 1 :]
                                     num = int(num)
                                     num = int(num / 1000)
-                                    line = " " + str(num) + " ns\n"
+                                    line = f" {str(num)} ns\n"
                                     isParsed = True
                     elif symbol == "$":
                         if "$scope" not in line:
@@ -136,11 +136,11 @@ def parse_diff(paths):
                                 if "$timescale" not in line:
                                     if "$end" not in line:
                                         if isParsed is False:
-                                            line = line.replace(symbol, " " + signal)
+                                            line = line.replace(symbol, f" {signal}")
                                             isParsed = True
                     elif symbol in line:
-                        if line[line.index(symbol) :] == (symbol + "\n"):
-                            line = line.replace(symbol, " " + signal)
+                        if line[line.index(symbol) :] == (f"{symbol}\n"):
+                            line = line.replace(symbol, f" {signal}")
                             isParsed = True
 
                 if firstDif:
@@ -160,15 +160,9 @@ def parse_diff(paths):
                         line = "*******************\n"
 
                     if "*** " in line:
-                        if line[line.index(" ") + 1] == "/":
-                            line = "*** IMPL: " + line[line.index(" ") + 1 :]
-                        else:
-                            line = "*** IMPL: " + line[line.index(" ") + 1 :]
+                        line = f"*** IMPL: P{line[line.index(' ') + 1 :]}"
 
                     if "--- " in line:
-                        if line[line.index(" ") + 1] == "/":
-                            line = "--- REVERSED: " + line[line.index(" ") + 1 :]
-                        else:
-                            line = "--- REVERSED: " + line[line.index(" ") + 1 :]
+                        line = f"--- REVERSED: {line[line.index(' ') + 1 :]}"
 
                 output.write(line)

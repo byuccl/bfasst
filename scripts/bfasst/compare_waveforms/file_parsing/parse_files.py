@@ -1,8 +1,4 @@
 import spydrnet as sdn
-from bfasst.compare_waveforms.Templates import structs
-
-data = structs.data
-clear_data = structs.clear_data
 
 
 def parse(file):
@@ -11,19 +7,31 @@ def parse(file):
     library = netlist.libraries[0]
     definition = library.definitions[0]
 
+    output_list = []
+    total_list = []
+    output_bits_list = []
+    input_list = []
+    input_bits_list = []
+
+    data = {}
+
     # Use design.yaml_path to find yaml file. Read to find if more modules exist.
     for port in definition.ports:
         if str(port.direction) == "Direction.OUT":
-            data["output_list"].append(port.name)
-            data["total_list"].append(port.name)
-            data["output_bits_list"].append(len(port.pins) - 1)
+            output_list.append(port.name)
+            total_list.append(port.name)
+            output_bits_list.append(len(port.pins) - 1)
         elif str(port.direction) == "Direction.IN":
-            data["input_list"].append(port.name)
-            data["total_list"].append(port.name)
-            data["input_bits_list"].append(len(port.pins) - 1)
-    if "clk" in data["input_list"]:
-        if data["input_list"].index("clk") == 0:
-            data["input_list"].append(data["input_list"].pop(0))
+            input_list.append(port.name)
+            total_list.append(port.name)
+            input_bits_list.append(len(port.pins) - 1)
+    if "clk" in input_list:
+        if input_list.index("clk") == 0:
+            input_list.append(input_list.pop(0))
+
+    data = set_data(
+        input_list, output_list, input_bits_list, output_bits_list, total_list
+    )
     return data
 
 
@@ -31,6 +39,13 @@ def parse_multiple(file, reversed_file):
     """A specific parse function in the situation where multiple verilog files exist. The design has multiple layers of ports, so finding the equivalent
     ports requires comparing the ports in each layer to the ports in the reversed_netlist. Once both have the same equivalence, they are stored."""
     total_reversed = []
+    output_list = []
+    total_list = []
+    output_bits_list = []
+    input_list = []
+    input_bits_list = []
+
+    data = {}
 
     netlist = sdn.parse(str(reversed_file))
     library = netlist.libraries[0]
@@ -58,19 +73,21 @@ def parse_multiple(file, reversed_file):
         if not_port is False:
             for port in i.ports:
                 if str(port.direction) == "Direction.OUT":
-                    data["output_list"].append(port.name)
-                    data["total_list"].append(port.name)
-                    data["output_bits_list"].append(len(port.pins) - 1)
+                    output_list.append(port.name)
+                    total_list.append(port.name)
+                    output_bits_list.append(len(port.pins) - 1)
                 elif str(port.direction) == "Direction.IN":
-                    data["input_list"].append(port.name)
-                    data["total_list"].append(port.name)
-                    data["input_bits_list"].append(len(port.pins) - 1)
-
-            if "clk" in data["input_list"]:
-                if data["input_list"].index("clk") == 0:
-                    data["input_list"].append(data["input_list"].pop(0))
+                    input_list.append(port.name)
+                    total_list.append(port.name)
+                    input_bits_list.append(len(port.pins) - 1)
+            if "clk" in input_list:
+                if input_list.index("clk") == 0:
+                    input_list.append(input_list.pop(0))
         else:
             not_port = False
+    data = set_data(
+        input_list, output_list, input_bits_list, output_bits_list, total_list
+    )
     reversed_file.unlink()
     return data
 
@@ -98,3 +115,13 @@ def parse_reversed(paths, i):
     if i == 0:
         return parse_multiple(paths["path"][i], paths["test"])
     return parse(paths["test"])  # Parses this newly-generated simplified netlist.
+
+
+def set_data(input_list, output_list, input_bits_list, output_bits_list, total_list):
+    data = {}
+    data.setdefault("input_list", input_list)
+    data.setdefault("output_list", output_list)
+    data.setdefault("input_bits_list", input_bits_list)
+    data.setdefault("output_bits_list", output_bits_list)
+    data.setdefault("total_list", total_list)
+    return data

@@ -147,9 +147,9 @@ def yosys_cmp(design, build_dir, flow_args):
     compare_tool.compare_netlists(design)
 
 
-def wave_cmp(design, build_dir, flow_args):
+def wave_cmp(design, build_dir, runInterface):
     tool = Waveform_CompareTool(build_dir)
-    return tool.compare_netlists(design)
+    return tool.compare_netlists(design, runInterface)
 
 
 def onespin_cmp(design, build_dir, flow_args):
@@ -273,7 +273,7 @@ def flow_xilinx_yosys_waveform(design, flow_args, build_dir):
 
     # Run X-ray and fasm2bel
     status = xray_rev(design, build_dir, flow_args)
-    status = wave_cmp(design, build_dir, flow_args[FlowArgs.CMP])
+    status = wave_cmp(design, build_dir, True)
     
     return status
 
@@ -284,7 +284,7 @@ def flow_xilinx_yosys_waveform_quick(design, flow_args, build_dir):
 
     # Run X-ray and fasm2bel
     status = xray_rev(design, build_dir, flow_args)
-    status = wave_cmp(design, build_dir, flow_args[FlowArgs.CMP])
+    status = wave_cmp(design, build_dir, False)
     
     return status
 
