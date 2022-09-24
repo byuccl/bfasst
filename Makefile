@@ -77,4 +77,3 @@ install_yosys:
 format:
 	find ./scripts -iname "*.py" -exec black -l 100 {} \;
 
-
