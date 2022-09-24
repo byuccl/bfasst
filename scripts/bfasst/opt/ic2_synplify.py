@@ -5,8 +5,10 @@ import os
 import os.path
 
 import bfasst
+from bfasst import paths
+from bfasst.design import Design
 from bfasst.opt.base import OptTool
-from bfasst.status import Status, OptStatus
+from bfasst.status import BfasstException, Status, OptStatus
 
 PROJECT_TEMPLATE_FILE = "template_sp.prj"
 IC2_SYNPLIFY_PROJ_FILE = "synplify_project.prj"
@@ -56,19 +58,16 @@ class IC2_Synplify_OptTool(OptTool):
             )
 
             # Run Icecube 2 LSE synthesis
-            status = self.run_sythesis(prj_path, log_path)
-            if status.error:
+            try:
+                status = self.run_sythesis(prj_path, log_path)
+            except BfasstException as e:
                 # If generic error, see if log has something more specific
-                if status.status == OptStatus.ERROR:
+                if e.error == OptStatus.ERROR:
                     new_status = self.check_opt_log(log_path)
-                    if new_status.error:
-                        return new_status
-                return status
+                raise e
 
         # Parse synthesis log for errors
         status = self.check_opt_log(log_path)
-        if status.error:
-            return status
 
         if need_to_run:
             # Copy edif netlist out of project directory3
@@ -117,9 +116,9 @@ class IC2_Synplify_OptTool(OptTool):
             return Status(OptStatus.SUCCESS)
 
     def create_ic2_synplify_project_file(self, design, edif_path, in_files, lib_files):
-        assert type(design) is bfasst.design.Design
+        assert type(design) is Design
 
-        template_file = bfasst.I2C_RESOURCES / PROJECT_TEMPLATE_FILE
+        template_file = paths.I2C_RESOURCES / PROJECT_TEMPLATE_FILE
         project_file = self.work_dir / IC2_SYNPLIFY_PROJ_FILE
         shutil.copyfile(template_file, project_file)
 

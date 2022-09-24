@@ -4,6 +4,7 @@ import subprocess
 import time
 
 import bfasst
+from bfasst import paths
 from bfasst.synth.base import SynthesisTool
 from bfasst.status import Status, SynthStatus
 
@@ -30,7 +31,7 @@ class Yosys_Tech_SynthTool(SynthesisTool):
         # Run Yosys on the design
         # This assumes that the VHDL module *is* installed!
         cmd = [
-            os.path.join(bfasst.config.YOSYS_INSTALL_DIR, "yosys"),
+            os.path.join(bfasst.config.YOSYS_INSTALL_DIR, "yosys"),     #  pylint: disable=E1101
             "-m",
             "vhdl",
             "-s",
@@ -61,8 +62,8 @@ class Yosys_Tech_SynthTool(SynthesisTool):
     def create_yosys_script(self, design, netlist_path):
         # It's a little messy, but I want to just call my existing script that
         #   does this
-        path_to_script_builder = bfasst.SCRIPTS_PATH / "yosys" / "createYosScript.py"
-        script_template_file = bfasst.YOSYS_RESOURCES / YOSYS_SCRIPT_TEMPLATE
+        path_to_script_builder = paths.SCRIPTS_PATH / "yosys" / "createYosScript.py"
+        script_template_file = paths.YOSYS_RESOURCES / YOSYS_SCRIPT_TEMPLATE
         yosys_script_file = self.work_dir / YOSYS_SCRIPT_FILE
 
         # TODO: Figure out how to add VHDL library files to the yosys vhdl flow
@@ -86,7 +87,6 @@ class Yosys_Tech_SynthTool(SynthesisTool):
                 timeout=bfasst.config.I2C_LSE_TIMEOUT,
             )
         except subprocess.TimeoutExpired:
-            fp.write("\nTimeout\n")
             return Status(SynthStatus.TIMEOUT)
         else:
             if p.returncode != 0:

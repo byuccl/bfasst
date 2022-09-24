@@ -6,9 +6,10 @@ from bfasst.tool import Tool
 
 
 class ImplementationTool(Tool):
-    def __init__(self, cwd) -> None:
-        super().__init__(cwd)
-        self.success_status = Status(ImplStatus.SUCCESS)
+    success_status = Status(ImplStatus.SUCCESS)
+
+    def __init__(self, cwd, flow_args="") -> None:
+        super().__init__(cwd, flow_args)
 
     # This method should run implementation.  It should return
     # (bitstream, status), where:

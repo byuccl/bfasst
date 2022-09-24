@@ -4,6 +4,7 @@ import random
 import re
 
 import bfasst
+from bfasst import paths
 from bfasst.error_injection.base import ErrorInjectionTool
 from bfasst.status import Status, ErrorInjectionStatus
 
@@ -50,7 +51,7 @@ class ErrorInjector_ErrorInjectionTool(ErrorInjectionTool):
         # Open the YAML file (if there is one) and read the flow information
         if design.error_flow_yaml is None:
             return (Status(ErrorInjectionStatus.NO_YAML), None)
-        with open(bfasst.ERROR_FLOW_PATH / design.error_flow_yaml) as fp:
+        with open(paths.ERROR_FLOW_PATH / design.error_flow_yaml) as fp:
             error_flow_info = yaml.safe_load(fp)
 
         corrupt_netlists = []
@@ -65,8 +66,6 @@ class ErrorInjector_ErrorInjectionTool(ErrorInjectionTool):
                 flow_fcn = self.get_flow_fcn_from_name(flow_name)
                 for itr in range(num_iterations):
                     flow_ret = flow_fcn(netlist_buffer, design)
-                    if flow_ret[0] == Status(ErrorInjectionStatus.FCN_ERROR):
-                        return (Status(ErrorInjectionStatus.FCN_ERROR), None)
                     netlist_buffer = flow_ret[1]
             self.write_buffer_to_netlist(netlist_buffer, corrupt_netlist_path)
             corrupt_netlists.append(corrupt_netlist_path)
