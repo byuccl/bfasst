@@ -1,11 +1,11 @@
 import yaml
 import zipfile
 import pathlib
-import shutil
-import sys
 
-import bfasst
 from bfasst import paths
+from bfasst.compare.onespin import OneSpin_CompareTool
+from bfasst.design import Design
+from bfasst.flows import get_flow_fcn_by_name, FlowArgs
 from bfasst.utils import error
 
 class Experiment:
@@ -13,6 +13,7 @@ class Experiment:
         self.post_run = None
         self.yaml_path = yaml_path
         self.name = yaml_path.stem
+        self.flow_args = {k: "" for k in FlowArgs}
 
         # Read experiment YAML
         with open(yaml_path) as fp:
@@ -20,14 +21,14 @@ class Experiment:
 
         # Get the flow fcn pointer
         if not "flow" in experiment_props:
-            bfasst.utils.error("'flow' property missing from experiment YAML", yaml_path)
-        self.flow_fcn = bfasst.flows.get_flow_fcn_by_name(experiment_props["flow"])
+            error("'flow' property missing from experiment YAML", yaml_path)
+        self.flow_fcn = get_flow_fcn_by_name(experiment_props.pop("flow"))
 
         # Create design objects for all designs
         self.design_paths = []
 
         if "designs" in experiment_props:
-            for d in experiment_props["designs"]:
+            for d in experiment_props.pop("designs"):
                 d_path = paths.EXAMPLES_PATH / d
                 if not d_path.is_dir():
                     error("Provided design directory", d_path, "does not exist")
@@ -45,12 +46,8 @@ class Experiment:
                         self.design_paths.append(d_child)
 
 
-        # if "designs" in experiment_props:
-        #     for d in experiment_props["designs"]:
-        #         self.design_paths.append(pathlib.Path(d))
-
         if "design_dirs" in experiment_props:
-            for design_dir in experiment_props["design_dirs"]:
+            for design_dir in experiment_props.pop("design_dirs"):
                 design_dir_path = paths.EXAMPLES_PATH / design_dir
                 if not design_dir_path.is_dir():
                     error(design_dir_path, "is not a directory")
@@ -61,7 +58,7 @@ class Experiment:
                         self.design_paths.append(pathlib.Path(design_dir) / dir_item.name)
 
         if "post_run" in experiment_props:
-            self.post_run = getattr(self, experiment_props["post_run"])
+            self.post_run = getattr(self, experiment_props.pop("post_run"))
 
         # Uniquify
         self.design_paths = list(set(self.design_paths))
@@ -69,12 +66,19 @@ class Experiment:
 
         self.designs = []
         for design_path in self.design_paths:
-            design = bfasst.design.Design(paths.EXAMPLES_PATH / design_path)
+            design = Design(paths.EXAMPLES_PATH / design_path)
             self.designs.append(design)
 
         for design in self.designs:
             if "error_flow" in experiment_props:
-                design.error_flow_yaml = experiment_props["error_flow"] + ".yaml"
+                design.error_flow_yaml = experiment_props.pop("error_flow") + ".yaml"
+
+        for k, v in experiment_props.items():
+            try:
+                key = FlowArgs[k.upper()]
+                self.flow_args[key] = v
+            except KeyError:
+                continue
 
     def get_longest_design_name(self):
         return max([len(str(d.rel_path)) for d in self.designs])
@@ -94,12 +98,10 @@ class Experiment:
     def export_to_onespin(self, build_dir):
         i = 0
         with zipfile.ZipFile(build_dir / "onespin.zip", "w") as z:
-            onespin_bash_path = bfasst.ONESPIN_RESOURCES / "run_onespin.bash"
+            onespin_bash_path = paths.ONESPIN_RESOURCES / "run_onespin.bash"
             z.write(onespin_bash_path, arcname=(onespin_bash_path.name))
             for p in self.design_paths:
-                onespin_path = (
-                    build_dir / p.name / bfasst.compare.onespin.OneSpin_CompareTool.TOOL_WORK_DIR
-                )
+                onespin_path = (build_dir / p.name / OneSpin_CompareTool.TOOL_WORK_DIR)
                 if not onespin_path.is_dir():
                     continue
 

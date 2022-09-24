@@ -16,16 +16,22 @@ class ToolProduct:
 class Tool(abc.ABC):
     TERM_COLOR_STAGE = TermColor.PURPLE
 
-    def __init__(self, cwd):
+    def __init__(self, cwd, flow_args = ""):
         super().__init__()
         self.cwd = cwd
-
+        self.flow_args = flow_args
         self.work_dir = self.make_work_dir()
 
     @property
     @classmethod
     @abc.abstractclassmethod
     def TOOL_WORK_DIR(self):
+        raise NotImplementedError
+
+    @property
+    @classmethod
+    @abc.abstractclassmethod
+    def success_status(self):
         raise NotImplementedError
 
     def make_work_dir(self):
@@ -53,11 +59,9 @@ class Tool(abc.ABC):
 
                 # If log file has an error, return that status
                 status = tool_product.check_log_fcn(tool_product.log_path)
-                if status.error:
-                    return status
 
                 # If log file doesn't have an error, but output file is expected and missing, re-run
-                elif (tool_product.file_path is not None) and (not tool_product.file_path.is_file()):
+                if (tool_product.file_path is not None) and (not tool_product.file_path.is_file()):
                     return None
             else:
                 # This ToolProduct doesn't produce a log file

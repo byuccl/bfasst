@@ -1,0 +1,34 @@
+BFASST CI
+
+This folder contains CI for the BFASST project.
+
+Files:
+ci
+current
+fail
+run
+
+Organization
+
+The ci script is the meat of the process.  It first removes everything
+from potentially previous runs.  Then it sets up a chroot using
+debootstrap and generates a ci script to run inside it.  It then mounts
+proc, sys and dev, bind-mounts vivado into the chroot, copies ssh keys
+into the chroot, and execs into the generated script.
+
+The script begins by creating a new test user and copying the ssh
+keys into the new user's home directory.  It then installs some basic
+prerequisites to align the chroot with a normal install of ubuntu.
+It then su's into the test user and attempts to build bfasst.  Note that
+the process can be configured with several variables at the top, relating
+to conformal access and vivado location.
+
+The current script determines the latest commit to the bfasst repo.
+
+The fail script sends a message to the bfasst slack channel.  Note that
+this requires a file called slack_webhook in its directory, and expects
+the commit id on stdin.
+
+The run script ties it all together. It caches the commit from a previous
+run, if any, and if the new commit differs from the old commit, runs ci.
+If ci exits nonzero, it runs fail with the newest commit id on stdin.

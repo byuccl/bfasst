@@ -6,9 +6,10 @@ from bfasst.status import Status
 
 
 class OptTool(Tool):
-    def __init__(self, cwd) -> None:
-        super().__init__(cwd)
-        self.success_status = Status(OptStatus.SUCCESS)
+    success_status = Status(OptStatus.SUCCESS)
+    
+    def __init__(self, cwd, flow_args="") -> None:
+        super().__init__(cwd, flow_args)
 
     # This method should run an optimizer.  It should return
     # (netlist, status), where:

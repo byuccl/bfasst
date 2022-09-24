@@ -39,8 +39,7 @@ class Waveform_CompareTool(CompareTool):
     CELLS_SIM = str(pathlib.Path.cwd()) + "/third_party/yosys/techlibs/xilinx/cells_sim.v" + "; "
     #Note: Impl design = str(design.impl_netlist_path)
     #Reversed design = str(design.reversed_netlist_path)
-    def compare_netlists(self, design, print_to_stdout=True):
-        self.print_to_stdout = print_to_stdout
+    def compare_netlists(self, design):
         log_path = self.work_dir / self.LOG_FILE_NAME
         generate_comparison = ToolProduct(None, log_path, self.check_compare_status)
         status = self.get_prev_run_status(
@@ -51,12 +50,10 @@ class Waveform_CompareTool(CompareTool):
         )
 
         if status is not None:
-            if self.print_to_stdout:
-                self.print_skipping_compare()
+            self.print_skipping_compare()
             return status
         
-        if self.print_to_stdout:
-            self.print_running_compare()
+        self.print_running_compare()
 
         BASIC_PATH = str(design.impl_netlist_path)[0:len(str(design.impl_netlist_path))-len(str(design.impl_netlist_path.name))]
         print(BASIC_PATH)
@@ -443,7 +440,7 @@ class Waveform_CompareTool(CompareTool):
                 os.remove(PATH + REVERSED_NAME + ".tcl")
                 os.remove(PATH + "dsn")
                 os.remove(PATH + "diff.txt")
-        Zreturn(isEquivalent)
+        return(isEquivalent)
 
 
 

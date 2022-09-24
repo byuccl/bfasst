@@ -56,8 +56,7 @@ class Waveform_CompareTool(CompareTool):
 
     """The function that compares the netlists."""
 
-    def compare_netlists(self, design, print_to_stdout=True):
-        self.print_to_stdout = print_to_stdout
+    def compare_netlists(self, design):
         log_path = self.work_dir / self.LOG_FILE_NAME
         generate_comparison = ToolProduct(None, log_path, self.check_compare_status)
         status = self.get_prev_run_status(
@@ -69,12 +68,10 @@ class Waveform_CompareTool(CompareTool):
         )
 
         if status is not None:
-            if self.print_to_stdout:
-                self.print_skipping_compare()
+            self.print_skipping_compare()
             return status
 
-        if self.print_to_stdout:
-            self.print_running_compare()
+        self.print_running_compare()
 
         impl_path = design.impl_netlist_path
         module = impl_path.name[0 : len(impl_path.name) - 7]

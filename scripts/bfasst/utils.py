@@ -45,7 +45,7 @@ def create_build_design_dir(build_dir, design_dir):
 
 
 def get_design_dir(design_name):
-    return os.path.join(bfasst.EXAMPLES_PATH, design_name)
+    return os.path.join(bfasst.paths.EXAMPLES_PATH, design_name)
 
 
 def clean_folder(folder_path):

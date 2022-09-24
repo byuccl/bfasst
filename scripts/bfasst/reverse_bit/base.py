@@ -6,9 +6,10 @@ from bfasst.status import Status, BitReverseStatus
 
 
 class ReverseBitTool(Tool):
-    def __init__(self, cwd) -> None:
-        super().__init__(cwd)
-        self.success_status = Status(BitReverseStatus.SUCCESS)
+    success_status = Status(BitReverseStatus.SUCCESS)
+    
+    def __init__(self, cwd, flow_args="") -> None:
+        super().__init__(cwd, flow_args)
 
     # This method should run bitstream reversal.  It should return
     # (netlist, status), where:
