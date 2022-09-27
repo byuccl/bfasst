@@ -92,7 +92,7 @@ class Vivado_SynthesisTool(SynthesisTool):
 
                 # Add vhdl library files
                 for vf, libname in design.vhdl_libs.items():
-                    fp.write(f"read_vhdl -library " + libname + " {vf}\n")
+                    fp.write(f"read_vhdl -library {libname} {vf}\n")
 
                 if not self.flow_args:
                 # Synthesize - do not include any DSP modules in the synthesized design
