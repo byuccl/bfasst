@@ -7,9 +7,7 @@ def check_diff(paths):
     is_equivalent = False
 
     # Finds how many lines are different in the two files.
-    dif = subprocess.getoutput(
-        [f"diff -c {paths['vcd'][0]} {paths['vcd'][1]}"]
-    )
+    dif = subprocess.getoutput([f"diff -c {paths['vcd'][0]} {paths['vcd'][1]}"])
     if paths["diff"].exists():
         paths["diff"].unlink()
     with paths["diff"].open("x") as file:
@@ -19,17 +17,34 @@ def check_diff(paths):
     lines = 0
     with paths["diff"].open("r") as file:
         for line in file:
-            if len(line) != 0:
-                lines = lines + 1
-
+            if (line[0] == "-") | (line[0] == "!") | (line[0] == "+"):
+                if (
+                    (line[0:3] != "---")
+                    & (line[1:3] != " 0")
+                    & (line[0:8] != "! $scope")
+                    & (line[0:3] != "! \t")
+                    & (line[1:3] != " 1")
+                ):
+                    lines = lines + 1
+    print(f"{lines} lines found non-equivalent!")
     # If there are more than 32 lines different, the two designs must be unequivalent.
-    if lines > 42:
+    if lines > 0:
         print(f"NOT EQUIVALENT! SEE {paths['parsed_diff']} for more info")
         parse_diff(paths)
         if paths["parsed_diff"].exists():
             with paths["parsed_diff"].open("r") as file:
                 for line in file:
-                    print(line)
+                    if (len(line) != 0) & (
+                        (line[0] == "-") | (line[0] == "!") | (line[0] == "+")
+                    ):
+                        if (
+                            (line[0:3] != "---")
+                            & (line[1:3] != " 0")
+                            & (line[0:8] != "! $scope")
+                            & (line[0:3] != "! \t")
+                            & (line[1:3] != " 1")
+                        ):
+                            print(line)
         else:
             subprocess.run(["diff", "-c", str(paths["vcd"][0]), str(paths["vcd"][1])])
 
@@ -62,10 +77,25 @@ def parse_diff(paths):
                     if newWord is False:
                         word = word + i
                     else:
-                        if word != "$var" & word != "wire":
-                            if "[" in word:
-                                word = word[0 : word.index("[")]
-                            words.append(word)
+                        if (word != "$var") & (word != "wire"):
+                            if "[" not in word:
+                                words.append(word)
+                            word = ""
+                            newWord = False
+                        else:
+                            word = ""
+                            newWord = False
+            if "$var reg" in line:
+                word = ""
+                for i in line:
+                    if i == " ":
+                        newWord = True
+                    if newWord is False:
+                        word = word + i
+                    else:
+                        if (word != "$var") & (word != "reg"):
+                            if "[" not in word:
+                                words.append(word)
                             word = ""
                             newWord = False
                         else:
@@ -114,7 +144,7 @@ def parse_diff(paths):
                 for symbol, signal in zip(symbols, signals):
                     if symbol == "#":
                         if "#\n" in line:
-                            line = line.replace(f"{symbol} {signal}")
+                            line = line.replace(symbol, signal)
                             isParsed = True
                         elif "#" in line:
                             if line[line.index("#") + 1] != " ":

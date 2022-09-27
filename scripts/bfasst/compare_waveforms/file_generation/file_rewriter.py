@@ -21,20 +21,3 @@ def fix_file(paths, i):
             )
     with path.open("w") as fin:
         fin.write(file_data)
-
-
-def rewrite_tcl(paths):
-    """Rewrite the TCL script for waveform viewing so it doesn't create new VCD files on re-view."""
-    lines = []
-    with paths["tcl"][0].open("r") as fp:
-        lines = fp.readlines()
-    with paths["tcl"][0].open("w") as fp:
-        for number, line in enumerate(lines):
-            if number not in [2, 3]:
-                fp.write(line)
-    with paths["tcl"][1].open("r") as fp:
-        lines = fp.readlines()
-    with paths["tcl"][1].open("w") as fp:
-        for number, line in enumerate(lines):
-            if number not in [2, 3]:
-                fp.write(line)
