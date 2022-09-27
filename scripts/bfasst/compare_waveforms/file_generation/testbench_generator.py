@@ -88,9 +88,9 @@ def generate_first_testbench(paths, test_num, data, i):
                         for input, k in zip(data["input_list"], range(input_num(data))):
                             if input != "clk":
                                 if k == 0:
-                                    line = f"    # 5 {str(input)} = {str(random_list[k][j])};\n"
+                                    line = f"    # 5 {input} = {random_list[k][j]};\n"
                                 else:
-                                    line = f"    {str(input)} = {str(random_list[k][j])};\n"
+                                    line = f"    {input} = {random_list[k][j]};\n"
                             else:
                                 if k == 0:
                                     line = "    # 5 "
@@ -112,7 +112,7 @@ def generate_testbench(paths, data, i):
                     line = line.replace(paths["modules"][1], paths["modules"][i + 1])
 
                 if f"{paths['modules'][1]}_tb);" in line:
-                    line = f"    $dumpvars(0,{paths['modules'][i+1]}_tb);\n"
+                    line = f"    $dumpvars(1,{paths['modules'][i+1]}_tb);\n"
 
                 if f"{paths['modules'][1]} instanceOf (" in line:
                     line = f"{paths['modules'][i+1]} instanceOf ("

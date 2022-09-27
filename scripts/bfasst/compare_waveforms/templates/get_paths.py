@@ -1,7 +1,5 @@
-paths = {}
-
-
 def get_paths(work_dir, root_path, design):
+    paths = {}
     # The base directory that files are stored in
     paths.setdefault("build_dir", work_dir)
     # Cells sim is used as a reference for any modules that are defined such as IBUF

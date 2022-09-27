@@ -24,11 +24,6 @@ from bfasst.compare_waveforms.file_generation import (
 from bfasst.compare_waveforms.templates import get_paths
 from bfasst.compare_waveforms.interface import waveform_interface
 
-# Data and Paths are structs that contain the parsed data from our design and the paths for all generated files.
-data = {}
-paths = get_paths.paths
-
-
 class Waveform_CompareTool(CompareTool):
     """The main class for comparing the waveforms."""
 
@@ -57,9 +52,7 @@ class Waveform_CompareTool(CompareTool):
             self.work_dir, bfasst.paths.ROOT_PATH, design
         )  # Gets all paths used for file-generation
 
-        if (
-            runInterface
-        ):  # If the quick flow is chosen, interface is skipped and so is viewing the actual waveforms.
+        if runInterface:  # If the quick flow is chosen, interface is skipped and so is viewing the actual waveforms.
             choice = waveform_interface.user_interface(
                 paths
             )  # Runs through the User interface, finds what the user wants to do.
@@ -70,35 +63,30 @@ class Waveform_CompareTool(CompareTool):
             design
         )  # Checks if there are multiple verilog files in the design.
 
-        if (
-            choice == 0
-        ):  # Previous Status was unequivalent and User doesn't want to do any tests.
+        if choice == 0:  # Previous Status was unequivalent and User doesn't want to do any tests.
             return Status(CompareStatus.NOT_EQUIVALENT)
         if choice == 1:  # User wants to re-generate files.
             # Remove old testbenches and generate new ones
             for i in range(2):
                 if paths["tb"][i].exists():
                     paths["tb"][i].unlink()
-            self.generate_files(multiple_files)
-            if self.run_test():
+            self.generate_files(multiple_files, paths)
+            if self.run_test(paths):
                 return self.success_status
-        if (
-            choice == 2
-        ):  # User wants to analyze graphs, previous Status was unequivalent
+        if choice == 2:  # User wants to analyze graphs, previous Status was unequivalent
             analyze_graph.analyze_graphs(paths["build_dir"], paths["modules"][0])
-        if (
-            choice == 3
-        ):  # Previous Status was equivalent and User doesn't want to do any tests.
+        if choice == 3:  # Previous Status was equivalent and User doesn't want to do any tests.
             return Status(CompareStatus.SUCCESS)
         if choice == 4:  # User wants to analyze graphs, previous status was equivalent
             analyze_graph.analyze_graphs(paths["build_dir"], paths["modules"][0])
             return Status(CompareStatus.SUCCESS)
         return Status(CompareStatus.NOT_EQUIVALENT)
 
-    def generate_files(self, multiple_files):
+    def generate_files(self, multiple_files, paths):
         """The main function that generates testbenches and TCL files. It begins by calling the parsers for the input & output names, then
         it calls the testbench generators, finally it calls the TCL generators. It then increments to the next file and clears the data structure."""
         test_num = 100  # Change this number if you want to run more or less than 100 tests in the testbench.
+        data = {} # Contains all of the IOs for the design.
         file_rewriter.copy_files(
             paths
         )  # Creates copies of the netlists that will be modified by the file_rewriter
@@ -118,18 +106,14 @@ class Waveform_CompareTool(CompareTool):
                     file_rewriter.fix_file(
                         paths, i
                     )  # Rewrites the files to have correct module names
-                    if (
-                        multiple_files
-                    ):  # The logic for how to parse the file depends on whether or not there are multiple verilog files involved in a design
+                    if multiple_files:  # The logic for how to parse the file depends on whether or not there are multiple verilog files involved in a design
                         data = parse_files.parse_reversed(
                             paths, i
                         )  # Finds the IO names and bit sizes
                     else:
                         data = parse_files.parse(file.name)
 
-                if (
-                    i == 0
-                ):  # Create the initial testbench with randomized inputs for all input ports (based upon bit-size)
+                if i == 0:  # Create the initial testbench with randomized inputs for all input ports (based upon bit-size)
                     testbench_generator.generate_first_testbench(
                         paths, test_num, data, i
                     )
@@ -148,12 +132,11 @@ class Waveform_CompareTool(CompareTool):
                 waveform_generator.generate_VCD(
                     paths, i
                 )  # All previously generated files are ran through Icarus and then GTKwave, creating the files we need.
-                data.clear()
         file_rewriter.rewrite_tcl(
             paths
         )  # TCLs are rewritten to remove VCD generation portions so they can be tested in the future without regenerating VCD files.
 
-    def run_test(self):
+    def run_test(self, paths):
         """A function that generates the wavefiles from the testbenches, runs gtkwave w/ the TCLs generated earlier on the wavefiles
         that have just been generated, then checks the difference between gtkwave's two outputs. If there are more than 32 lines that
         are different, the designs must be unequivalent."""
@@ -177,3 +160,5 @@ class Waveform_CompareTool(CompareTool):
         m = re.search(r"ERROR", log_text, re.M)
         if m:
             return Status(CompareStatus.NOT_EQUIVALENT)
+
+        return(default)

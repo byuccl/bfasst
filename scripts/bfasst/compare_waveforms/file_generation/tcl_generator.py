@@ -11,7 +11,7 @@ def generate_first_TCL(paths, data, i):
         TCL.write(line)
         TCL.write("gtkwave::addSignalsFromList $filter\n")
         TCL.write(
-            f"gtkwave::/File/Export/Write_VCD_File_As \"{str(paths['build_dir'])}/{paths['modules'][i+1]}.vcd\"\n"
+            f"gtkwave::/File/Export/Write_VCD_File_As \"{paths['build_dir']}/{paths['modules'][i+1]}.vcd\"\n"
         )
         TCL.write("gtkwave::File/Quit")
 

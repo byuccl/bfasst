@@ -8,7 +8,7 @@ def check_diff(paths):
 
     # Finds how many lines are different in the two files.
     dif = subprocess.getoutput(
-        [f"diff -c {str(paths['vcd'][0])} {str(paths['vcd'][1])}"]
+        [f"diff -c {paths['vcd'][0]} {paths['vcd'][1]}"]
     )
     if paths["diff"].exists():
         paths["diff"].unlink()
@@ -23,8 +23,8 @@ def check_diff(paths):
                 lines = lines + 1
 
     # If there are more than 32 lines different, the two designs must be unequivalent.
-    if lines > 32:
-        print(f"NOT EQUIVALENT! SEE {str(paths['parsed_diff'])} for more info")
+    if lines > 42:
+        print(f"NOT EQUIVALENT! SEE {paths['parsed_diff']} for more info")
         parse_diff(paths)
         if paths["parsed_diff"].exists():
             with paths["parsed_diff"].open("r") as file:
@@ -62,7 +62,7 @@ def parse_diff(paths):
                     if newWord is False:
                         word = word + i
                     else:
-                        if (word != "$var") & (word != "wire"):
+                        if word != "$var" & word != "wire":
                             if "[" in word:
                                 word = word[0 : word.index("[")]
                             words.append(word)
@@ -122,13 +122,13 @@ def parse_diff(paths):
                                     num = line[line.index("#") + 1 : line.index("\n")]
                                     num = int(num)
                                     num = int(num / 1000)
-                                    line = f" {str(num)} ns\n"
+                                    line = f" {num} ns\n"
                                     isParsed = True
                                 else:
                                     num = line[line.index("#") + 1 :]
                                     num = int(num)
                                     num = int(num / 1000)
-                                    line = f" {str(num)} ns\n"
+                                    line = f" {num} ns\n"
                                     isParsed = True
                     elif symbol == "$":
                         if "$scope" not in line:
