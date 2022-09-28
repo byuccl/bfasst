@@ -1,15 +1,12 @@
 def get_paths(work_dir, root_path, design):
     paths = {}
     # The base directory that files are stored in
-    paths.setdefault("build_dir", work_dir)
+    paths["build_dir"] = work_dir
     # Cells sim is used as a reference for any modules that are defined such as IBUF
-    paths.setdefault(
-        "cells_sim", root_path / ("third_party/yosys/techlibs/xilinx/cells_sim.v")
-    )
+    paths["cells_sim"] = root_path / ("third_party/yosys/techlibs/xilinx/cells_sim.v")
     # Path to the sample testbench used for creating the automatic testbench
-    paths.setdefault(
-        "sample_tb",
-        root_path / ("scripts/bfasst/compare_waveforms/templates/sample_tb.v"),
+    paths["sample_tb"] = root_path / (
+        "scripts/bfasst/compare_waveforms/templates/sample_tb.v"
     )
     # Paths to the implicit and reversed netlists
     paths["path"] = []
@@ -25,9 +22,9 @@ def get_paths(work_dir, root_path, design):
     paths["modules"].append(paths["path"][0].name[0 : len(paths["path"][0].name) - 2])
     paths["modules"].append(paths["path"][1].name[0 : len(paths["path"][1].name) - 2])
     # Path to the diff txt file
-    paths.setdefault("diff", paths["build_dir"] / "diff.txt")
+    paths["diff"] = paths["build_dir"] / "diff.txt"
     # Path to the parsed_diff txt file
-    paths.setdefault("parsed_diff", work_dir / "parsed_diff.txt")
+    paths["parsed_diff"] = work_dir / "parsed_diff.txt"
     # Paths to the testbench files
     paths["tb"] = []
     paths["tb"].append(paths["build_dir"] / (f"{paths['modules'][1]}_tb.v"))
@@ -41,7 +38,7 @@ def get_paths(work_dir, root_path, design):
     paths["temp_vcd"].append(paths["build_dir"] / (f"{paths['modules'][1]}_temp.vcd"))
     paths["temp_vcd"].append(paths["build_dir"] / (f"{paths['modules'][2]}_temp.vcd"))
     # Path to the dsn file (A file generated between the TCL and VCD files)
-    paths.setdefault("dsn", paths["build_dir"] / ("dsn"))
+    paths["dsn"] = paths["build_dir"] / ("dsn")
     # Paths to the TCL files
     paths["tcl"] = []
     paths["tcl"].append(paths["build_dir"] / (f"{paths['modules'][1]}.tcl"))
@@ -51,6 +48,6 @@ def get_paths(work_dir, root_path, design):
     paths["fst"].append(paths["build_dir"] / (f"{paths['modules'][1]}_temp.vcd.fst"))
     paths["fst"].append(paths["build_dir"] / (f"{paths['modules'][2]}_temp.vcd.fst"))
     # Path to the test.v file used in multiple_file parsing
-    paths.setdefault("test", paths["build_dir"] / "test.v")
+    paths["test"] = paths["build_dir"] / "test.v"
 
     return paths
