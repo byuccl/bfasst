@@ -15,7 +15,7 @@ base = sys.argv[8]
 
 assert vivado is not None, "VIVADO_PATH environmental variable was not set!"
 
-template = Path(base) / ("Templates/template.tcl")
+template = Path(base) / ("templates/template.tcl")
 temp_tcl = Path(base) / str("temp.tcl")
 if temp_tcl.exists():
     temp_tcl.unlink()
