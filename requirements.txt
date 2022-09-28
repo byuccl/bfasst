@@ -7,3 +7,5 @@ cmake
 pyyaml
 numpy
 spydrnet
+werkzeug
+pylint

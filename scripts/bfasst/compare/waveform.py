@@ -59,9 +59,8 @@ class Waveform_CompareTool(CompareTool):
         else:
             choice = 1
 
-        multiple_files = waveform_interface.check_multiple_files(
-            design
-        )  # Checks if there are multiple verilog files in the design.
+        multiple_files = waveform_interface.check_multiple_files(design)
+        # Checks if there are multiple verilog files in the design.
 
         if choice == 0:
             # Previous Status was unequivalent and User doesn't want to do any tests.
