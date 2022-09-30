@@ -14,12 +14,11 @@ from bfasst.tool import ToolProduct
 
 # Note: All of the tools below cna be found in the compare_waveforms directory. Each covers a part of the waveform toolchain
 from bfasst.compare_waveforms.tools import analyze_graph
-from bfasst.compare_waveforms.file_parsing import parse_diff, parse_files
+from bfasst.compare_waveforms.file_parsing import file_rewriter, parse_diff, parse_files
 from bfasst.compare_waveforms.file_generation import (
     testbench_generator,
     tcl_generator,
     waveform_generator,
-    file_rewriter,
 )
 from bfasst.compare_waveforms.templates import get_paths
 from bfasst.compare_waveforms.interface import waveform_interface
