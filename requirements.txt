@@ -8,4 +8,4 @@ pyyaml
 numpy
 spydrnet
 werkzeug
-pylint
+pylint==2.14.4
