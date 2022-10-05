@@ -7,7 +7,7 @@ OUTPUTS
 
 initial begin
     $dumpfile("test.vcd");
-    $dumpvars(0,TB_NAME);
+    $dumpvars(1,TB_NAME);
 
     /*SIGNALS GO HERE*/
 
