@@ -10,14 +10,22 @@ jobs:
         python-version: ["3.8", "3.9", "3.10"]
     steps:
     - uses: actions/checkout@v3
+    - name: Get Diff Action
+      uses: technote-space/get-diff-action@v4.0.1
+      with: 
+        PATTERNS: | 
+          +(src|resources)/**/*.py
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
+      if: env.GIT_DIFF
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r $(git ls-files 'requirements.txt')
+      if: env.GIT_DIFF
     - name: Analysing the code with pylint
       run: |
-        pylint $(git diff --name-only origin/master HEAD | grep ".py")
+        pylint ${{ env.GIT_DIFF_FILTERED }}
+      if: env.GIT_DIFF
