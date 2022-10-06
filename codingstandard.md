@@ -5,8 +5,8 @@ Note that this is subject to change and discussion.
 
 + 100 character line width maximum.
 + All functions and modules should have a docstring.
-+ Variable names should be snakecase.
-+ Class names should be camelcase.
++ Variable names should be snake_case.
++ Class names should be PascalCase.
 + One import per line.
 + Imports from a given source should be contiguous (eg. stdlib, bfasst, etc.).
 + Nested blocks shouldn't go more than 5 deep.

@@ -155,7 +155,10 @@ disable=raw-checker-failed,
         too-few-public-methods,
         too-many-instance-attributes,
         too-many-arguments,
-        
+        unspecified-encoding,
+        consider-using-with,
+        useless-super-delegation,
+        subprocess-run-check
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -191,10 +194,10 @@ exclude-protected=_asdict,
                   _make
 
 # List of valid names for the first argument in a class method.
-valid-classmethod-first-arg=cls
+valid-classmethod-first-arg=cls, self
 
 # List of valid names for the first argument in a metaclass class method.
-valid-metaclass-classmethod-first-arg=cls
+valid-metaclass-classmethod-first-arg=cls, self
 
 
 [STRING]
@@ -326,11 +329,16 @@ good-names=i,
            f,
            x,
            e,
-           _
+           _,
+           fp,
+           TCL,
+           tmp,
+           tb,
+
 
 # Good variable names regexes, separated by a comma. If names match any regex,
 # they will always be accepted
-good-names-rgxs=
+good-names-rgxs=f[0-9],
 
 # Include a hint for the correct naming format with invalid-name.
 include-naming-hint=no
@@ -586,7 +594,7 @@ indent-after-paren=4
 indent-string='    '
 
 # Maximum number of characters on a single line.
-max-line-length=160
+max-line-length=100
 
 # Maximum number of lines in a module.
 max-module-lines=1000
