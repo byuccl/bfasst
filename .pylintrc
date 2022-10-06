@@ -158,7 +158,8 @@ disable=raw-checker-failed,
         unspecified-encoding,
         consider-using-with,
         useless-super-delegation,
-        subprocess-run-check
+        subprocess-run-check,
+        fixme
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
