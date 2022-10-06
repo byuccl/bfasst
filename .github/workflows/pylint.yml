@@ -20,4 +20,4 @@ jobs:
         pip install -r $(git ls-files 'requirements.txt')
     - name: Analysing the code with pylint
       run: |
-        pylint --disable=W,R,C $(git diff --name-only origin/master HEAD~1 | grep ".py")
+        pylint $(git diff --name-only origin/master HEAD~1 | grep ".py")
