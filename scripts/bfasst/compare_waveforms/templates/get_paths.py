@@ -23,8 +23,6 @@ def get_paths(work_dir, root_path, design):
     paths["modules"].append(paths["path"][1].name[0 : len(paths["path"][1].name) - 2])
     # Path to the diff txt file
     paths["diff"] = paths["build_dir"] / "diff.txt"
-    # Path to the parsed_diff txt file
-    paths["parsed_diff"] = work_dir / "parsed_diff.txt"
     # Paths to the testbench files
     paths["tb"] = []
     paths["tb"].append(paths["build_dir"] / (f"{paths['modules'][1]}_tb.v"))
