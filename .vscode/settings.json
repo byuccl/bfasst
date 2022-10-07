@@ -7,5 +7,5 @@
         "third_party/fasm2bels/fasm2bels"
     ],
     "python.pythonPath": ".venv/bin/python3",
-    "git.enableCommitSigning: true"
+    "git.enableCommitSigning": true,
 }
