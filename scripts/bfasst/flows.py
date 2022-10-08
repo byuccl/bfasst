@@ -50,6 +50,7 @@ class Flows(Enum):
     XILINX_CONFORMAL_IMPL = "xilinx_conformal_impl"
     XILINX_YOSYS_IMPL = "xilinx_yosys_impl"
     XILINX_YOSYS_WAVEFORM = "xilinx_yosys_waveform"
+    XILINX_YOSYS_WAVEFORM_QUICK = "xilinx_yosys_waveform_quick"
     GATHER_IMPL_DATA = "gather_impl_data"
     CONFORMAL_ONLY = "conformal_only"
     XILINX = "xilinx"
@@ -68,6 +69,7 @@ flow_fcn_map = {
     Flows.XILINX_CONFORMAL_IMPL: lambda: flow_xilinx_conformal_impl,
     Flows.XILINX_YOSYS_IMPL: lambda: flow_xilinx_yosys_impl,
     Flows.XILINX_YOSYS_WAVEFORM: lambda: flow_xilinx_yosys_waveform,
+    Flows.XILINX_YOSYS_WAVEFORM_QUICK: lambda: flow_xilinx_yosys_waveform_quick,
     Flows.GATHER_IMPL_DATA: lambda: flow_gather_impl_data,
     Flows.CONFORMAL_ONLY: lambda: flow_conformal_only,
     Flows.XILINX: lambda: flow_xilinx,
@@ -145,9 +147,9 @@ def yosys_cmp(design, build_dir, flow_args):
     return compare_tool.compare_netlists(design)
 
 
-def wave_cmp(design, build_dir, flow_args):
+def wave_cmp(design, build_dir, runInterface):
     tool = Waveform_CompareTool(build_dir)
-    return tool.compare_netlists(design)
+    return tool.compare_netlists(design, runInterface)
 
 
 def onespin_cmp(design, build_dir, flow_args):
@@ -264,17 +266,27 @@ def flow_xilinx_yosys_impl(design, flow_args, build_dir):
     return status
 
 
-def flow_xilinx_yosys_waveform(design, build_dir, flow_args):
+def flow_xilinx_yosys_waveform(design, flow_args, build_dir):
     # Run Xilinx synthesis and implementation
     status = vivado_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
     status = vivado_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
     # Run X-ray and fasm2bel
     status = xray_rev(design, build_dir, flow_args)
-    status = wave_cmp(design, build_dir, flow_args[FlowArgs.CMP])
-
+    status = wave_cmp(design, build_dir, True)
+    
     return status
 
+def flow_xilinx_yosys_waveform_quick(design, flow_args, build_dir):
+    # Run Xilinx synthesis and implementation
+    status = vivado_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
+    status = vivado_impl(design, build_dir, flow_args[FlowArgs.IMPL])
+
+    # Run X-ray and fasm2bel
+    status = xray_rev(design, build_dir, flow_args)
+    status = wave_cmp(design, build_dir, False)
+    
+    return status
 
 def flow_ic2_synplify_conformal(design, flow_args, build_dir):
     # Run Icecube2 Synplify synthesis
