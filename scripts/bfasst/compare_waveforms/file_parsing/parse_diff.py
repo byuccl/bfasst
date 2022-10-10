@@ -11,8 +11,8 @@ def parse_signals(line):
         words = parse_io(line, "reg", words, new_word)
     return words
 
-def parse_io(line, io, words, new_word):
-    """A function whose only purpose is to appease the coding standard by reducing the number of 
+def parse_io(line, input_output, words, new_word):
+    """A function whose only purpose is to appease the coding standard by reducing the number of
     branches in parse_signals"""
     word = ""
     for i in line:
@@ -21,7 +21,7 @@ def parse_io(line, io, words, new_word):
         if new_word is False:
             word = word + i
         else:
-            if (word != "$var") & (word != io):
+            if (word != "$var") & (word != input_output):
                 if "[" not in word:
                     words.append(word)
                 word = ""
@@ -29,7 +29,7 @@ def parse_io(line, io, words, new_word):
             else:
                 word = ""
                 new_word = False
-    return(words)
+    return words
 
 def append_unequivalent_data(unequivalent_data, time_related_data, group):
     """Checks for any unequivalent data based upon the data's status at any given time."""
@@ -101,7 +101,7 @@ def past_initial_data(line, data):
 
 
 def init_data():
-    """A function whose sole-purpose is to appease the coding standard so check_diff has less than 
+    """A function whose sole-purpose is to appease the coding standard so check_diff has less than
     15 local variables."""
     data = {}
     data["time"] = "0"
@@ -118,7 +118,7 @@ def init_data():
 
 
 def place_data(group, append):
-    """A function whose sole-purpose is to appease the coding standard so check_diff has less than 
+    """A function whose sole-purpose is to appease the coding standard so check_diff has less than
     5 nested if blocks"""
     for i in group:
         append.append(i)
@@ -126,7 +126,7 @@ def place_data(group, append):
 
 
 def parse_data(paths, time_related_data, i):
-    """A function whose sole-purpose is to appease the coding standard so check_diff has less than 
+    """A function whose sole-purpose is to appease the coding standard so check_diff has less than
     15 local variables."""
     data = init_data()
     signal = []
