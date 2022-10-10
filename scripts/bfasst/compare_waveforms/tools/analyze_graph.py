@@ -1,9 +1,9 @@
-from re import X
-import bfasst
-import bfasst.paths
+"""A tool used to analyze graphs for equivalent/unequivalent data."""
 import subprocess
 from subprocess import Popen
 from pathlib import Path
+import bfasst
+import bfasst.paths
 from bfasst.config import VIVADO_BIN_PATH
 
 
@@ -37,11 +37,11 @@ def analyze_graphs(path, module):
             "Do you want to launch in full-screen mode? 1 for yes, 0 for no."
         )
         if choice != "0":
-            (x, y) = find_resolution()
+            (x, cord_y) = find_resolution()
             x = str(x)
-            y = str(y)
+            cord_y = str(cord_y)
             wavefile.write(f"initial_window_x {x}\n")
-            wavefile.write(f"initial_window_y {y}\n")
+            wavefile.write(f"initial_window_y {cord_y}\n")
 
         choice = input("Compare with Vivado? 1 for yes, 0 for no.")
         vivado = False
@@ -78,8 +78,8 @@ def analyze_graphs(path, module):
         ]
 
     procs = [Popen(i) for i in commands]
-    for p in procs:
-        p.wait()
+    for proc in procs:
+        proc.wait()
 
     gtkwave.unlink()
     impl_fst.unlink()
@@ -87,34 +87,37 @@ def analyze_graphs(path, module):
 
 
 def find_resolution():
-    """A function primarily meant to check the user's monitor resolution so gtkwave can launch in full-screen mode."""
+    """A function primarily meant to check the user's monitor resolution so gtkwave can launch in
+    full-screen mode."""
     output = subprocess.check_output("xrandr")
     output = output.decode()
     temp = Path("temp.txt")
     with temp.open("x") as file:
         file.write(output)
 
-    foundDisplay = False
-    isPrimary = False
+    found_display = False
+    is_primary = False
 
     with temp.open("r") as file:
         for line in file:
             if "primary" in line:
-                isPrimary = True
-            if isPrimary:
+                is_primary = True
+            if is_primary:
                 # The user-resolution is indicated by the * character in a line.
                 if "*" in line:
-                    if foundDisplay is False:
+                    if found_display is False:
                         line = line.strip()
-                        # The user-resolution is always in the format ____x____, so the width is before the x and the
+                        # The user-resolution is always in the format ____x____, so the width is
+                        # before the x and the
                         # height is after the x.
                         x = line[0 : line.index("x")]
-                        y = line[line.index("x") + 1 : line.index(" ")]
-                        foundDisplay = True
+                        cord_y = line[line.index("x") + 1 : line.index(" ")]
+                        found_display = True
                         temp.unlink()
-                        return (x, y)
-    # If, for whatever reason, the screen resolution can't be found, it defaults to the absolute lowest screen resolution.
-    if foundDisplay is False:
+                        return (x, cord_y)
+    # If, for whatever reason, the screen resolution can't be found, it defaults to the absolute
+    # lowest screen resolution.
+    if found_display is False:
         temp.unlink()
         return (320, 200)
 
