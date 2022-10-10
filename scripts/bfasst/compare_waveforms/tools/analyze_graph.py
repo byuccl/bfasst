@@ -40,13 +40,13 @@ def analyze_graphs(path, module):
     if vivado:
 
         commands = [
-            ["gtkwave", "-T", str(path / (f"{module}_impl.tcl")), "-o", 
+            ["gtkwave", "-T", str(path / (f"{module}_impl.tcl")), "-o",
             str(path / (f"{module}_impl.vcd"))],
-            ["gtkwave", "-T", str(path / (f"{module}_reversed.tcl")), "-o", 
+            ["gtkwave", "-T", str(path / (f"{module}_reversed.tcl")), "-o",
             str(path / (f"{module}_reversed.vcd"))],
             [
                 "python",
-                str(bfasst.paths.ROOT_PATH / 
+                str(bfasst.paths.ROOT_PATH /
                 "scripts/bfasst/compare_waveforms" / "tools/run_vivado.py"),
                 str(path / (f"{module}_impl.v")),
                 str(path / (f"{module}_impl_tb.v")),
@@ -60,9 +60,9 @@ def analyze_graphs(path, module):
         ]
     else:
         commands = [
-            ["gtkwave", "-T", str(path / (f"{module}_impl.tcl")), "-o", 
+            ["gtkwave", "-T", str(path / (f"{module}_impl.tcl")), "-o",
             str(path / (f"{module}_impl.vcd"))],
-            ["gtkwave", "-T", str(path / (f"{module}_reversed.tcl")), "-o", 
+            ["gtkwave", "-T", str(path / (f"{module}_reversed.tcl")), "-o",
             str(path / (f"{module}_reversed.vcd"))],
         ]
 
@@ -106,3 +106,4 @@ def find_resolution():
     # lowest screen resolution.
     temp.unlink()
     return (320, 200)
+    
