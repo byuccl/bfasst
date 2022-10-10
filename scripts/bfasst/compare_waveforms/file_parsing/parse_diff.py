@@ -1,45 +1,35 @@
 """A module used to accurately check the difference between VCD files"""
 
-
 def parse_signals(line):
     """Is used in the header of a VCD file to find the names of every signal, it's corresponding
     symbol, and it's bitsize."""
     words = []
     new_word = False
     if "$var wire" in line:
-        word = ""
-        for i in line:
-            if i == " ":
-                new_word = True
-            if new_word is False:
-                word = word + i
-            else:
-                if (word != "$var") & (word != "wire"):
-                    if "[" not in word:
-                        words.append(word)
-                    word = ""
-                    new_word = False
-                else:
-                    word = ""
-                    new_word = False
+        words = parse_io(line, "wire", words, new_word)
     if "$var reg" in line:
-        word = ""
-        for i in line:
-            if i == " ":
-                new_word = True
-            if new_word is False:
-                word = word + i
-            else:
-                if (word != "$var") & (word != "reg"):
-                    if "[" not in word:
-                        words.append(word)
-                    word = ""
-                    new_word = False
-                else:
-                    word = ""
-                    new_word = False
+        words = parse_io(line, "reg", words, new_word)
     return words
 
+def parse_io(line, io, words, new_word):
+    """A function whose only purpose is to appease the coding standard by reducing the number of 
+    branches in parse_signals"""
+    word = ""
+    for i in line:
+        if i == " ":
+            new_word = True
+        if new_word is False:
+            word = word + i
+        else:
+            if (word != "$var") & (word != io):
+                if "[" not in word:
+                    words.append(word)
+                word = ""
+                new_word = False
+            else:
+                word = ""
+                new_word = False
+    return(words)
 
 def append_unequivalent_data(unequivalent_data, time_related_data, group):
     """Checks for any unequivalent data based upon the data's status at any given time."""
@@ -71,7 +61,7 @@ def check_duplicates(line, data, write):
                 write.write(line)
             data["binary_state"][j] = line[0]
     elif " " in line:
-        if (line[line.index(" ") + 1 : len(line) - 1]) in data["signal"]:
+        if line[line.index(" ") + 1 : len(line) - 1] in data["signal"]:
             j = data["signal"].index(line[line.index(" ") + 1 : len(line) - 1])
             if data["state"][j] != line[0 : line.index(" ")]:
                 write.write(line)
@@ -111,7 +101,8 @@ def past_initial_data(line, data):
 
 
 def init_data():
-    """A function whose sole-purpose is to appease the coding standard so check_diff has less than 15 local variables."""
+    """A function whose sole-purpose is to appease the coding standard so check_diff has less than 
+    15 local variables."""
     data = {}
     data["time"] = "0"
     data["name"] = []
@@ -127,14 +118,16 @@ def init_data():
 
 
 def place_data(group, append):
-    """A function whose sole-purpose is to appease the coding standard so check_diff has less than 5 nested if blocks"""
+    """A function whose sole-purpose is to appease the coding standard so check_diff has less than 
+    5 nested if blocks"""
     for i in group:
         append.append(i)
     return append
 
 
 def parse_data(paths, time_related_data, i):
-    """A function whose sole-purpose is to appease the coding standard so check_diff has less than 15 local variables."""
+    """A function whose sole-purpose is to appease the coding standard so check_diff has less than 
+    15 local variables."""
     data = init_data()
     signal = []
     name = []

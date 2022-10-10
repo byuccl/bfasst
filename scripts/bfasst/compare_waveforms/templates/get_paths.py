@@ -1,4 +1,8 @@
+"""Gets the paths for the waveform comparison tool."""
+
+
 def get_paths(work_dir, root_path, design):
+    """A function that gets all of the necessary paths used by the waveform comparison tool."""
     paths = {}
     # The base directory that files are stored in
     paths["build_dir"] = work_dir
