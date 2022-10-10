@@ -6,6 +6,20 @@ import bfasst
 import bfasst.paths
 from bfasst.config import VIVADO_BIN_PATH
 
+impl_v = ""
+impl_tb = ""
+reversed_v = ""
+reversed_tb = ""
+impl_vcd = ""
+reversed_vcd = ""
+impl_tcl = ""
+reversed_tcl = ""
+impl_fst = ""
+reversed_fst = ""
+diff = ""
+base_path = ""
+run_vivado = ""
+base_path = ""
 
 def analyze_graphs(path, module):
     """A function to launch the graphs for designs that have already been tested. Mainly meant
@@ -117,8 +131,6 @@ def find_resolution():
                         return (x, cord_y)
     # If, for whatever reason, the screen resolution can't be found, it defaults to the absolute
     # lowest screen resolution.
-    if found_display is False:
-        temp.unlink()
-        return (320, 200)
-
     temp.unlink()
+    return (320, 200)
+
