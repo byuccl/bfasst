@@ -6,39 +6,9 @@ import bfasst
 import bfasst.paths
 from bfasst.config import VIVADO_BIN_PATH
 
-impl_v = ""
-impl_tb = ""
-reversed_v = ""
-reversed_tb = ""
-impl_vcd = ""
-reversed_vcd = ""
-impl_tcl = ""
-reversed_tcl = ""
-impl_fst = ""
-reversed_fst = ""
-diff = ""
-base_path = ""
-run_vivado = ""
-base_path = ""
-
 def analyze_graphs(path, module):
     """A function to launch the graphs for designs that have already been tested. Mainly meant
     for checking designs that came back unequivalent to see what was wrong with them."""
-    impl_v = path / (f"{module}_impl.v")
-    impl_tb = path / (f"{module}_impl_tb.v")
-    reversed_v = path / (f"{module}_reversed.v")
-    reversed_tb = path / (f"{module}_reversed_tb.v")
-    impl_vcd = path / (f"{module}_impl.vcd")
-    reversed_vcd = path / (f"{module}_reversed.vcd")
-    impl_tcl = path / (f"{module}_impl.tcl")
-    reversed_tcl = path / (f"{module}_reversed.tcl")
-    impl_fst = path / (f"{module}_impl.vcd.fst")
-    reversed_fst = path / (f"{module}_reversed.vcd.fst")
-    diff = path / "diff.txt"
-    base_path = bfasst.paths.ROOT_PATH / "scripts/bfasst/compare_waveforms"
-    run_vivado = base_path / "tools/run_vivado.py"
-    base_path = bfasst.paths.ROOT_PATH / "scripts/bfasst/compare_waveforms"
-
     gtkwave = Path(".gtkwaverc")
     if gtkwave.exists():
         gtkwave.unlink()
@@ -62,33 +32,38 @@ def analyze_graphs(path, module):
         if choice != "0":
             vivado = True
 
-    if diff.exists():
-        with diff.open("r") as file:
+    if (path / "diff.txt").exists():
+        with (path / "diff.txt").open("r") as file:
             for line in file:
                 print(line)
 
     if vivado:
 
         commands = [
-            ["gtkwave", "-T", str(impl_tcl), "-o", str(impl_vcd)],
-            ["gtkwave", "-T", str(reversed_tcl), "-o", str(reversed_vcd)],
+            ["gtkwave", "-T", str(path / (f"{module}_impl.tcl")), "-o", 
+            str(path / (f"{module}_impl.vcd"))],
+            ["gtkwave", "-T", str(path / (f"{module}_reversed.tcl")), "-o", 
+            str(path / (f"{module}_reversed.vcd"))],
             [
                 "python",
-                str(run_vivado),
-                str(impl_v),
-                str(impl_tb),
+                str(bfasst.paths.ROOT_PATH / 
+                "scripts/bfasst/compare_waveforms" / "tools/run_vivado.py"),
+                str(path / (f"{module}_impl.v")),
+                str(path / (f"{module}_impl_tb.v")),
                 f"{module}_impl_tb",
-                str(reversed_v),
-                str(reversed_tb),
+                str(path / (f"{module}_reversed.v")),
+                str(path / (f"{module}_reversed_tb.v")),
                 f"{module}_reversed_tb",
                 str(VIVADO_BIN_PATH),
-                str(base_path),
+                str(bfasst.paths.ROOT_PATH / "scripts/bfasst/compare_waveforms"),
             ],
         ]
     else:
         commands = [
-            ["gtkwave", "-T", str(impl_tcl), "-o", str(impl_vcd)],
-            ["gtkwave", "-T", str(reversed_tcl), "-o", str(reversed_vcd)],
+            ["gtkwave", "-T", str(path / (f"{module}_impl.tcl")), "-o", 
+            str(path / (f"{module}_impl.vcd"))],
+            ["gtkwave", "-T", str(path / (f"{module}_reversed.tcl")), "-o", 
+            str(path / (f"{module}_reversed.vcd"))],
         ]
 
     procs = [Popen(i) for i in commands]
@@ -96,8 +71,6 @@ def analyze_graphs(path, module):
         proc.wait()
 
     gtkwave.unlink()
-    impl_fst.unlink()
-    reversed_fst.unlink()
 
 
 def find_resolution():
@@ -133,4 +106,3 @@ def find_resolution():
     # lowest screen resolution.
     temp.unlink()
     return (320, 200)
-
