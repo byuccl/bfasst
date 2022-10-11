@@ -48,7 +48,7 @@ class State(Enum):
 
 @enum_unique
 class Flows(Enum):
-	'''An enum describing the different flows'''
+    '''An enum describing the different flows'''
     IC2_LSE_CONFORMAL = "IC2_lse_conformal"
     IC2_SYNPLIFY_CONFORMAL = "IC2_synplify_conformal"
     SYNPLIFY_IC2_ONESPIN = "synplify_IC2_icestorm_onespin"
@@ -112,13 +112,13 @@ def run_flow(design, flow_type, flow_args, build_dir):
 
 
 def IC2_LSE_synth(design, build_dir, flow_args):
-	'''Run Icecube2 LSE synthesis'''
+    '''Run Icecube2 LSE synthesis'''
     synth_tool = IC2_LSE_SynthesisTool(build_dir, flow_args)
     return synth_tool.create_netlist(design)
 
 
 def IC2_Synplify_synth(design, build_dir, flow_args):
-	'''Run Icecube2 Synplify synthesis'''
+    '''Run Icecube2 Synplify synthesis'''
     synth_tool = IC2_Synplify_SynthesisTool(build_dir)
     return synth_tool.create_netlist(design)
 
@@ -223,7 +223,7 @@ def flow_ic2_lse_conformal(design, flow_args, build_dir):
 
 
 def flow_conformal_only(design, flow_args, build_dir):
-	'''Run Conformal in isolation'''
+    '''Run Conformal in isolation'''
     assert design.netlist_path is not None
     assert design.reversed_netlist_path is not None
 
@@ -366,8 +366,8 @@ def flow_synplify_ic2_icestorm_onespin(design, flow_args, build_dir):
 
 
 def flow_yosys_tech_lse_conformal(design, flow_args, build_dir):
-	'''Synthesize with yosys, optimize and implement with icecube2
-	LSE, reverse with icestorm, and compare with conformal'''
+    '''Synthesize with yosys, optimize and implement with icecube2
+    LSE, reverse with icestorm, and compare with conformal'''
     # Run the Yosys synthesizer
     status = yosys_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
 
@@ -392,8 +392,8 @@ def flow_yosys_tech_lse_conformal(design, flow_args, build_dir):
 
 
 def flow_yosys_tech_synplify_conformal(design, flow_args, build_dir):
-	'''Synthesize with yosys, optimize and implement with icecube2
-	Synplify, reverse with icestorm, and compare with conformal'''
+    '''Synthesize with yosys, optimize and implement with icecube2
+    Synplify, reverse with icestorm, and compare with conformal'''
     # Run the Yosys synthesizer
     status = yosys_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
 
@@ -418,8 +418,8 @@ def flow_yosys_tech_synplify_conformal(design, flow_args, build_dir):
 
 
 def flow_yosys_tech_synplify_onespin(design, flow_args, build_dir):
-	'''Synthesize with yosys, optimize and implement with icecube2
-	Synplify, reverse with icestorm, and compare with Onespin'''
+    '''Synthesize with yosys, optimize and implement with icecube2
+    Synplify, reverse with icestorm, and compare with Onespin'''
     # Run the Yosys synthesizer
     status = yosys_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
 
@@ -442,9 +442,9 @@ def flow_yosys_tech_synplify_onespin(design, flow_args, build_dir):
 
 
 def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
-	'''Synthesize with yosys, inject errors, optimize and implement
-	with icecube2 Synplify, reverse with icestorm, and compare
-	with Onespin'''
+    '''Synthesize with yosys, inject errors, optimize and implement
+    with icecube2 Synplify, reverse with icestorm, and compare
+    with Onespin'''
     # Set the results file path so it can be used in the different tools
     design.results_summary_path = build_dir / "results_summary.txt"
 
