@@ -21,18 +21,18 @@ class IC2_LSE_OptTool(OptTool):
     TOOL_WORK_DIR = "ic2_opt"
 
     def get_log_path(self):
-    	'''return logpath as configured in config.py'''
+        '''return logpath as configured in config.py'''
         return self.work_dir / bfasst.config.OPT_LOG_NAME
 
     def get_last_runtime(self):
-    	'''return last runtime'''
+        '''return last runtime'''
         log_path = self.get_log_path()
         if not log_path.is_file():
             return None
         return log_path.stat().st_mtime
 
     def create_netlist(self, design, in_files, lib_files, force_run=False):
-    	'''optimize netlist'''
+        '''optimize netlist'''
 
         # Save edif netlist path to design object
         design.netlist_path = self.cwd / (design.top + ".edf")
@@ -82,7 +82,7 @@ class IC2_LSE_OptTool(OptTool):
         return Status(OptStatus.SUCCESS)
 
     def run_sythesis(self, prj_path, log_path):
-    	'''run synthesis on netlist'''
+        '''run synthesis on netlist'''
         syth_bin_path = bfasst.config.IC2_INSTALL_DIR / "LSE" / "bin" / "lin64" / "synthesis"
         if not syth_bin_path.is_file():
             error(syth_bin_path, "does not exist")
@@ -112,7 +112,7 @@ class IC2_LSE_OptTool(OptTool):
             return Status(OptStatus.SUCCESS)
 
     def create_ic2_lse_project_file(self, design, edif_path, in_files, lib_files):
-    	'''create project file for icecube2 lse'''
+        '''create project file for icecube2 lse'''
         assert isinstance(design, bfasst.design.Design)
 
         template_file = paths.I2C_RESOURCES / PROJECT_TEMPLATE_FILE
@@ -133,12 +133,12 @@ class IC2_LSE_OptTool(OptTool):
             fp.write("-top " + design.top + "\n")
             fp.write("-output_edif " + str(edif_path) + "\n")
 
-        # 	@echo "-top $(NAME)" >> $@
-        # 	@echo "-output_edif ../../$(IC2_EDIF_FILE)" >> $@
+        #   @echo "-top $(NAME)" >> $@
+        #   @echo "-output_edif ../../$(IC2_EDIF_FILE)" >> $@
         return project_file
 
     def check_opt_log(self, synth_log):
-    	'''check optimization log for errors'''
+        '''check optimization log for errors'''
         text = open(synth_log).read()
         if re.search("^Timeout$", text, re.M):
             return Status(OptStatus.TIMEOUT)
@@ -146,10 +146,10 @@ class IC2_LSE_OptTool(OptTool):
         return Status(OptStatus.SUCCESS)
 
     def fix_lut_inits(self, design):
-	    '''This function goes through the generated netlist and
-	    changes binary LUT inits to hex. Apparently LSE generates
-	    binary LUT inits under some conditions, and the IC2 backend
-	    doesn't like that.'''
+        '''This function goes through the generated netlist and
+        changes binary LUT inits to hex. Apparently LSE generates
+        binary LUT inits under some conditions, and the IC2 backend
+        doesn't like that.'''
     
         with in_place.InPlace(design.netlist_path) as n_f:
             found_first_init = False
@@ -182,7 +182,7 @@ class IC2_LSE_OptTool(OptTool):
                     n_f.write(line)
 
     def write_result_file(self, design):
-    	'''write out results to file'''
+        '''write out results to file'''
         if design.results_summary_path is None:
             print("No results path set!")
             return
