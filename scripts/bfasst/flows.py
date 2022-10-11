@@ -189,9 +189,9 @@ def flow_ic2_lse_conformal(design, flow_args, build_dir):
     # Run conformal
     design.compare_golden_files.append(design.top_file)
     design.compare_golden_files.extend(design.get_support_files())
-    design.compare_golden_files_paths.append(design.full_path / design.top_file)
+    design.compare_golden_files_paths.append(design.path / design.top_file)
     design.compare_golden_files_paths.extend(
-        [design.full_path / f for f in design.get_support_files()]
+        [design.path / f for f in design.get_support_files()]
     )
     design.golden_is_verilog = design.top_is_verilog()
     status = conformal_cmp(design, build_dir, flow_args[FlowArgs.CMP])
@@ -300,9 +300,9 @@ def flow_ic2_synplify_conformal(design, flow_args, build_dir):
     # Run conformal
     design.compare_golden_files.append(design.top_file)
     design.compare_golden_files.extend(design.get_support_files())
-    design.compare_golden_files_paths.append(design.full_path / design.top_file)
+    design.compare_golden_files_paths.append(design.path / design.top_file)
     design.compare_golden_files_paths.extend(
-        [design.full_path / f for f in design.get_support_files()]
+        [design.path / f for f in design.get_support_files()]
     )
     design.golden_is_verilog = design.top_is_verilog()
 
@@ -324,9 +324,9 @@ def flow_synplify_ic2_icestorm_onespin(design, flow_args, build_dir):
     # Run conformal
     design.compare_golden_files.append(design.top_file)
     design.compare_golden_files.extend(design.get_support_files())
-    design.compare_golden_files_paths.append(design.full_path / design.top_file)
+    design.compare_golden_files_paths.append(design.path / design.top_file)
     design.compare_golden_files_paths.extend(
-        [design.full_path / f for f in design.get_support_files()]
+        [design.path / f for f in design.get_support_files()]
     )
     design.golden_is_verilog = design.top_is_verilog()
 
