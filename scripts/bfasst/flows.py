@@ -260,15 +260,15 @@ def flow_xilinx_conformal_impl(design, flow_args, build_dir):
 
 
     #TODO Conformal_CompareTool.compare_netlists does not take a mapping arg
-    """
-    compare_tool = bfasst.compare.conformal.Conformal_CompareTool(
-        build_dir, Vendor.XILINX
-    )
-    with bfasst.conformal_lock:
-        status = compare_tool.compare_netlists(
-            design, args[FlowArgs.MAP_STAGE.value]
-        )
-    """
+    
+    #compare_tool = bfasst.compare.conformal.Conformal_CompareTool(
+    #    build_dir, Vendor.XILINX
+    #)
+    #with bfasst.conformal_lock:
+    #    status = compare_tool.compare_netlists(
+    #        design, args[FlowArgs.MAP_STAGE.value]
+    #    )
+    
     status = conformal_cmp(design, build_dir, flow_args[FlowArgs.CMP])
     return status
 
