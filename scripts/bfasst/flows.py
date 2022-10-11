@@ -1,4 +1,10 @@
-''' A grab bag of flows, illustrating different ways of composing the tools'''
+"""
+Script to define CAD flows.
+
+Create your own flow and add it to the Flows class and the flow_fcn_map.
+Helper functions for vendor tools are defined.
+"""
+
 from enum import Enum
 from enum import unique as enum_unique
 import pathlib
