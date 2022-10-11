@@ -122,7 +122,7 @@ class IC2_LSE_OptTool(OptTool):
                 elif os.path.splitext(design_file)[1].lower() == ".vhd":
                     fp.write("-lib work -vhd " + design_file + "\n")
 
-            for (vhdl_lib_file_path, vhdl_lib) in lib_files:
+            for (vhdl_lib_file_path, vhdl_lib) in lib_files or []:
                 fp.write("-lib " + vhdl_lib + " -vhd " + str(vhdl_lib_file_path) + "\n")
             fp.write("-top " + design.top + "\n")
             fp.write("-output_edif " + str(edif_path) + "\n")

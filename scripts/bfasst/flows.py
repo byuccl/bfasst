@@ -179,7 +179,7 @@ def onespin_cmp(design, build_dir, flow_args):
         return compare_tool.compare_netlists(design)
 
 
-def ic2_lse_opt(design, build_dir, flow_args, in_files, lib_files=[]):
+def ic2_lse_opt(design, build_dir, flow_args, in_files, lib_files=None):
     '''Optimize design using IceCube2 LSE'''
     lse_opt_tool = IC2_LSE_OptTool(build_dir)
     status = lse_opt_tool.create_netlist(design, in_files, lib_files)
