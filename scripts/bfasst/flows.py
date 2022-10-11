@@ -1,3 +1,10 @@
+"""
+Script to define CAD flows.
+
+Create your own flow and add it to the Flows class and the flow_fcn_map.
+Helper functions for vendor tools are defined.
+"""
+
 from enum import Enum
 from enum import unique as enum_unique
 import pathlib
@@ -92,14 +99,13 @@ def get_flow_fcn_by_name(flow_name):
 
 
 def run_flow(design, flow_type, flow_args, build_dir):
-    assert type(design) is Design
+    assert isinstance(design, Design)
 
     flow_fcn = get_flow_fcn_by_name(flow_type)
     return flow_fcn(design, flow_args, build_dir)
 
 
 def IC2_LSE_synth(design, build_dir, flow_args):
-    # Run Icecube2 LSE synthesis
     synth_tool = IC2_LSE_SynthesisTool(build_dir, flow_args)
     return synth_tool.create_netlist(design)
 
@@ -538,7 +544,10 @@ def flow_gather_impl_data(design, flow_args, build_dir):
 
     # Clean up project directories so we get fresh results later
     shutil.rmtree(build_dir / Yosys_Tech_SynthTool.TOOL_WORK_DIR)
-    shutil.rmtree(build_dir / IC2_Synplify_OptTool.TOOL_WORK_DIR) #TODO check that this line should be added.
+
+    #TODO check that this line should be added.
+    shutil.rmtree(build_dir / IC2_Synplify_OptTool.TOOL_WORK_DIR) 
+
     shutil.rmtree(build_dir / IC2_ImplementationTool.TOOL_WORK_DIR)
     shutil.rmtree(build_dir / Icestorm_ReverseBitTool.TOOL_WORK_DIR)
 
