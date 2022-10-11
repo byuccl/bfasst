@@ -39,14 +39,6 @@ class FlowArgs(Enum):
     CMP = 3     # Currently only accepts "XILINX" or "LATTICE" for Conformal Comparison
     ERR = 4
 
-
-class State(Enum):
-    '''An enum describing the state'''
-    INIT = 0
-    READING_STAGE = 1
-    READING_TOOL = 2
-
-
 @enum_unique
 class Flows(Enum):
     '''An enum describing the different flows'''
