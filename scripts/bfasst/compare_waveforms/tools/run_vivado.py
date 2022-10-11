@@ -72,7 +72,7 @@ def parse_line(line):
         line = line.replace(
             line[line.find("TB") : line.find("TB") + 2], sys.argv[6]
         )
-    return(line)
+    return line
 
 if __name__ == "__main__":
     main()
