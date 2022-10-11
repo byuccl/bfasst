@@ -2,7 +2,6 @@
 import subprocess
 from subprocess import Popen
 from pathlib import Path
-import bfasst
 import bfasst.paths
 from bfasst.config import VIVADO_BIN_PATH
 
