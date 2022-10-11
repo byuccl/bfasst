@@ -17,7 +17,7 @@ IC2_LSE_PROJ_FILE = "lse_project.prj"
 
 
 class IC2_LSE_OptTool(OptTool):
-'''wrapper class around icecube2 lse optimization step'''
+    '''wrapper class around icecube2 lse optimization step'''
     TOOL_WORK_DIR = "ic2_opt"
 
     def get_log_path(self):
