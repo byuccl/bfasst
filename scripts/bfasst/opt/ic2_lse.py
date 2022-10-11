@@ -16,7 +16,7 @@ PROJECT_TEMPLATE_FILE = "template_lse.prj"
 IC2_LSE_PROJ_FILE = "lse_project.prj"
 
 
-class IC2_LSE_OptTool(OptTool):
+class Ic2LseOptTool(OptTool):
     '''wrapper class around icecube2 lse optimization step'''
     TOOL_WORK_DIR = "ic2_opt"
 
@@ -150,7 +150,7 @@ class IC2_LSE_OptTool(OptTool):
         changes binary LUT inits to hex. Apparently LSE generates
         binary LUT inits under some conditions, and the IC2 backend
         doesn't like that.'''
-    
+
         with in_place.InPlace(design.netlist_path) as n_f:
             found_first_init = False
             for line in n_f:
