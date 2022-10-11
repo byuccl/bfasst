@@ -274,7 +274,7 @@ def flow_xilinx_yosys_waveform(design, flow_args, build_dir):
     # Run X-ray and fasm2bel
     status = xray_rev(design, build_dir, flow_args)
     status = wave_cmp(design, build_dir, True)
-    
+
     return status
 
 def flow_xilinx_yosys_waveform_quick(design, flow_args, build_dir):
@@ -285,7 +285,7 @@ def flow_xilinx_yosys_waveform_quick(design, flow_args, build_dir):
     # Run X-ray and fasm2bel
     status = xray_rev(design, build_dir, flow_args)
     status = wave_cmp(design, build_dir, False)
-    
+
     return status
 
 def flow_ic2_synplify_conformal(design, flow_args, build_dir):
@@ -369,7 +369,7 @@ def flow_yosys_tech_synplify_conformal(design, flow_args, build_dir):
     design.compare_golden_files_paths.append(yosys_netlist_path)
     design.golden_is_verilog = True
     status = IC2_Synplify_opt(design, build_dir, flow_args, [str(yosys_netlist_path)])
-    
+
     # Run IC2 Implementation
     status = IC2_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
@@ -393,7 +393,7 @@ def flow_yosys_tech_synplify_onespin(design, flow_args, build_dir):
     design.compare_golden_files_paths.append(yosys_netlist_path)
     design.golden_is_verilog = True
     status = IC2_Synplify_opt(design, build_dir, flow_args, [str(yosys_netlist_path)])
-    
+
     # Run IC2 Implementation
     status = IC2_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
@@ -424,7 +424,7 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
     design.compare_golden_files_paths.append(yosys_netlist_path)
     design.golden_is_verilog = True
     status = IC2_Synplify_opt(design, build_dir, flow_args, [str(yosys_netlist_path)])
-    
+
     # Run IC2 Implementation
     status = IC2_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
@@ -453,7 +453,7 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
         # Blow away the opt dir so we know we're getting a fresh build
         shutil.rmtree(build_dir / IC2_Synplify_OptTool.TOOL_WORK_DIR)
         status = IC2_Synplify_opt(design, build_dir, flow_args, [str(netlist)])
-    
+
         # Run IC2 Implementation
         shutil.rmtree(build_dir / IC2_ImplementationTool.TOOL_WORK_DIR)
         status = IC2_impl(design, build_dir, flow_args[FlowArgs.IMPL])
@@ -529,7 +529,7 @@ def flow_gather_impl_data(design, flow_args, build_dir):
     # Now run the Synplify synthesizer on the Yosys output
     yosys_netlist_path = design.netlist_path
     status = IC2_Synplify_opt(design, build_dir, flow_args, [str(yosys_netlist_path)])
-    
+
     # Run IC2 Implementation
     status = IC2_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
