@@ -189,7 +189,7 @@ def ic2_lse_opt(design, build_dir, flow_args, in_files, lib_files=None):
     return status
 
 
-def ic2_synplify_opt(design, build_dir, flow_args, in_files, lib_files=[]):
+def ic2_synplify_opt(design, build_dir, flow_args, in_files, lib_files=None):
     '''Optimize design using Icecube2 Synplify'''
     synp_opt_tool = IC2_Synplify_OptTool(build_dir)
     return synp_opt_tool.create_netlist(design, in_files, lib_files)
