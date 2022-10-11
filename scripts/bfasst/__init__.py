@@ -19,6 +19,7 @@ import bfasst.status
 import bfasst.impl
 import bfasst.reverse_bit
 import bfasst.compare
+import bfasst.compare_waveforms
 import bfasst.experiment
 import bfasst.error_injection
 
