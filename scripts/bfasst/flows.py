@@ -320,7 +320,7 @@ def flow_ic2_synplify_conformal(design, flow_args, build_dir):
     '''Icecube2 Synplify synthesis and implementation, reverse with icestorm,
     compare with Conformal'''
     # Run Icecube2 Synplify synthesis
-    status = ic2_sinylify_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
+    status = ic2_synplify_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
     # Run Icecube2 implementations
     status = ic2_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
@@ -345,7 +345,7 @@ def flow_ic2_synplify_conformal(design, flow_args, build_dir):
 def flow_synplify_ic2_icestorm_onespin(design, flow_args, build_dir):
     '''Icecube2 Synplify synthesis and implementation, reverse with icestorm,
     compare with onespin'''
-    status = ic2_sinylify_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
+    status = ic2_synplify_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
     # Run Icecube2 implementations
     status = ic2_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
@@ -532,7 +532,7 @@ def flow_gather_impl_data(design, flow_args, build_dir):
 
     # Start with an RTL->Synplify->IC2->Icestorm flow
     # Run Icecube2 Synplify synthesis
-    status = ic2_sinylify_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
+    status = ic2_synplify_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
 
     # Run Icecube2 implementations
     status = ic2_impl(design, build_dir, flow_args[FlowArgs.IMPL])
