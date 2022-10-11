@@ -18,7 +18,7 @@ from bfasst.synth.ic2_lse import IC2_LSE_SynthesisTool
 from bfasst.synth.ic2_synplify import IC2_Synplify_SynthesisTool
 from bfasst.synth.vivado import Vivado_SynthesisTool
 from bfasst.synth.yosys import Yosys_Tech_SynthTool
-from bfasst.opt.ic2_lse import IC2_LSE_OptTool
+from bfasst.opt.ic2_lse import Ic2LseOptTool
 from bfasst.opt.ic2_synplify import IC2_Synplify_OptTool
 from bfasst.impl.ic2 import IC2_ImplementationTool
 from bfasst.impl.vivado import Vivado_ImplementationTool
@@ -181,7 +181,7 @@ def onespin_cmp(design, build_dir, flow_args):
 
 def ic2_lse_opt(design, build_dir, flow_args, in_files, lib_files=None):
     '''Optimize design using IceCube2 LSE'''
-    lse_opt_tool = IC2_LSE_OptTool(build_dir)
+    lse_opt_tool = Ic2LseOptTool(build_dir)
     status = lse_opt_tool.create_netlist(design, in_files, lib_files)
     # Try fixing the netlist LUT inits (there's some issue with how LSE
     #   generates them)
@@ -557,8 +557,8 @@ def flow_gather_impl_data(design, flow_args, build_dir):
     status = icestorm_rev_bit(design, build_dir, flow_args)
 
     # Clean up project directories so we get fresh results later
-    if (build_dir / IC2_LSE_OptTool.TOOL_WORK_DIR).exists():
-        shutil.rmtree(build_dir / IC2_LSE_OptTool.TOOL_WORK_DIR)
+    if (build_dir / Ic2LseOptTool.TOOL_WORK_DIR).exists():
+        shutil.rmtree(build_dir / Ic2LseOptTool.TOOL_WORK_DIR)
     shutil.rmtree(build_dir / IC2_LSE_SynthesisTool.TOOL_WORK_DIR)
     shutil.rmtree(build_dir / IC2_ImplementationTool.TOOL_WORK_DIR)
     shutil.rmtree(build_dir / Icestorm_ReverseBitTool.TOOL_WORK_DIR)
