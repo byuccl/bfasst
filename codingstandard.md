@@ -18,3 +18,4 @@ Note that this is subject to change and discussion.
 + For string generation, use f-strings.
 + If a file has a main, the main should take no arguments, parse the argv, and only call another function.
 + If comparing against a singleton object (`True`, `False`, `None`), use `is` instead of `==`, `is not` instead of `!=`.
++ For parsing system parameters, use argparse
