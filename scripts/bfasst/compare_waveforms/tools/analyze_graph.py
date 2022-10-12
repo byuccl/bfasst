@@ -1,13 +1,16 @@
-"""A tool used to analyze graphs for equivalent/unequivalent data."""
+"""A tool used to analyze graphs for equivalent/unequivalent data using gtkwave."""
 import subprocess
 from subprocess import Popen
 from pathlib import Path
 import bfasst.paths
 from bfasst.config import VIVADO_BIN_PATH
 
+
 def analyze_graphs(path, module):
+
     """A function to launch the graphs for designs that have already been tested. Mainly meant
     for checking designs that came back unequivalent to see what was wrong with them."""
+
     gtkwave = Path(".gtkwaverc")
     if gtkwave.exists():
         gtkwave.unlink()
@@ -39,14 +42,27 @@ def analyze_graphs(path, module):
     if vivado:
 
         commands = [
-            ["gtkwave", "-T", str(path / (f"{module}_impl.tcl")), "-o",
-            str(path / (f"{module}_impl.vcd"))],
-            ["gtkwave", "-T", str(path / (f"{module}_reversed.tcl")), "-o",
-            str(path / (f"{module}_reversed.vcd"))],
+            [
+                "gtkwave",
+                "-T",
+                str(path / (f"{module}_impl.tcl")),
+                "-o",
+                str(path / (f"{module}_impl.vcd")),
+            ],
+            [
+                "gtkwave",
+                "-T",
+                str(path / (f"{module}_reversed.tcl")),
+                "-o",
+                str(path / (f"{module}_reversed.vcd")),
+            ],
             [
                 "python",
-                str(bfasst.paths.ROOT_PATH /
-                "scripts/bfasst/compare_waveforms" / "tools/run_vivado.py"),
+                str(
+                    bfasst.paths.ROOT_PATH
+                    / "scripts/bfasst/compare_waveforms"
+                    / "tools/run_vivado.py"
+                ),
                 str(path / (f"{module}_impl.v")),
                 str(path / (f"{module}_impl_tb.v")),
                 f"{module}_impl_tb",
@@ -59,10 +75,20 @@ def analyze_graphs(path, module):
         ]
     else:
         commands = [
-            ["gtkwave", "-T", str(path / (f"{module}_impl.tcl")), "-o",
-            str(path / (f"{module}_impl.vcd"))],
-            ["gtkwave", "-T", str(path / (f"{module}_reversed.tcl")), "-o",
-            str(path / (f"{module}_reversed.vcd"))],
+            [
+                "gtkwave",
+                "-T",
+                str(path / (f"{module}_impl.tcl")),
+                "-o",
+                str(path / (f"{module}_impl.vcd")),
+            ],
+            [
+                "gtkwave",
+                "-T",
+                str(path / (f"{module}_reversed.tcl")),
+                "-o",
+                str(path / (f"{module}_reversed.vcd")),
+            ],
         ]
 
     procs = [Popen(i) for i in commands]
@@ -73,8 +99,10 @@ def analyze_graphs(path, module):
 
 
 def find_resolution():
+
     """A function primarily meant to check the user's monitor resolution so gtkwave can launch in
     full-screen mode."""
+
     output = subprocess.check_output("xrandr")
     output = output.decode()
     temp = Path("temp.txt")
@@ -105,4 +133,3 @@ def find_resolution():
     # lowest screen resolution.
     temp.unlink()
     return (320, 200)
-    
