@@ -148,7 +148,8 @@ def parse_data(paths, time_related_data, i):
 
 def init_unequivalent_data():
 
-    """A function that initializes the data struct unequivalent data, a structure that keeps track of all data that is unequivalent at a specific time."""
+    """A function that initializes the data struct unequivalent data, a structure that keeps track 
+    of all data that is unequivalent at a specific time."""
 
     unequivalent_data = {}
     unequivalent_data["name"] = []
