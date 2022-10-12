@@ -30,13 +30,13 @@ the coding standard.
 ## Nested blocks
 
 The following constructs create a block in python:
-+ if/elif/else
-+ while
-+ for
-+ def
-+ class
-+ try/except/finally
-+ with
++ `if`/`elif`/`else`
++ `while`
++ `for`
++ `def`
++ `class`
++ `try`/`except`/`finally`
++ `with`
 
 There are 2 principles to help avoiding this issue: the
 single-responsibility principle, and encoding control.
@@ -45,15 +45,15 @@ single-responsibility principle, and encoding control.
 
 This principle states that a single function or class should only have
 one responsibility.  For example, given the following function:
-```
+```python
 def print_report(data):
-	report = {}
-	for x in data:
-		for d in x:
-			report[d.name] = x.value
+    report = {}
+    for x in data:
+        for d in x:
+            report[d.name] = x.value
 	for key, value in report:
-		for i in value:
-			print(f"{key}: {value}\t{i}")
+	    for i in value:
+	        print(f"{key}: {value}\t{i}")
 ```
 
 This function both generates a report, and formats it at the same time.
@@ -63,28 +63,28 @@ responsibility principle.  In addition, this nested data structure is
 processed all at once, with lots of nested information.
 
 This can be refactored as such:
-```
+```python
 def extract_data(value, nameds, report):
-	for named in nameds:
-		report[named.name] = value
-	return report
+    for named in nameds:
+        report[named.name] = value
+    return report
 
 def format_value(key, value):
-	for index in value:
-		print(f"{key}: {value}\t{index}")
+    for index in value:
+        print(f"{key}: {value}\t{index}")
 
 def generate_report(data):
-	report = {}
-	for item in data:
-		report = extract_data(item, item.value, report)
-	return report
+    report = {}
+    for item in data:
+        report = extract_data(item, item.value, report)
+    return report
 
 def format_report(report):
-	for key, value in report:
-		format_value(key_value)
+    for key, value in report:
+        format_value(key_value)
 
 def run_report(data):
-	format_report(generate_report(data))
+    format_report(generate_report(data))
 ```
 Note that the deepest nesting in this code is 2 deep, and each function
 has a single responsibility.  This can help break up loops, error
@@ -96,29 +96,29 @@ https://en.wikipedia.org/wiki/Single-responsibility_principle
 
 Another way to untangle control is to encode it in data.  One example
 of this is mapping keywords to actions.  Given the following code:
-```
+```python
 result = []
 for line in lines:
-	if line[0] is "sum":
-		result.append(line[1] + line[2])
-	elif: line[0] is "difference":
-		result.append(line[1] - line[2])
-	elif: line[0] is "product":
-		result.append(line[1] * line[2])
-	else
-		result.append(errorval)
+    if line[0] is "sum":
+        result.append(line[1] + line[2])
+    elif: line[0] is "difference":
+        result.append(line[1] - line[2])
+    elif: line[0] is "product":
+        result.append(line[1] * line[2])
+    else
+        result.append(errorval)
 ```
 
 This can be encoded compactly thus:
-```
+```python
 parser = {"sum": sum_fn,
-		"difference": difference_fn,
-		"product": product_fn}
+        "difference": difference_fn,
+        "product": product_fn}
 
 result = []
 for line in lines
-	op = parser.get(line[0], lambda _: errorval)
-	result.append(op(line))
+    op = parser.get(line[0], lambda _: errorval)
+    result.append(op(line))
 ```
 
 Those functions could easily have been lambdas, or defined previously,
@@ -143,34 +143,34 @@ recursive-descent and table-driven parsers if writing your own.
 Error-checking code can be made simpler with exception handling, early
 returns, or having sanitization functions that ensure inputs are valid.
 For example:
-```
+```python
 def division(x, y):
-	if y != 0:
-		return x / y
-	else:
-		return errorval
-	return impossible
+    if y != 0:
+        return x / y
+    else:
+        return errorval
+    return impossible
 ```
 can be changed in the following ways:
-```
+```python
 def division(x, y):
-	return x / y
+    return x / y
 
 def sanitize_divide(x, y):
-	if y != 0:
-		return division(x, y)
-	return errorval
+    if y != 0:
+        return division(x, y)
+    return errorval
 
 def early_divide(x, y):
-	if y == 0:
-		return erroval
-	return x / y
+    if y == 0:
+        return erroval
+    return x / y
 
 def exception_divide(x, y):
-	try:
-		division(x, y)
-	except ZeroDivisionError:
-		dosomethinguseful()
+    try:
+        division(x, y)
+    except ZeroDivisionError:
+        dosomethinguseful()
 ```
 
 These techniques are not necessarily mutually exclusive.  Note that the
@@ -193,23 +193,23 @@ are violating the single-responsibility principle from earlier.
 
 In order to keep the main function consistent, we have standardized on
 the following interface:
-```
+```python
 def main():
-	parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser()
 
-	parser.add_argument('filename', help='file to process')
+    parser.add_argument('filename', help='file to process')
 
-	parser.add_argument('-j', type=int,
-			default=1, help='number of tasks to do in parallel')
+    parser.add_argument('-j', type=int,
+            default=1, help='number of tasks to do in parallel')
 
-	parser.add_argument('-k', type=int,
-			required=True, help='a parameter governing the code')
+    parser.add_argument('-k', type=int,
+            required=True, help='a parameter governing the code')
 
-	args = parser.parse_args()
-	run_code(args.filename, args.j, args.k)
+    args = parser.parse_args()
+    run_code(args.filename, args.j, args.k)
 
 if __name__ == "__main__":
-	main()
+    main()
 ```
 
 Note that main's only responsibility is parsing arguments, and then it
