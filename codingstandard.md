@@ -20,7 +20,7 @@ Note that this is subject to change and discussion.
 + If comparing against a singleton object (`True`, `False`, `None`), use `is` instead of `==`, `is not` instead of `!=`.
 + For parsing system parameters, use argparse
 
-## Style hints
+# Style hints
 
 Knowing that it can be frustrating to feel that the standards are
 arbitrary and make programming less clear, below are some examples of
