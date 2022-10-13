@@ -4,7 +4,7 @@ This coding standard ensures consistency and efficiency across the project.
 Note that this is subject to change and discussion.
 
 + 100 character line width maximum.
-+ All functions and modules should have a docstring.
++ All functions and modules longer than 10 lines should have a docstring.
 + Variable names should be snake_case.
 + Class names should be PascalCase.
 + One import per line.
