@@ -8,4 +8,5 @@
     ],
     "python.pythonPath": ".venv/bin/python3",
     "git.enableCommitSigning": true,
+    "python.formatting.provider": "black",
 }
