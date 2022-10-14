@@ -7,14 +7,15 @@ import time
 import bfasst
 from bfasst.design import HdlType
 from bfasst.synth.base import SynthesisTool
+#import bfasst.synth.vivado_ioparse.py
 from bfasst.status import BfasstException, Status, SynthStatus
 from bfasst.config import VIVADO_BIN_PATH
 from bfasst.tool import ToolProduct
 
 
+
 class Vivado_SynthesisTool(SynthesisTool):
     TOOL_WORK_DIR = "vivado_synth"
-
 
     def create_netlist(self, design):
         default = "out_of_context" not in self.flow_args
@@ -24,7 +25,9 @@ class Vivado_SynthesisTool(SynthesisTool):
         design.netlist_path = self.cwd / f"{design.top}.edf"
         design.constraints_path = self.cwd / "constraints.xdc"
 
-        generate_netlist = ToolProduct(design.netlist_path, log_path, self.check_synth_log)
+        generate_netlist = ToolProduct(
+            design.netlist_path, log_path, self.check_synth_log
+        )
         generate_constraints = ToolProduct(design.constraints_path)
         tool_products = [generate_netlist, generate_constraints]
 
@@ -77,15 +80,15 @@ class Vivado_SynthesisTool(SynthesisTool):
                     fp.write(f"read_verilog -sv {design.top_file_path}\n")
                 else:
                     fp.write(f"read_vhdl {design.top_file_path}\n")
-                
+
                 # Add verilog files
                 for vf in design.verilog_file_paths:
                     fp.write(f"read_verilog {vf}\n")
-                
+
                 # Add system verilog files
                 for vf in design.system_verilog_file_paths:
                     fp.write(f"read_verilog -sv {vf}\n")
-                
+
                 # Add VHDL files
                 for vf in design.vhdl_file_paths:
                     fp.write(f"read_vhdl {vf}\n")
@@ -95,7 +98,7 @@ class Vivado_SynthesisTool(SynthesisTool):
                     fp.write(f"read_vhdl -library {libname} {vf}\n")
 
                 if not self.flow_args:
-                # Synthesize - do not include any DSP modules in the synthesized design
+                    # Synthesize - do not include any DSP modules in the synthesized design
                     fp.write(f"synth_design -top {design.top} -max_dsp 0\n")
                 else:
                     top = f" -top {design.top} " if "top" not in self.flow_args else ""
@@ -106,7 +109,9 @@ class Vivado_SynthesisTool(SynthesisTool):
                     # Auto-place ports
                     fp.write(f"place_ports\n")
                 fp.write(f"write_edif -force {{{design.netlist_path}}}\n")
-                fp.write(f"write_checkpoint -force -file {self.work_dir / 'design.dcp'}\n")
+                fp.write(
+                    f"write_checkpoint -force -file {self.work_dir / 'design.dcp'}\n"
+                )
 
                 if "out_of_context" not in self.flow_args:
                     # Save IO to determine where auto port placement occurred
@@ -137,24 +142,23 @@ class Vivado_SynthesisTool(SynthesisTool):
 
         return Status(SynthStatus.SUCCESS)
 
-    def extract_contraints(self, design, report_io_path):
-        with open(report_io_path, "r") as fp:
-            txt = fp.read()
+    @staticmethod
+    def xdc_line(pin):
+        return (
+            "set_property -dict "
+            f"{{ PACKAGE_PIN {pin[0]}   IOSTANDARD LVCMOS33 }} "
+            f"[get_ports {{ {pin[1]} }}];\n"
+        )
 
-        match = re.search("2. IO Assignments by Package Pin\n------(.*)$", txt, re.DOTALL)
+    @staticmethod
+    def write_xdc(pinmap, stream):
+        for pin in pinmap:
+            stream.write(xdc_line(pin))
 
-        lines = match.group(1).splitlines()
+    @staticmethod
+    def extract_contraints(design, report_io_path):
         with open(design.constraints_path, "w") as fp:
-            for line in lines:
-                m = re.match("\|\s+([A-Z]+[0-9]+)\s+\|\s+(\S+)\s+\|", line)
-                if m and m.group(2) != "|":
-                    fp.write(
-                        "set_property -dict { PACKAGE_PIN "
-                        + m.group(1)
-                        + "   IOSTANDARD LVCMOS33 } [get_ports { "
-                        + m.group(2)
-                        + " }];\n"
-                    )
+            write_xdc(vivado_ioparse.map_pins(report_io_path), fp)
 
     def check_synth_log(self, log_path):
         text = open(log_path).read()
