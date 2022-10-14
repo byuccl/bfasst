@@ -17,5 +17,4 @@ def lines_of(filename):
 
 # Note that filter with None works like (x for x in gen if x)
 def map_pins(report_io_path):
-    return filter(None, (parse
-_pin(line) for line in lines_of(report_io_path)))
+    return filter(None, (parse_pin(line) for line in lines_of(report_io_path)))
