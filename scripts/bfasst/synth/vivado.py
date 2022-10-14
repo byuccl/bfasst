@@ -8,7 +8,7 @@ import bfasst
 from bfasst.design import HdlType
 from bfasst.synth.base import SynthesisTool
 from bfasst.synth import vivado_ioparse
-from bfasst.status import BfasstException, Status, SynthStatus
+from bfasst.status import Status, SynthStatus
 from bfasst.config import VIVADO_BIN_PATH
 from bfasst.tool import ToolProduct
 
@@ -120,7 +120,7 @@ class VivadoSynthesisTool(SynthesisTool):
     def write_products(self, design, report_io_path, stream):
         if "out_of_context" not in self.flow_args:
             # Auto-place ports
-            stream.write(f"place_ports\n")
+            stream.write("place_ports\n")
         stream.write(f"write_edif -force {{{design.netlist_path}}}\n")
         stream.write(f"write_checkpoint -force -file {self.work_dir / 'design.dcp'}\n")
 
@@ -173,6 +173,6 @@ class VivadoSynthesisTool(SynthesisTool):
 
         match = re.search(r"^ERROR:\s*(.*?)$", text, re.M)
         if match:
-            return Status(SynthStatus.ERROR, m.group(1).strip())
+            return Status(SynthStatus.ERROR, match.group(1).strip())
 
         return self.success_status
