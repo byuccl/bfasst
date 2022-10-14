@@ -1,7 +1,6 @@
-""" This module provides support for parsing the report_io output of 
+""" This module provides support for parsing the report_io output of
 vivado into pin-port mappings"""
 import re
-import sys
 
 
 def parse_pin(line):
