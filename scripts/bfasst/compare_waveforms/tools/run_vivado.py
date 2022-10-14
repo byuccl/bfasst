@@ -4,6 +4,7 @@ from pathlib import Path
 import subprocess
 import shutil
 
+
 def parse_args():
 
     """Creates the argument parser for the Vivado Launcher."""
@@ -11,12 +12,14 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Launch Vivado.")
     parser.add_argument("base", metavar="Base", help="Base path to files.")
     parser.add_argument("module", metavar="Module", help="Module name.")
-    parser.add_argument("temp", metavar="Temp Folder", help=
-    "Temporary Location for TCL files.")
+    parser.add_argument(
+        "temp", metavar="Temp Folder", help="Temporary Location for TCL files."
+    )
     parser.add_argument("vivado", metavar="Vivado", help="Location of Vivado Launcher.")
 
     global args
     args = parser.parse_args()
+
 
 def create_tcl(template, temp_tcl):
 
@@ -30,20 +33,20 @@ def create_tcl(template, temp_tcl):
             for line in file:
                 if "PATH" in line:
                     line = line.replace(
-                        line[line.find("PATH") : line.find("PATH") + 4], 
-                        f"{args.base}/{args.module}.v"
+                        line[line.find("PATH") : line.find("PATH") + 4],
+                        f"{args.base}/{args.module}.v",
                     )
                 if "FILE_T" in line:
                     line = line.replace(
-                        line[line.find("FILE_T") : line.find("FILE_T") + 6], 
-                        f"{args.base}/{args.module}_tb.v"
+                        line[line.find("FILE_T") : line.find("FILE_T") + 6],
+                        f"{args.base}/{args.module}_tb.v",
                     )
                 elif "TB" in line:
                     line = line.replace(
-                        line[line.find("TB") : line.find("TB") + 2], 
-                        f"{args.module}_tb"
+                        line[line.find("TB") : line.find("TB") + 2], f"{args.module}_tb"
                     )
                 output.write(line)
+
 
 def main():
 
@@ -57,18 +60,28 @@ def main():
     temp_tcl = Path(args.temp) / (f"temp_{args.module}.tcl")
 
     create_tcl(template, temp_tcl)
-    
+
     temp_dir = Path(f"{args.module}_vivado_sim")
     if temp_dir.exists():
         shutil.rmtree(str(temp_dir))
     temp_dir.mkdir()
     print(str(temp_dir))
-    
-    subprocess.run([args.vivado, "-nolog", "-nojournal", "-tempDir", str(temp_dir), "-source", 
-    str(temp_tcl)])
+
+    subprocess.run(
+        [
+            args.vivado,
+            "-nolog",
+            "-nojournal",
+            "-tempDir",
+            str(temp_dir),
+            "-source",
+            str(temp_tcl),
+        ]
+    )
 
     shutil.rmtree(str(temp_dir))
     temp_tcl.unlink()
+
 
 if __name__ == "__main__":
     main()
