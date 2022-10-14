@@ -138,7 +138,7 @@ def conformal_cmp(design, build_dir, flow_args):
 
 def vivado_synth(design, build_dir, flow_args):
     '''Synthesize using Vivado'''
-    synth_tool = Vivado_SynthesisTool(build_dir, flow_args)
+    synth_tool = VivadoSynthesisTool(build_dir, flow_args)
     return synth_tool.create_netlist(design)
 
 

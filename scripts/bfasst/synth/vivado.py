@@ -37,6 +37,7 @@ class VivadoSynthesisTool(SynthesisTool):
     TOOL_WORK_DIR = "vivado_synth"
 
     def create_netlist(self, design):
+        """create netlist from design"""
         default = "out_of_context" not in self.flow_args
         log_path = self.work_dir / bfasst.config.SYNTH_LOG_NAME
 
@@ -79,10 +80,11 @@ class VivadoSynthesisTool(SynthesisTool):
         return self.success_status
 
     def write_header(self, stream):
-        stream.write("if {{ [ catch {{\n")
+        stream.write("if { [ catch {\n")
         stream.write(f"set_part {bfasst.config.PART}\n")
 
     def write_hdl(self, design, stream):
+        """write out read_<hdl> commands to the stream.  To be used in a tcl file"""
         if design.get_top_hdl_type() == HdlType.VERILOG:
             stream.write(f"read_verilog {design.top_file_path}\n")
         elif design.get_top_hdl_type() == HdlType.SYSTEM_VERILOG:
@@ -115,35 +117,34 @@ class VivadoSynthesisTool(SynthesisTool):
             dsp = " -max_dsp 0" if "max_dsp" not in self.flow_args else ""
             stream.write(f"synth_design{top}{dsp} {self.flow_args}\n")
 
-    def write_products(self, design, stream):
+    def write_products(self, design, report_io_path, stream):
         if "out_of_context" not in self.flow_args:
             # Auto-place ports
-            fp.write(f"place_ports\n")
-        fp.write(f"write_edif -force {{{design.netlist_path}}}\n")
-        fp.write(f"write_checkpoint -force -file {self.work_dir / 'design.dcp'}\n")
+            stream.write(f"place_ports\n")
+        stream.write(f"write_edif -force {{{design.netlist_path}}}\n")
+        stream.write(f"write_checkpoint -force -file {self.work_dir / 'design.dcp'}\n")
 
         if "out_of_context" not in self.flow_args:
             # Save IO to determine where auto port placement occurred
-            fp.write(f"report_io -force -file {report_io_path}\n")
+            stream.write(f"report_io -force -file {report_io_path}\n")
 
     def write_footer(self, stream):
-        fp.write(f"}} ] }} {{ exit 1 }}\n")
-        fp.write("exit\n")
+        stream.write("} ] } { exit 1 }\n")
+        stream.write("exit\n")
 
-    def write_tcl(self, design):
-        tcl_path = self.work_dir / "synth.tcl"
-        with open(tcl_path, "w") as fp:
-            if design:
-                write_header(self, fp)
-                write_hdl(self, design, fp)
-                write_synth(self, design, fp)
-                write_products(self, design, fp)
-                write_footer(self, fp)
+    def write_tcl(self, design, report_io_path, stream):
+        self.write_header(stream)
+        self.write_hdl(design, stream)
+        self.write_synth(design, stream)
+        self.write_products(design, report_io_path, stream)
+        self.write_footer(stream)
 
     def run_synth(self, design, log_path, report_io_path):
         """run vivado synthesis step, capturing edif file, log, and io_report"""
 
-        write_tcl(self, design)
+        tcl_path = self.work_dir / "synth.tcl"
+        with open(tcl_path, "w") as stream:
+            self.write_tcl(design, report_io_path, stream)
 
         with open(log_path, "w") as fp:
             cmd = [str(VIVADO_BIN_PATH), "-mode", "tcl", "-source", str(tcl_path)]
