@@ -7,12 +7,26 @@ import time
 import bfasst
 from bfasst.design import HdlType
 from bfasst.synth.base import SynthesisTool
-#import bfasst.synth.vivado_ioparse.py
+from bfasst.synth import vivado_ioparse
 from bfasst.status import BfasstException, Status, SynthStatus
 from bfasst.config import VIVADO_BIN_PATH
 from bfasst.tool import ToolProduct
 
 
+def xdc_line(pin):
+    return (
+        "set_property -dict "
+        f"{{ PACKAGE_PIN {pin[0]}   IOSTANDARD LVCMOS33 }} "
+        f"[get_ports {{ {pin[1]} }}];\n"
+    )
+
+def write_xdc(pinmap, stream):
+    for pin in pinmap:
+        stream.write(xdc_line(pin))
+
+def extract_contraints(design, report_io_path):
+    with open(design.constraints_path, "w") as fp:
+        write_xdc(vivado_ioparse.map_pins(report_io_path), fp)
 
 class Vivado_SynthesisTool(SynthesisTool):
     TOOL_WORK_DIR = "vivado_synth"
@@ -59,7 +73,7 @@ class Vivado_SynthesisTool(SynthesisTool):
 
         # Extract contraint file from Vivado-assigned pins
         if default:
-            self.extract_contraints(design, report_io_path)
+            extract_contraints(design, report_io_path)
 
         # Check synthesis log
         status = self.check_synth_log(log_path)
@@ -142,23 +156,7 @@ class Vivado_SynthesisTool(SynthesisTool):
 
         return Status(SynthStatus.SUCCESS)
 
-    @staticmethod
-    def xdc_line(pin):
-        return (
-            "set_property -dict "
-            f"{{ PACKAGE_PIN {pin[0]}   IOSTANDARD LVCMOS33 }} "
-            f"[get_ports {{ {pin[1]} }}];\n"
-        )
 
-    @staticmethod
-    def write_xdc(pinmap, stream):
-        for pin in pinmap:
-            stream.write(xdc_line(pin))
-
-    @staticmethod
-    def extract_contraints(design, report_io_path):
-        with open(design.constraints_path, "w") as fp:
-            write_xdc(vivado_ioparse.map_pins(report_io_path), fp)
 
     def check_synth_log(self, log_path):
         text = open(log_path).read()
