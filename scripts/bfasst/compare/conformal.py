@@ -86,7 +86,6 @@ class Conformal_CompareTool(CompareTool):
         # Create do file
         do_file_path = self.create_do_file(design)
 
-
         # Create remote machine folders
         cmd = (
             "mkdir -p bfasst_libs;"
@@ -100,9 +99,7 @@ class Conformal_CompareTool(CompareTool):
         )
 
         # Copy files to remote machine
-        self.copy_files_to_remote_machine(
-            client, design, do_file_path
-        )
+        self.copy_files_to_remote_machine(client, design, do_file_path)
 
         # Run conformal remotely
         try:
@@ -170,7 +167,7 @@ class Conformal_CompareTool(CompareTool):
 
         return Status(CompareStatus.SUCCESS)
 
-    def create_do_file(self, design, mapping_algorithm):
+    def create_do_file(self, design):  # Add mapping_algorithm arg when ready!
         do_file_path = self.work_dir / self.DO_FILE_NAME
 
         with open(do_file_path, "w") as fp:
@@ -236,9 +233,7 @@ class Conformal_CompareTool(CompareTool):
 
         return do_file_path
 
-    def copy_files_to_remote_machine(
-        self, client, design, do_file_path
-    ):
+    def copy_files_to_remote_machine(self, client, design, do_file_path):
         scpClient = scp.SCPClient(client.get_transport())
 
         # Copy library files
