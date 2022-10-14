@@ -5,99 +5,6 @@ from pathlib import Path
 import bfasst.paths
 from bfasst.config import VIVADO_BIN_PATH
 
-
-def analyze_graphs(path, module):
-
-    """A function to launch the graphs for designs that have already been tested. Mainly meant
-    for checking designs that came back unequivalent to see what was wrong with them."""
-
-    gtkwave = Path(".gtkwaverc")
-    if gtkwave.exists():
-        gtkwave.unlink()
-    with gtkwave.open("x") as wavefile:
-        wavefile.write("do_initial_zoom_fit 1\n")
-
-        # Optional: Functionality to detect a system's monitor size is added so that
-        # gtkwave can launch in full-screen mode.
-        choice = input(
-            "Do you want to launch in full-screen mode? 1 for yes, 0 for no."
-        )
-        if choice != "0":
-            (x, cord_y) = find_resolution()
-            x = str(x)
-            cord_y = str(cord_y)
-            wavefile.write(f"initial_window_x {x}\n")
-            wavefile.write(f"initial_window_y {cord_y}\n")
-
-        choice = input("Compare with Vivado? 1 for yes, 0 for no.")
-        vivado = False
-        if choice != "0":
-            vivado = True
-
-    if (path / "diff.txt").exists():
-        with (path / "diff.txt").open("r") as file:
-            for line in file:
-                print(line)
-
-    if vivado:
-
-        commands = [
-            [
-                "gtkwave",
-                "-T",
-                str(path / (f"{module}_impl.tcl")),
-                "-o",
-                str(path / (f"{module}_impl.vcd")),
-            ],
-            [
-                "gtkwave",
-                "-T",
-                str(path / (f"{module}_reversed.tcl")),
-                "-o",
-                str(path / (f"{module}_reversed.vcd")),
-            ],
-            [
-                "python",
-                str(
-                    bfasst.paths.ROOT_PATH
-                    / "scripts/bfasst/compare_waveforms"
-                    / "tools/run_vivado.py"
-                ),
-                str(path / (f"{module}_impl.v")),
-                str(path / (f"{module}_impl_tb.v")),
-                f"{module}_impl_tb",
-                str(path / (f"{module}_reversed.v")),
-                str(path / (f"{module}_reversed_tb.v")),
-                f"{module}_reversed_tb",
-                str(VIVADO_BIN_PATH),
-                str(bfasst.paths.ROOT_PATH / "scripts/bfasst/compare_waveforms"),
-            ],
-        ]
-    else:
-        commands = [
-            [
-                "gtkwave",
-                "-T",
-                str(path / (f"{module}_impl.tcl")),
-                "-o",
-                str(path / (f"{module}_impl.vcd")),
-            ],
-            [
-                "gtkwave",
-                "-T",
-                str(path / (f"{module}_reversed.tcl")),
-                "-o",
-                str(path / (f"{module}_reversed.vcd")),
-            ],
-        ]
-
-    procs = [Popen(i) for i in commands]
-    for proc in procs:
-        proc.wait()
-
-    gtkwave.unlink()
-
-
 def find_resolution():
 
     """A function primarily meant to check the user's monitor resolution so gtkwave can launch in
@@ -133,3 +40,86 @@ def find_resolution():
     # lowest screen resolution.
     temp.unlink()
     return (320, 200)
+
+def init_gtkwave():
+
+    """Initializes gtkwave so that it can launch with the correct zoom and, if the user wants, can
+    be launched in full-screen mode."""
+
+    gtkwave = Path(".gtkwaverc")
+
+    if gtkwave.exists():
+        gtkwave.unlink()
+
+    with gtkwave.open("x") as wavefile:
+        wavefile.write("do_initial_zoom_fit 1\n")
+        choice = input(
+            "Do you want to launch in full-screen mode? 1 for yes, 0 for no."
+        )
+        if choice != "0":
+            (x_cord, y_cord) = find_resolution()
+            x_cord = str(x_cord)
+            y_cord = str(y_cord)
+            wavefile.write(f"initial_window_x {x_cord}\n")
+            wavefile.write(f"initial_window_y {y_cord}\n")
+    
+    return(gtkwave)
+
+def launch_vivado(path, module, commands):
+
+    """Checks if the user wants to launch vivado. If so, adds vivado to the list of 
+    commands to run."""
+
+    choice = input("Compare with Vivado? 1 for yes, 0 for no.")
+    if choice != "0":
+        commands.append([
+            "python",
+            str(
+                bfasst.paths.ROOT_PATH
+                / "scripts/bfasst/compare_waveforms"
+                / "tools/run_vivado.py"
+            ),
+            str(path),
+            f"{module}_impl",
+            str(bfasst.paths.ROOT_PATH / "scripts/bfasst/compare_waveforms"),
+            str(VIVADO_BIN_PATH)
+        ])
+        commands.append([
+            "python",
+            str(
+                bfasst.paths.ROOT_PATH
+                / "scripts/bfasst/compare_waveforms"
+                / "tools/run_vivado.py"
+            ),
+            str(path),
+            f"{module}_reversed",
+            str(bfasst.paths.ROOT_PATH / "scripts/bfasst/compare_waveforms"),
+            str(VIVADO_BIN_PATH)
+        ])
+    return(commands)
+
+def analyze_graphs(path, module):
+
+    """A function to launch the graphs for designs that have already been tested. Mainly meant
+    for checking designs that came back unequivalent to see what was wrong with them."""
+
+    gtkwave = init_gtkwave()
+        
+    commands = [["gtkwave","-T",str(path / (f"{module}_impl.tcl")),
+            "-o",str(path / (f"{module}_impl.vcd")),],
+        ["gtkwave","-T",str(path / (f"{module}_reversed.tcl")),
+            "-o",str(path / (f"{module}_reversed.vcd")),]]
+
+    commands = launch_vivado(path, module, commands)
+
+    if (path / "diff.txt").exists():
+        with (path / "diff.txt").open("r") as file:
+            for line in file:
+                print(line)
+        
+
+    procs = [Popen(i) for i in commands]
+    for proc in procs:
+        proc.wait()
+
+    gtkwave.unlink()

@@ -1,15 +1,27 @@
 """A launcher for Vivado to compare gtkwave wavefiles to Vivado's waveform analysis"""
+import argparse
 from pathlib import Path
-from subprocess import Popen
+import subprocess
 import shutil
-import sys
 
-def main():
-    """The main function."""
-    assert sys.argv[7] is not None, "VIVADO_PATH environmental variable was not set!"
+def parse_args():
 
-    template = Path(sys.argv[8]) / ("templates/template.tcl")
-    temp_tcl = Path(sys.argv[8]) / str("temp.tcl")
+    """Creates the argument parser for the Vivado Launcher."""
+
+    parser = argparse.ArgumentParser(description="Launch Vivado.")
+    parser.add_argument("base", metavar="Base", help="Base path to files.")
+    parser.add_argument("module", metavar="Module", help="Module name.")
+    parser.add_argument("temp", metavar="Temp Folder", help=
+    "Temporary Location for TCL files.")
+    parser.add_argument("vivado", metavar="Vivado", help="Location of Vivado Launcher.")
+
+    global args
+    args = parser.parse_args()
+
+def create_tcl(template, temp_tcl):
+
+    """Creates a temporary TCL file to launch Vivado."""
+
     if temp_tcl.exists():
         temp_tcl.unlink()
 
@@ -18,61 +30,45 @@ def main():
             for line in file:
                 if "PATH" in line:
                     line = line.replace(
-                        line[line.find("PATH") : line.find("PATH") + 4], sys.argv[1]
+                        line[line.find("PATH") : line.find("PATH") + 4], 
+                        f"{args.base}/{args.module}.v"
                     )
                 if "FILE_T" in line:
                     line = line.replace(
-                        line[line.find("FILE_T") : line.find("FILE_T") + 6], sys.argv[2]
+                        line[line.find("FILE_T") : line.find("FILE_T") + 6], 
+                        f"{args.base}/{args.module}_tb.v"
                     )
                 elif "TB" in line:
                     line = line.replace(
-                        line[line.find("TB") : line.find("TB") + 2], sys.argv[3]
+                        line[line.find("TB") : line.find("TB") + 2], 
+                        f"{args.module}_tb"
                     )
                 output.write(line)
 
-    temp2_tcl = Path(sys.argv[8]) / str("temp2.tcl")
-    if temp2_tcl.exists():
-        temp2_tcl.unlink()
+def main():
 
-    with template.open("r") as file:
-        with temp2_tcl.open("x") as output:
-            for line in file:
-                line = parse_line(line)
-                output.write(line)
+    """The main function."""
 
-    commands = [
-        [sys.argv[7], "-nolog", "-nojournal", "-source", str(temp_tcl)],
-        [sys.argv[7], "-nolog", "-nojournal", "-source", str(temp2_tcl)],
-    ]
+    parse_args()
 
-    procs = [Popen(i) for i in commands]
-    for proc in procs:
-        proc.wait()
+    assert args.vivado is not None, "VIVADO_PATH environmental variable was not set!"
 
-    shutil.rmtree("temp")
-    shutil.rmtree("temp2")
+    template = Path(args.temp) / ("templates/template.tcl")
+    temp_tcl = Path(args.temp) / (f"temp_{args.module}.tcl")
+
+    create_tcl(template, temp_tcl)
+    
+    temp_dir = Path(f"{args.module}_vivado_sim")
+    if temp_dir.exists():
+        shutil.rmtree(str(temp_dir))
+    temp_dir.mkdir()
+    print(str(temp_dir))
+    
+    subprocess.run([args.vivado, "-nolog", "-nojournal", "-tempDir", str(temp_dir), "-source", 
+    str(temp_tcl)])
+
+    shutil.rmtree(str(temp_dir))
     temp_tcl.unlink()
-    temp2_tcl.unlink()
-
-def parse_line(line):
-    """Why does this exist? So pylint will be happy about branch numbers"""
-    if "temp" in line:
-        line = line.replace(
-            line[line.find("temp") : line.find("temp") + 4], "temp2"
-        )
-    if "PATH" in line:
-        line = line.replace(
-            line[line.find("PATH") : line.find("PATH") + 4], sys.argv[4]
-        )
-    if "FILE_T" in line:
-        line = line.replace(
-            line[line.find("FILE_T") : line.find("FILE_T") + 6], sys.argv[5]
-        )
-    elif "TB" in line:
-        line = line.replace(
-            line[line.find("TB") : line.find("TB") + 2], sys.argv[6]
-        )
-    return line
 
 if __name__ == "__main__":
     main()
