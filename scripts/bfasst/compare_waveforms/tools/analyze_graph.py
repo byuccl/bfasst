@@ -48,6 +48,7 @@ def init_gtkwave():
     """Initializes gtkwave so that it can launch with the correct zoom and, if the user wants, can
     be launched in full-screen mode."""
 
+    # .gtkwaverc is used to setup gtkwave with certain initializers such as launch in full-screen.
     gtkwave = Path(".gtkwaverc")
 
     if gtkwave.exists():
@@ -74,6 +75,8 @@ def launch_vivado(path, module, commands):
     commands to run."""
 
     choice = input("Compare with Vivado? 1 for yes, 0 for no.")
+
+    # Sets up the subprocess commands to launch Vivado
     if choice != "0":
         commands.append(
             [
@@ -113,6 +116,7 @@ def analyze_graphs(path, module):
 
     gtkwave = init_gtkwave()
 
+    # Initializes the subprocess commands to launch gtkwave.
     commands = [
         [
             "gtkwave",
@@ -130,13 +134,17 @@ def analyze_graphs(path, module):
         ],
     ]
 
+    # Checks if the user wants to compare the gtkwave testbenches with Vivado's simulations,
+    # then appends the run_vivado commands to the commands if the user chooses to do so.
     commands = launch_vivado(path, module, commands)
 
+    # Prints the diff.txt file so the user can see where differences in simulation occured.
     if (path / "diff.txt").exists():
         with (path / "diff.txt").open("r") as file:
             for line in file:
                 print(line)
 
+    # Allows all processes to be run concurrently.
     procs = [Popen(i) for i in commands]
     for proc in procs:
         proc.wait()
