@@ -47,6 +47,7 @@ def create_tcl(template, temp_tcl, args):
                     )
                 output.write(line)
 
+
 def launch_vivado():
 
     """Handles the logic for launching Vivado automatically."""
@@ -79,7 +80,7 @@ def launch_vivado():
     )
 
     shutil.rmtree(str(temp_dir))
-    temp_tcl.unlink()    
+    temp_tcl.unlink()
 
 
 def main():
