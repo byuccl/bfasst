@@ -153,10 +153,14 @@ def parse_data(paths, time_related_data, i):
                 data = check_duplicates(line, data)
 
                 if data["time"] != curr_time:
-                    [binary_state.append(i) for i in data["binary_state"]]
-                    [binary_time.append(i) for i in ([curr_time] * len(binary_name))]
-                    [state.append(i) for i in data["state"]]
-                    [time.append(i) for i in ([curr_time] * len(name))]
+                    for i in data["binary_state"]:
+                        binary_state.append(i)
+                    for i in data["state"]:
+                        state.append(i)
+                    for i in [curr_time] * len(binary_name):
+                        binary_time.append(i)
+                    for i in [curr_time] * len(name):
+                        time.append(i)
                     curr_time = data["time"]
 
     time_related_data.append(
