@@ -28,6 +28,7 @@ def create_tcl(template, temp_tcl, args):
     if temp_tcl.exists():
         temp_tcl.unlink()
 
+    # Replaces portions of the template TCL file with info needed for Vivado to launch.
     with template.open("r") as file:
         with temp_tcl.open("x") as output:
             for line in file:
@@ -61,11 +62,11 @@ def launch_vivado():
 
     create_tcl(template, temp_tcl, args)
 
+    # Creates a temporary directory so that multiple vivado simulations can occur at once.
     temp_dir = Path(f"{args.module}_vivado_sim")
     if temp_dir.exists():
         shutil.rmtree(str(temp_dir))
     temp_dir.mkdir()
-    print(str(temp_dir))
 
     subprocess.run(
         [
@@ -79,6 +80,7 @@ def launch_vivado():
         ]
     )
 
+    # Removes the temporary directory since the Vivado folder is not needed.
     shutil.rmtree(str(temp_dir))
     temp_tcl.unlink()
 
