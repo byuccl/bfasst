@@ -1,4 +1,5 @@
 """A launcher for Vivado to compare gtkwave wavefiles to Vivado's waveform analysis"""
+
 import argparse
 from pathlib import Path
 import subprocess
@@ -46,10 +47,9 @@ def create_tcl(template, temp_tcl, args):
                     )
                 output.write(line)
 
+def launch_vivado():
 
-def main():
-
-    """The main function."""
+    """Handles the logic for launching Vivado automatically."""
 
     args = parse_args()
 
@@ -79,7 +79,14 @@ def main():
     )
 
     shutil.rmtree(str(temp_dir))
-    temp_tcl.unlink()
+    temp_tcl.unlink()    
+
+
+def main():
+
+    """The main function."""
+
+    launch_vivado()
 
 
 if __name__ == "__main__":
