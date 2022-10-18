@@ -21,7 +21,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def create_tcl(template, temp_tcl, args):
+def create_tcl(template, temp_tcl, base, module):
 
     """Creates a temporary TCL file to launch Vivado."""
 
@@ -35,49 +35,47 @@ def create_tcl(template, temp_tcl, args):
                 if "PATH" in line:
                     line = line.replace(
                         line[line.find("PATH") : line.find("PATH") + 4],
-                        f"{args.base}/{args.module}.v",
+                        f"{base}/{module}.v",
                     )
                 if "FILE_T" in line:
                     line = line.replace(
                         line[line.find("FILE_T") : line.find("FILE_T") + 6],
-                        f"{args.base}/{args.module}_tb.v",
+                        f"{base}/{module}_tb.v",
                     )
                 elif "TB" in line:
                     line = line.replace(
-                        line[line.find("TB") : line.find("TB") + 2], f"{args.module}_tb"
+                        line[line.find("TB") : line.find("TB") + 2], f"{module}_tb"
                     )
                 output.write(line)
 
 
-def launch_vivado():
+def launch_vivado(base, module, temp, vivado):
 
     """Handles the logic for launching Vivado automatically."""
 
-    args = parse_args()
+    assert vivado is not None, "VIVADO_PATH environmental variable was not set!"
 
-    assert args.vivado is not None, "VIVADO_PATH environmental variable was not set!"
+    template = Path(temp) / ("templates/template.tcl")
+    temp_tcl = Path(temp) / (f"temp_{module}.tcl")
 
-    template = Path(args.temp) / ("templates/template.tcl")
-    temp_tcl = Path(args.temp) / (f"temp_{args.module}.tcl")
-
-    create_tcl(template, temp_tcl, args)
+    create_tcl(template, temp_tcl, base, module)
 
     # Creates a temporary directory so that multiple vivado simulations can occur at once.
-    temp_dir = Path(f"{args.module}_vivado_sim")
+    temp_dir = Path(f"{module}_vivado_sim")
     if temp_dir.exists():
         shutil.rmtree(str(temp_dir))
+
     temp_dir.mkdir()
 
     subprocess.run(
         [
-            args.vivado,
+            vivado,
             "-nolog",
             "-nojournal",
-            "-tempDir",
-            str(temp_dir),
             "-source",
             str(temp_tcl),
-        ]
+        ],
+        cwd=str(temp_dir),
     )
 
     # Removes the temporary directory since the Vivado folder is not needed.
@@ -89,7 +87,9 @@ def main():
 
     """The main function."""
 
-    launch_vivado()
+    args = parse_args()
+
+    launch_vivado(args.base, args.module, args.temp, args.vivado)
 
 
 if __name__ == "__main__":

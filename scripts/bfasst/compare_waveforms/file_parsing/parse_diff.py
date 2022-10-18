@@ -6,16 +6,10 @@ def init_data():
     """Sets all of the initial variables for data"""
 
     data = {}
-    data["time"] = "0"
+    data["time"] = []
     data["name"] = []
-    data["binary_name"] = []
     data["signal"] = []
-    data["binary_signal"] = []
     data["state"] = []
-    data["binary_state"] = []
-    data["returned_signal"] = []
-    data["past_header"] = False
-    data["past_definitions"] = False
 
     return data
 
@@ -37,7 +31,7 @@ def parse_io(line, input_output, words, new_word):
 
         else:
 
-            if (word != "$var") & (word != input_output):
+            if (word != "$var") and (word != input_output):
 
                 if "[" not in word:
                     words.append(word)
@@ -68,15 +62,15 @@ def parse_signals(line):
     return words
 
 
-def past_initial_data(line, data):
+def past_initial_data(line, data, past_header):
 
     """Parses all of the data at the start of the files to set the initial values for every
     variable."""
 
-    if data["past_header"] is True:
+    if past_header is True:
 
         if "$dumpvars" in line:
-            data["past_definitions"] = True
+            return (True, data)
 
         else:
 
@@ -85,45 +79,40 @@ def past_initial_data(line, data):
                 and "$enddefinitions" not in line
                 and "#0" not in line
             ):
-                data["returned_signal"] = parse_signals(line)
+                found_data = parse_signals(line)
 
-                if data["returned_signal"][0] == "1":
-                    data["binary_name"].append(data["returned_signal"][2])
-                    data["binary_signal"].append(data["returned_signal"][1])
-                    data["binary_state"].append("0")
+                if found_data[0] == "1":
+                    data["name"].append(found_data[2])
+                    data["signal"].append(found_data[1])
 
                 else:
-                    data["name"].append(data["returned_signal"][2])
-                    data["signal"].append(data["returned_signal"][1])
-                    data["state"].append("b0")
+                    data["name"].append(found_data[2])
+                    data["signal"].append(found_data[1])
 
     if "$scope module" in line:
-        data["past_header"] = True
+        return (True, data)
 
-    return data
+    return (False, data)
 
 
-def check_duplicates(line, data):
+def check_change(line, data, signals):
 
-    """Checks if the signal is the same as it was previously or if it has changed at a specific
-    time."""
+    """Updates the signals states and time"""
 
     if line[0] == "0" or line[0] == "1":
-
-        if line[1 : len(line) - 1] in data["binary_signal"]:
-            j = data["binary_signal"].index(line[1 : len(line) - 1])
-            data["binary_state"][j] = line[0]
+        if line[1 : len(line) - 1] in signals:
+            j = signals.index(line[1 : len(line) - 1])
+            data[j] = line[0]
 
     elif " " in line:
-
-        if line[line.index(" ") + 1 : len(line) - 1] in data["signal"]:
-            j = data["signal"].index(line[line.index(" ") + 1 : len(line) - 1])
-            data["state"][j] = line[0 : line.index(" ")]
+        if line[line.index(" ") + 1 : len(line) - 1] in signals:
+            j = signals.index(line[line.index(" ") + 1 : len(line) - 1])
+            data[j] = line[0 : line.index(" ")]
 
     elif line[0] == "#":
-        data["time"] = line[1 : len(line) - 1]
+        return (True, data)
 
-    return data
+    return (False, data)
 
 
 def parse_data(paths, time_related_data, i):
@@ -132,41 +121,30 @@ def parse_data(paths, time_related_data, i):
     each other to confirm that the two signals are equivalent."""
 
     data = init_data()
-    name = []
-    binary_time = []
-    time = []
-    binary_state = []
-    binary_name = []
-    state = []
-    curr_time = "0"
+    past_header = False
+    past_definitions = False
+    new_time = True
+    changed_data = []
+
+    data["time"].append(0)
 
     with paths["vcd"][i].open("r") as file:
-
         for line in file:
-
-            if data["past_definitions"] is False:
-                data = past_initial_data(line, data)
-
+            if past_header is False:
+                past_header, data = past_initial_data(line, data, past_header)
+            elif past_definitions is False:
+                past_definitions, data = past_initial_data(line, data, past_header)
             else:
-                name = data["name"]
-                binary_name = data["binary_name"]
-                data = check_duplicates(line, data)
+                if not changed_data:
+                    changed_data = ["0" for i in range(len(data["signal"]))]
+                if new_time:
+                    data["state"].append(changed_data[0 : len(data["signal"])])
+                    data["time"].append(data["time"][-1] + 1000)
+                new_time, changed_data = check_change(
+                    line, changed_data, data["signal"]
+                )
 
-                if data["time"] != curr_time:
-                    for j in data["binary_state"]:
-                        binary_state.append(j)
-                    for j in data["state"]:
-                        state.append(j)
-                    for j in [curr_time] * len(binary_name):
-                        binary_time.append(j)
-                    for j in [curr_time] * len(name):
-                        time.append(j)
-                    curr_time = data["time"]
-
-    time_related_data.append(
-        [binary_state, state, binary_name, name, binary_time, time]
-    )
-
+    time_related_data.append(data)
     return time_related_data
 
 
@@ -184,30 +162,30 @@ def init_unequivalent_data():
     return unequivalent_data
 
 
-def append_unequivalent_data(unequivalent_data, time_related_data, group):
+def append_unequivalent_data(unequivalent_data, data):
 
     """Checks for any unequivalent data based upon the data's status at any given time."""
 
-    name = time_related_data[0][2 + group]
-    length = len(name)
-    time = time_related_data[0][4 + group]
     index = 0
-    time_group = 0
+    time = 0
 
-    for impl, rev in zip(time_related_data[0][group], time_related_data[1][group]):
+    for impl, rev in zip(data[0]["state"], data[1]["state"]):
 
-        if impl != rev:
-            unequivalent_data["name"].append(name[index])
-            unequivalent_data["impl"].append(impl)
-            unequivalent_data["rev"].append(rev)
-            unequivalent_data["time"].append(int(time[index + time_group]) / 1000)
+        for i_sig, r_sig in zip(impl, rev):
 
-        if index < length - 1:
+            if i_sig != r_sig:
+
+                unequivalent_data["name"].append(data[0]["name"][index])
+                unequivalent_data["impl"].append(i_sig)
+                unequivalent_data["rev"].append(r_sig)
+                unequivalent_data["time"].append((time - 1000) / 1000)
+
             index = index + 1
 
-        else:
-            index = 0
-            time_group = time_group + length
+            if index == len(data[0]["name"]):
+                index = 0
+
+        time = time + 1000
 
     return unequivalent_data
 
@@ -218,15 +196,13 @@ def check_diff(paths):
     determine equivalence based upon the number of different states for each signal."""
 
     time_related_data = []
+
     for i in range(2):
         time_related_data = parse_data(paths, time_related_data, i)
 
     unequivalent_data = init_unequivalent_data()
 
-    for i in range(2):
-        unequivalent_data = append_unequivalent_data(
-            unequivalent_data, time_related_data, i
-        )
+    unequivalent_data = append_unequivalent_data(unequivalent_data, time_related_data)
 
     # If any lines exist in the diff file, then there must be unequivalency at some point
     # in the design
