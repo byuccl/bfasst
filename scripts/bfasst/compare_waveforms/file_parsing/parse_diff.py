@@ -1,19 +1,5 @@
 """A module used to accurately check the difference between VCD files"""
 
-
-def init_data():
-
-    """Sets all of the initial variables for data"""
-
-    data = {}
-    data["time"] = []
-    data["name"] = []
-    data["signal"] = []
-    data["state"] = []
-
-    return data
-
-
 def parse_io(line, input_output, words, new_word):
 
     """A function whose only purpose is to appease the coding standard by reducing the number of
@@ -112,53 +98,45 @@ def check_change(line, data, signals):
 
     return (False, data)
 
+def parse_line(line, data, monitor):
+
+    """Parses a singular line from the VCD file and stores the data in a data array."""
+
+    if monitor["past_header"] is False:
+        monitor["past_header"], data = past_initial_data(line, data, monitor["past_header"])
+    elif monitor["past_definitions"] is False:
+        monitor["past_definitions"], data = past_initial_data(line, data, monitor["past_header"])
+    else:
+        if not monitor["changed_data"]:
+            monitor["changed_data"] = ["0" for i in range(len(data["signal"]))]
+        if monitor["new_time"]:
+            data["state"].append(monitor["changed_data"][0 : len(data["signal"])])
+        monitor["new_time"], monitor["changed_data"] = check_change(
+            line, monitor["changed_data"], data["signal"]
+        )
+    return data, monitor
 
 def parse_data(paths, time_related_data, i):
 
     """Parses each vcd file, finds all occurences of a signal's state, then compares them against
     each other to confirm that the two signals are equivalent."""
 
-    data = init_data()
-    past_header = False
-    past_definitions = False
-    new_time = True
-    changed_data = []
-
-    data["time"].append(0)
+    data = {}
+    data["name"] = []
+    data["signal"] = []
+    data["state"] = []
+    monitor = {}
+    monitor["past_header"] = False
+    monitor["past_definitions"] = False
+    monitor["new_time"] = False
+    monitor["changed_data"] = []
 
     with paths["vcd"][i].open("r") as file:
         for line in file:
-            if past_header is False:
-                past_header, data = past_initial_data(line, data, past_header)
-            elif past_definitions is False:
-                past_definitions, data = past_initial_data(line, data, past_header)
-            else:
-                if not changed_data:
-                    changed_data = ["0" for i in range(len(data["signal"]))]
-                if new_time:
-                    data["state"].append(changed_data[0 : len(data["signal"])])
-                    data["time"].append(data["time"][-1] + 1000)
-                new_time, changed_data = check_change(
-                    line, changed_data, data["signal"]
-                )
+            data, monitor = parse_line(line, data, monitor)
 
     time_related_data.append(data)
     return time_related_data
-
-
-def init_unequivalent_data():
-
-    """A function that initializes the data struct unequivalent data, a structure that keeps track
-    of all data that is unequivalent at a specific time."""
-
-    unequivalent_data = {}
-    unequivalent_data["name"] = []
-    unequivalent_data["impl"] = []
-    unequivalent_data["rev"] = []
-    unequivalent_data["time"] = []
-
-    return unequivalent_data
-
 
 def append_unequivalent_data(unequivalent_data, data):
 
@@ -176,7 +154,7 @@ def append_unequivalent_data(unequivalent_data, data):
                 unequivalent_data["name"].append(data[0]["name"][index])
                 unequivalent_data["impl"].append(i_sig)
                 unequivalent_data["rev"].append(r_sig)
-                unequivalent_data["time"].append((time - 1000) / 1000)
+                unequivalent_data["time"].append((time) / 1000)
 
             index = index + 1
 
@@ -198,7 +176,11 @@ def check_diff(paths):
     for i in range(2):
         time_related_data = parse_data(paths, time_related_data, i)
 
-    unequivalent_data = init_unequivalent_data()
+    unequivalent_data = {}
+    unequivalent_data["name"] = []
+    unequivalent_data["impl"] = []
+    unequivalent_data["rev"] = []
+    unequivalent_data["time"] = []
 
     unequivalent_data = append_unequivalent_data(unequivalent_data, time_related_data)
 
