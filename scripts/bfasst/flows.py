@@ -16,7 +16,7 @@ from bfasst.design import Design
 from bfasst.utils import error
 from bfasst.synth.ic2_lse import IC2_LSE_SynthesisTool
 from bfasst.synth.ic2_synplify import IC2_Synplify_SynthesisTool
-from bfasst.synth.vivado import Vivado_SynthesisTool
+from bfasst.synth.vivado import VivadoSynthesisTool
 from bfasst.synth.yosys import Yosys_Tech_SynthTool
 from bfasst.opt.ic2_lse import Ic2LseOptTool
 from bfasst.opt.ic2_synplify import IC2_Synplify_OptTool
@@ -138,7 +138,7 @@ def conformal_cmp(design, build_dir, flow_args):
 
 def vivado_synth(design, build_dir, flow_args):
     '''Synthesize using Vivado'''
-    synth_tool = Vivado_SynthesisTool(build_dir, flow_args)
+    synth_tool = VivadoSynthesisTool(build_dir, flow_args)
     return synth_tool.create_netlist(design)
 
 
