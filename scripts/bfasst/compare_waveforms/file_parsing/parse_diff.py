@@ -31,7 +31,7 @@ def parse_io(line, input_output, words, new_word):
 
         else:
 
-            if (word != "$var") and (word != input_output):
+            if word not in ("$var", input_output):
 
                 if "[" not in word:
                     words.append(word)
@@ -72,22 +72,20 @@ def past_initial_data(line, data, past_header):
         if "$dumpvars" in line:
             return (True, data)
 
-        else:
+        if (
+            "$upscope" not in line
+            and "$enddefinitions" not in line
+            and "#0" not in line
+        ):
+            found_data = parse_signals(line)
 
-            if (
-                "$upscope" not in line
-                and "$enddefinitions" not in line
-                and "#0" not in line
-            ):
-                found_data = parse_signals(line)
+            if found_data[0] == "1":
+                data["name"].append(found_data[2])
+                data["signal"].append(found_data[1])
 
-                if found_data[0] == "1":
-                    data["name"].append(found_data[2])
-                    data["signal"].append(found_data[1])
-
-                else:
-                    data["name"].append(found_data[2])
-                    data["signal"].append(found_data[1])
+            else:
+                data["name"].append(found_data[2])
+                data["signal"].append(found_data[1])
 
     if "$scope module" in line:
         return (True, data)
