@@ -77,6 +77,9 @@ class Design:
                 "has no properties.  At minimum, design needs a 'top' property.",
             )
 
+        # Note that in python, lambdas are _expressions_, and
+        # cannot contain assignment _statements_, or any other
+        # type of statement.
         yaml_parse = {
             "top": lambda value: setattr(self, "top", value),
             "top_file": lambda value: setattr(self, "top_file_path", self.path / value),
