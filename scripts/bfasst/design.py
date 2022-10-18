@@ -142,7 +142,7 @@ class Design:
 
     def find_top_file(self):
         """infer top file from top module, checking for errors"""
-        top_paths = (self.path / (self.top + ext) for ext in [".v", ".sv", ".vhd"])
+        top_paths = [self.path / (self.top + ext) for ext in [".v", ".sv", ".vhd"]]
         valid_paths = filter(lambda x: x.is_file(), top_paths)
         if not valid_paths:
             error(
