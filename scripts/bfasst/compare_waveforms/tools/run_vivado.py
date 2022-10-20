@@ -1,77 +1,96 @@
+"""A launcher for Vivado to compare gtkwave wavefiles to Vivado's waveform analysis"""
+
+import argparse
 from pathlib import Path
-from subprocess import Popen
+import subprocess
 import shutil
-import sys
 
-base_path = sys.argv[1]
-tb_path = sys.argv[2]
-tb_name = sys.argv[3]
-base_path_r = sys.argv[4]
-tb_path_r = sys.argv[5]
-tb_name_r = sys.argv[6]
 
-vivado = sys.argv[7]
-base = sys.argv[8]
+def parse_args():
 
-assert vivado is not None, "VIVADO_PATH environmental variable was not set!"
+    """Creates the argument parser for the Vivado Launcher."""
 
-template = Path(base) / ("templates/template.tcl")
-temp_tcl = Path(base) / str("temp.tcl")
-if temp_tcl.exists():
+    parser = argparse.ArgumentParser(description="Launch Vivado.")
+    parser.add_argument("base", metavar="Base", help="Base path to files.")
+    parser.add_argument("module", metavar="Module", help="Module name.")
+    parser.add_argument(
+        "temp", metavar="Temp Folder", help="Temporary Location for TCL files."
+    )
+    parser.add_argument("vivado", metavar="Vivado", help="Location of Vivado Launcher.")
+
+    return parser.parse_args()
+
+
+def create_tcl(template, temp_tcl, base, module):
+
+    """Creates a temporary TCL file to launch Vivado."""
+
+    if temp_tcl.exists():
+        temp_tcl.unlink()
+
+    # Replaces portions of the template TCL file with info needed for Vivado to launch.
+    with template.open("r") as file:
+        with temp_tcl.open("x") as output:
+            for line in file:
+                if "PATH" in line:
+                    line = line.replace(
+                        line[line.find("PATH") : line.find("PATH") + 4],
+                        f"{base}/{module}.v",
+                    )
+                if "FILE_T" in line:
+                    line = line.replace(
+                        line[line.find("FILE_T") : line.find("FILE_T") + 6],
+                        f"{base}/{module}_tb.v",
+                    )
+                elif "TB" in line:
+                    line = line.replace(
+                        line[line.find("TB") : line.find("TB") + 2], f"{module}_tb"
+                    )
+                output.write(line)
+
+
+def launch_vivado(base, module, temp, vivado):
+
+    """Handles the logic for launching Vivado automatically."""
+
+    assert vivado is not None, "VIVADO_PATH environmental variable was not set!"
+
+    template = Path(temp) / ("templates/template.tcl")
+    temp_tcl = Path(temp) / (f"temp_{module}.tcl")
+
+    create_tcl(template, temp_tcl, base, module)
+
+    # Creates a temporary directory so that multiple vivado simulations can occur at once.
+    temp_dir = Path(f"{module}_vivado_sim")
+    if temp_dir.exists():
+        shutil.rmtree(str(temp_dir))
+
+    temp_dir.mkdir()
+
+    subprocess.run(
+        [
+            vivado,
+            "-nolog",
+            "-nojournal",
+            "-source",
+            str(temp_tcl),
+        ],
+        cwd=str(temp_dir),
+    )
+
+    # Removes the temporary directory since the Vivado folder is not needed.
+    shutil.rmtree(str(temp_dir))
     temp_tcl.unlink()
 
-with template.open("r") as file:
-    with temp_tcl.open("x") as output:
-        for line in file:
-            if "PATH" in line:
-                line = line.replace(
-                    line[line.find("PATH") : line.find("PATH") + 4], base_path
-                )
-            if "FILE_T" in line:
-                line = line.replace(
-                    line[line.find("FILE_T") : line.find("FILE_T") + 6], tb_path
-                )
-            elif "TB" in line:
-                line = line.replace(
-                    line[line.find("TB") : line.find("TB") + 2], tb_name
-                )
-            output.write(line)
 
-temp2_tcl = Path(base) / str("temp2.tcl")
-if temp2_tcl.exists():
-    temp2_tcl.unlink()
+def main():
 
-with template.open("r") as file:
-    with temp2_tcl.open("x") as output:
-        for line in file:
-            if "temp" in line:
-                line = line.replace(
-                    line[line.find("temp") : line.find("temp") + 4], "temp2"
-                )
-            if "PATH" in line:
-                line = line.replace(
-                    line[line.find("PATH") : line.find("PATH") + 4], base_path_r
-                )
-            if "FILE_T" in line:
-                line = line.replace(
-                    line[line.find("FILE_T") : line.find("FILE_T") + 6], tb_path_r
-                )
-            elif "TB" in line:
-                line = line.replace(
-                    line[line.find("TB") : line.find("TB") + 2], tb_name_r
-                )
-            output.write(line)
+    """The main function."""
 
-commands = [
-    [vivado, "-nolog", "-nojournal", "-source", str(temp_tcl)],
-    [vivado, "-nolog", "-nojournal", "-source", str(temp2_tcl)],
-]
+    args = parse_args()
 
-procs = [Popen(i) for i in commands]
-for p in procs:
-    p.wait()
+    launch_vivado(args.base, args.module, args.temp, args.vivado)
 
-shutil.rmtree("temp")
-shutil.rmtree("temp2")
-temp_tcl.unlink()
-temp2_tcl.unlink()
+
+if __name__ == "__main__":
+    main()
