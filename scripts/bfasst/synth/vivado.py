@@ -28,7 +28,8 @@ def write_xdc(pinmap, stream):
 
 def extract_contraints(design, report_io_path):
     with open(design.constraints_path, "w") as fp:
-        write_xdc(vivado_ioparse.map_pins(report_io_path), fp)
+        design.mapped_io = tuple(vivado_ioparse.map_pins(report_io_path))
+        write_xdc(design.mapped_io, fp)
 
 
 class VivadoSynthesisTool(SynthesisTool):
