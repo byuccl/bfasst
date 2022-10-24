@@ -89,13 +89,13 @@ class Design:
                 self, "reversed_netlist_path", self.path / value
             ),
             "include_all_verilog_files": lambda value: self.verilog_file_paths.extend(
-                self.hdl_by_suffix("v", "vh")
+                self.hdl_by_suffix(".v", ".vh")
             ),
             "include_all_system_verilog_files": lambda value: self.system_verilog_file_paths.extend(
-                self.hdl_by_suffix("sv")
+                self.hdl_by_suffix(".sv")
             ),
             "include_all_vhdl_files": lambda value: self.vhdl_file_paths.extend(
-                self.hdl_by_suffix("vhd")
+                self.hdl_by_suffix(".vhd")
             ),
             "verilog_files": lambda value: self.verilog_file_paths.extend(
                 self.path / source for source in value
@@ -158,11 +158,8 @@ class Design:
         return next(valid_paths)
 
     def hdl_by_suffix(self, *suffixes):
-        return (
-            source
-            for source in self.path.iterdir()
-            if source.is_file and source.suffix in suffixes and source != self.top_file_path
-        )
+        return (source for source in self.path.iterdir() if (source.is_file and source.suffix in suffixes and source != self.top_file_path))
+        
 
     def enum_vhdl_libs(self, vhdl_paths):
         result = {}
