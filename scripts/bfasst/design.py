@@ -155,7 +155,7 @@ class Design:
                 self.path,
             )
 
-        return list(valid_paths)[0]
+        return next(valid_paths)
 
     def hdl_by_suffix(self, *suffixes):
         return (
