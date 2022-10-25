@@ -1,8 +1,11 @@
+"""Handles parsing the Verilog files to find the signal names and lengths."""
 import spydrnet as sdn
 
 
 def parse(file):
+
     """Uses spydrnet to analyze the netlist and add the names of all inputs, outputs, and their respective bit sizes to the data structure."""
+
     netlist = sdn.parse(str(file))
     library = netlist.libraries[0]
     definition = library.definitions[0]
@@ -32,8 +35,10 @@ def parse(file):
 
 
 def parse_multiple(file, reversed_file):
+
     """A specific parse function in the situation where multiple verilog files exist. The design has multiple layers of ports, so finding the equivalent
     ports requires comparing the ports in each layer to the ports in the reversed_netlist. Once both have the same equivalence, they are stored."""
+
     data = {}
     data["output_list"] = []
     data["input_list"] = []
@@ -85,8 +90,10 @@ def parse_multiple(file, reversed_file):
 
 
 def parse_reversed(paths, i):
+
     """Due to reversed netlists having incomplete ports that can cause issues with spydrnet, this function removes
     all of the excess data the spydrnet doesn't need so that the inputs and outputs can still be parsed."""
+
     with paths["file"][1].open("r") as file:
         if paths["test"].exists():
             paths["test"].unlink()
@@ -104,6 +111,8 @@ def parse_reversed(paths, i):
                     if j == 0:
                         j = 1
                         newFile.write(line)
+
     if i == 0:
         return parse_multiple(paths["path"][i], paths["test"])
+
     return parse(paths["test"])  # Parses this newly-generated simplified netlist.
