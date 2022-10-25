@@ -13,10 +13,10 @@ def input_num(data):
 
 def total_num(data):
 
-    """A simple function to return the total amount of data being stored as both inputs and outputs
-    """
+    """A simple function to return the total amount of data being stored as both inputs and outputs"""
 
     return len(data["input_list"]) + len(data["output_list"])
+
 
 def generate_random(data, random_list, test_num):
 
@@ -24,9 +24,7 @@ def generate_random(data, random_list, test_num):
 
     for bits in data["input_bits_list"]:
         if bits == 0:
-            random_list.append(
-                np.random.randint(low=0, high=2, size=int(test_num))
-            )
+            random_list.append(np.random.randint(low=0, high=2, size=int(test_num)))
         else:
             random_list.append(
                 np.random.randint(
@@ -35,7 +33,8 @@ def generate_random(data, random_list, test_num):
                     size=int(test_num),
                 )
             )
-    return(random_list)
+    return random_list
+
 
 def write_random_state(input, input_number, index, random_list):
 
@@ -51,7 +50,8 @@ def write_random_state(input, input_number, index, random_list):
     else:
         if input_number == 0:
             line = "    # 5 "
-    return(line)
+    return line
+
 
 def write_random_lines(data, test_num, random_list, tb):
 
@@ -66,6 +66,7 @@ def write_random_lines(data, test_num, random_list, tb):
         tb.write("\n")
     return "    # 5 $finish;"
 
+
 def write_tb_name(paths, tb):
 
     """Returns the line with the testbench name included."""
@@ -74,7 +75,11 @@ def write_tb_name(paths, tb):
     tb.write(line)
     return "\n"
 
+
 def parse_line(line, data, tb, test_num, paths, random_list):
+
+    """Parses the individual line."""
+
     if "TB_NAME;" in line:
         line = write_tb_name(paths, tb)
 
@@ -82,9 +87,7 @@ def parse_line(line, data, tb, test_num, paths, random_list):
         line = f"    $dumpvars(1,{paths['modules'][1]}_tb);\n"
 
     if "INPUTS" in line:
-        for signal_in, bits in zip(
-            data["input_list"], data["input_bits_list"]
-        ):
+        for signal_in, bits in zip(data["input_list"], data["input_bits_list"]):
             signal_in = str(signal_in)
             bits = str(bits)
             if signal_in != "clk":
@@ -96,9 +99,7 @@ def parse_line(line, data, tb, test_num, paths, random_list):
             line = ""
 
     if "OUTPUTS" in line:
-        for signal_out, bits in zip(
-            data["output_list"], data["output_bits_list"]
-        ):
+        for signal_out, bits in zip(data["output_list"], data["output_bits_list"]):
             signal_out = str(signal_out)
             bits = str(bits)
             line = f"wire [{bits}:0] {signal_out};\n"
@@ -123,7 +124,7 @@ def parse_line(line, data, tb, test_num, paths, random_list):
         line = write_random_lines(data, test_num, random_list, tb)
 
     tb.write(line)
-    return(test_num)
+    return test_num
 
 
 def generate_first_testbench(paths, test_num, data, i):
@@ -140,8 +141,6 @@ def generate_first_testbench(paths, test_num, data, i):
             random_list = generate_random(data, random_list, test_num)
             for line in sample:
                 parse_line(line, data, tb, test_num, paths, random_list)
-
-
 
 
 def generate_testbench(paths, data, i):
