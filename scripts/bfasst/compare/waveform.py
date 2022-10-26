@@ -91,7 +91,7 @@ class WaveformCompareTool(CompareTool):
         it calls the testbench generators, finally it calls the TCL generators. It then increments
         to the next file and clears the data structure."""
         test_num = 100  # Change this number if you want to run more or less than 100 tests in the
-        #testbench.
+        # testbench.
         data = {}  # Contains all of the IOs for the design.
         file_rewriter.copy_files(paths)
         # Creates copies of the netlists that will be modified by the file_rewriter
@@ -110,7 +110,7 @@ class WaveformCompareTool(CompareTool):
                     # Rewrites the files to have correct module names
                     if multiple_files:
                         # The logic for how to parse the file depends on whether or not there are
-                        #multiple verilog files involved in a design
+                        # multiple verilog files involved in a design
                         data = parse_files.parse_reversed(paths, i)
                         # Finds the IO names and bit sizes
                     else:

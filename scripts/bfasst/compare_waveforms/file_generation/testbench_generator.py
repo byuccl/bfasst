@@ -59,7 +59,9 @@ def write_random_lines(data, test_num, random_list, tb):
 
     # The actual logic for adding random numbers to the testbench.
     for j in range(int(test_num)):
-        for input_signal, input_number in zip(data["input_list"], range(input_num(data))):
+        for input_signal, input_number in zip(
+            data["input_list"], range(input_num(data))
+        ):
             line = write_random_state(input_signal, input_number, j, random_list)
             tb.write(line)
             line = ""
@@ -161,7 +163,9 @@ def generate_testbench(paths, data, i):
                 if f"{paths['modules'][1]} instanceOf (" in line:
                     line = f"{paths['modules'][i+1]} instanceOf ("
 
-                    for total_data, i in zip(data["total_list"], range(total_num(data))):
+                    for total_data, i in zip(
+                        data["total_list"], range(total_num(data))
+                    ):
                         if i == total_num(data) - 1:
                             line = f"{line}{total_data});\n"
                         else:
