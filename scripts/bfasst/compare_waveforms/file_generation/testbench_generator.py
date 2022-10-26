@@ -1,7 +1,6 @@
-import numpy as np
-
-
 """A simple function to return the amount of data stored in the input list."""
+
+import numpy as np
 
 
 def input_num(data):
@@ -13,7 +12,8 @@ def input_num(data):
 
 def total_num(data):
 
-    """A simple function to return the total amount of data being stored as both inputs and outputs"""
+    """A simple function to return the total amount of data being stored as both inputs
+    and outputs"""
 
     return len(data["input_list"]) + len(data["output_list"])
 
@@ -36,17 +36,17 @@ def generate_random(data, random_list, test_num):
     return random_list
 
 
-def write_random_state(input, input_number, index, random_list):
+def write_random_state(input_signal, input_number, index, random_list):
 
     """Writes the current state for the random number."""
 
     line = ""
 
-    if input != "clk":
+    if input_signal != "clk":
         if input_number == 0:
-            line = f"    # 5 {input} = {random_list[input_number][index]};\n"
+            line = f"    # 5 {input_signal} = {random_list[input_number][index]};\n"
         else:
-            line = f"    {input} = {random_list[input_number][index]};\n"
+            line = f"    {input_signal} = {random_list[input_number][index]};\n"
     else:
         if input_number == 0:
             line = "    # 5 "
@@ -59,8 +59,8 @@ def write_random_lines(data, test_num, random_list, tb):
 
     # The actual logic for adding random numbers to the testbench.
     for j in range(int(test_num)):
-        for input, input_number in zip(data["input_list"], range(input_num(data))):
-            line = write_random_state(input, input_number, j, random_list)
+        for input_signal, input_number in zip(data["input_list"], range(input_num(data))):
+            line = write_random_state(input_signal, input_number, j, random_list)
             tb.write(line)
             line = ""
         tb.write("\n")
@@ -116,8 +116,8 @@ def parse_line(line, data, tb, test_num, paths, random_list):
                 line = f"{line}{total}, "
 
     if "reg clk = 0;" in line:
-        for input in data["input_list"]:
-            if input == "clk":
+        for input_signal in data["input_list"]:
+            if input_signal == "clk":
                 line = ""
 
     if "/*SIGNALS" in line:
@@ -161,10 +161,10 @@ def generate_testbench(paths, data, i):
                 if f"{paths['modules'][1]} instanceOf (" in line:
                     line = f"{paths['modules'][i+1]} instanceOf ("
 
-                    for totalData, i in zip(data["total_list"], range(total_num(data))):
+                    for total_data, i in zip(data["total_list"], range(total_num(data))):
                         if i == total_num(data) - 1:
-                            line = f"{line}{totalData});\n"
+                            line = f"{line}{total_data});\n"
                         else:
-                            line = f"{line}{totalData}, "
+                            line = f"{line}{total_data}, "
 
                 tb.write(line)
