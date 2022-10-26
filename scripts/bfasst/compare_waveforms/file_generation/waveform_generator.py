@@ -3,7 +3,7 @@
 import subprocess
 
 
-def generate_VCD(paths, i):
+def generate_vcd(paths, i):
 
     """Uses IVerilog to create a VCD file for viewing waveforms"""
 

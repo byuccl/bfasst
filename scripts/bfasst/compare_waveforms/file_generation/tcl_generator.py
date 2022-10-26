@@ -1,7 +1,7 @@
 """Handles TCL generation that is used by GTKWave for viewing waveforms."""
 
 
-def generate_first_TCL(paths, data, i):
+def generate_first_tcl(paths, data, i):
 
     """Generates the first TCL that will be used in gtkwave to create a VCD output."""
 
@@ -12,15 +12,15 @@ def generate_first_TCL(paths, data, i):
 
     with path.open("x") as TCL:
         line = "set filter [list "
-        for totalData in data["total_list"]:
-            line = f"{line}{(paths['modules'][i+1])}_tb.{totalData.strip()} "
+        for total_data in data["total_list"]:
+            line = f"{line}{(paths['modules'][i+1])}_tb.{total_data.strip()} "
 
         line = f"{line}]\n"
         TCL.write(line)
         TCL.write("gtkwave::addSignalsFromList $filter\n")
 
 
-def generate_TCL(paths, i):
+def generate_tcl(paths, i):
 
     """Replaces information in the last TCL with information specific to this testbench."""
 

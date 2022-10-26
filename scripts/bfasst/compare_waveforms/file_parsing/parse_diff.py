@@ -1,6 +1,5 @@
 """A module used to accurately check the difference between VCD files"""
 
-
 def parse_io(line, input_output, words, new_word):
 
     """A function whose only purpose is to appease the coding standard by reducing the number of
@@ -229,6 +228,8 @@ def check_diff(paths):
         print(f"See {paths['diff']} for more info")
 
     else:
+        if paths["diff"].exists():
+            paths["diff"].unlink()
         return True
 
     return False

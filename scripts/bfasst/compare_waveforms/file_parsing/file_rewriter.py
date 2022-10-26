@@ -5,7 +5,8 @@ import shutil
 
 def copy_files(paths):
 
-    """Creates copies of the two designs so that they can be modified when they need to be fixed for parsing"""
+    """Creates copies of the two designs so that they can be modified when they need to be fixed
+    for parsing"""
 
     shutil.copyfile(paths["path"][0], paths["build_dir"] / paths["path"][0].name)
     shutil.copyfile(paths["path"][1], paths["build_dir"] / paths["path"][1].name)
@@ -13,7 +14,8 @@ def copy_files(paths):
 
 def fix_file(paths, i):
 
-    """A function to fix syntax issues that spydrnet commonly has with xilinx-generated or reverse-generated netlists."""
+    """A function to fix syntax issues that spydrnet commonly has with xilinx-generated or
+    reverse-generated netlists."""
 
     path = paths["file"][i]
     file_name = paths["modules"][i + 1]

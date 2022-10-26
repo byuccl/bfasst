@@ -26,7 +26,7 @@ from bfasst.reverse_bit.xray import XRay_ReverseBitTool
 from bfasst.reverse_bit.icestorm import Icestorm_ReverseBitTool
 from bfasst.compare.conformal import Conformal_CompareTool
 from bfasst.compare.yosys import Yosys_CompareTool
-from bfasst.compare.waveform import Waveform_CompareTool
+from bfasst.compare.waveform import WaveformCompareTool
 from bfasst.compare.onespin import OneSpin_CompareTool
 from bfasst.error_injection.error_injector import ErrorInjector_ErrorInjectionTool
 
@@ -161,7 +161,7 @@ def yosys_cmp(design, build_dir, flow_args):
 
 def wave_cmp(design, build_dir, run_interface):
     '''Compare netlists via waveforms'''
-    tool = Waveform_CompareTool(build_dir)
+    tool = WaveformCompareTool(build_dir)
     return tool.compare_netlists(design, run_interface)
 
 def onespin_cmp(design, build_dir, flow_args):

@@ -4,7 +4,8 @@ import spydrnet as sdn
 
 def parse(file):
 
-    """Uses spydrnet to analyze the netlist and add the names of all inputs, outputs, and their respective bit sizes to the data structure."""
+    """Uses spydrnet to analyze the netlist and add the names of all inputs, outputs, and their
+    respective bit sizes to the data structure."""
 
     netlist = sdn.parse(str(file))
     library = netlist.libraries[0]
@@ -36,8 +37,10 @@ def parse(file):
 
 def parse_multiple(file, reversed_file):
 
-    """A specific parse function in the situation where multiple verilog files exist. The design has multiple layers of ports, so finding the equivalent
-    ports requires comparing the ports in each layer to the ports in the reversed_netlist. Once both have the same equivalence, they are stored."""
+    """A specific parse function in the situation where multiple verilog files exist. The design
+    has multiple layers of ports, so finding the equivalent
+    ports requires comparing the ports in each layer to the ports in the reversed_netlist. Once
+    both have the same equivalence, they are stored."""
 
     data = {}
     data["output_list"] = []
@@ -91,26 +94,29 @@ def parse_multiple(file, reversed_file):
 
 def parse_reversed(paths, i):
 
-    """Due to reversed netlists having incomplete ports that can cause issues with spydrnet, this function removes
-    all of the excess data the spydrnet doesn't need so that the inputs and outputs can still be parsed."""
+    """Due to reversed netlists having incomplete ports that can cause issues with spydrnet, this
+    function removes
+    all of the excess data the spydrnet doesn't need so that the inputs and outputs can still be
+    parsed."""
 
     with paths["file"][1].open("r") as file:
         if paths["test"].exists():
             paths["test"].unlink()
-        with paths["test"].open("x") as newFile:
+        with paths["test"].open("x") as new_file:
             j = 0
-            # Only includes lines that declare the module, the inputs, or the outputs or the line directly after them.
+            # Only includes lines that declare the module, the inputs, or the outputs or the line
+            # directly after them.
             for line in file:
                 if "module" in line:
-                    newFile.write(line)
+                    new_file.write(line)
                 elif "input" in line:
-                    newFile.write(line)
+                    new_file.write(line)
                 elif "output" in line:
-                    newFile.write(line)
+                    new_file.write(line)
                 else:
                     if j == 0:
                         j = 1
-                        newFile.write(line)
+                        new_file.write(line)
 
     if i == 0:
         return parse_multiple(paths["path"][i], paths["test"])
