@@ -2,6 +2,23 @@
 import spydrnet as sdn
 
 
+def get_data(data, ports):
+    """Finds all of the IO ports in the netlist and stores them in data."""
+    for port in ports:
+        if str(port.direction) == "Direction.OUT":
+            data["output_list"].append(port.name)
+            data["total_list"].append(port.name)
+            data["output_bits_list"].append(len(port.pins) - 1)
+        elif str(port.direction) == "Direction.IN":
+            data["input_list"].append(port.name)
+            data["total_list"].append(port.name)
+            data["input_bits_list"].append(len(port.pins) - 1)
+    if "clk" in data["input_list"]:
+        if data["input_list"].index("clk") == 0:
+            data["input_list"].append(data["input_list"].pop(0))
+    return data
+
+
 def parse(file):
 
     """Uses spydrnet to analyze the netlist and add the names of all inputs, outputs, and their
@@ -19,19 +36,7 @@ def parse(file):
     data["output_bits_list"] = []
 
     # Use design.yaml_path to find yaml file. Read to find if more modules exist.
-    for port in definition.ports:
-        if str(port.direction) == "Direction.OUT":
-            data["output_list"].append(port.name)
-            data["total_list"].append(port.name)
-            data["output_bits_list"].append(len(port.pins) - 1)
-        elif str(port.direction) == "Direction.IN":
-            data["input_list"].append(port.name)
-            data["total_list"].append(port.name)
-            data["input_bits_list"].append(len(port.pins) - 1)
-    if "clk" in data["input_list"]:
-        if data["input_list"].index("clk") == 0:
-            data["input_list"].append(data["input_list"].pop(0))
-
+    data = get_data(data, definition.ports)
     return data
 
 
@@ -74,18 +79,7 @@ def parse_multiple(file, reversed_file):
             else:
                 contains_item = False
         if not_port is False:
-            for port in i.ports:
-                if str(port.direction) == "Direction.OUT":
-                    data["output_list"].append(port.name)
-                    data["total_list"].append(port.name)
-                    data["output_bits_list"].append(len(port.pins) - 1)
-                elif str(port.direction) == "Direction.IN":
-                    data["input_list"].append(port.name)
-                    data["total_list"].append(port.name)
-                    data["input_bits_list"].append(len(port.pins) - 1)
-            if "clk" in data["input_list"]:
-                if data["input_list"].index("clk") == 0:
-                    data["input_list"].append(data["input_list"].pop(0))
+            data = get_data(data, i.ports)
         else:
             not_port = False
     reversed_file.unlink()
