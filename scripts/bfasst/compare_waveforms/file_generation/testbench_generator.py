@@ -53,6 +53,68 @@ def write_random_state(input_signal, input_number, index, random_list):
     return line
 
 
+def write_tb_name(paths, tb, is_paren):
+
+    """Returns the line with the testbench name included."""
+    if is_paren:
+        line = f"    $dumpvars(1,{paths['modules'][1]}_tb);"
+    else:
+        line = f"module {paths['modules'][1]}_tb;"
+    tb.write(line)
+    return "\n"
+
+
+def write_module_name(paths, data):
+
+    """Handles writing the module declaration."""
+
+    line = f"{paths['modules'][1]} instanceOf ("
+    for total, j in zip(data["total_list"], range(total_num(data))):
+        total = str(total)
+        if j == total_num(data) - 1:
+            line = f"{line}{total});\n"
+        else:
+            line = f"{line}{total}, "
+    return line
+
+
+def write_inputs(data, tb):
+
+    """Handles writing all of the input signals."""
+
+    for signal_in, bits in zip(data["input_list"], data["input_bits_list"]):
+        signal_in = str(signal_in)
+        bits = str(bits)
+        if signal_in != "clk":
+            line = f"reg [{bits}:0] {signal_in} = 0;\n"
+            tb.write(line)
+        else:
+            line = "reg clk = 0;\n"
+            tb.write(line)
+        line = ""
+    return ""
+
+
+def write_outputs(data, tb):
+
+    """Handles writing all of the output signals."""
+
+    for signal_out, bits in zip(data["output_list"], data["output_bits_list"]):
+        signal_out = str(signal_out)
+        bits = str(bits)
+        line = f"wire [{bits}:0] {signal_out};\n"
+        tb.write(line)
+    return ""
+
+
+def check_clk(data, line):
+    """Confirms that a clock is not declared as input signal and is set to 0."""
+    for input_signal in data["input_list"]:
+        if input_signal == "clk":
+            line = ""
+    return line
+
+
 def write_random_lines(data, test_num, random_list, tb):
 
     """Writes lines for all randomly generated numbers."""
@@ -69,58 +131,27 @@ def write_random_lines(data, test_num, random_list, tb):
     return "    # 5 $finish;"
 
 
-def write_tb_name(paths, tb):
-
-    """Returns the line with the testbench name included."""
-
-    line = f"module {paths['modules'][1]}_tb;"
-    tb.write(line)
-    return "\n"
-
-
 def parse_line(line, data, tb, test_num, paths, random_list):
 
     """Parses the individual line."""
 
     if "TB_NAME;" in line:
-        line = write_tb_name(paths, tb)
+        line = write_tb_name(paths, tb, False)
 
     if "TB_NAME)" in line:
-        line = f"    $dumpvars(1,{paths['modules'][1]}_tb);\n"
+        line = write_tb_name(paths, tb, True)
 
     if "INPUTS" in line:
-        for signal_in, bits in zip(data["input_list"], data["input_bits_list"]):
-            signal_in = str(signal_in)
-            bits = str(bits)
-            if signal_in != "clk":
-                line = f"reg [{bits}:0] {signal_in} = 0;\n"
-                tb.write(line)
-            else:
-                line = "reg clk = 0;\n"
-                tb.write(line)
-            line = ""
+        line = write_inputs(data, tb)
 
     if "OUTPUTS" in line:
-        for signal_out, bits in zip(data["output_list"], data["output_bits_list"]):
-            signal_out = str(signal_out)
-            bits = str(bits)
-            line = f"wire [{bits}:0] {signal_out};\n"
-            tb.write(line)
-        line = ""
+        line = write_outputs(data, tb)
 
     if "MODULE_NAME" in line:
-        line = f"{paths['modules'][1]} instanceOf ("
-        for total, j in zip(data["total_list"], range(total_num(data))):
-            total = str(total)
-            if j == total_num(data) - 1:
-                line = f"{line}{total});\n"
-            else:
-                line = f"{line}{total}, "
+        line = write_module_name(paths, data)
 
     if "reg clk = 0;" in line:
-        for input_signal in data["input_list"]:
-            if input_signal == "clk":
-                line = ""
+        line = check_clk(data, line)
 
     if "/*SIGNALS" in line:
         line = write_random_lines(data, test_num, random_list, tb)
@@ -163,10 +194,10 @@ def generate_testbench(paths, data, i):
                 if f"{paths['modules'][1]} instanceOf (" in line:
                     line = f"{paths['modules'][i+1]} instanceOf ("
 
-                    for total_data, i in zip(
+                    for total_data, index in zip(
                         data["total_list"], range(total_num(data))
                     ):
-                        if i == total_num(data) - 1:
+                        if index == total_num(data) - 1:
                             line = f"{line}{total_data});\n"
                         else:
                             line = f"{line}{total_data}, "

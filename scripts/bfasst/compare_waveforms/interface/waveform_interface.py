@@ -16,7 +16,8 @@ END_TESTS = "Ok. Ending Tests."
 
 def check_multiple_files(design):
 
-    """A function to check if there are multiple verilog files in a design or not. Used later in parsing stages due to different logic being needed."""
+    """A function to check if there are multiple verilog files in a design or not. Used later in
+    parsing stages due to different logic being needed."""
 
     with open(design.yaml_path, "r") as fp:
         design_props = yaml.safe_load(fp)
@@ -33,28 +34,38 @@ def check_multiple_files(design):
     return multiple_files
 
 
+def unequivalent_interface():
+    """Handles if the file was previously unequivalent."""
+    cont = input(
+        f"{DEFAULT_MESSAGE_1} unequivalent{DEFAULT_MESSAGE_2} {INPUT_RESPONSE}"
+    )
+    if cont == "0":
+        cont = input(f"{GENERATE_TB} {INPUT_RESPONSE}")
+        if cont == "0":
+            print(END_TESTS)
+            return QUIT_UNEQUIVALENT
+        return RUN_TESTS
+    return CHECK_GRAPHS_UNEQUIVALENT
+
+
+def equivalent_interface():
+    """Handles if the file was previously equivalent."""
+    cont = input(f"{DEFAULT_MESSAGE_1} equivalent{DEFAULT_MESSAGE_2} {INPUT_RESPONSE}")
+    if cont == "0":
+        cont = input(f"{GENERATE_TB} {INPUT_RESPONSE}")
+        if cont == "0":
+            print(END_TESTS)
+            return QUIT_EQUIVALENT
+        return RUN_TESTS
+    return CHECK_GRAPHS_EQUIVALENT
+
+
 def user_interface(paths):
 
     """Handles the actual interface for determining what to do if tests have already been ran."""
 
     if paths["diff"].exists():
-        cont = input(
-            f"{DEFAULT_MESSAGE_1} unequivalent{DEFAULT_MESSAGE_2} {INPUT_RESPONSE}"
-        )
-        if cont == "0":
-            cont = input(f"{GENERATE_TB} {INPUT_RESPONSE}")
-            if cont == "0":
-                print(END_TESTS)
-                return QUIT_UNEQUIVALENT
-            return RUN_TESTS
-        return CHECK_GRAPHS_UNEQUIVALENT
-    elif paths["vcd"][0].exists() & paths["vcd"][1].exists():
-        cont = input(f"{DEFAULT_MESSAGE_1} equivalent{DEFAULT_MESSAGE_2}")
-        if cont == "0":
-            cont = input(f"{GENERATE_TB} {INPUT_RESPONSE}")
-            if cont == "0":
-                print(END_TESTS)
-                return QUIT_EQUIVALENT
-            return RUN_TESTS
-        return CHECK_GRAPHS_EQUIVALENT
+        return unequivalent_interface()
+    if paths["vcd"][0].exists() & paths["vcd"][1].exists():
+        return equivalent_interface()
     return RUN_TESTS
