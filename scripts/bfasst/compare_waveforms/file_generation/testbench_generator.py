@@ -1,6 +1,6 @@
 """A simple function to return the amount of data stored in the input list."""
 
-import numpy as np
+import random
 
 
 def input_num(data):
@@ -24,14 +24,13 @@ def generate_random(data, random_list, test_num):
 
     for bits in data["input_bits_list"]:
         if bits == 0:
-            random_list.append(np.random.randint(low=0, high=2, size=int(test_num)))
+            random_list.append([random.randrange(0, 2) for i in range(int(test_num))])
         else:
             random_list.append(
-                np.random.randint(
-                    low=0,
-                    high=(2 ** (int(bits) + 1) - 1),
-                    size=int(test_num),
-                )
+                [
+                    random.randrange(0, (2 ** (int(bits) + 1) - 1))
+                    for i in range(int(test_num))
+                ]
             )
     return random_list
 
@@ -162,11 +161,11 @@ def parse_line(line, data, tb, test_num, paths, random_list):
 
 def generate_first_testbench(paths, test_num, data, i):
 
-    """This function creates the initial testbench that will be modified by the reversed-netlist.
-    It reads in a sample testbench
-    and replaces certain variables with the corresponding information from the data structure. It
-    also sets the variables equal
-    to random numbers that are generated to be within the corresponding variable's bit range."""
+    """This function creates the initial testbench that will be modified
+    by the reversed-netlist.  It reads in a sample testbench and replaces
+    certain variables with the corresponding information from the data
+    structure. It also sets the variables equal to random numbers that
+    are generated to be within the corresponding variable's bit range."""
 
     random_list = []
     with paths["sample_tb"].open("r") as sample:
@@ -178,9 +177,9 @@ def generate_first_testbench(paths, test_num, data, i):
 
 def generate_testbench(paths, data, i):
 
-    """Rather than generating a whole new testbench, this one takes the first generated testbench
-    and replaces everything that
-    is specific to that module with this module's information."""
+    """Rather than generating a whole new testbench, this one takes the
+    first generated testbench and replaces everything that is specific
+    to that module with this module's information."""
 
     with (paths["tb"][0]).open("r") as sample:
         with paths["tb"][i].open("x") as tb:

@@ -152,15 +152,15 @@ class WaveformCompareTool(CompareTool):
             log_text = log.read()
 
         # Check for timeout
-        if re.search(r"^Timeout$", log_text, re.M):
+        if re.search("^Timeout$", log_text, re.M):
             return Status(CompareStatus.TIMEOUT)
 
         # Regex search for result
-        i = re.search(r"Equivalence successfully proven!", log_text, re.M)
+        i = re.search("Equivalence successfully proven!", log_text, re.M)
         if i:
             return Status(CompareStatus.SUCCESS)
 
-        i = re.search(r"ERROR", log_text, re.M)
+        i = re.search("ERROR", log_text, re.M)
         if i:
             return Status(CompareStatus.NOT_EQUIVALENT)
 
