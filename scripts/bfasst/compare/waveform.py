@@ -1,9 +1,12 @@
-# Waveform equivalence checker. Designed by Jake Edvenson.
-# Relies on gtkwave, icarus-verilog, spydrnet, and numpy.
-# To use this script, use ./scripts/run_design.py (DESIGN_PATH) xilinx_yosys_waveform
-# The rest of the script should be self-explanitory. I've included a lot of user-prompts to make it very user-friendly.
-# If vivado or F4PGA ever change there netlist-generating style, this file may need to be edited.
-# I would check the fix_file function because this file currently alters the netlists so that spydrnet can parse them.
+"""Waveform equivalence checker. Designed by Jake Edvenson.
+    Relies on gtkwave, icarus-verilog, spydrnet, and numpy.
+    To use this script, use ./scripts/run_design.py (DESIGN_PATH)
+    xilinx_yosys_waveform
+    The rest of the script should be self-explanitory. I've included a lot of
+    user-prompts to make it very user-friendly.
+    If vivado or F4PGA ever change there netlist-generating style, this file may need to be edited.
+    I would check the fix_file function because this file currently alters the netlists so that
+    spydrnet can parse them."""
 
 import pathlib
 import re
@@ -11,8 +14,6 @@ import bfasst
 from bfasst.compare.base import CompareTool
 from bfasst.status import Status, CompareStatus
 from bfasst.tool import ToolProduct
-
-# Note: All of the tools below cna be found in the compare_waveforms directory. Each covers a part of the waveform toolchain
 from bfasst.compare_waveforms.tools import analyze_graph
 from bfasst.compare_waveforms.file_parsing import file_rewriter, parse_diff, parse_files
 from bfasst.compare_waveforms.file_generation import (
@@ -24,7 +25,7 @@ from bfasst.compare_waveforms.templates import get_paths
 from bfasst.compare_waveforms.interface import waveform_interface
 
 
-class Waveform_CompareTool(CompareTool):
+class WaveformCompareTool(CompareTool):
     """The main class for comparing the waveforms."""
 
     TOOL_WORK_DIR = "waveform"
@@ -52,7 +53,8 @@ class Waveform_CompareTool(CompareTool):
         # Gets all paths used for file-generation
 
         if runInterface:
-            # If the quick flow is chosen, interface is skipped and so is viewing the actual waveforms.
+            # If the quick flow is chosen, interface is skipped and so is viewing the actual
+            # waveforms.
             choice = waveform_interface.user_interface(paths)
             # Runs through the User interface, finds what the user wants to do.
         else:
@@ -84,9 +86,12 @@ class Waveform_CompareTool(CompareTool):
         return Status(CompareStatus.NOT_EQUIVALENT)
 
     def generate_files(self, multiple_files, paths):
-        """The main function that generates testbenches and TCL files. It begins by calling the parsers for the input & output names, then
-        it calls the testbench generators, finally it calls the TCL generators. It then increments to the next file and clears the data structure."""
-        test_num = 100  # Change this number if you want to run more or less than 100 tests in the testbench.
+        """The main function that generates testbenches and TCL files. It begins by calling the
+        parsers for the input & output names, then
+        it calls the testbench generators, finally it calls the TCL generators. It then increments
+        to the next file and clears the data structure."""
+        test_num = 100  # Change this number if you want to run more or less than 100 tests in the
+        # testbench.
         data = {}  # Contains all of the IOs for the design.
         file_rewriter.copy_files(paths)
         # Creates copies of the netlists that will be modified by the file_rewriter
@@ -104,14 +109,16 @@ class Waveform_CompareTool(CompareTool):
                     file_rewriter.fix_file(paths, i)
                     # Rewrites the files to have correct module names
                     if multiple_files:
-                        # The logic for how to parse the file depends on whether or not there are multiple verilog files involved in a design
+                        # The logic for how to parse the file depends on whether or not there are
+                        # multiple verilog files involved in a design
                         data = parse_files.parse_reversed(paths, i)
                         # Finds the IO names and bit sizes
                     else:
                         data = parse_files.parse(file.name)
 
                 if i == 0:
-                    # Create the initial testbench with randomized inputs for all input ports (based upon bit-size)
+                    # Create the initial testbench with randomized inputs for all input ports
+                    # (based upon bit-size)
                     testbench_generator.generate_first_testbench(
                         paths, test_num, data, i
                     )
@@ -119,37 +126,42 @@ class Waveform_CompareTool(CompareTool):
                     testbench_generator.generate_testbench(paths, data, i)
 
                 if i == 0:
-                    tcl_generator.generate_first_TCL(paths, data, i)
+                    tcl_generator.generate_first_tcl(paths, data, i)
                     # The first TCL will be generated based upon the IO port names
                 else:
-                    tcl_generator.generate_TCL(paths, i)
+                    tcl_generator.generate_tcl(paths, i)
                     # The second TCL just needs to change module names from the first one
 
-                waveform_generator.generate_VCD(paths, i)
-                # All previously generated files are ran through Icarus and then GTKwave, creating the files we need.
+                waveform_generator.generate_vcd(paths, i)
+                # All previously generated files are ran through Icarus and then GTKwave, creating
+                # the files we need.
 
     def run_test(self, paths):
-        """A function that generates the wavefiles from the testbenches, runs gtkwave w/ the TCLs generated earlier on the wavefiles
-        that have just been generated, then checks the difference between gtkwave's two outputs. If there are more than 32 lines that
+        """A function that generates the wavefiles from the testbenches, runs gtkwave w/ the TCLs
+        generated earlier on the wavefiles
+        that have just been generated, then checks the difference between gtkwave's two outputs. If
+        there are more than 32 lines that
         are different, the designs must be unequivalent."""
         return parse_diff.check_diff(paths)
-        # Checks the two VCD files against each other. Returns either equivalent or not depending on how many lines are different.
+        # Checks the two VCD files against each other. Returns either equivalent or not depending
+        # on how many lines are different.
 
     def check_compare_status(self, log_path, default=CompareStatus.NOT_EQUIVALENT):
+        """Used to confirm whether a design is equivalent or not."""
         with open(log_path, "r") as log:
             log_text = log.read()
 
         # Check for timeout
-        if re.search(r"^Timeout$", log_text, re.M):
+        if re.search("^Timeout$", log_text, re.M):
             return Status(CompareStatus.TIMEOUT)
 
         # Regex search for result
-        m = re.search(r"Equivalence successfully proven!", log_text, re.M)
-        if m:
+        i = re.search("Equivalence successfully proven!", log_text, re.M)
+        if i:
             return Status(CompareStatus.SUCCESS)
 
-        m = re.search(r"ERROR", log_text, re.M)
-        if m:
+        i = re.search("ERROR", log_text, re.M)
+        if i:
             return Status(CompareStatus.NOT_EQUIVALENT)
 
         return default

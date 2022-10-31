@@ -1,9 +1,12 @@
+"""A file that handles waveform generation using iverilog."""
+
 import subprocess
-import time
 
 
-def generate_VCD(paths, i):
+def generate_vcd(paths, i):
+
     """Uses IVerilog to create a VCD file for viewing waveforms"""
+
     subprocess.run(
         [
             "iverilog",
@@ -14,6 +17,8 @@ def generate_VCD(paths, i):
             str(paths["cells_sim"]),
         ]
     )
+
     subprocess.run(["vvp", str(paths["dsn"])])
     subprocess.run(["mv", "test.vcd", paths["vcd"][i]])
+
     paths["dsn"].unlink()
