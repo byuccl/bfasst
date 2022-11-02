@@ -43,12 +43,12 @@ def write_random_state(input_signal, input_number, index, random_list):
 
     if input_signal != "clk":
         if input_number == 0:
-            line = f"    # 10 {input_signal} = {random_list[input_number][index]};\n"
+            line = f"       # 2000 {input_signal} = {random_list[input_number][index]};\n"
         else:
-            line = f"    {input_signal} = {random_list[input_number][index]};\n"
+            line = f"       {input_signal} = {random_list[input_number][index]};\n"
     else:
         if input_number == 0:
-            line = "    # 10 "
+            line = "        # 2000 "
     return line
 
 
@@ -127,7 +127,7 @@ def write_random_lines(data, test_num, random_list, tb):
             tb.write(line)
             line = ""
         tb.write("\n")
-    return "    # 10 $finish;"
+    return "        # 2000 $finish;"
 
 
 def parse_line(line, data, tb, test_num, paths, random_list):
