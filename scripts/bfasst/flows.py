@@ -14,7 +14,7 @@ import shutil
 import bfasst
 from bfasst.design import Design
 from bfasst.utils import error
-from bfasst.synth.ic2_lse import IC2_LSE_SynthesisTool
+from bfasst.synth.ic2_lse import Ic2LseSynthesisTool
 from bfasst.synth.ic2_synplify import IC2_Synplify_SynthesisTool
 from bfasst.synth.vivado import VivadoSynthesisTool
 from bfasst.synth.yosys import Yosys_Tech_SynthTool
@@ -106,7 +106,7 @@ def run_flow(design, flow_type, flow_args, build_dir):
 
 def ic2_lse_synth(design, build_dir, flow_args):
     '''Run Icecube2 LSE synthesis'''
-    synth_tool = IC2_LSE_SynthesisTool(build_dir, flow_args)
+    synth_tool = Ic2LseSynthesisTool(build_dir, flow_args)
     return synth_tool.create_netlist(design)
 
 
@@ -551,7 +551,7 @@ def flow_gather_impl_data(design, flow_args, build_dir):
     # Clean up project directories so we get fresh results later
     if (build_dir / Ic2LseOptTool.TOOL_WORK_DIR).exists():
         shutil.rmtree(build_dir / Ic2LseOptTool.TOOL_WORK_DIR)
-    shutil.rmtree(build_dir / IC2_LSE_SynthesisTool.TOOL_WORK_DIR)
+    shutil.rmtree(build_dir / Ic2LseSynthesisTool.TOOL_WORK_DIR)
     shutil.rmtree(build_dir / IC2_ImplementationTool.TOOL_WORK_DIR)
     shutil.rmtree(build_dir / Icestorm_ReverseBitTool.TOOL_WORK_DIR)
 
