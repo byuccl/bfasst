@@ -13,10 +13,6 @@ def get_data(data, ports):
             data["input_list"].append(port.name)
             data["total_list"].append(port.name)
             data["input_bits_list"].append(len(port.pins) - 1)
-    if "clk" in data["input_list"]:
-        if data["input_list"].index("clk") == 0:
-            data["input_list"].append(data["input_list"].pop(0))
-            data["input_bits_list"].append(data["input_bits_list"].pop(0))
     return data
 
 

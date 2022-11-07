@@ -1,7 +1,10 @@
 """The main comparison tool for comparing two netlists."""
-from bfasst.compare_waveforms.file_parsing import file_rewriter, parse_files, parse_diff
+import argparse
+from pathlib import Path
+from bfasst.compare_waveforms.file_parsing import parse_files, parse_diff
 from bfasst.compare_waveforms.file_generation import (testbench_generator,
 tcl_generator, waveform_generator)
+from bfasst.compare_waveforms.templates import get_paths
 
 def generate_files(multiple_files, paths, test_num):
     """The main function that generates testbenches and TCL files. It begins by calling the
@@ -10,20 +13,18 @@ def generate_files(multiple_files, paths, test_num):
     to the next file and clears the data structure."""
     # testbench.
     data = {}  # Contains all of the IOs for the design.
-    file_rewriter.copy_files(paths)
-    # Creates copies of the netlists that will be modified by the file_rewriter
     for i in range(2):
-        with open(paths["path"][i], "r") as file:
+        with open(paths["file"][i], "r") as file:
 
             if i == 1:
-                file_rewriter.fix_file(paths, i)
+                #file_rewriter.fix_file(paths, i)
                 # Rewrites the files to have correct module names
                 data = parse_files.parse_reversed(paths, i)
                 # Finds the IO names and bit sizes
                 paths["test"].unlink()  # Gets rid of the test.v file
 
             else:
-                file_rewriter.fix_file(paths, i)
+                #file_rewriter.fix_file(paths, i)
                 # Rewrites the files to have correct module names
                 if multiple_files:
                     # The logic for how to parse the file depends on whether or not there are
@@ -62,3 +63,38 @@ def run_test(paths):
     return parse_diff.check_diff(paths)
     # Checks the two VCD files against each other. Returns either equivalent or not depending
     # on how many lines are different.
+
+def parse_args():
+
+    """Creates the argument parser for the Vivado Launcher."""
+
+    if __file__ != "compare_waveforms.py":
+        package_path = Path(Path().absolute()/__file__[0:len(__file__)-20])
+    else:
+        package_path = Path().absolute()
+
+    parser = argparse.ArgumentParser(description="Launch Vivado.")
+
+    parser.add_argument("-b", "--base", metavar="BasePath", action='store',
+    help="Base path to store files (defaults to the out folder).",
+    default=str(package_path/"out"))
+
+    parser.add_argument("-t", "--tech", metavar="TechLib", action='store',
+    help="Path to tech library (defaults to cells_sim.v in templates).",
+    default=str(package_path/"templates/cells_sim.v"))
+
+    parser.add_argument(
+        "-v", "--verilog", metavar="VerilogTB", action='store',
+        help="Location of the testbench template file (defaults to sample_tb.v in templates).",
+        default=str(package_path/"templates/sample_tb.v"))
+
+    parser.add_argument("fileA", metavar="File1", help="Path to file 1.")
+    parser.add_argument("fileB", metavar="File2", help="Path to file 2.")
+
+    args = parser.parse_args()
+
+    return get_paths.get_paths(args.base, args.tech, args.template, args.fileA, args.fileB)
+
+if __name__ == "__main__":
+    tests = input("Input number of tests to run")
+    generate_files(False, parse_args(), 10)

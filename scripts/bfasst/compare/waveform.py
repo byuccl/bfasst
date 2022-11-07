@@ -44,7 +44,10 @@ class WaveformCompareTool(CompareTool):
 
         self.print_running_compare()
 
-        paths = get_paths.get_paths(self.work_dir, bfasst.paths.ROOT_PATH, design)
+        paths = get_paths.get_paths(self.work_dir, bfasst.paths.ROOT_PATH /
+        ("third_party/yosys/techlibs/xilinx/cells_sim.v"),
+        bfasst.paths.ROOT_PATH / ("scripts/bfasst/compare_waveforms/templates/sample_tb.v"),
+        design.impl_netlist_path, design.reversed_netlist_path)
         # Gets all paths used for file-generation
 
         if runInterface:

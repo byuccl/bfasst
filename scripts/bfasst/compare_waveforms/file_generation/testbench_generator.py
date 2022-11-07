@@ -67,7 +67,7 @@ def write_module_name(paths, data):
 
     """Handles writing the module declaration."""
 
-    line = f"{paths['modules'][1]} instanceOf ("
+    line = f"{paths['modules'][0]} instanceOf ("
     for total, j in zip(data["total_list"], range(total_num(data))):
         total = str(total)
         if j == total_num(data) - 1:
@@ -190,8 +190,8 @@ def generate_testbench(paths, data, i):
                 if f"{paths['modules'][1]}_tb);" in line:
                     line = f"    $dumpvars(1,{paths['modules'][i+1]}_tb);\n"
 
-                if f"{paths['modules'][1]} instanceOf (" in line:
-                    line = f"{paths['modules'][i+1]} instanceOf ("
+                if f"{paths['modules'][0]} instanceOf (" in line:
+                    line = "top instanceOf ("
 
                     for total_data, index in zip(
                         data["total_list"], range(total_num(data))
@@ -200,9 +200,5 @@ def generate_testbench(paths, data, i):
                             line = f"{line}{total_data});\n"
                         else:
                             line = f"{line}{total_data}, "
-                
-                #if "# 10" in line:
-                    #if "= " in line:
-                        #line = line.replace(line[line.index("= ")+1: line.index(";")], )
 
                 tb.write(line)
