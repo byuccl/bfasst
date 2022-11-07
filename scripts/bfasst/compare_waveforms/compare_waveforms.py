@@ -1,10 +1,12 @@
 """The main comparison tool for comparing two netlists."""
 import argparse
 from pathlib import Path
+import shutil
 from bfasst.compare_waveforms.file_parsing import parse_files, parse_diff
 from bfasst.compare_waveforms.file_generation import (testbench_generator,
 tcl_generator, waveform_generator)
 from bfasst.compare_waveforms.templates import get_paths
+from bfasst.compare_waveforms.tools import analyze_graph
 
 def generate_files(multiple_files, paths, test_num):
     """The main function that generates testbenches and TCL files. It begins by calling the
@@ -75,26 +77,59 @@ def parse_args():
 
     parser = argparse.ArgumentParser(description="Launch Vivado.")
 
-    parser.add_argument("-b", "--base", metavar="BasePath", action='store',
+    parser.add_argument("--base", metavar="BasePath", action='store',
     help="Base path to store files (defaults to the out folder).",
     default=str(package_path/"out"))
 
-    parser.add_argument("-t", "--tech", metavar="TechLib", action='store',
+    parser.add_argument("--tech", metavar="TechLib", action='store',
     help="Path to tech library (defaults to cells_sim.v in templates).",
     default=str(package_path/"templates/cells_sim.v"))
 
     parser.add_argument(
-        "-v", "--verilog", metavar="VerilogTB", action='store',
+        "--testBench", metavar="TBLocation", action='store',
         help="Location of the testbench template file (defaults to sample_tb.v in templates).",
         default=str(package_path/"templates/sample_tb.v"))
+
+    parser.add_argument(
+        "--waveform", action='store_true',
+        help="Run gtkwave at the end of the equivalence-checking process.",
+        default=False)
 
     parser.add_argument("fileA", metavar="File1", help="Path to file 1.")
     parser.add_argument("fileB", metavar="File2", help="Path to file 2.")
 
     args = parser.parse_args()
 
-    return get_paths.get_paths(args.base, args.tech, args.template, args.fileA, args.fileB)
+    return args
 
 if __name__ == "__main__":
+
+    user_args = parse_args()
+
+    path = {}
+
+    path = get_paths.get_paths(Path(user_args.base), Path(user_args.tech),
+    Path(user_args.testBench), Path(user_args.fileA),Path(user_args.fileB))
+
+    if path["vcd"][0].exists() & path["vcd"][1].exists():
+        view = input("Previous tests exist. Run gtkwave? Input 1 for yes, 0 for no.")
+        if view == '0':
+            delete = input("Ok. Delete files and re-run tests? Input 1 for yes, 0 for no.")
+            if delete == '0':
+                print("Ok, ending program.")
+                quit()
+            shutil.rmtree(path["build_dir"])
+            Path(path["build_dir"]).mkdir()
+        else:
+            analyze_graph.analyze_graphs(path["build_dir"], path["modules"][0])
+            quit()
+
     tests = input("Input number of tests to run")
-    generate_files(False, parse_args(), 10)
+
+    generate_files(False, path, tests)
+    if run_test(path) is True:
+        print("Designs are equivalent!")
+    else:
+        print("Designs are unequivalent!")
+    if user_args.waveform:
+        analyze_graph.analyze_graphs(path["build_dir"], path["modules"][0])

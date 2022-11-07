@@ -10,6 +10,9 @@ To use spydrnet and numpy, you must use the command `pip install _____`
 
 To run the tool, use the command `./scripts/run_design.py (DESIGN_PATH) xilinx_yosys_waveform`
 
+To run this tool directly, use a command similar to `python3 -m bfasst.compare_waveforms.compare_waveforms ../build/xilinx_yosys_waveform/byu/alu/alu_impl.v ..`
+`/build/xilinx_yosys_waveform/byu/alu/alu_reversed.v`
+
 The tool will provide prompts in certain cases such as if the test has already been run or if the current file-type is unsupported.
 In these cases, it will ask the user to input either a `1` or a `0` to determine what to do next.
 
