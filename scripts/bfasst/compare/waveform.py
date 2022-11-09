@@ -18,6 +18,7 @@ from bfasst.compare_waveforms.tools import analyze_graph
 from bfasst.compare_waveforms.interface import waveform_interface
 from bfasst.compare_waveforms.templates import get_paths
 from bfasst.compare_waveforms import compare_waveforms
+from bfasst.config import VIVADO_BIN_PATH
 
 
 class WaveformCompareTool(CompareTool):
@@ -75,12 +76,16 @@ class WaveformCompareTool(CompareTool):
                 return self.success_status
         if choice == 2:
             # User wants to analyze graphs, previous Status was unequivalent
-            analyze_graph.analyze_graphs(paths["build_dir"], paths["modules"][0])
+            analyze_graph.analyze_graphs(paths["build_dir"], paths["modules"][0],
+            (bfasst.paths.ROOT_PATH/ "scripts/bfasst/compare_waveforms"),
+            VIVADO_BIN_PATH)
         if choice == 3:
             # Previous Status was equivalent and User doesn't want to do any tests.
             return Status(CompareStatus.SUCCESS)
         if choice == 4:  # User wants to analyze graphs, previous status was equivalent
-            analyze_graph.analyze_graphs(paths["build_dir"], paths["modules"][0])
+            analyze_graph.analyze_graphs(paths["build_dir"], paths["modules"][0],
+            (bfasst.paths.ROOT_PATH/ "scripts/bfasst/compare_waveforms"),
+            VIVADO_BIN_PATH)
             return Status(CompareStatus.SUCCESS)
         return Status(CompareStatus.NOT_EQUIVALENT)
 

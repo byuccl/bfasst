@@ -13,9 +13,9 @@ def generate_files(multiple_files, paths, test_num):
     parsers for the input & output names, then
     it calls the testbench generators, finally it calls the TCL generators. It then increments
     to the next file and clears the data structure."""
-    # testbench.
     data = {}  # Contains all of the IOs for the design.
     for i in range(2):
+        shutil.copyfile(paths["file"][i], Path(f"{paths['build_dir']/paths['modules'][i+1]}.v"))
         with open(paths["file"][i], "r") as file:
 
             if i == 1:
@@ -66,14 +66,9 @@ def run_test(paths):
     # Checks the two VCD files against each other. Returns either equivalent or not depending
     # on how many lines are different.
 
-def parse_args():
+def parse_args(package_path):
 
     """Creates the argument parser for the Vivado Launcher."""
-
-    if __file__ != "compare_waveforms.py":
-        package_path = Path(Path().absolute()/__file__[0:len(__file__)-20])
-    else:
-        package_path = Path().absolute()
 
     parser = argparse.ArgumentParser(description="Launch Vivado.")
 
@@ -95,6 +90,11 @@ def parse_args():
         help="Run gtkwave at the end of the equivalence-checking process.",
         default=False)
 
+    parser.add_argument(
+        "--vivado", action='store',
+        help="Additional argument for waveform, specifies the Vivado Bin Path to launch Vivado.",
+        default="none")
+
     parser.add_argument("fileA", metavar="File1", help="Path to file 1.")
     parser.add_argument("fileB", metavar="File2", help="Path to file 2.")
 
@@ -102,9 +102,15 @@ def parse_args():
 
     return args
 
+
 if __name__ == "__main__":
 
-    user_args = parse_args()
+    if __file__ != "compare_waveforms.py":
+        package = Path(Path().absolute()/__file__[0:len(__file__)-20])
+    else:
+        package = Path().absolute()
+
+    user_args = parse_args(package)
 
     path = {}
 
@@ -121,7 +127,8 @@ if __name__ == "__main__":
             shutil.rmtree(path["build_dir"])
             Path(path["build_dir"]).mkdir()
         else:
-            analyze_graph.analyze_graphs(path["build_dir"], path["modules"][0])
+            analyze_graph.analyze_graphs(path["build_dir"], path["modules"][0], package,
+            user_args.vivado)
             quit()
 
     tests = input("Input number of tests to run")
@@ -132,4 +139,5 @@ if __name__ == "__main__":
     else:
         print("Designs are unequivalent!")
     if user_args.waveform:
-        analyze_graph.analyze_graphs(path["build_dir"], path["modules"][0])
+        analyze_graph.analyze_graphs(path["build_dir"], path["modules"][0], package,
+        user_args.vivado)

@@ -2,8 +2,6 @@
 import subprocess
 from subprocess import Popen
 from pathlib import Path
-import bfasst.paths
-from bfasst.config import VIVADO_BIN_PATH
 
 
 def find_resolution():
@@ -69,7 +67,7 @@ def init_gtkwave():
     return gtkwave
 
 
-def launch_vivado(path, module, commands):
+def launch_vivado(path, module, commands, root, vivado_bin):
 
     """Checks if the user wants to launch vivado. If so, adds vivado to the list of
     commands to run."""
@@ -78,38 +76,35 @@ def launch_vivado(path, module, commands):
 
     # Sets up the subprocess commands to launch Vivado
     if choice != "0":
+        print(f"{module}")
         commands.append(
             [
                 "python",
                 str(
-                    bfasst.paths.ROOT_PATH
-                    / "scripts/bfasst/compare_waveforms"
-                    / "tools/run_vivado.py"
+                    root / "tools/run_vivado.py"
                 ),
                 str(path),
                 f"{module}_impl",
-                str(bfasst.paths.ROOT_PATH / "scripts/bfasst/compare_waveforms"),
-                str(VIVADO_BIN_PATH),
+                str(root),
+                str(vivado_bin),
             ]
         )
         commands.append(
             [
                 "python",
                 str(
-                    bfasst.paths.ROOT_PATH
-                    / "scripts/bfasst/compare_waveforms"
-                    / "tools/run_vivado.py"
+                    root / "tools/run_vivado.py"
                 ),
                 str(path),
                 f"{module}_reversed",
-                str(bfasst.paths.ROOT_PATH / "scripts/bfasst/compare_waveforms"),
-                str(VIVADO_BIN_PATH),
+                str(root),
+                str(vivado_bin),
             ]
         )
     return commands
 
 
-def analyze_graphs(path, module):
+def analyze_graphs(path, module, root, viv_bin):
 
     """A function to launch the graphs for designs that have already been tested. Mainly meant
     for checking designs that came back unequivalent to see what was wrong with them."""
@@ -121,7 +116,7 @@ def analyze_graphs(path, module):
         [
             "gtkwave",
             "-T",
-            str(path / (f"{module}_impl.tcl")),
+            str(path / (f"{module}_impl.tcl")), #TODO replace to FILEA and FILEB
             "-o",
             str(path / (f"{module}_impl.vcd")),
         ],
@@ -136,7 +131,8 @@ def analyze_graphs(path, module):
 
     # Checks if the user wants to compare the gtkwave testbenches with Vivado's simulations,
     # then appends the run_vivado commands to the commands if the user chooses to do so.
-    commands = launch_vivado(path, module, commands)
+    if(viv_bin != "none"):
+        commands = launch_vivado(path, module, commands, root, viv_bin)
 
     # Prints the diff.txt file so the user can see where differences in simulation occured.
     if (path / "diff.txt").exists():
