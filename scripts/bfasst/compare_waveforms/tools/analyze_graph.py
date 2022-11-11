@@ -67,7 +67,7 @@ def init_gtkwave():
     return gtkwave
 
 
-def launch_vivado(path, module, commands, root, vivado_bin):
+def launch_vivado(path, module_a, module_b, commands, root, vivado_bin):
 
     """Checks if the user wants to launch vivado. If so, adds vivado to the list of
     commands to run."""
@@ -76,7 +76,6 @@ def launch_vivado(path, module, commands, root, vivado_bin):
 
     # Sets up the subprocess commands to launch Vivado
     if choice != "0":
-        print(f"{module}")
         commands.append(
             [
                 "python",
@@ -84,7 +83,7 @@ def launch_vivado(path, module, commands, root, vivado_bin):
                     root / "tools/run_vivado.py"
                 ),
                 str(path),
-                f"{module}_impl",
+                module_a,
                 str(root),
                 str(vivado_bin),
             ]
@@ -96,7 +95,7 @@ def launch_vivado(path, module, commands, root, vivado_bin):
                     root / "tools/run_vivado.py"
                 ),
                 str(path),
-                f"{module}_reversed",
+                module_b,
                 str(root),
                 str(vivado_bin),
             ]
@@ -104,7 +103,7 @@ def launch_vivado(path, module, commands, root, vivado_bin):
     return commands
 
 
-def analyze_graphs(path, module, root, viv_bin):
+def analyze_graphs(path, module_a, module_b, root, viv_bin):
 
     """A function to launch the graphs for designs that have already been tested. Mainly meant
     for checking designs that came back unequivalent to see what was wrong with them."""
@@ -116,23 +115,23 @@ def analyze_graphs(path, module, root, viv_bin):
         [
             "gtkwave",
             "-T",
-            str(path / (f"{module}_impl.tcl")), #TODO replace to FILEA and FILEB
+            str(path / (f"{module_a}.tcl")),
             "-o",
-            str(path / (f"{module}_impl.vcd")),
+            str(path / (f"{module_a}.vcd")),
         ],
         [
             "gtkwave",
             "-T",
-            str(path / (f"{module}_reversed.tcl")),
+            str(path / (f"{module_b}.tcl")),
             "-o",
-            str(path / (f"{module}_reversed.vcd")),
+            str(path / (f"{module_b}.vcd")),
         ],
     ]
 
     # Checks if the user wants to compare the gtkwave testbenches with Vivado's simulations,
     # then appends the run_vivado commands to the commands if the user chooses to do so.
     if(viv_bin != "none"):
-        commands = launch_vivado(path, module, commands, root, viv_bin)
+        commands = launch_vivado(path, module_a, module_b, commands, root, viv_bin)
 
     # Prints the diff.txt file so the user can see where differences in simulation occured.
     if (path / "diff.txt").exists():

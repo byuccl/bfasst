@@ -86,14 +86,24 @@ def parse_args(package_path):
         default=str(package_path/"templates/sample_tb.v"))
 
     parser.add_argument(
-        "--waveform", action='store_true',
-        help="Run gtkwave at the end of the equivalence-checking process.",
-        default=False)
+        "-t", "--tests", action='store',
+        help="The number of tests to run. If quick is enabled, defaults to 100.",
+        default = 0)
+
+    parser.add_argument(
+        "-q", "--quick", action='store_true',
+        help="Skips all interface interactions. Specify tests or they default to 100.",
+        default = False)
 
     parser.add_argument(
         "--vivado", action='store',
         help="Additional argument for waveform, specifies the Vivado Bin Path to launch Vivado.",
         default="none")
+
+    parser.add_argument(
+        "--waveform", action='store_true',
+        help="Run gtkwave at the end of the equivalence-checking process.",
+        default=False)
 
     parser.add_argument("fileA", metavar="File1", help="Path to file 1.")
     parser.add_argument("fileB", metavar="File2", help="Path to file 2.")
@@ -118,26 +128,38 @@ if __name__ == "__main__":
     Path(user_args.testBench), Path(user_args.fileA),Path(user_args.fileB))
 
     if path["vcd"][0].exists() & path["vcd"][1].exists():
-        view = input("Previous tests exist. Run gtkwave? Input 1 for yes, 0 for no.")
-        if view == '0':
-            delete = input("Ok. Delete files and re-run tests? Input 1 for yes, 0 for no.")
-            if delete == '0':
-                print("Ok, ending program.")
+        if user_args.waveform is False:
+            print("Tests were already ran. Delete files and re-run tests?")
+            if user_args.quick is False:
+                DELETE = input("Input 1 for yes, 0 for no. ")
+            else:
+                DELETE = '1'
+            if DELETE == '0':
+                print("Ok. Ending program.")
+                quit()
+            elif DELETE != '1':
+                print(f"Invalid option: \"{DELETE}\". Ending program.")
                 quit()
             shutil.rmtree(path["build_dir"])
             Path(path["build_dir"]).mkdir()
         else:
-            analyze_graph.analyze_graphs(path["build_dir"], path["modules"][0], package,
-            user_args.vivado)
+            analyze_graph.analyze_graphs(path["build_dir"], path["modules"][1],
+            path["modules"][2], package, user_args.vivado)
             quit()
 
-    tests = input("Input number of tests to run")
+    TESTS = 0
+    if (user_args.quick is False) & (user_args.tests == 0):
+        TESTS = input("Input number of tests to run ")
+    elif (user_args.quick is True) & (user_args.tests == 0):
+        TESTS = 100
+    else:
+        TESTS = user_args.tests
 
-    generate_files(False, path, tests)
+    generate_files(False, path, TESTS)
     if run_test(path) is True:
         print("Designs are equivalent!")
     else:
         print("Designs are unequivalent!")
     if user_args.waveform:
-        analyze_graph.analyze_graphs(path["build_dir"], path["modules"][0], package,
-        user_args.vivado)
+        analyze_graph.analyze_graphs(path["build_dir"], path["modules"][1],
+        path["modules"][2], package, user_args.vivado)

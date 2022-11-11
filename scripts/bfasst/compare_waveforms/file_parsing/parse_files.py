@@ -110,6 +110,6 @@ def parse_reversed(paths, i):
                         new_file.write(line)
 
     if i == 0:
-        return parse_multiple(paths["path"][i], paths["test"])
+        return parse_multiple(paths["file"][i], paths["test"])
 
     return parse(paths["test"])  # Parses this newly-generated simplified netlist.

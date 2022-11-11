@@ -45,11 +45,12 @@ class WaveformCompareTool(CompareTool):
 
         self.print_running_compare()
 
+        # Gets all paths used for file-generation
         paths = get_paths.get_paths(self.work_dir, bfasst.paths.ROOT_PATH /
         ("third_party/yosys/techlibs/xilinx/cells_sim.v"),
         bfasst.paths.ROOT_PATH / ("scripts/bfasst/compare_waveforms/templates/sample_tb.v"),
         design.impl_netlist_path, design.reversed_netlist_path)
-        # Gets all paths used for file-generation
+
 
         if runInterface:
             # If the quick flow is chosen, interface is skipped and so is viewing the actual
@@ -76,14 +77,16 @@ class WaveformCompareTool(CompareTool):
                 return self.success_status
         if choice == 2:
             # User wants to analyze graphs, previous Status was unequivalent
-            analyze_graph.analyze_graphs(paths["build_dir"], paths["modules"][0],
+            analyze_graph.analyze_graphs(paths["build_dir"], paths["modules"][1],
+            paths["modules"][2],
             (bfasst.paths.ROOT_PATH/ "scripts/bfasst/compare_waveforms"),
             VIVADO_BIN_PATH)
         if choice == 3:
             # Previous Status was equivalent and User doesn't want to do any tests.
             return Status(CompareStatus.SUCCESS)
         if choice == 4:  # User wants to analyze graphs, previous status was equivalent
-            analyze_graph.analyze_graphs(paths["build_dir"], paths["modules"][0],
+            analyze_graph.analyze_graphs(paths["build_dir"], paths["modules"][1],
+            paths["modules"][2],
             (bfasst.paths.ROOT_PATH/ "scripts/bfasst/compare_waveforms"),
             VIVADO_BIN_PATH)
             return Status(CompareStatus.SUCCESS)
