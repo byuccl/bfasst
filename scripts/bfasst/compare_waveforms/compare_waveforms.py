@@ -7,6 +7,7 @@ from bfasst.compare_waveforms.file_generation import (testbench_generator,
 tcl_generator, waveform_generator)
 from bfasst.compare_waveforms.templates import get_paths
 from bfasst.compare_waveforms.tools import analyze_graph
+from bfasst.compare_waveforms.interface import waveform_interface
 
 def generate_files(multiple_files, paths, test_num):
     """The main function that generates testbenches and TCL files. It begins by calling the
@@ -127,25 +128,16 @@ if __name__ == "__main__":
     path = get_paths.get_paths(Path(user_args.base), Path(user_args.tech),
     Path(user_args.testBench), Path(user_args.fileA),Path(user_args.fileB))
 
-    if path["vcd"][0].exists() & path["vcd"][1].exists():
-        if user_args.waveform is False:
-            print("Tests were already ran. Delete files and re-run tests?")
-            if user_args.quick is False:
-                DELETE = input("Input 1 for yes, 0 for no. ")
-            else:
-                DELETE = '1'
-            if DELETE == '0':
-                print("Ok. Ending program.")
-                quit()
-            elif DELETE != '1':
-                print(f"Invalid option: \"{DELETE}\". Ending program.")
-                quit()
-            shutil.rmtree(path["build_dir"])
-            Path(path["build_dir"]).mkdir()
-        else:
-            analyze_graph.analyze_graphs(path["build_dir"], path["modules"][1],
-            path["modules"][2], package, user_args.vivado)
-            quit()
+    USER_INPUT = waveform_interface.user_interface(path, user_args.waveform, user_args.quick)
+
+    if (USER_INPUT == 0)  | (USER_INPUT == 3):
+        quit()
+    if (USER_INPUT == 2) | (USER_INPUT == 4):
+        analyze_graph.analyze_graphs(path["build_dir"], path["modules"][1],
+        path["modules"][2], package, user_args.vivado)
+        quit()
+    shutil.rmtree(path["build_dir"])
+    Path(path["build_dir"]).mkdir()
 
     TESTS = 0
     if (user_args.quick is False) & (user_args.tests == 0):

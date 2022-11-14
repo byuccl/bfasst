@@ -17,7 +17,10 @@ END_TESTS = "Ok. Ending Tests."
 def check_multiple_files(design):
 
     """A function to check if there are multiple verilog files in a design or not. Used later in
-    parsing stages due to different logic being needed."""
+    parsing stages due to different logic being needed. Assumed true if no design exists."""
+
+    if(design == None):
+        return True
 
     with open(design.yaml_path, "r") as fp:
         design_props = yaml.safe_load(fp)
@@ -34,38 +37,42 @@ def check_multiple_files(design):
     return multiple_files
 
 
-def unequivalent_interface():
+def unequivalent_interface(waveform):
     """Handles if the file was previously unequivalent."""
-    cont = input(
-        f"{DEFAULT_MESSAGE_1} unequivalent{DEFAULT_MESSAGE_2} {INPUT_RESPONSE}"
-    )
-    if cont == "0":
+    
+    if(waveform is False):
         cont = input(f"{GENERATE_TB} {INPUT_RESPONSE}")
         if cont == "0":
             print(END_TESTS)
+            return QUIT_UNEQUIVALENT
+        elif cont != "1":
+            print(f"Invalid input: {cont}, ending tests.")
             return QUIT_UNEQUIVALENT
         return RUN_TESTS
     return CHECK_GRAPHS_UNEQUIVALENT
 
 
-def equivalent_interface():
+def equivalent_interface(waveform):
     """Handles if the file was previously equivalent."""
-    cont = input(f"{DEFAULT_MESSAGE_1} equivalent{DEFAULT_MESSAGE_2} {INPUT_RESPONSE}")
-    if cont == "0":
+    if waveform is False:
         cont = input(f"{GENERATE_TB} {INPUT_RESPONSE}")
         if cont == "0":
             print(END_TESTS)
+            return QUIT_EQUIVALENT
+        elif cont != "1":
+            print(f"Invalid input: {cont}, ending tests.")
             return QUIT_EQUIVALENT
         return RUN_TESTS
     return CHECK_GRAPHS_EQUIVALENT
 
 
-def user_interface(paths):
+def user_interface(paths, waveform, quick):
 
     """Handles the actual interface for determining what to do if tests have already been ran."""
-
+    if(quick):
+        return RUN_TESTS
     if paths["diff"].exists():
-        return unequivalent_interface()
+        return unequivalent_interface(waveform)
     if paths["vcd"][0].exists() & paths["vcd"][1].exists():
-        return equivalent_interface()
+        return equivalent_interface(waveform)
     return RUN_TESTS

@@ -51,11 +51,22 @@ class WaveformCompareTool(CompareTool):
         bfasst.paths.ROOT_PATH / ("scripts/bfasst/compare_waveforms/templates/sample_tb.v"),
         design.impl_netlist_path, design.reversed_netlist_path)
 
+        run_waveforms = input("View waveforms of design w/ gtkwave? Input 1 for yes, 0 for no.")
+
+        if (run_waveforms != "1") & (run_waveforms != "0"):
+            print(f"Invalid input: {run_waveforms}, defaulting to no.")
+            run_waveforms = False
+
+        elif run_waveforms == "0":
+            run_waveforms = False
+
+        else:
+            run_waveforms = True
 
         if runInterface:
             # If the quick flow is chosen, interface is skipped and so is viewing the actual
             # waveforms.
-            choice = waveform_interface.user_interface(paths)
+            choice = waveform_interface.user_interface(paths, run_waveforms, False)
             # Runs through the User interface, finds what the user wants to do.
         else:
             choice = 1
