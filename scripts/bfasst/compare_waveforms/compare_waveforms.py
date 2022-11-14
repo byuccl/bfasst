@@ -128,6 +128,9 @@ if __name__ == "__main__":
     path = get_paths.get_paths(Path(user_args.base), Path(user_args.tech),
     Path(user_args.testBench), Path(user_args.fileA),Path(user_args.fileB))
 
+    if (not path["vcd"][0].exists()) & (not path["vcd"][1].exists()) & (user_args.waveform):
+        print("No tests exist. Defaulting to create new testbenches.")
+
     USER_INPUT = waveform_interface.user_interface(path, user_args.waveform, user_args.quick)
 
     if (USER_INPUT == 0)  | (USER_INPUT == 3):
@@ -152,6 +155,3 @@ if __name__ == "__main__":
         print("Designs are equivalent!")
     else:
         print("Designs are unequivalent!")
-    if user_args.waveform:
-        analyze_graph.analyze_graphs(path["build_dir"], path["modules"][1],
-        path["modules"][2], package, user_args.vivado)

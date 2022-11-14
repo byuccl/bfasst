@@ -57,12 +57,15 @@ def init_gtkwave():
         choice = input(
             "Do you want to launch in full-screen mode? 1 for yes, 0 for no."
         )
-        if choice != "0":
+        if choice == "1":
             (x_cord, y_cord) = find_resolution()
             x_cord = str(x_cord)
             y_cord = str(y_cord)
             wavefile.write(f"initial_window_x {x_cord}\n")
             wavefile.write(f"initial_window_y {y_cord}\n")
+        
+        elif choice != "0":
+            print("Invalid choice, defaulting to no.")
 
     return gtkwave
 
@@ -75,7 +78,7 @@ def launch_vivado(path, module_a, module_b, commands, root, vivado_bin):
     choice = input("Compare with Vivado? 1 for yes, 0 for no.")
 
     # Sets up the subprocess commands to launch Vivado
-    if choice != "0":
+    if choice == "1":
         commands.append(
             [
                 "python",
@@ -100,6 +103,8 @@ def launch_vivado(path, module_a, module_b, commands, root, vivado_bin):
                 str(vivado_bin),
             ]
         )
+    elif choice != "0":
+        print("Invalid choice, defaulting to no.")
     return commands
 
 
