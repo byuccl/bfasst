@@ -32,12 +32,12 @@ class WaveformCompareTool(CompareTool):
 
         if (run_waveforms != "1") & (run_waveforms != "0"):
             print(f"Invalid input: {run_waveforms}, defaulting to no.")
-            return(False)
+            return False
 
         if run_waveforms == "0":
-            return(False)
+            return False
 
-        return(True)
+        return True
 
     def compare_netlists(self, design, runInterface):
         """The function that compares the netlists."""

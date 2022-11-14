@@ -63,7 +63,7 @@ def init_gtkwave():
             y_cord = str(y_cord)
             wavefile.write(f"initial_window_x {x_cord}\n")
             wavefile.write(f"initial_window_y {y_cord}\n")
-  
+
         elif choice != "0":
             print("Invalid choice, defaulting to no.")
 
