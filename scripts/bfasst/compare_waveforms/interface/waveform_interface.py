@@ -19,7 +19,7 @@ def check_multiple_files(design):
     """A function to check if there are multiple verilog files in a design or not. Used later in
     parsing stages due to different logic being needed. Assumed true if no design exists."""
 
-    if(design == None):
+    if design is None:
         return True
 
     with open(design.yaml_path, "r") as fp:
@@ -45,7 +45,7 @@ def unequivalent_interface(waveform):
         if cont == "0":
             print(END_TESTS)
             return QUIT_UNEQUIVALENT
-        elif cont != "1":
+        if cont != "1":
             print(f"Invalid input: {cont}, ending tests.")
             return QUIT_UNEQUIVALENT
         return RUN_TESTS
@@ -59,7 +59,7 @@ def equivalent_interface(waveform):
         if cont == "0":
             print(END_TESTS)
             return QUIT_EQUIVALENT
-        elif cont != "1":
+        if cont != "1":
             print(f"Invalid input: {cont}, ending tests.")
             return QUIT_EQUIVALENT
         return RUN_TESTS

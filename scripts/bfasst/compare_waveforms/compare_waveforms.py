@@ -131,26 +131,26 @@ if __name__ == "__main__":
     if (not path["vcd"][0].exists()) & (not path["vcd"][1].exists()) & (user_args.waveform):
         print("No tests exist. Defaulting to create new testbenches.")
 
-    USER_INPUT = waveform_interface.user_interface(path, user_args.waveform, user_args.quick)
+    user_input = waveform_interface.user_interface(path, user_args.waveform, user_args.quick)
 
-    if (USER_INPUT == 0)  | (USER_INPUT == 3):
+    if (user_input == 0)  | (user_input == 3):
         quit()
-    if (USER_INPUT == 2) | (USER_INPUT == 4):
+    if (user_input == 2) | (user_input == 4):
         analyze_graph.analyze_graphs(path["build_dir"], path["modules"][1],
         path["modules"][2], package, user_args.vivado)
         quit()
     shutil.rmtree(path["build_dir"])
     Path(path["build_dir"]).mkdir()
 
-    TESTS = 0
+    tests = 0
     if (user_args.quick is False) & (user_args.tests == 0):
-        TESTS = input("Input number of tests to run ")
+        tests = input("Input number of tests to run ")
     elif (user_args.quick is True) & (user_args.tests == 0):
-        TESTS = 100
+        tests = 100
     else:
-        TESTS = user_args.tests
+        tests = user_args.tests
 
-    generate_files(False, path, TESTS)
+    generate_files(False, path, tests)
     if run_test(path) is True:
         print("Designs are equivalent!")
     else:
