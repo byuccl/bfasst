@@ -39,8 +39,8 @@ def check_multiple_files(design):
 
 def unequivalent_interface(waveform):
     """Handles if the file was previously unequivalent."""
-    
-    if(waveform is False):
+
+    if waveform is False:
         cont = input(f"{GENERATE_TB} {INPUT_RESPONSE}")
         if cont == "0":
             print(END_TESTS)
@@ -69,7 +69,7 @@ def equivalent_interface(waveform):
 def user_interface(paths, waveform, quick):
 
     """Handles the actual interface for determining what to do if tests have already been ran."""
-    if(quick):
+    if quick:
         return RUN_TESTS
     if paths["diff"].exists():
         return unequivalent_interface(waveform)

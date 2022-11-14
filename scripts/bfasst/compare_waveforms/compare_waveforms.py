@@ -2,6 +2,7 @@
 import argparse
 from pathlib import Path
 import shutil
+import sys
 from bfasst.compare_waveforms.file_parsing import parse_files, parse_diff
 from bfasst.compare_waveforms.file_generation import (testbench_generator,
 tcl_generator, waveform_generator)
@@ -131,26 +132,26 @@ if __name__ == "__main__":
     if (not path["vcd"][0].exists()) & (not path["vcd"][1].exists()) & (user_args.waveform):
         print("No tests exist. Defaulting to create new testbenches.")
 
-    user_input = waveform_interface.user_interface(path, user_args.waveform, user_args.quick)
+    USER_INPUT = waveform_interface.user_interface(path, user_args.waveform, user_args.quick)
 
-    if (user_input == 0)  | (user_input == 3):
-        quit()
-    if (user_input == 2) | (user_input == 4):
+    if (USER_INPUT == 0)  | (USER_INPUT == 3):
+        sys.exit()
+    if (USER_INPUT == 2) | (USER_INPUT == 4):
         analyze_graph.analyze_graphs(path["build_dir"], path["modules"][1],
         path["modules"][2], package, user_args.vivado)
-        quit()
+        sys.exit()
     shutil.rmtree(path["build_dir"])
     Path(path["build_dir"]).mkdir()
 
-    tests = 0
+    TESTS = 0
     if (user_args.quick is False) & (user_args.tests == 0):
-        tests = input("Input number of tests to run ")
+        TESTS = input("Input number of tests to run ")
     elif (user_args.quick is True) & (user_args.tests == 0):
-        tests = 100
+        TESTS = 100
     else:
-        tests = user_args.tests
+        TESTS = user_args.tests
 
-    generate_files(False, path, tests)
+    generate_files(False, path, TESTS)
     if run_test(path) is True:
         print("Designs are equivalent!")
     else:

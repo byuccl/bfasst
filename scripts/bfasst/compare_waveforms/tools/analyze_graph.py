@@ -63,7 +63,7 @@ def init_gtkwave():
             y_cord = str(y_cord)
             wavefile.write(f"initial_window_x {x_cord}\n")
             wavefile.write(f"initial_window_y {y_cord}\n")
-        
+  
         elif choice != "0":
             print("Invalid choice, defaulting to no.")
 
@@ -135,7 +135,7 @@ def analyze_graphs(path, module_a, module_b, root, viv_bin):
 
     # Checks if the user wants to compare the gtkwave testbenches with Vivado's simulations,
     # then appends the run_vivado commands to the commands if the user chooses to do so.
-    if(viv_bin != "none"):
+    if viv_bin != "none":
         commands = launch_vivado(path, module_a, module_b, commands, root, viv_bin)
 
     # Prints the diff.txt file so the user can see where differences in simulation occured.

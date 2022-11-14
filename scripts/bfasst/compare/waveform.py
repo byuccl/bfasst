@@ -27,6 +27,18 @@ class WaveformCompareTool(CompareTool):
     TOOL_WORK_DIR = "waveform"
     LOG_FILE_NAME = "log.txt"
 
+    def check_waveform_run(self):
+        run_waveforms = input("View waveforms of design w/ gtkwave? Input 1 for yes, 0 for no.")
+
+        if (run_waveforms != "1") & (run_waveforms != "0"):
+            print(f"Invalid input: {run_waveforms}, defaulting to no.")
+            return(False)
+
+        if run_waveforms == "0":
+            return(False)
+
+        return(True)
+
     def compare_netlists(self, design, runInterface):
         """The function that compares the netlists."""
         log_path = self.work_dir / self.LOG_FILE_NAME
@@ -51,17 +63,7 @@ class WaveformCompareTool(CompareTool):
         bfasst.paths.ROOT_PATH / ("scripts/bfasst/compare_waveforms/templates/sample_tb.v"),
         design.impl_netlist_path, design.reversed_netlist_path)
 
-        run_waveforms = input("View waveforms of design w/ gtkwave? Input 1 for yes, 0 for no.")
-
-        if (run_waveforms != "1") & (run_waveforms != "0"):
-            print(f"Invalid input: {run_waveforms}, defaulting to no.")
-            run_waveforms = False
-
-        elif run_waveforms == "0":
-            run_waveforms = False
-
-        else:
-            run_waveforms = True
+        run_waveforms = self.check_waveform_run()
 
         if runInterface:
             # If the quick flow is chosen, interface is skipped and so is viewing the actual
