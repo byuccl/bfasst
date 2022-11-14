@@ -311,7 +311,7 @@ const-naming-style=UPPER_CASE
 
 # Minimum line length for functions/classes that require docstrings, shorter
 # ones are exempt.
-docstring-min-length=10
+docstring-min-length=11
 
 # Naming style matching correct function names.
 function-naming-style=snake_case
@@ -336,11 +336,16 @@ good-names=i,
            TCL,
            tmp,
            tb,
+           ip,
+           val,
+           y,
+           z,
+           clk
 
 
 # Good variable names regexes, separated by a comma. If names match any regex,
 # they will always be accepted
-good-names-rgxs=f[0-9],
+; good-names-rgxs=
 
 # Include a hint for the correct naming format with invalid-name.
 include-naming-hint=no
