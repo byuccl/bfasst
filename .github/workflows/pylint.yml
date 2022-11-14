@@ -1,4 +1,4 @@
-ame: Pylint
+name: Pylint
 
 on: [pull_request]
 
