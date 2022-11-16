@@ -41,7 +41,7 @@ def find_resolution():
     return (320, 200)
 
 
-def init_gtkwave():
+def init_gtkwave(full_screen):
 
     """Initializes gtkwave so that it can launch with the correct zoom and, if the user wants, can
     be launched in full-screen mode."""
@@ -54,18 +54,12 @@ def init_gtkwave():
 
     with gtkwave.open("x") as wavefile:
         wavefile.write("do_initial_zoom_fit 1\n")
-        choice = input(
-            "Do you want to launch in full-screen mode? 1 for yes, 0 for no."
-        )
-        if choice == "1":
+        if full_screen:
             (x_cord, y_cord) = find_resolution()
             x_cord = str(x_cord)
             y_cord = str(y_cord)
             wavefile.write(f"initial_window_x {x_cord}\n")
             wavefile.write(f"initial_window_y {y_cord}\n")
-
-        elif choice != "0":
-            print("Invalid choice, defaulting to no.")
 
     return gtkwave
 
@@ -75,45 +69,36 @@ def launch_vivado(path, module_a, module_b, commands, root, vivado_bin):
     """Checks if the user wants to launch vivado. If so, adds vivado to the list of
     commands to run."""
 
-    choice = input("Compare with Vivado? 1 for yes, 0 for no.")
-
     # Sets up the subprocess commands to launch Vivado
-    if choice == "1":
-        commands.append(
-            [
-                "python",
-                str(
-                    root / "tools/run_vivado.py"
-                ),
-                str(path),
-                module_a,
-                str(root),
-                str(vivado_bin),
-            ]
-        )
-        commands.append(
-            [
-                "python",
-                str(
-                    root / "tools/run_vivado.py"
-                ),
-                str(path),
-                module_b,
-                str(root),
-                str(vivado_bin),
-            ]
-        )
-    elif choice != "0":
-        print("Invalid choice, defaulting to no.")
+    commands.append(
+        [
+            "python",
+            str(root / "tools/run_vivado.py"),
+            str(path),
+            module_a,
+            str(root),
+            str(vivado_bin),
+        ]
+    )
+    commands.append(
+        [
+            "python",
+            str(root / "tools/run_vivado.py"),
+            str(path),
+            module_b,
+            str(root),
+            str(vivado_bin),
+        ]
+    )
     return commands
 
 
-def analyze_graphs(path, module_a, module_b, root, viv_bin):
+def analyze_graphs(path, module_a, module_b, root, viv_bin, full_screen):
 
     """A function to launch the graphs for designs that have already been tested. Mainly meant
     for checking designs that came back unequivalent to see what was wrong with them."""
 
-    gtkwave = init_gtkwave()
+    gtkwave = init_gtkwave(full_screen)
 
     # Initializes the subprocess commands to launch gtkwave.
     commands = [

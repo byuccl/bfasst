@@ -11,14 +11,14 @@
 import pathlib
 import re
 import bfasst
+import yaml
 from bfasst.compare.base import CompareTool
-from bfasst.status import Status, CompareStatus
-from bfasst.tool import ToolProduct
 from bfasst.compare_waveforms.tools import analyze_graph
-from bfasst.compare_waveforms.interface import waveform_interface
 from bfasst.compare_waveforms.templates import get_paths
 from bfasst.compare_waveforms import compare_waveforms
 from bfasst.config import VIVADO_BIN_PATH
+from bfasst.status import Status, CompareStatus
+from bfasst.tool import ToolProduct
 
 
 class WaveformCompareTool(CompareTool):
@@ -27,19 +27,7 @@ class WaveformCompareTool(CompareTool):
     TOOL_WORK_DIR = "waveform"
     LOG_FILE_NAME = "log.txt"
 
-    def check_waveform_run(self):
-        run_waveforms = input("View waveforms of design w/ gtkwave? Input 1 for yes, 0 for no.")
-
-        if (run_waveforms != "1") & (run_waveforms != "0"):
-            print(f"Invalid input: {run_waveforms}, defaulting to no.")
-            return False
-
-        if run_waveforms == "0":
-            return False
-
-        return True
-
-    def compare_netlists(self, design, runInterface):
+    def compare_netlists(self, design, run_waveform, tests, vivado):
         """The function that compares the netlists."""
         log_path = self.work_dir / self.LOG_FILE_NAME
         generate_comparison = ToolProduct(None, log_path, self.check_compare_status)
@@ -58,54 +46,72 @@ class WaveformCompareTool(CompareTool):
         self.print_running_compare()
 
         # Gets all paths used for file-generation
-        paths = get_paths.get_paths(self.work_dir, bfasst.paths.ROOT_PATH /
-        ("third_party/yosys/techlibs/xilinx/cells_sim.v"),
-        bfasst.paths.ROOT_PATH / ("scripts/bfasst/compare_waveforms/templates/sample_tb.v"),
-        design.impl_netlist_path, design.reversed_netlist_path)
+        paths = get_paths.get_paths(
+            self.work_dir,
+            bfasst.paths.ROOT_PATH / ("third_party/yosys/techlibs/xilinx/cells_sim.v"),
+            bfasst.paths.ROOT_PATH
+            / ("scripts/bfasst/compare_waveforms/templates/sample_tb.v"),
+            design.impl_netlist_path,
+            design.reversed_netlist_path,
+        )
 
-        run_waveforms = self.check_waveform_run()
+        if run_waveform & (paths["vcd"][0].exists() & paths["vcd"][1].exists()):
+            if vivado:
+                analyze_graph.analyze_graphs(
+                    paths["build_dir"],
+                    paths["modules"][1],
+                    paths["modules"][2],
+                    (bfasst.paths.ROOT_PATH / "scripts/bfasst/compare_waveforms"),
+                    VIVADO_BIN_PATH,
+                    False,
+                )
+            else:
+                analyze_graph.analyze_graphs(
+                    paths["build_dir"],
+                    paths["modules"][1],
+                    paths["modules"][2],
+                    (bfasst.paths.ROOT_PATH / "scripts/bfasst/compare_waveforms"),
+                    "none",
+                    False,
+                )
+            if paths["diff"].exists():
+                return Status(CompareStatus.NOT_EQUIVALENT)
+            else:
+                return self.success_status
 
-        if runInterface:
-            # If the quick flow is chosen, interface is skipped and so is viewing the actual
-            # waveforms.
-            choice = waveform_interface.user_interface(paths, run_waveforms, False)
-            # Runs through the User interface, finds what the user wants to do.
-        else:
-            choice = 1
-
-        multiple_files = waveform_interface.check_multiple_files(design)
+        multiple_files = self.check_multiple_files(design)
         # Checks if there are multiple verilog files in the design.
 
-        if choice == 0:
-            # Previous Status was unequivalent and User doesn't want to do any tests.
-            return Status(CompareStatus.NOT_EQUIVALENT)
-        if choice == 1:  # User wants to re-generate files.
-            # Remove old testbenches and generate new ones
-            for i in range(2):
-                if paths["tb"][i].exists():
-                    paths["tb"][i].unlink()
-            test_num = input("Input the Number of tests to run.")
-            compare_waveforms.generate_files(multiple_files, paths, test_num)
-            if compare_waveforms.run_test(paths):
-                return self.success_status
-        if choice == 2:
-            # User wants to analyze graphs, previous Status was unequivalent
-            analyze_graph.analyze_graphs(paths["build_dir"], paths["modules"][1],
-            paths["modules"][2],
-            (bfasst.paths.ROOT_PATH/ "scripts/bfasst/compare_waveforms"),
-            VIVADO_BIN_PATH)
-        if choice == 3:
-            # Previous Status was equivalent and User doesn't want to do any tests.
-            return Status(CompareStatus.SUCCESS)
-        if choice == 4:  # User wants to analyze graphs, previous status was equivalent
-            analyze_graph.analyze_graphs(paths["build_dir"], paths["modules"][1],
-            paths["modules"][2],
-            (bfasst.paths.ROOT_PATH/ "scripts/bfasst/compare_waveforms"),
-            VIVADO_BIN_PATH)
-            return Status(CompareStatus.SUCCESS)
-        return Status(CompareStatus.NOT_EQUIVALENT)
+        for i in range(2):
+            if paths["tb"][i].exists():
+                paths["tb"][i].unlink()
+        compare_waveforms.generate_files(multiple_files, paths, tests)
+        if compare_waveforms.run_test(paths):
+            return self.success_status
 
-    def check_compare_status(self, log_path, default=CompareStatus.NOT_EQUIVALENT):
+    def check_multiple_files(self, design):
+
+        """A function to check if there are multiple verilog files in a design or not. Used later in
+        parsing stages due to different logic being needed. Assumed true if no design exists."""
+
+        if design is None:
+            return True
+
+        with open(design.yaml_path, "r") as fp:
+            design_props = yaml.safe_load(fp)
+
+        multiple_files = False
+
+        for k in design_props.keys():
+            # Handle 'include_all_verilog_files' option
+            if k == "include_all_verilog_files":
+                multiple_files = True
+            # Handle 'include_all_system_verilog_files' option
+            elif k == "include_all_system_verilog_files":
+                multiple_files = True
+        return multiple_files
+
+    def check_compare_status(self, log_path):
         """Used to confirm whether a design is equivalent or not."""
         with open(log_path, "r") as log:
             log_text = log.read()
@@ -115,12 +121,8 @@ class WaveformCompareTool(CompareTool):
             return Status(CompareStatus.TIMEOUT)
 
         # Regex search for result
-        i = re.search("Equivalence successfully proven!", log_text, re.M)
-        if i:
+        i = re.search("^6\. Compare Results:\s+(.*)$", log_text, re.M)
+        if i.group(1) == "PASS":
             return Status(CompareStatus.SUCCESS)
-
-        i = re.search("ERROR", log_text, re.M)
-        if i:
-            return Status(CompareStatus.NOT_EQUIVALENT)
-
-        return default
+        else:
+            return Status(CompareStatus.NOT_EQUIVALENT, i.group(1))
