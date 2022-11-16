@@ -10,8 +10,8 @@
 
 import pathlib
 import re
-import bfasst
 import yaml
+import bfasst
 from bfasst.compare.base import CompareTool
 from bfasst.compare_waveforms.tools import analyze_graph
 from bfasst.compare_waveforms.templates import get_paths
@@ -76,8 +76,7 @@ class WaveformCompareTool(CompareTool):
                 )
             if paths["diff"].exists():
                 return Status(CompareStatus.NOT_EQUIVALENT)
-            else:
-                return self.success_status
+            return Status(CompareStatus.SUCCESS)
 
         multiple_files = self.check_multiple_files(design)
         # Checks if there are multiple verilog files in the design.
@@ -85,9 +84,13 @@ class WaveformCompareTool(CompareTool):
         for i in range(2):
             if paths["tb"][i].exists():
                 paths["tb"][i].unlink()
+
         compare_waveforms.generate_files(multiple_files, paths, tests)
+
         if compare_waveforms.run_test(paths):
-            return self.success_status
+            Status(CompareStatus.SUCCESS)
+
+        return Status(CompareStatus.NOT_EQUIVALENT)
 
     def check_multiple_files(self, design):
 
@@ -121,8 +124,7 @@ class WaveformCompareTool(CompareTool):
             return Status(CompareStatus.TIMEOUT)
 
         # Regex search for result
-        i = re.search("^6\. Compare Results:\s+(.*)$", log_text, re.M)
+        i = re.search(r"^6\. Compare Results:\s+(.*)$", log_text, re.M)
         if i.group(1) == "PASS":
             return Status(CompareStatus.SUCCESS)
-        else:
-            return Status(CompareStatus.NOT_EQUIVALENT, i.group(1))
+        return Status(CompareStatus.NOT_EQUIVALENT, i.group(1))

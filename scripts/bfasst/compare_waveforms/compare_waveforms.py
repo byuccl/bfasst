@@ -136,7 +136,7 @@ def parse_args(package_path):
     parser.add_argument(
         "--waveform",
         action="store_true",
-        help="Run gtkwave at the end of the equivalence-checking process or on a previously ran test.",
+        help="Run gtkwave at the end of the verification process or on a previously ran test.",
         default=False,
     )
 
