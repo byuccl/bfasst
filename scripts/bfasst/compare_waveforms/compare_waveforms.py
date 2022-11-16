@@ -123,7 +123,7 @@ def parse_args(package_path):
         "--tests",
         action="store",
         help="The number of tests to run. If not set, defaults to 100.",
-        default=0,
+        default=100,
     )
 
     parser.add_argument(
@@ -193,12 +193,7 @@ if __name__ == "__main__":
     ):
         print("No tests exist. Defaulting to create new testbenches.")
 
-    if user_args.tests == 0:
-        TESTS = 100
-    else:
-        TESTS = user_args.tests
-
-    generate_files(True, path, TESTS)
+    generate_files(True, path, user_args.tests)
     if run_test(path) is True:
         print("Designs are equivalent!")
     else:
