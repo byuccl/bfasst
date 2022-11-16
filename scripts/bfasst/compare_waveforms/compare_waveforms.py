@@ -92,7 +92,7 @@ def parse_args(package_path):
         metavar="TechLib",
         action="store",
         help="Path to tech library (defaults to cells_sim.v in templates).",
-        default=str(package_path / "templates/cells_sim.v"),
+        default=str(package_path / "third_party/cells_sim.v"),
     )
 
     parser.add_argument(
