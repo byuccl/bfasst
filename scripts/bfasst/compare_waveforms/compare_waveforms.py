@@ -77,7 +77,7 @@ def parse_args(package_path):
 
     """Creates the argument parser for the Vivado Launcher."""
 
-    parser = argparse.ArgumentParser(description="Launch Vivado.")
+    parser = argparse.ArgumentParser(description="Run WaFoVe.")
 
     parser.add_argument(
         "--base",

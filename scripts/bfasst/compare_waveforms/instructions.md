@@ -1,35 +1,35 @@
+***WaFoVe***
+*WaveForm Verification*
+
 **Waveform Comparison Tool Installation Instructions**
 
-This tool will require installing `iverilog`, `gtkwave`, and `spydrnet`.
-
-You can install iverilog and gtkwave by using the command `sudo apt install ____`
-
-To use spydrnet and numpy, you must use the command `pip install _____`
-
-This tool also supports Vivado. If you want to use Vivado, use the command --vivado alongside the path to your bin/vivado file.
+Use `make` while in the WaFoVe directory.
 
 **How To Run**
 
-To run the tool, use the command `./scripts/run_design.py (DESIGN_PATH) xilinx_yosys_waveform`
+`usage: compare_waveforms.py [--base BasePath] [--tech TechLib] [-f] [--newTests] [--testBench TBLocation] [-t TESTS] [--vivado VIVADO] [--waveform] File1 File2`
 
-To run this tool directly, use a command similar to `python3 -m bfasst.compare_waveforms.compare_waveforms ../build/xilinx_yosys_waveform/byu/alu/alu_impl.v ../build/xilinx_yosys_waveform/byu/alu/alu_reversed.v --vivado /tools/Xilinx/Vivado/2019.2/bin/vivado --quick --waveform`
+positional arguments:
+  File1: Path to first verilog netlist.
+  File2: Path to second verilog netlist.
 
-The tool will provide prompts in certain cases such as if the test has already been run or if the current file-type is unsupported.
-In these cases, it will ask the user to input either a `1` or a `0` to determine what to do next.
+optional arguments:
+  -h, --help            show this help message and exit
+  --base BasePath       Base path to store files (defaults to the out folder).
+  --tech TechLib        Path to tech library (defaults to cells_sim.v in templates).
+  -f, --fullScreen      Specifies if graphs should be viewed in fullscreen.
+  --newTests            Location of the testbench template file (defaults to sample_tb.v in templates).
+  --testBench TBLocation
+                        Location of the testbench template file (defaults to sample_tb.v in templates).
+  -t TESTS, --tests TESTS
+                        The number of tests to run. If not set, defaults to 100.
+  --vivado VIVADO       Additional argument for waveform, specifies the Vivado Bin Path to launch Vivado.
+  --waveform            Run gtkwave at the end of the verification process or on a previously ran test.
 
-**Current State Of Program**
-This program has proven effectiveness in several scenarios. A few things need to be in place in order for it to work properly:
+**Limitations**
+A few things need to be in place in order for it to work properly:
 * Two verilog netlists being compared must have the same IO ports.
-
-
-**Currently supported features**
-* Parsing designs that only have 1 verilog file as a source.
-* Re-analyzing designs that have come back equivalent or unequivalent.
-* Creating random test-benches and TCL scripts for any netlist generated with Vivado or F4PGA.
-* Multi-verilog file design files.
-* Linking to Vivado to compare waveforms with gtkwave.
-* Parsing of diff.txt files to make them easier to read.
-
-
-
-
+* The verilog files must be netlists, they cannot be a regular design.
+* A tech-library is required for IVerilog to properly implement their testbenches. (Note: A defualt library is pulled from Yosys during the Make process.)
+* Clocks must be named "clk" at this point. Future implementations for this will be made.
+* The effectiveness of the testbenches is not considered at this time. In the future, tests will be made to show their effectiveness.
