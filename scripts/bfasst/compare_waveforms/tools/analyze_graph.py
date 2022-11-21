@@ -1,5 +1,6 @@
 """A tool used to analyze graphs for equivalent/unequivalent data using gtkwave."""
 import subprocess
+import argparse
 from subprocess import Popen
 from pathlib import Path
 
@@ -135,3 +136,26 @@ def analyze_graphs(path, module_a, module_b, root, viv_bin, full_screen):
         proc.wait()
 
     gtkwave.unlink()
+
+def parse_args():
+    """Creates the argument parser for the gtkwave launcher."""
+
+    parser = argparse.ArgumentParser(description="Launch GTKWave.")
+    parser.add_argument("base", metavar="Base", help="Base path to files.")
+    parser.add_argument("moduleA", metavar="ModuleA", help="Module name A.")
+    parser.add_argument("moduleB", metavar="ModuleB", help="Module name B.")
+    parser.add_argument(
+        "-f",
+        "--fullScreen",
+        action="store_true",
+        help="Launches gtkwave in full-screen mode.",
+        default=False,
+    )
+    return parser.parse_args()
+
+def main():
+    args = parse_args()
+    analyze_graphs(Path(args.base), args.moduleA, args.moduleB, "none", "none", args.fullScreen)
+
+if __name__ == "__main__":
+    main()

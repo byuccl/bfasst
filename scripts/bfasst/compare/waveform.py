@@ -1,12 +1,4 @@
-"""Waveform equivalence checker. Designed by Jake Edvenson.
-    Relies on gtkwave, icarus-verilog, spydrnet, and numpy.
-    To use this script, use ./scripts/run_design.py (DESIGN_PATH)
-    xilinx_yosys_waveform
-    The rest of the script should be self-explanitory. I've included a lot of
-    user-prompts to make it very user-friendly.
-    If vivado or F4PGA ever change there netlist-generating style, this file may need to be edited.
-    I would check the fix_file function because this file currently alters the netlists so that
-    spydrnet can parse them."""
+"""Waveform equivalence checker. Uses WaFoVe for verification."""
 
 import pathlib
 import re
@@ -103,16 +95,8 @@ class WaveformCompareTool(CompareTool):
         with open(design.yaml_path, "r") as fp:
             design_props = yaml.safe_load(fp)
 
-        multiple_files = False
-
-        for k in design_props.keys():
-            # Handle 'include_all_verilog_files' option
-            if k == "include_all_verilog_files":
-                multiple_files = True
-            # Handle 'include_all_system_verilog_files' option
-            elif k == "include_all_system_verilog_files":
-                multiple_files = True
-        return multiple_files
+        return (("included_all_verilog_files" in design_props) or
+        ("include_all_system_verilog_files" in design_props))
 
     def check_compare_status(self, log_path):
         """Used to confirm whether a design is equivalent or not."""
