@@ -13,9 +13,6 @@ def get_data(data, ports):
             data["input_list"].append(port.name)
             data["total_list"].append(port.name)
             data["input_bits_list"].append(len(port.pins) - 1)
-    if "clk" in data["input_list"]:
-        if data["input_list"].index("clk") == 0:
-            data["input_list"].append(data["input_list"].pop(0))
     return data
 
 
@@ -113,6 +110,6 @@ def parse_reversed(paths, i):
                         new_file.write(line)
 
     if i == 0:
-        return parse_multiple(paths["path"][i], paths["test"])
+        return parse_multiple(paths["file"][i], paths["test"])
 
     return parse(paths["test"])  # Parses this newly-generated simplified netlist.

@@ -1,7 +1,6 @@
 # pylint: disable=W0613
 """
 Script to define CAD flows.
-
 Create your own flow and add it to the Flows class and the flow_fcn_map.
 Helper functions for vendor tools are defined.
 """
@@ -32,16 +31,19 @@ from bfasst.error_injection.error_injector import ErrorInjector_ErrorInjectionTo
 
 
 class FlowArgs(Enum):
-    '''An enum describing the different places arguments go'''
+    """An enum describing the different places arguments go"""
+
     SYNTH = 0
     IMPL = 1
     MAP = 2
-    CMP = 3     # Currently only accepts "XILINX" or "LATTICE" for Conformal Comparison
+    CMP = 3  # Currently only accepts "XILINX" or "LATTICE" for Conformal Comparison
     ERR = 4
+
 
 @enum_unique
 class Flows(Enum):
-    '''An enum describing the different flows'''
+    """An enum describing the different flows"""
+
     IC2_LSE_CONFORMAL = "IC2_lse_conformal"
     IC2_SYNPLIFY_CONFORMAL = "IC2_synplify_conformal"
     SYNPLIFY_IC2_ONESPIN = "synplify_IC2_icestorm_onespin"
@@ -52,8 +54,8 @@ class Flows(Enum):
     XILINX_CONFORMAL_RTL = "xilinx_conformal"
     XILINX_CONFORMAL_IMPL = "xilinx_conformal_impl"
     XILINX_YOSYS_IMPL = "xilinx_yosys_impl"
-    XILINX_YOSYS_WAVEFORM = "xilinx_yosys_waveform"
-    XILINX_YOSYS_WAVEFORM_QUICK = "xilinx_yosys_waveform_quick"
+    XILINX_YOSYS_WAVEFORM_GRAPH = "xilinx_yosys_waveform_graph"
+    XILINX_YOSYS_WAVEFORM_TESTS = "xilinx_yosys_waveform_tests"
     GATHER_IMPL_DATA = "gather_impl_data"
     CONFORMAL_ONLY = "conformal_only"
     XILINX = "xilinx"
@@ -71,8 +73,8 @@ flow_fcn_map = {
     Flows.XILINX_CONFORMAL_RTL: lambda: flow_xilinx_conformal,
     Flows.XILINX_CONFORMAL_IMPL: lambda: flow_xilinx_conformal_impl,
     Flows.XILINX_YOSYS_IMPL: lambda: flow_xilinx_yosys_impl,
-    Flows.XILINX_YOSYS_WAVEFORM: lambda: flow_xilinx_yosys_waveform,
-    Flows.XILINX_YOSYS_WAVEFORM_QUICK: lambda: flow_xilinx_yosys_waveform_quick,
+    Flows.XILINX_YOSYS_WAVEFORM_GRAPH: lambda: flow_xilinx_yosys_waveform_graph,
+    Flows.XILINX_YOSYS_WAVEFORM_TESTS: lambda: flow_xilinx_yosys_waveform_tests,
     Flows.GATHER_IMPL_DATA: lambda: flow_gather_impl_data,
     Flows.CONFORMAL_ONLY: lambda: flow_conformal_only,
     Flows.XILINX: lambda: flow_xilinx,
@@ -80,13 +82,14 @@ flow_fcn_map = {
 
 
 class Vendor(Enum):
-    '''Enum differentiating between different fpga vendors'''
+    """Enum differentiating between different fpga vendors"""
+
     LATTICE = 1
     XILINX = 2
 
 
 def get_flow_fcn_by_name(flow_name):
-    '''Takes a string representing the flow_name, and returns a function implementing that flow'''
+    """Takes a string representing the flow_name, and returns a function implementing that flow"""
     try:
         flow_enum = Flows(flow_name)
     except ValueError:
@@ -97,7 +100,7 @@ def get_flow_fcn_by_name(flow_name):
 
 
 def run_flow(design, flow_type, flow_args, build_dir):
-    '''Takes a design object, flow string, flow arguments, and a build directory, and runs it'''
+    """Takes a design object, flow string, flow arguments, and a build directory, and runs it"""
     assert isinstance(design, Design)
 
     flow_fcn = get_flow_fcn_by_name(flow_type)
@@ -105,31 +108,32 @@ def run_flow(design, flow_type, flow_args, build_dir):
 
 
 def ic2_lse_synth(design, build_dir, flow_args):
-    '''Run Icecube2 LSE synthesis'''
+    """Run Icecube2 LSE synthesis"""
     synth_tool = Ic2LseSynthesisTool(build_dir, flow_args)
     return synth_tool.create_netlist(design)
 
 
 def ic2_synplify_synth(design, build_dir, flow_args):
-    '''Run Icecube2 Synplify synthesis'''
+    """Run Icecube2 Synplify synthesis"""
     synth_tool = IC2_Synplify_SynthesisTool(build_dir)
     return synth_tool.create_netlist(design)
 
+
 def ic2_impl(design, build_dir, flow_args):
-    '''Run Icecube2 implementation'''
+    """Run Icecube2 implementation"""
     impl_tool = IC2_ImplementationTool(build_dir, flow_args)
     return impl_tool.implement_bitstream(design)
 
 
-#TODO determine flow_args
+# TODO determine flow_args
 def icestorm_rev_bit(design, build_dir, flow_args):
-    '''Reverse bitstream using icestorm'''
+    """Reverse bitstream using icestorm"""
     reverse_bit_tool = Icestorm_ReverseBitTool(build_dir, flow_args)
     return reverse_bit_tool.reverse_bitstream(design)
 
 
 def conformal_cmp(design, build_dir, flow_args):
-    '''Compare netlists using Conformal'''
+    """Compare netlists using Conformal"""
     vendor = Vendor.XILINX if not flow_args else Vendor[flow_args.upper()]
     compare_tool = Conformal_CompareTool(build_dir, vendor)
     with bfasst.conformal_lock:
@@ -137,42 +141,44 @@ def conformal_cmp(design, build_dir, flow_args):
 
 
 def vivado_synth(design, build_dir, flow_args):
-    '''Synthesize using Vivado'''
+    """Synthesize using Vivado"""
     synth_tool = VivadoSynthesisTool(build_dir, flow_args)
     return synth_tool.create_netlist(design)
 
 
 def vivado_impl(design, build_dir, flow_args, ooc=False):
-    '''Implement using Vivado'''
+    """Implement using Vivado"""
     impl_tool = Vivado_ImplementationTool(build_dir, flow_args, ooc)
     return impl_tool.implement_bitstream(design)
 
 
 def yosys_synth(design, build_dir, flow_args):
-    '''Synthesize using Yosys'''
+    """Synthesize using Yosys"""
     synth_tool = Yosys_Tech_SynthTool(build_dir)
     return synth_tool.create_netlist(design)
 
 
 def yosys_cmp(design, build_dir, flow_args):
-    '''Compare netlists using yosys'''
+    """Compare netlists using yosys"""
     compare_tool = Yosys_CompareTool(build_dir)
     return compare_tool.compare_netlists(design)
 
-def wave_cmp(design, build_dir, run_interface):
-    '''Compare netlists via waveforms'''
+
+def wave_cmp(design, build_dir, run_waveform, tests, vivado):
+    """Compare netlists via waveforms"""
     tool = WaveformCompareTool(build_dir)
-    return tool.compare_netlists(design, run_interface)
+    return tool.compare_netlists(design, run_waveform, tests, vivado)
+
 
 def onespin_cmp(design, build_dir, flow_args):
-    '''Compare netlists using Onespin'''
+    """Compare netlists using Onespin"""
     compare_tool = OneSpin_CompareTool(build_dir)
     with bfasst.onespin_lock:
         return compare_tool.compare_netlists(design)
 
 
 def ic2_lse_opt(design, build_dir, flow_args, in_files, lib_files=None):
-    '''Optimize design using IceCube2 LSE'''
+    """Optimize design using IceCube2 LSE"""
     lse_opt_tool = Ic2LseOptTool(build_dir)
     status = lse_opt_tool.create_netlist(design, in_files, lib_files)
     # Try fixing the netlist LUT inits (there's some issue with how LSE
@@ -182,20 +188,20 @@ def ic2_lse_opt(design, build_dir, flow_args, in_files, lib_files=None):
 
 
 def ic2_synplify_opt(design, build_dir, flow_args, in_files, lib_files=None):
-    '''Optimize design using Icecube2 Synplify'''
+    """Optimize design using Icecube2 Synplify"""
     synp_opt_tool = IC2_Synplify_OptTool(build_dir)
     return synp_opt_tool.create_netlist(design, in_files, lib_files)
 
 
-#TODO determine flow_args
+# TODO determine flow_args
 def xray_rev(design, build_dir, flow_args):
-    '''Reverse bitstream using Xray'''
+    """Reverse bitstream using Xray"""
     reverse_bit_tool = XRay_ReverseBitTool(build_dir)
     return reverse_bit_tool.reverse_bitstream(design)
 
 
 def flow_ic2_lse_conformal(design, flow_args, build_dir):
-    '''Synthesize and implement using Icecube2 lse, and compare with Conformal'''
+    """Synthesize and implement using Icecube2 lse, and compare with Conformal"""
     status = ic2_lse_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
 
     status = ic2_impl(design, build_dir, flow_args[FlowArgs.IMPL])
@@ -216,7 +222,7 @@ def flow_ic2_lse_conformal(design, flow_args, build_dir):
 
 
 def flow_conformal_only(design, flow_args, build_dir):
-    '''Run Conformal in isolation'''
+    """Run Conformal in isolation"""
     assert design.netlist_path is not None
     assert design.reversed_netlist_path is not None
 
@@ -228,7 +234,7 @@ def flow_conformal_only(design, flow_args, build_dir):
 
 
 def flow_xilinx(design, flow_args, build_dir):
-    '''Run Xilinx synthesis and implementation'''
+    """Run Xilinx synthesis and implementation"""
     status = vivado_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
     ooc = "out_of_context" in flow_args[FlowArgs.SYNTH]
     status = vivado_impl(design, build_dir, flow_args[FlowArgs.IMPL], ooc)
@@ -236,7 +242,7 @@ def flow_xilinx(design, flow_args, build_dir):
 
 
 def flow_xilinx_conformal(design, flow_args, build_dir):
-    '''Run Xilinx synthesis and implementation and compare with conformal'''
+    """Run Xilinx synthesis and implementation and compare with conformal"""
     status = vivado_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
     status = vivado_impl(design, build_dir, flow_args[FlowArgs.IMPL])
     status = xray_rev(design, build_dir, flow_args)
@@ -245,7 +251,7 @@ def flow_xilinx_conformal(design, flow_args, build_dir):
 
 
 def flow_xilinx_conformal_impl(design, flow_args, build_dir):
-    '''Vivado synthesis and implementation, reverse with xray, compare with conformal'''
+    """Vivado synthesis and implementation, reverse with xray, compare with conformal"""
     # Run Xilinx synthesis and implementation
     status = vivado_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
     status = vivado_impl(design, build_dir, flow_args[FlowArgs.IMPL])
@@ -258,13 +264,12 @@ def flow_xilinx_conformal_impl(design, flow_args, build_dir):
         design.impl_netlist_path,
     ]
 
+    # TODO Conformal_CompareTool.compare_netlists does not take a mapping arg
 
-    #TODO Conformal_CompareTool.compare_netlists does not take a mapping arg
-
-    #compare_tool = bfasst.compare.conformal.Conformal_CompareTool(
+    # compare_tool = bfasst.compare.conformal.Conformal_CompareTool(
     #    build_dir, Vendor.XILINX
-    #)
-    #with bfasst.conformal_lock:
+    # )
+    # with bfasst.conformal_lock:
     #    status = compare_tool.compare_netlists(
     #        design, args[FlowArgs.MAP_STAGE.value]
     #    )
@@ -274,7 +279,7 @@ def flow_xilinx_conformal_impl(design, flow_args, build_dir):
 
 
 def flow_xilinx_yosys_impl(design, flow_args, build_dir):
-    '''Vivado synthesis and implementation, reverse with xray, compare with yosys'''
+    """Vivado synthesis and implementation, reverse with xray, compare with yosys"""
     status = vivado_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
     status = vivado_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
@@ -285,32 +290,36 @@ def flow_xilinx_yosys_impl(design, flow_args, build_dir):
     return status
 
 
-def flow_xilinx_yosys_waveform(design, flow_args, build_dir):
-    '''Vivado synthesis and implementation, reverse with xray, compare via waveforms'''
+def flow_xilinx_yosys_waveform_graph(design, flow_args, build_dir):
+    """Vivado synthesis and implementation, reverse with xray, compare via waveforms"""
     status = vivado_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
     status = vivado_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
     # Run X-ray and fasm2bel
     status = xray_rev(design, build_dir, flow_args)
-    status = wave_cmp(design, build_dir, True)
+    # Runs WaFoVe with the intent to view graphs of equivalent designs.
+    status = wave_cmp(design, build_dir, True, 100, False)
 
     return status
 
-def flow_xilinx_yosys_waveform_quick(design, flow_args, build_dir):
-    '''Vivado synthesis and implementation, reverse with xray,
-    compare via waveforms (no prompts)'''
+
+def flow_xilinx_yosys_waveform_tests(design, flow_args, build_dir):
+    """Vivado synthesis and implementation, reverse with xray,
+    compare via waveforms (no prompts)"""
     status = vivado_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
     status = vivado_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
     # Run X-ray and fasm2bel
     status = xray_rev(design, build_dir, flow_args)
-    status = wave_cmp(design, build_dir, False)
+    # Runs WaFoVe with the intent of generating new tests.
+    status = wave_cmp(design, build_dir, False, 100, False)
 
     return status
+
 
 def flow_ic2_synplify_conformal(design, flow_args, build_dir):
-    '''Icecube2 Synplify synthesis and implementation, reverse with icestorm,
-    compare with Conformal'''
+    """Icecube2 Synplify synthesis and implementation, reverse with icestorm,
+    compare with Conformal"""
     # Run Icecube2 Synplify synthesis
     status = ic2_synplify_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
     # Run Icecube2 implementations
@@ -328,15 +337,15 @@ def flow_ic2_synplify_conformal(design, flow_args, build_dir):
     )
     design.golden_is_verilog = design.top_is_verilog()
 
-    #TODO no vendor was originally specified here
+    # TODO no vendor was originally specified here
     status = conformal_cmp(design, build_dir, flow_args[FlowArgs.CMP])
 
     return status
 
 
 def flow_synplify_ic2_icestorm_onespin(design, flow_args, build_dir):
-    '''Icecube2 Synplify synthesis and implementation, reverse with icestorm,
-    compare with onespin'''
+    """Icecube2 Synplify synthesis and implementation, reverse with icestorm,
+    compare with onespin"""
     status = ic2_synplify_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
     # Run Icecube2 implementations
     status = ic2_impl(design, build_dir, flow_args[FlowArgs.IMPL])
@@ -359,8 +368,8 @@ def flow_synplify_ic2_icestorm_onespin(design, flow_args, build_dir):
 
 
 def flow_yosys_tech_lse_conformal(design, flow_args, build_dir):
-    '''Synthesize with yosys, optimize and implement with icecube2
-    LSE, reverse with icestorm, and compare with conformal'''
+    """Synthesize with yosys, optimize and implement with icecube2
+    LSE, reverse with icestorm, and compare with conformal"""
     # Run the Yosys synthesizer
     status = yosys_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
 
@@ -378,15 +387,15 @@ def flow_yosys_tech_lse_conformal(design, flow_args, build_dir):
     status = icestorm_rev_bit(design, build_dir, flow_args)
 
     # Run conformal
-    #TODO no vendor was originally specified here
+    # TODO no vendor was originally specified here
     status = conformal_cmp(design, build_dir, flow_args[FlowArgs.CMP])
 
     return status
 
 
 def flow_yosys_tech_synplify_conformal(design, flow_args, build_dir):
-    '''Synthesize with yosys, optimize and implement with icecube2
-    Synplify, reverse with icestorm, and compare with conformal'''
+    """Synthesize with yosys, optimize and implement with icecube2
+    Synplify, reverse with icestorm, and compare with conformal"""
     # Run the Yosys synthesizer
     status = yosys_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
 
@@ -404,15 +413,15 @@ def flow_yosys_tech_synplify_conformal(design, flow_args, build_dir):
     status = icestorm_rev_bit(design, build_dir, flow_args)
 
     # Run conformal
-    #TODO No Vendor was originally specified
+    # TODO No Vendor was originally specified
     status = conformal_cmp(design, build_dir, flow_args[FlowArgs.CMP])
 
     return status
 
 
 def flow_yosys_tech_synplify_onespin(design, flow_args, build_dir):
-    '''Synthesize with yosys, optimize and implement with icecube2
-    Synplify, reverse with icestorm, and compare with Onespin'''
+    """Synthesize with yosys, optimize and implement with icecube2
+    Synplify, reverse with icestorm, and compare with Onespin"""
     # Run the Yosys synthesizer
     status = yosys_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
 
@@ -435,9 +444,9 @@ def flow_yosys_tech_synplify_onespin(design, flow_args, build_dir):
 
 
 def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
-    '''Synthesize with yosys, inject errors, optimize and implement
+    """Synthesize with yosys, inject errors, optimize and implement
     with icecube2 Synplify, reverse with icestorm, and compare
-    with Onespin'''
+    with Onespin"""
     # Set the results file path so it can be used in the different tools
     design.results_summary_path = build_dir / "results_summary.txt"
 
@@ -515,9 +524,9 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
 
 
 def flow_gather_impl_data(design, flow_args, build_dir):
-    ''' This flow is mainly to try running the tools with different
+    """This flow is mainly to try running the tools with different
     synthesis/ implementation (e.g. synplify vs yosys, etc.) options to
-    compare their physical results (e.g. LUT counts, FF counts, etc)'''
+    compare their physical results (e.g. LUT counts, FF counts, etc)"""
 
     # Set the results file path so it can be used in the different tools
     design.results_summary_path = build_dir / "results_summary.txt"
@@ -571,7 +580,7 @@ def flow_gather_impl_data(design, flow_args, build_dir):
     # Clean up project directories so we get fresh results later
     shutil.rmtree(build_dir / Yosys_Tech_SynthTool.TOOL_WORK_DIR)
 
-    #TODO check that this line should be added.
+    # TODO check that this line should be added.
     shutil.rmtree(build_dir / IC2_Synplify_OptTool.TOOL_WORK_DIR)
 
     shutil.rmtree(build_dir / IC2_ImplementationTool.TOOL_WORK_DIR)

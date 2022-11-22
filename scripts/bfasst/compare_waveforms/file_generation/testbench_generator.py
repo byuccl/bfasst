@@ -43,12 +43,12 @@ def write_random_state(input_signal, input_number, index, random_list):
 
     if input_signal != "clk":
         if input_number == 0:
-            line = f"    # 5 {input_signal} = {random_list[input_number][index]};\n"
+            line = f"       # 2000 {input_signal} = {random_list[input_number][index]};\n"
         else:
-            line = f"    {input_signal} = {random_list[input_number][index]};\n"
+            line = f"       {input_signal} = {random_list[input_number][index]};\n"
     else:
         if input_number == 0:
-            line = "    # 5 "
+            line = "        # 2000 "
     return line
 
 
@@ -67,7 +67,7 @@ def write_module_name(paths, data):
 
     """Handles writing the module declaration."""
 
-    line = f"{paths['modules'][1]} instanceOf ("
+    line = f"{paths['modules'][0]} instanceOf ("
     for total, j in zip(data["total_list"], range(total_num(data))):
         total = str(total)
         if j == total_num(data) - 1:
@@ -127,7 +127,7 @@ def write_random_lines(data, test_num, random_list, tb):
             tb.write(line)
             line = ""
         tb.write("\n")
-    return "    # 5 $finish;"
+    return "        # 2000 $finish;"
 
 
 def parse_line(line, data, tb, test_num, paths, random_list):
@@ -190,8 +190,8 @@ def generate_testbench(paths, data, i):
                 if f"{paths['modules'][1]}_tb);" in line:
                     line = f"    $dumpvars(1,{paths['modules'][i+1]}_tb);\n"
 
-                if f"{paths['modules'][1]} instanceOf (" in line:
-                    line = f"{paths['modules'][i+1]} instanceOf ("
+                if f"{paths['modules'][0]} instanceOf (" in line:
+                    line = "top instanceOf ("
 
                     for total_data, index in zip(
                         data["total_list"], range(total_num(data))

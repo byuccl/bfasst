@@ -3,8 +3,7 @@
 
 def parse_io(line, input_output, words, new_word):
 
-    """A function whose only purpose is to appease the coding standard by reducing the number of
-    branches in parse_signals"""
+    """Checks a line for if a word is new or not."""
 
     word = ""
 
