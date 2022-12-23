@@ -12,4 +12,9 @@
         "--line-length 100"
     ],
     "python.formatting.provider": "black",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "pylint.args": [
+        "--rcfile ${workspaceFolder}/.pylintrc"
+    ]
 }

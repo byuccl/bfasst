@@ -1,9 +1,9 @@
 """A module used to accurately check the difference between VCD files"""
 
+
 def parse_io(line, input_output, words, new_word):
 
-    """A function whose only purpose is to appease the coding standard by reducing the number of
-    branches in parse_signals"""
+    """Checks a line for if a word is new or not."""
 
     word = ""
 
@@ -98,14 +98,19 @@ def check_change(line, data, signals):
 
     return (False, data)
 
+
 def parse_line(line, data, monitor):
 
     """Parses a singular line from the VCD file and stores the data in a data array."""
 
     if monitor["past_header"] is False:
-        monitor["past_header"], data = past_initial_data(line, data, monitor["past_header"])
+        monitor["past_header"], data = past_initial_data(
+            line, data, monitor["past_header"]
+        )
     elif monitor["past_definitions"] is False:
-        monitor["past_definitions"], data = past_initial_data(line, data, monitor["past_header"])
+        monitor["past_definitions"], data = past_initial_data(
+            line, data, monitor["past_header"]
+        )
     else:
         if not monitor["changed_data"]:
             monitor["changed_data"] = ["0" for i in range(len(data["signal"]))]
@@ -115,6 +120,7 @@ def parse_line(line, data, monitor):
             line, monitor["changed_data"], data["signal"]
         )
     return data, monitor
+
 
 def parse_data(paths, time_related_data, i):
 
@@ -137,6 +143,7 @@ def parse_data(paths, time_related_data, i):
 
     time_related_data.append(data)
     return time_related_data
+
 
 def append_unequivalent_data(unequivalent_data, data):
 
@@ -221,6 +228,8 @@ def check_diff(paths):
         print(f"See {paths['diff']} for more info")
 
     else:
+        if paths["diff"].exists():
+            paths["diff"].unlink()
         return True
 
     return False
