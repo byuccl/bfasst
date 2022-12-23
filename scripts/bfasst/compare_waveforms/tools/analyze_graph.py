@@ -1,9 +1,8 @@
 """A tool used to analyze graphs for equivalent/unequivalent data using gtkwave."""
 import subprocess
+import argparse
 from subprocess import Popen
 from pathlib import Path
-import bfasst.paths
-from bfasst.config import VIVADO_BIN_PATH
 
 
 def find_resolution():
@@ -43,7 +42,7 @@ def find_resolution():
     return (320, 200)
 
 
-def init_gtkwave():
+def init_gtkwave(full_screen):
 
     """Initializes gtkwave so that it can launch with the correct zoom and, if the user wants, can
     be launched in full-screen mode."""
@@ -56,10 +55,7 @@ def init_gtkwave():
 
     with gtkwave.open("x") as wavefile:
         wavefile.write("do_initial_zoom_fit 1\n")
-        choice = input(
-            "Do you want to launch in full-screen mode? 1 for yes, 0 for no."
-        )
-        if choice != "0":
+        if full_screen:
             (x_cord, y_cord) = find_resolution()
             x_cord = str(x_cord)
             y_cord = str(y_cord)
@@ -69,74 +65,64 @@ def init_gtkwave():
     return gtkwave
 
 
-def launch_vivado(path, module, commands):
+def launch_vivado(path, module_a, module_b, commands, root, vivado_bin):
 
     """Checks if the user wants to launch vivado. If so, adds vivado to the list of
     commands to run."""
 
-    choice = input("Compare with Vivado? 1 for yes, 0 for no.")
-
     # Sets up the subprocess commands to launch Vivado
-    if choice != "0":
-        commands.append(
-            [
-                "python",
-                str(
-                    bfasst.paths.ROOT_PATH
-                    / "scripts/bfasst/compare_waveforms"
-                    / "tools/run_vivado.py"
-                ),
-                str(path),
-                f"{module}_impl",
-                str(bfasst.paths.ROOT_PATH / "scripts/bfasst/compare_waveforms"),
-                str(VIVADO_BIN_PATH),
-            ]
-        )
-        commands.append(
-            [
-                "python",
-                str(
-                    bfasst.paths.ROOT_PATH
-                    / "scripts/bfasst/compare_waveforms"
-                    / "tools/run_vivado.py"
-                ),
-                str(path),
-                f"{module}_reversed",
-                str(bfasst.paths.ROOT_PATH / "scripts/bfasst/compare_waveforms"),
-                str(VIVADO_BIN_PATH),
-            ]
-        )
+    commands.append(
+        [
+            "python",
+            str(root / "tools/run_vivado.py"),
+            str(path),
+            module_a,
+            str(root),
+            str(vivado_bin),
+        ]
+    )
+    commands.append(
+        [
+            "python",
+            str(root / "tools/run_vivado.py"),
+            str(path),
+            module_b,
+            str(root),
+            str(vivado_bin),
+        ]
+    )
     return commands
 
 
-def analyze_graphs(path, module):
+def analyze_graphs(path, module_a, module_b, root, viv_bin, full_screen):
 
     """A function to launch the graphs for designs that have already been tested. Mainly meant
     for checking designs that came back unequivalent to see what was wrong with them."""
 
-    gtkwave = init_gtkwave()
+    gtkwave = init_gtkwave(full_screen)
 
     # Initializes the subprocess commands to launch gtkwave.
     commands = [
         [
             "gtkwave",
             "-T",
-            str(path / (f"{module}_impl.tcl")),
+            str(path / (f"{module_a}.tcl")),
             "-o",
-            str(path / (f"{module}_impl.vcd")),
+            str(path / (f"{module_a}.vcd")),
         ],
         [
             "gtkwave",
             "-T",
-            str(path / (f"{module}_reversed.tcl")),
+            str(path / (f"{module_b}.tcl")),
             "-o",
-            str(path / (f"{module}_reversed.vcd")),
+            str(path / (f"{module_b}.vcd")),
         ],
     ]
 
     # Checks if the user wants to compare the gtkwave testbenches with Vivado's simulations,
     # then appends the run_vivado commands to the commands if the user chooses to do so.
-    commands = launch_vivado(path, module, commands)
+    if viv_bin != "none":
+        commands = launch_vivado(path, module_a, module_b, commands, root, viv_bin)
 
     # Prints the diff.txt file so the user can see where differences in simulation occured.
     if (path / "diff.txt").exists():
@@ -150,3 +136,26 @@ def analyze_graphs(path, module):
         proc.wait()
 
     gtkwave.unlink()
+
+def parse_args():
+    """Creates the argument parser for the gtkwave launcher."""
+
+    parser = argparse.ArgumentParser(description="Launch GTKWave.")
+    parser.add_argument("base", metavar="Base", help="Base path to files.")
+    parser.add_argument("moduleA", metavar="ModuleA", help="Module name A.")
+    parser.add_argument("moduleB", metavar="ModuleB", help="Module name B.")
+    parser.add_argument(
+        "-f",
+        "--fullScreen",
+        action="store_true",
+        help="Launches gtkwave in full-screen mode.",
+        default=False,
+    )
+    return parser.parse_args()
+
+def main():
+    args = parse_args()
+    analyze_graphs(Path(args.base), args.moduleA, args.moduleB, "none", "none", args.fullScreen)
+
+if __name__ == "__main__":
+    main()

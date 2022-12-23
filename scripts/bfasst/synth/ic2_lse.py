@@ -1,14 +1,15 @@
-import shutil
-import subprocess
-import re
-import os
+"""
+Wrapper class for IC2 LSE Synthesis Tool.
+"""
 
 import bfasst
 from bfasst.synth.base import SynthesisTool
-from bfasst.status import Status, SynthStatus
 
 
-class IC2_LSE_SynthesisTool(SynthesisTool):
+class Ic2LseSynthesisTool(SynthesisTool):
+    """
+    Class to run IC2 LSE Synthesis Tool.
+    """
     TOOL_WORK_DIR = "ic2_synth"
 
     def create_netlist(self, design):
@@ -22,7 +23,7 @@ class IC2_LSE_SynthesisTool(SynthesisTool):
             fp.write("Running ic2_lse opt tool for synthesis")
 
         # Use the LSE optimizer -- it will perform the functions of our synthesis
-        self.opt_tool = bfasst.opt.ic2_lse.IC2_LSE_OptTool(self.cwd)
+        self.opt_tool = bfasst.opt.ic2_lse.Ic2LseOptTool(self.cwd)
 
         # The opt tool just takes a list of input files, it doesn't know if the design has
         # been modified (ie the design.yaml file), so we add this check here

@@ -4,8 +4,11 @@ import re
 
 
 def parse_pin(line):
-    match = re.match(r"\|\s+([A-Z]+[0-9]+)\s+\|\s+([^\s\|]+)\s+\|", line)
-    return (match.group(1), match.group(2)) if match else None
+    match = re.match(
+        r"\|\s+([A-Z]+[0-9]+)\s+\|\s+([^\s\|]+)\s+\|[^\|]+\|[^\|]+\|\s+([A-Z]+)\s+\|",
+        line,
+    )
+    return (match.group(1), match.group(2), match.group(3)) if match else None
 
 
 def lines_of(filename):
