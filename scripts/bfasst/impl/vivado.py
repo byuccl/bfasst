@@ -24,6 +24,8 @@ class Vivado_ImplementationTool(ImplementationTool):
     def implement_bitstream(self, design):
         log_path = self.work_dir / bfasst.config.IMPL_LOG_NAME
         design.impl_netlist_path = self.cwd / (design.top + "_impl.v")
+        design.impl_edif_path = design.impl_netlist_path.with_suffix(".edf")
+        design.xilinx_impl_checkpoint_path = self.work_dir / "design.dcp"
         design.bitstream_path = self.cwd / (design.top + ".bit")
 
         # Check for up to date previous run
@@ -76,8 +78,8 @@ class Vivado_ImplementationTool(ImplementationTool):
             fp.write("opt_design\n")
             fp.write("place_design\n")
             fp.write("route_design\n")
-            fp.write("write_checkpoint -force -file " + str(self.work_dir / "design.dcp") + "\n")
-            # fp.write("write_edif -force -file " + str(design.impl_netlist_path.with_suffix(".edf")) + "\n")
+            fp.write("write_checkpoint -force -file " + str(design.xilinx_impl_checkpoint_path) + "\n")
+            fp.write("write_edif -force -file " + str(design.impl_edif_path) + "\n")
             fp.write("write_verilog -force -file " + str(design.impl_netlist_path) + "\n")
             if not self.ooc:
                 fp.write("write_bitstream -force " + str(design.bitstream_path) + "\n")

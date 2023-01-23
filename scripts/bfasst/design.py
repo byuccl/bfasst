@@ -53,10 +53,14 @@ class Design:
         self.netlist_path = None
         self.yosys_netlist_path = None
         self.impl_netlist_path = None
+        self.impl_edif_path = None
         self.bitstream_path = None
         self.constraints_path = None
         self.reversed_netlist_path = None
         self.results_summary_path = None
+
+        # Toolchain-specific paths
+        self.xilinx_impl_checkpoint_path = None
 
         # Error flow related stuff
         self.error_flow_yaml = None
