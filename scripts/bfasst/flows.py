@@ -12,6 +12,7 @@ import shutil
 
 import bfasst
 from bfasst.design import Design
+from bfasst.transform.xilinx_phys_netlist import XilinxPhysNetlist
 from bfasst.utils import error
 from bfasst.synth.ic2_lse import Ic2LseSynthesisTool
 from bfasst.synth.ic2_synplify import IC2_Synplify_SynthesisTool
@@ -59,6 +60,7 @@ class Flows(Enum):
     GATHER_IMPL_DATA = "gather_impl_data"
     CONFORMAL_ONLY = "conformal_only"
     XILINX = "xilinx"
+    XILINX_PHYS_NETLIST = "xilinx_phys_netlist"
 
 
 # This uses a lambda so that I don't have to define all of the functions before this point
@@ -78,6 +80,7 @@ flow_fcn_map = {
     Flows.GATHER_IMPL_DATA: lambda: flow_gather_impl_data,
     Flows.CONFORMAL_ONLY: lambda: flow_conformal_only,
     Flows.XILINX: lambda: flow_xilinx,
+    Flows.XILINX_PHYS_NETLIST: lambda: flow_xilinx_phys_netlist
 }
 
 
@@ -238,6 +241,16 @@ def flow_xilinx(design, flow_args, build_dir):
     status = vivado_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
     ooc = "out_of_context" in flow_args[FlowArgs.SYNTH]
     status = vivado_impl(design, build_dir, flow_args[FlowArgs.IMPL], ooc)
+    return status
+
+def flow_xilinx_phys_netlist(design, flow_args, build_dir):
+    """Run Xilinx synthesis and implementation"""
+    status = vivado_synth(design, build_dir, flow_args[FlowArgs.SYNTH])
+    ooc = "out_of_context" in flow_args[FlowArgs.SYNTH]
+    status = vivado_impl(design, build_dir, flow_args[FlowArgs.IMPL], ooc)
+    
+    phy_netlist_tool = XilinxPhysNetlist(build_dir)
+    phy_netlist_tool.run(design)
     return status
 
 

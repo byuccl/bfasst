@@ -46,6 +46,10 @@ class ErrorInjectionStatus(enum.Enum):
     FCN_SUCCESS = 3
     FCN_ERROR = 4
 
+class TransformStatus(enum.Enum):
+    SUCCESS = 0
+    ERROR = 1
+
 
 msg_map = {
     SynthStatus.SUCCESS: "Synth Success",
