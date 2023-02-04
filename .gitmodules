@@ -4,3 +4,6 @@
 [submodule "third_party/yosys"]
 	path = third_party/yosys
 	url = https://github.com/YosysHQ/yosys.git
+[submodule "scripts/bfasst/netlist_mapping"]
+	path = scripts/bfasst/netlist_mapping
+	url = https://github.com/palm9727/ccl_netlist_mapping.git
