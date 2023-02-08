@@ -41,10 +41,6 @@ rapidwright:
 	cd third_party/RapidWright/interchange && make
 	cd third_party/RapidWright && make
 
-# Grab a binary release of rapidwright to use with Python/JPype scripts
-rapidwright_bin:
-	cd third_party && wget https://github.com/Xilinx/RapidWright/releases/download/v2022.2.1-beta/rapidwright-2022.2.1-standalone-lin64.jar
-
 install_fasm2bels:
 	git submodule init
 	git submodule update

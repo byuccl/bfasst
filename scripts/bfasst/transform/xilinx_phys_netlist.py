@@ -11,7 +11,12 @@ from bfasst.paths import THIRD_PARTY_PATH
 from bfasst.status import Status, TransformStatus
 from bfasst.transform.base import TransformTool
 
-jpype.startJVM(classpath=[str(THIRD_PARTY_PATH / "rapidwright-2022.2.1-standalone-lin64.jar")])
+jpype.startJVM(
+    classpath=[
+        str(THIRD_PARTY_PATH / "RapidWright" / "bin"),
+        *(str(s) for s in (THIRD_PARTY_PATH / "RapidWright" / "jars").glob("*.jar")),
+    ]
+)
 # pylint: disable=wrong-import-position,wrong-import-order
 from com.xilinx.rapidwright.design import (
     Design,
