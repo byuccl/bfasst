@@ -1,3 +1,5 @@
+""" Runs Vivado implementation (place/route)"""
+
 import subprocess
 import re
 import os
@@ -12,14 +14,14 @@ from bfasst.config import VIVADO_BIN_PATH
 from bfasst.tool import ToolProduct
 
 
-class Vivado_ImplementationTool(ImplementationTool):
-    TOOL_WORK_DIR = "vivado_impl"
+class VivadoImplementationTool(ImplementationTool):
+    """Run Vivado Implementation"""
 
+    TOOL_WORK_DIR = "vivado_impl"
 
     def __init__(self, cwd, flow_args="", ooc=False):
         super().__init__(cwd, flow_args)
         self.ooc = ooc
-
 
     def implement_bitstream(self, design):
         log_path = self.work_dir / bfasst.config.IMPL_LOG_NAME
@@ -56,6 +58,8 @@ class Vivado_ImplementationTool(ImplementationTool):
         return self.success_status
 
     def run_implementation(self, design, log_path):
+        """Run vivado executable to perform implementation"""
+
         tcl_path = self.work_dir / ("impl.tcl")
 
         with open(tcl_path, "w") as fp:
@@ -68,9 +72,7 @@ class Vivado_ImplementationTool(ImplementationTool):
 
             fp.write("set_property design_mode GateLvl [current_fileset]\n")
             fp.write(
-                "set_property edif_top_file "
-                + str(design.netlist_path)
-                + " [current_fileset]\n"
+                "set_property edif_top_file " + str(design.netlist_path) + " [current_fileset]\n"
             )
             fp.write("link_design -part " + bfasst.config.PART + "\n")
             if not self.ooc:
@@ -78,7 +80,9 @@ class Vivado_ImplementationTool(ImplementationTool):
             fp.write("opt_design\n")
             fp.write("place_design\n")
             fp.write("route_design\n")
-            fp.write("write_checkpoint -force -file " + str(design.xilinx_impl_checkpoint_path) + "\n")
+            fp.write(
+                "write_checkpoint -force -file " + str(design.xilinx_impl_checkpoint_path) + "\n"
+            )
             fp.write("write_edif -force -file " + str(design.impl_edif_path) + "\n")
             fp.write("write_verilog -force -file " + str(design.impl_netlist_path) + "\n")
             if not self.ooc:
@@ -101,7 +105,7 @@ class Vivado_ImplementationTool(ImplementationTool):
                 sys.stdout.flush()
                 fp.write(line)
                 fp.flush()
-                if re.match("\s*ERROR:", line):
+                if re.match(r"\s*ERROR:", line):
                     proc.kill()
             proc.communicate()
             if proc.returncode:
@@ -110,47 +114,41 @@ class Vivado_ImplementationTool(ImplementationTool):
         return self.success_status
 
     def check_impl_status(self, log_path):
+        """Checks the status of Vivado execution for errors"""
         text = open(log_path).read()
 
-        m = re.search(r"^ERROR:\s*(.*?)$", text, re.M)
-        if m:
-            return Status(ImplStatus.ERROR, m.group(1).strip())
+        matches = re.search(r"^ERROR:\s*(.*?)$", text, re.M)
+        if matches:
+            return Status(ImplStatus.ERROR, matches.group(1).strip())
 
-        return self.success_status
-
-        m = re.search(
+        matches = re.search(
             r"^Design LUT Count \((\d+)\) exceeded Device LUT Count \((\d+)\)$", text, re.M
         )
-        if m:
-            return Status(ImplStatus.TOO_MANY_LUTS, m.group(1) + "/" + m.group(2))
-        m = re.search(r"^Design FF Count \((\d+)\) exceeded Device FF Count \((\d+)\)$", text, re.M)
-        if m:
-            return Status(ImplStatus.TOO_MANY_FF, m.group(1) + "/" + m.group(2))
+        if matches:
+            return Status(ImplStatus.TOO_MANY_LUTS, matches.group(1) + "/" + matches.group(2))
+        matches = re.search(
+            r"^Design FF Count \((\d+)\) exceeded Device FF Count \((\d+)\)$", text, re.M
+        )
+        if matches:
+            return Status(ImplStatus.TOO_MANY_FF, matches.group(1) + "/" + matches.group(2))
 
         # Too many I/Os
-        m = re.search(
-            r"Unable to fit the design into the selected device/package$\n^DEVICE IO Count:.*?Regular IOs.*?(\d+).*?DESIGN IO Count:.*?Regular IOs.*?(\d+)",
+        matches = re.search(
+            (
+                r"Unable to fit the design into the selected device/package$\n",
+                r"^DEVICE IO Count:.*?Regular IOs.*?(\d+).*?DESIGN IO Count:.*?Regular IOs.*?(\d+)",
+            ),
             text,
             re.M | re.S,
         )
-        if m:
-            return Status(ImplStatus.TOO_MANY_IO, m.group(2) + "/" + m.group(1))
+        if matches:
+            return Status(ImplStatus.TOO_MANY_IO, matches.group(2) + "/" + matches.group(1))
 
-        # if too_large_str:
-        #     err_str += "Design does not fit. " + too_large_str
-
-        # # Invalid primitives
-        # m = re.search("^Error: (Module.*?is not a valid primitive.)", text, re.M)
-        # if (m):
-        #     err_str += m.group(1)
-
-        # if (err_str):
-        #     sys.stdout.write(err_str)
-        #     return True
-
-        return Status(ImplStatus.SUCCESS)
+        return self.success_status
 
     def write_to_results_file(self, design, log_path, need_to_run):
+        """This function writes results to a file.  Not sure if it's used anymore?"""
+
         if design.results_summary_path is None:
             print("No results path set!")
         else:
@@ -165,7 +163,7 @@ class Vivado_ImplementationTool(ImplementationTool):
                     for line in log_f:
                         if line.strip() == "Final Design Statistics":
                             # There's 11 results summay lines, copy all of them
-                            for itr in range(11):
+                            for _ in range(11):
                                 res_line = next(log_f)
                                 res_f.write(res_line)
                 res_f.write("\n")
