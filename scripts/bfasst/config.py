@@ -1,3 +1,5 @@
+""" Machine-specific configuration settings"""
+
 from pathlib import Path
 
 # Tool path locations
@@ -11,7 +13,7 @@ CONFORMAL_REMOTE_WORK_DIR = Path("/fsj/squallzz/bfasst_work")
 CONFORMAL_REMOTE_LIBS_DIR = Path("/fsj/squallzz/bfasst_libs")
 CONFORMAL_REMOTE_PATH = Path("/ee2/Cadence/CONFRML152/bin/lec")
 
-VIVADO_BIN_PATH = Path("/tools/Xilinx/Vivado/2019.2/bin/vivado")
+VIVADO_BIN_PATH = Path("/tools/Xilinx/Vivado/2022.2/bin/vivado")
 
 I2C_LSE_TIMEOUT = 600.0
 YOSYS_TIMEOUT = 600.0
