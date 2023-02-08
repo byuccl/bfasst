@@ -82,6 +82,6 @@ format:
 	find ./scripts -iname "*.py" -exec black -l 100 {} \;
 
 pylint:
-	pylint $$(git diff --name-only $$(git merge-base main HEAD) | grep -e ".py")
+	pylint $$(git diff --name-only $$(git merge-base main HEAD) | grep -e ".py$$")
 
 
