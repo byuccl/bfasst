@@ -59,7 +59,7 @@ ignore-patterns=^\.#
 # supports qualified module names, as well as Unix pattern matching.
 
 # This is a full list right now because pattern matching seems to be broken in pylint (https://github.com/PyCQA/pylint/issues/8232)
-ignored-modules=com.xilinx.rapidwright.design,
+ignored-modules=com.xilinx.rapidwright.design,com.xilinx.rapidwright.design.tools
 
 # Python code to execute, usually for sys.path manipulation such as
 # pygtk.require().
