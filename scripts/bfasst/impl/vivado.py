@@ -135,8 +135,8 @@ class VivadoImplementationTool(ImplementationTool):
         # Too many I/Os
         matches = re.search(
             (
-                r"Unable to fit the design into the selected device/package$\n",
-                r"^DEVICE IO Count:.*?Regular IOs.*?(\d+).*?DESIGN IO Count:.*?Regular IOs.*?(\d+)",
+                r"Unable to fit the design into the selected device/package$\n"
+                r"^DEVICE IO Count:.*?Regular IOs.*?(\d+).*?DESIGN IO Count:.*?Regular IOs.*?(\d+)"
             ),
             text,
             re.M | re.S,

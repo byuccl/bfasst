@@ -1,6 +1,7 @@
 """ Creates a xilinx netlist that has only physical primitives"""
 
 
+import re
 import subprocess
 import jpype
 import jpype.imports
@@ -11,11 +12,15 @@ from bfasst.status import Status, TransformStatus
 from bfasst.transform.base import TransformTool
 
 jpype.startJVM(classpath=[str(THIRD_PARTY_PATH / "rapidwright-2022.2.1-standalone-lin64.jar")])
-from com.xilinx.rapidwright.design import (  # pylint: disable=wrong-import-position,wrong-import-order
+# pylint: disable=wrong-import-position,wrong-import-order
+from com.xilinx.rapidwright.design import (
     Design,
     Unisim,
     PinType,
 )
+from com.xilinx.rapidwright.design.tools import LUTTools
+
+# pylint: enable=wrong-import-position,wrong-import-order
 
 
 class XilinxPhysNetlist(TransformTool):
@@ -26,41 +31,25 @@ class XilinxPhysNetlist(TransformTool):
 
     def run(self, design):
         """Transform the logical netlist into a netlist with only physical primitives"""
-        before_netlist_path = design.impl_edif_path.parent / (
-            design.impl_edif_path.stem + "_before.edf"
-        )
         after_netlist_verilog_path = design.impl_edif_path.parent / (
-            design.impl_edif_path.stem + "_after.v"
+            design.impl_edif_path.stem + "_physical.v"
         )
 
-        print(design.impl_netlist_path)
-        print(design.xilinx_impl_checkpoint_path, design.xilinx_impl_checkpoint_path.is_file())
-        print(design.impl_edif_path, design.impl_edif_path.is_file())
+        # Read the checkpoint into rapidwright, and get the netlist
         rw_design = Design.readCheckpoint(design.xilinx_impl_checkpoint_path, design.impl_edif_path)
-
-        print("Device:", rw_design.getDevice().getName())
-
         netlist = rw_design.getNetlist()
 
-        netlist.exportEDIF(before_netlist_path)
-
-        # Get LUT6_2 EDIFCell
+        # Get the LUT6_2 EDIFCell (all LUTs will be replaced with equivalent LUT6_2 primitives)
         lut6_2_edif_cell = netlist.getHDIPrimitive(Unisim.LUT6_2)
 
-        leaf_cells = netlist.getAllLeafCellInstances()
-
-        for leaf_cell in leaf_cells:
-            print(leaf_cell, leaf_cell.getCellType())
-
-        print("=" * 10, "cells", "=" * 10)
-        cells = rw_design.getCells()
+        # Keep a list of old replaced cells to remove after processing
         cells_to_remove = []
-        print("# cells:", len(cells))
 
-        for cell in cells:
+        # Loop through all cells in the design
+        for cell in rw_design.getCells():
             edif_cell_inst = cell.getEDIFCellInst()
-            # if edif_cell_inst:
-            #     print("\tEDIFCellInst Type:",edif_cell_inst.getCellType())
+
+            # Handle LUT cells
             if edif_cell_inst and str(edif_cell_inst.getCellType()).startswith("LUT"):
                 # TODO: Check if there is another LUT at this site/bel
 
@@ -70,12 +59,14 @@ class XilinxPhysNetlist(TransformTool):
 
             # TODO: Handle other primitives? BUFG->BUFGCTRL, etc.
 
+        # Remove old unusued cells
         for cell in cells_to_remove:
             edif_cell_inst = cell.getEDIFCellInst()
 
             # Remove the port instances
             edif_cell_inst.getParentCell().removeCellInst(edif_cell_inst)
 
+        # Create a new netlist
         self.export_new_netlist(rw_design, after_netlist_verilog_path)
 
     def export_new_netlist(self, rw_design, after_netlist_verilog_path):
@@ -99,22 +90,19 @@ class XilinxPhysNetlist(TransformTool):
     def process_lut(self, lut_cell, lut6_2_cell):
         """This function takes a LUT* from the netlist and replaces with with a LUT6_2
         with logical mapping equal to the physical mapping."""
+
         edif_cell_inst = lut_cell.getEDIFCellInst()
         assert edif_cell_inst
 
         print("Processing and replacing LUT", lut_cell)
 
-        # Create a new LUT6_2
+        # Create a new LUT6_2 instance
         new_cell_inst = edif_cell_inst.getParentCell().createChildCellInst(
             edif_cell_inst.getName() + "_new", lut6_2_cell
         )
 
-        # Copy properties
-        # TODO: Properties on fractured LUT?
+        # Copy all properties from existing LUT to new LUT (INIT will be fixed later)
         new_cell_inst.setPropertiesMap(edif_cell_inst.createDuplicatePropertiesMap())
-
-        # Fix INIT to match physical LUT
-        print(lut_cell.getProperties())
 
         # Wire up inputs/outputs
         for logical_pin, physical_pin in lut_cell.getPinMappingsL2P().items():
@@ -131,9 +119,11 @@ class XilinxPhysNetlist(TransformTool):
                 print("\t\tConnecting net", logical_in_net, "to input pin", new_logical_pin)
                 logical_in_net.createPortInst(new_cell_inst.getPort(new_logical_pin), new_cell_inst)
                 logical_in_net.removePortInst(edif_cell_inst.getPortInst(logical_pin))
+
             elif site_pin_inst.getPinType() == PinType.OUT:
                 logical_out_net = site_pin_inst.getNet().getLogicalNet()
                 print("\t\tDrives net", logical_out_net)
+
                 new_logical_pin = list(physical_pin)[0]
                 print("\t\tConnecting net", logical_out_net, "to output pin", new_logical_pin)
                 logical_out_net.createPortInst(
@@ -141,6 +131,31 @@ class XilinxPhysNetlist(TransformTool):
                 )
                 logical_out_net.removePortInst(edif_cell_inst.getPortInst(logical_pin))
 
-                # TODO
+        #### Fix INIT string
+        # TODO: Handle fractured LUT.
+        print("\tFixing INIT string")
 
-        # TODO: Fix INIT string
+        # First get an equation from the logical INIT string
+        init_eqn = str(LUTTools.getLUTEquation(lut_cell))
+        print("\t\tOld LUT INIT:", lut_cell.getProperty("INIT"))
+        print("\t\tOld LUT equation:", init_eqn)
+
+        # Now go through and rename
+        for logical_pin, physical_pin in lut_cell.getPinMappingsL2P().items():
+            # Skip the output pin
+            if str(physical_pin).startswith("[O"):
+                continue
+
+            matches = re.match(r"\[(A\d)\]", str(physical_pin))
+            assert matches
+            physical_pin = matches[1]
+
+            init_eqn = init_eqn.replace(str(logical_pin), str(physical_pin))
+
+        # Physical LUT inputs use A#, but LUTTools expect I#
+        init_eqn = init_eqn.replace("A", "I")
+
+        print("\t\tNew LUT eqn:", init_eqn)
+        init_str = LUTTools.getLUTInitFromEquation(init_eqn, 6)
+        print("\t\tNew LUT INIT:", init_str)
+        new_cell_inst.addProperty("INIT", init_str)
