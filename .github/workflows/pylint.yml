@@ -25,9 +25,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r $(git ls-files 'requirements.txt')
       if: env.GIT_DIFF
-    - name: Check for syntax errors with pylin
+    - name: Check for syntax errors with pylint
       run: |
-        pylint --errors-only $(git ls-files --directory scripts | grep -e ".py")
+        pylint --errors-only $(git ls-files --directory scripts | grep -e ".py$")
       if: env.GIT_DIFF
     - name: Analysing the code with pylint
       run: |

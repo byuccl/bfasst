@@ -51,6 +51,7 @@ install_fasm2bels:
 env:
 	echo ". `pwd`/third_party/rapidwright.sh" > "env.sh"
 	echo "export INTERCHANGE_SCHEMA_PATH=`pwd`/third_party/RapidWright/interchange/fpga-interchange-schema/interchange" >> "env.sh"
+	echo "export VIVADO_PATH=/tools/Xilinx/Vivado/2022.2/bin/vivado" >> "env.sh"
 
 install_yosys:
 	# Yosys
@@ -76,5 +77,8 @@ install_yosys:
 
 format:
 	find ./scripts -iname "*.py" -exec black -l 100 {} \;
+
+pylint:
+	pylint $$(git diff --name-only $$(git merge-base main HEAD) | grep -e ".py$$")
 
 

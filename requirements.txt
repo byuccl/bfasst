@@ -9,3 +9,4 @@ numpy
 spydrnet
 werkzeug
 pylint
+JPype1
