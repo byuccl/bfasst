@@ -82,6 +82,7 @@ msg_map = {
     ErrorInjectionStatus.NO_YAML: "No YAML for Error Injection",
     ErrorInjectionStatus.FCN_SUCCESS: "FCN Successful",
     ErrorInjectionStatus.FCN_ERROR: "FCN Error",
+    TransformStatus.SUCCESS: "Transform Success",
 }
 
 

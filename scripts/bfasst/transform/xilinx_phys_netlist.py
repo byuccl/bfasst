@@ -1,6 +1,6 @@
 """ Creates a xilinx netlist that has only physical primitives"""
 
-
+import pathlib
 import re
 import subprocess
 import jpype
@@ -9,7 +9,9 @@ import jpype.imports
 from bfasst.config import VIVADO_BIN_PATH
 from bfasst.paths import THIRD_PARTY_PATH
 from bfasst.status import Status, TransformStatus
+from bfasst.tool import ToolProduct
 from bfasst.transform.base import TransformTool
+from bfasst.utils import print_color
 
 jpype.startJVM(
     classpath=[
@@ -39,6 +41,22 @@ class XilinxPhysNetlist(TransformTool):
         after_netlist_verilog_path = design.impl_edif_path.parent / (
             design.impl_edif_path.stem + "_physical.v"
         )
+
+        # Check for up to date previous run
+        status = self.get_prev_run_status(
+            tool_products=[
+                ToolProduct(after_netlist_verilog_path),
+            ],
+            dependency_modified_time=max(
+                pathlib.Path(__file__).stat().st_mtime,
+                design.xilinx_impl_checkpoint_path.stat().st_mtime,
+                design.impl_edif_path.stat().st_mtime,
+            ),
+        )
+
+        if status is not None:
+            print_color(self.TERM_COLOR_STAGE, "Physical Netlist conversion already run")
+            return status
 
         # Read the checkpoint into rapidwright, and get the netlist
         rw_design = Design.readCheckpoint(design.xilinx_impl_checkpoint_path, design.impl_edif_path)

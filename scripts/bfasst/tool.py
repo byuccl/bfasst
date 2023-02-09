@@ -16,7 +16,7 @@ class ToolProduct:
 class Tool(abc.ABC):
     TERM_COLOR_STAGE = TermColor.PURPLE
 
-    def __init__(self, cwd, flow_args = ""):
+    def __init__(self, cwd, flow_args=""):
         super().__init__()
         self.cwd = cwd
         self.flow_args = flow_args
@@ -59,6 +59,8 @@ class Tool(abc.ABC):
 
                 # If log file has an error, return that status
                 status = tool_product.check_log_fcn(tool_product.log_path)
+                if status:
+                    return status
 
                 # If log file doesn't have an error, but output file is expected and missing, re-run
                 if (tool_product.file_path is not None) and (not tool_product.file_path.is_file()):
