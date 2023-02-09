@@ -2,7 +2,7 @@
 import spydrnet as sdn
 
 
-def generate_flipflops_list(instance, ffs, output_ffs, next_ffs):
+def generate_ffs_list(instance, ffs, output_ffs, next_ffs):
     #print(instance.name)
     new_instance = None
     next_ff = instance
@@ -49,12 +49,12 @@ def generate_flipflops_list(instance, ffs, output_ffs, next_ffs):
                                         ffs = next_ffs + output_ffs
     if not(last_ff):
         # Get to next FF
-        ffs = generate_flipflops_list(next_ff, ffs, output_ffs, next_ffs)
+        ffs = generate_ffs_list(next_ff, ffs, output_ffs, next_ffs)
 
     return ffs
 
 
-def go_to_initial_flipflop(instance, ffs):
+def go_to_initial_ff(instance, ffs):
     output_ffs = []
     next_ffs = []
     previous_instance = None
@@ -75,14 +75,14 @@ def go_to_initial_flipflop(instance, ffs):
                         previous_instance = w_pin.instance
 
     if initial_flipflop == True:
-        ffs = generate_flipflops_list(instance, ffs, output_ffs, next_ffs)
+        ffs = generate_ffs_list(instance, ffs, output_ffs, next_ffs)
     else:
-        ffs = go_to_initial_flipflop(previous_instance, ffs)
+        ffs = go_to_initial_ff(previous_instance, ffs)
     
     return ffs
 
 
-def get_flipflops_to_map_through_shift_register(library, ffs):
+def get_ffs_to_map_through_shift_register(library, ffs):
     done_with_mapping = False
     # Loop through each instance in the library to find a flipflop that has its output connected to another flipflop
     for instance in library.get_instances():
@@ -105,26 +105,26 @@ def get_flipflops_to_map_through_shift_register(library, ffs):
                         # Check if it is connected to more than one FF (It is part of a shift register)
                         if (ffs_connected > 1) and (not(done_with_mapping)):
                             # Go to initial FF to map FFs correctly
-                            ffs = go_to_initial_flipflop(instance, ffs)
+                            ffs = go_to_initial_ff(instance, ffs)
                             done_with_mapping = True
 
     return ffs
 
 
-def print_mapped_flipflops_through_shift_register(mapped_ffs):
+def print_mapped_ffs_through_shift_register(mapped_ffs):
     for ff_pair in mapped_ffs:
         print(ff_pair[0], " <-> ", ff_pair[1])
 
 
-def map_shift_register_and_output_flipflops(library1, library2):
+def map_shift_register_and_output_ffs(library1, library2):
     impl_ffs = []
     reversed_ffs = []
 
-    impl_ffs = get_flipflops_to_map_through_shift_register(
+    impl_ffs = get_ffs_to_map_through_shift_register(
         library1, impl_ffs
     )
 
-    reversed_ffs = get_flipflops_to_map_through_shift_register(
+    reversed_ffs = get_ffs_to_map_through_shift_register(
         library2, reversed_ffs
     )
 

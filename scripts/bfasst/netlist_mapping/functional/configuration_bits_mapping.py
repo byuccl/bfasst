@@ -33,7 +33,7 @@ def conf_bits_match(list_1, list_2):
     return True
 
 
-def map_flipflops_based_on_conf_bits(flipflops_data_1, flipflops_data_2):
+def map_ffs_based_on_conf_bits(flipflops_data_1, flipflops_data_2):
     mapped_flipflops = []
     # Loop through each pair in the mapped FFs data_1
     for data_1 in flipflops_data_1:

@@ -1,4 +1,4 @@
-def get_flipflops_through_carry(carry, ffs, carries):
+def get_ffs_through_carry(carry, ffs, carries):
     # print(carry.name + "!!!!!!!!!!!!!!!!!!!!!!!!")
     carries.append(carry.name)
     # Loop through all the pins in the carry to add ffs
@@ -65,14 +65,14 @@ def get_flipflops_through_carry(carry, ffs, carries):
                         # Case where the carry is connected directly to the carry!
                         if "CARRY" in wire_pin.instance.reference.name:
                             # Jump to the new carry
-                            ffs, carries = get_flipflops_through_carry(
+                            ffs, carries = get_ffs_through_carry(
                                 wire_pin.instance, ffs, carries
                             )
             # Else this is the last Carry!
     return ffs, carries
 
 
-def get_flipflops_to_map_through_carries(library, ffs, carries):
+def get_ffs_to_map_through_carries(library, ffs, carries):
     # Loop through each instance in the current library to find the first carry!
     for instance in library.get_instances():
         # Select carry
@@ -88,7 +88,7 @@ def get_flipflops_to_map_through_carries(library, ffs, carries):
                             "\<const0> " == pin.wire.cable.name
                         ):
                             # Get FFs through carry
-                            ffs, carries = get_flipflops_through_carry(
+                            ffs, carries = get_ffs_through_carry(
                                 instance, ffs, carries
                             )
     return ffs, carries
@@ -99,22 +99,22 @@ def print_mapped_carries(mapped_carries):
         print(carry_pair[0], " <-> ", carry_pair[1])
 
 
-def print_mapped_flipflops_through_carries(mapped_ffs):
+def print_mapped_ffs_through_carries(mapped_ffs):
     for ff_pair in mapped_ffs:
         print(ff_pair[0], " <-> ", ff_pair[1])
 
 
-def map_carries_and_flipflops(library1, library2):
+def map_carries_and_ffs(library1, library2):
     impl_carries = []
     reversed_carries = []
     impl_ffs = []
     reversed_ffs = []
 
-    impl_ffs, impl_carries = get_flipflops_to_map_through_carries(
+    impl_ffs, impl_carries = get_ffs_to_map_through_carries(
         library1, impl_ffs, impl_carries
     )
 
-    reversed_ffs, reversed_carries = get_flipflops_to_map_through_carries(
+    reversed_ffs, reversed_carries = get_ffs_to_map_through_carries(
         library2, reversed_ffs, reversed_carries
     )
 
@@ -140,9 +140,11 @@ def map_carries_and_flipflops(library1, library2):
 
     # print_mapped_flipflops_through_carries(mapped_flipflops)
 
-    return mapped_carries, mapped_flipflops
+    #return mapped_carries, mapped_flipflops
 
-def update_netlists_from_carries_and_flipflops_mapping(
+    return mapped_flipflops
+
+def update_netlists_from_carries_and_ffs_mapping(
     mapped_carries, mapped_flipflops, golden_netlist, reversed_netlist
 ):
     # Update netlist with the mapped carries

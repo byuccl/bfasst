@@ -92,7 +92,7 @@ def sop_match(sop_1, sop_2):
         return False
 
 
-def map_flipflops_based_on_logic_functions(flipflops_data_1, flipflops_data_2):
+def map_ffs_based_on_logic_func(flipflops_data_1, flipflops_data_2):
     mapped_flipflops = []
 
     for data_1 in flipflops_data_1:

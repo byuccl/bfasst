@@ -342,7 +342,7 @@ def get_lut_data(instance, configuration_bits, previous_luts, smaller_lut):
     return sop, configuration_bits, previous_luts
 
 
-def get_flipflop_data(instance):
+def get_ff_data(instance):
     # Check for \ at the beginning of the name to ignore it
     flipflop_name = None
     if instance.name[0] == "\\":
@@ -380,7 +380,7 @@ def get_flipflop_data(instance):
     return flipflop_data
 
 
-def get_flipflops_and_configuration_bits(library, carry_chain_mapped_flipflops, impl): 
+def get_ffs_and_conf_bits(library, carry_chain_mapped_flipflops, impl):
     netlist_flipflops_data = []
     # Loop through each instance in the current library
     for instance in library.get_instances():
@@ -401,7 +401,7 @@ def get_flipflops_and_configuration_bits(library, carry_chain_mapped_flipflops, 
             if not(flipflop_already_mapped):
                 # Get data from it and append it to list
                 #print("\\\\\\\\\\\\\\\\\\\\\\\\\\\\ " + instance.name + " \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\")
-                flipflop_data = get_flipflop_data(instance)
+                flipflop_data = get_ff_data(instance)
                 netlist_flipflops_data.append(flipflop_data)
     # Return the flipflops names and their lists of configuration bits object
     return netlist_flipflops_data
