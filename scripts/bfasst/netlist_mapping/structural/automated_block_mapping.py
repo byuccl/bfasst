@@ -1,8 +1,10 @@
-# This file contains an automated algorithm used to mapped netlists based on their structure
+"""Algorithm used to mapped netlists based on their structure"""
 
 def automatically_map_blocks(
     golden_netlist, reversed_netlist, mapped_points, init_mapped_blocks
 ):
+    """Maps netlists based on their cells and nets"""
+
     mapped_blocks = init_mapped_blocks
     progress = True
     # Loop until all blocks have been mapped or there is no more progress
@@ -198,5 +200,7 @@ def automatically_map_blocks(
 
 
 def print_mapped_blocks(mapped_points):
+    """Prints blocks mapped through automated block mapping"""
+
     for mapped_pair in mapped_points:
         print(mapped_pair[0] + " <-> " + mapped_pair[1])

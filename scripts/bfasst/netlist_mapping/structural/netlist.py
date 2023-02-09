@@ -1,6 +1,10 @@
-from structural.instance import Instance
+"""Builds new netlist structured used with automated block mapping"""
+
+from instance import Instance
 
 def get_netlist(library):
+    """Builds new netlist structure out of SpyDrNet netlist"""
+
     netlist = []
     # Loop through each instance in the current library
     for instance in library.get_instances():
@@ -12,7 +16,7 @@ def get_netlist(library):
         # Loop through each of the pins in the instance
         for pin in instance.pins:
             # Check to see that there is a wire connected to the pin
-            if pin.wire != None:
+            if pin.wire is not None:
                 cable_name = pin.wire.cable.name
                 wire_index = str(pin.wire.index())
                 wire_name = cable_name + "[" + wire_index + "]"
@@ -39,7 +43,7 @@ def get_netlist(library):
                 elif "O" in pin.inner_pin.port.name:
                     # Check that the wire is connected to other Input Pins
                     if len(pin.wire.pins) > 1:
-                        # Check that it is not a CO signal (CARRIES are mapped through the real netlist)
+                        # Check that it is not a CO signal (CARRIES!)
                         if "CO" in pin.inner_pin.port.name:
                             pass
                         else:
@@ -247,6 +251,8 @@ def get_netlist(library):
     return netlist
 
 def print_netlist(netlist):
+    """Prints the netlist structure"""
+
     for instance in netlist:
         if "CARRY" in instance.instance_type:
             print(instance.instance_name)
