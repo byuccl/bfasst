@@ -1,14 +1,15 @@
-# File used to define functions used to print mapped points
+"""File with functions to print mapped points"""
 
 def print_conformal_input_output_points(
     top_instance, golden_module_name, reversed_module_name
 ):
-    # Loop through each of the ports in the instance
+    """Prints the mapped input and output points for conformal"""
+
     for top_port in top_instance.get_ports():
         if "IN" in str(top_port.direction):
             if len(top_port.pins) > 1:
                 for pin in top_port.pins:
-                    if pin.wire != None:
+                    if pin.wire is not None:
                         input_name = (
                             pin.wire.cable.name + "[" + str(pin.wire.index()) + "]"
                         )
@@ -36,7 +37,7 @@ def print_conformal_input_output_points(
         elif "OUT" in str(top_port.direction):
             if len(top_port.pins) > 1:
                 for pin in top_port.pins:
-                    if pin.wire != None:
+                    if pin.wire is not None:
                         input_name = (
                             pin.wire.cable.name + "[" + str(pin.wire.index()) + "]"
                         )
@@ -68,6 +69,8 @@ def print_conformal_input_output_points(
 def print_conformal_structural_points(
     mapped_points, golden_module_name, reversed_module_name
 ):
+    """Prints the structurally mapped points for conformal"""
+
     for mapped_pair_and_types in mapped_points:
         if (
             (mapped_pair_and_types[2] == "FDRE")
@@ -87,33 +90,32 @@ def print_conformal_structural_points(
                 + reversed_module_name
             )
         elif (
-            (
                 ("LUT" in mapped_pair_and_types[2])
                 and ("LUT" in mapped_pair_and_types[3])
-            )
-            or (
+            ):
+            pass
+        elif (
                 (mapped_pair_and_types[2] == "BUFG")
                 and (mapped_pair_and_types[3] == "BUFG")
-            )
-            or (
+            ):
+            pass
+        elif (
                 (mapped_pair_and_types[2] == "IBUF")
                 and (mapped_pair_and_types[3] == "IBUF")
-            )
-            or (
+            ):
+            pass
+        elif (
                 (mapped_pair_and_types[2] == "OBUF")
                 and (mapped_pair_and_types[3] == "OBUF")
-            )
-            or (
+            ):
+            pass
+        elif (
                 (mapped_pair_and_types[2] == "MUXF7")
                 and (mapped_pair_and_types[3] == "MUXF7")
-            )
-        ):
+            ):
             pass
         else:
             print("Unable to recognize the types of the mapped points!")
-            print(
-                "Add more code to the print_conformal_structural_points function in print_data.py to recognize:"
-            )
             print(mapped_pair_and_types[2])
             print(mapped_pair_and_types[3])
 
@@ -121,6 +123,8 @@ def print_conformal_structural_points(
 def print_conformal_ff_points(
     mapped_flipflops, golden_module_name, reversed_module_name, printing_structural
 ):
+    """Prints the mapped flipflops for conformal"""
+
     for ff_names in mapped_flipflops:
         if printing_structural:
             impl_ff_name = ff_names[0][1:]
@@ -151,12 +155,13 @@ def print_conformal_ff_points(
 
 
 def print_sop(sop, level):
-    # Prepare identation based on the level
+    """Prints the Sum Of Products"""
+
     tabs = ""
-    for i in range(level):
+    for _ in range(level):
         tabs += "\t"
     print(tabs + "SOP:")
-    # Loop through the products
+
     for product in sop:
         print(
             tabs
@@ -166,10 +171,10 @@ def print_sop(sop, level):
             + str(product.negated_inputs_num)
             + ")"
         )
-        # Loop through the inputs
+
         for lut_input in product.lut_inputs:
             print(tabs + "\t" + lut_input.input)
-            if lut_input.sop != None:
+            if lut_input.sop is not None:
                 level += 1
                 level = print_sop(lut_input.sop, level)
             else:
@@ -179,10 +184,10 @@ def print_sop(sop, level):
 
 
 def print_data(data):
-    # Loop through the flipflop data list
+    """Prints the LUT data from the conf bits"""
+
     for flipflop_data in data:
         print(flipflop_data.flipflop_name)
         level = 1
         level = print_sop(flipflop_data.sop, level)
         print("\n")
-    pass

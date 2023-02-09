@@ -48,7 +48,7 @@ def functionally_map_netlists(golden_netlist_arg, reversed_netlist_arg):
     # Map Netlists based on the flipflops data (flipflop name, configuration bits, sop)
     functionally_mapped_ffs = map_ffs_based_on_logic_func(netlist_ffs_data_1, netlist_ffs_data_2)
 
-    # ################ Print the Mapped Points File to be used by Conformal ################
+    # Print the Mapped Points File to be used by Conformal
     print_conformal_input_output_points(
         ir1.top_instance,
         ir1.top_instance.reference.name,
