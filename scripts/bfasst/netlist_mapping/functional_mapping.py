@@ -32,6 +32,7 @@ def functionally_map_netlists(golden_netlist_arg, reversed_netlist_arg):
     library2 = ir2.libraries[0]
 
     # Get mapped carries and flipflops from the counters
+
     mapped_carries = []
     carry_chain_mapped_flipflops = []
     mapped_carries, carry_chain_mapped_flipflops = map_carries_and_flipflops(library1, library2)  
@@ -65,16 +66,22 @@ def functionally_map_netlists(golden_netlist_arg, reversed_netlist_arg):
         ir2.top_instance.reference.name,
     )
 
+    printing_structural = True
+
     print_conformal_ff_points(
         carry_chain_mapped_flipflops,
         ir1.top_instance.reference.name,
         ir2.top_instance.reference.name,
+        printing_structural
     )
+
+    printing_structural = False
 
     print_conformal_ff_points(
         functionally_mapped_flipflops,
         ir1.top_instance.reference.name,
         ir2.top_instance.reference.name,
+        printing_structural
     )
 
 
