@@ -34,7 +34,7 @@ def functionally_map_netlists(golden_netlist_arg, reversed_netlist_arg):
     # Get mapped carries and flipflops from the counters
     mapped_carries = []
     carry_chain_mapped_flipflops = []
-    #mapped_carries, carry_chain_mapped_flipflops = map_carries_and_flipflops(library1, library2)  
+    mapped_carries, carry_chain_mapped_flipflops = map_carries_and_flipflops(library1, library2)  
     #print(mapped_carries)
 
     # Filling the first flipflops data object
