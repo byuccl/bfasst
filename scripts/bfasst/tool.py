@@ -1,3 +1,5 @@
+""" Base class for all tools used in BFASST """
+
 import abc
 import pathlib
 import types
@@ -8,12 +10,18 @@ from bfasst.utils import TermColor
 
 @dataclass
 class ToolProduct:
+    """A file product of any tool.  If the tool producesd a log file, then you can also provide
+    the log_path, as well as a parser function (check_log_fcn), than can check if a prevoius run of
+    the tool was successful or not."""
+
     file_path: pathlib.Path
     log_path: pathlib.Path = None
     check_log_fcn: types.FunctionType = None
 
 
 class Tool(abc.ABC):
+    """Base class for all tools used in BFASST"""
+
     TERM_COLOR_STAGE = TermColor.PURPLE
 
     def __init__(self, cwd, flow_args=""):
@@ -25,7 +33,8 @@ class Tool(abc.ABC):
     @property
     @classmethod
     @abc.abstractclassmethod
-    def TOOL_WORK_DIR(self):
+    def TOOL_WORK_DIR(self):  # pylint: disable=invalid-name
+        """The subdirectory in the build folder to used for this tool."""
         raise NotImplementedError
 
     @property
@@ -68,12 +77,10 @@ class Tool(abc.ABC):
             else:
                 # This ToolProduct doesn't produce a log file
 
-                # Rerun if product file is missing
-                if not tool_product.file_path.is_file():
-                    return None
-
-                # Rerun if product file is out of date
-                if dependency_modified_time > tool_product.file_path.stat().st_mtime:
+                # Rerun if product file is missing, or if product file is out of date
+                if not tool_product.file_path.is_file() or (
+                    dependency_modified_time > tool_product.file_path.stat().st_mtime
+                ):
                     return None
 
         return self.success_status

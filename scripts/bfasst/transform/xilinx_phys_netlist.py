@@ -11,7 +11,7 @@ from bfasst.paths import THIRD_PARTY_PATH
 from bfasst.status import Status, TransformStatus
 from bfasst.tool import ToolProduct
 from bfasst.transform.base import TransformTool
-from bfasst.utils import print_color
+from bfasst.utils import TermColor, print_color
 
 jpype.startJVM(
     classpath=[
@@ -20,11 +20,8 @@ jpype.startJVM(
     ]
 )
 # pylint: disable=wrong-import-position,wrong-import-order
-from com.xilinx.rapidwright.design import (
-    Design,
-    Unisim,
-    PinType,
-)
+from com.xilinx.rapidwright.design import Design, Unisim
+from com.xilinx.rapidwright.edif import EDIFDirection
 from com.xilinx.rapidwright.design.tools import LUTTools
 
 # pylint: enable=wrong-import-position,wrong-import-order
@@ -92,8 +89,13 @@ class XilinxPhysNetlist(TransformTool):
         # Create a new netlist
         self.export_new_netlist(rw_design, after_netlist_verilog_path)
 
+        return self.success_status
+
     def export_new_netlist(self, rw_design, after_netlist_verilog_path):
         """Export the new netlist to a Verilog netlist file"""
+        print_color(
+            TermColor.BLUE, "\nUsing Vivado to create new netlist:", after_netlist_verilog_path
+        )
         phys_netlist_checkpoint = self.work_dir / "phys_netlist.dcp"
 
         # Export checkpoint, then run vivado to generate a new netlist
@@ -117,42 +119,44 @@ class XilinxPhysNetlist(TransformTool):
         edif_cell_inst = lut_cell.getEDIFCellInst()
         assert edif_cell_inst
 
-        print("Processing and replacing LUT", lut_cell)
+        print_color(TermColor.BLUE, "\nProcessing and replacing LUT", lut_cell)
 
         # Create a new LUT6_2 instance
+        new_cell_name = edif_cell_inst.getName() + "_phys"
         new_cell_inst = edif_cell_inst.getParentCell().createChildCellInst(
-            edif_cell_inst.getName() + "_new", lut6_2_cell
+            new_cell_name, lut6_2_cell
         )
+        print("\tCreated new cell", new_cell_name)
 
         # Copy all properties from existing LUT to new LUT (INIT will be fixed later)
         new_cell_inst.setPropertiesMap(edif_cell_inst.createDuplicatePropertiesMap())
 
         # Wire up inputs/outputs
         for logical_pin, physical_pin in lut_cell.getPinMappingsL2P().items():
-            print("\tProcessing logical pin", logical_pin)
+            print(f"\tProcessing logical pin {logical_pin}, physical pin {physical_pin}")
 
-            site_pin_inst = lut_cell.getSitePinFromLogicalPin(logical_pin, None)
+            port_inst = edif_cell_inst.getPortInst(logical_pin)
+            logical_net = port_inst.getNet()
 
-            if site_pin_inst.getPinType() == PinType.IN:
-                # Get the net that drives to this logical pin
-                logical_in_net = site_pin_inst.getNet().getLogicalNet()
-                print("\t\tInput driven by net", logical_in_net)
+            if port_inst.getDirection() == EDIFDirection.INPUT:
+                print("\t\tInput driven by net", logical_net)
 
-                new_logical_pin = str(logical_pin)[0] + (list(physical_pin)[0])[1]
-                print("\t\tConnecting net", logical_in_net, "to input pin", new_logical_pin)
-                logical_in_net.createPortInst(new_cell_inst.getPort(new_logical_pin), new_cell_inst)
-                logical_in_net.removePortInst(edif_cell_inst.getPortInst(logical_pin))
+                # A5 becomes I4, A1 becomes I0, etc.
+                assert len(physical_pin) == 1
+                new_logical_pin = str(logical_pin)[0] + str(
+                    int(str((list(physical_pin)[0])[1])) - 1
+                )
+                print("\t\tConnecting net", logical_net, "to input pin", new_logical_pin)
 
-            elif site_pin_inst.getPinType() == PinType.OUT:
-                logical_out_net = site_pin_inst.getNet().getLogicalNet()
-                print("\t\tDrives net", logical_out_net)
+            elif port_inst.getDirection() == EDIFDirection.OUTPUT:
+                print("\t\tDrives net", logical_net)
 
                 new_logical_pin = list(physical_pin)[0]
-                print("\t\tConnecting net", logical_out_net, "to output pin", new_logical_pin)
-                logical_out_net.createPortInst(
-                    new_cell_inst.getPort(new_logical_pin), new_cell_inst
-                )
-                logical_out_net.removePortInst(edif_cell_inst.getPortInst(logical_pin))
+                print("\t\tConnecting net", logical_net, "to output pin", new_logical_pin)
+
+            new_port = new_cell_inst.getPort(new_logical_pin)
+            logical_net.createPortInst(new_port, new_cell_inst)
+            logical_net.removePortInst(edif_cell_inst.getPortInst(logical_pin))
 
         #### Fix INIT string
         # TODO: Handle fractured LUT.
