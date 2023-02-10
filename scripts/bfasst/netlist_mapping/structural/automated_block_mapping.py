@@ -1,5 +1,6 @@
 """Algorithm used to mapped netlists based on their structure"""
 
+
 def automatically_map_blocks(
     golden_netlist, reversed_netlist, mapped_points, init_mapped_blocks
 ):

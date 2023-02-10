@@ -1,5 +1,6 @@
 """Mapping algorithm based on block chains and the functional trees of the LUTs before a FF."""
 
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # WARNING: Both netlists must have the exact same inputs and outputs!                             #
 # WARNING: The LUT reduction algorithm only works for LUTs with 2 inputs or more,                 #
@@ -10,6 +11,7 @@
 # WARNING: All terms in the list returned from the qm library may not be                          #
 #          essential prime implicants! Now they are all Prime Implicants!                         #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
 
 import argparse
 import spydrnet as sdn
