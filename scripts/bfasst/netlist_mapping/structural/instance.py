@@ -1,9 +1,10 @@
 """Instance class used for the automated block mapping."""
 
+
 class Instance:
     """Class used to save block data in netlist automated block mapping."""
 
-    def __init__( 
+    def __init__(
         self,
         instance_name,
         instance_type,

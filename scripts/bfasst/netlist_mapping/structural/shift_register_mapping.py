@@ -1,8 +1,12 @@
-# Algorithm used to map the flipflops found in a shift register, and its output.
+"""Maps the flipflops used for the shift register, and its output."""
+
+
 import spydrnet as sdn
 
 
 def generate_ffs_list(instance, ffs, output_ffs, next_ffs):
+    """Generates a ffs list to be mapped from a shift-register through recursion"""
+
     #print(instance.name)
     new_instance = None
     next_ff = instance
@@ -13,7 +17,7 @@ def generate_ffs_list(instance, ffs, output_ffs, next_ffs):
         # Find the pin with the Q port
         if "Q" in pin.inner_pin.port.name:
             # Check that it has a wire
-            if pin.wire != None:
+            if pin.wire is not None:
                 # Loop through the pins connected to the wire
                 for w_pin in pin.wire.pins:
                     # Find the pin with the D port
@@ -25,7 +29,7 @@ def generate_ffs_list(instance, ffs, output_ffs, next_ffs):
                             # Find the pin with the Q port
                             if "Q" in pin.inner_pin.port.name:
                                 # Check that it has a wire
-                                if pin.wire != None:
+                                if pin.wire is not None:
                                     # Loop through the pins connected to the wire
                                     obuf_count = 0
                                     ff_count = 0
@@ -33,7 +37,8 @@ def generate_ffs_list(instance, ffs, output_ffs, next_ffs):
                                         # Check if it is either an output or the next FF
                                         if "OBUF" in w_pin.instance.reference.name:
                                             obuf_count += 1
-                                        elif ("FDRE" in w_pin.instance.reference.name) or ("FDSE" in w_pin.instance.reference.name):
+                                        elif (("FDRE" in w_pin.instance.reference.name) or
+                                             ("FDSE" in w_pin.instance.reference.name)):
                                             ff_count += 1
                                     # Logic for output or next FF
                                     if obuf_count > 0:
@@ -47,7 +52,7 @@ def generate_ffs_list(instance, ffs, output_ffs, next_ffs):
                                         #print("\t\t\t Final FF")
                                         next_ffs.append(new_instance.name)
                                         ffs = next_ffs + output_ffs
-    if not(last_ff):
+    if not last_ff:
         # Get to next FF
         ffs = generate_ffs_list(next_ff, ffs, output_ffs, next_ffs)
 
@@ -55,6 +60,8 @@ def generate_ffs_list(instance, ffs, output_ffs, next_ffs):
 
 
 def go_to_initial_ff(instance, ffs):
+    """Goes to the initial ff using recursion"""
+
     output_ffs = []
     next_ffs = []
     previous_instance = None
@@ -64,7 +71,7 @@ def go_to_initial_ff(instance, ffs):
         # Find the pin with the D port
         if "D" in pin.inner_pin.port.name:
             # Check that it has a wire
-            if pin.wire != None:
+            if pin.wire is not None:
                 # Loop through the pins connected to the wire
                 for w_pin in pin.wire.pins:
                     # Find the pin with the Q port
@@ -74,17 +81,20 @@ def go_to_initial_ff(instance, ffs):
                         initial_flipflop = False
                         previous_instance = w_pin.instance
 
-    if initial_flipflop == True:
+    if initial_flipflop is True:
         ffs = generate_ffs_list(instance, ffs, output_ffs, next_ffs)
     else:
         ffs = go_to_initial_ff(previous_instance, ffs)
-    
+
     return ffs
 
 
 def get_ffs_to_map_through_shift_register(library, ffs):
+    """Gets the ffs to be mapped through the shift-register"""
+
     done_with_mapping = False
-    # Loop through each instance in the library to find a flipflop that has its output connected to another flipflop
+    # Loop through each instance in the library to find a flipflop that has its output
+    # connected to another flipflop
     for instance in library.get_instances():
         # Select FF
         if ("FDRE" in instance.reference.name) or ("FDSE" in instance.reference.name):
@@ -93,17 +103,19 @@ def get_ffs_to_map_through_shift_register(library, ffs):
                 # Find the pin with the Q port
                 if "Q" in pin.inner_pin.port.name:
                     # Check that it has a wire
-                    if pin.wire != None:
+                    if pin.wire is not None:
                         # Loop through the pins connected to the wire
                         ffs_connected = 0
                         for w_pin in pin.wire.pins:
                             # Check for outer pin
-                            if (type(w_pin) == sdn.OuterPin):
+                            #if type(w_pin) == sdn.OuterPin:
+                            if isinstance(w_pin, sdn.OuterPin):
                                 # Count FFs connected to wire
-                                if ("FDRE" in w_pin.instance.reference.name) or ("FDSE" in w_pin.instance.reference.name):
+                                if (("FDRE" in w_pin.instance.reference.name) or
+                                   ("FDSE" in w_pin.instance.reference.name)):
                                     ffs_connected += 1
-                        # Check if it is connected to more than one FF (It is part of a shift register)
-                        if (ffs_connected > 1) and (not(done_with_mapping)):
+                        # Check if it is connected to more than one FF (Part of a shift register)
+                        if (ffs_connected > 1) and (not done_with_mapping):
                             # Go to initial FF to map FFs correctly
                             ffs = go_to_initial_ff(instance, ffs)
                             done_with_mapping = True
@@ -112,11 +124,15 @@ def get_ffs_to_map_through_shift_register(library, ffs):
 
 
 def print_mapped_ffs_through_shift_register(mapped_ffs):
+    """Prints the mapped ffs through the shift-register"""
+
     for ff_pair in mapped_ffs:
         print(ff_pair[0], " <-> ", ff_pair[1])
 
 
 def map_shift_register_and_output_ffs(library1, library2):
+    """Maps the ffs in a shift-register and its output"""
+
     impl_ffs = []
     reversed_ffs = []
 
@@ -131,7 +147,8 @@ def map_shift_register_and_output_ffs(library1, library2):
     mapped_flipflops = []
     # Map flipflops gathered from the carries
     if len(impl_ffs) == len(reversed_ffs):
-        for i in range(len(impl_ffs)):
+        length = len(impl_ffs)
+        for i in range(length):
             mapped_pair = []
             mapped_pair.append(impl_ffs[i])
             mapped_pair.append(reversed_ffs[i])

@@ -1,4 +1,9 @@
+"""This file contains the necessary functions to map the carry chains"""
+
+
 def get_ffs_through_carry(carry, ffs, carries):
+    """Gets all the ffs in the carry chain"""
+
     # print(carry.name + "!!!!!!!!!!!!!!!!!!!!!!!!")
     carries.append(carry.name)
     # Loop through all the pins in the carry to add ffs
@@ -6,7 +11,7 @@ def get_ffs_through_carry(carry, ffs, carries):
         # Find the pin with the S port
         if "S" in pin.inner_pin.port.name:
             # Check that it has a wire
-            if pin.wire != None:
+            if pin.wire is not None:
                 # print(pin.wire.cable.name)
                 # Loop through the pins connected to the wire
                 for wire_pin in pin.wire.pins:
@@ -31,7 +36,7 @@ def get_ffs_through_carry(carry, ffs, carries):
                                 # Find the pin with the I port
                                 if "I" in lut_pin.inner_pin.port.name:
                                     # Check that it has a wire
-                                    if lut_pin.wire != None:
+                                    if lut_pin.wire is not None:
                                         # Loop through the pins connected to the lut's wire
                                         for lut_wire_pin in lut_pin.wire.pins:
                                             # Check for FF Output
@@ -56,7 +61,7 @@ def get_ffs_through_carry(carry, ffs, carries):
         # Find the pin with the CO port
         if "CO" in pin.inner_pin.port.name:
             # Check that it has a wire
-            if pin.wire != None:
+            if pin.wire is not None:
                 # Move to the next carry!
                 # Loop through the pins connected to the wire
                 for wire_pin in pin.wire.pins:
@@ -73,6 +78,8 @@ def get_ffs_through_carry(carry, ffs, carries):
 
 
 def get_ffs_to_map_through_carries(library, ffs, carries):
+    """Finds the first carry in the chain"""
+
     # Loop through each instance in the current library to find the first carry!
     for instance in library.get_instances():
         # Select carry
@@ -82,10 +89,11 @@ def get_ffs_to_map_through_carries(library, ffs, carries):
                 # Find the pin with the CI port
                 if "CI" in pin.inner_pin.port.name:
                     # Check that it has a wire
-                    if pin.wire != None:
-                        # Check if it is connected to a constant (ground); b for reversed, 0 for impl
-                        if ("\<constb> " == pin.wire.cable.name) or (
-                            "\<const0> " == pin.wire.cable.name
+                    if pin.wire is not None:
+                        # Check if it is connected to a constant (ground);
+                        # b for reversed, 0 for impl
+                        if (r"\<constb> " == pin.wire.cable.name) or (
+                            r"\<const0> " == pin.wire.cable.name
                         ):
                             # Get FFs through carry
                             ffs, carries = get_ffs_through_carry(
@@ -95,16 +103,22 @@ def get_ffs_to_map_through_carries(library, ffs, carries):
 
 
 def print_mapped_carries(mapped_carries):
+    """Prints carry chains"""
+
     for carry_pair in mapped_carries:
         print(carry_pair[0], " <-> ", carry_pair[1])
 
 
 def print_mapped_ffs_through_carries(mapped_ffs):
+    """Prints ffs"""
+
     for ff_pair in mapped_ffs:
         print(ff_pair[0], " <-> ", ff_pair[1])
 
 
 def map_carries_and_ffs(library1, library2):
+    """Maps ffs connected to the carry chain in the circuit"""
+
     impl_carries = []
     reversed_carries = []
     impl_ffs = []
@@ -121,7 +135,8 @@ def map_carries_and_ffs(library1, library2):
     mapped_carries = []
     # Map carry chains
     if len(impl_carries) == len(reversed_carries):
-        for i in range(len(impl_carries)):
+        length = len(impl_carries)
+        for i in range(length):
             mapped_pair = []
             mapped_pair.append(impl_carries[i])
             mapped_pair.append(reversed_carries[i])
@@ -132,7 +147,8 @@ def map_carries_and_ffs(library1, library2):
     mapped_flipflops = []
     # Map flipflops gathered from the carries
     if len(impl_ffs) == len(reversed_ffs):
-        for i in range(len(impl_ffs)):
+        length = len(impl_ffs)
+        for i in range(length):
             mapped_pair = []
             mapped_pair.append(impl_ffs[i])
             mapped_pair.append(reversed_ffs[i])
@@ -145,8 +161,10 @@ def map_carries_and_ffs(library1, library2):
     return mapped_flipflops
 
 def update_netlists_from_carries_and_ffs_mapping(
-    mapped_carries, mapped_flipflops, golden_netlist, reversed_netlist
+    mapped_carries, golden_netlist, reversed_netlist
 ):
+    """Updates the nets of the netlist structure with the new mapped ffs"""
+
     # Update netlist with the mapped carries
     # Loop through the mapped carries
     for mapped_pair in mapped_carries:

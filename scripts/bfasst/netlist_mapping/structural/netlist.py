@@ -1,6 +1,8 @@
 """Builds new netlist structured used with automated block mapping"""
 
+
 from instance import Instance
+
 
 def get_netlist(library):
     """Builds new netlist structure out of SpyDrNet netlist"""
@@ -249,6 +251,7 @@ def get_netlist(library):
             netlist.append(new_instance)
 
     return netlist
+
 
 def print_netlist(netlist):
     """Prints the netlist structure"""

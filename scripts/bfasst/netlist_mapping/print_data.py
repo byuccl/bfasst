@@ -1,5 +1,6 @@
 """File with functions to print mapped points"""
 
+
 def print_conformal_input_output_points(
     top_instance, golden_module_name, reversed_module_name
 ):
