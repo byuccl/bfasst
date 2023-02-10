@@ -66,9 +66,14 @@ class XilinxPhysNetlist(TransformTool):
         # Keep a list of old replaced cells to remove after processing
         cells_to_remove = []
 
+        # Keep a list of cells already visited and skip them
+        # This happens when we process LUTS mapped to the same BEL
+        cells_already_visited = set()
+
         # Loop through all cells in the design
         for cell in rw_design.getCells():
-            # edif_cell_inst = cell.getEDIFCellInst()
+            if cell in cells_already_visited:
+                continue
 
             # Handle LUT cells
             if fnmatch(str(cell.getBELName()), "A?LUT"):
@@ -85,6 +90,7 @@ class XilinxPhysNetlist(TransformTool):
 
                 if other_cells_at_this_bel:
                     other_lut_cell = other_cells_at_this_bel[0]
+                    cells_already_visited.add(other_lut_cell)
 
                 # Determine which is the LUT6 vs LUT5
                 if not other_lut_cell:
@@ -101,7 +107,10 @@ class XilinxPhysNetlist(TransformTool):
 
                 # Replace the LUT(s) with a LUT2_6
                 self.process_lut(lut6_cell, lut5_cell, lut6_2_edif_cell)
-                cells_to_remove.append(cell)
+
+                cells_to_remove.append(lut6_cell)
+                if lut5_cell:
+                    cells_to_remove.append(lut5_cell)
 
             # TODO: Handle other primitives? BUFG->BUFGCTRL, etc.
 
@@ -178,24 +187,26 @@ class XilinxPhysNetlist(TransformTool):
             self.connect_new_cell_pin(lut6_edif_cell_inst, new_cell_inst, logical_pin, physical_pin)
 
         # Now do the same for the other LUT
-        print(f"Processing LUT {lut5_cell.getName()}")
+        if lut5_cell:
+            print(f"Processing LUT {lut5_cell.getName()}")
+            for logical_pin, physical_pin in lut5_cell.getPinMappingsL2P().items():
+                assert len(physical_pin) == 1
+                physical_pin = list(physical_pin)[0]
 
-        for logical_pin, physical_pin in lut5_cell.getPinMappingsL2P().items():
-            assert len(physical_pin) == 1
-            physical_pin = list(physical_pin)[0]
+                port_inst = lut5_edif_cell_inst.getPortInst(logical_pin)
+                logical_net = port_inst.getNet()
+                assert logical_net
 
-            port_inst = lut5_edif_cell_inst.getPortInst(logical_pin)
-            logical_net = port_inst.getNet()
-            assert logical_net
+                if physical_pin in physical_pins_to_nets:
+                    # Already done this physical pin from other LUT
+                    # Make sure it's the same net
+                    assert physical_pins_to_nets[physical_pin] == logical_net
+                    print(f"  Skipping already connected physical pin {physical_pin}")
+                    continue
 
-            if physical_pin in physical_pins_to_nets:
-                # Already done this physical pin from other LUT
-                # Make sure it's the same net
-                assert physical_pins_to_nets[physical_pin] == logical_net
-                print(f"  Skipping already connected physical pin {physical_pin}")
-                continue
-
-            self.connect_new_cell_pin(lut5_edif_cell_inst, new_cell_inst, logical_pin, physical_pin)
+                self.connect_new_cell_pin(
+                    lut5_edif_cell_inst, new_cell_inst, logical_pin, physical_pin
+                )
 
         self.process_lut_init(lut6_cell, lut5_cell, new_cell_inst)
 
@@ -225,21 +236,9 @@ class XilinxPhysNetlist(TransformTool):
         logical_net.createPortInst(new_port, new_edif_cell_inst)
         logical_net.removePortInst(old_edif_cell_inst.getPortInst(old_logical_pin))
 
-    def process_lut_init(self, lut6_cell, lut5_cell, new_cell_inst):
-        """Fix the LUT INIT property for the new_cell_inst"""
-        assert lut5_cell is None
-
-        #### Fix INIT string
-        # TODO: Handle fractured LUT.
-        print("\tFixing INIT string")
-
-        # First get an equation from the logical INIT string
-        init_eqn = str(LUTTools.getLUTEquation(lut6_cell))
-        print("\t\tOld LUT INIT:", lut6_cell.getProperty("INIT"))
-        print("\t\tOld LUT equation:", init_eqn)
-
-        # Now go through and rename
-        for logical_pin, physical_pin in lut6_cell.getPinMappingsL2P().items():
+    def process_lut_eqn_logical_to_physical(self, eqn, cell):
+        """Transform a LUT equation using the logical to physical mappings"""
+        for logical_pin, physical_pin in cell.getPinMappingsL2P().items():
             # Skip the output pin
             if str(physical_pin).startswith("[O"):
                 continue
@@ -248,14 +247,50 @@ class XilinxPhysNetlist(TransformTool):
             assert matches
             physical_pin = matches[1]
 
-            init_eqn = init_eqn.replace(str(logical_pin), str(physical_pin))
+            eqn = eqn.replace(str(logical_pin), str(physical_pin))
 
         # Physical LUT inputs use A#, but LUTTools expect I#
-        init_eqn = init_eqn.replace("A", "I")
+        eqn = eqn.replace("A", "I")
+        return eqn
 
-        print("\t\tNew LUT eqn:", init_eqn)
-        init_str = LUTTools.getLUTInitFromEquation(init_eqn, 6)
-        print("\t\tNew LUT INIT:", init_str)
+    def process_lut_init(self, lut6_cell, lut5_cell, new_cell_inst):
+        """Fix the LUT INIT property for the new_cell_inst"""
+
+        #### Fix INIT string
+        # TODO: Handle fractured LUT.
+        print("  Fixing INIT string")
+
+        # First get an equation from the logical INIT string
+        lut6_init_eqn = str(LUTTools.getLUTEquation(lut6_cell))
+        print("    LUT6 INIT:", lut6_cell.getProperty("INIT"))
+        print("    LUT6 equation:", lut6_init_eqn)
+
+        if lut5_cell:
+            lut5_init_eqn = str(LUTTools.getLUTEquation(lut5_cell))
+            print("    LUT5 INIT:", lut5_cell.getProperty("INIT"))
+            print("    LUT5 equation:", lut5_init_eqn)
+
+        # If both LUT outputs are used, then neither equation should use I5
+        if lut5_cell:
+            assert "I5" not in lut6_init_eqn
+            assert "I5" not in lut5_init_eqn
+
+        lut6_init_eqn = self.process_lut_eqn_logical_to_physical(lut6_init_eqn, lut6_cell)
+        print("    New LUT6 eqn:", lut6_init_eqn)
+        if lut5_cell:
+            lut5_init_eqn = self.process_lut_eqn_logical_to_physical(lut5_init_eqn, lut5_cell)
+            print("    New LUT5 eqn:", lut6_init_eqn)
+
+        if not lut5_cell:
+            init_str = LUTTools.getLUTInitFromEquation(lut6_init_eqn, 6)
+        else:
+
+            init_str = (
+                "64'h"
+                + LUTTools.getLUTInitFromEquation(lut6_init_eqn, 5)[4:]
+                + LUTTools.getLUTInitFromEquation(lut5_init_eqn, 5)[4:]
+            )
+        print("    New LUT INIT:", init_str)
         new_cell_inst.addProperty("INIT", init_str)
 
     def cell_is_6lut(self, cell):
