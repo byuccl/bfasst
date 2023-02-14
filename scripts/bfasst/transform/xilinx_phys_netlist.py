@@ -115,7 +115,9 @@ class XilinxPhysNetlist(TransformTool):
             # TODO: Handle other primitives? BUFG->BUFGCTRL, etc.
 
         # Remove old unusued cells
+        print("Removing old cells...")
         for cell in cells_to_remove:
+            print("  ", cell.getName())
             edif_cell_inst = cell.getEDIFCellInst()
 
             # Remove the port instances
@@ -134,6 +136,7 @@ class XilinxPhysNetlist(TransformTool):
         phys_netlist_checkpoint = self.work_dir / "phys_netlist.dcp"
 
         # Export checkpoint, then run vivado to generate a new netlist
+        rw_design.unplaceDesign()
         rw_design.writeCheckpoint(phys_netlist_checkpoint)
 
         vivado_tcl_path = self.work_dir / "vivado_checkpoint_to_netlist.tcl"
@@ -153,8 +156,6 @@ class XilinxPhysNetlist(TransformTool):
 
         lut6_edif_cell_inst = lut6_cell.getEDIFCellInst()
         assert lut6_edif_cell_inst
-        if lut5_cell:
-            lut5_edif_cell_inst = lut5_cell.getEDIFCellInst()
 
         print_color(TermColor.BLUE, "\nProcessing and replacing LUT", lut6_cell)
         if lut5_cell:
@@ -193,48 +194,58 @@ class XilinxPhysNetlist(TransformTool):
                 assert len(physical_pin) == 1
                 physical_pin = list(physical_pin)[0]
 
+                lut5_edif_cell_inst = lut5_cell.getEDIFCellInst()
                 port_inst = lut5_edif_cell_inst.getPortInst(logical_pin)
-                logical_net = port_inst.getNet()
-                assert logical_net
-
-                if physical_pin in physical_pins_to_nets:
-                    # Already done this physical pin from other LUT
-                    # Make sure it's the same net
-                    assert physical_pins_to_nets[physical_pin] == logical_net
-                    print(f"  Skipping already connected physical pin {physical_pin}")
-                    continue
 
                 self.connect_new_cell_pin(
-                    lut5_edif_cell_inst, new_cell_inst, logical_pin, physical_pin
+                    lut5_edif_cell_inst,
+                    new_cell_inst,
+                    logical_pin,
+                    physical_pin,
+                    already_connected=physical_pin in physical_pins_to_nets,
                 )
 
         self.process_lut_init(lut6_cell, lut5_cell, new_cell_inst)
 
     def connect_new_cell_pin(
-        self, old_edif_cell_inst, new_edif_cell_inst, old_logical_pin, physical_pin
+        self,
+        old_edif_cell_inst,
+        new_edif_cell_inst,
+        old_logical_pin,
+        physical_pin,
+        already_connected=False,
     ):
         """This function connects the net from old_edif_cell_inst/old_logical_pin,
-        to the appropriate logical pin on the new_edif_cell_inst, based on the physical pin"""
+        to the appropriate logical pin on the new_edif_cell_inst, based on the physical pin,
+        and disconnects from the old cell.  It's possible the net is already_connected to the
+        new cell, in which case only the disconnect from old cell needs to be performed."""
         print(f"  Processing logical pin {old_logical_pin}, physical pin {physical_pin}")
 
         port_inst = old_edif_cell_inst.getPortInst(old_logical_pin)
         logical_net = port_inst.getNet()
-        if port_inst.getDirection() == EDIFDirection.INPUT:
-            print("    Input driven by net", logical_net)
 
-            # A5 becomes I4, A1 becomes I0, etc.
-            new_logical_pin = str(old_logical_pin)[0] + str(int(str(physical_pin[1])) - 1)
-            print("    Connecting net", logical_net, "to input pin", new_logical_pin)
+        if already_connected:
+            print(f"    Skipping already connected physical pin {physical_pin}")
 
-        elif port_inst.getDirection() == EDIFDirection.OUTPUT:
-            print("    Drives net", logical_net)
+        else:
+            if port_inst.getDirection() == EDIFDirection.INPUT:
+                print("    Input driven by net", logical_net)
 
-            new_logical_pin = physical_pin
-            print("    Connecting net", logical_net, "to output pin", new_logical_pin)
+                # A5 becomes I4, A1 becomes I0, etc.
+                new_logical_pin = str(old_logical_pin)[0] + str(int(str(physical_pin[1])) - 1)
+                print("    Connecting net", logical_net, "to input pin", new_logical_pin)
 
-        new_port = new_edif_cell_inst.getPort(new_logical_pin)
-        logical_net.createPortInst(new_port, new_edif_cell_inst)
-        logical_net.removePortInst(old_edif_cell_inst.getPortInst(old_logical_pin))
+            elif port_inst.getDirection() == EDIFDirection.OUTPUT:
+                print("    Drives net", logical_net)
+
+                new_logical_pin = physical_pin
+                print("    Connecting net", logical_net, "to output pin", new_logical_pin)
+
+            new_port = new_edif_cell_inst.getPort(new_logical_pin)
+            logical_net.createPortInst(new_port, new_edif_cell_inst)
+
+        # Disconnect connection to port on old cell
+        logical_net.removePortInst(port_inst)
 
     def process_lut_eqn_logical_to_physical(self, eqn, cell):
         """Transform a LUT equation using the logical to physical mappings"""
