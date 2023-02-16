@@ -2,11 +2,10 @@
 
 import abc
 import pathlib
-import sys
 import types
 from dataclasses import dataclass
 
-from bfasst.utils import TermColor, print_color, print_color_no_newl
+from bfasst.utils import TermColor, print_color
 
 
 @dataclass

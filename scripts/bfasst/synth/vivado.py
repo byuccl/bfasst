@@ -1,7 +1,6 @@
 """ This file provides tools to wrap Vivado for synthesis purposes """
 import subprocess
 import re
-import sys
 import pathlib
 
 import bfasst
@@ -45,7 +44,7 @@ class VivadoSynthesisTool(SynthesisTool):
         design.netlist_path = self.cwd / f"{design.top}.edf"
         design.constraints_path = self.cwd / "constraints.xdc"
 
-        generate_netlist = ToolProduct(design.netlist_path, log_path, self.check_synth_log)
+        generate_netlist = ToolProduct(design.netlist_path, self.log_path, self.check_synth_log)
         generate_constraints = ToolProduct(design.constraints_path)
         tool_products = [generate_netlist, generate_constraints]
 

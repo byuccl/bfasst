@@ -56,8 +56,8 @@ class XilinxPhysNetlist(TransformTool):
         if status is not None:
             print_color(self.TERM_COLOR_STAGE, "Physical Netlist conversion already run")
             return status
-        else:
-            self.open_new_log()
+
+        self.open_new_log()
         self.log_color(
             "Starting logical to physical netlist conversion for",
             design.xilinx_impl_checkpoint_path,
@@ -131,9 +131,9 @@ class XilinxPhysNetlist(TransformTool):
             edif_cell_inst.getParentCell().removeCellInst(edif_cell_inst)
 
         # Create a new netlist
-        self.export_new_netlist(rw_design, after_netlist_verilog_path)
+        status = self.export_new_netlist(rw_design, after_netlist_verilog_path)
 
-        return self.success_status
+        return status
 
     def export_new_netlist(self, rw_design, after_netlist_verilog_path):
         """Export the new netlist to a Verilog netlist file"""
@@ -176,8 +176,7 @@ class XilinxPhysNetlist(TransformTool):
                 return Status(TransformStatus.ERROR)
 
         self.log("Exported new netlist to", after_netlist_verilog_path)
-        # netlist = spydrnet.parse(str(edif_path))
-        # netlist.compose(verilog_path)
+        return self.success_status
 
     def process_lut(self, lut6_cell, lut5_cell, lut6_2_cell):
         """This function takes a LUT* from the netlist and replaces with with a LUT6_2
