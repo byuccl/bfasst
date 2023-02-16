@@ -1,7 +1,12 @@
-# For each hex char that it gets, it adds 4 binary numbers to the list
+"""This file contains functions used to transform numbers between hex and binary"""
+
+
 def hex_to_bin(conf_bits):
+    """Function used to transform each hex conf_bit to a bin.
+    For each hex char that it gets, it adds 4 binary numbers to the list."""
+
     new_list = []
-    # Transforming each hex conf_bit to a bin
+
     for char in conf_bits:
         if char == "0":
             new_list.extend(["0", "0", "0", "0"])
@@ -39,8 +44,9 @@ def hex_to_bin(conf_bits):
     return new_list
 
 
-# For 4 bin chars, it returns a hex char
 def bin_to_hex(conf_bits):
+    """In this function for 4 bin chars, it returns a hex char."""
+
     new_list = []
     # Iterate through all the binary lists
     i = 0
@@ -91,8 +97,10 @@ def bin_to_hex(conf_bits):
 
 
 def get_reversed_bin_for_each_hex(conf_bits):
+    """This function transforms each hex conf_bit to a bin num"""
+
     new_list = []
-    # Transforming each hex conf_bit to a bin
+
     for char in conf_bits:
         if char == "0":
             new_list.extend(["0", "0", "0", "0"])

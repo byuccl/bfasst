@@ -1,16 +1,22 @@
+"""This file contains functions used to map FFs based on their conf bits"""
+
+
 def make_configuration_bits_list_to_compare(conf_bits):
-    list = []
+    """Function used to create the lists of conf bits"""
+
+    conf_bits_list = []
 
     for num in conf_bits:
         pair = []
         pair.append(num)
         pair.append("not_found")
-        list.append(pair)
+        conf_bits_list.append(pair)
 
-    return list
+    return conf_bits_list
 
 
 def conf_bits_match(list_1, list_2):
+    """Functions used to match two lists of conf bits"""
 
     for pair_1 in list_1:
         for pair_2 in list_2:
@@ -34,6 +40,8 @@ def conf_bits_match(list_1, list_2):
 
 
 def map_ffs_based_on_conf_bits(flipflops_data_1, flipflops_data_2):
+    """This function is used to map all FFs in the netlists based on their conf bits"""
+
     mapped_flipflops = []
     # Loop through each pair in the mapped FFs data_1
     for data_1 in flipflops_data_1:
