@@ -4,7 +4,7 @@ import bfasst
 
 
 class TermColor:
-    """ Terminal codes for printing in color """
+    """Terminal codes for printing in color"""
 
     # pylint: disable=too-few-public-methods
 
@@ -18,12 +18,15 @@ class TermColor:
     UNDERLINE = "\033[4m"
 
 
+def print_color_no_newl(color, *msg):
+    sys.stdout.write(color + " ".join(str(item) for item in msg), TermColor.END)
+
 def print_color(color, *msg):
     print(color + " ".join(str(item) for item in msg), TermColor.END)
 
 
 def error(*msg, returncode=-1):
-    """ Print an error message and exit program """
+    """Print an error message and exit program"""
 
     print_color(TermColor.RED, "ERROR:", " ".join(str(item) for item in msg))
     assert False

@@ -2,10 +2,11 @@
 
 import abc
 import pathlib
+import sys
 import types
 from dataclasses import dataclass
 
-from bfasst.utils import TermColor
+from bfasst.utils import TermColor, print_color, print_color_no_newl
 
 
 @dataclass
@@ -29,6 +30,8 @@ class Tool(abc.ABC):
         self.cwd = cwd
         self.flow_args = flow_args
         self.work_dir = self.make_work_dir()
+        self.log_path = self.work_dir / "log.txt"
+        self.log_fp = None
 
     @property
     @classmethod
@@ -49,6 +52,21 @@ class Tool(abc.ABC):
         if not work_dir.is_dir():
             work_dir.mkdir()
         return work_dir
+
+    def open_new_log(self):
+        self.log_fp = open(self.log_path, "w")
+
+    def log(self, *msg):
+        """Write text to the log file and stdout"""
+        text = " ".join(*msg)
+        print(text)
+        self.log_fp.write(text + "\n")
+        self.log_fp.flush()
+
+    def log_color(self, color, *msg):
+        print_color(color, *msg)
+        self.log_fp.write(" ".join(*msg) + "\n")
+        self.log_fp.flush()
 
     def get_prev_run_status(self, tool_products, dependency_modified_time):
         """Determines whether previous run data can be reused, and if so,

@@ -75,6 +75,21 @@
                 "${workspaceFolder}/build/xilinx_yosys_impl/basic/add16_r_rst/contraints.xdc"
             ],
             "cwd": "${workspaceFolder}/third_party/fasm2bels",
+        },
+        {
+            "name": "experiment_parallel",
+            "type": "python",
+            "request": "launch",
+            "python": "${workspaceFolder}/.venv/bin/python",
+            "program": "scripts/run_experiment.py",
+            "args": [
+                "experiments/phys_netlist.yaml",
+                "-j1"
+            ],
+            "env": {
+                "VIVADO_PATH": "/tools/Xilinx/Vivado/2022.2/bin/vivado"
+            },
+            "cwd": "${workspaceFolder}",
         }
     ]
 }
