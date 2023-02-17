@@ -96,7 +96,7 @@ def job_done(experiment, print_lock, running_list, design, work_path, statuses, 
             status = future.exception()
 
             with open(work_path / LOG_FILE_NAME, "a") as f:
-                traceback.print_exception(status, file=f)
+                traceback.print_exception(status, value=status, tb=status.__traceback__, file=f)
         else:
             status = future.result()[1]
 
