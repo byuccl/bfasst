@@ -1,5 +1,4 @@
 """ This file provides tools to wrap Vivado for synthesis purposes """
-import subprocess
 import re
 import pathlib
 
@@ -73,9 +72,7 @@ class VivadoSynthesisTool(SynthesisTool):
             extract_contraints(design, report_io_path)
 
         # Check synthesis log
-        self.check_synth_log()
-
-        return self.success_status
+        return self.check_synth_log(self.log_path)
 
     def write_header(self, stream):
         stream.write("if { [ catch {\n")
@@ -145,26 +142,14 @@ class VivadoSynthesisTool(SynthesisTool):
             self.write_tcl(design, report_io_path, stream)
 
         cmd = [str(VIVADO_BIN_PATH), "-mode", "tcl", "-source", str(tcl_path)]
-        proc = subprocess.Popen(
-            cmd,
-            cwd=self.work_dir,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            universal_newlines=True,
-        )
-        for line in proc.stdout:
-            self.log(line.strip())
-            # if re.match("\s*ERROR:", line):
-            #     proc.kill()
-            #     return Status(SynthStatus.ERROR)
-        proc.communicate()
+        proc = self.exec_and_log(cmd)
         if proc.returncode:
             return Status(SynthStatus.ERROR)
 
-        return Status(SynthStatus.SUCCESS)
+        return self.success_status
 
-    def check_synth_log(self):
-        text = open(self.log_path).read()
+    def check_synth_log(self, log_path):
+        text = open(log_path).read()
 
         match = re.search(r"^ERROR:\s*(.*?)$", text, re.M)
         if match:

@@ -10,25 +10,27 @@ from enum import unique as enum_unique
 import pathlib
 import shutil
 
-import bfasst
-from bfasst.design import Design
-from bfasst.transform.xilinx_phys_netlist import XilinxPhysNetlist
-from bfasst.utils import error
-from bfasst.synth.ic2_lse import Ic2LseSynthesisTool
-from bfasst.synth.ic2_synplify import IC2_Synplify_SynthesisTool
-from bfasst.synth.vivado import VivadoSynthesisTool
-from bfasst.synth.yosys import Yosys_Tech_SynthTool
-from bfasst.opt.ic2_lse import Ic2LseOptTool
-from bfasst.opt.ic2_synplify import IC2_Synplify_OptTool
-from bfasst.impl.ic2 import IC2_ImplementationTool
-from bfasst.impl.vivado import VivadoImplementationTool
-from bfasst.reverse_bit.xray import XRay_ReverseBitTool
-from bfasst.reverse_bit.icestorm import Icestorm_ReverseBitTool
-from bfasst.compare.conformal import Conformal_CompareTool
-from bfasst.compare.yosys import Yosys_CompareTool
-from bfasst.compare.waveform import WaveformCompareTool
-from bfasst.compare.onespin import OneSpin_CompareTool
-from bfasst.error_injection.error_injector import ErrorInjector_ErrorInjectionTool
+# import bfasst
+
+from .design import Design
+from .transform.xilinx_phys_netlist import XilinxPhysNetlist
+from .utils import error
+from .synth.ic2_lse import Ic2LseSynthesisTool
+from .synth.ic2_synplify import IC2_Synplify_SynthesisTool
+from .synth.vivado import VivadoSynthesisTool
+from .synth.yosys import Yosys_Tech_SynthTool
+from .opt.ic2_lse import Ic2LseOptTool
+from .opt.ic2_synplify import IC2_Synplify_OptTool
+from .impl.ic2 import IC2_ImplementationTool
+from .impl.vivado import VivadoImplementationTool
+from .reverse_bit.xray import XRay_ReverseBitTool
+from .reverse_bit.icestorm import Icestorm_ReverseBitTool
+from .compare.conformal import Conformal_CompareTool
+from .compare.yosys import Yosys_CompareTool
+from .compare.waveform import WaveformCompareTool
+from .compare.onespin import OneSpin_CompareTool
+from .error_injection.error_injector import ErrorInjector_ErrorInjectionTool
+from .locks import conformal_lock, onespin_lock
 
 
 class FlowArgs(Enum):
@@ -139,7 +141,7 @@ def conformal_cmp(design, build_dir, flow_args):
     """Compare netlists using Conformal"""
     vendor = Vendor.XILINX if not flow_args else Vendor[flow_args.upper()]
     compare_tool = Conformal_CompareTool(build_dir, vendor)
-    with bfasst.conformal_lock:
+    with conformal_lock:
         return compare_tool.compare_netlists(design)
 
 
@@ -176,7 +178,7 @@ def wave_cmp(design, build_dir, run_waveform, tests, vivado):
 def onespin_cmp(design, build_dir, flow_args):
     """Compare netlists using Onespin"""
     compare_tool = OneSpin_CompareTool(build_dir)
-    with bfasst.onespin_lock:
+    with onespin_lock:
         return compare_tool.compare_netlists(design)
 
 
@@ -514,7 +516,7 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
         # Run compare to create a onespin tcl for yosys->corrupt reversed netlist
         design.compare_revised_file = design.reversed_netlist_filename()
         compare_tool = OneSpin_CompareTool(build_dir)
-        with bfasst.onespin_lock:
+        with onespin_lock:
             status = compare_tool.compare_netlists(design)
 
         # Run compare again so we can check yosys netlist -> corrupt yosys
@@ -522,7 +524,7 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
         # This lets us make sure that any compare errors are because of the
         #   netlist corruption, and not some other issue
         design.compare_revised_file = netlist.name
-        with bfasst.onespin_lock:
+        with onespin_lock:
             status = compare_tool.compare_netlists(design)
 
     # Write the python script to run all of the compare tcl scripts

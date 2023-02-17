@@ -25,8 +25,14 @@ jpype.startJVM(
 from com.xilinx.rapidwright.design import Design, Unisim
 from com.xilinx.rapidwright.edif import EDIFDirection
 from com.xilinx.rapidwright.design.tools import LUTTools
+from java.lang import System
+from java.io import PrintStream, File
 
 # pylint: enable=wrong-import-position,wrong-import-order
+
+
+class RapidwrightException(Exception):
+    pass
 
 
 class XilinxPhysNetlist(TransformTool):
@@ -40,6 +46,9 @@ class XilinxPhysNetlist(TransformTool):
         after_netlist_verilog_path = design.impl_edif_path.parent / (
             design.impl_edif_path.stem + "_physical.v"
         )
+
+        # Redirect rapidwright output to file
+        System.setOut(PrintStream(File(str(self.work_dir / "rapidwright_stdout.log"))))
 
         # Check for up to date previous run
         status = self.get_prev_run_status(
@@ -59,12 +68,33 @@ class XilinxPhysNetlist(TransformTool):
 
         self.open_new_log()
         self.log_color(
+            TermColor.PURPLE,
             "Starting logical to physical netlist conversion for",
             design.xilinx_impl_checkpoint_path,
+            design.impl_edif_path,
+            add_timestamp=True,
         )
+
+        phys_netlist_checkpoint = self.work_dir / "phys_netlist.dcp"
+
+        # Catch all Java exceptions since they are not picklable,
+        # and so cannot be handled properly by multiprocessing
+        # Don't raise from as this is also problematic.
+        try:
+            self.run_rapidwright(design, phys_netlist_checkpoint)
+        except jpype.JException as exc:
+            raise RapidwrightException(str(exc))  # pylint: disable=raise-missing-from
+
+        status = self.export_new_netlist(phys_netlist_checkpoint, after_netlist_verilog_path)
+
+        return status
+
+    def run_rapidwright(self, design, phys_netlist_checkpoint):
+        """Do all rapidwright related processing on the netlist"""
 
         # Read the checkpoint into rapidwright, and get the netlist
         rw_design = Design.readCheckpoint(design.xilinx_impl_checkpoint_path, design.impl_edif_path)
+
         netlist = rw_design.getNetlist()
 
         # Get the LUT6_2 EDIFCell (all LUTs will be replaced with equivalent LUT6_2 primitives)
@@ -130,21 +160,15 @@ class XilinxPhysNetlist(TransformTool):
             # Remove the port instances
             edif_cell_inst.getParentCell().removeCellInst(edif_cell_inst)
 
-        # Create a new netlist
-        status = self.export_new_netlist(rw_design, after_netlist_verilog_path)
+        # Export checkpoint, then run vivado to generate a new netlist
+        rw_design.unplaceDesign()
+        rw_design.writeCheckpoint(phys_netlist_checkpoint)
 
-        return status
-
-    def export_new_netlist(self, rw_design, after_netlist_verilog_path):
+    def export_new_netlist(self, phys_netlist_checkpoint, after_netlist_verilog_path):
         """Export the new netlist to a Verilog netlist file"""
         self.log_color(
             TermColor.BLUE, "\nUsing Vivado to create new netlist:", after_netlist_verilog_path
         )
-        phys_netlist_checkpoint = self.work_dir / "phys_netlist.dcp"
-
-        # Export checkpoint, then run vivado to generate a new netlist
-        rw_design.unplaceDesign()
-        rw_design.writeCheckpoint(phys_netlist_checkpoint)
 
         vivado_tcl_path = self.work_dir / "vivado_checkpoint_to_netlist.tcl"
         with open(vivado_tcl_path, "w") as fp:

@@ -18,9 +18,13 @@ import traceback
 
 
 import bfasst
+import bfasst.experiment
 from bfasst.output_cntrl import redirect, cleanup_redirect, enable_proxy
 from bfasst.status import BfasstException, Status
 from bfasst.utils import TermColor, print_color
+
+
+LOG_FILE_NAME = "log.txt"
 
 
 def print_running_list(running_list):
@@ -59,12 +63,10 @@ def update_runtimes_thread(print_lock, num_jobs, running_list, statuses):
     ).start()
 
 
-def init_worker():
-    signal.signal(signal.SIGINT, signal.SIG_IGN)
-
-
-def run_design(print_lock, running_list, design, design_dir, flow_fcn, flow_args):
+def run_design(print_lock, running_list, design, work_path, flow_fcn, flow_args):
     """This function runs a single job, running the selected CAD flow for one design"""
+
+    enable_proxy()  # Enable STDOUT redirects
 
     running_list[design.rel_path] = datetime.datetime.now()
     with print_lock:
@@ -72,25 +74,29 @@ def run_design(print_lock, running_list, design, design_dir, flow_fcn, flow_args
 
     buf = redirect()
     try:
-        status = flow_fcn(design=design, build_dir=design_dir, flow_args=flow_args)
+        status = flow_fcn(design=design, build_dir=work_path, flow_args=flow_args)
     except BfasstException as e:
         status = Status(status=e.error, msg=str(e), raise_excep=False)
     finally:
-        with open(f"{design_dir / design.path.name}.log", "w") as f:
+        with open(work_path / LOG_FILE_NAME, "w") as f:
             buf.seek(0)
             copyfileobj(buf, f)
         cleanup_redirect()
     return (design, status)
 
 
-def job_done(print_lock, running_list, ljust, design, statuses, future):
+def job_done(experiment, print_lock, running_list, design, work_path, statuses, future):
     """Removes job from the running_list, prints the job completion status,
     and saves the return status."""
+
+    ljust = experiment.get_longest_design_name() + 5
 
     with print_lock:
         if future.exception():
             status = future.exception()
-            print(traceback.print_exception(status))
+
+            with open(work_path / LOG_FILE_NAME, "a") as f:
+                traceback.print_exception(status, file=f)
         else:
             status = future.result()[1]
 
@@ -101,15 +107,15 @@ def job_done(print_lock, running_list, ljust, design, statuses, future):
         sys.stdout.write(str(status))
         sys.stdout.write("\n")
         # sys.stdout.write("\033[s")
-        print_lock.release()
 
         del running_list[design.rel_path]
-        print_running_list(future.running_list)
+        print_running_list(running_list)
 
     statuses.append(status)
 
 
 def cleanup():
+    print("Killing all child processes...")
     os.killpg(0, signal.SIGKILL)  # kill all processes in my group
 
 
@@ -127,16 +133,8 @@ def main(experiment_yaml, num_threads):
     # Build experiment object
     experiment = bfasst.experiment.Experiment(experiment_yaml)
 
-    # Create temp folder
-    build_dir = pathlib.Path.cwd() / "build" / experiment.name
-    if not build_dir.is_dir():
-        build_dir.mkdir(parents=True)
-
     # Don't run with less than one thread
     num_threads = max(1, num_threads)
-
-    # For each design
-    ljust = experiment.get_longest_design_name() + 5
 
     statuses = multiprocessing.Manager().list()
     running_list = multiprocessing.Manager().dict()
@@ -154,11 +152,13 @@ def main(experiment_yaml, num_threads):
     update_process.start()
 
     results = []
-    with concurrent.futures.ProcessPoolExecutor(
-        max_workers=len(experiment.designs),
-    ) as pool:
+
+    # https://github.com/jpype-project/jpype/issues/1024
+    ctx = multiprocessing.get_context("spawn")
+
+    with concurrent.futures.ProcessPoolExecutor(max_workers=num_threads, mp_context=ctx) as pool:
         for design in experiment.designs:
-            design_dir = build_dir / design.rel_path
+            design_dir = experiment.work_dir / design.rel_path
             design_dir.mkdir(parents=True, exist_ok=True)
 
             future = pool.submit(
@@ -171,7 +171,9 @@ def main(experiment_yaml, num_threads):
                 experiment.flow_args,
             )
             future.add_done_callback(
-                functools.partial(job_done, print_lock, running_list, ljust, design, statuses)
+                functools.partial(
+                    job_done, experiment, print_lock, running_list, design, design_dir, statuses
+                )
             )
             results.append(future)
 
@@ -186,11 +188,11 @@ def main(experiment_yaml, num_threads):
     t_end = time.perf_counter()
 
     if experiment.post_run is not None:
-        experiment.post_run(build_dir)
+        experiment.post_run(experiment.work_dir)
 
     print_ending_stats(statuses, t_end - t_start)
 
-    os.killpg(0, signal.SIGKILL)  # kill all processes in my group
+    print("Completed successfully")
 
 
 def print_ending_stats(statuses, runtime):
@@ -200,14 +202,24 @@ def print_ending_stats(statuses, runtime):
     print("-" * 80)
     print("Status By Type")
     print("-" * 80)
+
+    exception_exists = any(isinstance(s, Exception) for s in statuses)
+
+    # Convert exceptions to strings
+    statuses = [f"Exception: {str(s).strip()}" if isinstance(s, Exception) else s for s in statuses]
+
     if statuses:
         status_counts = collections.Counter(statuses)
 
-        pad = max(len(str(status)) for status in status_counts) + 10
+        pad = min(max(len(str(status)) for status in status_counts) + 10, 80)
         for status, count in status_counts.items():
-            print(str(status).ljust(pad), count)
+            print(str(status).strip().ljust(pad), count)
 
     print("-" * 80)
+    if exception_exists:
+        print_color(
+            TermColor.YELLOW, "Exception(s) occurred.  See log files for full exception trace."
+        )
     print("Execution took", round(runtime, 1), "seconds")
 
 

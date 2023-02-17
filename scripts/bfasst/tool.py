@@ -1,7 +1,9 @@
 """ Base class for all tools used in BFASST """
 
 import abc
+import datetime
 import pathlib
+import subprocess
 import types
 from dataclasses import dataclass
 
@@ -23,6 +25,10 @@ class Tool(abc.ABC):
     """Base class for all tools used in BFASST"""
 
     TERM_COLOR_STAGE = TermColor.PURPLE
+
+    DATE_FORMAT = "%Y-%m-%d"
+    TIME_FORMAT = "%H:%M:%S"
+    TIMESTAMP_FORMAT = DATE_FORMAT + " " + TIME_FORMAT + ".%f\t"
 
     def __init__(self, cwd, flow_args=""):
         super().__init__()
@@ -55,16 +61,23 @@ class Tool(abc.ABC):
     def open_new_log(self):
         self.log_fp = open(self.log_path, "w")
 
-    def log(self, *msg):
+    def log(self, *msg, add_timestamp=False):
         """Write text to the log file and stdout"""
-        text = " ".join(*msg)
+        text = " ".join(str(s) for s in msg)
+        if add_timestamp:
+            time_now = datetime.datetime.now()
+            text = time_now.strftime(Tool.TIMESTAMP_FORMAT) + text
         print(text)
         self.log_fp.write(text + "\n")
         self.log_fp.flush()
 
-    def log_color(self, color, *msg):
-        print_color(color, *msg)
-        self.log_fp.write(" ".join(*msg) + "\n")
+    def log_color(self, color, *msg, add_timestamp=False):
+        text = " ".join(str(s) for s in msg)
+        if add_timestamp:
+            time_now = datetime.datetime.now()
+            text = time_now.strftime(Tool.TIMESTAMP_FORMAT) + text
+        print_color(color, text)
+        self.log_fp.write(text + "\n")
         self.log_fp.flush()
 
     def get_prev_run_status(self, tool_products, dependency_modified_time):
@@ -101,3 +114,17 @@ class Tool(abc.ABC):
                     return None
 
         return self.success_status
+
+    def exec_and_log(self, cmd):
+        """Run a command using Popen and log the output, return the process handle"""
+        proc = subprocess.Popen(
+            cmd,
+            cwd=self.work_dir,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            universal_newlines=True,
+        )
+        for line in proc.stdout:
+            self.log(line.strip())
+        proc.communicate()
+        return proc
