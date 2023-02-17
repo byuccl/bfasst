@@ -1,8 +1,8 @@
 // Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2020.2 (lin64) Build 3064766 Wed Nov 18 09:12:47 MST 2020
-// Date        : Mon Aug  8 18:14:25 2022
-// Host        : CCL3 running 64-bit Ubuntu 20.04.4 LTS
+// Date        : Fri Jan 20 12:52:25 2023
+// Host        : CCL3 running 64-bit Ubuntu 20.04.5 LTS
 // Command     : write_verilog -force -file /home/palm9727/bfasst/build/xilinx_conformal_impl/byu/tx/tx_impl.v
 // Design      : tx
 // Purpose     : This is a Verilog netlist of the current design or from a specific cell of the design. The output is an

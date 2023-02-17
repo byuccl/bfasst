@@ -1,5 +1,8 @@
 """This file contains the class and necessary functions to create
-a binary search tree used to filter configuration bits in a LUT"""
+a binary search tree used to filter configuration bits in a LUT
+when inputs to the LUT have constant values. They may be not
+necessary at all since the qm algorithm can get the same prime
+implicants from the unfiltered LUT conf bits."""
 
 
 class Node:
@@ -8,6 +11,15 @@ class Node:
     def __init__(self):
         self.value = None
         self.children = None
+
+    def get_value(self):
+        """Returns value"""
+        return self.value
+
+    def get_children(self):
+        """Returns children"""
+        return self.children
+
 
 def add_children(parent_node):
     """Function used to add new children to a node"""
@@ -20,7 +32,7 @@ def add_children(parent_node):
 
 
 def create_tree(new_node, generations, conf_bits_index, conf_bits):
-    """Function used to create a tree with recursion"""
+    """Function used to create a tree through recursion"""
 
     new_node = add_children(new_node)
     # Generation 1: Return the parent node with values on children
@@ -36,10 +48,12 @@ def create_tree(new_node, generations, conf_bits_index, conf_bits):
                 child, generations - 1, conf_bits_index, conf_bits
             )
         return new_node, conf_bits_index
+    # It should never get here
+    return new_node, conf_bits_index
 
 
 def get_filtered_values(node, generations, lut_inputs, filtered_bst_values):
-    """Function used to get the filtered values of a LUT using recursion"""
+    """Function used to get the filtered values of a LUT through recursion"""
 
     # Getting the index of the inputs to the LUT from the generations
     inputs_index = generations - 1
@@ -66,3 +80,5 @@ def get_filtered_values(node, generations, lut_inputs, filtered_bst_values):
                 node.children[1], generations - 1, lut_inputs, filtered_bst_values
             )
         return filtered_bst_values
+    # It should never get here
+    return filtered_bst_values

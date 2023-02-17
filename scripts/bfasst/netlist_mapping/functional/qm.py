@@ -51,9 +51,11 @@ def qm_f(ones=None, zeros=None, dc_a=None):
     if dc_a is None:
         dc_a = []
 
-    elts = max(max(ones or zeros or dc_a),
-		max(zeros or dc_a or ones),
-		max(dc_a or ones or zeros)) + 1
+    first_max = max(ones or zeros or dc_a)
+    second_max = max(zeros or dc_a or ones)
+    third_max = max(dc_a or ones or zeros)
+
+    elts = max(first_max, second_max, third_max) + 1
     numvars = int(math.ceil(math.log(elts, 2)))
     elts = 1 << numvars
     all_v = set(b2s(i, numvars) for i in range(elts))
@@ -96,7 +98,7 @@ def is_full_cover(all_primes, ones):
 
 def is_cover(prime, one):
     '''Return a bool: Does the prime cover the minterm?'''
-    return min([p == 'X' or p == o for p, o in zip(prime, one)] + [True])
+    return min([p in ('X', o) for p, o in zip(prime, one)] + [True])
 
 
 def compute_primes(cubes, vars_a):
@@ -142,7 +144,7 @@ def merge(i, j):
     for a_i, b_i in zip(i, j):
         if (a_i == 'X' or b_i == 'X') and a_i != b_i:
             return None
-        elif a_i != b_i:
+        if a_i != b_i:
             dif_cnt += 1
             s_v += 'X'
         else:
@@ -153,43 +155,8 @@ def merge(i, j):
 
 
 if __name__ == '__main__':
-    from optparse import Option, IndentedHelpFormatter, OptionParser
-    from sys import argv, stdout
 
     def main():
-        """Computes the prime implicants based on the ones, zeroes, and don't cares"""
-
-        options = [
-            Option('-d', '--dontcares', dest='dc_a', default='',
-                help='comma-separated don\'t-cares', metavar='D'),
-            Option('-o', '--ones', dest='ones', default='',
-                help='comma-separated ones', metavar='O'),
-            Option('-z', '--zeros', dest='zeros', default='',
-                help='comma-separated zeros', metavar='Z')
-		]
-
-        f = IndentedHelpFormatter()
-        def raw_format(s_a):
-            return s_a + '\n'
-        f.format_description = raw_format
-
-        optparser = OptionParser(description=__doc__, formatter=f)
-        optparser.add_options(options)
-        opts, args = optparser.parse_args()
-        if len(argv) == 1 or args:
-            optparser.print_help()
-            exit()
-
-        opts.dc_a = [int(i) for i in opts.dc_a.split(',') if i]
-        opts.ones = [int(i) for i in opts.ones.split(',') if i]
-        opts.zeros = [int(i) for i in opts.zeros.split(',') if i]
-
-        soln = qm_f(dc_a=opts.dc_a, ones=opts.ones, zeros=opts.zeros)
-        if len(soln) == 0:
-            stdout.write('contradiction\n')
-        elif len(soln) == 1 and soln[0].count('X') == len(soln[0]):
-            stdout.write('tautology\n')
-        else:
-            stdout.write(' '.join(soln) + '\n')
+        """Ignored for this script"""
 
     main()

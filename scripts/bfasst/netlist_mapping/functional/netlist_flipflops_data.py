@@ -11,18 +11,22 @@ from bst import Node, create_tree, get_filtered_values
 
 
 class Parameter(Enum):
+    """Enums used to get the conf bits and its number"""
+
     BIT_NUM = 0
     CONF_BITS = 1
 
 
 class State(Enum):
+    """States used to get conf bits"""
+
     INIT = 0
     GET_BIT_NUM = 1
     GET_CONF_BITS = 2
 
 
 class FlipflopData:
-    """This class saves the necessary information to map the FF"""
+    """This class contains the necessary information to map the FF"""
 
     def __init__(self, flipflop_name, configuration_bits, sop):
         self.flipflop_name = flipflop_name
@@ -30,24 +34,34 @@ class FlipflopData:
         self.sop = sop
 
     def set_flipflop_name(self, flipflop_name):
+        """Sets the FF name"""
         self.flipflop_name = flipflop_name
 
     def add_configuration_bits(self, configuration_bits):
+        """Adds the conf bits"""
         self.configuration_bits.append(configuration_bits)
 
     def set_sop(self, sop):
+        """Sets the FF logic function tree"""
         self.sop = sop
 
 
 class Product:
     """This class saves the information of a product in a SOP"""
 
-    def __init__(self, string, lut_inputs, lut_inputs_num, negated_inputs_num, state):
+    def __init__(self, string, lut_inputs, num, state):
         self.string = string
         self.lut_inputs = lut_inputs # List of InputSOP objects
-        self.lut_inputs_num = lut_inputs_num
-        self.negated_inputs_num = negated_inputs_num
+        self.num = num
         self.state = state
+
+    def get_product_string(self):
+        """Used to get the string used for the product"""
+        return self.string
+
+    def get_product_state(self):
+        """Used to get the state of the product"""
+        return self.state
 
 
 class InputSOP:
@@ -57,6 +71,14 @@ class InputSOP:
         self.input = input_p
         self.sop = sop # List of Product objects
         self.state = state
+
+    def get_input_sop(self):
+        """Used to get the sop"""
+        return self.sop
+
+    def get_input_state(self):
+        """Used to get the InputSOP state"""
+        return self.state
 
 
 def parse_instance_parameters(parameters):
@@ -137,6 +159,8 @@ def get_reduced_lut_conf_bits(conf_bits_num, conf_bits, lut_inputs):
 
 
 def get_smaller_lut(lut_conf_bits, lut_inputs):
+    """This function returns data for a LUT5"""
+
     new_conf_bits = ""
     new_lut_inputs = []
     # Get new conf bits
@@ -172,6 +196,17 @@ def lut_conf_bits_to_lower_case(lut_conf_bits):
     return new_conf_bits
 
 
+def check_if_smaller_lut(smaller_lut, lut_conf_bits_num, lut_conf_bits, lut_inputs):
+    """Checks if it is a smaller LUT to get it from the LUT6_2"""
+
+    if smaller_lut:
+        lut_conf_bits_num, lut_conf_bits, lut_inputs = get_smaller_lut(
+            lut_conf_bits, lut_inputs
+        )
+
+    return lut_conf_bits_num, lut_conf_bits, lut_inputs
+
+
 def get_reduced_inputs_sops(inputs_sops, constant_inputs):
     """This function gets the inputs to the SOP that are not constants."""
 
@@ -189,6 +224,30 @@ def get_reduced_inputs_sops(inputs_sops, constant_inputs):
             new_input_index += 1
 
     return new_inputs_sops
+
+
+def check_for_lut_reduction(lut_inputs, lut_conf_bits, lut_conf_bits_num, inputs_sops):
+    """Function used to check for reduction and perform it"""
+
+    # Check if any of the LUT's inputs is a constant 1 to reduce the LUT
+    needs_reduction = False
+    constant_inputs = []
+    for i, value in enumerate(lut_inputs):
+        if str(value) == r"\<constb> ":
+            needs_reduction = True
+            constant_inputs.append("I" + str(i))
+
+    #print("Constant Inputs")
+    #print(constant_inputs)
+
+    # LUT Reduction
+    if needs_reduction and (len(constant_inputs) < 5):
+        lut_conf_bits = get_reduced_lut_conf_bits(
+            int(lut_conf_bits_num), lut_conf_bits, lut_inputs
+        )
+        inputs_sops = get_reduced_inputs_sops(inputs_sops, constant_inputs)
+
+    return lut_conf_bits, inputs_sops
 
 
 def get_minterms(conf_bits, lut_inputs_length):
@@ -234,12 +293,16 @@ def get_product(implicant):
         lut_input_index -= 1
     lut_inputs_number = len(lut_inputs)
 
-    product = Product(string, lut_inputs, lut_inputs_number, negated_num, "not_found")
+    num = {"lut_inputs": lut_inputs_number, "negative_inputs": negated_num}
+
+    product = Product(string, lut_inputs, num, "not_found")
 
     return product
 
 
 def get_sop(prime_implicants):
+    """Returns the SOP"""
+
     sop = []
 
     for implicant in prime_implicants:
@@ -247,6 +310,93 @@ def get_sop(prime_implicants):
         sop.append(product)
 
     return sop
+
+
+def lut_data_through_pin(out_pin, configuration_bits, previous_luts, inputs_sops, port_name):
+    """Function used to continue getting the LUT data"""
+
+    # Check that it is the outer pin of an instance
+    if "O" in out_pin.inner_pin.port.name:
+        # Check if it is a smaller LUT inside
+        new_smaller_lut = False
+        if "O5" in out_pin.inner_pin.port.name:
+            new_smaller_lut = True
+        # If a LUT is connected to this LUT
+        if "LUT" in out_pin.instance.reference.name:
+            # Check that it is not a previous LUT to get data from it
+            new_lut = True
+            # Loop through the previous luts
+            previous_luts_len = len(previous_luts)
+            for i in range(previous_luts_len):
+                # If found, not new
+                if out_pin.instance.name == previous_luts[i]:
+                    new_lut = False
+            # If new, then get data from it
+            if new_lut:
+                sop, configuration_bits, previous_luts = get_lut_data(
+                    out_pin.instance,
+                    configuration_bits,
+                    previous_luts,
+                    new_smaller_lut,
+                )
+                # Connect the sop to the correct input_sop
+                for input_sop in inputs_sops:
+                    if input_sop.input == port_name:
+                        input_sop.sop = sop
+
+    return configuration_bits, previous_luts
+
+
+def add_new_conf_bits(configuration_bits, lut_conf_bits):
+    """Adds the LUT's configuration bits to the list"""
+
+    lut_conf_bits_len = len(lut_conf_bits)
+    for i in range(lut_conf_bits_len):
+        # Adding each conf bit as a char to the conf bits list
+        configuration_bits.append(lut_conf_bits[i])
+
+    return configuration_bits
+
+
+def build_sop(lut_conf_bits, lut_inputs, inputs_sops):
+    """This function builds the SOP data structure based on the configuration bits"""
+    minterms, zeroes = get_minterms(lut_conf_bits, len(lut_inputs))
+    #start = timer()
+    #print("LUT inputs number:")
+    #print(len(lut_inputs))
+    #print("minterms again:")
+    #print(minterms)
+    #print("zeroes again:")
+    #print(zeroes)
+    prime_implicants = qm_f(ones = minterms, zeros = zeroes)
+    #dt = timer() - start
+    #print("qm_f: %f sec" % dt)
+    #print(prime_implicants)
+
+    sop = get_sop(prime_implicants)
+    #print(sop)
+
+    # Connect the LUT's SOP with its Inputs' SOPs
+    for product in sop:
+        for input_sop_1 in product.lut_inputs:
+            for input_sop_2 in inputs_sops:
+                if input_sop_1.input == input_sop_2.input:
+                    input_sop_1.sop = input_sop_2.sop
+
+    return sop
+
+def get_lut_conf_bits_and_num(instance):
+    """Gets the LUT's Number of and the actual Configuration Bits"""
+
+    parameters_data = []
+    if "VERILOG.Parameters" in instance.data:
+        parameters = str(instance.data["VERILOG.Parameters"])
+        parameters_data = parse_instance_parameters(parameters)
+
+    #print("Initial Configuration Bits:")
+    #print(lut_conf_bits)
+
+    return parameters_data[Parameter.CONF_BITS.value], parameters_data[Parameter.BIT_NUM.value]
 
 
 def get_lut_data(instance, configuration_bits, previous_luts, smaller_lut):
@@ -271,102 +421,39 @@ def get_lut_data(instance, configuration_bits, previous_luts, smaller_lut):
                 lut_inputs.append(str(lut_pin.wire.cable.name))
                 # Loop through the pins connected to the wire connected to the LUT
                 for out_pin in lut_pin.wire.pins:
-                    # Check that it is the outer pin of an instance
-                    if "O" in out_pin.inner_pin.port.name:
-                        # Check if it is a smaller LUT inside
-                        new_smaller_lut = False
-                        if "O5" in out_pin.inner_pin.port.name:
-                            new_smaller_lut = True
-                        # If a LUT is connected to this LUT
-                        if "LUT" in out_pin.instance.reference.name:
-                            # Check that it is not a previous LUT to get data from it
-                            new_lut = True
-                            # Loop through the previous luts
-                            previous_luts_len = len(previous_luts)
-                            for i in range(previous_luts_len):
-                                # If found, not new
-                                if out_pin.instance.name == previous_luts[i]:
-                                    new_lut = False
-                            # If new, then get data from it
-                            if new_lut:
-                                sop, configuration_bits, previous_luts = get_lut_data(
-                                    out_pin.instance,
-                                    configuration_bits,
-                                    previous_luts,
-                                    new_smaller_lut,
-                                )
-                                # Connect the sop to the correct input_sop
-                                for input_sop in inputs_sops:
-                                    if input_sop.input == port_name:
-                                        input_sop.sop = sop
-
-    # Getting the LUT's Number of and the actual Configuration Bits
-    parameters_data = []
-    if "VERILOG.Parameters" in instance.data:
-        parameters = str(instance.data["VERILOG.Parameters"])
-        parameters_data = parse_instance_parameters(parameters)
-
-    lut_conf_bits_num = parameters_data[Parameter.BIT_NUM.value]
-    lut_conf_bits = parameters_data[Parameter.CONF_BITS.value]
-    #print("Initial Configuration Bits:")
-    #print(lut_conf_bits)
-
-    # Put all conf bits in lower case
+                    configuration_bits, previous_luts = lut_data_through_pin(out_pin,
+                                                                             configuration_bits,
+                                                                             previous_luts,
+                                                                             inputs_sops,
+                                                                             port_name)
+    lut_conf_bits, lut_conf_bits_num = get_lut_conf_bits_and_num(instance)
     lut_conf_bits = lut_conf_bits_to_lower_case(lut_conf_bits)
+    lut_conf_bits_num, lut_conf_bits, lut_inputs = check_if_smaller_lut(smaller_lut,
+                                                                        lut_conf_bits_num,
+                                                                        lut_conf_bits,
+                                                                        lut_inputs)
+    lut_conf_bits, inputs_sops = check_for_lut_reduction(lut_inputs, lut_conf_bits,
+                                                         lut_conf_bits_num, inputs_sops)
+    configuration_bits = add_new_conf_bits(configuration_bits, lut_conf_bits)
+    sop = build_sop(lut_conf_bits, lut_inputs, inputs_sops)
 
-    # If it is a smaller LUT, get it from the LUT6_2
-    if smaller_lut:
-        lut_conf_bits_num, lut_conf_bits, lut_inputs = get_smaller_lut(
-            lut_conf_bits, lut_inputs
+    return sop, configuration_bits, previous_luts
+
+
+def check_for_lut(out_pin, sop, configuration_bits, previous_luts):
+    """Gets the LUT's data if it is connected to the FF"""
+
+    if "LUT" in out_pin.instance.reference.name:
+        # Check if it is a smaller LUT inside
+        new_smaller_lut = False
+        if "O5" in out_pin.inner_pin.port.name:
+            new_smaller_lut = True
+        sop, configuration_bits, previous_luts = get_lut_data(
+            out_pin.instance,
+            configuration_bits,
+            previous_luts,
+            new_smaller_lut,
         )
-
-    # Check if any of the LUT's inputs is a constant 1 to reduce the LUT
-    needs_reduction = False
-    constant_inputs = []
-    for i, value in enumerate(lut_inputs):
-        if str(value) == r"\<constb> ":
-            needs_reduction = True
-            constant_inputs.append("I" + str(i))
-
-    #print("Constant Inputs")
-    #print(constant_inputs)
-
-    # LUT Reduction
-    if needs_reduction and (len(constant_inputs) < 5):
-        lut_conf_bits = get_reduced_lut_conf_bits(
-            int(lut_conf_bits_num), lut_conf_bits, lut_inputs
-        )
-        inputs_sops = get_reduced_inputs_sops(inputs_sops, constant_inputs)
-
-    # Add the LUT's configuration bits to the list
-    lut_conf_bits_len = len(lut_conf_bits)
-    for i in range(lut_conf_bits_len):
-        # Adding each conf bit as a char to the conf bits list
-        configuration_bits.append(lut_conf_bits[i])
-
-    # Build SOP Data Structure based on the configuration bits
-    minterms, zeroes = get_minterms(lut_conf_bits, len(lut_inputs))
-    #start = timer()
-    #print("LUT inputs number:")
-    #print(len(lut_inputs))
-    #print("minterms again:")
-    #print(minterms)
-    #print("zeroes again:")
-    #print(zeroes)
-    prime_implicants = qm_f(ones = minterms, zeros = zeroes)
-    #dt = timer() - start
-    #print("qm_f: %f sec" % dt)
-    #print(prime_implicants)
-
-    sop = get_sop(prime_implicants)
-    #print(sop)
-
-    # Connect the LUT's SOP with its Inputs' SOPs
-    for product in sop:
-        for input_sop_1 in product.lut_inputs:
-            for input_sop_2 in inputs_sops:
-                if input_sop_1.input == input_sop_2.input:
-                    input_sop_1.sop = input_sop_2.sop
 
     return sop, configuration_bits, previous_luts
 
@@ -391,23 +478,17 @@ def get_ff_data(instance):
             if ff_pin.wire is not None:
                 # Loop through the pins connected to the wire connected to 'D' in the FF
                 for out_pin in ff_pin.wire.pins:
-                    # If a LUT is connected to the FF
-                    if "LUT" in out_pin.instance.reference.name:
-                        # Check if it is a smaller LUT inside
-                        new_smaller_lut = False
-                        if "O5" in out_pin.inner_pin.port.name:
-                            new_smaller_lut = True
-                        sop, configuration_bits, previous_luts = get_lut_data(
-                            out_pin.instance,
-                            configuration_bits,
-                            previous_luts,
-                            new_smaller_lut,
-                        )
+                    sop, configuration_bits, previous_luts = check_for_lut(out_pin,
+                                                                           sop,
+                                                                           configuration_bits,
+                                                                           previous_luts)
+
     flipflop_data = FlipflopData(flipflop_name, configuration_bits, sop)
     #print(flipflop_name)
     #print(configuration_bits)
     #print(previous_luts)
     #print(" ")
+
     return flipflop_data
 
 
@@ -419,7 +500,7 @@ def get_ffs_and_conf_bits(library, carry_chain_mapped_flipflops, impl):
     for instance in library.get_instances():
         instance_type = instance.reference.name
         # If the instance is a FF
-        if instance_type == "FDSE" or instance_type == "FDRE":
+        if instance_type in ('FDSE', 'FDRE'):
             # Try to find this flipflop in the carry mapped flipflops
             flipflop_already_mapped = False
             for mapped_pair in carry_chain_mapped_flipflops:
@@ -436,5 +517,6 @@ def get_ffs_and_conf_bits(library, carry_chain_mapped_flipflops, impl):
                 #print("\\\\\\\\ " + instance.name + " \\\\\\\\")
                 flipflop_data = get_ff_data(instance)
                 netlist_flipflops_data.append(flipflop_data)
+
     # Return the flipflops names and their lists of configuration bits object
     return netlist_flipflops_data
