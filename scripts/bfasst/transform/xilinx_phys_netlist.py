@@ -4,6 +4,7 @@ from fnmatch import fnmatch
 import pathlib
 import re
 import subprocess
+import sys
 import jpype
 import jpype.imports
 
@@ -24,8 +25,14 @@ jpype.startJVM(
 from com.xilinx.rapidwright.design import Design, Unisim
 from com.xilinx.rapidwright.edif import EDIFDirection
 from com.xilinx.rapidwright.design.tools import LUTTools
+from java.lang import System
+from java.io import PrintStream, File
 
 # pylint: enable=wrong-import-position,wrong-import-order
+
+
+class RapidwrightException(Exception):
+    pass
 
 
 class XilinxPhysNetlist(TransformTool):
@@ -39,6 +46,9 @@ class XilinxPhysNetlist(TransformTool):
         after_netlist_verilog_path = design.impl_edif_path.parent / (
             design.impl_edif_path.stem + "_physical.v"
         )
+
+        # Redirect rapidwright output to file
+        System.setOut(PrintStream(File(str(self.work_dir / "rapidwright_stdout.log"))))
 
         # Check for up to date previous run
         status = self.get_prev_run_status(
@@ -56,8 +66,35 @@ class XilinxPhysNetlist(TransformTool):
             print_color(self.TERM_COLOR_STAGE, "Physical Netlist conversion already run")
             return status
 
+        self.open_new_log()
+        self.log_color(
+            TermColor.PURPLE,
+            "Starting logical to physical netlist conversion for",
+            design.xilinx_impl_checkpoint_path,
+            design.impl_edif_path,
+            add_timestamp=True,
+        )
+
+        phys_netlist_checkpoint = self.work_dir / "phys_netlist.dcp"
+
+        # Catch all Java exceptions since they are not picklable,
+        # and so cannot be handled properly by multiprocessing
+        # Don't raise from as this is also problematic.
+        try:
+            self.run_rapidwright(design, phys_netlist_checkpoint)
+        except jpype.JException as exc:
+            raise RapidwrightException(str(exc))  # pylint: disable=raise-missing-from
+
+        status = self.export_new_netlist(phys_netlist_checkpoint, after_netlist_verilog_path)
+
+        return status
+
+    def run_rapidwright(self, design, phys_netlist_checkpoint):
+        """Do all rapidwright related processing on the netlist"""
+
         # Read the checkpoint into rapidwright, and get the netlist
         rw_design = Design.readCheckpoint(design.xilinx_impl_checkpoint_path, design.impl_edif_path)
+
         netlist = rw_design.getNetlist()
 
         # Get the LUT6_2 EDIFCell (all LUTs will be replaced with equivalent LUT6_2 primitives)
@@ -115,40 +152,55 @@ class XilinxPhysNetlist(TransformTool):
             # TODO: Handle other primitives? BUFG->BUFGCTRL, etc.
 
         # Remove old unusued cells
-        print("Removing old cells...")
+        self.log("Removing old cells...")
         for cell in cells_to_remove:
-            print("  ", cell.getName())
+            self.log("  ", cell.getName())
             edif_cell_inst = cell.getEDIFCellInst()
 
             # Remove the port instances
             edif_cell_inst.getParentCell().removeCellInst(edif_cell_inst)
 
-        # Create a new netlist
-        self.export_new_netlist(rw_design, after_netlist_verilog_path)
-
-        return self.success_status
-
-    def export_new_netlist(self, rw_design, after_netlist_verilog_path):
-        """Export the new netlist to a Verilog netlist file"""
-        print_color(
-            TermColor.BLUE, "\nUsing Vivado to create new netlist:", after_netlist_verilog_path
-        )
-        phys_netlist_checkpoint = self.work_dir / "phys_netlist.dcp"
-
         # Export checkpoint, then run vivado to generate a new netlist
         rw_design.unplaceDesign()
         rw_design.writeCheckpoint(phys_netlist_checkpoint)
+
+    def export_new_netlist(self, phys_netlist_checkpoint, after_netlist_verilog_path):
+        """Export the new netlist to a Verilog netlist file"""
+        self.log_color(
+            TermColor.BLUE, "\nUsing Vivado to create new netlist:", after_netlist_verilog_path
+        )
 
         vivado_tcl_path = self.work_dir / "vivado_checkpoint_to_netlist.tcl"
         with open(vivado_tcl_path, "w") as fp:
             fp.write(f"write_verilog -force {after_netlist_verilog_path}\n")
             fp.write("exit\n")
-        subprocess.run(
-            [VIVADO_BIN_PATH, phys_netlist_checkpoint, "-mode", "batch", "-source", vivado_tcl_path]
-        )
-        print("Exported new netlist to", after_netlist_verilog_path)
-        # netlist = spydrnet.parse(str(edif_path))
-        # netlist.compose(verilog_path)
+
+        vivado_log_path = self.TOOL_WORK_DIR / "vivado_edf_to_v.txt"
+        with open(vivado_log_path, "w") as fp:
+            proc = subprocess.Popen(
+                [
+                    VIVADO_BIN_PATH,
+                    phys_netlist_checkpoint,
+                    "-mode",
+                    "batch",
+                    "-source",
+                    vivado_tcl_path,
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                universal_newlines=True,
+            )
+            for line in proc.stdout:
+                sys.stdout.write(line)
+                sys.stdout.flush()
+                fp.write(line)
+                fp.flush()
+            proc.communicate()
+            if proc.returncode:
+                return Status(TransformStatus.ERROR)
+
+        self.log("Exported new netlist to", after_netlist_verilog_path)
+        return self.success_status
 
     def process_lut(self, lut6_cell, lut5_cell, lut6_2_cell):
         """This function takes a LUT* from the netlist and replaces with with a LUT6_2
@@ -157,9 +209,9 @@ class XilinxPhysNetlist(TransformTool):
         lut6_edif_cell_inst = lut6_cell.getEDIFCellInst()
         assert lut6_edif_cell_inst
 
-        print_color(TermColor.BLUE, "\nProcessing and replacing LUT", lut6_cell)
+        self.log_color(TermColor.BLUE, "\nProcessing and replacing LUT", lut6_cell)
         if lut5_cell:
-            print_color(TermColor.BLUE, "...along with co-located LUT", lut5_cell)
+            self.log_color(TermColor.BLUE, "...along with co-located LUT", lut5_cell)
 
         # Create a new LUT6_2 instance
         new_cell_name = lut6_edif_cell_inst.getName() + "_phys"
@@ -168,7 +220,7 @@ class XilinxPhysNetlist(TransformTool):
         new_cell_inst = lut6_edif_cell_inst.getParentCell().createChildCellInst(
             new_cell_name, lut6_2_cell
         )
-        print("Created new cell", new_cell_name)
+        self.log("Created new cell", new_cell_name)
 
         # Copy all properties from existing LUT to new LUT (INIT will be fixed later)
         new_cell_inst.setPropertiesMap(lut6_edif_cell_inst.createDuplicatePropertiesMap())
@@ -177,7 +229,7 @@ class XilinxPhysNetlist(TransformTool):
         # Wire up inputs/outputs
         physical_pins_to_nets = {}
 
-        print(f"Processing LUT {lut6_cell.getName()}")
+        self.log(f"Processing LUT {lut6_cell.getName()}")
         for logical_pin, physical_pin in lut6_cell.getPinMappingsL2P().items():
             assert len(physical_pin) == 1
             physical_pin = list(physical_pin)[0]
@@ -189,7 +241,7 @@ class XilinxPhysNetlist(TransformTool):
 
         # Now do the same for the other LUT
         if lut5_cell:
-            print(f"Processing LUT {lut5_cell.getName()}")
+            self.log(f"Processing LUT {lut5_cell.getName()}")
             for logical_pin, physical_pin in lut5_cell.getPinMappingsL2P().items():
                 assert len(physical_pin) == 1
                 physical_pin = list(physical_pin)[0]
@@ -219,27 +271,27 @@ class XilinxPhysNetlist(TransformTool):
         to the appropriate logical pin on the new_edif_cell_inst, based on the physical pin,
         and disconnects from the old cell.  It's possible the net is already_connected to the
         new cell, in which case only the disconnect from old cell needs to be performed."""
-        print(f"  Processing logical pin {old_logical_pin}, physical pin {physical_pin}")
+        self.log(f"  Processing logical pin {old_logical_pin}, physical pin {physical_pin}")
 
         port_inst = old_edif_cell_inst.getPortInst(old_logical_pin)
         logical_net = port_inst.getNet()
 
         if already_connected:
-            print(f"    Skipping already connected physical pin {physical_pin}")
+            self.log(f"    Skipping already connected physical pin {physical_pin}")
 
         else:
             if port_inst.getDirection() == EDIFDirection.INPUT:
-                print("    Input driven by net", logical_net)
+                self.log("    Input driven by net", logical_net)
 
                 # A5 becomes I4, A1 becomes I0, etc.
                 new_logical_pin = str(old_logical_pin)[0] + str(int(str(physical_pin[1])) - 1)
-                print("    Connecting net", logical_net, "to input pin", new_logical_pin)
+                self.log("    Connecting net", logical_net, "to input pin", new_logical_pin)
 
             elif port_inst.getDirection() == EDIFDirection.OUTPUT:
-                print("    Drives net", logical_net)
+                self.log("    Drives net", logical_net)
 
                 new_logical_pin = physical_pin
-                print("    Connecting net", logical_net, "to output pin", new_logical_pin)
+                self.log("    Connecting net", logical_net, "to output pin", new_logical_pin)
 
             new_port = new_edif_cell_inst.getPort(new_logical_pin)
             logical_net.createPortInst(new_port, new_edif_cell_inst)
@@ -269,17 +321,17 @@ class XilinxPhysNetlist(TransformTool):
 
         #### Fix INIT string
         # TODO: Handle fractured LUT.
-        print("  Fixing INIT string")
+        self.log("  Fixing INIT string")
 
         # First get an equation from the logical INIT string
         lut6_init_eqn = str(LUTTools.getLUTEquation(lut6_cell))
-        print("    LUT6 INIT:", lut6_cell.getProperty("INIT"))
-        print("    LUT6 equation:", lut6_init_eqn)
+        self.log("    LUT6 INIT:", lut6_cell.getProperty("INIT"))
+        self.log("    LUT6 equation:", lut6_init_eqn)
 
         if lut5_cell:
             lut5_init_eqn = str(LUTTools.getLUTEquation(lut5_cell))
-            print("    LUT5 INIT:", lut5_cell.getProperty("INIT"))
-            print("    LUT5 equation:", lut5_init_eqn)
+            self.log("    LUT5 INIT:", lut5_cell.getProperty("INIT"))
+            self.log("    LUT5 equation:", lut5_init_eqn)
 
         # If both LUT outputs are used, then neither equation should use I5
         if lut5_cell:
@@ -287,21 +339,20 @@ class XilinxPhysNetlist(TransformTool):
             assert "I5" not in lut5_init_eqn
 
         lut6_init_eqn = self.process_lut_eqn_logical_to_physical(lut6_init_eqn, lut6_cell)
-        print("    New LUT6 eqn:", lut6_init_eqn)
+        self.log("    New LUT6 eqn:", lut6_init_eqn)
         if lut5_cell:
             lut5_init_eqn = self.process_lut_eqn_logical_to_physical(lut5_init_eqn, lut5_cell)
-            print("    New LUT5 eqn:", lut6_init_eqn)
+            self.log("    New LUT5 eqn:", lut6_init_eqn)
 
         if not lut5_cell:
             init_str = LUTTools.getLUTInitFromEquation(lut6_init_eqn, 6)
         else:
-
             init_str = (
                 "64'h"
                 + LUTTools.getLUTInitFromEquation(lut6_init_eqn, 5)[4:]
                 + LUTTools.getLUTInitFromEquation(lut5_init_eqn, 5)[4:]
             )
-        print("    New LUT INIT:", init_str)
+        self.log("    New LUT INIT:", init_str)
         new_cell_inst.addProperty("INIT", init_str)
 
     def cell_is_6lut(self, cell):

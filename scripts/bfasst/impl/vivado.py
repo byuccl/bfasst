@@ -1,17 +1,13 @@
 """ Runs Vivado implementation (place/route)"""
 
-import subprocess
 import re
 import os
 import time
-import sys
-import pathlib
 
 import bfasst
 from bfasst.impl.base import ImplementationTool
 from bfasst.status import Status, ImplStatus
 from bfasst.config import VIVADO_BIN_PATH
-from bfasst.tool import ToolProduct
 
 
 class VivadoImplementationTool(ImplementationTool):
@@ -24,40 +20,27 @@ class VivadoImplementationTool(ImplementationTool):
         self.ooc = ooc
 
     def implement_bitstream(self, design):
-        log_path = self.work_dir / bfasst.config.IMPL_LOG_NAME
         design.impl_netlist_path = self.cwd / (design.top + "_impl.v")
         design.impl_edif_path = design.impl_netlist_path.with_suffix(".edf")
         design.xilinx_impl_checkpoint_path = self.work_dir / "design.dcp"
         design.bitstream_path = self.cwd / (design.top + ".bit")
 
-        # Check for up to date previous run
-        status = self.get_prev_run_status(
-            tool_products=[
-                ToolProduct(design.bitstream_path, log_path, self.check_impl_status),
-            ],
-            dependency_modified_time=max(
-                pathlib.Path(__file__).stat().st_mtime, design.netlist_path.stat().st_mtime
-            ),
-        )
-
-        if status is not None:
-            self.print_skipping_impl()
+        status = self.common_startup(design, self.check_impl_status)
+        if status:
             return status
 
-        self.print_running_impl()
-
         # Run implementation
-        status = self.run_implementation(design, log_path)
+        status = self.run_implementation(design)
 
         # Check implementation log
-        status = self.check_impl_status(log_path)
+        status = self.check_impl_status(self.log_path)
 
         # Update a file in the main directory with info about impl results
         # self.write_to_results_file(design, log_path, need_to_run)
 
         return self.success_status
 
-    def run_implementation(self, design, log_path):
+    def run_implementation(self, design):
         """Run vivado executable to perform implementation"""
 
         tcl_path = self.work_dir / ("impl.tcl")
@@ -91,25 +74,10 @@ class VivadoImplementationTool(ImplementationTool):
             fp.write("} ] } { exit 1 }\n")
             fp.write("exit\n")
 
-        with open(log_path, "w") as fp:
-            cmd = [str(VIVADO_BIN_PATH), "-mode", "tcl", "-source", str(tcl_path)]
-            proc = subprocess.Popen(
-                cmd,
-                cwd=self.work_dir,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                universal_newlines=True,
-            )
-            for line in proc.stdout:
-                sys.stdout.write(line)
-                sys.stdout.flush()
-                fp.write(line)
-                fp.flush()
-                if re.match(r"\s*ERROR:", line):
-                    proc.kill()
-            proc.communicate()
-            if proc.returncode:
-                return Status(ImplStatus.ERROR)
+        cmd = [str(VIVADO_BIN_PATH), "-mode", "tcl", "-source", str(tcl_path)]
+        proc = self.exec_and_log(cmd)
+        if proc.returncode:
+            return Status(ImplStatus.ERROR)
 
         return self.success_status
 

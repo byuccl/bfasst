@@ -1,10 +1,12 @@
-import sys, os, shutil
+""" Utility functions"""
+import sys
+import shutil
 
 import bfasst
 
 
 class TermColor:
-    """ Terminal codes for printing in color """
+    """Terminal codes for printing in color"""
 
     # pylint: disable=too-few-public-methods
 
@@ -18,44 +20,54 @@ class TermColor:
     UNDERLINE = "\033[4m"
 
 
+def print_color_no_newl(color, *msg):
+    """Print color without newline"""
+    sys.stdout.write(color + " ".join(str(item) for item in msg), TermColor.END)
+
+
 def print_color(color, *msg):
+    """Print mesage in color"""
     print(color + " ".join(str(item) for item in msg), TermColor.END)
 
 
 def error(*msg, returncode=-1):
-    """ Print an error message and exit program """
+    """Print an error message and exit program"""
 
     print_color(TermColor.RED, "ERROR:", " ".join(str(item) for item in msg))
     assert False
     sys.exit(returncode)
 
 
-def create_build_dir(dir):
-    new_dir = os.path.join(dir, bfasst.config.BUILD_DIR)
-    if not os.path.isdir(new_dir):
-        os.mkdir(new_dir)
+def create_build_dir(path):
+    """Create a build directory if it doesn't exist"""
+    new_dir = path / bfasst.config.BUILD_DIR
+    new_dir.mkdir(exist_ok=True)
     return new_dir
 
 
 def create_build_design_dir(build_dir, design_dir):
-    design_build_dir = os.path.join(build_dir, design_dir)
-    if not os.path.isdir(design_build_dir):
-        os.makedirs(design_build_dir)
+    """Create design/build directory"""
+    design_build_dir = build_dir / design_dir
+    design_build_dir.mkdir(exist_ok=True)
     return design_build_dir
 
 
 def get_design_dir(design_name):
-    return os.path.join(bfasst.paths.EXAMPLES_PATH, design_name)
+    """Return the design directory"""
+    return bfasst.paths.EXAMPLES_PATH / design_name
 
 
 def clean_folder(folder_path):
-    for file_object in os.listdir(folder_path):
-        file_object_path = os.path.join(folder_path, file_object)
-        if os.path.isfile(file_object_path):
-            os.unlink(file_object_path)
+    """Remove all items in a folder"""
+
+    for path in folder_path.iterdir():
+        if path.is_file():
+            path.unlink()
         else:
-            shutil.rmtree(file_object_path)
+            shutil.rmtree(path)
 
 
 def print_tcl_cmd_catch(fp, cmd, return_code=1):
+    """Create a Tcl catch statement"""
+
     fp.write("if { [catch { " + cmd + " } ] } { exit " + str(return_code) + " }\n")

@@ -24,7 +24,3 @@ BUILD_DIR = "build"
 
 PART_FAMILY = "artix7"
 PART = "xc7a200tsbg484-1"
-
-SYNTH_LOG_NAME = "synth.log"
-OPT_LOG_NAME = "opt.log"
-IMPL_LOG_NAME = "impl.log"
