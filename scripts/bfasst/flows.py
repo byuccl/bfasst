@@ -19,7 +19,7 @@ from .synth.vivado import VivadoSynthesisTool
 from .synth.yosys import Yosys_Tech_SynthTool
 from .opt.ic2_lse import Ic2LseOptTool
 from .opt.ic2_synplify import IC2_Synplify_OptTool
-from .impl.ic2 import IC2_ImplementationTool
+from .impl.ic2 import Ic2ImplementationTool
 from .impl.vivado import VivadoImplementationTool
 from .reverse_bit.xray import XRay_ReverseBitTool
 from .reverse_bit.icestorm import Icestorm_ReverseBitTool
@@ -124,7 +124,7 @@ def ic2_synplify_synth(design, build_dir, flow_args):
 
 def ic2_impl(design, build_dir, flow_args):
     """Run Icecube2 implementation"""
-    impl_tool = IC2_ImplementationTool(build_dir, flow_args)
+    impl_tool = Ic2ImplementationTool(build_dir, flow_args)
     return impl_tool.implement_bitstream(design)
 
 
@@ -504,7 +504,7 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
         status = ic2_synplify_opt(design, build_dir, flow_args, [str(netlist)])
 
         # Run IC2 Implementation
-        shutil.rmtree(build_dir / IC2_ImplementationTool.TOOL_WORK_DIR)
+        shutil.rmtree(build_dir / Ic2ImplementationTool.TOOL_WORK_DIR)
         status = ic2_impl(design, build_dir, flow_args[FlowArgs.IMPL])
 
         # Run icestorm bitstream reversal
@@ -553,7 +553,7 @@ def flow_gather_impl_data(design, flow_args, build_dir):
     if (build_dir / IC2_Synplify_OptTool.TOOL_WORK_DIR).exists():
         shutil.rmtree(build_dir / IC2_Synplify_OptTool.TOOL_WORK_DIR)
     shutil.rmtree(build_dir / IC2_Synplify_SynthesisTool.TOOL_WORK_DIR)
-    shutil.rmtree(build_dir / IC2_ImplementationTool.TOOL_WORK_DIR)
+    shutil.rmtree(build_dir / Ic2ImplementationTool.TOOL_WORK_DIR)
     shutil.rmtree(build_dir / Icestorm_ReverseBitTool.TOOL_WORK_DIR)
     # Now do RTL->LSE->IC2->Icestorm
     # Run Icecube2 LSE synthesis
@@ -569,7 +569,7 @@ def flow_gather_impl_data(design, flow_args, build_dir):
     if (build_dir / Ic2LseOptTool.TOOL_WORK_DIR).exists():
         shutil.rmtree(build_dir / Ic2LseOptTool.TOOL_WORK_DIR)
     shutil.rmtree(build_dir / Ic2LseSynthesisTool.TOOL_WORK_DIR)
-    shutil.rmtree(build_dir / IC2_ImplementationTool.TOOL_WORK_DIR)
+    shutil.rmtree(build_dir / Ic2ImplementationTool.TOOL_WORK_DIR)
     shutil.rmtree(build_dir / Icestorm_ReverseBitTool.TOOL_WORK_DIR)
 
     # Now do Yosys->Synplify->IC2->Icestorm
@@ -591,7 +591,7 @@ def flow_gather_impl_data(design, flow_args, build_dir):
     # TODO check that this line should be added.
     shutil.rmtree(build_dir / IC2_Synplify_OptTool.TOOL_WORK_DIR)
 
-    shutil.rmtree(build_dir / IC2_ImplementationTool.TOOL_WORK_DIR)
+    shutil.rmtree(build_dir / Ic2ImplementationTool.TOOL_WORK_DIR)
     shutil.rmtree(build_dir / Icestorm_ReverseBitTool.TOOL_WORK_DIR)
 
     # Now do Yosys->LSE->IC2->Icestorm
