@@ -37,7 +37,7 @@ class Ic2BaseOptTool(OptTool):
         edif_path_temp = self.work_dir / (design.top + ".edf")
 
         # Create Icecube 2 LSE synthesis project file
-        prj_path = self.create_ic2_lse_project_file(design, edif_path_temp, in_files, lib_files)
+        prj_path = self.create_project_file(design, edif_path_temp, in_files, lib_files)
 
         # Run Icecube 2 LSE synthesis
         try:
