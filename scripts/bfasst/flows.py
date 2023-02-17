@@ -249,7 +249,7 @@ def flow_xilinx_phys_netlist(design, flow_args, build_dir):
     status = vivado_impl(design, build_dir, flow_args[FlowArgs.IMPL], ooc)
 
     phy_netlist_tool = XilinxPhysNetlist(build_dir)
-    phy_netlist_tool.run(design)
+    status = phy_netlist_tool.run(design)
     return status
 
 
