@@ -10,8 +10,6 @@ from enum import unique as enum_unique
 import pathlib
 import shutil
 
-# import bfasst
-
 from .design import Design
 from .transform.xilinx_phys_netlist import XilinxPhysNetlist
 from .utils import error
