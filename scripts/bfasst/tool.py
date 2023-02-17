@@ -115,7 +115,7 @@ class Tool(abc.ABC):
 
         return self.success_status
 
-    def exec_and_log(self, cmd):
+    def exec_and_log(self, cmd, env=None, timeout=None):
         """Run a command using Popen and log the output, return the process handle"""
         proc = subprocess.Popen(
             cmd,
@@ -123,8 +123,9 @@ class Tool(abc.ABC):
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             universal_newlines=True,
+            env=env,
         )
         for line in proc.stdout:
             self.log(line.strip())
-        proc.communicate()
+        proc.communicate(timeout=timeout)
         return proc

@@ -10,25 +10,25 @@ from enum import unique as enum_unique
 import pathlib
 import shutil
 
-from .design import Design
-from .transform.xilinx_phys_netlist import XilinxPhysNetlist
-from .utils import error
-from .synth.ic2_lse import Ic2LseSynthesisTool
-from .synth.ic2_synplify import IC2_Synplify_SynthesisTool
-from .synth.vivado import VivadoSynthesisTool
-from .synth.yosys import Yosys_Tech_SynthTool
-from .opt.ic2_lse import Ic2LseOptTool
-from .opt.ic2_synplify import IC2_Synplify_OptTool
-from .impl.ic2 import Ic2ImplementationTool
-from .impl.vivado import VivadoImplementationTool
-from .reverse_bit.xray import XRay_ReverseBitTool
-from .reverse_bit.icestorm import Icestorm_ReverseBitTool
-from .compare.conformal import Conformal_CompareTool
-from .compare.yosys import Yosys_CompareTool
-from .compare.waveform import WaveformCompareTool
-from .compare.onespin import OneSpin_CompareTool
-from .error_injection.error_injector import ErrorInjector_ErrorInjectionTool
-from .locks import conformal_lock, onespin_lock
+from bfasst.design import Design
+from bfasst.transform.xilinx_phys_netlist import XilinxPhysNetlist
+from bfasst.utils import error
+from bfasst.synth.ic2_lse import Ic2LseSynthesisTool
+from bfasst.synth.ic2_synplify import Ic2SynplifySynthesisTool
+from bfasst.synth.vivado import VivadoSynthesisTool
+from bfasst.synth.yosys import Yosys_Tech_SynthTool
+from bfasst.opt.ic2_lse import Ic2LseOptTool
+from bfasst.opt.ic2_synplify import Ic2SynplifyOptTool
+from bfasst.impl.ic2 import Ic2ImplementationTool
+from bfasst.impl.vivado import VivadoImplementationTool
+from bfasst.reverse_bit.xray import XRay_ReverseBitTool
+from bfasst.reverse_bit.icestorm import Icestorm_ReverseBitTool
+from bfasst.compare.conformal import Conformal_CompareTool
+from bfasst.compare.yosys import Yosys_CompareTool
+from bfasst.compare.waveform import WaveformCompareTool
+from bfasst.compare.onespin import OneSpin_CompareTool
+from bfasst.error_injection.error_injector import ErrorInjector_ErrorInjectionTool
+from bfasst.locks import conformal_lock, onespin_lock
 
 
 class FlowArgs(Enum):
@@ -118,7 +118,7 @@ def ic2_lse_synth(design, build_dir, flow_args):
 
 def ic2_synplify_synth(design, build_dir, flow_args):
     """Run Icecube2 Synplify synthesis"""
-    synth_tool = IC2_Synplify_SynthesisTool(build_dir)
+    synth_tool = Ic2SynplifySynthesisTool(build_dir)
     return synth_tool.create_netlist(design)
 
 
@@ -192,7 +192,7 @@ def ic2_lse_opt(design, build_dir, flow_args, in_files, lib_files=None):
 
 def ic2_synplify_opt(design, build_dir, flow_args, in_files, lib_files=None):
     """Optimize design using Icecube2 Synplify"""
-    synp_opt_tool = IC2_Synplify_OptTool(build_dir)
+    synp_opt_tool = Ic2SynplifyOptTool(build_dir)
     return synp_opt_tool.create_netlist(design, in_files, lib_files)
 
 
@@ -500,7 +500,7 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
         # Now run the Synplify synthesizer on the Yosys output
         design.golden_is_verilog = True
         # Blow away the opt dir so we know we're getting a fresh build
-        shutil.rmtree(build_dir / IC2_Synplify_OptTool.TOOL_WORK_DIR)
+        shutil.rmtree(build_dir / Ic2SynplifyOptTool.TOOL_WORK_DIR)
         status = ic2_synplify_opt(design, build_dir, flow_args, [str(netlist)])
 
         # Run IC2 Implementation
@@ -550,9 +550,9 @@ def flow_gather_impl_data(design, flow_args, build_dir):
     status = icestorm_rev_bit(design, build_dir, flow_args)
 
     # Clean up project directories so we get fresh results later
-    if (build_dir / IC2_Synplify_OptTool.TOOL_WORK_DIR).exists():
-        shutil.rmtree(build_dir / IC2_Synplify_OptTool.TOOL_WORK_DIR)
-    shutil.rmtree(build_dir / IC2_Synplify_SynthesisTool.TOOL_WORK_DIR)
+    if (build_dir / Ic2SynplifyOptTool.TOOL_WORK_DIR).exists():
+        shutil.rmtree(build_dir / Ic2SynplifyOptTool.TOOL_WORK_DIR)
+    shutil.rmtree(build_dir / Ic2SynplifySynthesisTool.TOOL_WORK_DIR)
     shutil.rmtree(build_dir / Ic2ImplementationTool.TOOL_WORK_DIR)
     shutil.rmtree(build_dir / Icestorm_ReverseBitTool.TOOL_WORK_DIR)
     # Now do RTL->LSE->IC2->Icestorm
@@ -589,7 +589,7 @@ def flow_gather_impl_data(design, flow_args, build_dir):
     shutil.rmtree(build_dir / Yosys_Tech_SynthTool.TOOL_WORK_DIR)
 
     # TODO check that this line should be added.
-    shutil.rmtree(build_dir / IC2_Synplify_OptTool.TOOL_WORK_DIR)
+    shutil.rmtree(build_dir / Ic2SynplifyOptTool.TOOL_WORK_DIR)
 
     shutil.rmtree(build_dir / Ic2ImplementationTool.TOOL_WORK_DIR)
     shutil.rmtree(build_dir / Icestorm_ReverseBitTool.TOOL_WORK_DIR)
