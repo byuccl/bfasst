@@ -3,13 +3,11 @@
 import re
 import os
 import time
-import pathlib
 
 import bfasst
 from bfasst.impl.base import ImplementationTool
 from bfasst.status import Status, ImplStatus
 from bfasst.config import VIVADO_BIN_PATH
-from bfasst.tool import ToolProduct
 
 
 class VivadoImplementationTool(ImplementationTool):
@@ -27,22 +25,9 @@ class VivadoImplementationTool(ImplementationTool):
         design.xilinx_impl_checkpoint_path = self.work_dir / "design.dcp"
         design.bitstream_path = self.cwd / (design.top + ".bit")
 
-        # Check for up to date previous run
-        status = self.get_prev_run_status(
-            tool_products=[
-                ToolProduct(design.bitstream_path, self.log_path, self.check_impl_status),
-            ],
-            dependency_modified_time=max(
-                pathlib.Path(__file__).stat().st_mtime, design.netlist_path.stat().st_mtime
-            ),
-        )
-
-        if status is not None:
-            self.print_skipping_impl()
+        status = self.common_startup(design, self.check_impl_status)
+        if status:
             return status
-
-        self.print_running_impl()
-        self.open_new_log()
 
         # Run implementation
         status = self.run_implementation(design)

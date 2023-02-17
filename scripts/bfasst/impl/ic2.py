@@ -1,6 +1,5 @@
 """ IceCube2 Implementation tool"""
 
-import pathlib
 import shutil
 import subprocess
 import re
@@ -10,7 +9,6 @@ import bfasst
 from bfasst import paths
 from bfasst.impl.base import ImplementationTool
 from bfasst.status import Status, ImplStatus
-from bfasst.tool import ToolProduct
 
 
 class Ic2ImplementationTool(ImplementationTool):
@@ -19,25 +17,11 @@ class Ic2ImplementationTool(ImplementationTool):
     TOOL_WORK_DIR = "ic2_impl"
 
     def implement_bitstream(self, design):
-        # print("Running Impl")
-
         design.bitstream_path = self.cwd / (design.top + ".bit")
 
-        status = self.get_prev_run_status(
-            tool_products=[
-                ToolProduct(design.bitstream_path, self.log_path, self.check_impl_status)
-            ],
-            dependency_modified_time=max(
-                pathlib.Path(__file__).stat().st_mtime, design.netlist_path.stat().st_mtime
-            ),
-        )
-
-        if status is not None:
-            self.print_skipping_impl()
+        status = self.common_startup(design, self.check_impl_status)
+        if status:
             return status
-
-        self.print_running_impl()
-        self.open_new_log()
 
         # Create impl tcl script
         tcl_path = self.create_run_tcl()
@@ -102,19 +86,19 @@ class Ic2ImplementationTool(ImplementationTool):
         """Check log file for errors"""
         text = open(log_path).read()
 
-        matches = re.search(
+        match = re.search(
             r"^Design LUT Count \((\d+)\) exceeded Device LUT Count \((\d+)\)$", text, re.M
         )
-        if matches:
-            return Status(ImplStatus.TOO_MANY_LUTS, matches.group(1) + "/" + matches.group(2))
-        matches = re.search(
+        if match:
+            return Status(ImplStatus.TOO_MANY_LUTS, match.group(1) + "/" + match.group(2))
+        match = re.search(
             r"^Design FF Count \((\d+)\) exceeded Device FF Count \((\d+)\)$", text, re.M
         )
-        if matches:
-            return Status(ImplStatus.TOO_MANY_FF, matches.group(1) + "/" + matches.group(2))
+        if match:
+            return Status(ImplStatus.TOO_MANY_FF, match.group(1) + "/" + match.group(2))
 
         # Too many I/Os
-        matches = re.search(
+        match = re.search(
             (
                 r"Unable to fit the design into the selected device/package$\n^DEVICE IO Count:.*?"
                 r"Regular IOs.*?(\d+).*?DESIGN IO Count:.*?Regular IOs.*?(\d+)"
@@ -122,8 +106,8 @@ class Ic2ImplementationTool(ImplementationTool):
             text,
             re.M | re.S,
         )
-        if matches:
-            return Status(ImplStatus.TOO_MANY_IO, matches.group(2) + "/" + matches.group(1))
+        if match:
+            return Status(ImplStatus.TOO_MANY_IO, match.group(2) + "/" + match.group(1))
 
         # if too_large_str:
         #     err_str += "Design does not fit. " + too_large_str
