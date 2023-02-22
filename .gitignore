@@ -2,9 +2,11 @@
 *~
 \#*
 .#*
+temp/
 
-# Python virtual environment
+# Python files
 /.venv
+__pycache__
 
 # extra stuff
 **/build
@@ -14,17 +16,17 @@
 # text files
 *.txt
 
+# Vivado files
 .Xil
 *.log
 *.jou
+*.str
 
 ic2/
-temp/
 conformal/
 
-
-__pycache__
-
+# Generated local environment
 env.sh
 
+# Installed tools
 /third_party/rapidwright*
