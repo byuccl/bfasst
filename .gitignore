@@ -22,7 +22,6 @@ ic2/
 temp/
 conformal/
 
-
 __pycache__
 
 env.sh

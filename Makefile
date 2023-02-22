@@ -1,7 +1,7 @@
 IN_ENV = if [ -e .venv/bin/activate ]; then . .venv/bin/activate; fi;
 
 
-install: packages venv python_packages install_fasm2bels install_yosys
+install: packages install_wafove venv python_packages install_fasm2bels install_yosys
 
 venv:
 	python3 -m venv .venv
@@ -32,7 +32,6 @@ capnproto_java:
 	cd /tmp/capnproto-java && make
 	cd /tmp/capnproto-java && sudo make install
 
-
 rapidwright:
 	cd third_party && wget http://www.rapidwright.io/docs/_downloads/rapidwright-installer.jar
 	cd third_party && java -jar rapidwright-installer.jar -t
@@ -41,12 +40,18 @@ rapidwright:
 	cd third_party/RapidWright/interchange && make
 	cd third_party/RapidWright && make
 
-install_fasm2bels:
+submodules:
 	git submodule init
 	git submodule update
+
+install_fasm2bels: submodules
 	cd third_party/fasm2bels && make env
 	$(IN_ENV) cd third_party/fasm2bels && make build
 	cd third_party/fasm2bels && make test-py
+
+install_wafove: submodules
+	$(IN_ENV) python3 -m pip install -e third_party/WaFoVe
+	$(IN_ENV) cd third_party/WaFoVe && make install
 
 env:
 	echo ". `pwd`/third_party/rapidwright.sh" > "env.sh"
@@ -77,8 +82,5 @@ install_yosys:
 
 format:
 	find ./scripts -iname "*.py" -exec black -l 100 {} \;
-
-pylint:
-	pylint $$(git diff --name-only $$(git merge-base main HEAD) | grep -e ".py$$")
 
 
