@@ -1,0 +1,19 @@
+# This action sets up the BFASST environment in order to run other tools
+# TODO: Use https://github.com/actions/cache to cache rapidwright tool 
+
+name: "Setup Environment"
+runs:
+  using: "composite"
+  steps:
+  - name: env
+    shell: bash
+    run: |
+      make venv
+      make python_packages
+      make env
+  - name: rapidwright
+    shell: bash
+    run: | 
+      make rapidwright
+    
+          
