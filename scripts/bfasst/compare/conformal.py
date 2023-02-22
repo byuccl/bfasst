@@ -13,12 +13,12 @@ import paramiko
 import scp
 
 import bfasst
-from bfasst import flows
 from bfasst import paths
 from bfasst.design import HdlType
 from bfasst.tool import ToolProduct
 from bfasst.status import BfasstException, Status, CompareStatus
 from bfasst.compare.base import CompareTool
+from bfasst.types import Vendor
 from bfasst.utils import error
 
 
@@ -34,7 +34,7 @@ class ConformalCompareTool(CompareTool):
     def __init__(self, cwd, flow_args, vendor):
         super().__init__(cwd, flow_args)
 
-        assert isinstance(vendor, flows.Vendor)
+        assert isinstance(vendor, Vendor)
         self.vendor = vendor
 
         self.remote_libs_dir_path = None
@@ -63,7 +63,7 @@ class ConformalCompareTool(CompareTool):
         client = self.connect_to_remote_machine()
 
         # Handle libraries
-        if self.vendor == flows.Vendor.XILINX:
+        if self.vendor == Vendor.XILINX:
             self.remote_libs_dir_path = bfasst.config.CONFORMAL_REMOTE_LIBS_DIR / "xilinx"
             self.local_libs_paths = list(
                 (paths.RESOURCES_PATH / "conformal" / "libraries" / "xilinx").iterdir()
@@ -75,7 +75,7 @@ class ConformalCompareTool(CompareTool):
                 / "third_party/fasm2bels/third_party/prjxray/third_party/yosys/techlibs/xilinx/"
             )
             self.local_libs_paths.append(yosys_xilinx_libs_path / "cells_sim.v")
-        elif self.vendor == flows.Vendor.LATTICE:
+        elif self.vendor == Vendor.LATTICE:
             self.remote_libs_dir_path = bfasst.config.CONFORMAL_REMOTE_LIBS_DIR / "lattice"
             self.local_libs_paths = (
                 paths.RESOURCES_PATH / "conformal" / "libraries" / "lattice" / "sb_ice_syn.v",

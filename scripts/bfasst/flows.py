@@ -4,7 +4,7 @@ Create your own flow and add it to the Flows class and the flow_fcn_map.
 Helper functions for vendor tools are defined.
 """
 
-from enum import Enum, auto
+from enum import Enum
 from enum import unique as enum_unique
 import pathlib
 import shutil
@@ -20,6 +20,7 @@ from bfasst.synth.ic2_lse import Ic2LseSynthesisTool
 from bfasst.synth.ic2_synplify import Ic2SynplifySynthesisTool
 from bfasst.synth.yosys import Yosys_Tech_SynthTool
 from bfasst.tool_wrappers import (
+    ToolType,
     conformal_cmp,
     ic2_impl,
     ic2_lse_opt,
@@ -38,17 +39,6 @@ from bfasst.tool_wrappers import (
 )
 from bfasst.utils import error
 from bfasst.locks import onespin_lock
-
-
-class FlowArgs(Enum):
-    """An enum describing the different places arguments go"""
-
-    SYNTH = 0
-    IMPL = 1
-    MAP = 2
-    CMP = 3  # Currently only accepts "XILINX" or "LATTICE" for Conformal Comparison
-    ERR = 4
-    REVERSE = 5
 
 
 @enum_unique
@@ -95,13 +85,6 @@ flow_fcn_map = {
     Flows.XILINX: lambda: flow_xilinx,
     Flows.XILINX_PHYS_NETLIST: lambda: flow_xilinx_phys_netlist,
 }
-
-
-class Vendor(Enum):
-    """Enum differentiating between different fpga vendors"""
-
-    LATTICE = auto()
-    XILINX = auto()
 
 
 def get_flow_fcn_by_name(flow_name):
@@ -164,8 +147,8 @@ def flow_xilinx(design, flow_args, build_dir):
 def flow_xilinx_phys_netlist(design, flow_args, build_dir):
     """Run Xilinx synthesis and implementation"""
 
-    if "--flatten" not in flow_args[FlowArgs.SYNTH]:
-        flow_args[FlowArgs.SYNTH] += " --flatten"
+    if "--flatten" not in flow_args[ToolType.SYNTH]:
+        flow_args[ToolType.SYNTH] += " --flatten"
 
     status = vivado_synth(design, build_dir, flow_args)
     status = vivado_impl(design, build_dir, flow_args)

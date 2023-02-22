@@ -6,7 +6,8 @@ from pathlib import Path
 
 from bfasst.design import Design
 from bfasst import paths
-from bfasst.flows import FlowArgs, Flows, run_flow
+from bfasst.flows import Flows, run_flow
+from bfasst.tool_wrappers import ToolType
 
 
 def run_design(design_path, flow, error_flow, flow_args):
@@ -63,12 +64,13 @@ def main():
     # Build per-tool arguments into flow_args dictionary
     flow_args = defaultdict(str)
     flow_args_map = {
-        "synth": FlowArgs.SYNTH,
-        "impl": FlowArgs.IMPL,
-        "map": FlowArgs.MAP,
-        "cmp": FlowArgs.CMP,
+        "synth": ToolType.SYNTH,
+        "impl": ToolType.IMPL,
+        "map": ToolType.MAP,
+        "cmp": ToolType.CMP,
+        "reverse": ToolType.REVERSE,
     }
-    print(flow_args[FlowArgs.SYNTH])
+    print(flow_args[ToolType.SYNTH])
     for arg_name, enum in flow_args_map.items():
         flow_args[enum] = getattr(args, arg_name)
 
