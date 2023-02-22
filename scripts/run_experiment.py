@@ -1,7 +1,6 @@
 """ Run experiment which runs multiple designs/flows in parallel """
 
 from argparse import ArgumentParser
-import atexit
 import collections
 import datetime
 import functools
@@ -42,13 +41,10 @@ def print_running_list(running_list):
     sys.stdout.flush()
 
 
-def update_runtimes_thread(print_lock, num_jobs, running_list, statuses):
+def update_runtimes_thread(print_lock, num_jobs, running_list, statuses, period=1):
     """This function, designed to run in its own thread,
     calls print_running_list() periodically, until all jobs are done,
     or it is terminated."""
-
-    # signal.signal(signal.SIGINT, signal.SIG_IGN)
-    inverval_seconds = 1.0
 
     if len(statuses) == num_jobs:
         sys.stdout.write("\r\033[K")
@@ -57,7 +53,7 @@ def update_runtimes_thread(print_lock, num_jobs, running_list, statuses):
     with print_lock:
         print_running_list(running_list)
     threading.Timer(
-        inverval_seconds,
+        period,
         update_runtimes_thread,
         (print_lock, num_jobs, running_list, statuses),
     ).start()
@@ -114,16 +110,9 @@ def job_done(experiment, print_lock, running_list, design, work_path, statuses, 
     statuses.append(status)
 
 
-def cleanup():
-    print("Killing all child processes...")
-    os.killpg(0, signal.SIGKILL)  # kill all processes in my group
-
-
-def main(experiment_yaml, num_threads):
+def main(experiment_yaml, num_threads, print_period=1):
     """Setup and run experiment as multiple processes"""
-    os.setpgrp()  # create new process group, become its leader
-
-    atexit.register(cleanup)
+    # os.setpgrp()  # create new process group, become its leader
 
     # Make sure we capture Ctrl+C
     signal.signal(signal.SIGINT, signal.default_int_handler)
@@ -145,18 +134,19 @@ def main(experiment_yaml, num_threads):
     t_start = time.perf_counter()
     sys.stdout.write("\033[s")
 
-    update_process = multiprocessing.Process(
-        target=update_runtimes_thread,
-        args=[print_lock, len(experiment.designs), running_list, statuses],
-    )
-    update_process.start()
+    if print_period:
+        update_process = multiprocessing.Process(
+            target=update_runtimes_thread,
+            args=[print_lock, len(experiment.designs), running_list, statuses],
+        )
+        update_process.start()
 
     results = []
 
     # https://github.com/jpype-project/jpype/issues/1024
-    ctx = multiprocessing.get_context("spawn")
-
-    with concurrent.futures.ProcessPoolExecutor(max_workers=num_threads, mp_context=ctx) as pool:
+    with concurrent.futures.ProcessPoolExecutor(
+        max_workers=num_threads, mp_context=multiprocessing.get_context("spawn")
+    ) as pool:
         for design in experiment.designs:
             design_dir = experiment.work_dir / design.rel_path
             design_dir.mkdir(parents=True, exist_ok=True)
@@ -180,19 +170,17 @@ def main(experiment_yaml, num_threads):
         try:
             pool.shutdown(wait=True)
         except KeyboardInterrupt:
-            print("Keyboard!")
-            pool.shutdown(wait=False)
+            os.killpg(0, signal.SIGKILL)  # kill all processes in my group
 
-    update_process.terminate()
-    update_process.join()
+    if print_period:
+        update_process.terminate()
+        update_process.join()
     t_end = time.perf_counter()
 
     if experiment.post_run is not None:
         experiment.post_run(experiment.work_dir)
 
     print_ending_stats(statuses, t_end - t_start)
-
-    print("Completed successfully")
 
 
 def print_ending_stats(statuses, runtime):
@@ -204,9 +192,13 @@ def print_ending_stats(statuses, runtime):
     print("-" * 80)
 
     exception_exists = any(isinstance(s, Exception) for s in statuses)
+    error_exists = any(isinstance(s, Status) and s.error for s in statuses)
 
     # Convert exceptions to strings
     statuses = [f"Exception: {str(s).strip()}" if isinstance(s, Exception) else s for s in statuses]
+
+    # Convert statuses to enums
+    statuses = [s.status if isinstance(s, Status) else s for s in statuses]
 
     if statuses:
         status_counts = collections.Counter(statuses)
@@ -216,11 +208,18 @@ def print_ending_stats(statuses, runtime):
             print(str(status).strip().ljust(pad), count)
 
     print("-" * 80)
+    print("Execution took", round(runtime, 1), "seconds")
     if exception_exists:
         print_color(
             TermColor.YELLOW, "Exception(s) occurred.  See log files for full exception trace."
         )
-    print("Execution took", round(runtime, 1), "seconds")
+    if error_exists:
+        print_color(TermColor.YELLOW, "Error(s) occurred.")
+
+    if exception_exists or error_exists:
+        sys.exit(-1)
+    else:
+        print("Completed successfully")
 
 
 if __name__ == "__main__":
@@ -228,5 +227,6 @@ if __name__ == "__main__":
     # Set up command line arguments
     parser.add_argument("experiment_yaml", type=pathlib.Path, help="Experiment yaml file.")
     parser.add_argument("-j", "--threads", type=int, default=1, help="Number of threads")
+    parser.add_argument("--print_period", type=int, default=1)
     args = parser.parse_args()
-    main(args.experiment_yaml, args.threads)
+    main(args.experiment_yaml, args.threads, args.print_period)

@@ -1,14 +1,23 @@
+""" Base class for error injection tools"""
 import abc
+import shlex
+from bfasst import tool
 
 from bfasst.tool import Tool
 from bfasst.status import Status, ErrorInjectionStatus
 
 
 class ErrorInjectionTool(Tool):
+    """Base class for error injection tools"""
+
     success_status = Status(ErrorInjectionStatus.SUCCESS)
 
     def __init__(self, cwd, flow_args="") -> None:
-        super().__init__(cwd, flow_args)
+        super().__init__(cwd)
+
+        # Implementation options
+        parser = tool.ToolArgParser("error")
+        self.args = parser.parse_args(shlex.split(flow_args))
 
     # run_error_flows
     # If one or more error flows are specified with an error flow YAML,

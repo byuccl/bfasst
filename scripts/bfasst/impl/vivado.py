@@ -15,9 +15,8 @@ class VivadoImplementationTool(ImplementationTool):
 
     TOOL_WORK_DIR = "vivado_impl"
 
-    def __init__(self, cwd, flow_args="", ooc=False):
+    def __init__(self, cwd, flow_args=""):
         super().__init__(cwd, flow_args)
-        self.ooc = ooc
 
     def implement_bitstream(self, design):
         design.impl_netlist_path = self.cwd / (design.top + "_impl.v")
@@ -58,7 +57,7 @@ class VivadoImplementationTool(ImplementationTool):
                 "set_property edif_top_file " + str(design.netlist_path) + " [current_fileset]\n"
             )
             fp.write("link_design -part " + bfasst.config.PART + "\n")
-            if not self.ooc:
+            if not self.args.out_of_context:
                 fp.write("read_xdc " + str(design.constraints_path) + "\n")
             fp.write("opt_design\n")
             fp.write("place_design\n")
@@ -68,7 +67,7 @@ class VivadoImplementationTool(ImplementationTool):
             )
             fp.write("write_edif -force -file " + str(design.impl_edif_path) + "\n")
             fp.write("write_verilog -force -file " + str(design.impl_netlist_path) + "\n")
-            if not self.ooc:
+            if not self.args.out_of_context:
                 fp.write("write_bitstream -force " + str(design.bitstream_path) + "\n")
             # fp.write("write_edif -force {" + str(design.netlist_path) + "}\n")
             fp.write("} ] } { exit 1 }\n")

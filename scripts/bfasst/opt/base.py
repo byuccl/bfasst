@@ -1,5 +1,7 @@
 """ Base class for logic optimization tools"""
 import abc
+import shlex
+from bfasst import tool
 from bfasst.status import OptStatus
 
 from bfasst.tool import Tool
@@ -13,7 +15,11 @@ class OptTool(Tool):
     success_status = Status(OptStatus.SUCCESS)
 
     def __init__(self, cwd, flow_args="") -> None:
-        super().__init__(cwd, flow_args)
+        super().__init__(cwd)
+
+        # Implementation options
+        parser = tool.ToolArgParser("opt")
+        self.args = parser.parse_args(shlex.split(flow_args))
 
     # This method should run an optimizer.  It should return
     # (netlist, status), where:
