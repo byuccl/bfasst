@@ -4,14 +4,53 @@
 import spydrnet as sdn
 
 
-def generate_ffs_list(instance, ffs, output_ffs, next_ffs):
+def analyze_new_instance(new_instance, next_ff, last_ff, ffs_builder, ffs):
+    """Checks if the current FF is an output FF, or part of the shift-register"""
+
+    #print("\t\t", new_instance.name)
+    # Loop through the pins of the FF
+    for pin in new_instance.pins:
+        # Find the pin with the Q port
+        if "Q" in pin.inner_pin.port.name:
+            # Check that it has a wire
+            if pin.wire is not None:
+                # Loop through the pins connected to the wire
+                obuf_count = 0
+                ff_count = 0
+                for w_pin in pin.wire.pins:
+                    # Check if it is either an output or the next FF
+                    if "OBUF" in w_pin.instance.reference.name:
+                        obuf_count += 1
+                    elif (("FDRE" in w_pin.instance.reference.name) or
+                            ("FDSE" in w_pin.instance.reference.name)):
+                        ff_count += 1
+                # Logic for output or next FF
+                if obuf_count > 0:
+                    #print("\t\t\t Found OBUF")
+                    ffs_builder["output_ffs"].append(new_instance.name)
+                    #output_ffs.append(new_instance.name)
+                elif ff_count > 1:
+                    #print("\t\t\t Found FF")
+                    next_ff = new_instance
+                else:
+                    last_ff = True
+                    #print("\t\t\t Final FF")
+                    ffs_builder["next_ffs"].append(new_instance.name)
+                    #next_ffs.append(new_instance.name)
+                    ffs = ffs_builder["next_ffs"] + ffs_builder["output_ffs"]
+
+    return next_ff, last_ff, ffs_builder, ffs
+
+
+def generate_ffs_list(instance, ffs, ffs_builder):
     """Generates a ffs list to be mapped from a shift-register through recursion"""
 
     #print(instance.name)
     new_instance = None
     next_ff = instance
     last_ff = False
-    next_ffs.append(instance.name)
+    ffs_builder["next_ffs"].append(instance.name)
+    #next_ffs.append(instance.name)
     # Loop through the pins of the FF
     for pin in instance.pins:
         # Find the pin with the Q port
@@ -23,38 +62,15 @@ def generate_ffs_list(instance, ffs, output_ffs, next_ffs):
                     # Find the pin with the D port
                     if "D" in w_pin.inner_pin.port.name:
                         new_instance = w_pin.instance
-                        #print("\t\t", new_instance.name)
-                        # Loop through the pins of the FF
-                        for pin in new_instance.pins:
-                            # Find the pin with the Q port
-                            if "Q" in pin.inner_pin.port.name:
-                                # Check that it has a wire
-                                if pin.wire is not None:
-                                    # Loop through the pins connected to the wire
-                                    obuf_count = 0
-                                    ff_count = 0
-                                    for w_pin in pin.wire.pins:
-                                        # Check if it is either an output or the next FF
-                                        if "OBUF" in w_pin.instance.reference.name:
-                                            obuf_count += 1
-                                        elif (("FDRE" in w_pin.instance.reference.name) or
-                                             ("FDSE" in w_pin.instance.reference.name)):
-                                            ff_count += 1
-                                    # Logic for output or next FF
-                                    if obuf_count > 0:
-                                        #print("\t\t\t Found OBUF")
-                                        output_ffs.append(new_instance.name)
-                                    elif ff_count > 1:
-                                        #print("\t\t\t Found FF")
-                                        next_ff = new_instance
-                                    else:
-                                        last_ff = True
-                                        #print("\t\t\t Final FF")
-                                        next_ffs.append(new_instance.name)
-                                        ffs = next_ffs + output_ffs
+                        (next_ff, last_ff,
+                        ffs_builder, ffs) = analyze_new_instance(new_instance,
+                                                              next_ff,
+                                                              last_ff,
+                                                              ffs_builder,
+                                                              ffs)
     if not last_ff:
         # Get to next FF
-        ffs = generate_ffs_list(next_ff, ffs, output_ffs, next_ffs)
+        ffs = generate_ffs_list(next_ff, ffs, ffs_builder)
 
     return ffs
 
@@ -62,8 +78,7 @@ def generate_ffs_list(instance, ffs, output_ffs, next_ffs):
 def go_to_initial_ff(instance, ffs):
     """Goes to the initial ff using recursion"""
 
-    output_ffs = []
-    next_ffs = []
+    ffs_builder = {"output_ffs": [], "next_ffs": []}
     previous_instance = None
     initial_flipflop = True
     # Loop through the pins of the FF
@@ -82,7 +97,7 @@ def go_to_initial_ff(instance, ffs):
                         previous_instance = w_pin.instance
 
     if initial_flipflop is True:
-        ffs = generate_ffs_list(instance, ffs, output_ffs, next_ffs)
+        ffs = generate_ffs_list(instance, ffs, ffs_builder)
     else:
         ffs = go_to_initial_ff(previous_instance, ffs)
 

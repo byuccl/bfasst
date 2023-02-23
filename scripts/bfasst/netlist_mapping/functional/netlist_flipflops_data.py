@@ -4,10 +4,10 @@ from the LUTs before a FF"""
 
 import math
 from enum import Enum
-from converter import hex_to_bin, bin_to_hex, get_reversed_bin_for_each_hex
+from functional.converter import hex_to_bin, bin_to_hex, get_reversed_bin_for_each_hex
 #from timeit import default_timer as timer
-from qm import qm_f
-from bst import Node, create_tree, get_filtered_values
+from functional.qm import qm_f
+from functional.bst import Node, create_tree, get_filtered_values
 
 
 class Parameter(Enum):
