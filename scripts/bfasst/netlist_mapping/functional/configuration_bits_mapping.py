@@ -48,9 +48,7 @@ def map_ffs_based_on_conf_bits(flipflops_data_1, flipflops_data_2):
         conf_bits_1 = make_configuration_bits_list_to_compare(data_1.configuration_bits)
         # Loop through each pair in the mapped FFs data_2
         for data_2 in flipflops_data_2:
-            conf_bits_2 = make_configuration_bits_list_to_compare(
-                data_2.configuration_bits
-            )
+            conf_bits_2 = make_configuration_bits_list_to_compare(data_2.configuration_bits)
             # Check if they match
             if conf_bits_match(conf_bits_1, conf_bits_2):
                 mapped_flipflops.append([data_1.flipflop_name, data_2.flipflop_name])

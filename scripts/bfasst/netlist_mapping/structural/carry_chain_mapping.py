@@ -43,16 +43,12 @@ def get_ffs_through_carry(carry, ffs, carries):
                                             if "Q" in lut_wire_pin.inner_pin.port.name:
                                                 # Case where a FF is connected directly to the LUT!
                                                 if (
-                                                    "FDRE"
-                                                    in lut_wire_pin.instance.reference.name
+                                                    "FDRE" in lut_wire_pin.instance.reference.name
                                                 ) or (
-                                                    "FDSE"
-                                                    in lut_wire_pin.instance.reference.name
+                                                    "FDSE" in lut_wire_pin.instance.reference.name
                                                 ):
                                                     # Add ff to the list
-                                                    ffs.append(
-                                                        lut_wire_pin.instance.name
-                                                    )
+                                                    ffs.append(lut_wire_pin.instance.name)
                                                     # print(ffs)
                         # Ignore all other cases!
     # Done with adding flipflops from the carry!
@@ -70,9 +66,7 @@ def get_ffs_through_carry(carry, ffs, carries):
                         # Case where the carry is connected directly to the carry!
                         if "CARRY" in wire_pin.instance.reference.name:
                             # Jump to the new carry
-                            ffs, carries = get_ffs_through_carry(
-                                wire_pin.instance, ffs, carries
-                            )
+                            ffs, carries = get_ffs_through_carry(wire_pin.instance, ffs, carries)
             # Else this is the last Carry!
     return ffs, carries
 
@@ -96,9 +90,7 @@ def get_ffs_to_map_through_carries(library, ffs, carries):
                             r"\<const0> " == pin.wire.cable.name
                         ):
                             # Get FFs through carry
-                            ffs, carries = get_ffs_through_carry(
-                                instance, ffs, carries
-                            )
+                            ffs, carries = get_ffs_through_carry(instance, ffs, carries)
     return ffs, carries
 
 
@@ -124,9 +116,7 @@ def map_carries_and_ffs(library1, library2):
     impl_ffs = []
     reversed_ffs = []
 
-    impl_ffs, impl_carries = get_ffs_to_map_through_carries(
-        library1, impl_ffs, impl_carries
-    )
+    impl_ffs, impl_carries = get_ffs_to_map_through_carries(library1, impl_ffs, impl_carries)
 
     reversed_ffs, reversed_carries = get_ffs_to_map_through_carries(
         library2, reversed_ffs, reversed_carries
@@ -142,7 +132,7 @@ def map_carries_and_ffs(library1, library2):
             mapped_pair.append(reversed_carries[i])
             mapped_carries.append(mapped_pair)
 
-    #print_mapped_carries(mapped_carries)
+    # print_mapped_carries(mapped_carries)
 
     mapped_flipflops = []
     # Map flipflops gathered from the carries
@@ -156,13 +146,12 @@ def map_carries_and_ffs(library1, library2):
 
     # print_mapped_flipflops_through_carries(mapped_flipflops)
 
-    #return mapped_carries, mapped_flipflops
+    # return mapped_carries, mapped_flipflops
 
     return mapped_flipflops
 
-def update_netlists_from_carries_and_ffs_mapping(
-    mapped_carries, golden_netlist, reversed_netlist
-):
+
+def update_netlists_from_carries_and_ffs_mapping(mapped_carries, golden_netlist, reversed_netlist):
     """Updates the nets of the netlist structure with the new mapped ffs"""
 
     # Update netlist with the mapped carries
@@ -179,9 +168,7 @@ def update_netlists_from_carries_and_ffs_mapping(
                     if mapped_pair[1] == reversed_instance.instance_name:
                         # print(mapped_pair[1], " with ", reversed_instance.instance_name)
                         # Update Inputs in the reversed_carry
-                        for i, reversed_wire in enumerate(
-                            reversed_instance.input_wires_names
-                        ):
+                        for i, reversed_wire in enumerate(reversed_instance.input_wires_names):
                             # Update Input in cell
                             old_wire_name = reversed_wire
                             new_wire_name = impl_instance.input_wires_names[i]
@@ -194,21 +181,15 @@ def update_netlists_from_carries_and_ffs_mapping(
                                     reversed_block.input_wires_names
                                 ):
                                     if reversed_block_input_wire == old_wire_name:
-                                        reversed_block.input_wires_names[
-                                            i
-                                        ] = new_wire_name
+                                        reversed_block.input_wires_names[i] = new_wire_name
                                 # Updating Outputs
                                 for i, reversed_block_output_wire in enumerate(
                                     reversed_block.output_wires_names
                                 ):
                                     if reversed_block_output_wire == old_wire_name:
-                                        reversed_block.output_wires_names[
-                                            i
-                                        ] = new_wire_name
+                                        reversed_block.output_wires_names[i] = new_wire_name
                         # Update Outputs in the reversed_carry
-                        for i, reversed_wire in enumerate(
-                            reversed_instance.output_wires_names
-                        ):
+                        for i, reversed_wire in enumerate(reversed_instance.output_wires_names):
                             # Update Output in cell
                             old_wire_name = reversed_wire
                             new_wire_name = impl_instance.output_wires_names[i]
@@ -221,13 +202,9 @@ def update_netlists_from_carries_and_ffs_mapping(
                                     reversed_block.input_wires_names
                                 ):
                                     if reversed_block_input_wire == old_wire_name:
-                                        reversed_block.input_wires_names[
-                                            i
-                                        ] = new_wire_name
+                                        reversed_block.input_wires_names[i] = new_wire_name
                         # Update Other wires in the reversed_carry
-                        for i, reversed_wire in enumerate(
-                            reversed_instance.other_wires_names
-                        ):
+                        for i, reversed_wire in enumerate(reversed_instance.other_wires_names):
                             # Update Other wire in cell
                             old_wire_name = reversed_wire
                             new_wire_name = impl_instance.other_wires_names[i]
@@ -240,25 +217,19 @@ def update_netlists_from_carries_and_ffs_mapping(
                                     reversed_block.input_wires_names
                                 ):
                                     if reversed_block_input_wire == old_wire_name:
-                                        reversed_block.input_wires_names[
-                                            i
-                                        ] = new_wire_name
+                                        reversed_block.input_wires_names[i] = new_wire_name
                                 # Updating Outputs
                                 for i, reversed_block_output_wire in enumerate(
                                     reversed_block.output_wires_names
                                 ):
                                     if reversed_block_output_wire == old_wire_name:
-                                        reversed_block.output_wires_names[
-                                            i
-                                        ] = new_wire_name
+                                        reversed_block.output_wires_names[i] = new_wire_name
                                 # Updating Other wires
                                 for i, reversed_block_other_wire in enumerate(
                                     reversed_block.other_wires_names
                                 ):
                                     if reversed_block_other_wire == old_wire_name:
-                                        reversed_block.other_wires_names[
-                                            i
-                                        ] = new_wire_name
+                                        reversed_block.other_wires_names[i] = new_wire_name
                         # Done updating CARRY
 
     # Update netlist with the mapped flipflops (May not be needed)

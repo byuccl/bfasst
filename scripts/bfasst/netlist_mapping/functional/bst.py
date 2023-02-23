@@ -44,9 +44,7 @@ def create_tree(new_node, generations, conf_bits_index, conf_bits):
     # Generations 2 or Higher: Return parent node connected with children
     if generations > 1:
         for child in new_node.children:
-            child, conf_bits_index = create_tree(
-                child, generations - 1, conf_bits_index, conf_bits
-            )
+            child, conf_bits_index = create_tree(child, generations - 1, conf_bits_index, conf_bits)
         return new_node, conf_bits_index
     # It should never get here
     return new_node, conf_bits_index

@@ -34,17 +34,15 @@ def inputs_sops_match(matching_input_sops_counter, product_1, product_2):
         # Loop throguh the LUT Inputs for sop_2
         for input_sop_2 in product_2.lut_inputs:
             # Check that both Input SOPs have not been mapped
-            if ((input_sop_1.state == "not_found") and
-                (input_sop_2.state == "not_found")):
+            if (input_sop_1.state == "not_found") and (input_sop_2.state == "not_found"):
                 # Check if both don't have a SOP or if their SOPs match
-                if ((input_sop_1.sop is None) and (input_sop_2.sop is None)):
+                if (input_sop_1.sop is None) and (input_sop_2.sop is None):
                     # Update matching status for both SOPs
                     input_sop_1.state = "found"
                     input_sop_2.state = "found"
                     # Increase number of counter for matching SOPs
                     matching_input_sops_counter += 1
-                elif ((input_sop_1.sop is not None) and
-                        (input_sop_2.sop is not None)):
+                elif (input_sop_1.sop is not None) and (input_sop_2.sop is not None):
                     if sop_match(input_sop_1.sop, input_sop_2.sop):
                         # Update matching status for both SOPs
                         input_sop_1.state = "found"
@@ -53,6 +51,7 @@ def inputs_sops_match(matching_input_sops_counter, product_1, product_2):
                         matching_input_sops_counter += 1
 
     return matching_input_sops_counter
+
 
 def sop_match(sop_1, sop_2):
     """Function used to match SOPs"""
@@ -64,11 +63,11 @@ def sop_match(sop_1, sop_2):
         products_found = 0
         # Loop through their products
         for product_1 in sop_1:
-            #print("P_1")
-            #print(product_1)
+            # print("P_1")
+            # print(product_1)
             for product_2 in sop_2:
-                #print("P_2")
-                #print(product_2)
+                # print("P_2")
+                # print(product_2)
                 # Check if products match in Inputs Number and Negated Inputs
                 if (
                     (product_1.num["lut_inputs"] == product_2.num["lut_inputs"])
@@ -79,9 +78,9 @@ def sop_match(sop_1, sop_2):
                     # Check that the SOPs in their inputs also match!!!!!!!!!!!!!!!!!!!!!!!!!
                     # Reset counter for matching SOPs
                     matching_input_sops_counter = 0
-                    matching_input_sops_counter = inputs_sops_match(matching_input_sops_counter,
-                                                                    product_1,
-                                                                    product_2)
+                    matching_input_sops_counter = inputs_sops_match(
+                        matching_input_sops_counter, product_1, product_2
+                    )
                     # Check if all inputs in the product matched
                     if matching_input_sops_counter == product_1.num["lut_inputs"]:
                         # Then map this products (Say that they are found!)
@@ -92,9 +91,9 @@ def sop_match(sop_1, sop_2):
                     else:
                         restore_product_inputs(product_1, product_2)
 
-        #print("Found " + str(products_found) + " out of " + str(sop_1_len))
+            # print("Found " + str(products_found) + " out of " + str(sop_1_len))
 
-        # Restore Original not_found values for each product
+            # Restore Original not_found values for each product
             restore_sop_to_not_found_state(sop_1)
             restore_sop_to_not_found_state(sop_2)
 
@@ -112,12 +111,12 @@ def map_ffs_based_on_logic_func(flipflops_data_1, flipflops_data_2):
 
     for data_1 in flipflops_data_1:
         for data_2 in flipflops_data_2:
-            #print('\n')
-            #print("SOP to compare")
-            #print(data_1.sop)
-            #print(data_2.sop)
+            # print('\n')
+            # print("SOP to compare")
+            # print(data_1.sop)
+            # print(data_2.sop)
             if sop_match(data_1.sop, data_2.sop):
-                #print("MADE IT!!!!!!!!!!!!")
+                # print("MADE IT!!!!!!!!!!!!")
                 mapped_flipflops.append([data_1.flipflop_name, data_2.flipflop_name])
 
     return mapped_flipflops

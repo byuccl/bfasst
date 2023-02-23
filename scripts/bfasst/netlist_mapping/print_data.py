@@ -1,9 +1,7 @@
 """File with functions to print mapped points"""
 
 
-def print_conformal_input_output_points(
-    top_instance, golden_module_name, reversed_module_name
-):
+def print_conformal_input_output_points(top_instance, golden_module_name, reversed_module_name):
     """Prints the mapped input and output points for conformal"""
 
     for top_port in top_instance.get_ports():
@@ -11,9 +9,7 @@ def print_conformal_input_output_points(
             if len(top_port.pins) > 1:
                 for pin in top_port.pins:
                     if pin.wire is not None:
-                        input_name = (
-                            pin.wire.cable.name + "[" + str(pin.wire.index()) + "]"
-                        )
+                        input_name = pin.wire.cable.name + "[" + str(pin.wire.index()) + "]"
                         print(
                             "add mapped points "
                             + input_name
@@ -39,9 +35,7 @@ def print_conformal_input_output_points(
             if len(top_port.pins) > 1:
                 for pin in top_port.pins:
                     if pin.wire is not None:
-                        input_name = (
-                            pin.wire.cable.name + "[" + str(pin.wire.index()) + "]"
-                        )
+                        input_name = pin.wire.cable.name + "[" + str(pin.wire.index()) + "]"
                         print(
                             "add mapped points "
                             + input_name
@@ -67,18 +61,12 @@ def print_conformal_input_output_points(
             print("Unable to recognize port of the top module!")
 
 
-def print_conformal_structural_points(
-    mapped_points, golden_module_name, reversed_module_name
-):
+def print_conformal_structural_points(mapped_points, golden_module_name, reversed_module_name):
     """Prints the structurally mapped points for conformal"""
 
     for mapped_pair_and_types in mapped_points:
-        if (
-            (mapped_pair_and_types[2] == "FDRE")
-            and (mapped_pair_and_types[3] == "FDRE")
-        ) or (
-            (mapped_pair_and_types[2] == "FDSE")
-            and (mapped_pair_and_types[3] == "FDSE")
+        if ((mapped_pair_and_types[2] == "FDRE") and (mapped_pair_and_types[3] == "FDRE")) or (
+            (mapped_pair_and_types[2] == "FDSE") and (mapped_pair_and_types[3] == "FDSE")
         ):
             print(
                 "add mapped points "
@@ -90,30 +78,15 @@ def print_conformal_structural_points(
                 + " "
                 + reversed_module_name
             )
-        elif (
-                ("LUT" in mapped_pair_and_types[2])
-                and ("LUT" in mapped_pair_and_types[3])
-            ):
+        elif ("LUT" in mapped_pair_and_types[2]) and ("LUT" in mapped_pair_and_types[3]):
             pass
-        elif (
-                (mapped_pair_and_types[2] == "BUFG")
-                and (mapped_pair_and_types[3] == "BUFG")
-            ):
+        elif (mapped_pair_and_types[2] == "BUFG") and (mapped_pair_and_types[3] == "BUFG"):
             pass
-        elif (
-                (mapped_pair_and_types[2] == "IBUF")
-                and (mapped_pair_and_types[3] == "IBUF")
-            ):
+        elif (mapped_pair_and_types[2] == "IBUF") and (mapped_pair_and_types[3] == "IBUF"):
             pass
-        elif (
-                (mapped_pair_and_types[2] == "OBUF")
-                and (mapped_pair_and_types[3] == "OBUF")
-            ):
+        elif (mapped_pair_and_types[2] == "OBUF") and (mapped_pair_and_types[3] == "OBUF"):
             pass
-        elif (
-                (mapped_pair_and_types[2] == "MUXF7")
-                and (mapped_pair_and_types[3] == "MUXF7")
-            ):
+        elif (mapped_pair_and_types[2] == "MUXF7") and (mapped_pair_and_types[3] == "MUXF7"):
             pass
         else:
             print("Unable to recognize the types of the mapped points!")
@@ -165,12 +138,7 @@ def print_sop(sop, level):
 
     for product in sop:
         print(
-            tabs
-            + "("
-            + str(product.lut_inputs_num)
-            + ", "
-            + str(product.negated_inputs_num)
-            + ")"
+            tabs + "(" + str(product.lut_inputs_num) + ", " + str(product.negated_inputs_num) + ")"
         )
 
         for lut_input in product.lut_inputs:

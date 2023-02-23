@@ -7,7 +7,7 @@ import spydrnet as sdn
 def analyze_new_instance(new_instance, next_ff, last_ff, ffs_builder, ffs):
     """Checks if the current FF is an output FF, or part of the shift-register"""
 
-    #print("\t\t", new_instance.name)
+    # print("\t\t", new_instance.name)
     # Loop through the pins of the FF
     for pin in new_instance.pins:
         # Find the pin with the Q port
@@ -21,22 +21,23 @@ def analyze_new_instance(new_instance, next_ff, last_ff, ffs_builder, ffs):
                     # Check if it is either an output or the next FF
                     if "OBUF" in w_pin.instance.reference.name:
                         obuf_count += 1
-                    elif (("FDRE" in w_pin.instance.reference.name) or
-                            ("FDSE" in w_pin.instance.reference.name)):
+                    elif ("FDRE" in w_pin.instance.reference.name) or (
+                        "FDSE" in w_pin.instance.reference.name
+                    ):
                         ff_count += 1
                 # Logic for output or next FF
                 if obuf_count > 0:
-                    #print("\t\t\t Found OBUF")
+                    # print("\t\t\t Found OBUF")
                     ffs_builder["output_ffs"].append(new_instance.name)
-                    #output_ffs.append(new_instance.name)
+                    # output_ffs.append(new_instance.name)
                 elif ff_count > 1:
-                    #print("\t\t\t Found FF")
+                    # print("\t\t\t Found FF")
                     next_ff = new_instance
                 else:
                     last_ff = True
-                    #print("\t\t\t Final FF")
+                    # print("\t\t\t Final FF")
                     ffs_builder["next_ffs"].append(new_instance.name)
-                    #next_ffs.append(new_instance.name)
+                    # next_ffs.append(new_instance.name)
                     ffs = ffs_builder["next_ffs"] + ffs_builder["output_ffs"]
 
     return next_ff, last_ff, ffs_builder, ffs
@@ -45,12 +46,12 @@ def analyze_new_instance(new_instance, next_ff, last_ff, ffs_builder, ffs):
 def generate_ffs_list(instance, ffs, ffs_builder):
     """Generates a ffs list to be mapped from a shift-register through recursion"""
 
-    #print(instance.name)
+    # print(instance.name)
     new_instance = None
     next_ff = instance
     last_ff = False
     ffs_builder["next_ffs"].append(instance.name)
-    #next_ffs.append(instance.name)
+    # next_ffs.append(instance.name)
     # Loop through the pins of the FF
     for pin in instance.pins:
         # Find the pin with the Q port
@@ -62,12 +63,9 @@ def generate_ffs_list(instance, ffs, ffs_builder):
                     # Find the pin with the D port
                     if "D" in w_pin.inner_pin.port.name:
                         new_instance = w_pin.instance
-                        (next_ff, last_ff,
-                        ffs_builder, ffs) = analyze_new_instance(new_instance,
-                                                              next_ff,
-                                                              last_ff,
-                                                              ffs_builder,
-                                                              ffs)
+                        (next_ff, last_ff, ffs_builder, ffs) = analyze_new_instance(
+                            new_instance, next_ff, last_ff, ffs_builder, ffs
+                        )
     if not last_ff:
         # Get to next FF
         ffs = generate_ffs_list(next_ff, ffs, ffs_builder)
@@ -123,11 +121,12 @@ def get_ffs_to_map_through_shift_register(library, ffs):
                         ffs_connected = 0
                         for w_pin in pin.wire.pins:
                             # Check for outer pin
-                            #if type(w_pin) == sdn.OuterPin:
+                            # if type(w_pin) == sdn.OuterPin:
                             if isinstance(w_pin, sdn.OuterPin):
                                 # Count FFs connected to wire
-                                if (("FDRE" in w_pin.instance.reference.name) or
-                                   ("FDSE" in w_pin.instance.reference.name)):
+                                if ("FDRE" in w_pin.instance.reference.name) or (
+                                    "FDSE" in w_pin.instance.reference.name
+                                ):
                                     ffs_connected += 1
                         # Check if it is connected to more than one FF (Part of a shift register)
                         if (ffs_connected > 1) and (not done_with_mapping):
@@ -151,13 +150,9 @@ def map_shift_register_and_output_ffs(library1, library2):
     impl_ffs = []
     reversed_ffs = []
 
-    impl_ffs = get_ffs_to_map_through_shift_register(
-        library1, impl_ffs
-    )
+    impl_ffs = get_ffs_to_map_through_shift_register(library1, impl_ffs)
 
-    reversed_ffs = get_ffs_to_map_through_shift_register(
-        library2, reversed_ffs
-    )
+    reversed_ffs = get_ffs_to_map_through_shift_register(library2, reversed_ffs)
 
     mapped_flipflops = []
     # Map flipflops gathered from the carries
@@ -169,6 +164,6 @@ def map_shift_register_and_output_ffs(library1, library2):
             mapped_pair.append(reversed_ffs[i])
             mapped_flipflops.append(mapped_pair)
 
-    #print_mapped_flipflops_through_shift_register(mapped_flipflops)
+    # print_mapped_flipflops_through_shift_register(mapped_flipflops)
 
     return mapped_flipflops

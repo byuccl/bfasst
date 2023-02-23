@@ -13,5 +13,8 @@
     ],
     "python.formatting.provider": "black",
     "python.linting.enabled": true,
-    "python.linting.pylintEnabled": true
+    "python.linting.pylintEnabled": true,
+    "pylint.args": [
+        "--rcfile", "${workspaceFolder}/.pylintrc"
+    ]
 }

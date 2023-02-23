@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-'''Quine-McCluskey two-level logic minimization method.
+"""Quine-McCluskey two-level logic minimization method.
 
 Copyright 2008, Robert Dick <dickrp@eecs.umich.edu> with improvements
 from Pat Maupin <pmaupin@gmail.com>.
@@ -15,32 +15,32 @@ Library usage example:
   import qm_f
   print qm_f.qm_f(ones=[1, 2, 5], dc_a=[0, 7])
 
-Please see the license file for legal information.'''
+Please see the license file for legal information."""
 
 
-__version__ = '0.2'
-__author__ = 'Robert Dick'
-__author_email__ = 'dickrp@eecs.umich.edu'
+__version__ = "0.2"
+__author__ = "Robert Dick"
+__author_email__ = "dickrp@eecs.umich.edu"
 
 
 import math
 
 
 def qm_f(ones=None, zeros=None, dc_a=None):
-    '''Compute minimal two-level sum-of-products form.
-	Arguments are:
-		ones: iterable of integer minterms
-		zeros: iterable of integer maxterms
-		dc_a: iterable of integers specifying don't-care terms
+    """Compute minimal two-level sum-of-products form.
+    Arguments are:
+            ones: iterable of integer minterms
+            zeros: iterable of integer maxterms
+            dc_a: iterable of integers specifying don't-care terms
 
-	For proper operation, either (or both) the 'ones' and 'zeros'
-	parameters must be specified.  If one of these parameters is not
-	specified, it will be computed from the combination of the other
-	parameter and the optional 'dc_a' parameter.
+    For proper operation, either (or both) the 'ones' and 'zeros'
+    parameters must be specified.  If one of these parameters is not
+    specified, it will be computed from the combination of the other
+    parameter and the optional 'dc_a' parameter.
 
-	An assertion error will be raised if any terms are specified
-	in more than one argument, or if all three arguments are given
-	and not all terms are specified.'''
+    An assertion error will be raised if any terms are specified
+    in more than one argument, or if all three arguments are given
+    and not all terms are specified."""
 
     if ones is None:
         ones = []
@@ -72,39 +72,38 @@ def qm_f(ones=None, zeros=None, dc_a=None):
 
 
 def unate_cover(primes, ones):
-    '''Return the minimal cardinality subset of primes covering all ones.
+    """Return the minimal cardinality subset of primes covering all ones.
 
-	Exhaustive for now.  Feel free to replace this with an efficient unate
-	covering problem solver.'''
+    Exhaustive for now.  Feel free to replace this with an efficient unate
+    covering problem solver."""
 
     primes = list(primes)
-    cs_v = min((bitcount(b2s(cubesel, len(primes))), cubesel)
-		for cubesel in range(1 << len(primes))
-		if is_full_cover(active_primes(cubesel, primes), ones))[1]
+    cs_v = min(
+        (bitcount(b2s(cubesel, len(primes))), cubesel)
+        for cubesel in range(1 << len(primes))
+        if is_full_cover(active_primes(cubesel, primes), ones)
+    )[1]
     return active_primes(cs_v, primes)
 
 
 def active_primes(cubesel, primes):
-    '''Return the primes selected by the cube selection integer.'''
-    return [prime for used, prime in
-		zip(map(int, b2s(cubesel, len(primes))), primes) if used]
+    """Return the primes selected by the cube selection integer."""
+    return [prime for used, prime in zip(map(int, b2s(cubesel, len(primes))), primes) if used]
 
 
 def is_full_cover(all_primes, ones):
-    '''Return a bool: Does the set of primes cover all minterms?'''
-    return min([max([is_cover(p, o) for p in all_primes] + [False])
-		for o in ones] + [True])
+    """Return a bool: Does the set of primes cover all minterms?"""
+    return min([max([is_cover(p, o) for p in all_primes] + [False]) for o in ones] + [True])
 
 
 def is_cover(prime, one):
-    '''Return a bool: Does the prime cover the minterm?'''
-    return min([p in ('X', o) for p, o in zip(prime, one)] + [True])
+    """Return a bool: Does the prime cover the minterm?"""
+    return min([p in ("X", o) for p, o in zip(prime, one)] + [True])
 
 
 def compute_primes(cubes, vars_a):
-    '''Compute primes for the given set of cubes and variable count.'''
-    sigma = [set(i for i in cubes if bitcount(i) == v)
-		for v in range(vars_a + 1)]
+    """Compute primes for the given set of cubes and variable count."""
+    sigma = [set(i for i in cubes if bitcount(i) == v) for v in range(vars_a + 1)]
     primes = set()
     while sigma:
         nsigma = []
@@ -124,29 +123,29 @@ def compute_primes(cubes, vars_a):
 
 
 def bitcount(s_a):
-    '''Return the sum of on bits in s.'''
-    return sum(b == '1' for b in s_a)
+    """Return the sum of on bits in s."""
+    return sum(b == "1" for b in s_a)
 
 
 def b2s(i, vars_a):
-    '''Convert from an integer to a binary string.'''
-    s_v = ''
+    """Convert from an integer to a binary string."""
+    s_v = ""
     for _ in range(vars_a):
-        s_v = ['0', '1'][i & 1] + s_v
+        s_v = ["0", "1"][i & 1] + s_v
         i >>= 1
     return s_v
 
 
 def merge(i, j):
-    '''Return cube merge.  'X' is don't-care.  'None' if merge impossible.'''
-    s_v = ''
+    """Return cube merge.  'X' is don't-care.  'None' if merge impossible."""
+    s_v = ""
     dif_cnt = 0
     for a_i, b_i in zip(i, j):
-        if (a_i == 'X' or b_i == 'X') and a_i != b_i:
+        if (a_i == "X" or b_i == "X") and a_i != b_i:
             return None
         if a_i != b_i:
             dif_cnt += 1
-            s_v += 'X'
+            s_v += "X"
         else:
             s_v += a_i
         if dif_cnt > 1:
@@ -154,7 +153,7 @@ def merge(i, j):
     return s_v
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     def main():
         """Ignored for this script"""

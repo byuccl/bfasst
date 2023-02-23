@@ -63,7 +63,7 @@ def functionally_map_netlists(golden_netlist_arg, reversed_netlist_arg):
         carry_chain_mapped_flipflops,
         ir1.top_instance.reference.name,
         ir2.top_instance.reference.name,
-        printing_structural
+        printing_structural,
     )
 
     printing_structural = False
@@ -72,7 +72,7 @@ def functionally_map_netlists(golden_netlist_arg, reversed_netlist_arg):
         functionally_mapped_ffs,
         ir1.top_instance.reference.name,
         ir2.top_instance.reference.name,
-        printing_structural
+        printing_structural,
     )
 
 
