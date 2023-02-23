@@ -4,3 +4,6 @@
 [submodule "third_party/yosys"]
 	path = third_party/yosys
 	url = https://github.com/YosysHQ/yosys.git
+[submodule "third_party/WaFoVe"]
+	path = third_party/WaFoVe
+	url = https://github.com/byuccl/WaFoVe.git
