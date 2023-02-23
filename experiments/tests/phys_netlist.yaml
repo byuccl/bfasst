@@ -1,0 +1,20 @@
+designs:
+    - byu/alu
+    - byu/buttoncount
+    - byu/calc
+    - byu/debouncer
+    - byu/lightWave
+    - byu/mux8to1
+    - byu/oneshot
+    - byu/regfile
+    - byu/riscvSimpleDatapath
+    - byu/rx
+    - byu/seven_segment
+    - byu/shiftReg
+    - byu/Sout_reg
+    - byu/stopwatch
+    - byu/tx
+    - byu/UpDownButtonCount
+    
+    
+flow: xilinx_phys_netlist

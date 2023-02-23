@@ -1,4 +1,7 @@
+""" Base class for bitstream to netlist tools"""
 import abc
+import shlex
+from bfasst import tool
 
 from bfasst.tool import Tool
 from bfasst.utils import print_color
@@ -6,10 +9,16 @@ from bfasst.status import Status, BitReverseStatus
 
 
 class ReverseBitTool(Tool):
+    """Base class for bitstream to netlist tools"""
+
     success_status = Status(BitReverseStatus.SUCCESS)
-    
+
     def __init__(self, cwd, flow_args="") -> None:
-        super().__init__(cwd, flow_args)
+        super().__init__(cwd)
+
+        # Implementation options
+        parser = tool.ToolArgParser("bit_to_netlist")
+        self.args = parser.parse_args(shlex.split(flow_args))
 
     # This method should run bitstream reversal.  It should return
     # (netlist, status), where:

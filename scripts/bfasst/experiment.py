@@ -6,7 +6,7 @@ import yaml
 
 from bfasst import paths
 from bfasst.design import Design
-from bfasst.flows import get_flow_fcn_by_name, FlowArgs
+from bfasst.flows import get_flow_fcn_by_name, ToolType
 from bfasst.utils import error
 
 
@@ -17,7 +17,7 @@ class Experiment:
         self.post_run = None
         self.yaml_path = yaml_path
         self.name = yaml_path.stem
-        self.flow_args = {k: "" for k in FlowArgs}
+        self.flow_args = {k: "" for k in ToolType}
 
         # Read experiment YAML
         with open(yaml_path) as fp:
@@ -50,7 +50,7 @@ class Experiment:
 
         for key, val in experiment_props.items():
             try:
-                key = FlowArgs[key.upper()]
+                key = ToolType[key.upper()]
                 self.flow_args[key] = val
             except KeyError:
                 continue

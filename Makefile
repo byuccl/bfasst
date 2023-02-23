@@ -20,17 +20,20 @@ packages:
 		default-jre-headless \
 		uuid-dev \
 		libantlr4-runtime-dev \
-		openjdk-8-jdk \
+		openjdk-19-jdk \
 		capnproto \
-		libcapnp-dev
+		libcapnp-dev \
+		jq
 	
 python_packages:
 	$(IN_ENV) python3 -m pip install -r requirements.txt
 
 capnproto_java:
-	cd /tmp && git clone https://github.com/capnproto/capnproto-java
-	cd /tmp/capnproto-java && make
-	cd /tmp/capnproto-java && sudo make install
+	$(eval TEMP_DIR := $(shell mktemp -d))
+	cd $(TEMP_DIR) && git clone https://github.com/capnproto/capnproto-java
+	cd $(TEMP_DIR)/capnproto-java && make
+	cd $(TEMP_DIR)/capnproto-java && sudo make install
+	rm -rf $(TEMP_DIR)
 
 rapidwright:
 	cd third_party && wget http://www.rapidwright.io/docs/_downloads/rapidwright-installer.jar
@@ -54,7 +57,9 @@ install_wafove: submodules
 	$(IN_ENV) cd third_party/WaFoVe && make install
 
 env:
-	echo ". `pwd`/third_party/rapidwright.sh" > "env.sh"
+	echo "if [ -f \"`pwd`/third_party/rapidwright.sh\" ]\nthen" > "env.sh" 	
+	echo ". `pwd`/third_party/rapidwright.sh" >> "env.sh"
+	echo "fi" >> "env.sh"
 	echo "export INTERCHANGE_SCHEMA_PATH=`pwd`/third_party/RapidWright/interchange/fpga-interchange-schema/interchange" >> "env.sh"
 	echo "export VIVADO_PATH=/tools/Xilinx/Vivado/2022.2/bin/vivado" >> "env.sh"
 
@@ -83,4 +88,8 @@ install_yosys:
 format:
 	find ./scripts -iname "*.py" -exec black -l 100 {} \;
 
+
+pylint:
+	git fetch
+	pylint $$(git diff --name-only $$(git merge-base origin/main HEAD) | grep -e ".py$$")
 

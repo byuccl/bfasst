@@ -1,0 +1,37 @@
+name: Unit Tests
+
+on: pull_request
+
+# Cancel earlier jobs on new PR commit
+concurrency: 
+  group: ${{ github.head_ref }}
+  cancel-in-progress: true
+
+
+jobs:
+  # First list all the files in experiments/tests, and generate a JSON string of all the files
+  collect-experiments:
+    runs-on: [self-hosted, linux]
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+    - uses: actions/checkout@v3
+    - id: set-matrix
+      run: echo "matrix=$(ls experiments/tests/*.yaml | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+
+  # Build a matrix run of all experiments generated in previous job
+  run-experiments:
+    needs: collect-experiments
+    runs-on: [self-hosted, linux]
+    strategy:
+      matrix:
+        experiment: ${{ fromJson(needs.collect-experiments.outputs.matrix) }}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: ./.github/actions/setup_env
+    - name: experiments
+      timeout-minutes: 30
+      run: |
+        source .venv/bin/activate
+        source env.sh
+        python scripts/run_experiment.py ${{ matrix.experiment }} -j8 --print_period 0

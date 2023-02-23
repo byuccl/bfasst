@@ -1,9 +1,11 @@
 """ Base class for all tools used in BFASST """
 
 import abc
+import argparse
 import datetime
 import pathlib
 import subprocess
+import sys
 import types
 from dataclasses import dataclass
 
@@ -30,10 +32,9 @@ class Tool(abc.ABC):
     TIME_FORMAT = "%H:%M:%S"
     TIMESTAMP_FORMAT = DATE_FORMAT + " " + TIME_FORMAT + ".%f\t"
 
-    def __init__(self, cwd, flow_args=""):
+    def __init__(self, cwd):
         super().__init__()
         self.cwd = cwd
-        self.flow_args = flow_args
         self.work_dir = self.make_work_dir()
         self.log_path = self.work_dir / "log.txt"
         self.log_fp = None
@@ -98,7 +99,7 @@ class Tool(abc.ABC):
 
                 # If log file has an error, return that status
                 status = tool_product.check_log_fcn(tool_product.log_path)
-                if status:
+                if status.error:
                     return status
 
                 # If log file doesn't have an error, but output file is expected and missing, re-run
@@ -129,3 +130,13 @@ class Tool(abc.ABC):
             self.log(line.strip())
         proc.communicate(timeout=timeout)
         return proc
+
+
+class ToolArgParser(argparse.ArgumentParser):
+    def __init__(self, name) -> None:
+        super().__init__()
+        self.name = name
+
+    def error(self, message):
+        sys.stderr.write(f"{self.name} args error: {message}\n")
+        sys.exit(2)
