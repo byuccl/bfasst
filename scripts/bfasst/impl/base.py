@@ -1,6 +1,8 @@
 """ Base class for implementation tools """
 import abc
 import pathlib
+import shlex
+from bfasst import tool
 
 from bfasst.status import ImplStatus, Status
 from bfasst.utils import print_color
@@ -13,7 +15,12 @@ class ImplementationTool(Tool):
     success_status = Status(ImplStatus.SUCCESS)
 
     def __init__(self, cwd, flow_args="") -> None:
-        super().__init__(cwd, flow_args)
+        super().__init__(cwd)
+
+        # Implementation options
+        parser = tool.ToolArgParser("impl")
+        parser.add_argument("--out_of_context", action="store_true")
+        self.args = parser.parse_args(shlex.split(flow_args))
 
     # This method should run implementation.  It should return
     # (bitstream, status), where:

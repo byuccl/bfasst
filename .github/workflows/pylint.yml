@@ -11,12 +11,12 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Get Diff Action
-      uses: technote-space/get-diff-action@v4.0.1
+      uses: technote-space/get-diff-action@v6
       with: 
         PATTERNS: | 
           +(scripts|resources)/**/*.py
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
       if: env.GIT_DIFF

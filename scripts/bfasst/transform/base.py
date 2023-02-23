@@ -4,5 +4,5 @@ from bfasst import tool
 
 
 class TransformTool(tool.Tool):
-    def __init__(self, cwd, flow_args="") -> None:
-        super().__init__(cwd, flow_args)
+    def __init__(self, cwd) -> None:
+        super().__init__(cwd)

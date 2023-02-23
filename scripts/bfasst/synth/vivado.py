@@ -37,7 +37,7 @@ class VivadoSynthesisTool(SynthesisTool):
 
     def create_netlist(self, design):
         """create netlist from design"""
-        default = "out_of_context" not in self.flow_args
+        default = not self.args.out_of_context
 
         # Save edif netlist path to design object
         design.netlist_path = self.cwd / f"{design.top}.edf"
@@ -104,22 +104,20 @@ class VivadoSynthesisTool(SynthesisTool):
             stream.write(f"read_vhdl -library {libname} {hdl_file}\n")
 
     def write_synth(self, design, stream):
-        if not self.flow_args:
-            # Synthesize - do not include any DSP modules in the synthesized design
-            stream.write(f"synth_design -top {design.top} -max_dsp 0\n")
-        else:
-            top = f" -top {design.top} " if "top" not in self.flow_args else ""
-            dsp = " -max_dsp 0" if "max_dsp" not in self.flow_args else ""
-            stream.write(f"synth_design{top}{dsp} {self.flow_args}\n")
+        top = f" -top {design.top}" if "top" not in self.args else ""
+        flatten = " -flatten_hierarchy full" if self.args.flatten else ""
+        dsp = f" -max_dsp {self.args.max_dsp}" if self.args.max_dsp else ""
+
+        stream.write(f"synth_design{top}{dsp}{flatten}\n")
 
     def write_products(self, design, report_io_path, stream):
-        if "out_of_context" not in self.flow_args:
+        if not self.args.out_of_context:
             # Auto-place ports
             stream.write("place_ports\n")
         stream.write(f"write_edif -force {{{design.netlist_path}}}\n")
         stream.write(f"write_checkpoint -force -file {self.work_dir / 'design.dcp'}\n")
 
-        if "out_of_context" not in self.flow_args:
+        if not self.args.out_of_context:
             # Save IO to determine where auto port placement occurred
             stream.write(f"report_io -force -file {report_io_path}\n")
 
