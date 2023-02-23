@@ -1,3 +1,4 @@
+""" This module contains statuses that the various BFASST tools can return """
 import enum
 
 
@@ -47,6 +48,11 @@ class ErrorInjectionStatus(enum.Enum):
     FCN_ERROR = 4
 
 
+class TransformStatus(enum.Enum):
+    SUCCESS = 0
+    ERROR = 1
+
+
 msg_map = {
     SynthStatus.SUCCESS: "Synth Success",
     SynthStatus.ERROR: "!! Synth Error",
@@ -63,7 +69,7 @@ msg_map = {
     ImplStatus.TOO_MANY_IO: "Too many IOs",
     BitReverseStatus.SUCCESS: "Bitstream Reversal Success",
     BitReverseStatus.ERROR: "Bitstream Reversal Error",
-    BitReverseStatus.UNSUPPORTED_PRIMITVE:"!! Bit Reverse: Unsupported Primitive",
+    BitReverseStatus.UNSUPPORTED_PRIMITVE: "!! Bit Reverse: Unsupported Primitive",
     CompareStatus.SUCCESS: "Equivalent",
     CompareStatus.ERROR: "!! Compare Error",
     CompareStatus.NO_LICENSE: "No license for comparison tool",
@@ -71,12 +77,14 @@ msg_map = {
     CompareStatus.TIMEOUT: "!! Compare timeout",
     CompareStatus.PARSE_PROBLEM: "!! Parse error",
     CompareStatus.NEED_TO_RUN_ONESPIN: "Exported to Onespin",
-    ErrorInjectionStatus.SUCCESS : "Error Injection Successful",
-    ErrorInjectionStatus.ERROR : "Error Injection Unsuccessful",
-    ErrorInjectionStatus.NO_YAML : "No YAML for Error Injection",
-    ErrorInjectionStatus.FCN_SUCCESS : "FCN Successful",
-    ErrorInjectionStatus.FCN_ERROR : "FCN Error",    
+    ErrorInjectionStatus.SUCCESS: "Error Injection Successful",
+    ErrorInjectionStatus.ERROR: "Error Injection Unsuccessful",
+    ErrorInjectionStatus.NO_YAML: "No YAML for Error Injection",
+    ErrorInjectionStatus.FCN_SUCCESS: "FCN Successful",
+    ErrorInjectionStatus.FCN_ERROR: "FCN Error",
+    TransformStatus.SUCCESS: "Transform Success",
 }
+
 
 class BfasstException(Exception):
     def __init__(self, err, msg):
@@ -88,7 +96,7 @@ class Status:
     def __init__(self, status, msg="", raise_excep=True):
         self.status = status
         self.msg = f" ({msg})" if msg else ""
-        self.error = True if status.value else False
+        self.error = bool(status.value)
         if status.value and raise_excep:
             raise BfasstException(status, f"{msg_map[status]}{self.msg}")
 

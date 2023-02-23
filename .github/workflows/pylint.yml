@@ -11,12 +11,12 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Get Diff Action
-      uses: technote-space/get-diff-action@v4.0.1
+      uses: technote-space/get-diff-action@v6
       with: 
         PATTERNS: | 
           +(scripts|resources)/**/*.py
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
       if: env.GIT_DIFF
@@ -24,10 +24,13 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r $(git ls-files 'requirements.txt')
+        git submodule update --init third_party/WaFoVe
+        python -m pip install -e third_party/WaFoVe
+        cd third_party/WaFoVe && make build
       if: env.GIT_DIFF
-    - name: Check for syntax errors with pylin
+    - name: Check for syntax errors with pylint
       run: |
-        pylint --errors-only $(git ls-files --directory scripts | grep -e ".py")
+        pylint --errors-only $(git ls-files --directory scripts | grep -e ".py$")
       if: env.GIT_DIFF
     - name: Analysing the code with pylint
       run: |

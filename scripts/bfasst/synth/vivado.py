@@ -1,7 +1,5 @@
 """ This file provides tools to wrap Vivado for synthesis purposes """
-import subprocess
 import re
-import sys
 import pathlib
 
 import bfasst
@@ -39,16 +37,13 @@ class VivadoSynthesisTool(SynthesisTool):
 
     def create_netlist(self, design):
         """create netlist from design"""
-        default = "out_of_context" not in self.flow_args
-        log_path = self.work_dir / bfasst.config.SYNTH_LOG_NAME
+        default = not self.args.out_of_context
 
         # Save edif netlist path to design object
         design.netlist_path = self.cwd / f"{design.top}.edf"
         design.constraints_path = self.cwd / "constraints.xdc"
 
-        generate_netlist = ToolProduct(
-            design.netlist_path, log_path, self.check_synth_log
-        )
+        generate_netlist = ToolProduct(design.netlist_path, self.log_path, self.check_synth_log)
         generate_constraints = ToolProduct(design.constraints_path)
         tool_products = [generate_netlist, generate_constraints]
 
@@ -65,20 +60,19 @@ class VivadoSynthesisTool(SynthesisTool):
 
         # Run synthesis flow
         self.print_running_synth()
+        self.open_new_log()
 
         report_io_path = self.work_dir / "report_io.txt"
 
         # Run synthesis
-        self.run_synth(design, log_path, report_io_path)
+        self.run_synth(design, report_io_path)
 
         # Extract contraint file from Vivado-assigned pins
         if default:
             extract_contraints(design, report_io_path)
 
         # Check synthesis log
-        self.check_synth_log(log_path)
-
-        return self.success_status
+        return self.check_synth_log(self.log_path)
 
     def write_header(self, stream):
         stream.write("if { [ catch {\n")
@@ -110,22 +104,20 @@ class VivadoSynthesisTool(SynthesisTool):
             stream.write(f"read_vhdl -library {libname} {hdl_file}\n")
 
     def write_synth(self, design, stream):
-        if not self.flow_args:
-            # Synthesize - do not include any DSP modules in the synthesized design
-            stream.write(f"synth_design -top {design.top} -max_dsp 0\n")
-        else:
-            top = f" -top {design.top} " if "top" not in self.flow_args else ""
-            dsp = " -max_dsp 0" if "max_dsp" not in self.flow_args else ""
-            stream.write(f"synth_design{top}{dsp} {self.flow_args}\n")
+        top = f" -top {design.top}" if "top" not in self.args else ""
+        flatten = " -flatten_hierarchy full" if self.args.flatten else ""
+        dsp = f" -max_dsp {self.args.max_dsp}" if self.args.max_dsp else ""
+
+        stream.write(f"synth_design{top}{dsp}{flatten}\n")
 
     def write_products(self, design, report_io_path, stream):
-        if "out_of_context" not in self.flow_args:
+        if not self.args.out_of_context:
             # Auto-place ports
             stream.write("place_ports\n")
         stream.write(f"write_edif -force {{{design.netlist_path}}}\n")
         stream.write(f"write_checkpoint -force -file {self.work_dir / 'design.dcp'}\n")
 
-        if "out_of_context" not in self.flow_args:
+        if not self.args.out_of_context:
             # Save IO to determine where auto port placement occurred
             stream.write(f"report_io -force -file {report_io_path}\n")
 
@@ -140,34 +132,19 @@ class VivadoSynthesisTool(SynthesisTool):
         self.write_products(design, report_io_path, stream)
         self.write_footer(stream)
 
-    def run_synth(self, design, log_path, report_io_path):
+    def run_synth(self, design, report_io_path):
         """run vivado synthesis step, capturing edif file, log, and io_report"""
 
         tcl_path = self.work_dir / "synth.tcl"
         with open(tcl_path, "w") as stream:
             self.write_tcl(design, report_io_path, stream)
 
-        with open(log_path, "w") as fp:
-            cmd = [str(VIVADO_BIN_PATH), "-mode", "tcl", "-source", str(tcl_path)]
-            proc = subprocess.Popen(
-                cmd,
-                cwd=self.work_dir,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                universal_newlines=True,
-            )
-            for line in proc.stdout:
-                sys.stdout.write(line)
-                fp.write(line)
-                fp.flush()
-                # if re.match("\s*ERROR:", line):
-                #     proc.kill()
-                #     return Status(SynthStatus.ERROR)
-            proc.communicate()
-            if proc.returncode:
-                return Status(SynthStatus.ERROR)
+        cmd = [str(VIVADO_BIN_PATH), "-mode", "tcl", "-source", str(tcl_path)]
+        proc = self.exec_and_log(cmd)
+        if proc.returncode:
+            return Status(SynthStatus.ERROR)
 
-        return Status(SynthStatus.SUCCESS)
+        return self.success_status
 
     def check_synth_log(self, log_path):
         text = open(log_path).read()

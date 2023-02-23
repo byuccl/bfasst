@@ -30,6 +30,10 @@ run_experiment.py: error: the following arguments are required: experiment_yaml
 
 BFASST can be used to compose different CAD flows from severals tools.  You may want to install these tools:
 
+### WaFoVe
+1. Install Wafove:
+    * ```make install_wafove```
+
 ### Vivado
 
 1. Install Vivado

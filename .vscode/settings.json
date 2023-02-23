@@ -7,14 +7,11 @@
         "third_party/fasm2bels/fasm2bels"
     ],
     "python.pythonPath": ".venv/bin/python3",
-    "git.enableCommitSigning": true,
+    "git.enableCommitSigning": false,
     "python.formatting.blackArgs": [
-        "--line-length 100"
+        "--line-length","100"
     ],
     "python.formatting.provider": "black",
     "python.linting.enabled": true,
-    "python.linting.pylintEnabled": true,
-    "pylint.args": [
-        "--rcfile ${workspaceFolder}/.pylintrc"
-    ]
+    "python.linting.pylintEnabled": true
 }

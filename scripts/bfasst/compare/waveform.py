@@ -3,24 +3,31 @@
 import pathlib
 import re
 import yaml
+from wafove import compare_waveforms
+from wafove.templates import get_paths
+from wafove.tools import analyze_graph
 import bfasst
 from bfasst.compare.base import CompareTool
-from bfasst.compare_waveforms.tools import analyze_graph
-from bfasst.compare_waveforms.templates import get_paths
-from bfasst.compare_waveforms import compare_waveforms
 from bfasst.config import VIVADO_BIN_PATH
 from bfasst.status import Status, CompareStatus
 from bfasst.tool import ToolProduct
 
 
 class WaveformCompareTool(CompareTool):
-    """The main class for comparing the waveforms."""
+    """The main class for comparing the waveforms.
+    Note: 2 functions are not included yet in this tool: Seed specification & testbench analysis.
+    To include these functions, seed needs to be specified and the boolean value for all_signals
+    needs to be specified. Seperate functions could be created for bfasst to do this, but for now
+    they are hard-coded for the seed to be 0 & for all_signals to be set to false."""
 
     TOOL_WORK_DIR = "waveform"
     LOG_FILE_NAME = "log.txt"
 
     def compare_netlists(self, design, run_waveform, tests, vivado):
         """The function that compares the netlists."""
+        seed = 0  # Change this w/ a new input at a later time
+        all_signals = False  # Change this w/ a new input at a later time
+
         log_path = self.work_dir / self.LOG_FILE_NAME
         generate_comparison = ToolProduct(None, log_path, self.check_compare_status)
         status = self.get_prev_run_status(
@@ -41,8 +48,7 @@ class WaveformCompareTool(CompareTool):
         paths = get_paths.get_paths(
             self.work_dir,
             bfasst.paths.ROOT_PATH / ("third_party/yosys/techlibs/xilinx/cells_sim.v"),
-            bfasst.paths.ROOT_PATH
-            / ("scripts/bfasst/compare_waveforms/templates/sample_tb.v"),
+            bfasst.paths.ROOT_PATH / ("third_party/WaFoVe/wafove/templates/sample_tb.v"),
             design.impl_netlist_path,
             design.reversed_netlist_path,
         )
@@ -53,7 +59,7 @@ class WaveformCompareTool(CompareTool):
                     paths["build_dir"],
                     paths["modules"][1],
                     paths["modules"][2],
-                    (bfasst.paths.ROOT_PATH / "scripts/bfasst/compare_waveforms"),
+                    (bfasst.paths.ROOT_PATH),
                     VIVADO_BIN_PATH,
                     False,
                 )
@@ -62,7 +68,7 @@ class WaveformCompareTool(CompareTool):
                     paths["build_dir"],
                     paths["modules"][1],
                     paths["modules"][2],
-                    (bfasst.paths.ROOT_PATH / "scripts/bfasst/compare_waveforms"),
+                    (bfasst.paths.ROOT_PATH),
                     "none",
                     False,
                 )
@@ -77,10 +83,10 @@ class WaveformCompareTool(CompareTool):
             if paths["tb"][i].exists():
                 paths["tb"][i].unlink()
 
-        compare_waveforms.generate_files(multiple_files, paths, tests)
+        compare_waveforms.generate_files(multiple_files, paths, tests, seed, all_signals)
 
         if compare_waveforms.run_test(paths):
-            Status(CompareStatus.SUCCESS)
+            return Status(CompareStatus.SUCCESS)
 
         return Status(CompareStatus.NOT_EQUIVALENT)
 
@@ -95,8 +101,9 @@ class WaveformCompareTool(CompareTool):
         with open(design.yaml_path, "r") as fp:
             design_props = yaml.safe_load(fp)
 
-        return (("included_all_verilog_files" in design_props) or
-        ("include_all_system_verilog_files" in design_props))
+        return ("included_all_verilog_files" in design_props) or (
+            "include_all_system_verilog_files" in design_props
+        )
 
     def check_compare_status(self, log_path):
         """Used to confirm whether a design is equivalent or not."""

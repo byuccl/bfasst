@@ -7,3 +7,6 @@
 [submodule "scripts/bfasst/netlist_mapping"]
 	path = scripts/bfasst/netlist_mapping
 	url = https://github.com/palm9727/ccl_netlist_mapping.git
+[submodule "third_party/WaFoVe"]
+	path = third_party/WaFoVe
+	url = https://github.com/byuccl/WaFoVe.git
