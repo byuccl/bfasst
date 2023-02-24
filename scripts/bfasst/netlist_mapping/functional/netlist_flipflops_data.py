@@ -8,7 +8,7 @@ from converter import hex_to_bin, bin_to_hex, get_reversed_bin_for_each_hex
 
 # from timeit import default_timer as timer
 from qm import qm_f
-from bst import Node, create_tree, get_filtered_values
+from configuration_bits_tree import Node, create_tree, get_filtered_values
 
 
 class Parameter(Enum):
