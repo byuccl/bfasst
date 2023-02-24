@@ -102,6 +102,29 @@ def go_to_initial_ff(instance, ffs):
     return ffs
 
 
+def check_pin_for_ffs(pin, done_with_mapping, ffs, instance):
+    """Checks the FF's pin for other FFs"""
+
+    # Loop through the pins connected to the wire
+    ffs_connected = 0
+    for w_pin in pin.wire.pins:
+        # Check for outer pin
+        # if type(w_pin) == sdn.OuterPin:
+        if isinstance(w_pin, sdn.OuterPin):
+            # Count FFs connected to wire
+            if ("FDRE" in w_pin.instance.reference.name) or (
+                "FDSE" in w_pin.instance.reference.name
+            ):
+                ffs_connected += 1
+    # Check if it is connected to more than one FF (Part of a shift register)
+    if (ffs_connected > 1) and (not done_with_mapping):
+        # Go to initial FF to map FFs correctly
+        ffs = go_to_initial_ff(instance, ffs)
+        done_with_mapping = True
+
+    return done_with_mapping, ffs
+
+
 def get_ffs_to_map_through_shift_register(library, ffs):
     """Gets the ffs to be mapped through the shift-register"""
 
@@ -117,22 +140,9 @@ def get_ffs_to_map_through_shift_register(library, ffs):
                 if "Q" in pin.inner_pin.port.name:
                     # Check that it has a wire
                     if pin.wire is not None:
-                        # Loop through the pins connected to the wire
-                        ffs_connected = 0
-                        for w_pin in pin.wire.pins:
-                            # Check for outer pin
-                            # if type(w_pin) == sdn.OuterPin:
-                            if isinstance(w_pin, sdn.OuterPin):
-                                # Count FFs connected to wire
-                                if ("FDRE" in w_pin.instance.reference.name) or (
-                                    "FDSE" in w_pin.instance.reference.name
-                                ):
-                                    ffs_connected += 1
-                        # Check if it is connected to more than one FF (Part of a shift register)
-                        if (ffs_connected > 1) and (not done_with_mapping):
-                            # Go to initial FF to map FFs correctly
-                            ffs = go_to_initial_ff(instance, ffs)
-                            done_with_mapping = True
+                        done_with_mapping, ffs = check_pin_for_ffs(
+                            pin, done_with_mapping, ffs, instance
+                        )
 
     return ffs
 

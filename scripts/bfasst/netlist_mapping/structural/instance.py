@@ -4,26 +4,20 @@
 class Instance:
     """Class used to save block data in netlist automated block mapping."""
 
-    def __init__(
-        self,
-        instance_name,
-        instance_type,
-        input_wires_names,
-        input_wires_number,
-        input_wires_matching_number,
-        output_wires_names,
-        output_wires_number,
-        output_wires_matching_number,
-        other_wires_names,
-        other_wires_number,
-    ):
-        self.instance_name = instance_name
-        self.instance_type = instance_type
-        self.input_wires_names = input_wires_names
-        self.input_wires_number = input_wires_number
-        self.input_wires_matching_number = input_wires_matching_number
-        self.output_wires_names = output_wires_names
-        self.output_wires_number = output_wires_number
-        self.output_wires_matching_number = output_wires_matching_number
-        self.other_wires_names = other_wires_names
-        self.other_wires_number = other_wires_number
+    def __init__(self, instance, input_wires, output_wires, other_wires):
+        self.instance = instance
+        self.input_wires = input_wires
+        self.output_wires = output_wires
+        self.other_wires = other_wires
+
+    def get_input_wires(self):
+        """Returns input wires"""
+        return self.input_wires
+
+    def get_output_wires(self):
+        """Returns output wires"""
+        return self.output_wires
+
+    def get_other_wires(self):
+        """Returns other wires"""
+        return self.other_wires

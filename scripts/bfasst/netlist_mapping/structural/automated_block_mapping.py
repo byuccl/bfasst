@@ -15,11 +15,11 @@ def automatically_map_blocks(golden_netlist, reversed_netlist, mapped_points, in
         for reversed_instance in reversed_netlist:
             # If instance has unmatching wires (Not mapped yet)
             if (
-                reversed_instance.input_wires_number
-                != reversed_instance.input_wires_matching_number
+                reversed_instance.input_wires["number"]
+                != reversed_instance.input_wires["matching_number"]
             ) and (
-                reversed_instance.output_wires_number
-                != reversed_instance.output_wires_matching_number
+                reversed_instance.output_wires["number"]
+                != reversed_instance.output_wires["matching_number"]
             ):
                 potential_instances = []
                 higher_potential_instances = []
@@ -30,25 +30,29 @@ def automatically_map_blocks(golden_netlist, reversed_netlist, mapped_points, in
                     # If instances have same # of wires as input, output, and other
                     # That means that they are structurally the same!
                     if (
-                        (reversed_instance.input_wires_number == impl_instance.input_wires_number)
-                        and (
-                            reversed_instance.output_wires_number
-                            == impl_instance.output_wires_number
+                        (
+                            reversed_instance.input_wires["number"]
+                            == impl_instance.input_wires["number"]
                         )
                         and (
-                            reversed_instance.other_wires_number == impl_instance.other_wires_number
+                            reversed_instance.output_wires["number"]
+                            == impl_instance.output_wires["number"]
+                        )
+                        and (
+                            reversed_instance.other_wires["number"]
+                            == impl_instance.other_wires["number"]
                         )
                     ):
                         # Check for matching in inputs
                         input_wires_matching = 0
-                        for reversed_wire in reversed_instance.input_wires_names:
-                            for impl_wire in impl_instance.input_wires_names:
+                        for reversed_wire in reversed_instance.input_wires["names"]:
+                            for impl_wire in impl_instance.input_wires["names"]:
                                 if reversed_wire == impl_wire:
                                     input_wires_matching += 1
                         # Check for matching in outputs
                         output_wires_matching = 0
-                        for reversed_wire in reversed_instance.output_wires_names:
-                            for impl_wire in impl_instance.output_wires_names:
+                        for reversed_wire in reversed_instance.output_wires["names"]:
+                            for impl_wire in impl_instance.output_wires["names"]:
                                 if reversed_wire == impl_wire:
                                     output_wires_matching += 1
                         # If they match, add to potential_instances
@@ -84,30 +88,30 @@ def automatically_map_blocks(golden_netlist, reversed_netlist, mapped_points, in
                     # Mapping the nets of the block!
                     maps_performed = 0
                     # Updating the number of matching wires the first time!
-                    if (reversed_instance.input_wires_matching_number == 0) and (
-                        reversed_instance.output_wires_matching_number == 0
+                    if (reversed_instance.input_wires["matching_number"] == 0) and (
+                        reversed_instance.output_wires["matching_number"] == 0
                     ):
-                        for reversed_wire in reversed_instance.input_wires_names:
-                            for impl_wire in saved_instance.input_wires_names:
+                        for reversed_wire in reversed_instance.input_wires["names"]:
+                            for impl_wire in saved_instance.input_wires["names"]:
                                 if reversed_wire == impl_wire:
-                                    reversed_instance.input_wires_matching_number += 1
-                        for reversed_wire in reversed_instance.output_wires_names:
-                            for impl_wire in saved_instance.output_wires_names:
+                                    reversed_instance.input_wires["matching_number"] += 1
+                        for reversed_wire in reversed_instance.output_wires["names"]:
+                            for impl_wire in saved_instance.output_wires["names"]:
                                 if reversed_wire == impl_wire:
-                                    reversed_instance.output_wires_matching_number += 1
+                                    reversed_instance.output_wires["matching_number"] += 1
                         maps_performed += 1
                     # Input Mapping!!!
                     if (
-                        reversed_instance.input_wires_number
-                        - reversed_instance.input_wires_matching_number
+                        reversed_instance.input_wires["number"]
+                        - reversed_instance.input_wires["matching_number"]
                     ) == 1:
                         # Map Input Net
                         # Find Input wire in the reversed_instance
                         # that is not found in the impl_instance
                         reversed_input_index = 0
                         reversed_input_found = False
-                        for i, reversed_wire in enumerate(reversed_instance.input_wires_names):
-                            for impl_wire in saved_instance.input_wires_names:
+                        for i, reversed_wire in enumerate(reversed_instance.input_wires["names"]):
+                            for impl_wire in saved_instance.input_wires["names"]:
                                 if reversed_wire == impl_wire:
                                     reversed_input_found = True
                             if reversed_input_found is False:
@@ -117,52 +121,52 @@ def automatically_map_blocks(golden_netlist, reversed_netlist, mapped_points, in
                         # that is not found in the reversed_instance
                         impl_input_index = 0
                         impl_input_found = False
-                        for i, impl_wire in enumerate(saved_instance.input_wires_names):
-                            for reversed_wire in reversed_instance.input_wires_names:
+                        for i, impl_wire in enumerate(saved_instance.input_wires["names"]):
+                            for reversed_wire in reversed_instance.input_wires["names"]:
                                 if reversed_wire == impl_wire:
                                     impl_input_found = True
                             if impl_input_found is False:
                                 impl_input_index = i
                             impl_input_found = False
                         # Map the input net
-                        old_wire_name = reversed_instance.input_wires_names[reversed_input_index]
-                        new_wire_name = saved_instance.input_wires_names[impl_input_index]
-                        reversed_instance.input_wires_names[reversed_input_index] = new_wire_name
-                        reversed_instance.input_wires_matching_number += 1
+                        old_wire_name = reversed_instance.input_wires["names"][reversed_input_index]
+                        new_wire_name = saved_instance.input_wires["names"][impl_input_index]
+                        reversed_instance.input_wires["names"][reversed_input_index] = new_wire_name
+                        reversed_instance.input_wires["matching_number"] += 1
                         # Loop through all the reversed blocks, and if they have inputs or
                         # outputs equal to the old_wire_name change them to be the new_wire_name
                         for reversed_block in reversed_netlist:
                             for i, reversed_block_input_wire in enumerate(
-                                reversed_block.input_wires_names
+                                reversed_block.input_wires["names"]
                             ):
                                 if reversed_block_input_wire == old_wire_name:
-                                    reversed_block.input_wires_names[i] = new_wire_name
+                                    reversed_block.input_wires["names"][i] = new_wire_name
                             for i, reversed_block_output_wire in enumerate(
-                                reversed_block.output_wires_names
+                                reversed_block.output_wires["names"]
                             ):
                                 if reversed_block_output_wire == old_wire_name:
-                                    reversed_block.output_wires_names[i] = new_wire_name
+                                    reversed_block.output_wires["names"][i] = new_wire_name
                         maps_performed += 1
                     # Output Mapping!!!
                     if (
-                        reversed_instance.output_wires_number
-                        - reversed_instance.output_wires_matching_number
+                        reversed_instance.output_wires["number"]
+                        - reversed_instance.output_wires["matching_number"]
                     ) == 1:
                         # Map Output Net
                         # This should work if all blocks in the netlist only have one output wire!
-                        for i, reversed_wire in enumerate(reversed_instance.output_wires_names):
-                            for impl_wire in saved_instance.output_wires_names:
+                        for i, reversed_wire in enumerate(reversed_instance.output_wires["names"]):
+                            for impl_wire in saved_instance.output_wires["names"]:
                                 if reversed_wire != impl_wire:
-                                    reversed_instance.output_wires_names[i] = impl_wire
-                                    reversed_instance.output_wires_matching_number += 1
+                                    reversed_instance.output_wires["names"][i] = impl_wire
+                                    reversed_instance.output_wires["matching_number"] += 1
                                     # Loop through all the reversed blocks, and if they have inputs
                                     # equal to the reversed_wire change them to be the impl_wire
                                     for reversed_block in reversed_netlist:
                                         for i, reversed_block_input_wire in enumerate(
-                                            reversed_block.input_wires_names
+                                            reversed_block.input_wires["names"]
                                         ):
                                             if reversed_block_input_wire == reversed_wire:
-                                                reversed_block.input_wires_names[i] = impl_wire
+                                                reversed_block.input_wires["names"][i] = impl_wire
                         maps_performed += 1
                     # Important!
                     # > 0: The algorithm maps the most similar instances.
@@ -173,10 +177,10 @@ def automatically_map_blocks(golden_netlist, reversed_netlist, mapped_points, in
                         mapped_blocks += 1
                         progress = True
                         mapped_pair_and_types = []
-                        mapped_pair_and_types.append(saved_instance.instance_name)
-                        mapped_pair_and_types.append(reversed_instance.instance_name)
-                        mapped_pair_and_types.append(saved_instance.instance_type)
-                        mapped_pair_and_types.append(reversed_instance.instance_type)
+                        mapped_pair_and_types.append(saved_instance.instance["name"])
+                        mapped_pair_and_types.append(reversed_instance.instance["name"])
+                        mapped_pair_and_types.append(saved_instance.instance["type"])
+                        mapped_pair_and_types.append(reversed_instance.instance["type"])
                         mapped_points.append(mapped_pair_and_types)
 
     return mapped_points
