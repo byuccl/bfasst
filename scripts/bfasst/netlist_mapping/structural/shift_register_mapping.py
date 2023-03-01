@@ -2,6 +2,7 @@
 
 
 import spydrnet as sdn
+from map_ffs import get_mapped_ffs
 
 
 def analyze_new_instance(new_instance, next_ff, last_ff, ffs_builder, ffs):
@@ -165,14 +166,9 @@ def map_shift_register_and_output_ffs(library1, library2):
     reversed_ffs = get_ffs_to_map_through_shift_register(library2, reversed_ffs)
 
     mapped_flipflops = []
+
     # Map flipflops gathered from the carries
-    if len(impl_ffs) == len(reversed_ffs):
-        length = len(impl_ffs)
-        for i in range(length):
-            mapped_pair = []
-            mapped_pair.append(impl_ffs[i])
-            mapped_pair.append(reversed_ffs[i])
-            mapped_flipflops.append(mapped_pair)
+    mapped_flipflops = get_mapped_ffs(mapped_flipflops, impl_ffs, reversed_ffs)
 
     # print_mapped_flipflops_through_shift_register(mapped_flipflops)
 

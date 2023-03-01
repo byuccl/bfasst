@@ -1,6 +1,9 @@
 """Algorithm used to mapped netlists based on their structure"""
 
 
+from updating_reversed_netlist import update_wires_in_reversed_netlist
+
+
 def find_potential_instances(golden_netlist, reversed_instance, potential_instances):
     """Finds potential instances that match with the reversed_instance"""
 
@@ -139,13 +142,7 @@ def get_impl_input_index(saved_instance, reversed_instance):
 def update_reversed_netlist(reversed_netlist, old_wire_name, new_wire_name):
     """Updates the reversed netlist after mapping an input"""
 
-    for reversed_block in reversed_netlist:
-        for i, reversed_block_input_wire in enumerate(reversed_block.input_wires["names"]):
-            if reversed_block_input_wire == old_wire_name:
-                reversed_block.input_wires["names"][i] = new_wire_name
-        for i, reversed_block_output_wire in enumerate(reversed_block.output_wires["names"]):
-            if reversed_block_output_wire == old_wire_name:
-                reversed_block.output_wires["names"][i] = new_wire_name
+    update_wires_in_reversed_netlist(reversed_netlist, old_wire_name, new_wire_name)
 
     return reversed_netlist
 

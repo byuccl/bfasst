@@ -4,7 +4,8 @@
     },
     "python.analysis.extraPaths": [
         "scripts",
-        "third_party/fasm2bels/fasm2bels"
+        "third_party/fasm2bels/fasm2bels",
+        "./scripts/bfasst/netlist_mapping/structural"
     ],
     "python.pythonPath": ".venv/bin/python3",
     "git.enableCommitSigning": false,

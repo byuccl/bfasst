@@ -16,7 +16,7 @@
 import argparse
 import spydrnet as sdn
 from print_data import print_conformal_input_output_points
-from print_data import print_conformal_ff_points
+from print_data import print_conformal_mapped_ffs
 from structural.carry_chain_mapping import map_carries_and_ffs
 from structural.shift_register_mapping import map_shift_register_and_output_ffs
 from functional.logic_functions_mapping import map_ffs_based_on_logic_func
@@ -70,22 +70,11 @@ def map_netlists(golden_netlist_arg, reversed_netlist_arg):
         ir2.top_instance.reference.name,
     )
 
-    printing_structural = True
-
-    print_conformal_ff_points(
+    print_conformal_mapped_ffs(
         structurally_mapped_ffs,
-        ir1.top_instance.reference.name,
-        ir2.top_instance.reference.name,
-        printing_structural,
-    )
-
-    printing_structural = False
-
-    print_conformal_ff_points(
         func_mapped_ffs,
         ir1.top_instance.reference.name,
         ir2.top_instance.reference.name,
-        printing_structural,
     )
 
 

@@ -1,7 +1,7 @@
 """Builds new netlist structured used with automated block mapping"""
 
 
-from structural.instance import Instance
+from instance import Instance
 
 
 def append_wires_names(pin, input_wires_names, output_wires_names, other_wires_names):

@@ -1,6 +1,10 @@
 """This file contains the necessary functions to map the carry chains"""
 
 
+from map_ffs import get_mapped_ffs
+from updating_reversed_netlist import update_wires_in_reversed_netlist
+
+
 def check_for_ff_output(wire_pin, ffs):
     """Checks for FF Output"""
 
@@ -160,15 +164,10 @@ def map_carries_and_ffs(library1, library2):
 
     # print_mapped_carries(mapped_carries)
 
-    mapped_flipflops = []
     # Map flipflops gathered from the carries
-    if len(impl_ffs) == len(reversed_ffs):
-        length = len(impl_ffs)
-        for i in range(length):
-            mapped_pair = []
-            mapped_pair.append(impl_ffs[i])
-            mapped_pair.append(reversed_ffs[i])
-            mapped_flipflops.append(mapped_pair)
+    mapped_flipflops = []
+
+    mapped_flipflops = get_mapped_ffs(mapped_flipflops, impl_ffs, reversed_ffs)
 
     # print_mapped_flipflops_through_carries(mapped_flipflops)
 
@@ -186,16 +185,10 @@ def update_inputs_in_reversed_carry(reversed_instance, impl_instance, reversed_n
         new_wire_name = impl_instance.input_wires["names"][i]
         reversed_instance.input_wires["names"][i] = new_wire_name
         reversed_instance.input_wires["matching_number"] += 1
-        # Update wire in netlist
-        for reversed_block in reversed_netlist:
-            # Updating Inputs
-            for i, reversed_block_input_wire in enumerate(reversed_block.input_wires["names"]):
-                if reversed_block_input_wire == old_wire_name:
-                    reversed_block.input_wires["names"][i] = new_wire_name
-            # Updating Outputs
-            for i, reversed_block_output_wire in enumerate(reversed_block.output_wires["names"]):
-                if reversed_block_output_wire == old_wire_name:
-                    reversed_block.output_wires["names"][i] = new_wire_name
+
+        reversed_netlist = update_wires_in_reversed_netlist(
+            reversed_netlist, old_wire_name, new_wire_name
+        )
 
     return reversed_instance, reversed_netlist
 

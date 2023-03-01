@@ -160,3 +160,25 @@ def print_data(data):
         level = 1
         level = print_sop(flipflop_data.sop, level)
         print("\n")
+
+
+def print_conformal_mapped_ffs(structurally_mapped_ffs, func_mapped_ffs, ir1_name, ir2_name):
+    """Prints the ffs to be mapped by conformal"""
+
+    printing_structural = True
+
+    print_conformal_ff_points(
+        structurally_mapped_ffs,
+        ir1_name,
+        ir2_name,
+        printing_structural,
+    )
+
+    printing_structural = False
+
+    print_conformal_ff_points(
+        func_mapped_ffs,
+        ir1_name,
+        ir2_name,
+        printing_structural,
+    )
