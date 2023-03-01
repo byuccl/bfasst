@@ -68,10 +68,10 @@ def functionally_map_netlists(golden_netlist_arg, reversed_netlist_arg):
 def main():
     """Used to map the golden and reversed netlist"""
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("golden_netlist")
-    parser.add_argument("reversed_netlist")
-    args = parser.parse_args()
+    func_parser = argparse.ArgumentParser()
+    func_parser.add_argument("golden_netlist")
+    func_parser.add_argument("reversed_netlist")
+    args = func_parser.parse_args()
     functionally_map_netlists(args.golden_netlist, args.reversed_netlist)
 
 

@@ -26,17 +26,17 @@ from functional.netlist_flipflops_data import get_ffs_and_conf_bits
 def map_netlists(golden_netlist_arg, reversed_netlist_arg):
     """Maps the golden and reversed netlist based on block chains and functional trees"""
 
-    # Loads the first netlist as intermediate representation (ir1)
-    ir1 = sdn.parse(golden_netlist_arg)
+    # Loads the first netlist as intermediate representation (ccl_ir1)
+    ccl_ir1 = sdn.parse(golden_netlist_arg)
 
     # Get the first library in the netlist
-    library1 = ir1.libraries[0]
+    library1 = ccl_ir1.libraries[0]
 
-    # Loads the second netlist as intermediate representation (ir2)
-    ir2 = sdn.parse(reversed_netlist_arg)
+    # Loads the second netlist as intermediate representation (ccl_ir2)
+    ccl_ir2 = sdn.parse(reversed_netlist_arg)
 
     # Get the second library in the netlist
-    library2 = ir2.libraries[0]
+    library2 = ccl_ir2.libraries[0]
 
     # Structurally map flipflops
     structurally_mapped_ffs = []
@@ -65,26 +65,26 @@ def map_netlists(golden_netlist_arg, reversed_netlist_arg):
 
     # Print the Mapped Points File to be used by Conformal
     print_conformal_input_output_points(
-        ir1.top_instance,
-        ir1.top_instance.reference.name,
-        ir2.top_instance.reference.name,
+        ccl_ir1.top_instance,
+        ccl_ir1.top_instance.reference.name,
+        ccl_ir2.top_instance.reference.name,
     )
 
     print_conformal_mapped_ffs(
         structurally_mapped_ffs,
         func_mapped_ffs,
-        ir1.top_instance.reference.name,
-        ir2.top_instance.reference.name,
+        ccl_ir1.top_instance.reference.name,
+        ccl_ir2.top_instance.reference.name,
     )
 
 
 def main():
     """Used to map the golden and reversed netlist"""
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("golden_netlist")
-    parser.add_argument("reversed_netlist")
-    args = parser.parse_args()
+    ccl_parser = argparse.ArgumentParser()
+    ccl_parser.add_argument("golden_netlist")
+    ccl_parser.add_argument("reversed_netlist")
+    args = ccl_parser.parse_args()
     map_netlists(args.golden_netlist, args.reversed_netlist)
 
 
