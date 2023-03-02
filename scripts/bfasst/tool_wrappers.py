@@ -92,7 +92,7 @@ def onespin_cmp(design, build_dir, flow_args):
     """Compare netlists using Onespin"""
     from bfasst.compare.onespin import OneSpin_CompareTool
 
-    compare_tool = OneSpin_CompareTool(build_dir, flow_args)
+    compare_tool = OneSpin_CompareTool(build_dir, flow_args[ToolType.CMP])
     with onespin_lock:
         return compare_tool.compare_netlists(design)
 
@@ -121,7 +121,7 @@ def xray_rev(design, build_dir, flow_args):
     """Reverse bitstream using Xray"""
     from bfasst.reverse_bit.xray import XRayReverseBitTool
 
-    reverse_bit_tool = XRayReverseBitTool(build_dir, flow_args)
+    reverse_bit_tool = XRayReverseBitTool(build_dir, flow_args[ToolType.REVERSE])
     return reverse_bit_tool.reverse_bitstream(design)
 
 
