@@ -1,5 +1,8 @@
+"""
+Code to run Yosys synthesis on a design
+"""
+
 import os
-import shutil
 import subprocess
 import time
 
@@ -13,7 +16,9 @@ YOSYS_SCRIPT_FILE = "script.yos"
 YOSYS_LOG_FILE = "yosys.log"
 
 
-class Yosys_Tech_SynthTool(SynthesisTool):
+class YosysTechSynthTool(SynthesisTool):
+    """Yosys synthesis tool"""
+
     TOOL_WORK_DIR = "yosys_synth"
 
     def create_netlist(self, design):
@@ -31,7 +36,7 @@ class Yosys_Tech_SynthTool(SynthesisTool):
         # Run Yosys on the design
         # This assumes that the VHDL module *is* installed!
         cmd = [
-            os.path.join(bfasst.config.YOSYS_INSTALL_DIR, "yosys"),     #  pylint: disable=E1101
+            os.path.join(bfasst.config.YOSYS_INSTALL_DIR, "yosys"),
             "-m",
             "vhdl",
             "-s",
@@ -39,29 +44,20 @@ class Yosys_Tech_SynthTool(SynthesisTool):
             "-l",
             YOSYS_LOG_FILE,
         ]
+
         try:
-            p = subprocess.run(
-                cmd,
-                cwd=self.work_dir,
-                stdout=subprocess.DEVNULL,
-                timeout=bfasst.config.YOSYS_TIMEOUT,
-            )
+            proc = self.exec_and_log(cmd, timeout=bfasst.config.YOSYS_TIMEOUT)
         except subprocess.TimeoutExpired:
             # TODO: Write to logs here
             return Status(SynthStatus.TIMEOUT)
-        else:
-            if p.returncode != 0:
-                return Status(SynthStatus.ERROR)
-
-        if p.returncode != 0:
+        if proc.returncode != 0:
             return Status(SynthStatus.ERROR)
-        else:
-            self.write_to_results_file(design, log_path)
-            return Status(SynthStatus.SUCCESS)
+
+        self.write_to_results_file(design, log_path)
+        return Status(SynthStatus.SUCCESS)
 
     def create_yosys_script(self, design, netlist_path):
-        # It's a little messy, but I want to just call my existing script that
-        #   does this
+        """Create the yosys script that generates the netlist"""
         path_to_script_builder = paths.SCRIPTS_PATH / "yosys" / "createYosScript.py"
         script_template_file = paths.YOSYS_RESOURCES / YOSYS_SCRIPT_TEMPLATE
         yosys_script_file = self.work_dir / YOSYS_SCRIPT_FILE
@@ -74,27 +70,24 @@ class Yosys_Tech_SynthTool(SynthesisTool):
             file_paths += " " + str(design.full_path / design_file)
         # TODO: Add the same error handling as in other synth flows
         try:
-            p = subprocess.run(
-                [
-                    "python3",
-                    str(path_to_script_builder),
-                    "-s " + str(file_paths),
-                    "-i" + str(script_template_file),
-                    "-o" + str(yosys_script_file),
-                    "-v" + str(netlist_path),
-                ],
-                cwd=self.work_dir,
-                timeout=bfasst.config.I2C_LSE_TIMEOUT,
-            )
+            cmd = [
+                "python3",
+                str(path_to_script_builder),
+                "-s " + str(file_paths),
+                "-i" + str(script_template_file),
+                "-o" + str(yosys_script_file),
+                "-v" + str(netlist_path),
+            ]
+            proc = self.exec_and_log(cmd, timeout=bfasst.config.I2C_LSE_TIMEOUT)
         except subprocess.TimeoutExpired:
             return Status(SynthStatus.TIMEOUT)
-        else:
-            if p.returncode != 0:
-                return Status(SynthStatus.ERROR)
+        if proc.returncode != 0:
+            return Status(SynthStatus.ERROR)
 
         return Status(SynthStatus.SUCCESS)
 
     def write_to_results_file(self, design, log_path):
+        """Write the results of the run to the log"""
         with open(design.results_summary_path, "a") as res_f:
             time_modified = time.ctime(os.path.getmtime(log_path))
             res_f.write("Results Summary (Yosys) (" + time_modified + ")\n")
