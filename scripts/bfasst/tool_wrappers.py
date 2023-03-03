@@ -1,4 +1,4 @@
-""" Wrappers around various tools.  
+""" Wrappers around various tools.
 Only import as needed to minimize dependencies to the tools being used."""
 
 # pylint: disable=import-outside-toplevel

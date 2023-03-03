@@ -18,11 +18,16 @@ class VivadoImplementationTool(ImplementationTool):
     def __init__(self, cwd, flow_args=""):
         super().__init__(cwd, flow_args)
 
-    def implement_bitstream(self, design):
+    def init_design(self, design):
+        """Initialize design object with paths to files needed for implementation"""
         design.impl_netlist_path = self.cwd / (design.top + "_impl.v")
         design.impl_edif_path = design.impl_netlist_path.with_suffix(".edf")
         design.xilinx_impl_checkpoint_path = self.work_dir / "design.dcp"
         design.bitstream_path = self.cwd / (design.top + ".bit")
+
+    def implement_bitstream(self, design):
+        """Run vivado executable to perform implementation"""
+        self.init_design(design)
 
         status = self.common_startup(design, self.check_impl_status)
         if status:
@@ -39,39 +44,41 @@ class VivadoImplementationTool(ImplementationTool):
 
         return self.success_status
 
+    def write_header(self, design, fp):
+        fp.write("if { [ catch {\n")
+        fp.write("read_edif " + str(design.netlist_path) + "\n")
+        fp.write("set_property edif_top_file " + str(design.netlist_path) + " [current_fileset]\n")
+        fp.write("link_design -part " + bfasst.config.PART + "\n")
+        if not self.args.out_of_context:
+            fp.write("read_xdc " + str(design.constraints_path) + "\n")
+
+    def write_impl(self, fp):
+        fp.write("set_property design_mode GateLvl [current_fileset]\n")
+        fp.write("opt_design\n")
+        fp.write("place_design\n")
+        fp.write("route_design\n")
+
+    def write_outputs(self, design, fp):
+        fp.write("write_checkpoint -force -file " + str(design.xilinx_impl_checkpoint_path) + "\n")
+        fp.write("write_edif -force -file " + str(design.impl_edif_path) + "\n")
+        fp.write("write_verilog -force -file " + str(design.impl_netlist_path) + "\n")
+        if not self.args.out_of_context:
+            fp.write("write_bitstream -force " + str(design.bitstream_path) + "\n")
+
+    def write_footer(self, fp):
+        fp.write("} ] } { exit 1 }\n")
+        fp.write("exit\n")
+
     def run_implementation(self, design):
         """Run vivado executable to perform implementation"""
 
         tcl_path = self.work_dir / ("impl.tcl")
 
         with open(tcl_path, "w") as fp:
-            # fp.write("set_part " + bfasst.config.PART + "\n")
-            fp.write("if { [ catch {\n")
-            fp.write("read_edif " + str(design.netlist_path) + "\n")
-
-            # for vf in design.verilog_files:
-            #     fp.write("read_verilog " + str(design.))
-
-            fp.write("set_property design_mode GateLvl [current_fileset]\n")
-            fp.write(
-                "set_property edif_top_file " + str(design.netlist_path) + " [current_fileset]\n"
-            )
-            fp.write("link_design -part " + bfasst.config.PART + "\n")
-            if not self.args.out_of_context:
-                fp.write("read_xdc " + str(design.constraints_path) + "\n")
-            fp.write("opt_design\n")
-            fp.write("place_design\n")
-            fp.write("route_design\n")
-            fp.write(
-                "write_checkpoint -force -file " + str(design.xilinx_impl_checkpoint_path) + "\n"
-            )
-            fp.write("write_edif -force -file " + str(design.impl_edif_path) + "\n")
-            fp.write("write_verilog -force -file " + str(design.impl_netlist_path) + "\n")
-            if not self.args.out_of_context:
-                fp.write("write_bitstream -force " + str(design.bitstream_path) + "\n")
-            # fp.write("write_edif -force {" + str(design.netlist_path) + "}\n")
-            fp.write("} ] } { exit 1 }\n")
-            fp.write("exit\n")
+            self.write_header(design, fp)
+            self.write_impl(fp)
+            self.write_outputs(design, fp)
+            self.write_footer(fp)
 
         cmd = [str(VIVADO_BIN_PATH), "-mode", "tcl", "-source", str(tcl_path)]
         proc = self.exec_and_log(cmd)
