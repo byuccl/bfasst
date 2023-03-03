@@ -40,11 +40,11 @@ class VivadoSynthImpTool:
             if impl_status is not None:
                 self.impl_tool.print_skipping_impl()
                 return impl_status
-            else:
-                self.impl_tool.print_running_impl()
-                self.impl_tool.open_new_log()
-                self.impl_tool.run_implementation(design)
-                return self.impl_tool.check_impl_status(self.impl_tool.log_path)
+
+            self.impl_tool.print_running_impl()
+            self.impl_tool.open_new_log()
+            self.impl_tool.run_implementation(design)
+            return self.impl_tool.check_impl_status(self.impl_tool.log_path)
 
         self.synth_tool.print_running_synth()
 
