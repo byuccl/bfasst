@@ -60,6 +60,12 @@ def map_netlists(golden_netlist_arg, reversed_netlist_arg):
     # Filling the second flipflops data object
     netlist_ffs_data_2 = get_ffs_and_conf_bits(library2, structurally_mapped_ffs, False)
 
+    # Printing Flipflops and Logic Equation's Trees for debugging
+    # print("Golden")
+    # print_data(netlist_ffs_data_1)
+    # print("Reversed")
+    # print_data(netlist_ffs_data_2)
+
     # Map Netlists based on the flipflops data (flipflop name, configuration bits, sop)
     func_mapped_ffs = map_ffs_based_on_logic_func(netlist_ffs_data_1, netlist_ffs_data_2)
 

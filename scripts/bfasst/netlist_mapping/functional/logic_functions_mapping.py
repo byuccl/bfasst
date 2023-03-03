@@ -58,6 +58,8 @@ def sop_match(sop_1, sop_2):
 
     sop_1_len = len(sop_1)
     sop_2_len = len(sop_2)
+    # print(sop_1_len)
+    # print(sop_2_len)
     # Check if they have the same number of products
     if sop_1_len == sop_2_len:
         products_found = 0
@@ -75,6 +77,25 @@ def sop_match(sop_1, sop_2):
                     and (product_1.state == "not_found")
                     and (product_2.state == "not_found")
                 ):
+                    # print("Products match in Inputs Number and Negated Inputs")
+                    # print(
+                    #     "product_1_lut_inputs_num: ",
+                    #     product_1.num["lut_inputs"],
+                    #     " product_2_lut_inputs_num: ",
+                    #     product_2.num["lut_inputs"],
+                    # )
+                    # print(
+                    #     "product_1_negative_inputs_num: ",
+                    #     product_1.num["negative_inputs"],
+                    #     " product_2_negative_inputs_num: ",
+                    #     product_2.num["negative_inputs"],
+                    # )
+                    # print(
+                    #     "product_1_state: ",
+                    #     product_1.state,
+                    #     " product_2_state: ",
+                    #     product_2.state,
+                    # )
                     # Check that the SOPs in their inputs also match!!!!!!!!!!!!!!!!!!!!!!!!!
                     # Reset counter for matching SOPs
                     matching_input_sops_counter = 0
@@ -91,11 +112,11 @@ def sop_match(sop_1, sop_2):
                     else:
                         restore_product_inputs(product_1, product_2)
 
-            # print("Found " + str(products_found) + " out of " + str(sop_1_len))
+        # print("Found " + str(products_found) + " out of " + str(sop_1_len))
 
-            # Restore Original not_found values for each product
-            restore_sop_to_not_found_state(sop_1)
-            restore_sop_to_not_found_state(sop_2)
+        # Restore Original not_found values for each product
+        restore_sop_to_not_found_state(sop_1)
+        restore_sop_to_not_found_state(sop_2)
 
         # Check that the number of products matches the number of products found
         if products_found == sop_1_len:
@@ -111,12 +132,14 @@ def map_ffs_based_on_logic_func(flipflops_data_1, flipflops_data_2):
 
     for data_1 in flipflops_data_1:
         for data_2 in flipflops_data_2:
-            # print('\n')
+            # print("\n")
             # print("SOP to compare")
             # print(data_1.sop)
             # print(data_2.sop)
             if sop_match(data_1.sop, data_2.sop):
-                # print("MADE IT!!!!!!!!!!!!")
+                # print("\t", data_1.flipflop_name)
+                # print("\t", data_2.flipflop_name)
+                # print("\t MADE IT!!!!!!!!!!!!")
                 mapped_flipflops.append([data_1.flipflop_name, data_2.flipflop_name])
 
     return mapped_flipflops

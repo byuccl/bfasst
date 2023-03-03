@@ -138,7 +138,12 @@ def print_sop(sop, level):
 
     for product in sop:
         print(
-            tabs + "(" + str(product.lut_inputs_num) + ", " + str(product.negated_inputs_num) + ")"
+            tabs
+            + "("
+            + str(product.num["lut_inputs"])
+            + ", "
+            + str(product.num["negative_inputs"])
+            + ")"
         )
 
         for lut_input in product.lut_inputs:
