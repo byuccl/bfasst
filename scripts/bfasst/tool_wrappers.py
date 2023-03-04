@@ -147,7 +147,12 @@ def vivado_full(design, build_dir, flow_args):
     synth_tool = VivadoSynthesisTool(build_dir, flow_args[ToolType.SYNTH])
     impl_tool = VivadoImplementationTool(build_dir, flow_args[ToolType.IMPL])
 
+    if synth_tool.args.out_of_context:
+        impl_tool.args.out_of_context = True
+
     synth_status = synth_tool.check_runs(design)
+
+    impl_tool.init_design(design)
 
     if synth_status is not None:
         synth_tool.print_skipping_synth()
@@ -174,6 +179,7 @@ def vivado_full(design, build_dir, flow_args):
 
     synth_tool.print_running_synth()
     synth_tool.open_new_log()
+    impl_tool.open_new_log()
     tcl_path = synth_tool.cwd / "run.tcl"
     report_io_path = synth_tool.work_dir / "report_io.txt"
     with open(tcl_path, "w") as fp:
@@ -182,6 +188,7 @@ def vivado_full(design, build_dir, flow_args):
         synth_tool.write_synth(design, fp)
         synth_tool.write_products(design, report_io_path, fp)
         impl_tool.write_impl(fp)
+        impl_tool.write_outputs(design, fp)
         synth_tool.write_footer(fp)
 
     cmd = [str(VIVADO_BIN_PATH), "-mode", "tcl", "-source", str(tcl_path)]
