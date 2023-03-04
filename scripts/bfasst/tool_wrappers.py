@@ -3,7 +3,10 @@ Only import as needed to minimize dependencies to the tools being used."""
 
 # pylint: disable=import-outside-toplevel
 from pathlib import Path
+from bfasst.config import VIVADO_BIN_PATH
 from bfasst.locks import conformal_lock, onespin_lock
+from bfasst.status import BfasstException
+from bfasst.tool import ToolProduct
 from bfasst.types import ToolType, Vendor
 
 
@@ -138,11 +141,8 @@ def xilinx_phys_netlist(design, build_dir):
 
 def vivado_full(design, build_dir, flow_args):
     """Run Vivado Synthesis and Implementation"""
-    from bfasst.config import VIVADO_BIN_PATH
     from bfasst.impl.vivado import VivadoImplementationTool
-    from bfasst.status import BfasstException
     from bfasst.synth.vivado import VivadoSynthesisTool
-    from bfasst.tool import ToolProduct
 
     synth_tool = VivadoSynthesisTool(build_dir, flow_args[ToolType.SYNTH])
     impl_tool = VivadoImplementationTool(build_dir, flow_args[ToolType.IMPL])
