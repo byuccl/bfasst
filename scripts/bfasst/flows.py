@@ -36,6 +36,7 @@ from bfasst.tool_wrappers import (
     xray_rev,
     yosys_cmp,
     yosys_synth,
+    vivado_full,
 )
 from bfasst.utils import error
 from bfasst.locks import onespin_lock
@@ -139,9 +140,10 @@ def flow_conformal_only(design, flow_args, build_dir):
 
 def flow_xilinx(design, flow_args, build_dir):
     """Run Xilinx synthesis and implementation"""
-    status = vivado_synth(design, build_dir, flow_args)
-    status = vivado_impl(design, build_dir, flow_args)
-    return status
+    return vivado_full(design, build_dir, flow_args)
+    # status = vivado_synth(design, build_dir, flow_args)
+    # status = vivado_impl(design, build_dir, flow_args)
+    # return status
 
 
 def flow_xilinx_phys_netlist(design, flow_args, build_dir):
