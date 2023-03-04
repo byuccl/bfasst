@@ -44,6 +44,7 @@ def main():
     parser.add_argument("--impl", help="Implementation args", nargs=1, type=str, default="")
     parser.add_argument("--map", help="Mapping args", nargs=1, type=str, default="")
     parser.add_argument("--cmp", help="Comparison args", nargs=1, type=str, default="")
+    parser.add_argument("--reverse", help="Reverse args", nargs=1, type=str, default="")
     parser.add_argument("--err", help="Error flow args", nargs=1, type=str, default="")
     parser.add_argument("--quiet", action="store_true")
 
