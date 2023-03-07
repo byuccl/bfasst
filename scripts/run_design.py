@@ -40,12 +40,12 @@ def main():
 
     parser.add_argument("design_path", help="Path to design in examples directory.")
     parser.add_argument("flow", choices=[e.value for e in Flows])
-    parser.add_argument("--synth", help="Synthesis args", nargs=1, type=str, default=[""])
-    parser.add_argument("--impl", help="Implementation args", nargs=1, type=str, default=[""])
-    parser.add_argument("--map", help="Mapping args", nargs=1, type=str, default=[""])
-    parser.add_argument("--cmp", help="Comparison args", nargs=1, type=str, default=[""])
-    parser.add_argument("--reverse", help="Reverse args", nargs=1, type=str, default=[""])
-    parser.add_argument("--err", help="Error flow args", nargs=1, type=str, default=[""])
+    parser.add_argument("--synth", help="Synthesis args", type=str, default="")
+    parser.add_argument("--impl", help="Implementation args", type=str, default="")
+    parser.add_argument("--map", help="Mapping args", type=str, default="")
+    parser.add_argument("--cmp", help="Comparison args", type=str, default="")
+    parser.add_argument("--reverse", help="Reverse args", type=str, default="")
+    parser.add_argument("--err", help="Error flow args", type=str, default="")
     parser.add_argument("--quiet", action="store_true")
 
     error_flows = []
@@ -74,7 +74,7 @@ def main():
     print(args)
     print(flow_args[ToolType.SYNTH])
     for arg_name, enum in flow_args_map.items():
-        flow_args[enum] = getattr(args, arg_name)[0]
+        flow_args[enum] = getattr(args, arg_name)
     print(flow_args)
     design_path = Path(args.design_path)
     if not design_path.is_dir() and (paths.EXAMPLES_PATH / design_path).is_dir():
