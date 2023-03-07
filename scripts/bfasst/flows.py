@@ -18,7 +18,7 @@ from bfasst.opt.ic2_synplify import Ic2SynplifyOptTool
 from bfasst.reverse_bit.icestorm import Icestorm_ReverseBitTool
 from bfasst.synth.ic2_lse import Ic2LseSynthesisTool
 from bfasst.synth.ic2_synplify import Ic2SynplifySynthesisTool
-from bfasst.synth.yosys import Yosys_Tech_SynthTool
+from bfasst.synth.yosys import YosysTechSynthTool
 from bfasst.tool_wrappers import (
     ToolType,
     conformal_cmp,
@@ -490,7 +490,7 @@ def flow_gather_impl_data(design, flow_args, build_dir):
     status = icestorm_rev_bit(design, build_dir, flow_args)
 
     # Clean up project directories so we get fresh results later
-    shutil.rmtree(build_dir / Yosys_Tech_SynthTool.TOOL_WORK_DIR)
+    shutil.rmtree(build_dir / YosysTechSynthTool.TOOL_WORK_DIR)
 
     # TODO check that this line should be added.
     shutil.rmtree(build_dir / Ic2SynplifyOptTool.TOOL_WORK_DIR)
