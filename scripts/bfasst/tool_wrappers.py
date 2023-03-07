@@ -71,9 +71,9 @@ def vivado_impl(design, build_dir, flow_args):
 
 def yosys_synth(design, build_dir, flow_args):
     """Synthesize using Yosys"""
-    from bfasst.synth.yosys import Yosys_Tech_SynthTool
+    from bfasst.synth.yosys import YosysTechSynthTool
 
-    synth_tool = Yosys_Tech_SynthTool(build_dir, flow_args[ToolType.SYNTH])
+    synth_tool = YosysTechSynthTool(build_dir, flow_args[ToolType.SYNTH])
     return synth_tool.create_netlist(design)
 
 
