@@ -188,6 +188,7 @@ def vivado_full(design, build_dir, flow_args):
         synth_tool.write_hdl(design, fp)
         synth_tool.write_synth(design, fp)
         synth_tool.write_products(design, report_io_path, fp)
+        # need to add constraints logic, but this is determined post-synthesis
         impl_tool.write_impl(fp)
         impl_tool.write_outputs(design, fp)
         synth_tool.write_footer(fp)
