@@ -143,6 +143,7 @@ def vivado_full(design, build_dir, flow_args):
     """Run Vivado Synthesis and Implementation"""
     from bfasst.impl.vivado import VivadoImplementationTool
     from bfasst.synth.vivado import VivadoSynthesisTool
+    from bfasst.status import ImplStatus
 
     synth_tool = VivadoSynthesisTool(build_dir, flow_args[ToolType.SYNTH])
     impl_tool = VivadoImplementationTool(build_dir, flow_args[ToolType.IMPL])
@@ -194,6 +195,6 @@ def vivado_full(design, build_dir, flow_args):
     cmd = [str(VIVADO_BIN_PATH), "-mode", "tcl", "-source", str(tcl_path)]
     proc = synth_tool.exec_and_log(cmd)
     if proc.returncode:
-        raise BfasstException(0, "Vivado synth/impl flow failed")
+        raise BfasstException(ImplStatus.ERROR, "Vivado synth/impl flow failed")
 
     return impl_tool.success_status
