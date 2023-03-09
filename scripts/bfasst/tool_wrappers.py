@@ -1,4 +1,4 @@
-""" Wrappers around various tools.  
+""" Wrappers around various tools.
 Only import as needed to minimize dependencies to the tools being used."""
 
 # pylint: disable=import-outside-toplevel
@@ -66,9 +66,9 @@ def vivado_impl(design, build_dir, flow_args):
 
 def yosys_synth(design, build_dir, flow_args):
     """Synthesize using Yosys"""
-    from bfasst.synth.yosys import Yosys_Tech_SynthTool
+    from bfasst.synth.yosys import YosysTechSynthTool
 
-    synth_tool = Yosys_Tech_SynthTool(build_dir, flow_args[ToolType.SYNTH])
+    synth_tool = YosysTechSynthTool(build_dir, flow_args[ToolType.SYNTH])
     return synth_tool.create_netlist(design)
 
 
@@ -92,7 +92,7 @@ def onespin_cmp(design, build_dir, flow_args):
     """Compare netlists using Onespin"""
     from bfasst.compare.onespin import OneSpin_CompareTool
 
-    compare_tool = OneSpin_CompareTool(build_dir, flow_args)
+    compare_tool = OneSpin_CompareTool(build_dir, flow_args[ToolType.CMP])
     with onespin_lock:
         return compare_tool.compare_netlists(design)
 
@@ -121,7 +121,7 @@ def xray_rev(design, build_dir, flow_args):
     """Reverse bitstream using Xray"""
     from bfasst.reverse_bit.xray import XRayReverseBitTool
 
-    reverse_bit_tool = XRayReverseBitTool(build_dir, flow_args)
+    reverse_bit_tool = XRayReverseBitTool(build_dir, flow_args[ToolType.REVERSE])
     return reverse_bit_tool.reverse_bitstream(design)
 
 
