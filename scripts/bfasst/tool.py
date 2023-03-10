@@ -62,6 +62,9 @@ class Tool(abc.ABC):
     def open_new_log(self):
         self.log_fp = open(self.log_path, "w")
 
+    def log_title(self, title):
+        self.log(f"{'='*80}\n{title}\n{'='*80}")
+
     def log(self, *msg, add_timestamp=False):
         """Write text to the log file and stdout"""
         text = " ".join(str(s) for s in msg)
@@ -116,18 +119,40 @@ class Tool(abc.ABC):
 
         return self.success_status
 
-    def exec_and_log(self, cmd, env=None, timeout=None):
+    def exec_and_log(self, cmd, cwd=None, fp=None, fp_err=None, env=None, timeout=None):
         """Run a command using Popen and log the output, return the process handle"""
+
+        # Default cwd is the work directory
+        if cwd is None:
+            cwd = self.work_dir
+
+        # Can't provide an fp_err without an fp
+        assert fp_err is None or fp is not None
+
         proc = subprocess.Popen(
             cmd,
-            cwd=self.work_dir,
             stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
+            stderr=subprocess.STDOUT if fp_err is None else subprocess.PIPE,
             universal_newlines=True,
+            cwd=cwd,
             env=env,
         )
+
+        # Print stdout to log
         for line in proc.stdout:
-            self.log(line.strip())
+            if fp:
+                fp.write(line)
+            else:
+                self.log(line.strip())
+
+        # If stderr is separate, print it to log as well.
+        if fp_err:
+            for line in proc.stderr:
+                if fp:
+                    fp.write(line)
+                else:
+                    self.log(line.strip())
+
         proc.communicate(timeout=timeout)
         return proc
 
