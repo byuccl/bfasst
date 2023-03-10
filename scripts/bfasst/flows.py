@@ -13,6 +13,7 @@ from bfasst.compare.onespin import OneSpin_CompareTool
 from bfasst.design import Design
 from bfasst.error_injection.error_injector import ErrorInjector_ErrorInjectionTool
 from bfasst.impl.ic2 import Ic2ImplementationTool
+from bfasst.netlist_mapping.ccl_mapping import map_netlists
 from bfasst.opt.ic2_lse import Ic2LseOptTool
 from bfasst.opt.ic2_synplify import Ic2SynplifyOptTool
 from bfasst.reverse_bit.icestorm import Icestorm_ReverseBitTool
@@ -48,6 +49,7 @@ class Flows(Enum):
     # These flows have unit tests to verify they are functioning
     XILINX = "xilinx"
     XILINX_PHYS_NETLIST = "xilinx_phys_netlist"
+    CCL_MAPPING = "ccl_mapping"
 
     # These flows may be legacy and need unit tests to verify they are working
     IC2_LSE_CONFORMAL = "IC2_lse_conformal"
@@ -84,6 +86,7 @@ flow_fcn_map = {
     Flows.CONFORMAL_ONLY: lambda: flow_conformal_only,
     Flows.XILINX: lambda: flow_xilinx,
     Flows.XILINX_PHYS_NETLIST: lambda: flow_xilinx_phys_netlist,
+    Flows.CCL_MAPPING: lambda: flow_ccl_mapping,
 }
 
 
@@ -513,3 +516,8 @@ def flow_gather_impl_data(design, flow_args, build_dir):
     status = icestorm_rev_bit(design, build_dir, flow_args)
 
     return status
+
+
+def flow_ccl_mapping(design, flow_args, build_dir):
+    map_netlists(*flow_args[ToolType.MAP].split(" "))
+    return 0
