@@ -30,5 +30,4 @@ env.sh
 
 # Installed tools
 /third_party/rapidwright*
-scripts/bfasst/config.py
 third_party
