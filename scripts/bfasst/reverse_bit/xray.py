@@ -1,5 +1,4 @@
 """ X-ray bitstream to netlist tool"""
-import subprocess
 import os
 import re
 import pathlib
@@ -24,7 +23,7 @@ class XRayReverseBitTool(ReverseBitTool):
             / "env"
             / "conda"
             / "envs"
-            / "symbiflow_xc_fasm2bels"
+            / "f4pga_xc_fasm2bels"
             / "bin"
             / "python3"
         )
@@ -63,6 +62,7 @@ class XRayReverseBitTool(ReverseBitTool):
             return status
 
         self.print_running_reverse_bit()
+        self.open_new_log()
 
         # Bitstream to fasm file
         status = self.convert_bit_to_fasm(design.bitstream_path, fasm_path)
@@ -83,6 +83,7 @@ class XRayReverseBitTool(ReverseBitTool):
 
     def convert_bit_to_fasm(self, bitstream_path, fasm_path):
         """Convert bitstream to FASM file"""
+        self.log_title("Converting bitstream to FASM")
 
         my_env = os.environ.copy()
         my_env["PATH"] = str(self.xray_path / "build" / "tools") + os.pathsep + my_env["PATH"]
@@ -96,14 +97,11 @@ class XRayReverseBitTool(ReverseBitTool):
             bitstream_path,
         ]
 
+        self.log("Creating FASM file", fasm_path)
+        self.log("Saving log output to", self.to_fasm_log)
+        self.log("\n", *cmd, "\n")
         with open(fasm_path, "w") as fp, open(self.to_fasm_log, "w") as fp_err:
-            proc = subprocess.run(
-                cmd,
-                stdout=fp,
-                stderr=fp_err,
-                cwd=self.work_dir,
-                env=my_env,
-            )
+            proc = self.exec_and_log(cmd, fp=fp, fp_err=fp_err, env=my_env)
             if proc.returncode:
                 return Status(BitReverseStatus.ERROR)
 
@@ -111,6 +109,8 @@ class XRayReverseBitTool(ReverseBitTool):
 
     def convert_fasm_to_netlist(self, fasm_path, constraints_path, netlist_path, xdc_path):
         """Convert the FASM file to a netlist"""
+        self.log_title("Converting FASM to netlist")
+
         cmd = [
             self.fasm2bels_python_path,
             "-mfasm2bels",
@@ -129,10 +129,10 @@ class XRayReverseBitTool(ReverseBitTool):
             "--input_xdc",
             constraints_path,
         ]
+        self.log("\n", *cmd, "\n")
 
-        print(" ".join((str(s) for s in cmd)))
-
-        proc = self.exec_and_log(cmd, self.fasm2bels_path)
+        with open(self.to_netlist_log, "w") as fp:
+            proc = self.exec_and_log(cmd, fp=fp, cwd=self.fasm2bels_path)
         if proc.returncode:
             return Status(BitReverseStatus.ERROR)
 
