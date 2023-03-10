@@ -13,12 +13,13 @@ from bfasst.compare.onespin import OneSpin_CompareTool
 from bfasst.design import Design
 from bfasst.error_injection.error_injector import ErrorInjector_ErrorInjectionTool
 from bfasst.impl.ic2 import Ic2ImplementationTool
+from bfasst.netlist_mapping.ccl_mapping import map_netlists
 from bfasst.opt.ic2_lse import Ic2LseOptTool
 from bfasst.opt.ic2_synplify import Ic2SynplifyOptTool
 from bfasst.reverse_bit.icestorm import Icestorm_ReverseBitTool
 from bfasst.synth.ic2_lse import Ic2LseSynthesisTool
 from bfasst.synth.ic2_synplify import Ic2SynplifySynthesisTool
-from bfasst.synth.yosys import Yosys_Tech_SynthTool
+from bfasst.synth.yosys import YosysTechSynthTool
 from bfasst.tool_wrappers import (
     ToolType,
     conformal_cmp,
@@ -47,9 +48,12 @@ class Flows(Enum):
 
     # These flows have unit tests to verify they are functioning
     XILINX = "xilinx"
+    XILINX_AND_REVERSED = "xilinx_and_reversed"
     XILINX_PHYS_NETLIST = "xilinx_phys_netlist"
+    XILINX_PHYS_NETLIST_COMPARE = "xilinx_phys_netlist_cmp"
 
     # These flows may be legacy and need unit tests to verify they are working
+    CCL_MAPPING = "ccl_mapping"
     IC2_LSE_CONFORMAL = "IC2_lse_conformal"
     IC2_SYNPLIFY_CONFORMAL = "IC2_synplify_conformal"
     SYNPLIFY_IC2_ONESPIN = "synplify_IC2_icestorm_onespin"
@@ -84,6 +88,9 @@ flow_fcn_map = {
     Flows.CONFORMAL_ONLY: lambda: flow_conformal_only,
     Flows.XILINX: lambda: flow_xilinx,
     Flows.XILINX_PHYS_NETLIST: lambda: flow_xilinx_phys_netlist,
+    Flows.CCL_MAPPING: lambda: flow_ccl_mapping,
+    Flows.XILINX_PHYS_NETLIST_COMPARE: lambda: flow_xilinx_phys_netlist_cmp,
+    Flows.XILINX_AND_REVERSED: lambda: flow_xilinx_and_reversed,
 }
 
 
@@ -144,8 +151,16 @@ def flow_xilinx(design, flow_args, build_dir):
     return status
 
 
+def flow_xilinx_and_reversed(design, flow_args, build_dir):
+    """Run Xilinx bitstream, then fasm2bels reverse"""
+    status = vivado_synth(design, build_dir, flow_args)
+    status = vivado_impl(design, build_dir, flow_args)
+    status = xray_rev(design, build_dir, flow_args)
+    return status
+
+
 def flow_xilinx_phys_netlist(design, flow_args, build_dir):
-    """Run Xilinx synthesis and implementation"""
+    """Create a Xilinx physical netlist"""
 
     if "--flatten" not in flow_args[ToolType.SYNTH]:
         flow_args[ToolType.SYNTH] += " --flatten"
@@ -154,6 +169,15 @@ def flow_xilinx_phys_netlist(design, flow_args, build_dir):
     status = vivado_impl(design, build_dir, flow_args)
     status = xilinx_phys_netlist(design, build_dir)
 
+    return status
+
+
+def flow_xilinx_phys_netlist_cmp(design, flow_args, build_dir):
+    """Compare Xilinx physical netlist to FASM2BELs netlist"""
+    status = flow_xilinx_phys_netlist(design, flow_args, build_dir)
+    status = xray_rev(design, build_dir, flow_args)
+
+    # TODO: Run pablo's structural compare
     return status
 
 
@@ -490,7 +514,7 @@ def flow_gather_impl_data(design, flow_args, build_dir):
     status = icestorm_rev_bit(design, build_dir, flow_args)
 
     # Clean up project directories so we get fresh results later
-    shutil.rmtree(build_dir / Yosys_Tech_SynthTool.TOOL_WORK_DIR)
+    shutil.rmtree(build_dir / YosysTechSynthTool.TOOL_WORK_DIR)
 
     # TODO check that this line should be added.
     shutil.rmtree(build_dir / Ic2SynplifyOptTool.TOOL_WORK_DIR)
@@ -513,3 +537,8 @@ def flow_gather_impl_data(design, flow_args, build_dir):
     status = icestorm_rev_bit(design, build_dir, flow_args)
 
     return status
+
+
+def flow_ccl_mapping(design, flow_args, build_dir):
+    map_netlists(*flow_args[ToolType.MAP].split(" "))
+    return 0

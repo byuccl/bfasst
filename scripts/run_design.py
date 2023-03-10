@@ -39,11 +39,12 @@ def main():
     parser = ArgumentParser()
 
     parser.add_argument("design_path", help="Path to design in examples directory.")
-    parser.add_argument("flow", choices=[e.value for e in Flows])
+    parser.add_argument("flow", choices=sorted([e.value for e in Flows]))
     parser.add_argument("--synth", help="Synthesis args", nargs=1, type=str, default="")
     parser.add_argument("--impl", help="Implementation args", nargs=1, type=str, default="")
     parser.add_argument("--map", help="Mapping args", nargs=1, type=str, default="")
     parser.add_argument("--cmp", help="Comparison args", nargs=1, type=str, default="")
+    parser.add_argument("--reverse", help="Reverse args", nargs=1, type=str, default="")
     parser.add_argument("--err", help="Error flow args", nargs=1, type=str, default="")
     parser.add_argument("--quiet", action="store_true")
 

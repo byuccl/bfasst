@@ -1,7 +1,8 @@
 """Algorithm used to mapped netlists based on their structure"""
 
-
-from updating_reversed_netlist import update_wires_in_reversed_netlist
+from bfasst.netlist_mapping.structural.updating_reversed_netlist import (
+    update_wires_in_reversed_netlist,
+)
 
 
 def find_potential_instances(golden_netlist, reversed_instance, potential_instances):

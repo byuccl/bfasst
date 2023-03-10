@@ -4,8 +4,7 @@
     },
     "python.analysis.extraPaths": [
         "scripts",
-        "third_party/fasm2bels/fasm2bels",
-        "./scripts/bfasst/netlist_mapping/structural"
+        "third_party/fasm2bels/fasm2bels"
     ],
     "python.pythonPath": ".venv/bin/python3",
     "git.enableCommitSigning": false,
@@ -14,8 +13,5 @@
     ],
     "python.formatting.provider": "black",
     "python.linting.enabled": true,
-    "python.linting.pylintEnabled": true,
-    "pylint.args": [
-        "--rcfile", "${workspaceFolder}/.pylintrc"
-    ]
+    "python.linting.pylintEnabled": true
 }

@@ -18,10 +18,10 @@
 
 import argparse
 import spydrnet as sdn
-from print_data import print_conformal_input_output_points
-from print_data import print_conformal_structural_points
-from structural.netlist import get_netlist
-from structural.automated_block_mapping import automatically_map_blocks
+from bfasst.netlist_mapping.print_data import print_conformal_input_output_points
+from bfasst.netlist_mapping.print_data import print_conformal_structural_points
+from bfasst.netlist_mapping.structural.netlist import get_netlist
+from bfasst.netlist_mapping.structural.automated_block_mapping import automatically_map_blocks
 
 
 def structurally_map_netlists(golden_netlist_arg, reversed_netlist_arg):
