@@ -1,8 +1,10 @@
 """This file contains the necessary functions to map the carry chains"""
 
 
-from map_ffs import get_mapped_ffs
-from updating_reversed_netlist import update_wires_in_reversed_netlist
+from bfasst.netlist_mapping.structural.map_ffs import get_mapped_ffs
+from bfasst.netlist_mapping.structural.updating_reversed_netlist import (
+    update_wires_in_reversed_netlist,
+)
 
 
 def check_for_ff_output(wire_pin, ffs):
