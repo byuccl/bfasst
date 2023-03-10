@@ -15,11 +15,11 @@
 
 import argparse
 import spydrnet as sdn
-from print_data import print_conformal_input_output_points
-from print_data import print_conformal_mapped_ffs
-from structural.carry_chain_mapping import map_carries_and_ffs
-from functional.logic_functions_mapping import map_ffs_based_on_logic_func
-from functional.netlist_flipflops_data import get_ffs_and_conf_bits
+from bfasst.netlist_mapping.print_data import print_conformal_input_output_points
+from bfasst.netlist_mapping.print_data import print_conformal_mapped_ffs
+from bfasst.netlist_mapping.structural.carry_chain_mapping import map_carries_and_ffs
+from bfasst.netlist_mapping.functional.logic_functions_mapping import map_ffs_based_on_logic_func
+from bfasst.netlist_mapping.functional.netlist_flipflops_data import get_ffs_and_conf_bits
 
 
 def functionally_map_netlists(golden_netlist_arg, reversed_netlist_arg):
