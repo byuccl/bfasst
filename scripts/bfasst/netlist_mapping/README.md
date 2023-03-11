@@ -5,7 +5,7 @@
 and a functional algorithm for the rest of the flipflops.
 
 * Here is an example of how to run one of the scripts:  
-$ python ccl_mapping.py netlist_examples/tx_impl.v netlist_examples/tx_reversed.v > mapped_points.txt
+```$ python ccl_mapping.py netlist_examples/tx_impl.v netlist_examples/tx_reversed.v > mapped_points.txt```
 
 * The [mapped_points.txt](./mapped_points.txt) file generated can be used in Conformal Equivalence Checker by adding the following lines to the compare.do file:  
 set system mode lec -nomap  
