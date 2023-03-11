@@ -457,11 +457,14 @@ class XilinxPhysNetlist(TransformTool):
             if str(physical_pin).startswith("[O"):
                 continue
 
-            matches = re.match(r"\[(A\d)\]", str(physical_pin))
+            matches = re.match(r"\[A(\d)\]", str(physical_pin))
             assert matches
-            physical_pin = matches[1]
 
-            eqn = eqn.replace(str(logical_pin), str(physical_pin))
+            # A5 becomes I4, A1 becomes I0, etc, so subtract 1, but
+            # don't replace A with I yet, until all replacements are done.
+            physical_pin = int(matches[1]) - 1
+
+            eqn = eqn.replace(str(logical_pin), "A" + str(physical_pin))
 
         # Physical LUT inputs use A#, but LUTTools expect I#
         eqn = eqn.replace("A", "I")
