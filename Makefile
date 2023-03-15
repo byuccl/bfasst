@@ -27,6 +27,7 @@ packages:
 	
 python_packages:
 	$(IN_ENV) python3 -m pip install -r requirements.txt
+	$(IN_ENV) python3 -m pip install -e .
 
 capnproto_java:
 	$(eval TEMP_DIR := $(shell mktemp -d))
