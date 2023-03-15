@@ -99,6 +99,6 @@ format:
 
 pylint:
 	git fetch
-	pylint --errors-only $$(git ls-files --directory scripts | grep -e ".py$$")
+	pylint --errors-only $$(git ls-files --directory scripts --directory bfasst | grep -e ".py$$")
 	pylint $$(git diff --name-only $$(git merge-base origin/main HEAD) | grep -e ".py$$")
 
