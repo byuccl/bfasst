@@ -27,7 +27,7 @@ class Design:
             error("Design folder", dir_path, " does not exist.")
 
         self.path = dir_path
-        self.rel_path = self.path.relative_to(paths.EXAMPLES_PATH)
+        self.rel_path = self.path.relative_to(paths.DESIGNS_PATH)
         self.yaml_path = self.path / DESIGN_YAML_NAME
 
         self.top = None
@@ -88,9 +88,7 @@ class Design:
             "top": lambda value: setattr(self, "top", value),
             "top_file": lambda value: setattr(self, "top_file_path", self.path / value),
             "top_architecture": lambda value: setattr(self, "top_architecture", value),
-            "synthesized_netlist": lambda value: setattr(
-                self, "netlist_path", self.path / value
-            ),
+            "synthesized_netlist": lambda value: setattr(self, "netlist_path", self.path / value),
             "reversed_netlist": lambda value: setattr(
                 self, "reversed_netlist_path", self.path / value
             ),
@@ -106,9 +104,7 @@ class Design:
             "verilog_files": lambda value: self.verilog_file_paths.extend(
                 self.path / source for source in value
             ),
-            "vhdl_libs": lambda value: setattr(
-                self, "vhdl_libs", self.enum_vhdl_libs(value)
-            ),
+            "vhdl_libs": lambda value: setattr(self, "vhdl_libs", self.enum_vhdl_libs(value)),
         }
 
         for key, value in design_props.items():
@@ -169,18 +165,13 @@ class Design:
         return (
             source
             for source in self.path.iterdir()
-            if (
-                source.is_file()
-                and source.suffix in suffixes
-                and source != self.top_file_path
-            )
+            if (source.is_file() and source.suffix in suffixes and source != self.top_file_path)
         )
 
     def enum_vhdl_libs(self, vhdl_paths):
         result = {}
         libraries = (
-            (self.path / library, (self.path / library).rglob("*.vhd"))
-            for library in vhdl_paths
+            (self.path / library, (self.path / library).rglob("*.vhd")) for library in vhdl_paths
         )
         for library in libraries:
             for source in library[1]:
@@ -194,11 +185,7 @@ class Design:
         return get_hdl_type(self.top_file_path)
 
     def get_support_files(self):
-        return (
-            self.verilog_file_paths
-            + self.vhdl_file_paths
-            + self.system_verilog_file_paths
-        )
+        return self.verilog_file_paths + self.vhdl_file_paths + self.system_verilog_file_paths
 
     # def reversed_netlist_filename(self):
     #     return os.path.basename(self.reversed_netlist_path)

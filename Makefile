@@ -27,6 +27,7 @@ packages:
 	
 python_packages:
 	$(IN_ENV) python3 -m pip install -r requirements.txt
+	$(IN_ENV) python3 -m pip install -e .
 
 capnproto_java:
 	$(eval TEMP_DIR := $(shell mktemp -d))
@@ -57,7 +58,7 @@ install_fasm2bels: submodules
 	cd third_party/fasm2bels && make test-py
 
 # Run a simple design through fasm2bels to generate the database.
-	$(IN_ENV) python scripts/run_design.py examples/basic/and3/ xilinx_and_reversed
+	$(IN_ENV) python scripts/run_design.py designs/basic/and3/ xilinx_and_reversed
 
 install_wafove: submodules
 	$(IN_ENV) python3 -m pip install -e third_party/WaFoVe
@@ -98,6 +99,6 @@ format:
 
 pylint:
 	git fetch
-	pylint --errors-only $$(git ls-files --directory scripts | grep -e ".py$$")
+	pylint --errors-only $$(git ls-files --directory scripts --directory bfasst | grep -e ".py$$")
 	pylint $$(git diff --name-only $$(git merge-base origin/main HEAD) | grep -e ".py$$")
 
