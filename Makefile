@@ -58,7 +58,7 @@ install_fasm2bels: submodules
 	cd third_party/fasm2bels && make test-py
 
 # Run a simple design through fasm2bels to generate the database.
-	$(IN_ENV) python scripts/run_design.py examples/basic/and3/ xilinx_and_reversed
+	$(IN_ENV) python scripts/run_design.py designs/basic/and3/ xilinx_and_reversed
 
 install_wafove: submodules
 	$(IN_ENV) python3 -m pip install -e third_party/WaFoVe
