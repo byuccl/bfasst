@@ -24,13 +24,14 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r $(git ls-files 'requirements.txt')
+        pip install -e .
         git submodule update --init third_party/WaFoVe
         python -m pip install -e third_party/WaFoVe
         cd third_party/WaFoVe && make build
       if: env.GIT_DIFF
     - name: Check for syntax errors with pylint
       run: |
-        pylint --errors-only $(git ls-files --directory scripts | grep -e ".py$")
+        pylint --errors-only $(git ls-files --directory scripts --directory bfasst | grep -e ".py$")
       if: env.GIT_DIFF
     - name: Analysing the code with pylint
       run: |

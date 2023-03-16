@@ -41,7 +41,7 @@ class Experiment:
 
         self.designs = []
         for design_path in self.design_paths:
-            design = Design(paths.EXAMPLES_PATH / design_path)
+            design = Design(paths.DESIGNS_PATH / design_path)
             self.designs.append(design)
 
         for design in self.designs:
@@ -66,7 +66,7 @@ class Experiment:
 
         if "designs" in experiment_props:
             for design in experiment_props.pop("designs"):
-                d_path = paths.EXAMPLES_PATH / design
+                d_path = paths.DESIGNS_PATH / design
                 if not d_path.is_dir():
                     error("Provided design directory", d_path, "does not exist")
 
@@ -84,7 +84,7 @@ class Experiment:
 
         if "design_dirs" in experiment_props:
             for design_dir in experiment_props.pop("design_dirs"):
-                design_dir_path = paths.EXAMPLES_PATH / design_dir
+                design_dir_path = paths.DESIGNS_PATH / design_dir
                 if not design_dir_path.is_dir():
                     error(design_dir_path, "is not a directory")
 
