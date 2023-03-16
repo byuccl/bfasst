@@ -54,7 +54,7 @@ def create_build_design_dir(build_dir, design_dir):
 
 def get_design_dir(design_name):
     """Return the design directory"""
-    return bfasst.paths.EXAMPLES_PATH / design_name
+    return bfasst.paths.DESIGNS_PATH / design_name
 
 
 def clean_folder(folder_path):
