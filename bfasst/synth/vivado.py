@@ -146,7 +146,15 @@ class VivadoSynthesisTool(SynthesisTool):
         with open(tcl_path, "w") as stream:
             self.write_tcl(design, report_io_path, stream)
 
-        cmd = [str(VIVADO_BIN_PATH), "-mode", "tcl", "-source", str(tcl_path)]
+        cmd = [
+            str(VIVADO_BIN_PATH),
+            "-mode",
+            "tcl",
+            "-source",
+            str(tcl_path),
+            "-nojournal",
+            "-nolog",
+        ]
         proc = self.exec_and_log(cmd)
         if proc.returncode:
             return Status(SynthStatus.ERROR)

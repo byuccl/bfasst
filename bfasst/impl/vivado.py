@@ -80,7 +80,15 @@ class VivadoImplementationTool(ImplementationTool):
             self.write_outputs(design, fp)
             self.write_footer(fp)
 
-        cmd = [str(VIVADO_BIN_PATH), "-mode", "tcl", "-source", str(tcl_path)]
+        cmd = [
+            str(VIVADO_BIN_PATH),
+            "-mode",
+            "tcl",
+            "-source",
+            str(tcl_path),
+            "-nolog",
+            "-nojournal",
+        ]
         proc = self.exec_and_log(cmd)
         if proc.returncode:
             return Status(ImplStatus.ERROR)
