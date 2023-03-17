@@ -27,6 +27,7 @@ packages:
 	
 python_packages:
 	$(IN_ENV) python3 -m pip install -r requirements.txt
+	$(IN_ENV) python3 -m pip install -e .
 
 capnproto_java:
 	$(eval TEMP_DIR := $(shell mktemp -d))
@@ -49,8 +50,15 @@ submodules:
 
 install_fasm2bels: submodules
 	cd third_party/fasm2bels && make env
+	
+#TODO: Remove this once https://github.com/f4pga/prjxray/issues/1950 is fixed
+	cd third_party/fasm2bels/third_party/prjxray && git apply ../../../../prjxray-cpp17.patch
+	
 	$(IN_ENV) cd third_party/fasm2bels && make build
 	cd third_party/fasm2bels && make test-py
+
+# Run a simple design through fasm2bels to generate the database.
+	$(IN_ENV) python scripts/run_design.py designs/basic/and3/ xilinx_and_reversed
 
 install_wafove: submodules
 	$(IN_ENV) python3 -m pip install -e third_party/WaFoVe
@@ -61,7 +69,7 @@ env:
 	echo ". `pwd`/third_party/rapidwright.sh" >> "env.sh"
 	echo "fi" >> "env.sh"
 	echo "export INTERCHANGE_SCHEMA_PATH=`pwd`/third_party/RapidWright/interchange/fpga-interchange-schema/interchange" >> "env.sh"
-	echo "export VIVADO_PATH=/tools/Xilinx/Vivado/2022.2/bin/vivado" >> "env.sh"
+	echo "export VIVADO_PATH=/tools/Xilinx/Vivado/2020.2/bin/vivado" >> "env.sh"
 
 install_yosys:
 	# Yosys
@@ -91,5 +99,6 @@ format:
 
 pylint:
 	git fetch
+	pylint --errors-only $$(git ls-files --directory scripts --directory bfasst | grep -e ".py$$")
 	pylint $$(git diff --name-only $$(git merge-base origin/main HEAD) | grep -e ".py$$")
 

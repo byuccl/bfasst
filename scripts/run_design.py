@@ -17,7 +17,7 @@ def run_design(design_path, flow, error_flow, flow_args):
     design = Design(design_path)
 
     # Create temp folder
-    build_dir = Path.cwd() / "build" / flow / (design_path.relative_to(paths.EXAMPLES_PATH))
+    build_dir = Path.cwd() / "build" / flow / (design_path.relative_to(paths.DESIGNS_PATH))
     build_dir.mkdir(parents=True, exist_ok=True)
 
     # Store the error flow for later
@@ -77,8 +77,8 @@ def main():
         flow_args[enum] = getattr(args, arg_name)
     print(flow_args)
     design_path = Path(args.design_path)
-    if not design_path.is_dir() and (paths.EXAMPLES_PATH / design_path).is_dir():
-        design_path = paths.EXAMPLES_PATH / design_path
+    if not design_path.is_dir() and (paths.DESIGNS_PATH / design_path).is_dir():
+        design_path = paths.DESIGNS_PATH / design_path
     design_path = design_path.absolute()
 
     run_design(design_path, args.flow, args.error_flow, flow_args=flow_args)

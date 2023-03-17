@@ -11,9 +11,15 @@ runs:
       make venv
       make python_packages
       make env
+
   - name: rapidwright
     shell: bash
     run: | 
       make rapidwright
+
+  - name: fasm2bels
+    shell: bash
+    run: |
+      . env.sh && make install_fasm2bels
     
           

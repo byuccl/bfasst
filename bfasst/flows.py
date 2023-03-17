@@ -48,7 +48,9 @@ class Flows(Enum):
 
     # These flows have unit tests to verify they are functioning
     XILINX = "xilinx"
+    XILINX_AND_REVERSED = "xilinx_and_reversed"
     XILINX_PHYS_NETLIST = "xilinx_phys_netlist"
+    XILINX_PHYS_NETLIST_COMPARE = "xilinx_phys_netlist_cmp"
 
     # These flows may be legacy and need unit tests to verify they are working
     IC2_LSE_CONFORMAL = "IC2_lse_conformal"
@@ -85,6 +87,8 @@ flow_fcn_map = {
     Flows.CONFORMAL_ONLY: lambda: flow_conformal_only,
     Flows.XILINX: lambda: flow_xilinx,
     Flows.XILINX_PHYS_NETLIST: lambda: flow_xilinx_phys_netlist,
+    Flows.XILINX_PHYS_NETLIST_COMPARE: lambda: flow_xilinx_phys_netlist_cmp,
+    Flows.XILINX_AND_REVERSED: lambda: flow_xilinx_and_reversed,
 }
 
 
@@ -146,8 +150,16 @@ def flow_xilinx(design, flow_args, build_dir):
     # return status
 
 
+def flow_xilinx_and_reversed(design, flow_args, build_dir):
+    """Run Xilinx bitstream, then fasm2bels reverse"""
+    status = vivado_synth(design, build_dir, flow_args)
+    status = vivado_impl(design, build_dir, flow_args)
+    status = xray_rev(design, build_dir, flow_args)
+    return status
+
+
 def flow_xilinx_phys_netlist(design, flow_args, build_dir):
-    """Run Xilinx synthesis and implementation"""
+    """Create a Xilinx physical netlist"""
 
     if "--flatten" not in flow_args[ToolType.SYNTH]:
         flow_args[ToolType.SYNTH] += " --flatten"
@@ -156,6 +168,15 @@ def flow_xilinx_phys_netlist(design, flow_args, build_dir):
     status = vivado_impl(design, build_dir, flow_args)
     status = xilinx_phys_netlist(design, build_dir)
 
+    return status
+
+
+def flow_xilinx_phys_netlist_cmp(design, flow_args, build_dir):
+    """Compare Xilinx physical netlist to FASM2BELs netlist"""
+    status = flow_xilinx_phys_netlist(design, flow_args, build_dir)
+    status = xray_rev(design, build_dir, flow_args)
+
+    # TODO: Run pablo's structural compare
     return status
 
 

@@ -36,8 +36,9 @@ BFASST can be used to compose different CAD flows from severals tools.  You may 
 
 ### Vivado
 
-1. Install Vivado
-1. Update _scripts/bfasst/config.py_ and make sure the path points to your Vivado installation. 
+1. Install Vivado **2020.2**
+    * Note: Vivado 2022.2 is not supported due to a yosys compatibility [issue](https://github.com/YosysHQ/yosys/issues/3699)
+3. Update _scripts/bfasst/config.py_ and make sure the path points to your Vivado installation. 
 
 ### Fasm2Bels
 1. Install capnproto_java:

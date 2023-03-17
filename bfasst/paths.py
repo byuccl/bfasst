@@ -2,9 +2,9 @@
 
 import pathlib
 
-ROOT_PATH = pathlib.Path(__file__).resolve().parent.parent.parent
+ROOT_PATH = pathlib.Path(__file__).resolve().parent.parent
 
-EXAMPLES_PATH = ROOT_PATH / "examples"
+DESIGNS_PATH = ROOT_PATH / "designs"
 EXPERIMENTS_PATH = ROOT_PATH / "experiments"
 RESOURCES_PATH = ROOT_PATH / "resources"
 SCRIPTS_PATH = ROOT_PATH / "scripts"
