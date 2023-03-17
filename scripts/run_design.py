@@ -23,7 +23,7 @@ def run_design(design_path, flow, error_flow, flow_args):
     design = Design(design_path)
 
     # Create temp folder
-    build_dir = Path.cwd() / "build" / flow / (design_path.relative_to(paths.DESIGNS_PATH))
+    build_dir = Path.cwd() / "build" / flow / (design.path.relative_to(paths.DESIGNS_PATH))
     build_dir.mkdir(parents=True, exist_ok=True)
 
     # Store the error flow for later
