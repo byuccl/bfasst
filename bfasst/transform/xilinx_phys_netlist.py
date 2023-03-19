@@ -122,7 +122,8 @@ class XilinxPhysNetlist(TransformTool):
 
             print_color(
                 TermColor.RED,
-                f"{cell.getName()} ({edif_cell_inst.getCellType().getName() if edif_cell_inst else 'None'})",
+                cell.getName(),
+                f"({edif_cell_inst.getCellType().getName() if edif_cell_inst else 'None'})",
             )
 
             if edif_cell_inst is None:
@@ -170,15 +171,15 @@ class XilinxPhysNetlist(TransformTool):
                     cells_to_remove.append(lut6_cell)
                 if lut5_cell and not lut5_cell.isRoutethru():
                     cells_to_remove.append(lut5_cell)
+                continue
 
             # These primitives don't need to get transformed
-            elif cell.getBELName() in ("INBUF_EN", "OUTBUF", "AFF", "BFF", "CFF", "DFF", "PAD"):
+            if cell.getBELName() in ("INBUF_EN", "OUTBUF", "AFF", "BFF", "CFF", "DFF", "PAD"):
                 continue
 
             # TODO: Handle other primitives? RAM*, BUFG->BUFGCTRL, etc.
-            else:
-                print(cell)
-                return Status(TransformStatus.ERROR, f"Unhandled primitive {cell.getBELName()}")
+            print(cell)
+            return Status(TransformStatus.ERROR, f"Unhandled primitive {cell.getBELName()}")
 
         # Remove old unusued cells
         self.log("Removing old cells...")
