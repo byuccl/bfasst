@@ -49,6 +49,7 @@ class XilinxPhysNetlist(TransformTool):
         phys_netlist_edif_path = design.impl_edif_path.parent / (
             design.impl_edif_path.stem + "_physical.edf"
         )
+        design.impl_netlist_path = phys_netlist_verilog_path
 
         # Redirect rapidwright output to file
         System.setOut(PrintStream(File(str(self.work_dir / "rapidwright_stdout.log"))))
@@ -117,7 +118,17 @@ class XilinxPhysNetlist(TransformTool):
         # https://github.com/Xilinx/RapidWright/issues/36
         # Seems possible to happen (https://github.com/Xilinx/RapidWright/issues/226)
         for cell in rw_design.getCells():
-            print_color(TermColor.RED, cell.getName())
+            edif_cell_inst = cell.getEDIFCellInst()
+
+            print_color(
+                TermColor.RED,
+                f"{cell.getName()} ({edif_cell_inst.getCellType().getName() if edif_cell_inst else 'None'})",
+            )
+
+            if edif_cell_inst is None:
+                self.log("  Skipping")
+                continue
+
             if cell in cells_already_visited:
                 continue
 
@@ -160,7 +171,14 @@ class XilinxPhysNetlist(TransformTool):
                 if lut5_cell and not lut5_cell.isRoutethru():
                     cells_to_remove.append(lut5_cell)
 
+            # These primitives don't need to get transformed
+            elif cell.getBELName() in ("INBUF_EN", "OUTBUF", "AFF", "BFF", "CFF", "DFF", "PAD"):
+                continue
+
             # TODO: Handle other primitives? RAM*, BUFG->BUFGCTRL, etc.
+            else:
+                print(cell)
+                return Status(TransformStatus.ERROR, f"Unhandled primitive {cell.getBELName()}")
 
         # Remove old unusued cells
         self.log("Removing old cells...")
@@ -487,8 +505,8 @@ class XilinxPhysNetlist(TransformTool):
         else:
             init_str = (
                 "64'h"
-                + LUTTools.getLUTInitFromEquation(lut6_eqn_phys, 5)[4:]
-                + LUTTools.getLUTInitFromEquation(lut5_eqn_phys, 5)[4:]
+                + LUTTools.getLUTInitFromEquation(lut6_eqn_phys, 5)[4:].zfill(8)
+                + LUTTools.getLUTInitFromEquation(lut5_eqn_phys, 5)[4:].zfill(8)
             )
         self.log("  New LUT INIT:", init_str)
         new_cell_inst.addProperty("INIT", init_str)
