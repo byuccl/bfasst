@@ -5,12 +5,10 @@ on:
     branches:
       - main
   pull_request:
-    branches:
-      - main
 
 # Cancel earlier jobs on new PR commit
 concurrency: 
-  group: ${{ github.head_ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 
