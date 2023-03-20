@@ -1,6 +1,5 @@
 """ Base synthesis tool class"""
 import abc
-import shlex
 
 from bfasst import tool
 from bfasst.utils import print_color

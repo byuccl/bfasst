@@ -1,7 +1,5 @@
 """ Base class for error injection tools"""
 import abc
-import shlex
-from bfasst import tool
 
 from bfasst.tool import Tool
 from bfasst.status import Status, ErrorInjectionStatus

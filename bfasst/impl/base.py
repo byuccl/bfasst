@@ -1,8 +1,6 @@
 """ Base class for implementation tools """
 import abc
 import pathlib
-import shlex
-from bfasst import tool
 
 from bfasst.status import ImplStatus, Status
 from bfasst.utils import print_color
