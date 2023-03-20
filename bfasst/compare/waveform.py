@@ -3,9 +3,11 @@
 import pathlib
 import re
 import yaml
+
 from wafove import compare_waveforms
 from wafove.templates import get_paths
 from wafove.tools import analyze_graph
+
 import bfasst
 from bfasst.compare.base import CompareTool
 from bfasst.config import VIVADO_BIN_PATH
@@ -23,10 +25,73 @@ class WaveformCompareTool(CompareTool):
     TOOL_WORK_DIR = "waveform"
     LOG_FILE_NAME = "log.txt"
 
-    def compare_netlists(self, design, run_waveform, tests, vivado):
+    def add_args(self):
+        """Parses all input arguments for WaFoVe's bfasst implementation."""
+        super().add_args()
+
+        self.arg_parser.add_argument(
+            "-a",
+            "--allSignals",
+            action="store_true",
+            help="Compares all signals rather than IOs (Typically returns false).",
+            default=False,
+        )
+
+        self.arg_parser.add_argument(
+            "-f",
+            "--fullScreen",
+            action="store_true",
+            help="Specifies if graphs should be viewed in fullscreen.",
+            default=False,
+        )
+
+        self.arg_parser.add_argument(
+            "-s",
+            "--seed",
+            action="store",
+            help="The seed random will use to generate the specific testbench. Defaults to 0.",
+            default=0,
+        )
+
+        self.arg_parser.add_argument(
+            "-t",
+            "--tests",
+            action="store",
+            help="The number of tests to run. If not set, defaults to 100.",
+            default=100,
+        )
+
+        self.arg_parser.add_argument(
+            "-v",
+            "--verbose",
+            action="store_true",
+            help="Allows for printing of debugging info & tracing the tool's flow.",
+            default=False,
+        )
+
+        self.arg_parser.add_argument(
+            "--vivado",
+            action="store_true",
+            help="Additional argument for waveform, specifies the Vivado Bin Path to launch Vivado",
+            default=False,
+        )
+
+        self.arg_parser.add_argument(
+            "--waveform",
+            action="store_true",
+            help="Run gtkwave at the end of the verification process or on a previously ran test.",
+            default=False,
+        )
+
+    def compare_netlists(self, design):
         """The function that compares the netlists."""
-        seed = 0  # Change this w/ a new input at a later time
-        all_signals = False  # Change this w/ a new input at a later time
+
+        print("\nRunning WaFoVe to compare netlists...")
+        print(f"Number of tests being run: {self.args.tests}")
+        print(f"Seed: {self.args.seed}")
+        print(f"Testing against all internal signals: {self.args.allSignals}")
+        print(f"Displaying waveforms via Gtkwave: {self.args.waveform}")
+        print(f"Displaying waveforms via Vivado: {self.args.vivado}\n")
 
         log_path = self.work_dir / self.LOG_FILE_NAME
         generate_comparison = ToolProduct(None, log_path, self.check_compare_status)
@@ -49,28 +114,29 @@ class WaveformCompareTool(CompareTool):
             self.work_dir,
             bfasst.paths.ROOT_PATH / ("third_party/yosys/techlibs/xilinx/cells_sim.v"),
             bfasst.paths.ROOT_PATH / ("third_party/WaFoVe/wafove/templates/sample_tb.v"),
+            bfasst.paths.ROOT_PATH / ("third_party/WaFoVe/wafove/tools/"),
             design.impl_netlist_path,
             design.reversed_netlist_path,
         )
 
-        if run_waveform & (paths["vcd"][0].exists() & paths["vcd"][1].exists()):
-            if vivado:
+        if self.args.waveform & (paths["vcd"][0].exists() & paths["vcd"][1].exists()):
+            if self.args.vivado:
                 analyze_graph.analyze_graphs(
                     paths["build_dir"],
                     paths["modules"][1],
                     paths["modules"][2],
-                    (bfasst.paths.ROOT_PATH),
+                    paths["vivado"],
                     VIVADO_BIN_PATH,
-                    False,
+                    self.args.fullScreen,
                 )
             else:
                 analyze_graph.analyze_graphs(
                     paths["build_dir"],
                     paths["modules"][1],
                     paths["modules"][2],
-                    (bfasst.paths.ROOT_PATH),
+                    paths["vivado"],
                     "none",
-                    False,
+                    self.args.fullScreen,
                 )
             if paths["diff"].exists():
                 return Status(CompareStatus.NOT_EQUIVALENT)
@@ -83,7 +149,9 @@ class WaveformCompareTool(CompareTool):
             if paths["tb"][i].exists():
                 paths["tb"][i].unlink()
 
-        compare_waveforms.generate_files(multiple_files, paths, tests, seed, all_signals)
+        compare_waveforms.generate_files(
+            multiple_files, paths, self.args.tests, self.args.seed, self.args.allSignals
+        )
 
         if compare_waveforms.run_test(paths):
             return Status(CompareStatus.SUCCESS)
@@ -91,7 +159,6 @@ class WaveformCompareTool(CompareTool):
         return Status(CompareStatus.NOT_EQUIVALENT)
 
     def check_multiple_files(self, design):
-
         """A function to check if there are multiple verilog files in a design or not. Used later in
         parsing stages due to different logic being needed. Assumed true if no design exists."""
 
