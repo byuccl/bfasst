@@ -237,10 +237,7 @@ def flow_wafove(design, flow_args, build_dir):
     # Input number of tests to run, seed to base random on, whether or not to show all signals
     # Whether or not to open gtkwave and analyze graphs, and whether or not to open Vivado and
     # analyze graphs.
-    args = ""
-    if flow_args[ToolType.CMP] != '':
-        args = flow_args[ToolType.CMP][0]
-    status = wave_cmp(design, build_dir, shlex.split(args))
+    status = wave_cmp(design, build_dir, flow_args)
 
     return status
 
