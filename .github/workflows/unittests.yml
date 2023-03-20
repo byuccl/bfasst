@@ -14,7 +14,7 @@ jobs:
     runs-on: [self-hosted, linux]
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
-      matrix-wip: ${{ steps.set-matrix-wip.outputs.matrix }}
+      matrix-wip: ${{ steps.set-matrix-wip.outputs.matrix-wip }}
     steps:
     - uses: actions/checkout@v3
     - id: set-matrix
