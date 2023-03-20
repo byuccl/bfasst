@@ -7,7 +7,6 @@ Helper functions for vendor tools are defined.
 from enum import Enum
 from enum import unique as enum_unique
 import pathlib
-import shlex
 import shutil
 from bfasst.compare.onespin import OneSpin_CompareTool
 
