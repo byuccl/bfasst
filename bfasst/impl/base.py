@@ -18,9 +18,11 @@ class ImplementationTool(Tool):
         super().__init__(cwd)
 
         # Implementation options
-        parser = tool.ToolArgParser("impl")
-        parser.add_argument("--out_of_context", action="store_true")
-        self.args = parser.parse_args(shlex.split(flow_args))
+        self.create_arg_parser("impl", flow_args)
+
+    def add_args(self):
+        """Default arguments for all impl tools"""
+        self.arg_parser.add_argument("--out_of_context", action="store_true")
 
     # This method should run implementation.  It should return
     # (bitstream, status), where:

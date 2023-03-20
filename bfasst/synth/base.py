@@ -16,11 +16,13 @@ class SynthesisTool(tool.Tool):
         super().__init__(cwd)
 
         # Sythesis options
-        parser = tool.ToolArgParser("synth")
-        parser.add_argument("--flatten", action="store_true")
-        parser.add_argument("--max_dsp", nargs=1, type=int)
-        parser.add_argument("--out_of_context", action="store_true")
-        self.args = parser.parse_args(shlex.split(flow_args))
+        self.create_arg_parser("synth", flow_args)
+
+    def add_args(self):
+        """Default arguments for all synth tools"""
+        self.arg_parser.add_argument("--flatten", action="store_true")
+        self.arg_parser.add_argument("--max_dsp", nargs=1, type=int)
+        self.arg_parser.add_argument("--out_of_context", action="store_true")
 
     # This method should run synthesis.  It should return
     # (netlist, status), where:
