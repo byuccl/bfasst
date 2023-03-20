@@ -102,3 +102,6 @@ pylint:
 	pylint --errors-only $$(git ls-files --directory scripts --directory bfasst | grep -e ".py$$")
 	pylint $$(git diff --name-only $$(git merge-base origin/main HEAD) | grep -e ".py$$")
 
+
+doctest:
+	find bfasst -iname "*.py" -exec python -m doctest {} \;
