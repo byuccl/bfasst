@@ -1,6 +1,10 @@
 name: Unit Tests
 
-on: pull_request
+on: 
+  push:
+    branches:
+      - main
+  pull_request:
 
 # Cancel earlier jobs on new PR commit
 concurrency: 
