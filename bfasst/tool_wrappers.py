@@ -80,12 +80,12 @@ def yosys_cmp(design, build_dir, flow_args):
     return compare_tool.compare_netlists(design)
 
 
-def wave_cmp(design, build_dir, args):
+def wave_cmp(design, build_dir, flow_args):
     """Compare netlists via waveforms"""
     from bfasst.compare.waveform import WaveformCompareTool
 
-    tool = WaveformCompareTool(build_dir)
-    return tool.compare_netlists(design, args)
+    tool = WaveformCompareTool(build_dir, flow_args[ToolType.CMP])
+    return tool.compare_netlists(design)
 
 
 def onespin_cmp(design, build_dir, flow_args):
