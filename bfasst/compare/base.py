@@ -1,8 +1,6 @@
 """ Base class for comparison tools"""
 import abc
-import shlex
 
-from bfasst import tool
 from bfasst.status import CompareStatus, Status
 
 from bfasst.tool import Tool
@@ -18,8 +16,10 @@ class CompareTool(Tool):
         super().__init__(cwd)
 
         # Implementation options
-        parser = tool.ToolArgParser("compare")
-        self.args = parser.parse_args(shlex.split(flow_args))
+        self.create_arg_parser("compare", flow_args)
+
+    def add_args(self):
+        """Default arguments for all compare tools"""
 
     # This method should run netlist comparison.  It should return
     # a status

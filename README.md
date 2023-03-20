@@ -1,3 +1,7 @@
+![example workflow](https://github.com/byuccl/bfasst/actions/workflows/python.yml/badge.svg)
+![example workflow](https://github.com/byuccl/bfasst/actions/workflows/unittests.yml/badge.svg)
+
+
 # BFASST (BYU FPGA Assurance Tool)
 
 The BFASST tool is a Python package located at `scripts/bfasst`.  The tool can be used to compose custom FPGA CAD flows.  Many of these flows are already defined and can be found in `flows.py`.

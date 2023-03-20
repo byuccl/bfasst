@@ -1,9 +1,9 @@
-name: Pylint
+name: Python
 
 on: [pull_request]
 
 jobs:
-  build:
+  pylint:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -37,3 +37,12 @@ jobs:
       run: |
         pylint ${{ env.GIT_DIFF_FILTERED }}
       if: env.GIT_DIFF
+
+
+  doctest:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run doctest
+      run: |
+        make doctest

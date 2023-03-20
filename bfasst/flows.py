@@ -67,8 +67,7 @@ class Flows(Enum):
     XILINX_CONFORMAL_RTL = "xilinx_conformal"
     XILINX_CONFORMAL_IMPL = "xilinx_conformal_impl"
     XILINX_YOSYS_IMPL = "xilinx_yosys_impl"
-    XILINX_YOSYS_WAVEFORM_GRAPH = "xilinx_yosys_waveform_graph"
-    XILINX_YOSYS_WAVEFORM_TESTS = "xilinx_yosys_waveform_tests"
+    XILINX_YOSYS_WAFOVE = "xilinx_yosys_wafove"
     GATHER_IMPL_DATA = "gather_impl_data"
     CONFORMAL_ONLY = "conformal_only"
 
@@ -85,8 +84,7 @@ flow_fcn_map = {
     Flows.XILINX_CONFORMAL_RTL: lambda: flow_xilinx_conformal,
     Flows.XILINX_CONFORMAL_IMPL: lambda: flow_xilinx_conformal_impl,
     Flows.XILINX_YOSYS_IMPL: lambda: flow_xilinx_yosys_impl,
-    Flows.XILINX_YOSYS_WAVEFORM_GRAPH: lambda: flow_xilinx_yosys_waveform_graph,
-    Flows.XILINX_YOSYS_WAVEFORM_TESTS: lambda: flow_xilinx_yosys_waveform_tests,
+    Flows.XILINX_YOSYS_WAFOVE: lambda: flow_wafove,
     Flows.GATHER_IMPL_DATA: lambda: flow_gather_impl_data,
     Flows.CONFORMAL_ONLY: lambda: flow_conformal_only,
     Flows.XILINX: lambda: flow_xilinx,
@@ -234,29 +232,18 @@ def flow_xilinx_yosys_impl(design, flow_args, build_dir):
     return status
 
 
-def flow_xilinx_yosys_waveform_graph(design, flow_args, build_dir):
-    """Vivado synthesis and implementation, reverse with xray, compare via waveforms"""
+def flow_wafove(design, flow_args, build_dir):
+    """Vivado synthesis and implementation, reverse with xray, compare with WaFoVe"""
     status = vivado_synth(design, build_dir, flow_args)
     status = vivado_impl(design, build_dir, flow_args)
 
     # Run X-ray and fasm2bel
     status = xray_rev(design, build_dir, flow_args)
-    # Runs WaFoVe with the intent to view graphs of equivalent designs.
-    status = wave_cmp(design, build_dir, True, 100, False)
 
-    return status
-
-
-def flow_xilinx_yosys_waveform_tests(design, flow_args, build_dir):
-    """Vivado synthesis and implementation, reverse with xray,
-    compare via waveforms (no prompts)"""
-    status = vivado_synth(design, build_dir, flow_args)
-    status = vivado_impl(design, build_dir, flow_args)
-
-    # Run X-ray and fasm2bel
-    status = xray_rev(design, build_dir, flow_args)
-    # Runs WaFoVe with the intent of generating new tests.
-    status = wave_cmp(design, build_dir, False, 100, False)
+    # Input number of tests to run, seed to base random on, whether or not to show all signals
+    # Whether or not to open gtkwave and analyze graphs, and whether or not to open Vivado and
+    # analyze graphs.
+    status = wave_cmp(design, build_dir, flow_args)
 
     return status
 
