@@ -168,9 +168,13 @@ class WaveformCompareTool(CompareTool):
         with open(design.yaml_path, "r") as fp:
             design_props = yaml.safe_load(fp)
 
-        return ("included_all_verilog_files" in design_props) or (
-            "include_all_system_verilog_files" in design_props
-        )
+        if "include_all_verilog_files" in design_props:
+            return(design_props["include_all_verilog_files"])
+        
+        if "include_all_system_verilog_files" in design_props:
+            return(design_props["include_all_system_verilog_files"])
+
+        return False
 
     def check_compare_status(self, log_path):
         """Used to confirm whether a design is equivalent or not."""
