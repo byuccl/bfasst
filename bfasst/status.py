@@ -83,6 +83,7 @@ msg_map = {
     ErrorInjectionStatus.FCN_SUCCESS: "FCN Successful",
     ErrorInjectionStatus.FCN_ERROR: "FCN Error",
     TransformStatus.SUCCESS: "Transform Success",
+    TransformStatus.ERROR: "Transform Error",
 }
 
 
