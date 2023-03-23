@@ -530,11 +530,11 @@ def flow_gather_impl_data(design, flow_args, build_dir):
     return status
 
 
-def flow_ccl_mapping(design, flow_args, build_dir):
+def flow_ccl_mapping(_design, flow_args, _build_dir):
     ccl_map(*flow_args[ToolType.MAP].split(" "))
     return Status(MapStatus.SUCCESS)
 
 
-def flow_struct_mapping(design, flow_args, build_dir):
+def flow_struct_mapping(_design, flow_args, _build_dir):
     structurally_map_netlists(*flow_args[ToolType.MAP].split(" "))
     return Status(MapStatus.SUCCESS)
