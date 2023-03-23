@@ -177,11 +177,11 @@ class XilinxPhysNetlist(TransformTool):
                 continue
 
             if edif_cell_inst.getCellType().getName() in ("MUXF7", "MUXF8"):
-                self.process_muxf7_muxf8(cell)
+                cells_to_remove.extend(self.process_muxf7_muxf8(cell))
                 continue
 
             if edif_cell_inst.getCellType().getName() in ("CARRY4",):
-                self.process_carry4(cell)
+                cells_to_remove.extend(self.process_carry4(cell))
                 continue
 
             # These primitives don't need to get transformed
