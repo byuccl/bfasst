@@ -90,6 +90,7 @@ msg_map = {
     TransformStatus.SUCCESS: "Transform Success",
     MapStatus.SUCCESS: "Map Success",
     MapStatus.ERROR: "Map Error",
+    TransformStatus.ERROR: "Transform Error",
 }
 
 
