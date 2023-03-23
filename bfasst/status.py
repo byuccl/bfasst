@@ -53,6 +53,11 @@ class TransformStatus(enum.Enum):
     ERROR = 1
 
 
+class MapStatus(enum.Enum):
+    SUCCESS = 0
+    ERROR = 1
+
+
 msg_map = {
     SynthStatus.SUCCESS: "Synth Success",
     SynthStatus.ERROR: "!! Synth Error",
@@ -83,6 +88,8 @@ msg_map = {
     ErrorInjectionStatus.FCN_SUCCESS: "FCN Successful",
     ErrorInjectionStatus.FCN_ERROR: "FCN Error",
     TransformStatus.SUCCESS: "Transform Success",
+    MapStatus.SUCCESS: "Map Success",
+    MapStatus.ERROR: "Map Error",
     TransformStatus.ERROR: "Transform Error",
 }
 
