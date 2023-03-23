@@ -169,10 +169,10 @@ class WaveformCompareTool(CompareTool):
             design_props = yaml.safe_load(fp)
 
         if "include_all_verilog_files" in design_props:
-            return(design_props["include_all_verilog_files"])
-        
+            return design_props["include_all_verilog_files"]
+
         if "include_all_system_verilog_files" in design_props:
-            return(design_props["include_all_system_verilog_files"])
+            return design_props["include_all_system_verilog_files"]
 
         return False
 
