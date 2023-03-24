@@ -81,6 +81,7 @@ class XilinxPhysNetlist(TransformTool):
     def __init__(self, work_dir):
         super().__init__(work_dir)
         self.bufgctrl_edif_cell = None
+        self.vcc_edif_net = None
 
     def run(self, design):
         """Transform the logical netlist into a netlist with only physical primitives"""
@@ -134,6 +135,21 @@ class XilinxPhysNetlist(TransformTool):
 
         return status
 
+    def init_vcc_net(self, netlist):
+        """Create an edif vcc cell/net if it doesn't exist"""
+        vcc_edif_cell = netlist.getHDIPrimitive(Unisim.VCC)
+        nets = vcc_edif_cell.getNets()
+        if nets:
+            return nets[0]
+
+        vcc_edif_net = vcc_edif_cell.createNet("vcc_net_phys_netlist")
+        vcc_edif_inst = vcc_edif_cell.createCellInst("vcc_phys_netlist", None)
+        port = vcc_edif_inst.getPort("P")
+        assert port
+        vcc_edif_net.createPortInst(port, vcc_edif_inst)
+
+        return vcc_edif_net
+
     def run_rapidwright(self, design, phys_netlist_checkpoint, phys_netlist_edif_path):
         """Do all rapidwright related processing on the netlist"""
 
@@ -153,16 +169,8 @@ class XilinxPhysNetlist(TransformTool):
         # if vcc_edif_net is None:
         #     vcc_edif_net = netlist.getNetFromHierName("<const1>")
         if vcc_edif_net is None:
-            vcc_edif_cell = netlist.getHDIPrimitive(Unisim.VCC)
-            nets = vcc_edif_cell.getNets()
-            if nets:
-                vcc_edif_net = nets[0]
-            else:
-                vcc_edif_net = vcc_edif_cell.createNet("vcc_net_phys_netlist")
-                vcc_edif_inst = vcc_edif_cell.createCellInst("vcc_phys_netlist", None)
-                port = vcc_edif_inst.getPort("P")
-                assert port
-                vcc_edif_net.createPortInst(port, vcc_edif_inst)
+            vcc_edif_net = self.init_vcc_net(netlist)
+
         self.vcc_edif_net = vcc_edif_net
 
         # Keep a list of old replaced cells to remove after processing
