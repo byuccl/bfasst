@@ -7,6 +7,7 @@ import subprocess
 import sys
 import jpype
 import jpype.imports
+from jpype.types import JInt
 
 from bfasst.config import VIVADO_BIN_PATH
 from bfasst.paths import THIRD_PARTY_PATH
@@ -74,6 +75,7 @@ class XilinxPhysNetlist(TransformTool):
             "S[0]": "S0",
             "CYINIT": "CYINIT",
         },
+        "BUFG": {"I": "I0", "O": "O"},
     }
 
     def run(self, design):
@@ -139,6 +141,10 @@ class XilinxPhysNetlist(TransformTool):
         # Get the LUT6_2 EDIFCell (all LUTs will be replaced with equivalent LUT6_2 primitives)
         lut6_2_edif_cell = netlist.getHDIPrimitive(Unisim.LUT6_2)
 
+        # Init BUFGCTRL cell template
+        self.bufgctrl_edif_cell = netlist.getHDIPrimitive(Unisim.BUFGCTRL)
+        self.vcc_edif_net = rw_design.getVccNet().getLogicalNet()
+
         # Keep a list of old replaced cells to remove after processing
         cells_to_remove = []
 
@@ -176,23 +182,28 @@ class XilinxPhysNetlist(TransformTool):
                 )
                 continue
 
-            if edif_cell_inst.getCellType().getName() in ("MUXF7", "MUXF8"):
+            cell_type = edif_cell_inst.getCellType().getName()
+            if cell_type in ("MUXF7", "MUXF8"):
                 cells_to_remove.extend(self.process_muxf7_muxf8(cell))
                 continue
 
-            if edif_cell_inst.getCellType().getName() in ("CARRY4",):
+            if cell_type in ("CARRY4",):
                 cells_to_remove.extend(self.process_carry4(cell))
                 continue
 
+            if cell_type in ("BUFG",):
+                cells_to_remove.extend(self.process_bufg(cell))
+                continue
+
             # These primitives don't need to get transformed
-            if edif_cell_inst.getCellType().getName() in ("IBUF", "OBUF", "OBUFT", "FDSE", "FDRE"):
+            if cell_type in ("IBUF", "OBUF", "OBUFT", "FDSE", "FDRE"):
                 continue
 
             # TODO: Handle other primitives? RAM*, BUFG->BUFGCTRL, etc.
             print(cell)
             return Status(
                 TransformStatus.ERROR,
-                f"Unhandled primitive {edif_cell_inst.getCellType().getName()}",
+                f"Unhandled primitive {cell_type}",
             )
 
         # Remove old unusued cells
@@ -296,6 +307,70 @@ class XilinxPhysNetlist(TransformTool):
             return []
 
         raise NotImplementedError
+
+    def check_pin(self, physical_pin, logical_pin, edif_cell_inst):
+        """Run assertions to check pin format"""
+        assert len(physical_pin) == 1
+        physical_pin = list(physical_pin)[0]
+
+        port_inst = edif_cell_inst.getPortInst(logical_pin)
+        assert port_inst
+
+        logical_net = port_inst.getNet()
+        assert logical_net
+
+        return (physical_pin, logical_net, port_inst)
+
+    def process_bufg(self, bufg_cell):
+        """Convert BUFG to BUFGCTRL"""
+        bufg_edif_inst = bufg_cell.getEDIFCellInst()
+        assert bufg_edif_inst
+
+        type_name = bufg_edif_inst.getCellType().getName()
+        self.log_color(TermColor.BLUE, f"\nProcessing {type_name}", bufg_cell)
+
+        assert not self.cell_is_default_mapping(bufg_cell)
+
+        new_cell_name = bufg_edif_inst.getName() + "_phys"
+        bufgctrl = bufg_edif_inst.getParentCell().createChildCellInst(
+            new_cell_name, self.bufgctrl_edif_cell
+        )
+
+        self.log("Created new cell", new_cell_name)
+
+        bufgctrl.setPropertiesMap(bufg_edif_inst.createDuplicatePropertiesMap())
+
+        # set default properties
+        for prop_name in ("INIT_OUT", "IS_CE0_INVERTED", "IS_IGNORE1_INVERTED", "IS_S0_INVERTED"):
+            bufgctrl.addProperty(prop_name, JInt(0))
+
+        for prop_name in ("IS_CE1_INVERTED", "IS_IGNORE0_INVERTED", "IS_S1_INVERTED"):
+            bufgctrl.addProperty(prop_name, JInt(1))
+
+        bufgctrl.addProperty("PRESELECT_I0", "TRUE")
+        bufgctrl.addProperty("PRESELECT_I1", "FALSE")
+
+        # Copy pins
+        self.log(f"  Copying pins from {bufg_cell.getName()}")
+        print(bufg_cell.getPinMappingsL2P())
+
+        for logical_pin, physical_pin in bufg_cell.getPinMappingsL2P().items():
+            physical_pin, logical_net, port_inst = self.check_pin(
+                physical_pin, logical_pin, bufg_edif_inst
+            )
+            new_logical_pin = physical_pin
+            new_port = bufgctrl.getPort(new_logical_pin)
+            assert new_port
+            logical_net.createPortInst(new_port, bufgctrl)
+            logical_net.removePortInst(port_inst)
+
+        # Set default connections
+        for port_name in ("CE0", "CE1", "I1", "IGNORE0", "IGNORE1", "S0", "S1"):
+            port = bufgctrl.getPort(port_name)
+            assert port
+            self.vcc_edif_net.createPortInst(port, bufgctrl)
+
+        return [bufg_cell]
 
     def get_lut6_lut5_for_given_lut_cell(self, cell, cells_already_visited):
         """For a given LUT cell, determine the LUT6 and LUT5 at the
