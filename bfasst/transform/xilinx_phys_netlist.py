@@ -143,7 +143,8 @@ class XilinxPhysNetlist(TransformTool):
 
         # Init BUFGCTRL cell template
         self.bufgctrl_edif_cell = netlist.getHDIPrimitive(Unisim.BUFGCTRL)
-        self.vcc_edif_net = rw_design.getVccNet().getLogicalNet()
+        self.const1_net = rw_design.getNetlist().getNetFromHierName("<const1>")
+        assert self.const1_net
 
         # Keep a list of old replaced cells to remove after processing
         cells_to_remove = []
@@ -368,7 +369,7 @@ class XilinxPhysNetlist(TransformTool):
         for port_name in ("CE0", "CE1", "I1", "IGNORE0", "IGNORE1", "S0", "S1"):
             port = bufgctrl.getPort(port_name)
             assert port
-            self.vcc_edif_net.createPortInst(port, bufgctrl)
+            self.const1_net.createPortInst(port, bufgctrl)
 
         return [bufg_cell]
 
