@@ -309,18 +309,30 @@ class XilinxPhysNetlist(TransformTool):
 
         raise NotImplementedError
 
-    def check_pin(self, physical_pin, logical_pin, edif_cell_inst):
-        """Run assertions to check pin format"""
+    def valid_net_transfer(self, physical_pin, logical_pin, old_edif_cell_inst, new_edif_cell_inst):
+        """
+        Run assertions to check pin format and pin to port mapping.
+
+        Assumes that the new logical pin equals the old physical pin.  (LUTs
+        are treated differently. See lut_move_net_to_new_cell).
+
+        Return value:
+        (PortInst, PortInst) - A tuple of the port from the old edif cell and
+                               the port from the new edif cell
+        """
         assert len(physical_pin) == 1
         physical_pin = list(physical_pin)[0]
 
-        port_inst = edif_cell_inst.getPortInst(logical_pin)
-        assert port_inst
+        existing_port_inst = edif_cell_inst.getPortInst(logical_pin)
+        assert existing_port_inst
 
-        logical_net = port_inst.getNet()
+        logical_net = existing_port_inst.getNet()
         assert logical_net
 
-        return (physical_pin, logical_net, port_inst)
+        new_port = new_edif_cell_inst.getPort(physical_pin)
+        assert new_port
+
+        return (existing_port_inst, new_port)
 
     def process_bufg(self, bufg_cell):
         """Convert BUFG to BUFGCTRL"""
@@ -355,15 +367,10 @@ class XilinxPhysNetlist(TransformTool):
         self.log(f"  Copying pins from {bufg_cell.getName()}")
         print(bufg_cell.getPinMappingsL2P())
 
-        for logical_pin, physical_pin in bufg_cell.getPinMappingsL2P().items():
-            physical_pin, logical_net, port_inst = self.check_pin(
-                physical_pin, logical_pin, bufg_edif_inst
-            )
-            new_logical_pin = physical_pin
-            new_port = bufgctrl.getPort(new_logical_pin)
-            assert new_port
+        for pins in bufg_cell.getPinMappingsL2P().items():
+            old_port, new_port = self.check_pin(*pins, bufg_edif_inst, bufgctrl)
             logical_net.createPortInst(new_port, bufgctrl)
-            logical_net.removePortInst(port_inst)
+            logical_net.removePortInst(old_port)
 
         # Set default connections
         for port_name in ("CE0", "CE1", "I1", "IGNORE0", "IGNORE1", "S0", "S1"):
