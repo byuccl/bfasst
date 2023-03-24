@@ -78,6 +78,10 @@ class XilinxPhysNetlist(TransformTool):
         "BUFG": {"I": "I0", "O": "O"},
     }
 
+    def __init__(self, work_dir):
+        super().__init__(work_dir)
+        self.bufgctrl_edif_cell = None
+
     def run(self, design):
         """Transform the logical netlist into a netlist with only physical primitives"""
         phys_netlist_verilog_path = design.impl_edif_path.parent / (
