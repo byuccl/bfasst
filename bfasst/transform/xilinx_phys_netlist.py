@@ -268,14 +268,12 @@ class XilinxPhysNetlist(TransformTool):
         default_l2p_map = XilinxPhysNetlist.STD_PIN_MAP_BY_CELL[type_name]
 
         l2p = cell.getPinMappingsL2P()
-        permuted = False
         for logical, physical in default_l2p_map.items():
             if logical in l2p and list(l2p[logical]) != [physical]:
                 print(list(l2p[logical]), "<>", [physical])
-                permuted = True
-                break
+                return False
 
-        return permuted
+        return True
 
     def process_muxf7_muxf8(self, cell):
         """Process MUXF7/MUXF8 primitive
@@ -286,8 +284,7 @@ class XilinxPhysNetlist(TransformTool):
         type_name = cell.getEDIFCellInst().getCellType().getName()
         self.log_color(TermColor.BLUE, f"\nProcessing {type_name}", cell)
 
-        permuted = self.cell_is_default_mapping(cell)
-        if not permuted:
+        if self.cell_is_default_mapping(cell):
             self.log("  Inputs not permuted, skipping")
             return []
 
@@ -302,8 +299,8 @@ class XilinxPhysNetlist(TransformTool):
         self.log_color(TermColor.BLUE, f"\nProcessing {type_name}", cell)
 
         print(cell.getPinMappingsL2P())
-        permuted = self.cell_is_default_mapping(cell)
-        if not permuted:
+
+        if self.cell_is_default_mapping(cell):
             self.log("  Inputs not permuted, skipping")
             return []
 
@@ -342,7 +339,7 @@ class XilinxPhysNetlist(TransformTool):
         type_name = bufg_edif_inst.getCellType().getName()
         self.log_color(TermColor.BLUE, f"\nProcessing {type_name}", bufg_cell)
 
-        assert not self.cell_is_default_mapping(bufg_cell)
+        assert self.cell_is_default_mapping(bufg_cell)
 
         new_cell_name = bufg_edif_inst.getName() + "_phys"
         bufgctrl = bufg_edif_inst.getParentCell().createChildCellInst(
