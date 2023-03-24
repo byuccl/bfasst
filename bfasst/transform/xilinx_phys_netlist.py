@@ -143,8 +143,23 @@ class XilinxPhysNetlist(TransformTool):
 
         # Init BUFGCTRL cell template
         self.bufgctrl_edif_cell = netlist.getHDIPrimitive(Unisim.BUFGCTRL)
-        self.const1_net = rw_design.getNetlist().getNetFromHierName("<const1>")
-        assert self.const1_net
+
+        # Get/Create the VCC EDIF Net
+        vcc_edif_net = rw_design.getVccNet().getLogicalNet()
+        # if vcc_edif_net is None:
+        #     vcc_edif_net = netlist.getNetFromHierName("<const1>")
+        if vcc_edif_net is None:
+            vcc_edif_cell = netlist.getHDIPrimitive(Unisim.VCC)
+            nets = vcc_edif_cell.getNets()
+            if nets:
+                vcc_edif_net = nets[0]
+            else:
+                vcc_edif_net = vcc_edif_cell.createNet("vcc_net_phys_netlist")
+                vcc_edif_inst = vcc_edif_cell.createCellInst("vcc_phys_netlist", None)
+                port = vcc_edif_inst.getPort("P")
+                assert port
+                vcc_edif_net.createPortInst(port, vcc_edif_inst)
+        self.vcc_edif_net = vcc_edif_net
 
         # Keep a list of old replaced cells to remove after processing
         cells_to_remove = []
@@ -306,30 +321,29 @@ class XilinxPhysNetlist(TransformTool):
 
         raise NotImplementedError
 
-    def valid_net_transfer(self, physical_pin, logical_pin, old_edif_cell_inst, new_edif_cell_inst):
+    def valid_net_transfer(self, logical_pin, physical_pin, old_edif_cell_inst, new_edif_cell_inst):
         """
-        Run assertions to check pin format and pin to port mapping.
+        Run assertions to check pin format and pin to port mapping then add new cell to the net and
+        remove the old cell.
 
         Assumes that the new logical pin equals the old physical pin.  (LUTs
         are treated differently. See lut_move_net_to_new_cell).
-
-        Return value:
-        (PortInst, PortInst) - A tuple of the port from the old edif cell and
-                               the port from the new edif cell
         """
+
         assert len(physical_pin) == 1
         physical_pin = list(physical_pin)[0]
 
-        existing_port_inst = edif_cell_inst.getPortInst(logical_pin)
-        assert existing_port_inst
+        old_port = old_edif_cell_inst.getPortInst(logical_pin)
+        assert old_port
 
-        logical_net = existing_port_inst.getNet()
+        logical_net = old_port.getNet()
         assert logical_net
 
         new_port = new_edif_cell_inst.getPort(physical_pin)
         assert new_port
 
-        return (existing_port_inst, new_port)
+        logical_net.createPortInst(new_port, new_edif_cell_inst)
+        logical_net.removePortInst(old_port)
 
     def process_bufg(self, bufg_cell):
         """Convert BUFG to BUFGCTRL"""
@@ -365,15 +379,13 @@ class XilinxPhysNetlist(TransformTool):
         print(bufg_cell.getPinMappingsL2P())
 
         for pins in bufg_cell.getPinMappingsL2P().items():
-            old_port, new_port = self.check_pin(*pins, bufg_edif_inst, bufgctrl)
-            logical_net.createPortInst(new_port, bufgctrl)
-            logical_net.removePortInst(old_port)
+            self.valid_net_transfer(*pins, bufg_edif_inst, bufgctrl)
 
         # Set default connections
         for port_name in ("CE0", "CE1", "I1", "IGNORE0", "IGNORE1", "S0", "S1"):
             port = bufgctrl.getPort(port_name)
             assert port
-            self.const1_net.createPortInst(port, bufgctrl)
+            self.vcc_edif_net.createPortInst(port, bufgctrl)
 
         return [bufg_cell]
 
