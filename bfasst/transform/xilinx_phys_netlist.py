@@ -142,8 +142,12 @@ class XilinxPhysNetlist(TransformTool):
         if nets:
             return nets[0]
 
-        vcc_edif_net = vcc_edif_cell.createNet("vcc_net_phys_netlist")
-        vcc_edif_inst = vcc_edif_cell.createCellInst("vcc_phys_netlist", None)
+        # Create new VCC instance as part of top-level
+        vcc_edif_inst = netlist.getTopCell().createChildCellInst("vcc_phys_netlist", vcc_edif_cell)
+
+        # Create VCC net as part of top-level
+        vcc_edif_net = EDIFNet("vcc_net_phys_netlist", netlist.getTopCell())
+
         port = vcc_edif_inst.getPort("P")
         assert port
         vcc_edif_net.createPortInst(port, vcc_edif_inst)
