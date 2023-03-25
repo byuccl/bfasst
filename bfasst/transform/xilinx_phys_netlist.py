@@ -305,6 +305,7 @@ class XilinxPhysNetlist(TransformTool):
         matches = re.search("^ERROR: (.*)$", txt, re.M)
         if matches:
             return Status(TransformStatus.ERROR, matches.group(1))
+        return self.success_status
 
     def cell_is_default_mapping(self, cell):
         """This checks whether the cell is using the default logical to physical mappings"""
