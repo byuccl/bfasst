@@ -13,9 +13,12 @@ from bfasst.compare.onespin import OneSpin_CompareTool
 from bfasst.design import Design
 from bfasst.error_injection.error_injector import ErrorInjector_ErrorInjectionTool
 from bfasst.impl.ic2 import Ic2ImplementationTool
+from bfasst.netlist_mapping.ccl_mapping import map_netlists as ccl_map
+from bfasst.netlist_mapping.structural_mapping import structurally_map_netlists
 from bfasst.opt.ic2_lse import Ic2LseOptTool
 from bfasst.opt.ic2_synplify import Ic2SynplifyOptTool
 from bfasst.reverse_bit.icestorm import Icestorm_ReverseBitTool
+from bfasst.status import Status, MapStatus
 from bfasst.synth.ic2_lse import Ic2LseSynthesisTool
 from bfasst.synth.ic2_synplify import Ic2SynplifySynthesisTool
 from bfasst.synth.yosys import YosysTechSynthTool
@@ -50,8 +53,10 @@ class Flows(Enum):
     XILINX_AND_REVERSED = "xilinx_and_reversed"
     XILINX_PHYS_NETLIST = "xilinx_phys_netlist"
     XILINX_PHYS_NETLIST_COMPARE = "xilinx_phys_netlist_cmp"
+    STRUCTURAL_MAP = "structural_map"
 
     # These flows may be legacy and need unit tests to verify they are working
+    CCL_MAP = "ccl_map"
     IC2_LSE_CONFORMAL = "IC2_lse_conformal"
     IC2_SYNPLIFY_CONFORMAL = "IC2_synplify_conformal"
     SYNPLIFY_IC2_ONESPIN = "synplify_IC2_icestorm_onespin"
@@ -84,6 +89,8 @@ flow_fcn_map = {
     Flows.CONFORMAL_ONLY: lambda: flow_conformal_only,
     Flows.XILINX: lambda: flow_xilinx,
     Flows.XILINX_PHYS_NETLIST: lambda: flow_xilinx_phys_netlist,
+    Flows.CCL_MAP: lambda: flow_ccl_mapping,
+    Flows.STRUCTURAL_MAP: lambda: flow_struct_mapping,
     Flows.XILINX_PHYS_NETLIST_COMPARE: lambda: flow_xilinx_phys_netlist_cmp,
     Flows.XILINX_AND_REVERSED: lambda: flow_xilinx_and_reversed,
 }
@@ -521,3 +528,13 @@ def flow_gather_impl_data(design, flow_args, build_dir):
     status = icestorm_rev_bit(design, build_dir, flow_args)
 
     return status
+
+
+def flow_ccl_mapping(_design, flow_args, _build_dir):
+    ccl_map(*flow_args[ToolType.MAP].split(" "))
+    return Status(MapStatus.SUCCESS)
+
+
+def flow_struct_mapping(_design, flow_args, _build_dir):
+    structurally_map_netlists(*flow_args[ToolType.MAP].split(" "))
+    return Status(MapStatus.SUCCESS)
