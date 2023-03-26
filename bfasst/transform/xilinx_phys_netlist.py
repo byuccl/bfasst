@@ -290,7 +290,21 @@ class XilinxPhysNetlist(TransformTool):
             if proc.returncode:
                 return Status(TransformStatus.ERROR)
 
+        status = self.check_vivado_output(vivado_log_path)
+        if status:
+            return status
+
         self.log("Exported new netlist to", phys_netlist_verilog_path)
+        return self.success_status
+
+    def check_vivado_output(self, vivado_log_path):
+        """Check the log output of the Vivado exeuction for ERROR messages"""
+        txt = open(vivado_log_path).read()
+
+        # Check for ERROR message:
+        matches = re.search("^ERROR: (.*)$", txt, re.M)
+        if matches:
+            return Status(TransformStatus.ERROR, matches.group(1))
         return self.success_status
 
     def cell_is_default_mapping(self, cell):
@@ -716,7 +730,7 @@ class XilinxPhysNetlist(TransformTool):
             lut5_eqn_phys = self.process_lut_eqn(lut5_cell, True)
 
         if not lut5_cell:
-            init_str = LUTTools.getLUTInitFromEquation(lut6_eqn_phys, 6)
+            init_str = "64'h" + LUTTools.getLUTInitFromEquation(lut6_eqn_phys, 6)[4:].zfill(16)
         else:
             init_str = (
                 "64'h"
