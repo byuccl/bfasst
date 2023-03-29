@@ -23,7 +23,9 @@ packages:
 		openjdk-19-jdk \
 		capnproto \
 		libcapnp-dev \
-		jq
+		jq \
+		iverilog \
+		gtkwave
 	
 python_packages:
 	$(IN_ENV) python3 -m pip install -r requirements.txt
