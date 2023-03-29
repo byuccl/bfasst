@@ -84,8 +84,9 @@ class XilinxPhysNetlist(TransformTool):
         self.bufgctrl_edif_cell = None
         self.vcc_edif_net = None
 
-        # Rapidwright design
+        # Rapidwright design / netlist
         self.rw_design = None
+        self.rw_netlist = None
 
     def run(self, design):
         """Transform the logical netlist into a netlist with only physical primitives"""
@@ -197,7 +198,7 @@ class XilinxPhysNetlist(TransformTool):
         for cell in self.rw_design.getCells():
             edif_cell_inst = cell.getEDIFCellInst()
 
-            print_color(
+            self.log_color(
                 TermColor.RED,
                 cell.getName(),
                 f"({edif_cell_inst.getCellType().getName() if edif_cell_inst else 'None'})",
@@ -271,7 +272,8 @@ class XilinxPhysNetlist(TransformTool):
                 lut6_cell = site_inst.getCell(lut6_bel_name)
                 lut5_cell = site_inst.getCell(lut5_bel_name)
 
-                self.process_lut(lut6_cell, lut5_cell, lut6_2_edif_cell)
+                if lut6_cell or lut5_cell:
+                    self.process_lut(lut6_cell, lut5_cell, lut6_2_edif_cell)
 
                 if lut6_cell:
                     cells_already_visited.add(lut6_cell)
@@ -444,19 +446,16 @@ class XilinxPhysNetlist(TransformTool):
         """This function takes a LUT* from the netlist and replaces with with a LUT6_2
         with logical mapping equal to the physical mapping."""
 
+        assert lut6_cell is not None
         self.log_color(
             TermColor.BLUE,
-            "\nProcessing and replacing LUT",
-            lut6_cell,
-            "(routethru)" if lut6_cell.isRoutethru() else "",
+            "\nProcessing and replacing LUT(s):",
+            ",".join(
+                str(lut_cell) + ("(routethru)" if lut_cell.isRoutethru() else "")
+                for lut_cell in (lut6_cell, lut5_cell)
+                if lut_cell is not None
+            ),
         )
-        if lut5_cell:
-            self.log_color(
-                TermColor.BLUE,
-                "...along with co-located LUT",
-                lut5_cell,
-                "(routethru)" if lut5_cell.isRoutethru() else "",
-            )
 
         lut6_edif_cell_inst = lut6_cell.getEDIFCellInst()
         assert lut6_edif_cell_inst
@@ -546,7 +545,12 @@ class XilinxPhysNetlist(TransformTool):
         self.log("Creating routethru for", cell.getName())
 
         # Create the new net
-        new_net_name = cell.getName() + "_routethru_" + str(cell.getBEL().getName())[0]
+        new_net_name = (
+            cell.getName()
+            + "_routethru_"
+            + str(cell.getBEL().getName())[0]
+            + ("6" if not is_lut5 else "5")
+        )
         self.log("  Creating new net", new_net_name)
         new_net = EDIFNet(new_net_name, cell.getEDIFCellInst().getParentCell())
 
