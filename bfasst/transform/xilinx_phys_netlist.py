@@ -251,7 +251,9 @@ class XilinxPhysNetlist(TransformTool):
         self.rw_netlist.exportEDIF(phys_netlist_edif_path)
 
     def process_all_luts(self, cells_already_visited):
-        # Get the LUT6_2 EDIFCell (all LUTs will be replaced with equivalent LUT6_2 primitives)
+        """Visit all LUTs and replace them with LUT6_2 instances"""
+
+        # Get the LUT6_2 EDIFCell
         lut6_2_edif_cell = self.rw_netlist.getHDIPrimitive(Unisim.LUT6_2)
 
         for site_inst in self.rw_design.getSiteInsts():
@@ -365,8 +367,6 @@ class XilinxPhysNetlist(TransformTool):
         type_name = cell.getEDIFCellInst().getCellType().getName()
         self.log_color(TermColor.BLUE, f"\nProcessing {type_name}", cell)
 
-        print(cell.getPinMappingsL2P())
-
         if self.cell_is_default_mapping(cell):
             self.log("  Inputs not permuted, skipping")
             return []
@@ -428,7 +428,6 @@ class XilinxPhysNetlist(TransformTool):
 
         # Copy pins
         self.log(f"  Copying pins from {bufg_cell.getName()}")
-        print(bufg_cell.getPinMappingsL2P())
 
         for pins in bufg_cell.getPinMappingsL2P().items():
             self.valid_net_transfer(*pins, bufg_edif_inst, bufgctrl)
@@ -441,46 +440,9 @@ class XilinxPhysNetlist(TransformTool):
 
         return [bufg_cell]
 
-    def get_lut6_lut5_for_given_lut_cell(self, cell, cells_already_visited):
-        """For a given LUT cell, determine the LUT6 and LUT5 at the
-        location and return them"""
-
-        # Check if there is another LUT at this site/bel
-        other_lut_cell = None
-        other_cells_at_this_bel = [
-            other_cell
-            for other_cell in cell.getSiteInst().getCells()
-            if fnmatch(str(other_cell.getBELName()), f"{str(cell.getBELName())[0]}?LUT")
-            and other_cell != cell
-        ]
-        # Shouldn't have more than one other LUT at this location
-        assert len(other_cells_at_this_bel) <= 1
-
-        if other_cells_at_this_bel:
-            other_lut_cell = other_cells_at_this_bel[0]
-            cells_already_visited.add(other_lut_cell)
-
-        # Determine which is the LUT6 vs LUT5
-        if not other_lut_cell:
-            lut6_cell = cell
-            lut5_cell = None
-        elif self.cell_is_6lut(cell):
-            lut6_cell = cell
-            lut5_cell = other_lut_cell
-        else:
-            lut6_cell = other_lut_cell
-            lut5_cell = cell
-
-        assert self.cell_is_6lut(lut6_cell)
-        assert lut5_cell is None or self.cell_is_5lut(lut5_cell)
-
-        return (lut6_cell, lut5_cell)
-
     def process_lut(self, lut6_cell, lut5_cell, lut6_2_cell):
         """This function takes a LUT* from the netlist and replaces with with a LUT6_2
         with logical mapping equal to the physical mapping."""
-
-        # lut6_cell, lut5_cell = self.get_lut6_lut5_for_given_lut_cell(cell, cells_already_visited)
 
         self.log_color(
             TermColor.BLUE,
@@ -500,7 +462,15 @@ class XilinxPhysNetlist(TransformTool):
         assert lut6_edif_cell_inst
 
         # Create a new LUT6_2 instance
-        new_cell_name = lut6_edif_cell_inst.getName() + "_phys"
+        routethru_only = lut6_cell.isRoutethru() and (lut5_cell is None or lut5_cell.isRoutethru())
+
+        if routethru_only:
+            # Suffix routethru as _RT(ABCD)
+            new_cell_name = (
+                lut6_edif_cell_inst.getName() + "_routethru_" + str(lut6_cell.getBEL().getName())[0]
+            )
+        else:
+            new_cell_name = lut6_edif_cell_inst.getName() + "_phys"
         if lut5_cell:
             new_cell_name += "_shared"
         new_cell_inst = lut6_edif_cell_inst.getParentCell().createChildCellInst(
@@ -516,7 +486,6 @@ class XilinxPhysNetlist(TransformTool):
         physical_pins_to_nets = {}
 
         self.log(f"Processing LUT {lut6_cell.getName()}")
-        print(lut6_cell.getPinMappingsL2P())
         for logical_pin, physical_pin in lut6_cell.getPinMappingsL2P().items():
             assert len(physical_pin) == 1
             physical_pin = list(physical_pin)[0]
@@ -531,8 +500,6 @@ class XilinxPhysNetlist(TransformTool):
 
         # Now do the same for the other LUT
         if lut5_cell:
-            print(lut5_cell.getPinMappingsL2P())
-
             self.log(f"Processing LUT {lut5_cell.getName()}")
             for logical_pin, physical_pin in lut5_cell.getPinMappingsL2P().items():
                 assert len(physical_pin) == 1
@@ -579,7 +546,7 @@ class XilinxPhysNetlist(TransformTool):
         self.log("Creating routethru for", cell.getName())
 
         # Create the new net
-        new_net_name = cell.getName() + "_routethru"
+        new_net_name = cell.getName() + "_routethru_" + str(cell.getBEL().getName())[0]
         self.log("  Creating new net", new_net_name)
         new_net = EDIFNet(new_net_name, cell.getEDIFCellInst().getParentCell())
 
@@ -607,7 +574,6 @@ class XilinxPhysNetlist(TransformTool):
         logical_pins = list(cell.getPinMappingsL2P().keys())
         assert len(logical_pins) == 1
         routed_to_port_name = str(logical_pins[0])
-        print(routed_to_port_name)
 
         # Handle bus based ports (eg CARRY4 )
         routed_to_port_idx = None
@@ -667,7 +633,6 @@ class XilinxPhysNetlist(TransformTool):
             if port_inst.getDirection() == EDIFDirection.INPUT:
                 self.log("    Input driven by net", logical_net)
 
-                print(physical_pin)
                 # A5 becomes I4, A1 becomes I0, etc.
                 new_logical_pin = "I" + str(int(str(physical_pin[1])) - 1)
                 self.log(
