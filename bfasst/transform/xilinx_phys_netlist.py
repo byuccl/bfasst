@@ -23,6 +23,7 @@ jpype.startJVM(
     ]
 )
 # pylint: disable=wrong-import-position,wrong-import-order
+from com.xilinx.rapidwright.device import SiteTypeEnum
 from com.xilinx.rapidwright.design import Design, Unisim
 from com.xilinx.rapidwright.edif import EDIFDirection, EDIFNet
 from com.xilinx.rapidwright.design.tools import LUTTools
@@ -183,6 +184,13 @@ class XilinxPhysNetlist(TransformTool):
         # Keep a list of cells already visited and skip them
         # This happens when we process LUTS mapped to the same BEL
         cells_already_visited = set()
+
+        # First loop through all sites and deal with LUTs.  We can't use Design.getCells() for this
+        # as it does not return LUT routethru objects.
+        for site_inst in rw_design.getSiteInsts():
+            if site_inst.getSiteTypeEnum() in (SiteTypeEnum.SLICEL, SiteTypeEnum.SLICEM):
+                raise NotImplementedError
+        raise NotImplementedError
 
         # Loop through all cells in the design
         # TODO: getCells(), doesn't return routethru cells.  However, getSiteInst().getCells() DOES,
