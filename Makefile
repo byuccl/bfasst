@@ -23,7 +23,9 @@ packages:
 		openjdk-19-jdk \
 		capnproto \
 		libcapnp-dev \
-		jq
+		jq \
+		iverilog \
+		gtkwave
 	
 python_packages:
 	$(IN_ENV) python3 -m pip install -r requirements.txt
@@ -50,10 +52,6 @@ submodules:
 
 install_fasm2bels: submodules
 	cd third_party/fasm2bels && make env
-	
-#TODO: Remove this once https://github.com/f4pga/prjxray/issues/1950 is fixed
-	cd third_party/fasm2bels/third_party/prjxray && git apply ../../../../prjxray-cpp17.patch
-	
 	$(IN_ENV) cd third_party/fasm2bels && make build
 	cd third_party/fasm2bels && make test-py
 
@@ -69,7 +67,7 @@ env:
 	echo ". `pwd`/third_party/rapidwright.sh" >> "env.sh"
 	echo "fi" >> "env.sh"
 	echo "export INTERCHANGE_SCHEMA_PATH=`pwd`/third_party/RapidWright/interchange/fpga-interchange-schema/interchange" >> "env.sh"
-	echo "export VIVADO_PATH=/tools/Xilinx/Vivado/2020.2/bin/vivado" >> "env.sh"
+	echo "export VIVADO_PATH=/tools/Xilinx/Vivado/2022.2/bin/vivado" >> "env.sh"
 
 install_yosys:
 	# Yosys

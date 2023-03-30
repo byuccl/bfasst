@@ -15,16 +15,16 @@ concurrency:
 jobs:
   # First list all the files in experiments/tests, and generate a JSON string of all the files
   collect-experiments:
-    runs-on: [self-hosted, linux]
+    runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
-      matrix-wip: ${{ steps.set-matrix-wip.outputs.matrix-wip }}
+      # matrix-wip: ${{ steps.set-matrix-wip.outputs.matrix-wip }}
     steps:
     - uses: actions/checkout@v3
     - id: set-matrix
       run: echo "matrix=$(ls experiments/tests/*.yaml | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
-    - id: set-matrix-wip
-      run: echo "matrix-wip=$(ls experiments/wip/*.yaml | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+    # - id: set-matrix-wip
+    #   run: echo "matrix-wip=$(ls experiments/wip/*.yaml | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
 
   # Build a matrix run of all experiments generated in previous job
   run-experiments:
@@ -34,6 +34,12 @@ jobs:
       matrix:
         experiment: ${{ fromJson(needs.collect-experiments.outputs.matrix) }}
     steps:
+    - name: 'Cleanup build folder'
+      run: |
+        ls -la ./
+        rm -rf ./* || true
+        rm -rf ./.??* || true
+        ls -la ./
     - uses: actions/checkout@v3
       with:
         submodules: 'recursive'
@@ -45,21 +51,23 @@ jobs:
         source env.sh
         python scripts/run_experiment.py ${{ matrix.experiment }} -j8 --print_period 0
 
-  run-experiments-wip:
-    needs: collect-experiments
-    runs-on: [self-hosted, linux]
-    strategy:
-      matrix:
-        experiment: ${{ fromJson(needs.collect-experiments.outputs.matrix-wip) }}
-    continue-on-error: true
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        submodules: 'recursive'
-    - uses: ./.github/actions/setup_env
-    - name: experiments
-      timeout-minutes: 30
-      run: |
-        source .venv/bin/activate
-        source env.sh
-        python scripts/run_experiment.py ${{ matrix.experiment }} -j8 --print_period 0
+  # Don't use WIP tests until Github UI is fixed (https://github.com/orgs/community/discussions/15452)
+  #
+  # run-experiments-wip:
+  #   needs: collect-experiments
+  #   runs-on: [self-hosted, linux]
+  #   strategy:
+  #     matrix:
+  #       experiment: ${{ fromJson(needs.collect-experiments.outputs.matrix-wip) }}
+  #   continue-on-error: true
+  #   steps:
+  #   - uses: actions/checkout@v3
+  #     with:
+  #       submodules: 'recursive'
+  #   - uses: ./.github/actions/setup_env
+  #   - name: experiments
+  #     timeout-minutes: 30
+  #     run: |
+  #       source .venv/bin/activate
+  #       source env.sh
+  #       python scripts/run_experiment.py ${{ matrix.experiment }} -j8 --print_period 0

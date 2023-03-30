@@ -21,5 +21,10 @@ runs:
     shell: bash
     run: |
       . env.sh && make install_fasm2bels
+
+  - name: wafove
+    shell: bash
+    run: |
+      . env.sh && make install_wafove
     
           
