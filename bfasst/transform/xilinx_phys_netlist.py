@@ -8,21 +8,17 @@ import sys
 import jpype
 import jpype.imports
 from jpype.types import JInt
+from bfasst import jpype_jvm
 
 from bfasst.config import VIVADO_BIN_PATH
-from bfasst.paths import THIRD_PARTY_PATH
 from bfasst.status import Status, TransformStatus
 from bfasst.tool import ToolProduct
 from bfasst.transform.base import TransformTool
 from bfasst.utils import TermColor, print_color
 
-jpype.startJVM(
-    classpath=[
-        str(THIRD_PARTY_PATH / "RapidWright" / "bin"),
-        *(str(s) for s in (THIRD_PARTY_PATH / "RapidWright" / "jars").glob("*.jar")),
-    ]
-)
+
 # pylint: disable=wrong-import-position,wrong-import-order
+jpype_jvm.start()
 from com.xilinx.rapidwright.device import SiteTypeEnum
 from com.xilinx.rapidwright.design import Design, Unisim
 from com.xilinx.rapidwright.edif import EDIFDirection, EDIFNet
@@ -77,6 +73,16 @@ class XilinxPhysNetlist(TransformTool):
             "CYINIT": "CYINIT",
         },
         "BUFG": {"I": "I0", "O": "O"},
+        "LUT6_2": {
+            "I0": "A1",
+            "I1": "A2",
+            "I2": "A3",
+            "I3": "A4",
+            "I4": "A5",
+            "I5": "A6",
+            "O5": "O5",
+            "O6": "O6",
+        },
     }
 
     def __init__(self, work_dir):
@@ -87,6 +93,9 @@ class XilinxPhysNetlist(TransformTool):
         # Rapidwright design / netlist
         self.rw_design = None
         self.rw_netlist = None
+
+        # Cell to use for all new LUTs
+        self.lut6_2_edif_cell = None
 
     def run(self, design):
         """Transform the logical netlist into a netlist with only physical primitives"""
@@ -140,12 +149,19 @@ class XilinxPhysNetlist(TransformTool):
 
         return status
 
-    def init_vcc_net(self):
+    def get_or_create_vcc_net(self):
         """Create an edif vcc cell/net if it doesn't exist"""
         vcc_edif_cell = self.rw_netlist.getHDIPrimitive(Unisim.VCC)
-        nets = vcc_edif_cell.getNets()
-        if nets:
-            return nets[0]
+
+        vcc_insts = [
+            inst
+            for inst in self.rw_netlist.getTopCell().getCellInsts()
+            if inst.getCellType() == vcc_edif_cell
+        ]
+        assert len(vcc_insts) <= 1
+
+        if vcc_insts:
+            return vcc_insts[0].getPortInst("P").getNet()
 
         # Create new VCC instance as part of top-level
         vcc_edif_inst = self.rw_netlist.getTopCell().createChildCellInst(
@@ -175,11 +191,7 @@ class XilinxPhysNetlist(TransformTool):
         self.bufgctrl_edif_cell = self.rw_netlist.getHDIPrimitive(Unisim.BUFGCTRL)
 
         # Get/Create the VCC EDIF Net
-        vcc_edif_net = self.rw_design.getVccNet().getLogicalNet()
-        # if vcc_edif_net is None:
-        #     vcc_edif_net = netlist.getNetFromHierName("<const1>")
-        if vcc_edif_net is None:
-            vcc_edif_net = self.init_vcc_net()
+        vcc_edif_net = self.get_or_create_vcc_net()
 
         self.vcc_edif_net = vcc_edif_net
 
@@ -255,7 +267,7 @@ class XilinxPhysNetlist(TransformTool):
         """Visit all LUTs and replace them with LUT6_2 instances"""
 
         # Get the LUT6_2 EDIFCell
-        lut6_2_edif_cell = self.rw_netlist.getHDIPrimitive(Unisim.LUT6_2)
+        self.lut6_2_edif_cell = self.rw_netlist.getHDIPrimitive(Unisim.LUT6_2)
 
         for site_inst in self.rw_design.getSiteInsts():
             if site_inst.getSiteTypeEnum() not in (SiteTypeEnum.SLICEL, SiteTypeEnum.SLICEM):
@@ -273,7 +285,7 @@ class XilinxPhysNetlist(TransformTool):
                 lut5_cell = site_inst.getCell(lut5_bel_name)
 
                 if lut6_cell or lut5_cell:
-                    self.process_lut(lut6_cell, lut5_cell, lut6_2_edif_cell)
+                    self.process_lut(lut6_cell, lut5_cell)
 
                 if lut6_cell:
                     cells_already_visited.add(lut6_cell)
@@ -442,7 +454,7 @@ class XilinxPhysNetlist(TransformTool):
 
         return [bufg_cell]
 
-    def process_lut(self, lut6_cell, lut5_cell, lut6_2_cell):
+    def process_lut(self, lut6_cell, lut5_cell):
         """This function takes a LUT* from the netlist and replaces with with a LUT6_2
         with logical mapping equal to the physical mapping."""
 
@@ -456,32 +468,33 @@ class XilinxPhysNetlist(TransformTool):
                 if lut_cell is not None
             ),
         )
-
         lut6_edif_cell_inst = lut6_cell.getEDIFCellInst()
         assert lut6_edif_cell_inst
 
-        # Create a new LUT6_2 instance
-        routethru_only = lut6_cell.isRoutethru() and (lut5_cell is None or lut5_cell.isRoutethru())
+        #### Get name for new LUT6_2 cell
+        new_cell_name = lut6_edif_cell_inst.getName() + "_phys"
 
-        if routethru_only:
+        # Routethru only?
+        if lut6_cell.isRoutethru() and (lut5_cell is None or lut5_cell.isRoutethru()):
             # Suffix routethru as _RT(ABCD)
             new_cell_name = (
                 lut6_edif_cell_inst.getName() + "_routethru_" + str(lut6_cell.getBEL().getName())[0]
             )
-        else:
-            new_cell_name = lut6_edif_cell_inst.getName() + "_phys"
+
         if lut5_cell:
             new_cell_name += "_shared"
+
+        #### Create the new LUT6_2 instance
         new_cell_inst = lut6_edif_cell_inst.getParentCell().createChildCellInst(
-            new_cell_name, lut6_2_cell
+            new_cell_name, self.lut6_2_edif_cell
         )
         self.log("Created new cell", new_cell_name)
 
-        # Copy all properties from existing LUT to new LUT (INIT will be fixed later)
+        ##### Copy all properties from existing LUT to new LUT (INIT will be fixed later)
         new_cell_inst.setPropertiesMap(lut6_edif_cell_inst.createDuplicatePropertiesMap())
         # TODO: If other_lut_cell is not None, then check that properties don't conflict?
 
-        # Wire up inputs/outputs
+        #### Wire up inputs/outputs
         physical_pins_to_nets = {}
 
         self.log(f"Processing LUT {lut6_cell.getName()}")
@@ -517,6 +530,15 @@ class XilinxPhysNetlist(TransformTool):
                     physical_pin,
                     already_connected_net=physical_pins_to_nets.get(physical_pin),
                 )
+
+        # Connect up remaining inputs to VCC
+        for logical_port in XilinxPhysNetlist.STD_PIN_MAP_BY_CELL["LUT6_2"]:
+            if logical_port.startswith("I"):
+                port = new_cell_inst.getPortInst(logical_port)
+                if not port:
+                    self.vcc_edif_net.createPortInst(
+                        new_cell_inst.getPort(logical_port), new_cell_inst
+                    )
 
         # If old cell is a LUT route through some extra processing is required.
         # LUT route through cells don't exist in the original netlist (the original net
