@@ -32,6 +32,7 @@ from bfasst.tool_wrappers import (
     ic2_synplify_synth,
     icestorm_rev_bit,
     onespin_cmp,
+    structural_cmp,
     vivado_impl,
     vivado_synth,
     wave_cmp,
@@ -178,8 +179,7 @@ def flow_xilinx_phys_netlist_cmp(design, flow_args, build_dir):
     """Compare Xilinx physical netlist to FASM2BELs netlist"""
     status = flow_xilinx_phys_netlist(design, flow_args, build_dir)
     status = xray_rev(design, build_dir, flow_args)
-
-    # TODO: Run pablo's structural compare
+    status = structural_cmp(design, build_dir, flow_args)
     return status
 
 

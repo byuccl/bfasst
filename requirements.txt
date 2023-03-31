@@ -10,3 +10,5 @@ spydrnet
 werkzeug
 pylint
 JPype1
+bidict
+

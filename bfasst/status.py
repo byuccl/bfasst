@@ -38,6 +38,7 @@ class CompareStatus(enum.Enum):
     TIMEOUT = 4
     PARSE_PROBLEM = 5
     NEED_TO_RUN_ONESPIN = 6
+    COULD_NOT_MAP = 7
 
 
 class ErrorInjectionStatus(enum.Enum):
@@ -82,6 +83,7 @@ msg_map = {
     CompareStatus.TIMEOUT: "!! Compare timeout",
     CompareStatus.PARSE_PROBLEM: "!! Parse error",
     CompareStatus.NEED_TO_RUN_ONESPIN: "Exported to Onespin",
+    CompareStatus.COULD_NOT_MAP: "Could not map",
     ErrorInjectionStatus.SUCCESS: "Error Injection Successful",
     ErrorInjectionStatus.ERROR: "Error Injection Unsuccessful",
     ErrorInjectionStatus.NO_YAML: "No YAML for Error Injection",
