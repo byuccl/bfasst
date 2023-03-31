@@ -7,12 +7,6 @@ from bfasst.compare.base import CompareTool
 from bfasst.status import CompareStatus, Status
 from bfasst.utils import TermColor, error, properties_are_equal
 
-# pylint: disable=wrong-import-position,wrong-import-order
-jpype_jvm.start()
-from com.xilinx.rapidwright.design.tools import LUTTools
-
-# pylint: enable=wrong-import-position,wrong-import-order
-
 
 class StructuralCompareTool(CompareTool):
     """Structural compare and map"""
@@ -309,6 +303,9 @@ class StructuralCompareTool(CompareTool):
         return instances_matching_connections
 
     def get_properties_for_type(self, cell_type):
+        """Return the list of properties that must match for a given cell type
+        for the cell to be considered equivalent."""
+
         if cell_type == "LUT6_2":
             return ("INIT",)
         if cell_type in ("FDSE", "FDRE"):
@@ -389,7 +386,8 @@ class Netlist:
 
                 net = self.wire_to_net[driver_wire]
                 self.tool.log(
-                    f"Adding alias wire {wire.cable.name}[{wire.index()}] to net {net.name}[{net.wire.index()}]"
+                    f"Adding alias wire {wire.cable.name}[{wire.index()}]",
+                    f"to net {net.name}[{net.wire.index()}]",
                 )
                 net.add_alias_wire(wire)
                 processed_alias_wires.append(wire)
@@ -513,28 +511,23 @@ class Net:
     def get_direction_for_unisim(cell_type_name, port_name):
         """Get a pin direction for a UNISIM cell"""
 
-        if cell_type_name == "LUT6_2":
-            if port_name.startswith("I"):
-                return sdn.ir.Port.Direction.IN
-            return sdn.ir.Port.Direction.OUT
-        if cell_type_name in ("IBUF", "OBUF", "OBUFT"):
-            if port_name in ("I", "T"):
-                return sdn.ir.Port.Direction.IN
-            return sdn.ir.Port.Direction.OUT
-        if cell_type_name in ("GND", "VCC"):
-            return sdn.ir.Port.Direction.OUT
-        if cell_type_name in ("FDRE", "FDSE"):
-            if port_name in ("Q",):
-                return sdn.ir.Port.Direction.OUT
-            return sdn.ir.Port.Direction.IN
-        if cell_type_name in ("MUXF7", "MUXF8", "BUFGCTRL"):
-            if port_name == "O":
-                return sdn.ir.Port.Direction.OUT
-            return sdn.ir.Port.Direction.IN
-        if cell_type_name == "CARRY4":
-            if port_name in ("CI", "CYINIT", "DI", "S"):
-                return sdn.ir.Port.Direction.IN
-            return sdn.ir.Port.Direction.OUT
+        cell_inputs_and_outputs = (
+            (("LUT6_2",), ("I0", "I1", "I2", "I3", "I4", "I5"), ("O5", "O6")),
+            (("IBUF", "OBUF", "OBUFT"), ("I", "T"), ("O",)),
+            (("GND",), (), ("G",)),
+            (("VCC",), (), ("P",)),
+            (("FDSE", "FDRE"), ("D", "CE", "R", "C"), ("Q",)),
+            (("CARRY4",), ("CI", "CYINIT", "DI", "S"), ("O", "CO")),
+            (("BUFGCTRL",), ("CE0", "CE1", "I0", "I1", "IGNORE0", "IGNORE1", "S0", "S1"), ("O",)),
+        )
+
+        for cell_types, inputs, outputs in cell_inputs_and_outputs:
+            if cell_type_name in cell_types:
+                if port_name in inputs:
+                    return sdn.ir.Port.Direction.IN
+                if port_name in outputs:
+                    return sdn.ir.Port.Direction.OUT
+                raise NotImplementedError(cell_type_name, port_name)
 
         if cell_type_name.startswith("SDN_VERILOG_ASSIGNMENT"):
             if port_name == "i":
@@ -553,6 +546,7 @@ class Net:
 
     @staticmethod
     def wire_is_alias(wire):
+        """Return whether wire is an alias of another wire (ie derived from assign statement)"""
         for pin in wire.pins:
             # assign statements don't have InnerPins
             if isinstance(pin, sdn.InnerPin):
