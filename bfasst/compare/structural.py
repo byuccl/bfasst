@@ -53,6 +53,20 @@ class StructuralCompareTool(CompareTool):
         self.named_netlist = netlist_a
         self.reversed_netlist = netlist_b
 
+        # for instance in self.named_netlist.instances:
+        #     print(instance.instance.name)
+        #     if instance.instance.name.strip() == r"\count_i_reg[12]_i_6":
+        #         for pin in instance.pins:
+        #             print(
+        #                 pin.pin.inner_pin.port.name,
+        #                 pin.index,
+        #                 pin.pin.wire,
+        #                 pin.pin.wire.index() if pin.pin.wire else "",
+        #             )
+        #         raise NotImplementedError
+
+        # raise NotImplementedError
+
         # Structurally map the rest of the netlists
         self.perform_mapping()
 
@@ -294,7 +308,10 @@ class StructuralCompareTool(CompareTool):
                 for instance in instances_matching_connections
                 if instance.get_pin(pin.name, pin.index).net == other_net
             ]
-            self.log(f"    {len(instances_matching_connections)} remaining")
+            self.log(
+                f"    {len(instances_matching_connections)} remaining:",
+                ",".join(i.name for i in instances_matching_connections),
+            )
 
         self.log(
             f"  {len(instances_matching_connections)} instance(s) after filtering on connections"
@@ -516,9 +533,10 @@ class Net:
             (("IBUF", "OBUF", "OBUFT"), ("I", "T"), ("O",)),
             (("GND",), (), ("G",)),
             (("VCC",), (), ("P",)),
-            (("FDSE", "FDRE"), ("D", "CE", "R", "C"), ("Q",)),
+            (("FDSE", "FDRE"), ("D", "CE", "R", "C", "S"), ("Q",)),
             (("CARRY4",), ("CI", "CYINIT", "DI", "S"), ("O", "CO")),
             (("BUFGCTRL",), ("CE0", "CE1", "I0", "I1", "IGNORE0", "IGNORE1", "S0", "S1"), ("O",)),
+            (("MUXF7", "MUXF8"), ("I0", "I1", "S"), ("O",)),
         )
 
         for cell_types, inputs, outputs in cell_inputs_and_outputs:
