@@ -14,9 +14,6 @@ __pycache__
 **/icestorm
 **/source_list
 
-# text files
-*.txt
-
 # Vivado files
 .Xil
 *.log
