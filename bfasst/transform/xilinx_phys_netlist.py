@@ -10,7 +10,6 @@ from bidict import bidict
 import jpype
 import jpype.imports
 from jpype.types import JInt
-from bfasst import jpype_jvm
 
 from bfasst import jpype_jvm
 from bfasst.config import VIVADO_BIN_PATH
