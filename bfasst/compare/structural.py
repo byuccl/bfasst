@@ -173,6 +173,7 @@ class StructuralCompareTool(CompareTool):
                     continue
 
             iteration += 1
+        return self.success_status
 
     def add_block_mapping(self, instance, matched_instance):
         """Add mapping point between two Instances"""
