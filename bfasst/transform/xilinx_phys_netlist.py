@@ -5,11 +5,13 @@ import pathlib
 import re
 import subprocess
 import sys
+
+from bidict import bidict
 import jpype
 import jpype.imports
 from jpype.types import JInt
-from bfasst import jpype_jvm
 
+from bfasst import jpype_jvm
 from bfasst.config import VIVADO_BIN_PATH
 from bfasst.status import Status, TransformStatus
 from bfasst.tool import ToolProduct
@@ -40,49 +42,57 @@ class XilinxPhysNetlist(TransformTool):
     TOOL_WORK_DIR = "xilinx_phys_netlist"
 
     STD_PIN_MAP_BY_CELL = {
-        "MUXF7": {
-            "I0": "0",
-            "I1": "1",
-            "S": "S0",
-            "O": "OUT",
-        },
-        "MUXF8": {
-            "I0": "0",
-            "I1": "1",
-            "S": "S0",
-            "O": "OUT",
-        },
-        "CARRY4": {
-            "DI[3]": "DI3",
-            "DI[2]": "DI2",
-            "DI[1]": "DI1",
-            "DI[0]": "DI0",
-            "CI": "CIN",
-            "CO[3]": "CO3",
-            "CO[2]": "CO2",
-            "CO[1]": "CO1",
-            "CO[0]": "CO0",
-            "O[3]": "O3",
-            "O[2]": "O2",
-            "O[1]": "O1",
-            "O[0]": "O0",
-            "S[3]": "S3",
-            "S[2]": "S2",
-            "S[1]": "S1",
-            "S[0]": "S0",
-            "CYINIT": "CYINIT",
-        },
-        "BUFG": {"I": "I0", "O": "O"},
-        "LUT6_2": {
-            "I0": "A1",
-            "I1": "A2",
-            "I2": "A3",
-            "I3": "A4",
-            "I4": "A5",
-            "I5": "A6",
-            "O5": "O5",
-            "O6": "O6",
-        },
+        "MUXF7": bidict(
+            {
+                "I0": "0",
+                "I1": "1",
+                "S": "S0",
+                "O": "OUT",
+            }
+        ),
+        "MUXF8": bidict(
+            {
+                "I0": "0",
+                "I1": "1",
+                "S": "S0",
+                "O": "OUT",
+            }
+        ),
+        "CARRY4": bidict(
+            {
+                "DI[3]": "DI3",
+                "DI[2]": "DI2",
+                "DI[1]": "DI1",
+                "DI[0]": "DI0",
+                "CI": "CIN",
+                "CO[3]": "CO3",
+                "CO[2]": "CO2",
+                "CO[1]": "CO1",
+                "CO[0]": "CO0",
+                "O[3]": "O3",
+                "O[2]": "O2",
+                "O[1]": "O1",
+                "O[0]": "O0",
+                "S[3]": "S3",
+                "S[2]": "S2",
+                "S[1]": "S1",
+                "S[0]": "S0",
+                "CYINIT": "CYINIT",
+            }
+        ),
+        "BUFG": bidict({"I": "I0", "O": "O"}),
+        "LUT6_2": bidict(
+            {
+                "I0": "A1",
+                "I1": "A2",
+                "I2": "A3",
+                "I3": "A4",
+                "I4": "A5",
+                "I5": "A6",
+                "O5": "O5",
+                "O6": "O6",
+            }
+        ),
     }
 
     def __init__(self, work_dir):
@@ -274,18 +284,37 @@ class XilinxPhysNetlist(TransformTool):
                 continue
 
             lut_pair_bel_names = [
-                ("A6LUT", "A5LUT"),
-                ("B6LUT", "B5LUT"),
-                ("C6LUT", "C5LUT"),
-                ("D6LUT", "D5LUT"),
+                ("A6LUT", "A6LUT_O6", "A5LUT", "A5LUT_O5"),
+                ("B6LUT", "B6LUT_O6", "B5LUT", "B5LUT_O5"),
+                ("C6LUT", "C6LUT_O6", "C5LUT", "C5LUT_O5"),
+                ("D6LUT", "D6LUT_O6", "D5LUT", "D5LUT_O5"),
             ]
 
-            for lut6_bel_name, lut5_bel_name in lut_pair_bel_names:
-                lut6_cell = site_inst.getCell(lut6_bel_name)
-                lut5_cell = site_inst.getCell(lut5_bel_name)
+            gnd_nets = site_inst.getSiteWiresFromNet(self.rw_design.getGndNet())
+
+            for lut6_bel, lut6_pin_out, lut5_bel, lut5_pin_out in lut_pair_bel_names:
+                lut6_cell = site_inst.getCell(lut6_bel)
+                lut5_cell = site_inst.getCell(lut5_bel)
+                gnd_generator_pins = []
+
+                if lut6_pin_out in gnd_nets:
+                    # If a gnd net, then there can't be a cell there
+                    assert lut6_cell is None
+                    assert lut5_cell is None
+
+                    gnd_generator_pins.append(lut6_pin_out)
+
+                if lut5_pin_out in gnd_nets:
+                    # If a gnd net, then there can't be a cell there
+                    assert lut6_cell is None
+                    assert lut5_cell is None
+
+                    gnd_generator_pins.append(lut5_pin_out)
 
                 if lut6_cell or lut5_cell:
                     self.process_lut(lut6_cell, lut5_cell)
+                elif gnd_generator_pins:
+                    self.process_lut_gnd(site_inst, gnd_generator_pins)
 
                 if lut6_cell:
                     cells_already_visited.add(lut6_cell)
@@ -454,6 +483,68 @@ class XilinxPhysNetlist(TransformTool):
 
         return [bufg_cell]
 
+    def process_lut_gnd(self, site_inst, pins):
+        """Process a LUT that isn't part of the design (ie no cell), but
+        is configured to generate a GND signal"""
+
+        self.log_color(
+            TermColor.BLUE,
+            f"\nProcessing LUT GND at site {site_inst}, pin(s):",
+            ",".join(str(p) for p in pins),
+        )
+
+        # Create a new lut6_2 instance
+        new_cell_name = str(site_inst.getName()) + "." + ".".join(p for p in pins) + ".GND.gen"
+        new_cell_inst = self.rw_design.getTopEDIFCell().createChildCellInst(
+            new_cell_name, self.lut6_2_edif_cell
+        )
+        self.log("Created new cell", new_cell_name)
+
+        for pin_out in pins:
+            self.log("Processing GND output pin", pin_out)
+
+            # Create a new net to replace the global ground
+            new_net_name = str(site_inst.getName()) + "." + pin_out + ".GND"
+            self.log("  Creating new GND net", new_net_name)
+            new_net = EDIFNet(new_net_name, self.rw_design.getTopEDIFCell())
+
+            # Drive net using LUT output port
+            lut_out_port = new_cell_inst.getPort("O6" if pin_out.endswith("O6") else "O5")
+            self.log("  Connecting new net to LUT output port", lut_out_port.getName())
+            assert lut_out_port
+            new_net.createPortInst(lut_out_port, new_cell_inst)
+
+            # Loop through ports this GND net needs to drive and connect them up
+            for pin_in in site_inst.getSiteWirePins(pin_out):
+                cell = site_inst.getCell(pin_in.getBEL())
+                if cell:
+                    self.log(" ", pin_in, pin_in.getBEL(), site_inst.getCell(pin_in.getBEL()))
+                    routed_to_cell_inst = cell.getEDIFCellInst()
+
+                    # Map physical pin back to logical netlist port name
+                    assert self.cell_is_default_mapping(cell)
+                    logical_port_name = self.STD_PIN_MAP_BY_CELL[
+                        routed_to_cell_inst.getCellType().getName()
+                    ].inverse[pin_in.getName()]
+
+                    routed_to_port_inst = routed_to_cell_inst.getPortInst(logical_port_name)
+                    assert routed_to_port_inst
+
+                    # Disconnect const0 net from pin
+                    routed_to_cell_inst.getPortInst(logical_port_name).getNet().removePortInst(
+                        routed_to_port_inst
+                    )
+
+                    # Connect up new LUT GND net to pin
+                    if routed_to_port_inst.getPort().isBus():
+                        new_net.createPortInst(
+                            routed_to_port_inst.getPort(),
+                            routed_to_port_inst.getIndex(),
+                            routed_to_cell_inst,
+                        )
+                    else:
+                        new_net.createPortInst(routed_to_port_inst.getPort(), routed_to_cell_inst)
+
     def process_lut(self, lut6_cell, lut5_cell):
         """This function takes a LUT* from the netlist and replaces with with a LUT6_2
         with logical mapping equal to the physical mapping."""
@@ -592,6 +683,7 @@ class XilinxPhysNetlist(TransformTool):
         ]
         assert len(matching_cells) == 1
         routed_to_cell = matching_cells[0]
+        routed_to_cell_inst = routed_to_cell.getEDIFCellInst()
 
         # First figure out which logical pin this routethru goes to.
         # Even though we are calling the gePinMappingsL2P on the LUT cell,
@@ -601,36 +693,22 @@ class XilinxPhysNetlist(TransformTool):
         assert len(logical_pins) == 1
         routed_to_port_name = str(logical_pins[0])
 
-        # Handle bus based ports (eg CARRY4 )
-        routed_to_port_idx = None
-        if "[" in routed_to_port_name:
-            match = re.match(r"(.*)\[(\d+)\]", routed_to_port_name)
-            assert match
-            routed_to_port_name = match.group(1)
-            routed_to_port_idx = int(match.group(2))
-
-        routed_to_cell_inst = routed_to_cell.getEDIFCellInst()
-        routed_to_port = routed_to_cell_inst.getPort(routed_to_port_name)
-        assert routed_to_port
-
-        # The index in the signal name is not necessarily the index used in the netlist
-        # Perform the conversion here
-        if routed_to_port.isBus():
-            routed_to_port_idx = routed_to_port.getPortIndexFromNameIndex(routed_to_port_idx)
+        routed_to_port_inst = routed_to_cell_inst.getPortInst(routed_to_port_name)
+        assert routed_to_port_inst
 
         self.log(
             "  Connecting new net to BEL",
             routed_to_cell.getBEL().getName(),
             ", port",
-            f"{routed_to_port_name}[{routed_to_port_idx}]"
-            if routed_to_port_idx is not None
-            else routed_to_port_name,
+            routed_to_port_name,
         )
 
-        if routed_to_port_idx is not None:
-            new_net.createPortInst(routed_to_port, routed_to_port_idx, routed_to_cell_inst)
+        if routed_to_port_inst.getPort().isBus():
+            new_net.createPortInst(
+                routed_to_port_inst.getPort(), routed_to_port_inst.getIndex(), routed_to_cell_inst
+            )
         else:
-            new_net.createPortInst(routed_to_port, routed_to_cell_inst)
+            new_net.createPortInst(routed_to_port_inst.getPort(), routed_to_cell_inst)
 
     def lut_move_net_to_new_cell(
         self,
