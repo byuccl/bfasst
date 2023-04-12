@@ -23,7 +23,7 @@ from bfasst.utils import TermColor, print_color
 jpype_jvm.start()
 from com.xilinx.rapidwright.device import SiteTypeEnum
 from com.xilinx.rapidwright.design import Design, Unisim
-from com.xilinx.rapidwright.edif import EDIFDirection, EDIFNet
+from com.xilinx.rapidwright.edif import EDIFDirection, EDIFNet, EDIFPropertyValue, EDIFValueType
 from com.xilinx.rapidwright.design.tools import LUTTools
 from java.lang import System
 from java.io import PrintStream, File
@@ -497,6 +497,9 @@ class XilinxPhysNetlist(TransformTool):
         new_cell_name = str(site_inst.getName()) + "." + ".".join(p for p in pins) + ".GND.gen"
         new_cell_inst = self.rw_design.getTopEDIFCell().createChildCellInst(
             new_cell_name, self.lut6_2_edif_cell
+        )
+        new_cell_inst.setPropertiesMap(
+            {"INIT": EDIFPropertyValue("64'h0000000000000000", EDIFValueType.STRING)}
         )
         self.log("Created new cell", new_cell_name)
 
