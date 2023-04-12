@@ -254,7 +254,7 @@ class StructuralCompareTool(CompareTool):
 
         instances_matching_props = instances_matching_cell_type[:]
         for prop in properties_to_match:
-            if prop not in properties:
+            if properties is None or prop not in properties:
                 error(prop, "not in properties:", properties)
             assert prop in properties
 
