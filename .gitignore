@@ -8,6 +8,9 @@ temp/
 /.venv
 __pycache__
 
+# Python packaging
+*.egg-info
+
 # extra stuff
 **/build
 **/icestorm
