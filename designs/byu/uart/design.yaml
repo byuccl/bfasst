@@ -1,0 +1,3 @@
+top: uart_top
+
+include_all_system_verilog_files: True

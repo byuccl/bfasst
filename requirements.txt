@@ -11,3 +11,5 @@ werkzeug
 pylint
 prettytable
 JPype1
+bidict
+pylint

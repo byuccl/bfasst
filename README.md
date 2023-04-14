@@ -1,3 +1,7 @@
+![example workflow](https://github.com/byuccl/bfasst/actions/workflows/python.yml/badge.svg)
+![example workflow](https://github.com/byuccl/bfasst/actions/workflows/unittests.yml/badge.svg)
+
+
 # BFASST (BYU FPGA Assurance Tool)
 
 The BFASST tool is a Python package located at `scripts/bfasst`.  The tool can be used to compose custom FPGA CAD flows.  Many of these flows are already defined and can be found in `flows.py`.
@@ -30,10 +34,15 @@ run_experiment.py: error: the following arguments are required: experiment_yaml
 
 BFASST can be used to compose different CAD flows from severals tools.  You may want to install these tools:
 
+### WaFoVe
+1. Install Wafove:
+    * ```make install_wafove```
+
 ### Vivado
 
-1. Install Vivado
-1. Update _scripts/bfasst/config.py_ and make sure the path points to your Vivado installation. 
+1. Install Vivado **2020.2**
+    * Note: Vivado 2022.2 is not supported due to a yosys compatibility [issue](https://github.com/YosysHQ/yosys/issues/3699)
+3. Update _scripts/bfasst/config.py_ and make sure the path points to your Vivado installation. 
 
 ### Fasm2Bels
 1. Install capnproto_java:

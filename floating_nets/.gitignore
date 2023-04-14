@@ -1,7 +1,0 @@
-/output
-/proj
-*.log
-*.bin
-*.pcf
-/reversed.v
-*.asc

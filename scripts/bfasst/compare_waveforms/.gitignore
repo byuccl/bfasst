@@ -1,3 +1,0 @@
-#Ignores cells_sim.v and anything in the out folder.
-third_party/yosys/cells_sim.v
-out/*
