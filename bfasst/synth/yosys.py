@@ -8,10 +8,13 @@ import time
 
 import bfasst
 from bfasst import paths
+from bfasst.vendor import Vendor
 from bfasst.synth.base import SynthesisTool
 from bfasst.status import Status, SynthStatus
 
 YOSYS_SCRIPT_TEMPLATE = "ex_yos_tech.yos"
+YOSYS_XILINX_SYNTH_SCRIPT_TEMPLATE = "ex_yos_tech_xilinx.yos"
+YOSYS_LATTICE_SYNTH_SCRIPT_TEMPLATE = "yos_synth_tech_lattice.yos"
 YOSYS_SCRIPT_FILE = "script.yos"
 YOSYS_LOG_FILE = "yosys.log"
 
@@ -21,7 +24,18 @@ class YosysTechSynthTool(SynthesisTool):
 
     TOOL_WORK_DIR = "yosys_synth"
 
+    def __init__(self, cwd, vendor):
+        super().__init__(cwd)
+
+        assert isinstance(vendor) is Vendor
+        self.vendor = vendor
+
     def create_netlist(self, design):
+        temp_gold_files = design.get_golden_files()
+        for files in temp_gold_files:
+            if files.suffix in ".vhd" or files.suffix in ".vhdl":
+                return Status(SynthStatus.VHDL)
+
         # Target netlist output
         design.netlist_path = self.cwd / (design.top + "_yosys_tech.v")
 
@@ -35,6 +49,8 @@ class YosysTechSynthTool(SynthesisTool):
 
         # Run Yosys on the design
         # This assumes that the VHDL module *is* installed!
+        # yosys_path = "/home/jthompson3198/bfasst/third_party/yosys"
+        yosys_path = paths.ROOT_PATH / "third_party" / "yosys"
         cmd = [
             os.path.join(paths.YOSYS_INSTALL_DIR, "yosys"),
             "-m",
@@ -59,15 +75,25 @@ class YosysTechSynthTool(SynthesisTool):
     def create_yosys_script(self, design, netlist_path):
         """Create the yosys script that generates the netlist"""
         path_to_script_builder = paths.SCRIPTS_PATH / "yosys" / "createYosScript.py"
-        script_template_file = paths.YOSYS_RESOURCES / YOSYS_SCRIPT_TEMPLATE
+        if self.vendor == Vendor.XILINX:
+            script_template_file = paths.YOSYS_RESOURCES / YOSYS_XILINX_SYNTH_SCRIPT_TEMPLATE
+        elif self.vendor == Vendor.LATTICE:
+            script_template_file = paths.YOSYS_RESOURCES / YOSYS_LATTICE_SYNTH_SCRIPT_TEMPLATE
+        else:
+            script_template_file = paths.YOSYS_RESOURCES / YOSYS_SCRIPT_TEMPLATE
         yosys_script_file = self.work_dir / YOSYS_SCRIPT_FILE
 
         # TODO: Figure out how to add VHDL library files to the yosys vhdl flow
-        file_paths = str(design.full_path / design.top_file)
-        for design_file in design.verilog_files:
-            file_paths += " " + str(design.full_path / design_file)
-        for design_file in design.vhdl_files:
-            file_paths += " " + str(design.full_path / design_file)
+        # file_paths = str(design.full_path / design.top_file)
+        # for design_file in design.verilog_files:
+        #     file_paths += " " + str(design.full_path / design_file)
+        # for design_file in design.vhdl_files:
+        #     file_paths += " " + str(design.full_path / design_file)
+        file_paths = str(design.rel_path / design.top_file_path)
+        for design_file in design.verilog_file_paths:
+            file_paths += " " + str(design.rel_path / design_file)
+        for design_file in design.vhdl_file_paths:
+            file_paths += " " + str(design.rel_path / design_file)
         # TODO: Add the same error handling as in other synth flows
         try:
             cmd = [

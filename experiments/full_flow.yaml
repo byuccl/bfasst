@@ -1,0 +1,7 @@
+design_dirs:
+    - basic/
+    - ooc/
+
+flow: full_flow
+
+# synth: "-mode out_of_context"

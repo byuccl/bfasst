@@ -1,0 +1,21 @@
+# read design
+read_verilog temp.v
+hierarchy -check -top temp
+
+# the high-level stuff
+proc; opt; fsm ; opt; memory; opt
+
+# mapping to internal cell library
+techmap; opt
+
+# mapping flip-flops to mycells.lib
+dfflibmap -liberty mycells.lib
+
+# mapping logic to mycells.lib
+abc -liberty mycells.lib
+
+# cleanup
+clean
+
+# write synthesized design
+write_verilog synth.v

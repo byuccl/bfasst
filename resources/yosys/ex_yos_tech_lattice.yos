@@ -1,0 +1,12 @@
+# Simple example yosys script
+# Used to generate yosys scripts to build specific projects
+# This script is used in the RTL --> Yosys --> ABC flow
+
+# Read verilog input files
+# read_verilog file.v
+
+# Run xilinx synthesis passes
+synth_nexus
+
+# Now write the verilog output
+# write_verilog yosys_out.v

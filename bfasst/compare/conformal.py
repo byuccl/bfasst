@@ -36,6 +36,8 @@ class ConformalCompareTool(CompareTool):
 
         assert isinstance(vendor, Vendor)
         self.vendor = vendor
+        self.remote_libs_dir_path = None
+        self.local_libs_paths = None
 
         self.remote_libs_dir_path = None
         self.local_libs_paths = None
@@ -108,7 +110,7 @@ class ConformalCompareTool(CompareTool):
         self.copy_log_from_remote_machine(client)
         client.close()
 
-        if status.status == CompareStatus.TIMEOUT:
+        if status == CompareStatus.TIMEOUT:
             with open(log_path, "a") as fp:
                 fp.write("\nTimeout\n")
 
@@ -118,6 +120,9 @@ class ConformalCompareTool(CompareTool):
         return self.success_status
 
     def connect_to_remote_machine(self):
+        """This connects to the caedm machines
+        so we can use conformal"""
+
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         client.connect(
@@ -193,8 +198,8 @@ class ConformalCompareTool(CompareTool):
             fp.write(
                 "read design "
                 + design.reversed_netlist_path.name
-                + " -Verilog -Revised -sensitive -continuousassignment Bidirectional"
-                + " -nokeep_unreach -nosupply\n"
+                + " -Verilog -Revised -sensitive -continuousassignment \
+                Bidirectional -nokeep_unreach -nosupply\n"
             )
             fp.write(r"add renaming rule vector_expand %s\[%d\] @1_@2 -Both -map" + "\n")
 
@@ -213,6 +218,7 @@ class ConformalCompareTool(CompareTool):
         # Create script to run GUI on caedm
         run_gui_path = self.work_dir / self.GUI_FILE_NAME
         with open(run_gui_path, "w") as fp:
+            fp.write("source " + str(bfasst.config.CONFORMAL_REMOTE_SOURCE_SCRIPT) + ";\n")
             fp.write("source " + str(bfasst.config.CONFORMAL_REMOTE_SOURCE_SCRIPT) + ";\n")
             fp.write(
                 str(bfasst.config.CONFORMAL_REMOTE_PATH) + " -Dofile " + self.DO_FILE_NAME + "\n"
@@ -244,7 +250,8 @@ class ConformalCompareTool(CompareTool):
         # Copy mapped points
         # scpClient.put(
         #     str(mapped_points_file_path),
-        #     str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR / self.MAPPED_POINTS_FILE_NAME),
+        #     str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR \
+        # / self.MAPPED_POINTS_FILE_NAME),
         # )
 
         for design_file in design.get_golden_files():
@@ -259,6 +266,9 @@ class ConformalCompareTool(CompareTool):
         scp_client.close()
 
     def copy_log_from_remote_machine(self, client):
+        """Copies the log file from the conformal
+        comparison back to the user machine"""
+
         scp_client = scp.SCPClient(client.get_transport())
         scp_client.get(
             str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR / self.LOG_FILE_NAME),

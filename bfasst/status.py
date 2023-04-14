@@ -1,4 +1,5 @@
 """ This module contains statuses that the various BFASST tools can return """
+
 import enum
 
 
@@ -6,6 +7,7 @@ class SynthStatus(enum.Enum):
     SUCCESS = 0
     ERROR = 1
     TIMEOUT = 2
+    VHDL = 3
 
 
 class OptStatus(enum.Enum):
@@ -62,6 +64,7 @@ msg_map = {
     SynthStatus.SUCCESS: "Synth Success",
     SynthStatus.ERROR: "!! Synth Error",
     SynthStatus.TIMEOUT: "Synth Timeout",
+    SynthStatus.VHDL: "VHDL not supported",
     OptStatus.SUCCESS: "Opt Success",
     OptStatus.ERROR: "!! Opt Error",
     OptStatus.TIMEOUT: "Opt Timeout",

@@ -59,6 +59,149 @@ def update_runtimes_thread(print_lock, num_jobs, running_list, statuses, period=
     ).start()
 
 
+def chk_html(html_path, flows_list):
+    """This function checks to see if an html file exists.
+    If one does not exist one is made and filled with the
+    base code."""
+
+    if Path(html_path).resolve().is_file() == 0:
+        tmp_html = open(html_path, "w")
+        tmp_html.write(
+            "<!DOCTYPE html>\n<html>\n<style>\ntable, th, td     \
+         {\n\tborder:1px solid black;\n}\n</style>\n<body>\n\n<h2>BFASST    \
+          Experiment Runs and Results</h2>\n"
+        )
+        tmp_html.write("<table>\n<thead>\n\t<tr>\n\t\t<th>Design</th>")
+        for flow in flows_list:
+            tmp_html.write("\n\t\t<th>" + str(flow) + "</th>")
+        tmp_html.write(
+            '\n\t</tr>\n</thead>\n<tbody>\n</tbody>\n</table>    \
+        \n\n<p>To run these designs yourself, check out the <a href="htt   \
+        ps://github.com/byuccl/bfasst">BFASST Github repository</a>.</p>\n\n</body>\n</html>'
+        )
+        tmp_html.close()
+
+
+def write_html(html_str, idx_html_path):
+    """This function reads the html for yeses and nos
+    of each experiment run and changes the color
+    to green if yes and red if no."""
+
+    yes_str = "<td>Yes</td>"
+    no_str = "<td>No</td>"
+    yes_style = ' style="background-color:darkseagreen;color:black;"'
+    no_style = ' style="background-color:lightcoral;color:black;"'
+
+    while html_str.find(yes_str) != -1:
+        index = html_str.find(yes_str)
+        html_str = html_str[: index + 3] + yes_style + html_str[index + 3 :]
+
+    while html_str.find(no_str) != -1:
+        index = html_str.find(no_str)
+        html_str = html_str[: index + 3] + no_style + html_str[index + 3 :]
+
+    html_file = open(idx_html_path, "w")
+
+    html_file.write(
+        "<!DOCTYPE html>\n<html>\n<style>\ntable, th, td \
+    {\n\tborder:1px solid black;\n}\n</style>\n<body>\n\n<h2>BFASST \
+     Experiment Runs and Results</h2>\n"
+    )
+
+    html_file.write("\n" + html_str)
+
+    html_file.write(
+        '\n\n<p>To run these designs yourself, check out \
+     the <a href="https://github.com/byuccl/bfasst">BFASST Github \
+      repository</a>.</p>\n\n</body>\n</html>'
+    )
+
+    html_file.close()
+
+
+def html_update(equivalence, design, flow_fcn, flows_list):
+    """This function updates the html table. It converts
+    the experiments that output equivalent to table entries
+    of yes and not equivanlent experiments to tabke entries
+    of no."""
+
+    idx_html_path = "./index.html"
+
+    if str(equivalence).find("Equivalent") != -1:
+        table_value = "Yes"
+    elif str(equivalence).find("Not equivalent") != -1:
+        table_value = "No"
+    else:
+        table_value = str(equivalence)
+
+    flow_name = flow_fcn.split()
+    curr_flow = flow_name[1][5:]
+
+    flow_dict = dict.fromkeys(flows_list, "Not Run Yet")
+    for flow in flows_list:
+        if flow == curr_flow:
+            flow_dict[flow] = table_value
+
+    chk_html(idx_html_path, flows_list)
+    with open(idx_html_path, "r") as fp:
+        html = fp.read()
+
+    x = from_html_one(html)
+    x_json = json.loads(x.get_json_string())
+
+    if design in x.get_json_string():
+        for i, curr_x_json in enumerate(x_json):
+            # curr_x_json = x_json[i]
+            if design in str(curr_x_json):
+                if (
+                    curr_x_json[curr_flow] != flow_dict[curr_flow]
+                    and flow_dict[curr_flow] != "Not Run Yet"
+                ):
+                    curr_x_json[curr_flow] = flow_dict[curr_flow]
+                for f in flows_list:
+                    if f != curr_flow:
+                        flow_dict[f] = curr_x_json[f]
+                x.del_row(i - 1)
+                break
+
+    temp_list = [flow_dict[column] for column in flows_list]
+    temp_list.insert(0, design)
+    x.add_row(temp_list)
+
+    write_html(x.get_html_string(), idx_html_path)
+
+
+def list_maker(flows_list, design_dict=None, go_make=False):
+    """This function makes a list of each experiment
+    with the design being tested, the result of the experiment,
+    and the flow used."""
+
+    if design_dict is None:
+        design_dict = {}
+    idx_html_path = "./index.html"
+    if design_dict != {}:
+        file1 = open("temp.txt", "a+")  # append mode
+        json.dump(design_dict, file1)
+        file1.write("\n")
+        file1.close()
+    if go_make:
+        try:
+            file1 = open("temp.txt", "r")
+            line = file1.readline()
+            while line:
+                json_temp = json.loads(line)
+                line = file1.readline()
+                html_update(
+                    json_temp["status"], json_temp["design"], json_temp["flow_fcn"], flows_list
+                )
+            file1.close()
+            pathlib.Path("./temp.txt").unlink()
+            print("index.html updated")  # Updated
+        except:
+            chk_html(idx_html_path, flows_list)
+            print("index.html unchanged")  # Do nothing
+
+
 def run_design(print_lock, running_list, design, work_path, flow_fcn, flow_args):
     """This function runs a single job, running the selected CAD flow for one design"""
 
@@ -78,6 +221,14 @@ def run_design(print_lock, running_list, design, work_path, flow_fcn, flow_args)
             buf.seek(0)
             copyfileobj(buf, f)
         cleanup_redirect()
+        path = design_dir
+        design_dict = {
+            "design": path.name,
+            "status": str(status),
+            "flow_fcn": str(flow_fcn).casefold(),
+        }
+        design_dict_copy = design_dict.copy()
+        list_maker(flows_list, design_dict=design_dict_copy)
     return (design, status)
 
 
@@ -206,6 +357,9 @@ def print_ending_stats(statuses, runtime):
         pad = min(max(len(str(status)) for status in status_counts) + 10, 80)
         for status, count in status_counts.items():
             print(str(status).strip().ljust(pad), count)
+
+    for i in enumerate(designs_list):
+        print(designs_list[i])
 
     print("-" * 80)
     print("Execution took", round(runtime, 1), "seconds")

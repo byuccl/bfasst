@@ -1,0 +1,34 @@
+# Simple example yosys script
+# Used to generate yosys scripts to build specific projects
+
+# Read verilog input files
+# read_verilog file.v
+
+# Set up a hierarchy so parametric modules work
+hierarchy -check -auto-top
+
+proc; opt; fsm; opt; memory; opt
+
+# Remove any source attributes
+setattr -unset src *
+setattr -mod -unset src *
+
+# Flatten the design to remove parameterized modules
+flatten
+
+# Do some optimization passes
+# Functional reduction w/ inverted signals
+freduce -inv
+# Reduce word sizes
+wreduce
+
+techmap; opt;
+
+#cleanup
+clean
+
+# Write the output (non-techmapped) netlist
+write_verilog yosys_synth.v
+
+# At some point, this script could be extended to allow techmapping;
+#   let's not worry about that for now, though.

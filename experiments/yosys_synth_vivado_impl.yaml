@@ -1,0 +1,7 @@
+design_dirs:
+    - basic/
+    - ooc/
+
+flow: yosys_synth_vivado_impl
+
+# synth: "-mode out_of_context"
