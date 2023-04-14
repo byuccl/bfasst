@@ -9,6 +9,9 @@ temp/
 __pycache__
 *.egg-info
 
+# Python packaging
+*.egg-info
+
 # extra stuff
 **/build
 **/icestorm
