@@ -48,6 +48,14 @@ def conformal_cmp(design, build_dir, flow_args, vendor=Vendor.XILINX):
         return compare_tool.compare_netlists(design)
 
 
+def structural_cmp(design, build_dir, flow_args):
+    """Structural compare and map"""
+    from bfasst.compare.structural import StructuralCompareTool
+
+    struct_cmp = StructuralCompareTool(build_dir, flow_args[ToolType.CMP])
+    return struct_cmp.compare_netlists(design)
+
+
 def vivado_synth(design, build_dir, flow_args):
     """Synthesize using Vivado"""
     from bfasst.synth.vivado import VivadoSynthesisTool
