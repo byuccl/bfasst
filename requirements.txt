@@ -6,7 +6,7 @@ cryptography
 cmake
 pyyaml
 numpy
-git+https://github.com/byuccl/spydrnet@next_release
+spydrnet
 werkzeug
 pylint
 JPype1
