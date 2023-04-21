@@ -20,7 +20,7 @@ packages:
 		default-jre-headless \
 		uuid-dev \
 		libantlr4-runtime-dev \
-		openjdk-19-jdk \
+		openjdk-18-jdk \
 		capnproto \
 		libcapnp-dev \
 		jq \
@@ -39,12 +39,7 @@ capnproto_java:
 	rm -rf $(TEMP_DIR)
 
 rapidwright:
-	cd third_party && wget http://www.rapidwright.io/docs/_downloads/rapidwright-installer.jar
-	cd third_party && java -jar rapidwright-installer.jar -t
-	cd third_party/RapidWright && git submodule init
-	cd third_party/RapidWright && git submodule update
-	cd third_party/RapidWright/interchange && make
-	cd third_party/RapidWright && make
+	cd third_party/RapidWright && ./gradlew compileJava
 
 submodules:
 	git submodule init
