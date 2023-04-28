@@ -4,6 +4,7 @@ import abc
 import argparse
 import datetime
 import pathlib
+import shlex
 import subprocess
 import sys
 import types
@@ -39,6 +40,12 @@ class Tool(abc.ABC):
         self.log_path = self.work_dir / "log.txt"
         self.log_fp = None
 
+        # Argument parser
+        self.arg_parser = None
+
+        # Arguments (after parsing)
+        self.args = None
+
     @property
     @classmethod
     @abc.abstractclassmethod
@@ -52,6 +59,23 @@ class Tool(abc.ABC):
     def success_status(self):
         raise NotImplementedError
 
+    @abc.abstractmethod
+    def add_args(self):
+        """Add arguments for argparser.  This should be done using this
+        function for all child tool classes."""
+        raise NotImplementedError
+
+    def create_arg_parser(self, name, args):
+        """Create the arg parser object then add arguments by
+        calling child method"""
+        self.arg_parser = ToolArgParser(name)
+
+        # Call child function(s) to add arguments to this tool
+        self.add_args()
+
+        # Parse the arguments
+        self.args = self.arg_parser.parse_args(shlex.split(args))
+
     def make_work_dir(self):
         work_dir = self.cwd / self.TOOL_WORK_DIR
 
@@ -62,8 +86,8 @@ class Tool(abc.ABC):
     def open_new_log(self):
         self.log_fp = open(self.log_path, "w")
 
-    def log_title(self, title):
-        self.log(f"{'='*80}\n{title}\n{'='*80}")
+    def log_title(self, *msg):
+        self.log(f"{'='*80}\n{' '.join(str(s) for s in msg)}\n{'='*80}")
 
     def log(self, *msg, add_timestamp=False):
         """Write text to the log file and stdout"""

@@ -53,6 +53,14 @@ def conformal_cmp(design, build_dir, flow_args, vendor=Vendor.XILINX):
         return compare_tool.compare_netlists(design)
 
 
+def structural_cmp(design, build_dir, flow_args):
+    """Structural compare and map"""
+    from bfasst.compare.structural import StructuralCompareTool
+
+    struct_cmp = StructuralCompareTool(build_dir, flow_args[ToolType.CMP])
+    return struct_cmp.compare_netlists(design)
+
+
 def vivado_synth(design, build_dir, flow_args):
     """Synthesize using Vivado"""
     from bfasst.synth.vivado import VivadoSynthesisTool
@@ -85,12 +93,12 @@ def yosys_cmp(design, build_dir, flow_args):
     return compare_tool.compare_netlists(design)
 
 
-def wave_cmp(design, build_dir, run_waveform, tests, vivado):
+def wave_cmp(design, build_dir, flow_args):
     """Compare netlists via waveforms"""
     from bfasst.compare.waveform import WaveformCompareTool
 
-    tool = WaveformCompareTool(build_dir)
-    return tool.compare_netlists(design, run_waveform, tests, vivado)
+    tool = WaveformCompareTool(build_dir, flow_args[ToolType.CMP])
+    return tool.compare_netlists(design)
 
 
 def onespin_cmp(design, build_dir, flow_args):

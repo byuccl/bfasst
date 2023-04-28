@@ -4,7 +4,7 @@
 * Module: rx
 *
 * Author: Pablo Lopez
-* Class: ECEN 220, TA, Fall 2020
+* Class: ECEN 220, Fall 2020
 * Date: 11/30/2020
 *
 * Description: Implementation of a UART Receiver in SV
@@ -21,7 +21,7 @@ module rx(
     input wire logic Reset,
     input wire logic Sin,
     input wire logic Received);
-    
+
     // BAUD Rate Timer
     logic timerDone, timerHalfDone, clrTimer;
     logic[12:0] cycles;

@@ -1,7 +1,5 @@
 """ Base class for bitstream to netlist tools"""
 import abc
-import shlex
-from bfasst import tool
 
 from bfasst.tool import Tool
 from bfasst.utils import print_color
@@ -17,8 +15,10 @@ class ReverseBitTool(Tool):
         super().__init__(cwd)
 
         # Implementation options
-        parser = tool.ToolArgParser("bit_to_netlist")
-        self.args = parser.parse_args(shlex.split(flow_args))
+        self.create_arg_parser("bit_to_netlist", flow_args)
+
+    def add_args(self):
+        """Default arguments for all reverse tools"""
 
     # This method should run bitstream reversal.  It should return
     # (netlist, status), where:

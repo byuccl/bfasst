@@ -6,18 +6,24 @@ from pathlib import Path
 
 from bfasst.design import Design
 from bfasst import paths
-from bfasst.flows import Flows, run_flow
+from bfasst.flows import Flows, run_flow, get_flow_fcn_by_name
 from bfasst.tool_wrappers import ToolType
 
 
 def run_design(design_path, flow, error_flow, flow_args):
     """Run a design through a given flow"""
 
+    if flow_args[ToolType.MAP]:
+        flow = Flows(flow)
+        status = get_flow_fcn_by_name(flow)(None, flow_args, None)
+        print(status)
+        return
+
     # Load the design
     design = Design(design_path)
 
     # Create temp folder
-    build_dir = Path.cwd() / "build" / flow / (design_path.relative_to(paths.DESIGNS_PATH))
+    build_dir = Path.cwd() / "build" / flow / (design.path.relative_to(paths.DESIGNS_PATH))
     build_dir.mkdir(parents=True, exist_ok=True)
 
     # Store the error flow for later
@@ -39,7 +45,7 @@ def main():
     parser = ArgumentParser()
 
     parser.add_argument("design_path", help="Path to design in examples directory.")
-    parser.add_argument("flow", choices=[e.value for e in Flows])
+    parser.add_argument("flow", choices=sorted([e.value for e in Flows]))
     parser.add_argument("--synth", help="Synthesis args", type=str, default="")
     parser.add_argument("--impl", help="Implementation args", type=str, default="")
     parser.add_argument("--map", help="Mapping args", type=str, default="")
@@ -71,17 +77,10 @@ def main():
         "cmp": ToolType.CMP,
         "reverse": ToolType.REVERSE,
     }
-    print(args)
-    print(flow_args[ToolType.SYNTH])
     for arg_name, enum in flow_args_map.items():
         flow_args[enum] = getattr(args, arg_name)
-    print(flow_args)
-    design_path = Path(args.design_path)
-    if not design_path.is_dir() and (paths.DESIGNS_PATH / design_path).is_dir():
-        design_path = paths.DESIGNS_PATH / design_path
-    design_path = design_path.absolute()
 
-    run_design(design_path, args.flow, args.error_flow, flow_args=flow_args)
+    run_design(Path(args.design_path), args.flow, args.error_flow, flow_args=flow_args)
 
 
 if __name__ == "__main__":
