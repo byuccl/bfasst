@@ -40,7 +40,7 @@ from bfasst.tool_wrappers import (
     xray_rev,
     yosys_cmp,
     yosys_synth,
-    vivado_full,
+    vivado_ooc,
 )
 from bfasst.utils import error
 from bfasst.locks import onespin_lock
@@ -52,6 +52,7 @@ class Flows(Enum):
 
     # These flows have unit tests to verify they are functioning
     XILINX = "xilinx"
+    XILINX_OOC = "xilinx_ooc"
     XILINX_AND_REVERSED = "xilinx_and_reversed"
     XILINX_PHYS_NETLIST = "xilinx_phys_netlist"
     XILINX_PHYS_NETLIST_COMPARE = "xilinx_phys_netlist_cmp"
@@ -93,6 +94,7 @@ flow_fcn_map = {
     Flows.XILINX_PHYS_NETLIST: lambda: flow_xilinx_phys_netlist,
     Flows.CCL_MAP: lambda: flow_ccl_mapping,
     Flows.STRUCTURAL_MAP: lambda: flow_struct_mapping,
+    Flows.XILINX_OOC: lambda: flow_xilinx_ooc,
     Flows.XILINX_PHYS_NETLIST_COMPARE: lambda: flow_xilinx_phys_netlist_cmp,
     Flows.XILINX_AND_REVERSED: lambda: flow_xilinx_and_reversed,
 }
@@ -148,12 +150,17 @@ def flow_conformal_only(design, flow_args, build_dir):
     return status
 
 
+def flow_xilinx_ooc(design, flow_args, build_dir):
+    """Run Xilinx synthesis and implementation for ooc designs"""
+    status = vivado_ooc(design, build_dir, flow_args)
+    return status
+
+
 def flow_xilinx(design, flow_args, build_dir):
     """Run Xilinx synthesis and implementation"""
-    return vivado_full(design, build_dir, flow_args)
-    # status = vivado_synth(design, build_dir, flow_args)
-    # status = vivado_impl(design, build_dir, flow_args)
-    # return status
+    status = vivado_synth(design, build_dir, flow_args)
+    status = vivado_impl(design, build_dir, flow_args)
+    return status
 
 
 def flow_xilinx_and_reversed(design, flow_args, build_dir):

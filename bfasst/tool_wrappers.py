@@ -147,8 +147,8 @@ def xilinx_phys_netlist(design, build_dir):
     return status
 
 
-def vivado_full(design, build_dir, flow_args):
-    """Run Vivado Synthesis and Implementation"""
+def vivado_ooc(design, build_dir, flow_args):
+    """Run Vivado Synthesis and Implementation for out-of-context designs"""
     from bfasst.impl.vivado import VivadoImplementationTool
     from bfasst.synth.vivado import VivadoSynthesisTool
     from bfasst.status import ImplStatus
@@ -156,35 +156,30 @@ def vivado_full(design, build_dir, flow_args):
     synth_tool = VivadoSynthesisTool(build_dir, flow_args[ToolType.SYNTH])
     impl_tool = VivadoImplementationTool(build_dir, flow_args[ToolType.IMPL])
 
-    if synth_tool.args.out_of_context:
-        impl_tool.args.out_of_context = True
+    synth_tool.args.out_of_context = True
+    impl_tool.args.out_of_context = True
 
     synth_status = synth_tool.check_runs(design)
 
     impl_tool.init_design(design)
 
-    if synth_status is not None:
-        synth_tool.print_skipping_synth()
-        impl_status = impl_tool.get_prev_run_status(
-            tool_products=[
-                ToolProduct(
-                    design.bitstream_path,
-                    impl_tool.log_path,
-                    impl_tool.check_impl_status,
-                )
-            ],
-            dependency_modified_time=max(
-                Path(__file__).stat().st_mtime, design.netlist_path.stat().st_mtime
-            ),
-        )
-        if impl_status is not None:
-            impl_tool.print_skipping_impl()
-            return impl_status
+    impl_status = impl_tool.get_prev_run_status(
+        tool_products=[
+            ToolProduct(
+                design.bitstream_path,
+                impl_tool.log_path,
+                impl_tool.check_impl_status,
+            )
+        ],
+        dependency_modified_time=max(
+            Path(__file__).stat().st_mtime, design.netlist_path.stat().st_mtime
+        ),
+    )
 
-        impl_tool.print_running_impl()
-        impl_tool.open_new_log()
-        impl_tool.run_implementation(design)
-        return impl_tool.check_impl_status(impl_tool.log_path)
+    if synth_status is not None and impl_status is not None:
+        synth_tool.print_skipping_synth()
+        impl_tool.print_skipping_impl()
+        return impl_status
 
     synth_tool.print_running_synth()
     synth_tool.open_new_log()

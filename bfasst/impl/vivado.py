@@ -23,6 +23,7 @@ class VivadoImplementationTool(ImplementationTool):
         design.impl_netlist_path = self.cwd / (design.top + "_impl.v")
         design.impl_edif_path = design.impl_netlist_path.with_suffix(".edf")
         design.xilinx_impl_checkpoint_path = self.work_dir / "design.dcp"
+        design.utilization_path = self.work_dir / "utilization.txt"
         design.bitstream_path = self.cwd / (design.top + ".bit")
 
     def implement_bitstream(self, design):
@@ -47,7 +48,7 @@ class VivadoImplementationTool(ImplementationTool):
     def write_header(self, design, fp):
         fp.write("if { [ catch {\n")
         fp.write("read_edif " + str(design.netlist_path) + "\n")
-        fp.write("set_property edif_top_file " + str(design.netlist_path) + " [current_fileset]\n")
+        fp.write("set_property top_file " + str(design.netlist_path) + " [current_fileset]\n")
         fp.write("link_design -part " + bfasst.config.PART + "\n")
         if not self.args.out_of_context:
             fp.write("read_xdc " + str(design.constraints_path) + "\n")
@@ -62,6 +63,7 @@ class VivadoImplementationTool(ImplementationTool):
         fp.write("write_checkpoint -force -file " + str(design.xilinx_impl_checkpoint_path) + "\n")
         fp.write("write_edif -force -file " + str(design.impl_edif_path) + "\n")
         fp.write("write_verilog -force -file " + str(design.impl_netlist_path) + "\n")
+        fp.write("report_utilization -file " + str(design.utilization_path) + "\n")
         if not self.args.out_of_context:
             fp.write("write_bitstream -force " + str(design.bitstream_path) + "\n")
 
