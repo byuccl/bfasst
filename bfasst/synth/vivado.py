@@ -1,4 +1,5 @@
 """ This file provides tools to wrap Vivado for synthesis purposes """
+
 import re
 import pathlib
 
@@ -146,9 +147,8 @@ class VivadoSynthesisTool(SynthesisTool):
         with open(tcl_path, "w") as stream:
             self.write_tcl(design, report_io_path, stream)
 
-        VIVADO_COMMAND.append("-source")
-        VIVADO_COMMAND.append(str(tcl_path))
-        proc = self.exec_and_log(VIVADO_COMMAND)
+        cmd = VIVADO_COMMAND + ["-source", str(tcl_path)]
+        proc = self.exec_and_log(cmd)
         if proc.returncode:
             return Status(SynthStatus.ERROR)
 

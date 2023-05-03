@@ -82,9 +82,8 @@ class VivadoImplementationTool(ImplementationTool):
             self.write_outputs(design, fp)
             self.write_footer(fp)
 
-        VIVADO_COMMAND.append("-source")
-        VIVADO_COMMAND.append(str(tcl_path))
-        proc = self.exec_and_log(VIVADO_COMMAND)
+        cmd = VIVADO_COMMAND + ["-source", str(tcl_path)]
+        proc = self.exec_and_log(cmd)
         if proc.returncode:
             return Status(ImplStatus.ERROR)
 
