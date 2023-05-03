@@ -165,6 +165,10 @@ def flow_xilinx(design, flow_args, build_dir):
 
 def flow_xilinx_and_reversed(design, flow_args, build_dir):
     """Run Xilinx bitstream, then fasm2bels reverse"""
+
+    if "--max_dsp" not in flow_args[ToolType.SYNTH]:
+        flow_args[ToolType.SYNTH] += " --max_dsp 0"
+
     status = vivado_synth(design, build_dir, flow_args)
     status = vivado_impl(design, build_dir, flow_args)
     status = xray_rev(design, build_dir, flow_args)
@@ -186,6 +190,10 @@ def flow_xilinx_phys_netlist(design, flow_args, build_dir):
 
 def flow_xilinx_phys_netlist_cmp(design, flow_args, build_dir):
     """Compare Xilinx physical netlist to FASM2BELs netlist"""
+
+    if "--max_dsp" not in flow_args[ToolType.SYNTH]:
+        flow_args[ToolType.SYNTH] += " --max_dsp 0"
+
     status = flow_xilinx_phys_netlist(design, flow_args, build_dir)
     status = xray_rev(design, build_dir, flow_args)
     status = structural_cmp(design, build_dir, flow_args)
