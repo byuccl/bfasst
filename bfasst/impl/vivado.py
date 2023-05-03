@@ -84,12 +84,9 @@ class VivadoImplementationTool(ImplementationTool):
 
         cmd = [
             str(VIVADO_BIN_PATH),
-            "-mode",
-            "tcl",
+            "-nojournal -nolog -mode tcl"
             "-source",
-            str(tcl_path),
-            "-nolog",
-            "-nojournal",
+            str(tcl_path)
         ]
         proc = self.exec_and_log(cmd)
         if proc.returncode:
