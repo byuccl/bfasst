@@ -1,20 +1,7 @@
 IN_ENV = if [ -e .venv/bin/activate ]; then . .venv/bin/activate; fi;
 
 
-install: packages capnproto_java rapidwright venv python_packages install_fasm2bels install_yosys install_wafove
-
-venv:
-	python3 -m venv .venv
-	$(IN_ENV) python3 -m pip install -U pip
-	$(IN_ENV) python3 -m pip install -r requirements.txt
-	$(IN_ENV) python3 -m pip install -e .
-	echo "\nif [ -f \"`pwd`/third_party/rapidwright.sh\" ]\nthen" >> ".venv/bin/activate" 	
-	echo ". `pwd`/third_party/rapidwright.sh" >> ".venv/bin/activate"
-	echo "fi" >> ".venv/bin/activate"
-	echo "export INTERCHANGE_SCHEMA_PATH=`pwd`/third_party/RapidWright/interchange/fpga-interchange-schema/interchange" >> ".venv/bin/activate"
-	echo "export VIVADO_PATH=/tools/Xilinx/Vivado/2022.2/bin/vivado" >> ".venv/bin/activate"
-	echo "unset VIVADO_PATH" > ".venv/bin/deactivate"
-	echo "unset INTERCHANGE_SCHEMA_PATH" >> ".venv/bin/deactivate"
+install: packages rapidwright venv install_fasm2bels install_yosys install_wafove
 
 packages:
 	sudo apt-get install -y \
@@ -34,8 +21,8 @@ packages:
 		libcapnp-dev \
 		jq \
 		iverilog \
-		gtkwave
-	
+		gtkwave	
+
 capnproto_java:
 	$(eval TEMP_DIR := $(shell mktemp -d))
 	cd $(TEMP_DIR) && git clone https://github.com/capnproto/capnproto-java
@@ -46,12 +33,30 @@ capnproto_java:
 submodules:
 	git submodule update --init --recursive
 
-rapidwright: submodules
+rapidwright: submodules capnproto_java
 	cd third_party/RapidWright && ./gradlew compileJava
 	cd third_party/RapidWright/interchange && make
 
+venv: rapidwright
+	python3 -m venv .venv
+	$(IN_ENV) python3 -m pip install -U pip
+	$(IN_ENV) python3 -m pip install -r requirements.txt
+	$(IN_ENV) python3 -m pip install -e .
+	echo "\nif [ -f \"`pwd`/third_party/rapidwright.sh\" ]\nthen" >> ".venv/bin/activate" 	
+	echo ". `pwd`/third_party/rapidwright.sh" >> ".venv/bin/activate"
+	echo "fi" >> ".venv/bin/activate"
+	echo "export INTERCHANGE_SCHEMA_PATH=`pwd`/third_party/RapidWright/interchange/fpga-interchange-schema/interchange" >> ".venv/bin/activate"
+	echo "export VIVADO_PATH=/tools/Xilinx/Vivado/2022.2/bin/vivado" >> ".venv/bin/activate"
+	echo "unset VIVADO_PATH" > ".venv/bin/deactivate"
+	echo "unset INTERCHANGE_SCHEMA_PATH" >> ".venv/bin/deactivate"
+	
+
 install_fasm2bels: submodules
 	cd third_party/fasm2bels && make env
+	echo "source \"`pwd`/third_party/fasm2bels/env/conda/bin/activate\" f4pga_xc_fasm2bels" >> ".venv/bin/activate"
+	echo "source \"`pwd`/third_party/fasm2bels/env/conda/bin/deactivate\" 2> /dev/null" >> ".venv/bin/deactivate"
+	$(IN_ENV) cd third_party/fasm2bels/third_party/prjxray && make env
+	echo "if [ -e \"`pwd`/third_party/fasm2bels/third_party/prjxray/env/bin/activate\" ]; then . \"`pwd`/third_party/fasm2bels/third_party/prjxray/env/bin/activate\"; fi; source \"`pwd`/third_party/fasm2bels/third_party/prjxray/utils/environment.python.sh\";" >> ".venv/bin/activate"
 	$(IN_ENV) cd third_party/fasm2bels && make build
 	cd third_party/fasm2bels && make test-py
 
@@ -62,7 +67,7 @@ install_wafove: submodules
 	$(IN_ENV) python3 -m pip install -e third_party/WaFoVe
 	$(IN_ENV) cd third_party/WaFoVe && make install
 
-install_yosys:
+install_yosys: submodules
 	# Yosys
 	sudo apt-get install -y \
 		build-essential \
