@@ -7,7 +7,7 @@ from bfasst.design import HdlType
 from bfasst.synth.base import SynthesisTool
 from bfasst.synth import vivado_ioparse
 from bfasst.status import Status, SynthStatus
-from bfasst.config import VIVADO_BIN_PATH
+from bfasst.config import VIVADO_COMMAND
 from bfasst.tool import ToolProduct
 
 
@@ -146,13 +146,9 @@ class VivadoSynthesisTool(SynthesisTool):
         with open(tcl_path, "w") as stream:
             self.write_tcl(design, report_io_path, stream)
 
-        cmd = [
-            str(VIVADO_BIN_PATH),
-            "-nojournal -nolog -mode tcl"
-            "-source",
-            str(tcl_path)
-        ]
-        proc = self.exec_and_log(cmd)
+        VIVADO_COMMAND.append("-source")
+        VIVADO_COMMAND.append(str(tcl_path))
+        proc = self.exec_and_log(VIVADO_COMMAND)
         if proc.returncode:
             return Status(SynthStatus.ERROR)
 

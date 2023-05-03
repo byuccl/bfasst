@@ -7,7 +7,7 @@ import time
 import bfasst
 from bfasst.impl.base import ImplementationTool
 from bfasst.status import Status, ImplStatus
-from bfasst.config import VIVADO_BIN_PATH
+from bfasst.config import VIVADO_COMMAND
 
 
 class VivadoImplementationTool(ImplementationTool):
@@ -82,13 +82,9 @@ class VivadoImplementationTool(ImplementationTool):
             self.write_outputs(design, fp)
             self.write_footer(fp)
 
-        cmd = [
-            str(VIVADO_BIN_PATH),
-            "-nojournal -nolog -mode tcl"
-            "-source",
-            str(tcl_path)
-        ]
-        proc = self.exec_and_log(cmd)
+        VIVADO_COMMAND.append("-source")
+        VIVADO_COMMAND.append(str(tcl_path))
+        proc = self.exec_and_log(VIVADO_COMMAND)
         if proc.returncode:
             return Status(ImplStatus.ERROR)
 
