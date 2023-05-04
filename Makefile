@@ -2,7 +2,6 @@ IN_ENV = if [ -e .venv/bin/activate ]; then . .venv/bin/activate; fi;
 
 CAPNPJ := $(shell which capnpc-java)
 
-
 install: submodules rapidwright venv python_packages env install_fasm2bels install_yosys install_wafove
 
 venv:
