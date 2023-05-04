@@ -9,13 +9,13 @@ temp/
 __pycache__
 *.egg-info
 
+# Python packaging
+*.egg-info
+
 # extra stuff
 **/build
 **/icestorm
 **/source_list
-
-# text files
-*.txt
 
 # Vivado files
 .Xil
@@ -29,6 +29,3 @@ conformal/
 # Generated local environment
 env.sh
 
-# Installed tools
-/third_party/rapidwright*
-third_party

@@ -7,3 +7,6 @@
 [submodule "third_party/WaFoVe"]
 	path = third_party/WaFoVe
 	url = https://github.com/byuccl/WaFoVe.git
+[submodule "third_party/RapidWright"]
+	path = third_party/RapidWright
+	url = https://github.com/Xilinx/RapidWright.git

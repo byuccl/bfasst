@@ -86,8 +86,8 @@ class Tool(abc.ABC):
     def open_new_log(self):
         self.log_fp = open(self.log_path, "w")
 
-    def log_title(self, title):
-        self.log(f"{'='*80}\n{title}\n{'='*80}")
+    def log_title(self, *msg):
+        self.log(f"{'='*80}\n{' '.join(str(s) for s in msg)}\n{'='*80}")
 
     def log(self, *msg, add_timestamp=False):
         """Write text to the log file and stdout"""
