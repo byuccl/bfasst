@@ -88,9 +88,6 @@ env: rapidwright venv
 
 install_yosys:
 	# Yosys
-	sudo apt-get install -y \
-		
-
 	cd third_party/yosys && make -j8
 
 
