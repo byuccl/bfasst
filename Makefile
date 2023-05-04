@@ -1,24 +1,17 @@
 IN_ENV = if [ -e .venv/bin/activate ]; then . .venv/bin/activate; fi;
 
+CAPNPJ := $(shell which capnpc-java)
 
-install: packages capnproto_java rapidwright venv python_packages install_fasm2bels install_yosys install_wafove
+
+install: submodules rapidwright venv python_packages env install_fasm2bels install_yosys install_wafove
 
 venv:
 	python3 -m venv .venv
 	$(IN_ENV) python3 -m pip install -U pip
-	$(IN_ENV) python3 -m pip install -r requirements.txt
-	$(IN_ENV) python3 -m pip install -e .
-	echo "\nif [ -f \"`pwd`/third_party/rapidwright.sh\" ]\nthen" >> ".venv/bin/activate" 	
-	echo ". `pwd`/third_party/rapidwright.sh" >> ".venv/bin/activate"
-	echo "fi" >> ".venv/bin/activate"
-	echo "export INTERCHANGE_SCHEMA_PATH=`pwd`/third_party/RapidWright/interchange/fpga-interchange-schema/interchange" >> ".venv/bin/activate"
-	echo "export VIVADO_PATH=/tools/Xilinx/Vivado/2022.2/bin/vivado" >> ".venv/bin/activate"
-	echo "unset VIVADO_PATH" > ".venv/bin/deactivate"
-	echo "unset INTERCHANGE_SCHEMA_PATH" >> ".venv/bin/deactivate"
 
 packages:
-	sudo apt-get install -y \
-		make \
+	apt-get update
+	apt-get install -y \
 		python3-dev \
 		python3-venv \
 		python3-pip \
@@ -34,37 +27,7 @@ packages:
 		libcapnp-dev \
 		jq \
 		iverilog \
-		gtkwave
-	
-capnproto_java:
-	$(eval TEMP_DIR := $(shell mktemp -d))
-	cd $(TEMP_DIR) && git clone https://github.com/capnproto/capnproto-java
-	cd $(TEMP_DIR)/capnproto-java && make
-	cd $(TEMP_DIR)/capnproto-java && sudo make install
-	rm -rf $(TEMP_DIR)
-
-submodules:
-	git submodule update --init --recursive
-
-rapidwright: submodules
-	cd third_party/RapidWright && ./gradlew compileJava
-	cd third_party/RapidWright/interchange && make
-
-install_fasm2bels: submodules
-	cd third_party/fasm2bels && make env
-	$(IN_ENV) cd third_party/fasm2bels && make build
-	cd third_party/fasm2bels && make test-py
-
-# Run a simple design through fasm2bels to generate the database.
-	$(IN_ENV) python scripts/run_design.py designs/basic/and3/ xilinx_and_reversed
-
-install_wafove: submodules
-	$(IN_ENV) python3 -m pip install -e third_party/WaFoVe
-	$(IN_ENV) cd third_party/WaFoVe && make install
-
-install_yosys:
-	# Yosys
-	sudo apt-get install -y \
+		gtkwave \
 		build-essential \
 		clang \
 		bison \
@@ -80,6 +43,53 @@ install_yosys:
 		libboost-python-dev \
 		libboost-filesystem-dev \
 		zlib1g-dev
+	
+python_packages:
+	$(IN_ENV) python3 -m pip install -r requirements.txt
+	$(IN_ENV) python3 -m pip install -e .
+
+capnproto_java:
+ifeq "$(CAPNPJ)" ""
+	$(eval TEMP_DIR := $(shell mktemp -d))
+	cd $(TEMP_DIR) && git clone https://github.com/capnproto/capnproto-java
+	cd $(TEMP_DIR)/capnproto-java && make
+	cd $(TEMP_DIR)/capnproto-java && make install
+	rm -rf $(TEMP_DIR)
+endif
+
+submodules:
+	git submodule update --init --recursive
+
+rapidwright: submodules
+	cd third_party/RapidWright && ./gradlew compileJava
+	cd third_party/RapidWright/interchange/ && make
+
+install_fasm2bels: submodules
+	cd third_party/fasm2bels && make env
+	$(IN_ENV) cd third_party/fasm2bels && make build
+	$(IN_ENV) cd third_party/fasm2bels && make test-py
+
+# Run a simple design through fasm2bels to generate the database.
+	$(IN_ENV) python scripts/run_design.py designs/basic/and3/ xilinx_and_reversed
+
+install_wafove: submodules
+	$(IN_ENV) python3 -m pip install -e third_party/WaFoVe
+	$(IN_ENV) cd third_party/WaFoVe && make install
+
+env: rapidwright venv
+	echo >> ".venv/bin/activate"
+	echo "if [ -f \"`pwd`/third_party/rapidwright.sh\" ];then" >> ".venv/bin/activate" 	
+	echo ". `pwd`/third_party/rapidwright.sh" >> ".venv/bin/activate"
+	echo "fi" >> ".venv/bin/activate"
+	echo "export INTERCHANGE_SCHEMA_PATH=`pwd`/third_party/RapidWright/interchange/fpga-interchange-schema/interchange" >> ".venv/bin/activate"
+	echo "export VIVADO_PATH=/tools/Xilinx/Vivado/2022.2/bin/vivado" >> ".venv/bin/activate"
+	echo "unset VIVADO_PATH" > ".venv/bin/deactivate"
+	echo "unset INTERCHANGE_SCHEMA_PATH" >> ".venv/bin/deactivate"
+
+install_yosys:
+	# Yosys
+	sudo apt-get install -y \
+		
 
 	cd third_party/yosys && make -j8
 
