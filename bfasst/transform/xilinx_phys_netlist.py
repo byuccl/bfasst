@@ -191,9 +191,18 @@ class XilinxPhysNetlist(TransformTool):
         """Do all rapidwright related processing on the netlist"""
 
         # Read the checkpoint into rapidwright, and get the netlist
-        self.rw_design = Design.readCheckpoint(
-            design.xilinx_impl_checkpoint_path, design.impl_edif_path
-        )
+        try:
+            self.rw_design = Design.readCheckpoint(
+                design.xilinx_impl_checkpoint_path, design.impl_edif_path
+            )
+        except jpype.JException as exc:
+            error = str(exc)
+            if "Failed to reliably download file" in error:
+                self.rw_design = Design.readCheckpoint(
+                design.xilinx_impl_checkpoint_path, design.impl_edif_path
+            )
+            else:
+                raise RapidwrightException(str(exc))
 
         self.rw_netlist = self.rw_design.getNetlist()
 
