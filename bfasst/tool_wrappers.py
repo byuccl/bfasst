@@ -161,31 +161,35 @@ def vivado_ooc(design, build_dir, flow_args):
 
     synth_status = synth_tool.check_runs(design)
 
-    impl_tool.init_design(design)
-
-    impl_status = impl_tool.get_prev_run_status(
-        tool_products=[
-            ToolProduct(
-                design.bitstream_path,
-                impl_tool.log_path,
-                impl_tool.check_impl_status,
+    if synth_status is not None:
+        impl_tool.init_design(design)
+        try:
+            impl_status = impl_tool.get_prev_run_status(
+                tool_products=[
+                    ToolProduct(
+                        design.bitstream_path,
+                        impl_tool.log_path,
+                        impl_tool.check_impl_status,
+                    )
+                ],
+                dependency_modified_time=max(
+                    Path(__file__).stat().st_mtime, design.netlist_path.stat().st_mtime
+                ),
             )
-        ],
-        dependency_modified_time=max(
-            Path(__file__).stat().st_mtime, design.netlist_path.stat().st_mtime
-        ),
-    )
-
-    if synth_status is not None and impl_status is not None:
-        synth_tool.print_skipping_synth()
-        impl_tool.print_skipping_impl()
-        return impl_status
+        except FileNotFoundError:
+            impl_status = None
+        if impl_status is not None:
+            synth_tool.print_skipping_synth()
+            impl_tool.print_skipping_impl()
+            return impl_status
 
     synth_tool.print_running_synth()
+    impl_tool.print_running_impl()
     synth_tool.open_new_log()
     impl_tool.open_new_log()
     tcl_path = synth_tool.cwd / "run.tcl"
     report_io_path = synth_tool.work_dir / "report_io.txt"
+    impl_tool.init_design(design)
     with open(tcl_path, "w") as fp:
         synth_tool.write_header(fp)
         synth_tool.write_hdl(design, fp)
@@ -199,6 +203,6 @@ def vivado_ooc(design, build_dir, flow_args):
     cmd = [str(VIVADO_BIN_PATH), "-mode", "tcl", "-source", str(tcl_path)]
     proc = synth_tool.exec_and_log(cmd)
     if proc.returncode:
-        raise BfasstException(ImplStatus.ERROR, "Vivado synth/impl flow failed")
+        raise BfasstException(ImplStatus.ERROR, "Vivado ooc synth/impl flow failed")
 
     return impl_tool.success_status
