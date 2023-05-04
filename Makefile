@@ -73,7 +73,7 @@ install_fasm2bels: submodules
 
 install_wafove: submodules
 	$(IN_ENV) python3 -m pip install -e third_party/WaFoVe
-	$(IN_ENV) cd third_party/WaFoVe && make install
+	$(IN_ENV) cd third_party/WaFoVe && make build
 
 env: rapidwright venv
 	echo >> ".venv/bin/activate"
