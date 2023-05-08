@@ -32,7 +32,7 @@ options:
                         YAML file describing errors to inject for testing.Only works with flows designed for error injection
 ```
 
-There are also several pre-configured *experiments*, which allow you to run a large set of designs and collect results.  These configurations are located within the `experiments` directory, and can be run using `./scripts/run_experiment.py`:
+There are also several pre-configured *experiments*, which allow you to run a large set of designs and collect results.  These configurations are located within the `experiments` directory, and can be run using `python ./scripts/run_experiment.py`:
 ```
 usage: run_experiment.py [-h] [-j THREADS] [--print_period PRINT_PERIOD] experiment_yaml
 
@@ -51,8 +51,6 @@ options:
 * Install Vivado 2022.2
   * Update bfasst/config.py_ and make sure the path points to your Vivado installation. 
 * Clone this github repository. 
-* Checkout the make branch
-  * ```git checkout make```
 * Install necessary packages:
   * ```sudo make packages```
 * Install Capnproto Java
@@ -74,15 +72,18 @@ A Waveform Verification tool. In other words, a tool used to confirm that two Ve
     * See third_party/WaFoVe/documentation/README.md for more details
 
 ### Fasm2Bels
-Information found here: https://github.com/chipsalliance/f4pga-xc-fasm2bels/blob/master/README.md
-    * This tool depends on Project X-Ray (also installed with bfasst): https://github.com/f4pga/prjxray/blob/master/README.md
+Information found here: <https://github.com/chipsalliance/f4pga-xc-fasm2bels/blob/master/README.md>
+    * This tool depends on Project X-Ray (installed automatically with Fasm2Bels): <https://github.com/f4pga/prjxray/blob/master/README.md>
+
+### RapidWright
+Information found here: <https://github.com/Xilinx/RapidWright/blob/master/README.md>
 
 ### Yosys
-An open source synthesis tool. https://github.com/YosysHQ/yosys/blob/master/README.md
+An open source synthesis tool. <https://github.com/YosysHQ/yosys/blob/master/README.md>
 
 ### Conformal
 The conformal plugin is currently designed to run conformal on a remote machine (CAEDM machine at BYU).
-  * Set up your SSH with caedm. You'll know if you set it up correctly when you can use ```ssh caedm``` and log in without having to enter your password. Follow the guide at https://byu-cpe.github.io/ComputingBootCamp/tutorials/linux/ .
+  * Set up your SSH with caedm. You'll know if you set it up correctly when you can use ```ssh caedm``` and log in without having to enter your password. Follow the guide at <https://byu-cpe.github.io/ComputingBootCamp/tutorials/linux/> .
   * Open _bfasst/config.py_. Change _fsj/squallz_ to your caedm login info. For instance, if you connect to caedm and enter ```pwd``` and your info is _/hij/username_, change _fsj/squallz_ to _hij/username_.
 Finally, test to confirm that everything worked correctly! Run the following:
 1. Activate the virual environment: ```. .venv/bin/activate```
