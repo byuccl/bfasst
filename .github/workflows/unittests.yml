@@ -48,7 +48,6 @@ jobs:
       timeout-minutes: 30
       run: |
         source .venv/bin/activate
-        source env.sh
         python scripts/run_experiment.py ${{ matrix.experiment }} -j8 --print_period 0
 
   # Don't use WIP tests until Github UI is fixed (https://github.com/orgs/community/discussions/15452)
