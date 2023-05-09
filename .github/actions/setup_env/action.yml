@@ -5,6 +5,12 @@ name: "Setup Environment"
 runs:
   using: "composite"
   steps:
+  
+  - name: rapidwright
+    shell: bash
+    run: | 
+      make rapidwright
+      
   - name: env
     shell: bash
     run: |
@@ -12,19 +18,14 @@ runs:
       make python_packages
       make env
 
-  - name: rapidwright
-    shell: bash
-    run: | 
-      make rapidwright
-
   - name: fasm2bels
     shell: bash
     run: |
-      . env.sh && make install_fasm2bels
+      make install_fasm2bels
 
   - name: wafove
     shell: bash
     run: |
-      . env.sh && make install_wafove
+      make install_wafove
     
           
