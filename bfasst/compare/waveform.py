@@ -2,7 +2,6 @@
 
 import pathlib
 import re
-import yaml
 
 from wafove import compare_waveforms
 from wafove.templates import get_paths
@@ -142,39 +141,18 @@ class WaveformCompareTool(CompareTool):
                 return Status(CompareStatus.NOT_EQUIVALENT)
             return Status(CompareStatus.SUCCESS)
 
-        multiple_files = self.check_multiple_files(design)
-        # Checks if there are multiple verilog files in the design.
-
         for i in range(2):
             if paths["tb"][i].exists():
                 paths["tb"][i].unlink()
 
         compare_waveforms.generate_files(
-            multiple_files, paths, self.args.tests, self.args.seed, self.args.allSignals
+            paths, self.args.tests, self.args.seed, self.args.allSignals
         )
 
         if compare_waveforms.run_test(paths):
             return Status(CompareStatus.SUCCESS)
 
         return Status(CompareStatus.NOT_EQUIVALENT)
-
-    def check_multiple_files(self, design):
-        """A function to check if there are multiple verilog files in a design or not. Used later in
-        parsing stages due to different logic being needed. Assumed true if no design exists."""
-
-        if design is None:
-            return True
-
-        with open(design.yaml_path, "r") as fp:
-            design_props = yaml.safe_load(fp)
-
-        if "include_all_verilog_files" in design_props:
-            return design_props["include_all_verilog_files"]
-
-        if "include_all_system_verilog_files" in design_props:
-            return design_props["include_all_system_verilog_files"]
-
-        return False
 
     def check_compare_status(self, log_path):
         """Used to confirm whether a design is equivalent or not."""
