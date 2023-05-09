@@ -1,6 +1,6 @@
 designs:
   - ooc/
 
-flow: xilinx
+flow: xilinx_ooc
 
-synth: "-mode out_of_context"
+synth: " --flatten"
