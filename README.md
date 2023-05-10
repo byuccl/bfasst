@@ -58,9 +58,6 @@ options:
 ### Install BFASST
 * Install the Python virtual environment, activate, and install packages:
   * `make install`
-* Return to main branch
-  * ```git checkout main```
-
 
 ## Tools
 BFASST can be used to compose different CAD flows from severals tools.  These tools are installed with BFASST.
@@ -88,3 +85,4 @@ The conformal plugin is currently designed to run conformal on a remote machine 
 Finally, test to confirm that everything worked correctly! Run the following:
 1. Activate the virual environment: ```. .venv/bin/activate```
 2. Run the flow:  ```python scripts/run_design.py designs/basic/add4/ xilinx_conformal_impl```
+

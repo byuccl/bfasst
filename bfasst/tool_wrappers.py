@@ -2,8 +2,11 @@
 Only import as needed to minimize dependencies to the tools being used."""
 
 # pylint: disable=import-outside-toplevel
-
+from pathlib import Path
+from bfasst.config import VIVADO_BIN_PATH
 from bfasst.locks import conformal_lock, onespin_lock
+from bfasst.status import BfasstException
+from bfasst.tool import ToolProduct
 from bfasst.types import ToolType, Vendor
 
 
@@ -43,7 +46,9 @@ def conformal_cmp(design, build_dir, flow_args, vendor=Vendor.XILINX):
     """Compare netlists using Conformal"""
     from bfasst.compare.conformal import ConformalCompareTool
 
-    compare_tool = ConformalCompareTool(build_dir, flow_args[ToolType.CMP], vendor)
+    compare_tool = ConformalCompareTool(
+        build_dir, flow_args[ToolType.CMP], vendor
+    )  # TODO vendor should be flow arg
     with conformal_lock:
         return compare_tool.compare_netlists(design)
 
@@ -140,3 +145,64 @@ def xilinx_phys_netlist(design, build_dir):
     phy_netlist_tool = XilinxPhysNetlist(build_dir)
     status = phy_netlist_tool.run(design)
     return status
+
+
+def vivado_ooc(design, build_dir, flow_args):
+    """Run Vivado Synthesis and Implementation for out-of-context designs"""
+    from bfasst.impl.vivado import VivadoImplementationTool
+    from bfasst.synth.vivado import VivadoSynthesisTool
+    from bfasst.status import ImplStatus
+
+    synth_tool = VivadoSynthesisTool(build_dir, flow_args[ToolType.SYNTH])
+    impl_tool = VivadoImplementationTool(build_dir, flow_args[ToolType.IMPL])
+
+    synth_tool.args.out_of_context = True
+    impl_tool.args.out_of_context = True
+
+    synth_status = synth_tool.check_runs(design)
+
+    if synth_status is not None:
+        impl_tool.init_design(design)
+        try:
+            impl_status = impl_tool.get_prev_run_status(
+                tool_products=[
+                    ToolProduct(
+                        design.bitstream_path,
+                        impl_tool.log_path,
+                        impl_tool.check_impl_status,
+                    )
+                ],
+                dependency_modified_time=max(
+                    Path(__file__).stat().st_mtime, design.netlist_path.stat().st_mtime
+                ),
+            )
+        except FileNotFoundError:
+            impl_status = None
+        if impl_status is not None:
+            synth_tool.print_skipping_synth()
+            impl_tool.print_skipping_impl()
+            return impl_status
+
+    synth_tool.print_running_synth()
+    impl_tool.print_running_impl()
+    synth_tool.open_new_log()
+    impl_tool.open_new_log()
+    tcl_path = synth_tool.cwd / "run.tcl"
+    report_io_path = synth_tool.work_dir / "report_io.txt"
+    impl_tool.init_design(design)
+    with open(tcl_path, "w") as fp:
+        synth_tool.write_header(fp)
+        synth_tool.write_hdl(design, fp)
+        synth_tool.write_synth(design, fp)
+        synth_tool.write_products(design, report_io_path, fp)
+        # need to add constraints logic, but this is determined post-synthesis
+        impl_tool.write_impl(fp)
+        impl_tool.write_outputs(design, fp)
+        synth_tool.write_footer(fp)
+
+    cmd = [str(VIVADO_BIN_PATH), "-mode", "tcl", "-source", str(tcl_path)]
+    proc = synth_tool.exec_and_log(cmd)
+    if proc.returncode:
+        raise BfasstException(ImplStatus.ERROR, "Vivado ooc synth/impl flow failed")
+
+    return impl_tool.success_status

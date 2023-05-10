@@ -1,4 +1,5 @@
 """ This file provides tools to wrap Vivado for synthesis purposes """
+
 import re
 import pathlib
 
@@ -7,7 +8,7 @@ from bfasst.design import HdlType
 from bfasst.synth.base import SynthesisTool
 from bfasst.synth import vivado_ioparse
 from bfasst.status import Status, SynthStatus
-from bfasst.config import VIVADO_BIN_PATH
+from bfasst.config import VIVADO_COMMAND
 from bfasst.tool import ToolProduct
 
 
@@ -35,25 +36,31 @@ class VivadoSynthesisTool(SynthesisTool):
 
     TOOL_WORK_DIR = "vivado_synth"
 
-    def create_netlist(self, design):
-        """create netlist from design"""
-        default = not self.args.out_of_context
+    def check_runs(self, design):
+        """Check if synthesis has already been run"""
 
         # Save edif netlist path to design object
         design.netlist_path = self.cwd / f"{design.top}.edf"
         design.constraints_path = self.cwd / "constraints.xdc"
 
         generate_netlist = ToolProduct(design.netlist_path, self.log_path, self.check_synth_log)
-        generate_constraints = ToolProduct(design.constraints_path)
-        tool_products = [generate_netlist, generate_constraints]
+        if self.args.out_of_context:
+            tool_products = [generate_netlist]
+        else:
+            generate_constraints = ToolProduct(design.constraints_path)
+            tool_products = [generate_netlist, generate_constraints]
 
-        status = self.get_prev_run_status(
+        return self.get_prev_run_status(
             tool_products,
             dependency_modified_time=max(
                 pathlib.Path(__file__).stat().st_mtime, design.last_modified_time()
             ),
         )
 
+    def create_netlist(self, design):
+        """create netlist from design"""
+
+        status = self.check_runs(design)
         if status is not None:
             self.print_skipping_synth()
             return status
@@ -68,7 +75,7 @@ class VivadoSynthesisTool(SynthesisTool):
         self.run_synth(design, report_io_path)
 
         # Extract contraint file from Vivado-assigned pins
-        if default:
+        if not self.args.out_of_context:
             extract_contraints(design, report_io_path)
 
         # Check synthesis log
@@ -107,8 +114,9 @@ class VivadoSynthesisTool(SynthesisTool):
         top = f" -top {design.top}" if "top" not in self.args else ""
         flatten = " -flatten_hierarchy full" if self.args.flatten else ""
         dsp = f" -max_dsp {self.args.max_dsp}" if self.args.max_dsp else ""
+        ooc = " -mode out_of_context" if self.args.out_of_context else ""
 
-        stream.write(f"synth_design{top}{dsp}{flatten}\n")
+        stream.write(f"synth_design{top}{dsp}{flatten}{ooc}\n")
 
     def write_products(self, design, report_io_path, stream):
         if not self.args.out_of_context:
@@ -139,7 +147,7 @@ class VivadoSynthesisTool(SynthesisTool):
         with open(tcl_path, "w") as stream:
             self.write_tcl(design, report_io_path, stream)
 
-        cmd = [str(VIVADO_BIN_PATH), "-mode", "tcl", "-source", str(tcl_path)]
+        cmd = VIVADO_COMMAND + ["-source", str(tcl_path)]
         proc = self.exec_and_log(cmd)
         if proc.returncode:
             return Status(SynthStatus.ERROR)

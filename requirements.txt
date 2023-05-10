@@ -11,4 +11,3 @@ werkzeug
 pylint
 JPype1
 bidict
-pylint
