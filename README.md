@@ -66,7 +66,7 @@ Before running any bfasst flows, always make sure you have activated the BFASST 
 
 ### WaFoVe
 A Waveform Verification tool. In other words, a tool used to confirm that two Verilog designs are equivalent through analyzing their waveforms.
-    * See <third_party/WaFoVe/documentation/README.md> for more details
+    * See [](third_party/WaFoVe/documentation/README.md) for more details
 
 ### Fasm2Bels
 Information found here: <https://github.com/chipsalliance/f4pga-xc-fasm2bels/blob/master/README.md>
