@@ -20,7 +20,7 @@ class SynthesisTool(tool.Tool):
     def add_args(self):
         """Default arguments for all synth tools"""
         self.arg_parser.add_argument("--flatten", action="store_true")
-        self.arg_parser.add_argument("--max_dsp", type=int)
+        self.arg_parser.add_argument("--max_dsp", type=int, default=None)
         self.arg_parser.add_argument("--out_of_context", action="store_true")
 
     # This method should run synthesis.  It should return
