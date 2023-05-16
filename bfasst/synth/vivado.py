@@ -113,7 +113,7 @@ class VivadoSynthesisTool(SynthesisTool):
     def write_synth(self, design, stream):
         top = f" -top {design.top}" if "top" not in self.args else ""
         flatten = " -flatten_hierarchy full" if self.args.flatten else ""
-        dsp = f" -max_dsp {self.args.max_dsp}" if self.args.max_dsp else ""
+        dsp = f" -max_dsp {self.args.max_dsp}" if self.args.max_dsp is not None else ""
         ooc = " -mode out_of_context" if self.args.out_of_context else ""
 
         stream.write(f"synth_design{top}{dsp}{flatten}{ooc}\n")
