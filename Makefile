@@ -76,7 +76,7 @@ install_wafove: submodules
 	$(IN_ENV) python3 -m pip install -e third_party/WaFoVe
 	$(IN_ENV) cd third_party/WaFoVe && make build
 
-env: rapidwright venv
+env: venv rapidwright 
 	echo >> ".venv/bin/activate"
 	echo "if [ -f \"`pwd`/third_party/rapidwright.sh\" ];then" >> ".venv/bin/activate" 	
 	echo ". `pwd`/third_party/rapidwright.sh" >> ".venv/bin/activate"
