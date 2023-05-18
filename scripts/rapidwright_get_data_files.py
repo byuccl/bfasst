@@ -1,11 +1,11 @@
 """ Trigger download of rapidwright data files"""
 
-from bfasst import jpype_jvm, paths
+from bfasst import jpype_jvm
 
 jpype_jvm.start()
 
 # pylint: disable=wrong-import-position,wrong-import-order
-from com.xilinx.rapidwright.design import Design
+from com.xilinx.rapidwright.util import FileTools
 
 # pylint: enable=wrong-import-position,wrong-import-order
 
@@ -15,4 +15,4 @@ print("7-series data files.")
 print("-" * 80)
 
 # Load a rapidwright design
-Design.readCheckpoint(paths.RESOURCES_PATH / "rapidwright" / "and3.dcp")
+FileTools.ensureDataFilesAreStaticInstallFriendly("xc7a200t")
