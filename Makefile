@@ -62,6 +62,7 @@ submodules:
 rapidwright: submodules
 	cd third_party/RapidWright && ./gradlew compileJava
 	cd third_party/RapidWright/interchange/ && make
+	$(IN_ENV) python scripts/rapidwright_get_data_files.py
 
 install_fasm2bels: submodules
 	cd third_party/fasm2bels && make env

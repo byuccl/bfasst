@@ -1,6 +1,7 @@
 """ Handles starting the JPype JVM used for Rapidwright"""
 
 import jpype
+import jpype.imports
 
 from bfasst.paths import THIRD_PARTY_PATH
 
