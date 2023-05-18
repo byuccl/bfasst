@@ -92,7 +92,7 @@ install_yosys:
 
 
 format:
-	find ./scripts -iname "*.py" -exec black -l 100 {} \;
+	find ./scripts -iname "*.py" -exec black -q -l 100 {} \;
 
 
 pylint: format
