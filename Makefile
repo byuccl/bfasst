@@ -62,6 +62,7 @@ submodules:
 rapidwright: submodules
 	cd third_party/RapidWright && ./gradlew compileJava
 	cd third_party/RapidWright/interchange/ && make
+	$(IN_ENV) python scripts/rapidwright_get_data_files.py
 
 install_fasm2bels: submodules
 	cd third_party/fasm2bels && make env
@@ -75,7 +76,7 @@ install_wafove: submodules
 	$(IN_ENV) python3 -m pip install -e third_party/WaFoVe
 	$(IN_ENV) cd third_party/WaFoVe && make build
 
-env: rapidwright venv
+env: venv rapidwright 
 	echo >> ".venv/bin/activate"
 	echo "if [ -f \"`pwd`/third_party/rapidwright.sh\" ];then" >> ".venv/bin/activate" 	
 	echo ". `pwd`/third_party/rapidwright.sh" >> ".venv/bin/activate"
@@ -91,7 +92,7 @@ install_yosys:
 
 
 format:
-	find ./scripts -iname "*.py" -exec black -l 100 {} \;
+	find ./scripts -iname "*.py" -exec black -q -l 100 {} \;
 
 
 pylint: format
