@@ -6,6 +6,12 @@ runs:
   using: "composite"
   steps:
   
+  - name: venv
+    shell: bash
+    run: |
+      make venv
+      make python_packages
+
   - name: rapidwright
     shell: bash
     run: | 
@@ -14,8 +20,6 @@ runs:
   - name: env
     shell: bash
     run: |
-      make venv
-      make python_packages
       make env
 
   - name: fasm2bels
