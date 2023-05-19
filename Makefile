@@ -1,5 +1,5 @@
+VIVADO_PATH := "/tools/Xilinx/Vivado/2022.2/bin/vivado"
 IN_ENV = if [ -e .venv/bin/activate ]; then . .venv/bin/activate; fi;
-
 CAPNPJ := $(shell which capnpc-java)
 
 install: submodules rapidwright venv python_packages env install_fasm2bels install_yosys install_wafove
@@ -82,7 +82,7 @@ env: venv rapidwright
 	echo ". `pwd`/third_party/rapidwright.sh" >> ".venv/bin/activate"
 	echo "fi" >> ".venv/bin/activate"
 	echo "export INTERCHANGE_SCHEMA_PATH=`pwd`/third_party/RapidWright/interchange/fpga-interchange-schema/interchange" >> ".venv/bin/activate"
-	echo "export VIVADO_PATH=/tools/Xilinx/Vivado/2022.2/bin/vivado" >> ".venv/bin/activate"
+	echo "export VIVADO_PATH=$(VIVADO_PATH)" >> ".venv/bin/activate"
 	echo "unset VIVADO_PATH" > ".venv/bin/deactivate"
 	echo "unset INTERCHANGE_SCHEMA_PATH" >> ".venv/bin/deactivate"
 

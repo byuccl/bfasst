@@ -49,7 +49,7 @@ options:
 ## Install
 ### Prerequisites
 * Install Vivado 2022.2
-  * Update bfasst/config.py_ and make sure the path points to your Vivado installation. 
+  * Update the first line of the Makefile and make sure the path points to your Vivado installation. 
 * Clone this github repository. 
 * Install necessary packages:
   * ```sudo make packages```
