@@ -2,7 +2,7 @@ VIVADO_PATH := "/tools/Xilinx/Vivado/2022.2/bin/vivado"
 IN_ENV = if [ -e .venv/bin/activate ]; then . .venv/bin/activate; fi;
 CAPNPJ := $(shell which capnpc-java)
 
-install: submodules rapidwright venv python_packages env install_fasm2bels install_yosys install_wafove
+install: submodules venv python_packages rapidwright env install_fasm2bels install_yosys install_wafove
 
 venv:
 	python3 -m venv .venv
