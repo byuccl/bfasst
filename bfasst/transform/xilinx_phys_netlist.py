@@ -194,7 +194,6 @@ class XilinxPhysNetlist(TransformTool):
         self.rw_design = Design.readCheckpoint(
             design.xilinx_impl_checkpoint_path, design.impl_edif_path
         )
-        
         self.rw_netlist = self.rw_design.getNetlist()
 
         # Init BUFGCTRL cell template
