@@ -29,13 +29,11 @@ runs:
 
   - name: fasm2bels_artifcats
     if: always()
-    uses: actions/download-artifact@v3
+    uses: actions/upload-artifact@v3
     with:
       name: log_files
       path: |
-        build/xilinx_and_reversed/basic/and3/vivado_impl/log.txt
-        build/xilinx_and_reversed/basic/and3/vivado_synth/log.txt
-        build/xilinx_and_reversed/basic/and3/xray/log.txt
+        build/**/log.txt
 
   - name: wafove
     shell: bash
