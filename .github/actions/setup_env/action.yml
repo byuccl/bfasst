@@ -28,12 +28,13 @@ runs:
       make install_fasm2bels
 
   - name: fasm2bels_artifcats
-    if: always()
+    if: failure()
     uses: actions/upload-artifact@v3
     with:
       name: log_files
       path: |
         build/**/log.txt
+        build/**/*.log
 
   - name: wafove
     shell: bash
