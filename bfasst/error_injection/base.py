@@ -10,8 +10,8 @@ class ErrorInjectionTool(Tool):
 
     success_status = Status(ErrorInjectionStatus.SUCCESS)
 
-    def __init__(self, cwd, flow_args="") -> None:
-        super().__init__(cwd)
+    def __init__(self, cwd, design, flow_args="") -> None:
+        super().__init__(cwd, design)
 
         # Implementation options
         self.create_arg_parser("error", flow_args)
@@ -28,5 +28,5 @@ class ErrorInjectionTool(Tool):
     #       list will be [path_to_corrupt_netlist_1, path_to_corrupt_netlist_2]
     #     - status is a Status object from bfasst.status
     @abc.abstractmethod
-    def run_error_flows(self, design):
+    def run_error_flows(self):
         pass

@@ -23,8 +23,8 @@ class ErrorInjector_ErrorInjectionTool(ErrorInjectionTool):
     # For now these will be lambda functions, but it might be worth having a
     #   separate class system for error injection flows if they end up being
     #   very complicated (which they well could be)
-    def __init__(self, build_dir):
-        super().__init__(build_dir)
+    def __init__(self, build_dir, design):
+        super().__init__(build_dir, design)
         self.flow_fcn_map = {
             self.Errors.LUT_BIT_FLIP: lambda: self.lut_bit_flip_fcn,
             self.Errors.CROSS_LUT_WIRES: lambda: self.cross_lut_wires_fcn,
@@ -45,34 +45,34 @@ class ErrorInjector_ErrorInjectionTool(ErrorInjectionTool):
         fcn = self.flow_fcn_map[flow_enum]()
         return fcn
 
-    def run_error_flows(self, design):
-        design.nets_to_remove_from_pcf.clear()
+    def run_error_flows(self):
+        self.design.nets_to_remove_from_pcf.clear()
 
         # Open the YAML file (if there is one) and read the flow information
-        if design.error_flow_yaml is None:
+        if self.design.error_flow_yaml is None:
             return (Status(ErrorInjectionStatus.NO_YAML), None)
-        with open(paths.ERROR_FLOW_PATH / design.error_flow_yaml) as fp:
+        with open(paths.ERROR_FLOW_PATH / self.design.error_flow_yaml) as fp:
             error_flow_info = yaml.safe_load(fp)
 
         corrupt_netlists = []
         for flow in error_flow_info["error_injection_flows"]:
-            corrupt_netlist_path = self.work_dir / (design.top + "_" + flow["name"] + ".v")
-            corrupt_netlist_path = design.netlist_path.parent / corrupt_netlist_path
-            print(design.yosys_netlist_path)
-            netlist_buffer = self.read_netlist_to_buffer(design.yosys_netlist_path)
+            corrupt_netlist_path = self.work_dir / (self.design.top + "_" + flow["name"] + ".v")
+            corrupt_netlist_path = self.design.netlist_path.parent / corrupt_netlist_path
+            print(self.design.yosys_netlist_path)
+            netlist_buffer = self.read_netlist_to_buffer(self.design.yosys_netlist_path)
             for p in flow["passes"]:
                 flow_name = p[0]
                 num_iterations = p[1]
                 flow_fcn = self.get_flow_fcn_from_name(flow_name)
                 for itr in range(num_iterations):
-                    flow_ret = flow_fcn(netlist_buffer, design)
+                    flow_ret = flow_fcn(netlist_buffer, self.design)
                     netlist_buffer = flow_ret[1]
             self.write_buffer_to_netlist(netlist_buffer, corrupt_netlist_path)
             corrupt_netlists.append(corrupt_netlist_path)
-        design.corrupt_netlist_paths = corrupt_netlists
+        self.design.corrupt_netlist_paths = corrupt_netlists
         # Get a list of the names of flows we're using to return as well
         flow_name_list = [flow["name"] for flow in error_flow_info["error_injection_flows"]]
-        design.error_flow_names = flow_name_list
+        self.design.error_flow_names = flow_name_list
         tuple_list = list(zip(corrupt_netlists, flow_name_list))
         return (Status(ErrorInjectionStatus.SUCCESS), tuple_list)
 
@@ -88,7 +88,7 @@ class ErrorInjector_ErrorInjectionTool(ErrorInjectionTool):
             for line in lines:
                 fp.write(line)
 
-    def lut_bit_flip_fcn(self, netlist_buffer, design):
+    def lut_bit_flip_fcn(self, netlist_buffer):
         # Go through the golden file. Copy everything to an internal buffer,
         #   and note where LUT inits happen.
         #   Once the whole thing is read, pick a random lut and change 1 bit
@@ -131,7 +131,7 @@ class ErrorInjector_ErrorInjectionTool(ErrorInjectionTool):
         )
         return (Status(ErrorInjectionStatus.FCN_SUCCESS), netlist_buffer)
 
-    def cross_lut_wires_fcn(self, netlist_buffer, design):
+    def cross_lut_wires_fcn(self, netlist_buffer):
         # Look for lut outputs
         lut_out_linenos = []
         for lineno in range(len(netlist_buffer)):
@@ -157,7 +157,7 @@ class ErrorInjector_ErrorInjectionTool(ErrorInjectionTool):
         print("Swapped LUT outputs on lines", lut1_lineno, "and", lut2_lineno)
         return (Status(ErrorInjectionStatus.FCN_SUCCESS), netlist_buffer)
 
-    def add_signal_tap(self, netlist_buffer, design):
+    def add_signal_tap(self, netlist_buffer):
         # Find where the module declaration, wire statements, output
         #   statements, and assign statements are in the design
         module_decl_line = None
@@ -226,8 +226,8 @@ class ErrorInjector_ErrorInjectionTool(ErrorInjectionTool):
         # Note what the tapped net is so we can remove it from the pcf (since
         #   we're "modifying" the bitstream)
         if escaped_name:
-            design.nets_to_remove_from_pcf.add(wire_to_tap[1:])
+            self.design.nets_to_remove_from_pcf.add(wire_to_tap[1:])
         else:
-            design.nets_to_remove_from_pcf.add(wire_to_tap)
+            self.design.nets_to_remove_from_pcf.add(wire_to_tap)
 
         return (Status(ErrorInjectionStatus.FCN_SUCCESS), netlist_buffer)
