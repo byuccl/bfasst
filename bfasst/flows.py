@@ -398,8 +398,8 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
     status = yosys_synth(design, build_dir, flow_args)
 
     # Run error injection
-    error_inj_tool = ErrorInjector_ErrorInjectionTool(build_dir)
-    ret = error_inj_tool.run_error_flows(design)
+    error_inj_tool = ErrorInjector_ErrorInjectionTool(build_dir, design)
+    ret = error_inj_tool.run_error_flows()
     status = ret[0]
 
     # Run Synth, impl, and icestorm on the original netlist
@@ -449,9 +449,9 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
 
         # Run compare to create a onespin tcl for yosys->corrupt reversed netlist
         design.compare_revised_file = design.reversed_netlist_filename()
-        compare_tool = OneSpin_CompareTool(build_dir)
+        compare_tool = OneSpin_CompareTool(build_dir, design)
         with onespin_lock:
-            status = compare_tool.compare_netlists(design)
+            status = compare_tool.compare_netlists()
 
         # Run compare again so we can check yosys netlist -> corrupt yosys
         #   netlist
@@ -459,10 +459,10 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
         #   netlist corruption, and not some other issue
         design.compare_revised_file = netlist.name
         with onespin_lock:
-            status = compare_tool.compare_netlists(design)
+            status = compare_tool.compare_netlists()
 
     # Write the python script to run all of the compare tcl scripts
-    compare_tool.write_compare_script(design)
+    compare_tool.write_compare_script()
 
     return status
 
