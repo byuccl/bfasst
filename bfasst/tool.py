@@ -33,9 +33,10 @@ class Tool(abc.ABC):
     TIME_FORMAT = "%H:%M:%S"
     TIMESTAMP_FORMAT = DATE_FORMAT + " " + TIME_FORMAT + ".%f\t"
 
-    def __init__(self, cwd):
+    def __init__(self, cwd, design=None):
         super().__init__()
         self.cwd = cwd
+        self.design = design
         self.work_dir = self.make_work_dir()
         self.log_path = self.work_dir / "log.txt"
         self.log_fp = None
