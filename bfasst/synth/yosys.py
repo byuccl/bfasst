@@ -21,17 +21,17 @@ class YosysTechSynthTool(SynthesisTool):
 
     TOOL_WORK_DIR = "yosys_synth"
 
-    def create_netlist(self, design):
+    def create_netlist(self):
         # Target netlist output
-        design.netlist_path = self.cwd / (design.top + "_yosys_tech.v")
+        self.design.netlist_path = self.cwd / (self.design.top + "_yosys_tech.v")
 
         log_path = self.work_dir / YOSYS_LOG_FILE
 
         # TODO: Add "need to run" checks
 
         # Create the yosys script that generates the netlist
-        self.create_yosys_script(design, design.netlist_path)
-        design.yosys_netlist_path = design.netlist_path
+        self.create_yosys_script(self.design.netlist_path)
+        self.design.yosys_netlist_path = self.design.netlist_path
 
         # Run Yosys on the design
         # This assumes that the VHDL module *is* installed!
@@ -53,21 +53,21 @@ class YosysTechSynthTool(SynthesisTool):
         if proc.returncode != 0:
             return Status(SynthStatus.ERROR)
 
-        self.write_to_results_file(design, log_path)
+        self.write_to_results_file(log_path)
         return Status(SynthStatus.SUCCESS)
 
-    def create_yosys_script(self, design, netlist_path):
+    def create_yosys_script(self, netlist_path):
         """Create the yosys script that generates the netlist"""
         path_to_script_builder = paths.SCRIPTS_PATH / "yosys" / "createYosScript.py"
         script_template_file = paths.YOSYS_RESOURCES / YOSYS_SCRIPT_TEMPLATE
         yosys_script_file = self.work_dir / YOSYS_SCRIPT_FILE
 
         # TODO: Figure out how to add VHDL library files to the yosys vhdl flow
-        file_paths = str(design.full_path / design.top_file)
-        for design_file in design.verilog_files:
-            file_paths += " " + str(design.full_path / design_file)
-        for design_file in design.vhdl_files:
-            file_paths += " " + str(design.full_path / design_file)
+        file_paths = str(self.design.full_path / self.design.top_file)
+        for design_file in self.design.verilog_files:
+            file_paths += " " + str(self.design.full_path / design_file)
+        for design_file in self.design.vhdl_files:
+            file_paths += " " + str(self.design.full_path / design_file)
         # TODO: Add the same error handling as in other synth flows
         try:
             cmd = [
@@ -86,9 +86,9 @@ class YosysTechSynthTool(SynthesisTool):
 
         return Status(SynthStatus.SUCCESS)
 
-    def write_to_results_file(self, design, log_path):
+    def write_to_results_file(self, log_path):
         """Write the results of the run to the log"""
-        with open(design.results_summary_path, "a") as res_f:
+        with open(self.design.results_summary_path, "a") as res_f:
             time_modified = time.ctime(os.path.getmtime(log_path))
             res_f.write("Results Summary (Yosys) (" + time_modified + ")\n")
             with open(log_path, "r") as log_f:

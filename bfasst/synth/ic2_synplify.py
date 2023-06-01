@@ -7,4 +7,4 @@ class Ic2SynplifySynthesisTool(Ic2BaseSynthesisTool):
     """Synplify synthesis tool"""
 
     def get_tool(self):
-        return Ic2SynplifyOptTool(self.cwd)
+        return Ic2SynplifyOptTool(self.cwd, self.design)

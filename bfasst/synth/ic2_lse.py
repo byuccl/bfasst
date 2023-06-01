@@ -12,4 +12,4 @@ class Ic2LseSynthesisTool(Ic2BaseSynthesisTool):
     """
 
     def get_tool(self):
-        return bfasst.opt.ic2_lse.Ic2LseOptTool(self.cwd)
+        return bfasst.opt.ic2_lse.Ic2LseOptTool(self.cwd, self.design)
