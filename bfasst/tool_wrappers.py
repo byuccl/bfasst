@@ -47,18 +47,18 @@ def conformal_cmp(design, build_dir, flow_args, vendor=Vendor.XILINX):
     from bfasst.compare.conformal import ConformalCompareTool
 
     compare_tool = ConformalCompareTool(
-        build_dir, flow_args[ToolType.CMP], vendor
+        build_dir, design, flow_args[ToolType.CMP], vendor
     )  # TODO vendor should be flow arg
     with conformal_lock:
-        return compare_tool.compare_netlists(design)
+        return compare_tool.compare_netlists()
 
 
 def structural_cmp(design, build_dir, flow_args):
     """Structural compare and map"""
     from bfasst.compare.structural import StructuralCompareTool
 
-    struct_cmp = StructuralCompareTool(build_dir, flow_args[ToolType.CMP])
-    return struct_cmp.compare_netlists(design)
+    struct_cmp = StructuralCompareTool(build_dir, design, flow_args[ToolType.CMP])
+    return struct_cmp.compare_netlists()
 
 
 def vivado_synth(design, build_dir, flow_args):
@@ -89,25 +89,25 @@ def yosys_cmp(design, build_dir, flow_args):
     """Compare netlists using yosys"""
     from bfasst.compare.yosys import Yosys_CompareTool
 
-    compare_tool = Yosys_CompareTool(build_dir, flow_args[ToolType.CMP])
-    return compare_tool.compare_netlists(design)
+    compare_tool = Yosys_CompareTool(build_dir, design, flow_args[ToolType.CMP])
+    return compare_tool.compare_netlists()
 
 
 def wave_cmp(design, build_dir, flow_args):
     """Compare netlists via waveforms"""
     from bfasst.compare.waveform import WaveformCompareTool
 
-    tool = WaveformCompareTool(build_dir, flow_args[ToolType.CMP])
-    return tool.compare_netlists(design)
+    tool = WaveformCompareTool(build_dir, design, flow_args[ToolType.CMP])
+    return tool.compare_netlists()
 
 
 def onespin_cmp(design, build_dir, flow_args):
     """Compare netlists using Onespin"""
     from bfasst.compare.onespin import OneSpin_CompareTool
 
-    compare_tool = OneSpin_CompareTool(build_dir, flow_args[ToolType.CMP])
+    compare_tool = OneSpin_CompareTool(build_dir, design, flow_args[ToolType.CMP])
     with onespin_lock:
-        return compare_tool.compare_netlists(design)
+        return compare_tool.compare_netlists()
 
 
 def ic2_lse_opt(design, build_dir, flow_args, in_files, lib_files=None):

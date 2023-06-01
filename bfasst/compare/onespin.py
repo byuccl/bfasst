@@ -15,51 +15,51 @@ ONESPIN_PY_TEMPLATE = "run_onespin.py"
 class OneSpin_CompareTool(CompareTool):
     TOOL_WORK_DIR = "onespin"
 
-    def compare_netlists(self, design):
+    def compare_netlists(self):
         yaml_data = {}
 
         # TODO: I DON'T THINK THIS IS COPYING ALL OF GOLDEN? OR MAYBE I'VE CHANGED WHAT GOLDEN IS? I THINK THIS CAN BE WRONG!!!!!
-        for f in design.compare_golden_files_paths:
+        for f in self.design.compare_golden_files_paths:
             shutil.copyfile(f, self.work_dir / f.name)
-        print("copying reversed netlist", design.reversed_netlist_path)
+        print("copying reversed netlist", self.design.reversed_netlist_path)
         shutil.copyfile(
-            design.reversed_netlist_path, self.work_dir / design.reversed_netlist_filename()
+            self.design.reversed_netlist_path, self.work_dir / self.design.reversed_netlist_filename()
         )
 
-        if design.corrupt_netlist_paths is not None:
-            for netlist in design.corrupt_netlist_paths:
+        if self.design.corrupt_netlist_paths is not None:
+            for netlist in self.design.corrupt_netlist_paths:
                 shutil.copyfile(netlist, self.work_dir / netlist.name)
 
         pathlib.Path(self.work_dir / "rtl").mkdir(exist_ok=True)
-        rtl_paths = [design.full_path / f for f in design.get_support_files()]
-        rtl_paths.append(pathlib.Path(design.top_path()))
+        rtl_paths = [self.design.full_path / f for f in self.design.get_support_files()]
+        rtl_paths.append(pathlib.Path(self.design.top_path()))
         for f in rtl_paths:
             shutil.copyfile(f, self.work_dir / "rtl" / f.name)
 
-        yaml_data["golden_files"] = design.compare_golden_files
-        yaml_data["revised_file"] = design.reversed_netlist_filename()
+        yaml_data["golden_files"] = self.design.compare_golden_files
+        yaml_data["revised_file"] = self.design.reversed_netlist_filename()
         # yaml_data["revised_file"] = design.compare_revised_file
         yaml_data["rtl_files"] = ["rtl/" + f.name for f in rtl_paths]
 
-        if design.golden_is_verilog:
-            yaml_data["golden_top"] = design.top
-        elif design.top_architecture is not None:
-            yaml_data["golden_top"] = design.top + "(" + design.top_architecture + ")"
+        if self.design.golden_is_verilog:
+            yaml_data["golden_top"] = self.design.top
+        elif self.design.top_architecture is not None:
+            yaml_data["golden_top"] = self.design.top + "(" + self.design.top_architecture + ")"
 
-        if design.top_is_verilog:
-            yaml_data["rtl_top"] = design.top
-        elif design.top_architecture is not None:
-            yaml_data["rtl_top"] = design.top + "(" + design.top_architecture + ")"
+        if self.design.top_is_verilog:
+            yaml_data["rtl_top"] = self.design.top
+        elif self.design.top_architecture is not None:
+            yaml_data["rtl_top"] = self.design.top + "(" + self.design.top_architecture + ")"
 
         compare_yaml = self.work_dir / "design.yaml"
         with open(compare_yaml, "w") as fp:
             yaml.dump(yaml_data, fp)
 
-        self.write_compare_tcl(design)
+        self.write_compare_tcl()
 
         return Status(CompareStatus.NEED_TO_RUN_ONESPIN)
 
-    def write_compare_tcl(self, design):
+    def write_compare_tcl(self):
         # Read the sample onespin tcl script from resources
         sample_onespin_path = paths.ONESPIN_RESOURCES / ONESPIN_TCL_TEMPLATE
         tcl_template_lines = []
@@ -69,18 +69,18 @@ class OneSpin_CompareTool(CompareTool):
 
         gold_is_rtl = False
         gold_is_yosys = False
-        if design.compare_golden_files[0] == design.yosys_netlist_path.name:
+        if self.design.compare_golden_files[0] == self.design.yosys_netlist_path.name:
             gold_is_yosys = True
         else:
             gold_is_rtl = True
         if not gold_is_rtl and not gold_is_yosys:
             print(
                 "gold is not rtl or yosys!",
-                design.compare_golden_files[0],
-                design.yosys_netlist_path.name,
+                self.design.compare_golden_files[0],
+                self.design.yosys_netlist_path.name,
             )
         revised_is_reversed = False
-        if design.compare_revised_file == design.reversed_netlist_filename():
+        if self.design.compare_revised_file == self.design.reversed_netlist_filename():
             revised_is_reversed = True
 
         # Go through the file and write it to an output. Where needed fill in
@@ -89,12 +89,12 @@ class OneSpin_CompareTool(CompareTool):
             tcl_name = "run_onespin_rtl_to_yosys.tcl"
         elif gold_is_yosys:
             if revised_is_reversed:
-                if design.cur_error_flow_name is None:
+                if self.design.cur_error_flow_name is None:
                     tcl_name = "run_onespin_yosys_to_reversed.tcl"
                 else:
-                    tcl_name = "run_onespin_yosys_to_" + design.cur_error_flow_name + ".tcl"
+                    tcl_name = "run_onespin_yosys_to_" + self.design.cur_error_flow_name + ".tcl"
             else:
-                tcl_name = "run_onespin_yosys_to_yosys_" + design.cur_error_flow_name + ".tcl"
+                tcl_name = "run_onespin_yosys_to_yosys_" + self.design.cur_error_flow_name + ".tcl"
         else:
             print("Unhandled compare configuration")
         print("Writing tcl file", tcl_name)
@@ -104,7 +104,7 @@ class OneSpin_CompareTool(CompareTool):
                 fp.write(line)
 
                 if line.strip() == "# Read golden here":
-                    for f in design.compare_golden_files:
+                    for f in self.design.compare_golden_files:
                         print("golden file: ", f)
                         if gold_is_rtl:
                             f = "rtl/" + str(f)
@@ -114,10 +114,10 @@ class OneSpin_CompareTool(CompareTool):
                         # TODO: I don't want to use golden_is_verilog, because
                         #   some designs can have goldens that have both vlog and
                         #   vhdl
-                        if design.golden_is_verilog:
+                        if self.design.golden_is_verilog:
                             fp.write(
                                 "read_verilog -golden -pragma_ignore {} -version 2001 {/home/jgoeders/temp/"
-                                + design.top
+                                + self.design.top
                                 + "/"
                                 + str(f)
                                 + "}\n"
@@ -125,47 +125,47 @@ class OneSpin_CompareTool(CompareTool):
                         else:
                             fp.write(
                                 "read_vhdl -golden -pragma_ignore {} -version 93 {/home/jgoeders/temp/"
-                                + design.top
+                                + self.design.top
                                 + "/"
                                 + str(f)
                                 + "}\n"
                             )
 
                 if line.strip() == "# Read revised here":
-                    print("revised:", design.compare_revised_file)
+                    print("revised:", self.design.compare_revised_file)
                     # The revised design *should* always be a verilog netlist
                     # (we aren't really doing any comparison with edif)
                     fp.write(
                         "read_verilog -revised -pragma_ignore {} -version 2001 {/home/jgoeders/temp/"
-                        + design.top
+                        + self.design.top
                         + "/"
-                        + design.compare_revised_file
+                        + self.design.compare_revised_file
                         + "}\n"
                     )
                 if line.strip() == "# Set top module in elaborate options":
                     # using golden_is_verilog should work here since we only
                     #   are looking at the top module
-                    if design.golden_is_verilog:
+                    if self.design.golden_is_verilog:
                         fp.write(
-                            "set_elaborate_option -golden -top {Verilog!work." + design.top + "}\n"
+                            "set_elaborate_option -golden -top {Verilog!work." + self.design.top + "}\n"
                         )
                 if line.strip() == "# Save results":
                     # what output file names should be used?
                     # What about the RTL check?
                     out_name = "results_" + tcl_name[12:-4] + ".log"
                     fp.write(
-                        "save_result_file /home/jgoeders/temp/" + design.top + "/" + out_name + "\n"
+                        "save_result_file /home/jgoeders/temp/" + self.design.top + "/" + out_name + "\n"
                     )
                 if line.strip() == "map":
                     # Add extra commands to map internal net names to try to
                     #   help comparison
                     # This works with verilog for now
                     # TODO: Handle VHDL
-                    f1 = design.compare_golden_files_paths[0]
+                    f1 = self.design.compare_golden_files_paths[0]
                     if gold_is_rtl:
-                        f1 = self.work_dir / "rtl" / design.top_file
-                    f2 = self.work_dir / design.compare_revised_file
-                    if not design.golden_is_verilog:
+                        f1 = self.work_dir / "rtl" / self.design.top_file
+                    f2 = self.work_dir / self.design.compare_revised_file
+                    if not self.design.golden_is_verilog:
                         continue
                     mappings = self.find_mappings_vlog(f1, f2)
                     map_commands = self.get_tcl_map_commands(mappings)
@@ -174,7 +174,7 @@ class OneSpin_CompareTool(CompareTool):
 
     # write_compare_script creates the python script used to run the compare
     #   tcl scripts
-    def write_compare_script(self, design):
+    def write_compare_script(self):
         # Read the template script from the resources directory
         template_lines = []
         with open(paths.ONESPIN_RESOURCES / ONESPIN_PY_TEMPLATE) as fp:
@@ -186,7 +186,7 @@ class OneSpin_CompareTool(CompareTool):
             for line in template_lines:
                 fp.write(line)
                 if line.strip() == "# Create list of flow names here":
-                    flow_list = design.error_flow_names.copy()
+                    flow_list = self.design.error_flow_names.copy()
                     print(flow_list)
                     flow_list.append("yosys")  # this assumes a yosys flow
                     flow_list.append("rtl")

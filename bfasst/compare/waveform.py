@@ -82,7 +82,7 @@ class WaveformCompareTool(CompareTool):
             default=False,
         )
 
-    def compare_netlists(self, design):
+    def compare_netlists(self):
         """The function that compares the netlists."""
 
         print("\nRunning WaFoVe to compare netlists...")
@@ -98,7 +98,7 @@ class WaveformCompareTool(CompareTool):
             tool_products=(generate_comparison,),
             dependency_modified_time=max(
                 pathlib.Path(__file__).stat().st_mtime,
-                design.reversed_netlist_path.stat().st_mtime,
+                self.design.reversed_netlist_path.stat().st_mtime,
             ),
         )
 
@@ -114,8 +114,8 @@ class WaveformCompareTool(CompareTool):
             bfasst.paths.ROOT_PATH / ("third_party/yosys/techlibs/xilinx/cells_sim.v"),
             bfasst.paths.ROOT_PATH / ("third_party/WaFoVe/wafove/templates/sample_tb.v"),
             bfasst.paths.ROOT_PATH / ("third_party/WaFoVe/wafove/tools/"),
-            design.impl_netlist_path,
-            design.reversed_netlist_path,
+            self.design.impl_netlist_path,
+            self.design.reversed_netlist_path,
         )
 
         if self.args.waveform & (paths["vcd"][0].exists() & paths["vcd"][1].exists()):

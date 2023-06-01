@@ -12,14 +12,14 @@ class Yosys_CompareTool(CompareTool):
     TOOL_WORK_DIR = "yosys"
     LOG_FILE_NAME = "log.txt"
     SCRIPT_FILE_NAME = "compare.ys"
-    def compare_netlists(self, design):
+    def compare_netlists(self):
         log_path = self.work_dir / self.LOG_FILE_NAME
 
         generate_comparison = ToolProduct(None, log_path, self.check_compare_status)
         status = self.get_prev_run_status(
             tool_products=(generate_comparison,),
             dependency_modified_time=max(
-                pathlib.Path(__file__).stat().st_mtime, design.reversed_netlist_path.stat().st_mtime
+                pathlib.Path(__file__).stat().st_mtime, self.design.reversed_netlist_path.stat().st_mtime
             ),
         )
 
@@ -31,7 +31,7 @@ class Yosys_CompareTool(CompareTool):
         self.print_running_compare()
 
         # Create Yosys script
-        script_file_path = self.create_script_file(design)
+        script_file_path = self.create_script_file()
 
         # Run Yosys
         with open(log_path, "w") as fp:
@@ -53,7 +53,7 @@ class Yosys_CompareTool(CompareTool):
             
         return self.success_status
     
-    def create_script_file(self, design):
+    def create_script_file(self):
         script_file_path = self.work_dir / self.SCRIPT_FILE_NAME
 
         with open(script_file_path, "w") as fp:
@@ -76,14 +76,14 @@ class Yosys_CompareTool(CompareTool):
 
             ##NEW VERSION?
             fp.write("read_verilog " + str(pathlib.Path.cwd()) + "/third_party/yosys/techlibs/xilinx/cells_sim.v" + "; ")
-            fp.write("read_verilog " + str(design.impl_netlist_path) + "; ")
+            fp.write("read_verilog " + str(self.design.impl_netlist_path) + "; ")
             fp.write("prep -flatten; ")
             fp.write("hierarchy -auto-top; ")
             fp.write("rename -top gold; ")
             fp.write("splitnets -ports;; ")
             fp.write("design -stash gold\n")
             fp.write("read_verilog " + str(pathlib.Path.cwd()) + "/third_party/yosys/techlibs/xilinx/cells_sim.v" + "; ")
-            fp.write("read_verilog " + str(design.reversed_netlist_path) + "; ")
+            fp.write("read_verilog " + str(self.design.reversed_netlist_path) + "; ")
             fp.write("prep -flatten; ")
             fp.write("hierarchy -auto-top; ")
             fp.write("rename -top gate; ")

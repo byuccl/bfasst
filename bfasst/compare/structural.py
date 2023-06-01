@@ -13,8 +13,8 @@ class StructuralCompareTool(CompareTool):
 
     TOOL_WORK_DIR = "struct_cmp"
 
-    def __init__(self, cwd, flow_args="") -> None:
-        super().__init__(cwd, flow_args)
+    def __init__(self, cwd, design, flow_args="") -> None:
+        super().__init__(cwd, design, flow_args)
 
         self.named_netlist = None
         self.reversed_netlist = None
@@ -24,11 +24,11 @@ class StructuralCompareTool(CompareTool):
 
         jpype_jvm.start()
 
-    def compare_netlists(self, design):
+    def compare_netlists(self):
         """Map the golden and reversed netlists through automated block mapping"""
 
-        impl_netlist = design.impl_netlist_path
-        netlist_b = design.reversed_netlist_path
+        impl_netlist = self.design.impl_netlist_path
+        netlist_b = self.design.reversed_netlist_path
 
         self.open_new_log()
 

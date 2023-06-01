@@ -12,7 +12,7 @@ class CompareTool(Tool):
 
     success_status = Status(CompareStatus.SUCCESS)
 
-    def __init__(self, cwd, flow_args="") -> None:
+    def __init__(self, cwd, design, flow_args="") -> None:
         super().__init__(cwd)
 
         # Implementation options
@@ -24,7 +24,7 @@ class CompareTool(Tool):
     # This method should run netlist comparison.  It should return
     # a status
     @abc.abstractmethod
-    def compare_netlists(self, design):
+    def compare_netlists(self):
         pass
 
     def print_running_compare(self):

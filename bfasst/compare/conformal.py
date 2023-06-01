@@ -31,8 +31,8 @@ class ConformalCompareTool(CompareTool):
     GUI_FILE_NAME = "run_conformal_gui.sh"
     MAPPED_POINTS_FILE_NAME = "mapped_points.txt"
 
-    def __init__(self, cwd, flow_args, vendor):
-        super().__init__(cwd, flow_args)
+    def __init__(self, cwd, design, flow_args, vendor):
+        super().__init__(cwd, design, flow_args)
 
         assert isinstance(vendor, Vendor)
         self.vendor = vendor
@@ -40,7 +40,7 @@ class ConformalCompareTool(CompareTool):
         self.remote_libs_dir_path = None
         self.local_libs_paths = None
 
-    def compare_netlists(self, design):
+    def compare_netlists(self):
         """Compare given netlists"""
         log_path = self.work_dir / self.LOG_FILE_NAME
 
@@ -49,7 +49,7 @@ class ConformalCompareTool(CompareTool):
             tool_products=(generate_comparison,),
             dependency_modified_time=max(
                 pathlib.Path(__file__).stat().st_mtime,
-                design.reversed_netlist_path.stat().st_mtime,
+                self.design.reversed_netlist_path.stat().st_mtime,
             ),
         )
 
@@ -84,7 +84,7 @@ class ConformalCompareTool(CompareTool):
             assert False, self.vendor
 
         # Create do file
-        do_file_path = self.create_do_file(design)
+        do_file_path = self.create_do_file()
 
         # Create remote machine folders
         cmd = "mkdir -p bfasst_libs;" + "mkdir -p bfasst_libs/xilinx;" + "mkdir -p bfasst_work;"
@@ -94,7 +94,7 @@ class ConformalCompareTool(CompareTool):
         client.exec_command(cmd, timeout=bfasst.config.CONFORMAL_TIMEOUT)
 
         # Copy files to remote machine
-        self.copy_files_to_remote_machine(client, design, do_file_path)
+        self.copy_files_to_remote_machine(client, do_file_path)
 
         # Run conformal remotely
         try:
@@ -160,7 +160,7 @@ class ConformalCompareTool(CompareTool):
 
         return Status(CompareStatus.SUCCESS)
 
-    def create_do_file(self, design):
+    def create_do_file(self):
         """Create the conformal do file"""
         do_file_path = self.work_dir / self.DO_FILE_NAME
 
@@ -171,16 +171,16 @@ class ConformalCompareTool(CompareTool):
                 + " -nooptimize\n"
             )
 
-            if design.get_golden_hdl_type() == HdlType.VERILOG:
+            if self.design.get_golden_hdl_type() == HdlType.VERILOG:
                 src_type = "-Verilog"
-            elif design.get_golden_hdl_type() == HdlType.VHDL:
+            elif self.design.get_golden_hdl_type() == HdlType.VHDL:
                 src_type = "-Vhdl"
             else:
-                error("Unsupported golden HDL type: ", design.get_golden_hdl_type())
+                error("Unsupported golden HDL type: ", self.design.get_golden_hdl_type())
 
             fp.write(
                 "read design "
-                + " ".join([golden.name for golden in design.get_golden_files()])
+                + " ".join([golden.name for golden in self.design.get_golden_files()])
                 + " "
                 + src_type
                 + " -Golden -sensitive -continuousassignment Bidirectional"
@@ -192,7 +192,7 @@ class ConformalCompareTool(CompareTool):
 
             fp.write(
                 "read design "
-                + design.reversed_netlist_path.name
+                + self.design.reversed_netlist_path.name
                 + " -Verilog -Revised -sensitive -continuousassignment Bidirectional"
                 + " -nokeep_unreach -nosupply\n"
             )
@@ -220,7 +220,7 @@ class ConformalCompareTool(CompareTool):
 
         return do_file_path
 
-    def copy_files_to_remote_machine(self, client, design, do_file_path):
+    def copy_files_to_remote_machine(self, client, do_file_path):
         """Copy files to remote machine"""
         scp_client = scp.SCPClient(client.get_transport())
 
@@ -247,12 +247,12 @@ class ConformalCompareTool(CompareTool):
         #     str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR / self.MAPPED_POINTS_FILE_NAME),
         # )
 
-        for design_file in design.get_golden_files():
+        for design_file in self.design.get_golden_files():
             scp_client.put(str(design_file), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
 
         # Copy reverse netlist file
         scp_client.put(
-            str(design.reversed_netlist_path),
+            str(self.design.reversed_netlist_path),
             str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR),
         )
 
