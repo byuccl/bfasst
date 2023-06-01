@@ -11,8 +11,8 @@ class ReverseBitTool(Tool):
 
     success_status = Status(BitReverseStatus.SUCCESS)
 
-    def __init__(self, cwd, flow_args="") -> None:
-        super().__init__(cwd)
+    def __init__(self, cwd, design, flow_args="") -> None:
+        super().__init__(cwd, design)
 
         # Implementation options
         self.create_arg_parser("bit_to_netlist", flow_args)
@@ -25,7 +25,7 @@ class ReverseBitTool(Tool):
     #   - netlist is the path to the produced netlist file
     #   - status is a Status object from bfasst.status
     @abc.abstractmethod
-    def reverse_bitstream(self, design):
+    def reverse_bitstream(self):
         pass
 
     def print_running_reverse_bit(self):

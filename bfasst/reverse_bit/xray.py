@@ -14,8 +14,8 @@ class XRayReverseBitTool(ReverseBitTool):
 
     TOOL_WORK_DIR = "xray"
 
-    def __init__(self, cwd, flow_args):
-        super().__init__(cwd, flow_args)
+    def __init__(self, cwd, design, flow_args):
+        super().__init__(cwd, design, flow_args)
 
         self.fasm2bels_path = paths.ROOT_PATH / "third_party" / "fasm2bels"
         self.fasm2bels_python_path = (
@@ -33,27 +33,27 @@ class XRayReverseBitTool(ReverseBitTool):
         self.to_netlist_log = self.work_dir / "to_netlist.log"
         self.to_fasm_log = self.work_dir / "to_fasm.log"
 
-    def reverse_bitstream(self, design):
+    def reverse_bitstream(self):
         """Run bitstream to netlist conversion"""
         # To fasm process
-        fasm_path = self.work_dir / (design.top + ".fasm")
+        fasm_path = self.work_dir / (self.design.top + ".fasm")
         generate_fasm = ToolProduct(fasm_path)
 
         # To reversed netlist process
-        design.reversed_netlist_path = self.cwd / (design.top + "_reversed.v")
+        self.design.reversed_netlist_path = self.cwd / (self.design.top + "_reversed.v")
         generate_netlist = ToolProduct(
-            design.reversed_netlist_path, self.to_netlist_log, self.to_netlist_log_parser
+            self.design.reversed_netlist_path, self.to_netlist_log, self.to_netlist_log_parser
         )
 
-        if design.cur_error_flow_name is not None:
-            design.reversed_netlist_path = self.cwd / (
-                design.top + "_" + design.cur_error_flow_name + "_reversed.v"
+        if self.design.cur_error_flow_name is not None:
+            self.design.reversed_netlist_path = self.cwd / (
+                self.design.top + "_" + self.design.cur_error_flow_name + "_reversed.v"
             )
 
         status = self.get_prev_run_status(
             [generate_fasm, generate_netlist],
             dependency_modified_time=max(
-                pathlib.Path(__file__).stat().st_mtime, design.bitstream_path.stat().st_mtime
+                pathlib.Path(__file__).stat().st_mtime, self.design.bitstream_path.stat().st_mtime
             ),
         )
 
@@ -65,13 +65,13 @@ class XRayReverseBitTool(ReverseBitTool):
         self.open_new_log()
 
         # Bitstream to fasm file
-        status = self.convert_bit_to_fasm(design.bitstream_path, fasm_path)
+        status = self.convert_bit_to_fasm(self.design.bitstream_path, fasm_path)
 
         # fasm to netlist
-        xdc_path = self.work_dir / (design.top + "_reversed.xdc")
+        xdc_path = self.work_dir / (self.design.top + "_reversed.xdc")
         try:
             status = self.convert_fasm_to_netlist(
-                fasm_path, design.constraints_path, design.reversed_netlist_path, xdc_path
+                fasm_path, self.design.constraints_path, self.design.reversed_netlist_path, xdc_path
             )
         except BfasstException as e:
             # See if the log parser can find an error message
