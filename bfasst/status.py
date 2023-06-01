@@ -105,10 +105,10 @@ class BfasstException(Exception):
 class Status:
     def __init__(self, status, msg="", raise_excep=True):
         self.status = status
-        self.msg = f" ({msg})" if msg else ""
+        self.msg = msg if msg else ""
         self.error = bool(status.value)
         if status.value and raise_excep:
-            raise BfasstException(status, f"{msg_map[status]}{self.msg}")
+            raise BfasstException(status, f": {self.msg}")
 
     def __str__(self):
-        return f"{self.msg}"
+        return f"{msg_map[self.status]}{self.msg}"
