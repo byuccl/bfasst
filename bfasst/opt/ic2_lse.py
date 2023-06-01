@@ -32,16 +32,16 @@ class Ic2LseOptTool(Ic2BaseOptTool):
 
         return self.exec_synth_tool(cmd, env)
 
-    def create_project_file(self, design, edif_path, in_files, lib_files):
+    def create_project_file(self, edif_path, in_files, lib_files):
         """create project file for icecube2 lse"""
-        assert isinstance(design, bfasst.design.Design)
+        assert isinstance(self.design, bfasst.design.Design)
 
         template_file = paths.I2C_RESOURCES / PROJECT_TEMPLATE_FILE
         project_file = self.work_dir / IC2_LSE_PROJ_FILE
         shutil.copyfile(template_file, project_file)
 
         with open(project_file, "a") as fp:
-            fp.write("-p " + str(design.full_path) + "\n")
+            fp.write("-p " + str(self.design.full_path) + "\n")
 
             for design_file in in_files:
                 if os.path.splitext(design_file)[1].lower() == ".v":
@@ -51,7 +51,7 @@ class Ic2LseOptTool(Ic2BaseOptTool):
 
             for vhdl_lib_file_path, vhdl_lib in lib_files or []:
                 fp.write("-lib " + vhdl_lib + " -vhd " + str(vhdl_lib_file_path) + "\n")
-            fp.write("-top " + design.top + "\n")
+            fp.write("-top " + self.design.top + "\n")
             fp.write("-output_edif " + str(edif_path) + "\n")
 
         #   @echo "-top $(NAME)" >> $@
@@ -66,13 +66,13 @@ class Ic2LseOptTool(Ic2BaseOptTool):
 
         return Status(OptStatus.SUCCESS)
 
-    def fix_lut_inits(self, design):
+    def fix_lut_inits(self):
         """This function goes through the generated netlist and
         changes binary LUT inits to hex. Apparently LSE generates
         binary LUT inits under some conditions, and the IC2 backend
         doesn't like that."""
 
-        with in_place.InPlace(design.netlist_path) as n_f:
+        with in_place.InPlace(self.design.netlist_path) as n_f:
             found_first_init = False
             for line in n_f:
                 if line.strip().split()[0:2] == ["(property", "LUT_INIT"]:

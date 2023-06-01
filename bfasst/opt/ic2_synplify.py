@@ -38,24 +38,24 @@ class Ic2SynplifyOptTool(Ic2BaseOptTool):
 
         return self.exec_synth_tool(cmd, env)
 
-    def create_project_file(self, design, edif_path, in_files, lib_files):
+    def create_project_file(self, edif_path, in_files, lib_files):
         """Create icecube2 project file"""
-        assert isinstance(design, Design)
+        assert isinstance(self.design, Design)
 
         template_file = paths.I2C_RESOURCES / PROJECT_TEMPLATE_FILE
         project_file = self.work_dir / IC2_SYNPLIFY_PROJ_FILE
         shutil.copyfile(template_file, project_file)
 
         with open(project_file, "a") as fp:
-            fp.write("set_option -top_module " + design.top + "\n")
+            fp.write("set_option -top_module " + self.design.top + "\n")
             for design_file in in_files:
                 if os.path.splitext(design_file)[1].lower() == ".v":
                     fp.write(
-                        "add_file -verilog -lib work " + str(design.full_path / design_file) + "\n"
+                        "add_file -verilog -lib work " + str(self.design.full_path / design_file) + "\n"
                     )
                 elif os.path.splitext(design_file)[1].lower() == ".vhd":
                     fp.write(
-                        "add_file -vhdl -lib work " + str(design.full_path / design_file) + "\n"
+                        "add_file -vhdl -lib work " + str(self.design.full_path / design_file) + "\n"
                     )
 
             for vhdl_lib_file_path, vhdl_lib in lib_files:
