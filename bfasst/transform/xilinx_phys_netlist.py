@@ -95,8 +95,8 @@ class XilinxPhysNetlist(TransformTool):
         ),
     }
 
-    def __init__(self, work_dir):
-        super().__init__(work_dir)
+    def __init__(self, work_dir, design):
+        super().__init__(work_dir, design)
         self.bufgctrl_edif_cell = None
         self.vcc_edif_net = None
 
@@ -107,15 +107,15 @@ class XilinxPhysNetlist(TransformTool):
         # Cell to use for all new LUTs
         self.lut6_2_edif_cell = None
 
-    def run(self, design):
+    def run(self):
         """Transform the logical netlist into a netlist with only physical primitives"""
-        phys_netlist_verilog_path = design.impl_edif_path.parent / (
-            design.impl_edif_path.stem + "_physical.v"
+        phys_netlist_verilog_path = self.design.impl_edif_path.parent / (
+            self.design.impl_edif_path.stem + "_physical.v"
         )
-        phys_netlist_edif_path = design.impl_edif_path.parent / (
-            design.impl_edif_path.stem + "_physical.edf"
+        phys_netlist_edif_path = self.design.impl_edif_path.parent / (
+            self.design.impl_edif_path.stem + "_physical.edf"
         )
-        design.impl_netlist_path = phys_netlist_verilog_path
+        self.design.impl_netlist_path = phys_netlist_verilog_path
 
         # Redirect rapidwright output to file
         System.setOut(PrintStream(File(str(self.work_dir / "rapidwright_stdout.log"))))
@@ -127,8 +127,8 @@ class XilinxPhysNetlist(TransformTool):
             ],
             dependency_modified_time=max(
                 pathlib.Path(__file__).stat().st_mtime,
-                design.xilinx_impl_checkpoint_path.stat().st_mtime,
-                design.impl_edif_path.stat().st_mtime,
+                self.design.xilinx_impl_checkpoint_path.stat().st_mtime,
+                self.design.impl_edif_path.stat().st_mtime,
             ),
         )
 
@@ -140,8 +140,8 @@ class XilinxPhysNetlist(TransformTool):
         self.log_color(
             TermColor.GREEN,
             "Starting logical to physical netlist conversion for",
-            design.xilinx_impl_checkpoint_path,
-            design.impl_edif_path,
+            self.design.xilinx_impl_checkpoint_path,
+            self.design.impl_edif_path,
             add_timestamp=True,
         )
 
@@ -151,7 +151,7 @@ class XilinxPhysNetlist(TransformTool):
         # and so cannot be handled properly by multiprocessing
         # Don't raise from as this is also problematic.
         try:
-            self.run_rapidwright(design, phys_netlist_checkpoint, phys_netlist_edif_path)
+            self.run_rapidwright(phys_netlist_checkpoint, phys_netlist_edif_path)
         except jpype.JException as exc:
             raise RapidwrightException(str(exc))  # pylint: disable=raise-missing-from
 
@@ -187,20 +187,20 @@ class XilinxPhysNetlist(TransformTool):
 
         return vcc_edif_net
 
-    def run_rapidwright(self, design, phys_netlist_checkpoint, phys_netlist_edif_path):
+    def run_rapidwright(self, phys_netlist_checkpoint, phys_netlist_edif_path):
         """Do all rapidwright related processing on the netlist"""
 
         # Read the checkpoint into rapidwright, and get the netlist
         try:
             self.rw_design = Design.readCheckpoint(
-                design.xilinx_impl_checkpoint_path, design.impl_edif_path
+                self.design.xilinx_impl_checkpoint_path, self.design.impl_edif_path
             )
         except jpype.JException as exc:
             error = str(exc)
             if "Failed to reliably download file" not in error:
                 raise RapidwrightException(error)           # pylint: disable=raise-missing-from
             self.rw_design = Design.readCheckpoint(
-            design.xilinx_impl_checkpoint_path, design.impl_edif_path
+            self.design.xilinx_impl_checkpoint_path, self.design.impl_edif_path
             )
 
         self.rw_netlist = self.rw_design.getNetlist()
