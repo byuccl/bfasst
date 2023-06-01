@@ -14,16 +14,16 @@ def ic2_lse_synth(design, build_dir, flow_args):
     """Run Icecube2 LSE synthesis"""
     from bfasst.synth.ic2_lse import Ic2LseSynthesisTool
 
-    synth_tool = Ic2LseSynthesisTool(build_dir, flow_args[ToolType.SYNTH])
-    return synth_tool.create_netlist(design)
+    synth_tool = Ic2LseSynthesisTool(build_dir, design, flow_args[ToolType.SYNTH])
+    return synth_tool.create_netlist()
 
 
 def ic2_synplify_synth(design, build_dir, flow_args):
     """Run Icecube2 Synplify synthesis"""
     from bfasst.synth.ic2_synplify import Ic2SynplifySynthesisTool
 
-    synth_tool = Ic2SynplifySynthesisTool(build_dir, flow_args[ToolType.SYNTH])
-    return synth_tool.create_netlist(design)
+    synth_tool = Ic2SynplifySynthesisTool(build_dir, design, flow_args[ToolType.SYNTH])
+    return synth_tool.create_netlist()
 
 
 def ic2_impl(design, build_dir, flow_args):
@@ -38,8 +38,8 @@ def icestorm_rev_bit(design, build_dir, flow_args):
     """Reverse bitstream using icestorm"""
     from bfasst.reverse_bit.icestorm import Icestorm_ReverseBitTool
 
-    reverse_bit_tool = Icestorm_ReverseBitTool(build_dir, flow_args[ToolType.REVERSE])
-    return reverse_bit_tool.reverse_bitstream(design)
+    reverse_bit_tool = Icestorm_ReverseBitTool(build_dir, design, flow_args[ToolType.REVERSE])
+    return reverse_bit_tool.reverse_bitstream()
 
 
 def conformal_cmp(design, build_dir, flow_args, vendor=Vendor.XILINX):
@@ -65,8 +65,8 @@ def vivado_synth(design, build_dir, flow_args):
     """Synthesize using Vivado"""
     from bfasst.synth.vivado import VivadoSynthesisTool
 
-    synth_tool = VivadoSynthesisTool(build_dir, flow_args[ToolType.SYNTH])
-    return synth_tool.create_netlist(design)
+    synth_tool = VivadoSynthesisTool(build_dir, design, flow_args[ToolType.SYNTH])
+    return synth_tool.create_netlist()
 
 
 def vivado_impl(design, build_dir, flow_args):
@@ -81,8 +81,8 @@ def yosys_synth(design, build_dir, flow_args):
     """Synthesize using Yosys"""
     from bfasst.synth.yosys import YosysTechSynthTool
 
-    synth_tool = YosysTechSynthTool(build_dir, flow_args[ToolType.SYNTH])
-    return synth_tool.create_netlist(design)
+    synth_tool = YosysTechSynthTool(build_dir, design, flow_args[ToolType.SYNTH])
+    return synth_tool.create_netlist()
 
 
 def yosys_cmp(design, build_dir, flow_args):
@@ -110,15 +110,15 @@ def onespin_cmp(design, build_dir, flow_args):
         return compare_tool.compare_netlists()
 
 
-def ic2_lse_opt(design, build_dir, flow_args, in_files, lib_files=None):
+def ic2_lse_opt(build_dir, flow_args, in_files, lib_files=None):
     """Optimize design using IceCube2 LSE"""
     from bfasst.opt.ic2_lse import Ic2LseOptTool
 
     lse_opt_tool = Ic2LseOptTool(build_dir, flow_args)
-    status = lse_opt_tool.create_netlist(design, in_files, lib_files)
+    status = lse_opt_tool.create_netlist(in_files, lib_files)
     # Try fixing the netlist LUT inits (there's some issue with how LSE
     #   generates them)
-    lse_opt_tool.fix_lut_inits(design)
+    lse_opt_tool.fix_lut_inits()
     return status
 
 
@@ -134,16 +134,16 @@ def xray_rev(design, build_dir, flow_args):
     """Reverse bitstream using Xray"""
     from bfasst.reverse_bit.xray import XRayReverseBitTool
 
-    reverse_bit_tool = XRayReverseBitTool(build_dir, flow_args[ToolType.REVERSE])
-    return reverse_bit_tool.reverse_bitstream(design)
+    reverse_bit_tool = XRayReverseBitTool(build_dir, design, flow_args[ToolType.REVERSE])
+    return reverse_bit_tool.reverse_bitstream()
 
 
 def xilinx_phys_netlist(design, build_dir):
     """Run the xilinx physical netlist transformation"""
     from bfasst.transform.xilinx_phys_netlist import XilinxPhysNetlist
 
-    phy_netlist_tool = XilinxPhysNetlist(build_dir)
-    status = phy_netlist_tool.run(design)
+    phy_netlist_tool = XilinxPhysNetlist(build_dir, design)
+    status = phy_netlist_tool.run()
     return status
 
 
@@ -153,13 +153,13 @@ def vivado_ooc(design, build_dir, flow_args):
     from bfasst.synth.vivado import VivadoSynthesisTool
     from bfasst.status import ImplStatus
 
-    synth_tool = VivadoSynthesisTool(build_dir, flow_args[ToolType.SYNTH])
+    synth_tool = VivadoSynthesisTool(build_dir, design, flow_args[ToolType.SYNTH])
     impl_tool = VivadoImplementationTool(build_dir, design, flow_args[ToolType.IMPL])
 
     synth_tool.args.out_of_context = True
     impl_tool.args.out_of_context = True
 
-    synth_status = synth_tool.check_runs(design)
+    synth_status = synth_tool.check_runs()
 
     if synth_status is not None:
         impl_tool.init_design()
@@ -192,9 +192,9 @@ def vivado_ooc(design, build_dir, flow_args):
     impl_tool.init_design()
     with open(tcl_path, "w") as fp:
         synth_tool.write_header(fp)
-        synth_tool.write_hdl(design, fp)
-        synth_tool.write_synth(design, fp)
-        synth_tool.write_products(design, report_io_path, fp)
+        synth_tool.write_hdl(fp)
+        synth_tool.write_synth(fp)
+        synth_tool.write_products(report_io_path, fp)
         # need to add constraints logic, but this is determined post-synthesis
         impl_tool.write_impl(fp)
         impl_tool.write_outputs(fp)
