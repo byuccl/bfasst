@@ -16,10 +16,10 @@ class Ic2ImplementationTool(ImplementationTool):
 
     TOOL_WORK_DIR = "ic2_impl"
 
-    def implement_bitstream(self, design):
-        design.bitstream_path = self.cwd / (design.top + ".bit")
+    def implement_bitstream(self):
+        self.design.bitstream_path = self.cwd / (self.design.top + ".bit")
 
-        status = self.common_startup(design, self.check_impl_status)
+        status = self.common_startup(self.check_impl_status)
         if status:
             return status
 
@@ -27,11 +27,11 @@ class Ic2ImplementationTool(ImplementationTool):
         tcl_path = self.create_run_tcl()
 
         # Copy netlist into impl working folder
-        new_netlist_path = self.work_dir / design.netlist_path.name
-        shutil.copyfile(design.netlist_path, new_netlist_path)
+        new_netlist_path = self.work_dir / self.design.netlist_path.name
+        shutil.copyfile(self.design.netlist_path, new_netlist_path)
 
         # Run implementation
-        status = self.run_implementation(design, new_netlist_path, tcl_path)
+        status = self.run_implementation(new_netlist_path, tcl_path)
 
         # Check implementation log
         status = self.check_impl_status(self.log_path)
@@ -39,20 +39,20 @@ class Ic2ImplementationTool(ImplementationTool):
         # if need_to_run:
         # Copy bitstream out of working directory
         bitstream_proj_path = (
-            self.work_dir / "sbt" / "outputs" / "bitmap" / (design.top + "_bitmap.bin")
+            self.work_dir / "sbt" / "outputs" / "bitmap" / (self.design.top + "_bitmap.bin")
         )
         try:
-            shutil.copyfile(bitstream_proj_path, design.bitstream_path)
+            shutil.copyfile(bitstream_proj_path, self.design.bitstream_path)
         except FileNotFoundError:
             return Status(ImplStatus.ERROR)
 
         # Copy constraints out of working directory
         constraints_proj_path = (
-            self.work_dir / "sbt" / "outputs" / "placer" / (design.top + "_sbt.pcf")
+            self.work_dir / "sbt" / "outputs" / "placer" / (self.design.top + "_sbt.pcf")
         )
-        design.constraints_path = self.cwd / (design.top + ".pcf")
+        self.design.constraints_path = self.cwd / (self.design.top + ".pcf")
         try:
-            shutil.copyfile(constraints_proj_path, design.constraints_path)
+            shutil.copyfile(constraints_proj_path, self.design.constraints_path)
         except FileNotFoundError:
             return Status(ImplStatus.ERROR)
 
@@ -61,11 +61,11 @@ class Ic2ImplementationTool(ImplementationTool):
 
         return Status(ImplStatus.SUCCESS)
 
-    def run_implementation(self, design, netlist_path, tcl_path):
+    def run_implementation(self, netlist_path, tcl_path):
         """Run implemention"""
         netlist_no_ext = netlist_path.stem
 
-        cmd = ["tclsh", tcl_path, design.top, ".", netlist_no_ext]
+        cmd = ["tclsh", tcl_path, self.design.top, ".", netlist_no_ext]
         env = os.environ.copy()
         env["SBT_DIR"] = bfasst.config.IC2_INSTALL_DIR / "sbt_backend"
         with open(self.log_path, "a") as fp:

@@ -30,8 +30,8 @@ def ic2_impl(design, build_dir, flow_args):
     """Run Icecube2 implementation"""
     from bfasst.impl.ic2 import Ic2ImplementationTool
 
-    impl_tool = Ic2ImplementationTool(build_dir, flow_args[ToolType.IMPL])
-    return impl_tool.implement_bitstream(design)
+    impl_tool = Ic2ImplementationTool(build_dir, design, flow_args[ToolType.IMPL])
+    return impl_tool.implement_bitstream()
 
 
 def icestorm_rev_bit(design, build_dir, flow_args):
@@ -73,8 +73,8 @@ def vivado_impl(design, build_dir, flow_args):
     """Implement using Vivado"""
     from bfasst.impl.vivado import VivadoImplementationTool
 
-    impl_tool = VivadoImplementationTool(build_dir, flow_args[ToolType.IMPL])
-    return impl_tool.implement_bitstream(design)
+    impl_tool = VivadoImplementationTool(build_dir, design, flow_args[ToolType.IMPL])
+    return impl_tool.implement_bitstream()
 
 
 def yosys_synth(design, build_dir, flow_args):
@@ -154,7 +154,7 @@ def vivado_ooc(design, build_dir, flow_args):
     from bfasst.status import ImplStatus
 
     synth_tool = VivadoSynthesisTool(build_dir, flow_args[ToolType.SYNTH])
-    impl_tool = VivadoImplementationTool(build_dir, flow_args[ToolType.IMPL])
+    impl_tool = VivadoImplementationTool(build_dir, design, flow_args[ToolType.IMPL])
 
     synth_tool.args.out_of_context = True
     impl_tool.args.out_of_context = True
@@ -162,7 +162,7 @@ def vivado_ooc(design, build_dir, flow_args):
     synth_status = synth_tool.check_runs(design)
 
     if synth_status is not None:
-        impl_tool.init_design(design)
+        impl_tool.init_design()
         try:
             impl_status = impl_tool.get_prev_run_status(
                 tool_products=[
@@ -189,7 +189,7 @@ def vivado_ooc(design, build_dir, flow_args):
     impl_tool.open_new_log()
     tcl_path = synth_tool.cwd / "run.tcl"
     report_io_path = synth_tool.work_dir / "report_io.txt"
-    impl_tool.init_design(design)
+    impl_tool.init_design()
     with open(tcl_path, "w") as fp:
         synth_tool.write_header(fp)
         synth_tool.write_hdl(design, fp)
@@ -197,7 +197,7 @@ def vivado_ooc(design, build_dir, flow_args):
         synth_tool.write_products(design, report_io_path, fp)
         # need to add constraints logic, but this is determined post-synthesis
         impl_tool.write_impl(fp)
-        impl_tool.write_outputs(design, fp)
+        impl_tool.write_outputs(fp)
         synth_tool.write_footer(fp)
 
     cmd = [str(VIVADO_BIN_PATH), "-mode", "tcl", "-source", str(tcl_path)]

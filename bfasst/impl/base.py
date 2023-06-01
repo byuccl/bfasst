@@ -12,8 +12,8 @@ class ImplementationTool(Tool):
 
     success_status = Status(ImplStatus.SUCCESS)
 
-    def __init__(self, cwd, flow_args="") -> None:
-        super().__init__(cwd)
+    def __init__(self, cwd, design, flow_args="") -> None:
+        super().__init__(cwd, design)
 
         # Implementation options
         self.create_arg_parser("impl", flow_args)
@@ -36,13 +36,13 @@ class ImplementationTool(Tool):
     def print_skipping_impl(self):
         print_color(self.TERM_COLOR_STAGE, "Implementation already run")
 
-    def common_startup(self, design, log_check_fcn):
+    def common_startup(self, log_check_fcn):
         """Commmon startup code for Implementation tools that first checks if
         prevous run can be used, and if not starts a new run"""
         status = self.get_prev_run_status(
-            tool_products=[ToolProduct(design.bitstream_path, self.log_path, log_check_fcn)],
+            tool_products=[ToolProduct(self.design.bitstream_path, self.log_path, log_check_fcn)],
             dependency_modified_time=max(
-                pathlib.Path(__file__).stat().st_mtime, design.netlist_path.stat().st_mtime
+                pathlib.Path(__file__).stat().st_mtime, self.design.netlist_path.stat().st_mtime
             ),
         )
 

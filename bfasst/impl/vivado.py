@@ -15,27 +15,27 @@ class VivadoImplementationTool(ImplementationTool):
 
     TOOL_WORK_DIR = "vivado_impl"
 
-    def __init__(self, cwd, flow_args=""):
-        super().__init__(cwd, flow_args)
+    def __init__(self, cwd, design, flow_args=""):
+        super().__init__(cwd, design, flow_args)
 
-    def init_design(self, design):
+    def init_design(self):
         """Initialize design object with paths to files needed for implementation"""
-        design.impl_netlist_path = self.cwd / (design.top + "_impl.v")
-        design.impl_edif_path = design.impl_netlist_path.with_suffix(".edf")
-        design.xilinx_impl_checkpoint_path = self.work_dir / "design.dcp"
-        design.utilization_path = self.work_dir / "utilization.txt"
-        design.bitstream_path = self.cwd / (design.top + ".bit")
+        self.design.impl_netlist_path = self.cwd / (self.design.top + "_impl.v")
+        self.design.impl_edif_path = self.design.impl_netlist_path.with_suffix(".edf")
+        self.design.xilinx_impl_checkpoint_path = self.work_dir / "design.dcp"
+        self.design.utilization_path = self.work_dir / "utilization.txt"
+        self.design.bitstream_path = self.cwd / (self.design.top + ".bit")
 
-    def implement_bitstream(self, design):
+    def implement_bitstream(self):
         """Run vivado executable to perform implementation"""
-        self.init_design(design)
+        self.init_design()
 
-        status = self.common_startup(design, self.check_impl_status)
+        status = self.common_startup(self.check_impl_status)
         if status:
             return status
 
         # Run implementation
-        status = self.run_implementation(design)
+        status = self.run_implementation()
 
         # Check implementation log
         status = self.check_impl_status(self.log_path)
@@ -45,13 +45,13 @@ class VivadoImplementationTool(ImplementationTool):
 
         return self.success_status
 
-    def write_header(self, design, fp):
+    def write_header(self, fp):
         fp.write("if { [ catch {\n")
-        fp.write("read_edif " + str(design.netlist_path) + "\n")
-        fp.write("set_property top_file " + str(design.netlist_path) + " [current_fileset]\n")
+        fp.write("read_edif " + str(self.design.netlist_path) + "\n")
+        fp.write("set_property top_file " + str(self.design.netlist_path) + " [current_fileset]\n")
         fp.write("link_design -part " + bfasst.config.PART + "\n")
         if not self.args.out_of_context:
-            fp.write("read_xdc " + str(design.constraints_path) + "\n")
+            fp.write("read_xdc " + str(self.design.constraints_path) + "\n")
 
     def write_impl(self, fp):
         fp.write("set_property design_mode GateLvl [current_fileset]\n")
@@ -59,27 +59,27 @@ class VivadoImplementationTool(ImplementationTool):
         fp.write("place_design\n")
         fp.write("route_design\n")
 
-    def write_outputs(self, design, fp):
-        fp.write("write_checkpoint -force -file " + str(design.xilinx_impl_checkpoint_path) + "\n")
-        fp.write("write_edif -force -file " + str(design.impl_edif_path) + "\n")
-        fp.write("write_verilog -force -file " + str(design.impl_netlist_path) + "\n")
-        fp.write("report_utilization -file " + str(design.utilization_path) + "\n")
+    def write_outputs(self, fp):
+        fp.write("write_checkpoint -force -file " + str(self.design.xilinx_impl_checkpoint_path) + "\n")
+        fp.write("write_edif -force -file " + str(self.design.impl_edif_path) + "\n")
+        fp.write("write_verilog -force -file " + str(self.design.impl_netlist_path) + "\n")
+        fp.write("report_utilization -file " + str(self.design.utilization_path) + "\n")
         if not self.args.out_of_context:
-            fp.write("write_bitstream -force " + str(design.bitstream_path) + "\n")
+            fp.write("write_bitstream -force " + str(self.design.bitstream_path) + "\n")
 
     def write_footer(self, fp):
         fp.write("} ] } { exit 1 }\n")
         fp.write("exit\n")
 
-    def run_implementation(self, design):
+    def run_implementation(self):
         """Run vivado executable to perform implementation"""
 
         tcl_path = self.work_dir / ("impl.tcl")
 
         with open(tcl_path, "w") as fp:
-            self.write_header(design, fp)
+            self.write_header(fp)
             self.write_impl(fp)
-            self.write_outputs(design, fp)
+            self.write_outputs(fp)
             self.write_footer(fp)
 
         cmd = VIVADO_COMMAND + ["-source", str(tcl_path)]
@@ -122,13 +122,13 @@ class VivadoImplementationTool(ImplementationTool):
 
         return self.success_status
 
-    def write_to_results_file(self, design, log_path, need_to_run):
+    def write_to_results_file(self, log_path, need_to_run):
         """This function writes results to a file.  Not sure if it's used anymore?"""
 
-        if design.results_summary_path is None:
+        if self.design.results_summary_path is None:
             print("No results path set!")
         else:
-            with open(design.results_summary_path, "a") as res_f:
+            with open(self.design.results_summary_path, "a") as res_f:
                 time_modified = time.ctime(os.path.getmtime(log_path))
                 res_f.write("Results summary (IC2) (" + time_modified + ")\n")
                 # How can I differentiate between different versions of the design?
