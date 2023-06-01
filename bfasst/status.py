@@ -111,4 +111,4 @@ class Status:
             raise BfasstException(status, f"{msg_map[status]}{self.msg}")
 
     def __str__(self):
-        return f"{msg_map[self.status]}{self.msg}"
+        return f"{self.msg}"
