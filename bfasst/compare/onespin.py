@@ -62,8 +62,107 @@ class OneSpinCompareTool(CompareTool):
 
         return Status(CompareStatus.NEED_TO_RUN_ONESPIN)
 
+    def read_golden(self, fp, gold_is_rtl):
+        """Read the golden file."""
+        for f in self.design.compare_golden_files:
+            print("golden file: ", f)
+            if gold_is_rtl:
+                f = "rtl/" + str(f)
+            # TODO: I'm not sure that design.top will point to the
+            #   right directory all the time... Maybe get the design
+            #   name somewhere else?
+            # TODO: I don't want to use golden_is_verilog, because
+            #   some designs can have goldens that have both vlog and
+            #   vhdl
+            if self.design.golden_is_verilog:
+                fp.write(
+                    "read_verilog -golden -pragma_ignore {} -version 2001 "
+                    + "{/home/jgoeders/temp/"
+                    + self.design.top
+                    + "/"
+                    + str(f)
+                    + "}\n"
+                )
+            else:
+                fp.write(
+                    "read_vhdl -golden -pragma_ignore {} -version 93 "
+                    + "{/home/jgoeders/temp/"
+                    + self.design.top
+                    + "/"
+                    + str(f)
+                    + "}\n"
+                )
+
+    def read_revised(self, fp):
+        print("revised:", self.design.compare_revised_file)
+        # The revised design *should* always be a verilog netlist
+        # (we aren't really doing any comparison with edif)
+        fp.write(
+            "read_verilog -revised -pragma_ignore {} -version 2001 "
+            + "{/home/jgoeders/temp/"
+            + self.design.top
+            + "/"
+            + self.design.compare_revised_file
+            + "}\n"
+        )
+
+    def set_top_in_elaborate(self, fp):
+        # using golden_is_verilog should work here since we only
+        #   are looking at the top module
+        if self.design.golden_is_verilog:
+            fp.write(
+                "set_elaborate_option -golden -top {Verilog!work." 
+                + self.design.top
+                + "}\n"
+            )
+
+    def save_results(self, fp, tcl_name):
+        # what output file names should be used?
+        # What about the RTL check?
+        out_name = "results_" + tcl_name[12:-4] + ".log"
+        fp.write(
+            "save_result_file /home/jgoeders/temp/"
+            + self.design.top
+            + "/"
+            + out_name
+            + "\n"
+        )
+
+    def map_internal_net_names(self, fp, gold_is_rtl):
+        """Add extra commands to map internal net names to try to help comparison."""
+        # This works with verilog for now
+        # TODO: Handle VHDL
+        f_1 = self.design.compare_golden_files_paths[0]
+        if gold_is_rtl:
+            f_1 = self.work_dir / "rtl" / self.design.top_file
+        f_2 = self.work_dir / self.design.compare_revised_file
+        if not self.design.golden_is_verilog:
+            return
+        mappings = self.find_mappings_vlog(f_1, f_2)
+        map_commands = self.get_tcl_map_commands(mappings)
+        for cmd in map_commands:
+            fp.write(cmd)
+
+    def commit_compare_tcl(self, tcl_name, tcl_template_lines, gold_is_rtl):
+        """Write the tcl file for running the comparison."""
+        print("Writing tcl file", tcl_name)
+        tcl_path = self.work_dir / tcl_name
+        with open(tcl_path, "w") as fp:
+            for line in tcl_template_lines:
+                fp.write(line)
+                if line.strip() == "# Read golden here":
+                    self.read_golden(fp, gold_is_rtl)
+                if line.strip() == "# Read revised here":
+                    self.read_revised(fp)
+                if line.strip() == "# Set top module in elaborate options":
+                    self.set_top_in_elaborate(fp)
+                if line.strip() == "# Save results":
+                    self.save_results(fp, tcl_name)
+                if line.strip() == "map":
+                    self.map_internal_net_names(fp, gold_is_rtl)
+
     def write_compare_tcl(self):
-        """Write the tcl file for comparing the netlists."""
+        """set conditions to create the tcl file for running the comparison."""
         # Read the sample onespin tcl script from resources
         sample_onespin_path = paths.ONESPIN_RESOURCES / ONESPIN_TCL_TEMPLATE
         tcl_template_lines = []
@@ -101,89 +200,7 @@ class OneSpinCompareTool(CompareTool):
                 tcl_name = "run_onespin_yosys_to_yosys_" + self.design.cur_error_flow_name + ".tcl"
         else:
             print("Unhandled compare configuration")
-        print("Writing tcl file", tcl_name)
-        tcl_path = self.work_dir / tcl_name
-        with open(tcl_path, "w") as fp:
-            for line in tcl_template_lines:
-                fp.write(line)
-
-                if line.strip() == "# Read golden here":
-                    for f in self.design.compare_golden_files:
-                        print("golden file: ", f)
-                        if gold_is_rtl:
-                            f = "rtl/" + str(f)
-                        # TODO: I'm not sure that design.top will point to the
-                        #   right directory all the time... Maybe get the design
-                        #   name somewhere else?
-                        # TODO: I don't want to use golden_is_verilog, because
-                        #   some designs can have goldens that have both vlog and
-                        #   vhdl
-                        if self.design.golden_is_verilog:
-                            fp.write(
-                                "read_verilog -golden -pragma_ignore {} -version 2001 "
-                                + "{/home/jgoeders/temp/"
-                                + self.design.top
-                                + "/"
-                                + str(f)
-                                + "}\n"
-                            )
-                        else:
-                            fp.write(
-                                "read_vhdl -golden -pragma_ignore {} -version 93 "
-                                + "{/home/jgoeders/temp/"
-                                + self.design.top
-                                + "/"
-                                + str(f)
-                                + "}\n"
-                            )
-
-                if line.strip() == "# Read revised here":
-                    print("revised:", self.design.compare_revised_file)
-                    # The revised design *should* always be a verilog netlist
-                    # (we aren't really doing any comparison with edif)
-                    fp.write(
-                        "read_verilog -revised -pragma_ignore {} -version 2001 "
-                        + "{/home/jgoeders/temp/"
-                        + self.design.top
-                        + "/"
-                        + self.design.compare_revised_file
-                        + "}\n"
-                    )
-                if line.strip() == "# Set top module in elaborate options":
-                    # using golden_is_verilog should work here since we only
-                    #   are looking at the top module
-                    if self.design.golden_is_verilog:
-                        fp.write(
-                            "set_elaborate_option -golden -top {Verilog!work." 
-                            + self.design.top
-                            + "}\n"
-                        )
-                if line.strip() == "# Save results":
-                    # what output file names should be used?
-                    # What about the RTL check?
-                    out_name = "results_" + tcl_name[12:-4] + ".log"
-                    fp.write(
-                        "save_result_file /home/jgoeders/temp/"
-                        + self.design.top
-                        + "/"
-                        + out_name
-                        + "\n"
-                    )
-                if line.strip() == "map":
-                    # Add extra commands to map internal net names to try to
-                    #   help comparison
-                    # This works with verilog for now
-                    # TODO: Handle VHDL
-                    f_1 = self.design.compare_golden_files_paths[0]
-                    if gold_is_rtl:
-                        f_1 = self.work_dir / "rtl" / self.design.top_file
-                    f_2 = self.work_dir / self.design.compare_revised_file
-                    if not self.design.golden_is_verilog:
-                        continue
-                    mappings = self.find_mappings_vlog(f_1, f_2)
-                    map_commands = self.get_tcl_map_commands(mappings)
-                    for cmd in map_commands:
-                        fp.write(cmd)
+        self.commit_compare_tcl(tcl_name, tcl_template_lines, gold_is_rtl)
 
     def write_compare_script(self):
         """Creates the python script used to run the compare tcl scripts"""
