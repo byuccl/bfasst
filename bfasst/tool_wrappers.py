@@ -87,9 +87,9 @@ def yosys_synth(design, build_dir, flow_args):
 
 def yosys_cmp(design, build_dir, flow_args):
     """Compare netlists using yosys"""
-    from bfasst.compare.yosys import Yosys_CompareTool
+    from bfasst.compare.yosys import YosysCompareTool
 
-    compare_tool = Yosys_CompareTool(build_dir, design, flow_args[ToolType.CMP])
+    compare_tool = YosysCompareTool(build_dir, design, flow_args[ToolType.CMP])
     return compare_tool.compare_netlists()
 
 
