@@ -14,8 +14,9 @@ class CompareTool(Tool):
     success_status = Status(CompareStatus.SUCCESS)
 
     LOG_FILE_NAME = "log.txt"
+
     def __init__(self, cwd, design, flow_args="") -> None:
-        super().__init__(cwd)
+        super().__init__(cwd, design)
         # Implementation options
         self.create_arg_parser("compare", flow_args)
 
