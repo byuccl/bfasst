@@ -8,7 +8,7 @@ from enum import Enum
 from enum import unique as enum_unique
 import pathlib
 import shutil
-from bfasst.compare.onespin import OneSpin_CompareTool
+from bfasst.compare.onespin import OneSpinCompareTool
 
 from bfasst.design import Design
 from bfasst.error_injection.error_injector import ErrorInjector_ErrorInjectionTool
@@ -449,7 +449,7 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
 
         # Run compare to create a onespin tcl for yosys->corrupt reversed netlist
         design.compare_revised_file = design.reversed_netlist_filename()
-        compare_tool = OneSpin_CompareTool(build_dir, design)
+        compare_tool = OneSpinCompareTool(build_dir, design)
         with onespin_lock:
             status = compare_tool.compare_netlists()
 

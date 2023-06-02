@@ -103,9 +103,9 @@ def wave_cmp(design, build_dir, flow_args):
 
 def onespin_cmp(design, build_dir, flow_args):
     """Compare netlists using Onespin"""
-    from bfasst.compare.onespin import OneSpin_CompareTool
+    from bfasst.compare.onespin import OneSpinCompareTool
 
-    compare_tool = OneSpin_CompareTool(build_dir, design, flow_args[ToolType.CMP])
+    compare_tool = OneSpinCompareTool(build_dir, design, flow_args[ToolType.CMP])
     with onespin_lock:
         return compare_tool.compare_netlists()
 

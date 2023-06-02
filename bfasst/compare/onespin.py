@@ -1,9 +1,9 @@
-import yaml
+"""Run OneSpin to compare netlists."""
 import shutil
 import pathlib
 import re
+import yaml
 
-import bfasst
 from bfasst import paths
 from bfasst.compare.base import CompareTool
 from bfasst.status import Status, CompareStatus
@@ -12,18 +12,21 @@ ONESPIN_TCL_TEMPLATE = "run_onespin.tcl"
 ONESPIN_PY_TEMPLATE = "run_onespin.py"
 
 
-class OneSpin_CompareTool(CompareTool):
+class OneSpinCompareTool(CompareTool):
+    """OneSpin compare tool."""
     TOOL_WORK_DIR = "onespin"
 
     def compare_netlists(self):
         yaml_data = {}
 
-        # TODO: I DON'T THINK THIS IS COPYING ALL OF GOLDEN? OR MAYBE I'VE CHANGED WHAT GOLDEN IS? I THINK THIS CAN BE WRONG!!!!!
+        # TODO: I DON'T THINK THIS IS COPYING ALL OF GOLDEN?
+        # OR MAYBE I'VE CHANGED WHAT GOLDEN IS? I THINK THIS CAN BE WRONG!!!!!
         for f in self.design.compare_golden_files_paths:
             shutil.copyfile(f, self.work_dir / f.name)
         print("copying reversed netlist", self.design.reversed_netlist_path)
         shutil.copyfile(
-            self.design.reversed_netlist_path, self.work_dir / self.design.reversed_netlist_filename()
+            self.design.reversed_netlist_path,
+            self.work_dir / self.design.reversed_netlist_filename()
         )
 
         if self.design.corrupt_netlist_paths is not None:
@@ -60,6 +63,7 @@ class OneSpin_CompareTool(CompareTool):
         return Status(CompareStatus.NEED_TO_RUN_ONESPIN)
 
     def write_compare_tcl(self):
+        """Write the tcl file for comparing the netlists."""
         # Read the sample onespin tcl script from resources
         sample_onespin_path = paths.ONESPIN_RESOURCES / ONESPIN_TCL_TEMPLATE
         tcl_template_lines = []
@@ -116,7 +120,8 @@ class OneSpin_CompareTool(CompareTool):
                         #   vhdl
                         if self.design.golden_is_verilog:
                             fp.write(
-                                "read_verilog -golden -pragma_ignore {} -version 2001 {/home/jgoeders/temp/"
+                                "read_verilog -golden -pragma_ignore {} -version 2001 "
+                                + "{/home/jgoeders/temp/"
                                 + self.design.top
                                 + "/"
                                 + str(f)
@@ -124,7 +129,8 @@ class OneSpin_CompareTool(CompareTool):
                             )
                         else:
                             fp.write(
-                                "read_vhdl -golden -pragma_ignore {} -version 93 {/home/jgoeders/temp/"
+                                "read_vhdl -golden -pragma_ignore {} -version 93 "
+                                + "{/home/jgoeders/temp/"
                                 + self.design.top
                                 + "/"
                                 + str(f)
@@ -136,7 +142,8 @@ class OneSpin_CompareTool(CompareTool):
                     # The revised design *should* always be a verilog netlist
                     # (we aren't really doing any comparison with edif)
                     fp.write(
-                        "read_verilog -revised -pragma_ignore {} -version 2001 {/home/jgoeders/temp/"
+                        "read_verilog -revised -pragma_ignore {} -version 2001 "
+                        + "{/home/jgoeders/temp/"
                         + self.design.top
                         + "/"
                         + self.design.compare_revised_file
@@ -147,34 +154,39 @@ class OneSpin_CompareTool(CompareTool):
                     #   are looking at the top module
                     if self.design.golden_is_verilog:
                         fp.write(
-                            "set_elaborate_option -golden -top {Verilog!work." + self.design.top + "}\n"
+                            "set_elaborate_option -golden -top {Verilog!work." 
+                            + self.design.top
+                            + "}\n"
                         )
                 if line.strip() == "# Save results":
                     # what output file names should be used?
                     # What about the RTL check?
                     out_name = "results_" + tcl_name[12:-4] + ".log"
                     fp.write(
-                        "save_result_file /home/jgoeders/temp/" + self.design.top + "/" + out_name + "\n"
+                        "save_result_file /home/jgoeders/temp/"
+                        + self.design.top
+                        + "/"
+                        + out_name
+                        + "\n"
                     )
                 if line.strip() == "map":
                     # Add extra commands to map internal net names to try to
                     #   help comparison
                     # This works with verilog for now
                     # TODO: Handle VHDL
-                    f1 = self.design.compare_golden_files_paths[0]
+                    f_1 = self.design.compare_golden_files_paths[0]
                     if gold_is_rtl:
-                        f1 = self.work_dir / "rtl" / self.design.top_file
-                    f2 = self.work_dir / self.design.compare_revised_file
+                        f_1 = self.work_dir / "rtl" / self.design.top_file
+                    f_2 = self.work_dir / self.design.compare_revised_file
                     if not self.design.golden_is_verilog:
                         continue
-                    mappings = self.find_mappings_vlog(f1, f2)
+                    mappings = self.find_mappings_vlog(f_1, f_2)
                     map_commands = self.get_tcl_map_commands(mappings)
                     for cmd in map_commands:
                         fp.write(cmd)
 
-    # write_compare_script creates the python script used to run the compare
-    #   tcl scripts
     def write_compare_script(self):
+        """Creates the python script used to run the compare tcl scripts"""
         # Read the template script from the resources directory
         template_lines = []
         with open(paths.ONESPIN_RESOURCES / ONESPIN_PY_TEMPLATE) as fp:
@@ -193,13 +205,14 @@ class OneSpin_CompareTool(CompareTool):
                     flow_list_str = "  flow_names = " + str(flow_list) + "\n"
                     fp.write(flow_list_str)
 
-    # find_mappings_vlog
-    # checks the two files f1 and f2 and finds a list of matching net names
-    #   between the two. Only handles verilog files.
-    def find_mappings_vlog(self, f1, f2):
-        print("f1:", f1)
-        print("f2:", f2)
-        f1_nets = set()
+    def find_mappings_vlog(self, f_1, f_2):
+        """
+        Checks the two files f_1 and f_2 and finds a list of matching net names
+        between the two. Only handles verilog files.
+        """
+        print("f_1:", f_1)
+        print("f_2:", f_2)
+        f_1_nets = set()
         f2_nets = set()
         # This regex should match a letter, _, or \, then 0 or more letters,
         #   numbers, _s, or .s
@@ -210,7 +223,7 @@ class OneSpin_CompareTool(CompareTool):
         # List of which nets are busses
         bus_list = []
         bus_decl_map = {}
-        with open(f1) as f:
+        with open(f_1) as f:
             for line in f:
                 if line.split() and line.split()[0] in {"wire", "reg", "logic"}:
                     # We need to find all net names in the declaration
@@ -222,12 +235,12 @@ class OneSpin_CompareTool(CompareTool):
                     for net in match_list:
                         if net in {"wire", "reg", "logic"}:
                             continue
-                        f1_nets.add(net)
+                        f_1_nets.add(net)
                         if bus_match:
                             bus_list.append(net)
                             bus_decl_map[net] = bus_match.group(0)
-        print("Found f1 nets", f1_nets)
-        with open(f2) as f:
+        print("Found f_1 nets", f_1_nets)
+        with open(f_2) as f:
             for line in f:
                 if line.split() and line.split()[0] in {"wire", "reg", "logic"}:
                     # We need to find all net names in the declaration
@@ -242,28 +255,29 @@ class OneSpin_CompareTool(CompareTool):
                         f2_nets.add(net)
                         if bus_match:
                             # Check that the bus declaration here matches the
-                            #   one in f1. If it doesn't, we could be using
+                            #   one in f_1. If it doesn't, we could be using
                             #   a different encoding for the signal, which can
                             #   cause problems
                             if net not in bus_list:
-                                # This isn't a bus in the f1. There's no way
+                                # This isn't a bus in the f_1. There's no way
                                 #   it can match, so don't consider it
                                 f2_nets.remove(net)
                                 continue
                             if bus_match.group(0) != bus_decl_map[net]:
                                 # Bus declarations are different; remove this
-                                #   from f2 list so it won't be returned from
+                                #   from f_2 list so it won't be returned from
                                 #   the function
                                 f2_nets.remove(net)
-        print("Found f2 nets", f2_nets)
-        print("Intersection:", f1_nets & f2_nets)
+        print("Found f_2 nets", f2_nets)
+        print("Intersection:", f_1_nets & f2_nets)
         print("busses:", bus_list)
-        return (f1_nets & f2_nets, bus_list)
+        return (f_1_nets & f2_nets, bus_list)
 
-    # get_tcl_map_commands
-    # Takes a list of nets to map (see find_mappings_vlog) and returns a list
-    #   of lines for a tcl script to create the mappings in onespin
     def get_tcl_map_commands(self, mappings_tuple):
+        """
+        Takes a list of nets to map (see find_mappings_vlog) and returns a list
+        of lines for a tcl script to create the mappings in onespin
+        """
         mappings, bus_list = mappings_tuple
         lines = []
         for net in mappings:
@@ -276,7 +290,8 @@ class OneSpin_CompareTool(CompareTool):
                 lines.append("set bits [get_bits {" + net + "[*}]\n")
                 lines.append("set bits_revised [get_bits -revised {" + net + "[*}]\n")
                 lines.append(
-                    "for {set i 0} {$i < [llength $bits]} {incr i} {add_mapping -internal [lindex $bits $i] [lindex $bits_revised $i]}\n"
+                    "for {set i 0} {$i < [llength $bits]} {incr i} "
+                    + "{add_mapping -internal [lindex $bits $i] [lindex $bits_revised $i]}\n"
                 )
             else:
                 # This net is not a bus, so we can just map it directly
