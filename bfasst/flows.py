@@ -11,7 +11,7 @@ import shutil
 from bfasst.compare.onespin import OneSpinCompareTool
 
 from bfasst.design import Design
-from bfasst.error_injection.error_injector import ErrorInjector_ErrorInjectionTool
+from bfasst.error_injection.error_injector import ErrorInjector
 from bfasst.impl.ic2 import Ic2ImplementationTool
 from bfasst.netlist_mapping.ccl_mapping import map_netlists as ccl_map
 from bfasst.netlist_mapping.structural_mapping import structurally_map_netlists
@@ -398,7 +398,7 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
     status = yosys_synth(design, build_dir, flow_args)
 
     # Run error injection
-    error_inj_tool = ErrorInjector_ErrorInjectionTool(build_dir, design)
+    error_inj_tool = ErrorInjector(build_dir, design)
     ret = error_inj_tool.run_error_flows()
     status = ret[0]
 
