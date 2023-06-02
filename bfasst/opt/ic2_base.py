@@ -24,7 +24,9 @@ class Ic2BaseOptTool(OptTool):
         self.design.netlist_path = self.cwd / (self.design.top + ".edf")
 
         status = self.get_prev_run_status(
-            tool_products=[ToolProduct(self.design.netlist_path, self.log_path, self.check_opt_log)],
+            tool_products=[ToolProduct(self.design.netlist_path,
+                                       self.log_path,
+                                       self.check_opt_log)],
             dependency_modified_time=max(
                 pathlib.Path(__file__).stat().st_mtime, self.design.last_modified_time()
             ),

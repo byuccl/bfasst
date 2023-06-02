@@ -51,11 +51,15 @@ class Ic2SynplifyOptTool(Ic2BaseOptTool):
             for design_file in in_files:
                 if os.path.splitext(design_file)[1].lower() == ".v":
                     fp.write(
-                        "add_file -verilog -lib work " + str(self.design.full_path / design_file) + "\n"
+                        "add_file -verilog -lib work "
+                        + str(self.design.full_path / design_file)
+                        + "\n"
                     )
                 elif os.path.splitext(design_file)[1].lower() == ".vhd":
                     fp.write(
-                        "add_file -vhdl -lib work " + str(self.design.full_path / design_file) + "\n"
+                        "add_file -vhdl -lib work "
+                        + str(self.design.full_path / design_file)
+                        + "\n"
                     )
 
             for vhdl_lib_file_path, vhdl_lib in lib_files:
