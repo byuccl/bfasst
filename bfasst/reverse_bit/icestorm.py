@@ -1,4 +1,4 @@
-import shutil
+"""IceStorm reverse bitstream tool."""
 import subprocess
 import re
 import time
@@ -12,13 +12,14 @@ from bfasst.status import Status, BitReverseStatus
 # IC2_LSE_PROJ_FILE = 'lse_project.prj'
 
 
-class Icestorm_ReverseBitTool(ReverseBitTool):
+class IcestormReverseBitTool(ReverseBitTool):
+    """IceStorm reverse bitstream tool"""
     TOOL_WORK_DIR = "icestorm"
 
     def reverse_bitstream(self):
         # print("Running ReverseBit")
 
-        if self.design.cur_error_flow_name == None:
+        if self.design.cur_error_flow_name is None:
             self.design.reversed_netlist_path = self.cwd / (self.design.top + "_reversed.v")
         else:
             self.design.reversed_netlist_path = self.cwd / (
@@ -32,8 +33,10 @@ class Icestorm_ReverseBitTool(ReverseBitTool):
         need_to_run |= not self.design.reversed_netlist_path.is_file()
 
         # Run if reverse netlist file is out of date
+        rev_netlist_mtime = self.design.reversed_netlist_path.stat().st_mtime
+        netlist_mtime = self.design.netlist_path.stat().st_mtime
         need_to_run |= (not need_to_run) and (
-            self.design.reversed_netlist_path.stat().st_mtime < self.design.bitstream_path.stat().st_mtime
+            rev_netlist_mtime < netlist_mtime
         )
 
         if need_to_run:
@@ -50,20 +53,21 @@ class Icestorm_ReverseBitTool(ReverseBitTool):
 
         self.write_to_results_file(self.design.reversed_netlist_path, need_to_run)
 
-        return Status(BitReverseStatus.SUCCESS)
+        return status
 
     def convert_bit_to_asc(self, bitstream_path, asc_path):
         cmd = [bfasst.config.ICESTORM_INSTALL_DIR / "icepack" / "iceunpack", bitstream_path]
 
         with open(asc_path, "w") as fp:
-            p = subprocess.run(cmd, stdout=fp, stderr=subprocess.STDOUT, cwd=self.work_dir)
+            process = subprocess.run(cmd, stdout=fp, stderr=subprocess.STDOUT, cwd=self.work_dir)
 
-            if p.returncode:
+            if process.returncode:
                 return Status(BitReverseStatus.ERROR)
 
         return Status(BitReverseStatus.SUCCESS)
 
     def convert_asc_to_netlist(self, asc_path, constraints_path, netlist_path):
+        """Converts an ASC file to a netlist using IceStorm tools."""
         cmd = [
             bfasst.config.ICESTORM_INSTALL_DIR / "icebox" / "icebox_vlog.py",
             "-P",
@@ -73,23 +77,25 @@ class Icestorm_ReverseBitTool(ReverseBitTool):
         ]
 
         with open(netlist_path, "w") as fp:
-            p = subprocess.run(cmd, stdout=fp, stderr=subprocess.STDOUT, cwd=self.work_dir)
+            process = subprocess.run(cmd, stdout=fp, stderr=subprocess.STDOUT, cwd=self.work_dir)
 
-            if p.returncode:
+            if process.returncode:
                 return Status(BitReverseStatus.ERROR)
 
         return Status(BitReverseStatus.SUCCESS)
 
-    # Sometimes IC2 implementation can add stuff to signal names in PCF files
-    #   (e.x. clk_i becomes clk_i_ibuf). This function removes those extra
-    #   suffixes/prefixes. This also removes all location information from the
-    #   PCF. For our purposes, we only need the set_io statements to infer
-    #   the I/O signal names.
     # TODO: Ideally, this function should probably check against the top-level
     #       I/O on the original RTL to make sure that none of the signals have
     #       the suffixes we're removing (i.e. they weren't added by IC2). For
     #       now, though, we'll assume that all suf/prefixes are not in the RTL.
     def fix_pcf_names(self):
+        """
+        Sometimes IC2 implementation can add stuff to signal names in PCF files
+        (e.x. clk_i becomes clk_i_ibuf). This function removes those extra
+        suffixes/prefixes. This also removes all location information from the
+        PCF. For our purposes, we only need the set_io statements to infer
+        the I/O signal names.
+        """
         set_io_lines = []
         with open(self.design.constraints_path, "r") as pcf:
             for line in pcf:
@@ -113,6 +119,7 @@ class Icestorm_ReverseBitTool(ReverseBitTool):
                     pcf.write(new_line)
 
     def write_to_results_file(self, netlist_path, need_to_run):
+        """Writes the results of the reverse bitstream tool to the results file."""
         if self.design.results_summary_path is None:
             print("No results path set!")
             return

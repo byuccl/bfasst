@@ -36,9 +36,9 @@ def ic2_impl(design, build_dir, flow_args):
 
 def icestorm_rev_bit(design, build_dir, flow_args):
     """Reverse bitstream using icestorm"""
-    from bfasst.reverse_bit.icestorm import Icestorm_ReverseBitTool
+    from bfasst.reverse_bit.icestorm import IcestormReverseBitTool
 
-    reverse_bit_tool = Icestorm_ReverseBitTool(build_dir, design, flow_args[ToolType.REVERSE])
+    reverse_bit_tool = IcestormReverseBitTool(build_dir, design, flow_args[ToolType.REVERSE])
     return reverse_bit_tool.reverse_bitstream()
 
 

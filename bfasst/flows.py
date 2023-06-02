@@ -17,7 +17,7 @@ from bfasst.netlist_mapping.ccl_mapping import map_netlists as ccl_map
 from bfasst.netlist_mapping.structural_mapping import structurally_map_netlists
 from bfasst.opt.ic2_lse import Ic2LseOptTool
 from bfasst.opt.ic2_synplify import Ic2SynplifyOptTool
-from bfasst.reverse_bit.icestorm import Icestorm_ReverseBitTool
+from bfasst.reverse_bit.icestorm import IcestormReverseBitTool
 from bfasst.status import Status, MapStatus
 from bfasst.synth.ic2_lse import Ic2LseSynthesisTool
 from bfasst.synth.ic2_synplify import Ic2SynplifySynthesisTool
@@ -444,7 +444,7 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
         status = ic2_impl(design, build_dir, flow_args)
 
         # Run icestorm bitstream reversal
-        shutil.rmtree(build_dir / Icestorm_ReverseBitTool.TOOL_WORK_DIR)
+        shutil.rmtree(build_dir / IcestormReverseBitTool.TOOL_WORK_DIR)
         status = icestorm_rev_bit(design, build_dir, flow_args)
 
         # Run compare to create a onespin tcl for yosys->corrupt reversed netlist
@@ -490,7 +490,7 @@ def flow_gather_impl_data(design, flow_args, build_dir):
         shutil.rmtree(build_dir / Ic2SynplifyOptTool.TOOL_WORK_DIR)
     shutil.rmtree(build_dir / Ic2SynplifySynthesisTool.TOOL_WORK_DIR)
     shutil.rmtree(build_dir / Ic2ImplementationTool.TOOL_WORK_DIR)
-    shutil.rmtree(build_dir / Icestorm_ReverseBitTool.TOOL_WORK_DIR)
+    shutil.rmtree(build_dir / IcestormReverseBitTool.TOOL_WORK_DIR)
     # Now do RTL->LSE->IC2->Icestorm
     # Run Icecube2 LSE synthesis
     status = ic2_lse_synth(design, build_dir, flow_args)
@@ -506,7 +506,7 @@ def flow_gather_impl_data(design, flow_args, build_dir):
         shutil.rmtree(build_dir / Ic2LseOptTool.TOOL_WORK_DIR)
     shutil.rmtree(build_dir / Ic2LseSynthesisTool.TOOL_WORK_DIR)
     shutil.rmtree(build_dir / Ic2ImplementationTool.TOOL_WORK_DIR)
-    shutil.rmtree(build_dir / Icestorm_ReverseBitTool.TOOL_WORK_DIR)
+    shutil.rmtree(build_dir / IcestormReverseBitTool.TOOL_WORK_DIR)
 
     # Now do Yosys->Synplify->IC2->Icestorm
     # Run the Yosys synthesizer
@@ -528,7 +528,7 @@ def flow_gather_impl_data(design, flow_args, build_dir):
     shutil.rmtree(build_dir / Ic2SynplifyOptTool.TOOL_WORK_DIR)
 
     shutil.rmtree(build_dir / Ic2ImplementationTool.TOOL_WORK_DIR)
-    shutil.rmtree(build_dir / Icestorm_ReverseBitTool.TOOL_WORK_DIR)
+    shutil.rmtree(build_dir / IcestormReverseBitTool.TOOL_WORK_DIR)
 
     # Now do Yosys->LSE->IC2->Icestorm
     # Run the Yosys synthesizer
