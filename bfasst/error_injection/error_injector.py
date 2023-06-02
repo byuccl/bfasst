@@ -94,6 +94,11 @@ class ErrorInjector(ErrorInjectionTool):
             for line in lines:
                 fp.write(line)
 
+    def flip_bit(self, lut_size, init_int):
+        bit_to_flip = random.randint(0, lut_size)
+        flip_mask = 1 << bit_to_flip
+        return init_int ^ flip_mask
+
     def lut_bit_flip_fcn(self, netlist_buffer):
         """
         Goes through the golden file, copies everything to an internal
@@ -121,9 +126,7 @@ class ErrorInjector(ErrorInjectionTool):
         lut_size_str = re.findall("[1-9][0-9]?'h", lut_to_change.strip())[0]
         lut_size = int(lut_size_str[:-2])
         # Pick a bit to flip and flip it
-        bit_to_flip = random.randint(0, lut_size)
-        flip_mask = 1 << bit_to_flip
-        new_init = init_int ^ flip_mask
+        new_init = self.flip_bit(lut_size, init_int)
         # Replace the old LUT init with this new value
         new_init_hex = hex(new_init)[2:]
         # I'm not going to worry about correct indentation...
@@ -210,10 +213,7 @@ class ErrorInjector(ErrorInjectionTool):
         wire_to_tap = netlist_buffer[wire_list[0]].split()[-1][0:-1]
         if wire_to_tap == "":
             wire_to_tap = netlist_buffer[wire_list[0]].split()[-2]
-        if wire_to_tap[0] == "\\":
-            escaped_name = True
-        else:
-            escaped_name = False
+        escaped_name = bool(wire_to_tap[0] == "\\")
         print("tapping", wire_to_tap)
         # Also grab the bus declaration, if there is one
         # m = re.search("\[.*\]", netlist_buffer[wire_list[0]])
