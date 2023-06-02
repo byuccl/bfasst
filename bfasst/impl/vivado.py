@@ -60,7 +60,9 @@ class VivadoImplementationTool(ImplementationTool):
         fp.write("route_design\n")
 
     def write_outputs(self, fp):
-        fp.write("write_checkpoint -force -file " + str(self.design.xilinx_impl_checkpoint_path) + "\n")
+        fp.write("write_checkpoint -force -file "
+                 + str(self.design.xilinx_impl_checkpoint_path)
+                 + "\n")
         fp.write("write_edif -force -file " + str(self.design.impl_edif_path) + "\n")
         fp.write("write_verilog -force -file " + str(self.design.impl_netlist_path) + "\n")
         fp.write("report_utilization -file " + str(self.design.utilization_path) + "\n")
