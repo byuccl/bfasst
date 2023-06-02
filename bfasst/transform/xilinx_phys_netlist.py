@@ -3,8 +3,6 @@
 from fnmatch import fnmatch
 import pathlib
 import re
-import subprocess
-import sys
 
 from bidict import bidict
 import jpype
@@ -16,7 +14,7 @@ from bfasst.config import VIVADO_BIN_PATH
 from bfasst.status import Status, TransformStatus
 from bfasst.tool import ToolProduct
 from bfasst.transform.base import TransformTool
-from bfasst.utils import TermColor, print_color
+from bfasst.utils import TermColor, print_color, tee
 
 
 # pylint: disable=wrong-import-position,wrong-import-order
@@ -198,9 +196,9 @@ class XilinxPhysNetlist(TransformTool):
         except jpype.JException as exc:
             error = str(exc)
             if "Failed to reliably download file" not in error:
-                raise RapidwrightException(error)           # pylint: disable=raise-missing-from
+                raise RapidwrightException(error)  # pylint: disable=raise-missing-from
             self.rw_design = Design.readCheckpoint(
-            self.design.xilinx_impl_checkpoint_path, self.design.impl_edif_path
+                self.design.xilinx_impl_checkpoint_path, self.design.impl_edif_path
             )
 
         self.rw_netlist = self.rw_design.getNetlist()
@@ -342,28 +340,17 @@ class XilinxPhysNetlist(TransformTool):
             fp.write("exit\n")
 
         vivado_log_path = self.work_dir / "vivado_edf_to_v.txt"
-        with open(vivado_log_path, "w") as fp:
-            proc = subprocess.Popen(
-                [
-                    VIVADO_BIN_PATH,
-                    phys_netlist_checkpoint,
-                    "-mode",
-                    "batch",
-                    "-source",
-                    vivado_tcl_path,
-                ],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                universal_newlines=True,
-            )
-            for line in proc.stdout:
-                sys.stdout.write(line)
-                sys.stdout.flush()
-                fp.write(line)
-                fp.flush()
-            proc.communicate()
-            if proc.returncode:
-                return Status(TransformStatus.ERROR)
+        cmd = [
+            VIVADO_BIN_PATH,
+            phys_netlist_checkpoint,
+            "-mode",
+            "batch",
+            "-source",
+            vivado_tcl_path,
+        ]
+        cwd = None
+        if tee(cmd, cwd, vivado_log_path):
+            return Status(TransformStatus.ERROR)
 
         status = self.check_vivado_output(vivado_log_path)
         if status:

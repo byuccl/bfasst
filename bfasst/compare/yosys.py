@@ -1,11 +1,10 @@
 """Yosys equivalence checker"""
-import subprocess
 import pathlib
-import sys
 import re
 from bfasst.compare.base import CompareTool
 from bfasst.status import Status, CompareStatus
 from bfasst.tool import ToolProduct
+from bfasst.utils import tee
 
 
 class YosysCompareTool(CompareTool):
@@ -32,28 +31,12 @@ class YosysCompareTool(CompareTool):
 
         self.print_running_compare()
 
-        # Create Yosys script
-        script_file_path = self.create_script_file()
-
         # Run Yosys
-        with open(log_path, "w") as fp:
-            cmd = ["./yosys", script_file_path]
-            proc = subprocess.Popen(
-                cmd,
-                cwd=str(pathlib.Path.cwd()) + "/third_party/yosys",
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                universal_newlines=True,
-            )
-            for line in proc.stdout:
-                sys.stdout.write(line)
-                fp.write(line)
-                fp.flush()
-            proc.communicate()
-            if proc.returncode:
-                return Status(CompareStatus.NOT_EQUIVALENT)
-
-        return self.success_status
+        cmd = ["./yosys", self.create_script_file()]
+        cwd = str(pathlib.Path.cwd()) + "/third_party/yosys"
+        if tee(cmd, cwd, log_path):
+            return Status(CompareStatus.NOT_EQUIVALENT)
+        return Status(CompareStatus.SUCCESS)
 
     def create_script_file(self):
         """Creates a Tcl script that asserts equivalence between the two designs"""

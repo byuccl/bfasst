@@ -2,6 +2,7 @@
 import re
 import sys
 import shutil
+import subprocess
 
 import bfasst
 
@@ -117,3 +118,21 @@ def properties_are_equal(prop1, prop2):
         return prop
 
     return convert_to_val(prop1) == convert_to_val(prop2)
+
+
+def tee(cmd, cwd, log_path):
+    """Run a command and tee the output to a log file"""
+    with open(log_path, "w") as fp:
+        proc = subprocess.Popen(
+            args=cmd,
+            cwd=cwd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            universal_newlines=True,
+        )
+        for line in proc.stdout:
+            sys.stdout.write(line)
+            fp.write(line)
+            fp.flush()
+        proc.communicate()
+        return proc.returncode

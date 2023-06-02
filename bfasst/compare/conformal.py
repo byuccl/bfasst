@@ -2,7 +2,6 @@
 
 import re
 import socket
-import pathlib
 
 # Suppress paramiko warning
 # import warnings
@@ -15,7 +14,6 @@ import scp
 import bfasst
 from bfasst import paths
 from bfasst.design import HdlType
-from bfasst.tool import ToolProduct
 from bfasst.status import BfasstException, Status, CompareStatus
 from bfasst.compare.base import CompareTool
 from bfasst.types import Vendor
@@ -42,22 +40,11 @@ class ConformalCompareTool(CompareTool):
 
     def compare_netlists(self):
         """Compare given netlists"""
-        log_path = self.work_dir / self.LOG_FILE_NAME
-
-        generate_comparison = ToolProduct(None, log_path, self.check_compare_status)
-        status = self.get_prev_run_status(
-            tool_products=(generate_comparison,),
-            dependency_modified_time=max(
-                pathlib.Path(__file__).stat().st_mtime,
-                self.design.reversed_netlist_path.stat().st_mtime,
-            ),
-        )
-
+        status = self.up_to_date(self.check_compare_status)
         if status is not None:
-            self.print_skipping_compare()
             return status
 
-        self.print_running_compare()
+        log_path = self.work_dir / self.LOG_FILE_NAME
 
         # Connect to remote machine
         client = self.connect_to_remote_machine()
