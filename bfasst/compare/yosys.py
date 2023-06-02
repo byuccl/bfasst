@@ -126,3 +126,5 @@ class YosysCompareTool(CompareTool):
         match = re.search(r"ERROR", log_text, re.M)
         if match:
             return Status(CompareStatus.NOT_EQUIVALENT)
+
+        return Status(CompareStatus.PARSE_PROBLEM)
