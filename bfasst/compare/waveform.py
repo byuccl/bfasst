@@ -1,6 +1,5 @@
 """Waveform equivalence checker. Uses WaFoVe for verification."""
 
-import pathlib
 import re
 
 from wafove import compare_waveforms
@@ -11,7 +10,6 @@ import bfasst
 from bfasst.compare.base import CompareTool
 from bfasst.config import VIVADO_BIN_PATH
 from bfasst.status import Status, CompareStatus
-from bfasst.tool import ToolProduct
 
 
 class WaveformCompareTool(CompareTool):
@@ -22,7 +20,6 @@ class WaveformCompareTool(CompareTool):
     they are hard-coded for the seed to be 0 & for all_signals to be set to false."""
 
     TOOL_WORK_DIR = "waveform"
-    LOG_FILE_NAME = "log.txt"
 
     def add_args(self):
         """Parses all input arguments for WaFoVe's bfasst implementation."""
@@ -82,7 +79,7 @@ class WaveformCompareTool(CompareTool):
             default=False,
         )
 
-    def compare_netlists(self, design):
+    def compare_netlists(self):
         """The function that compares the netlists."""
 
         print("\nRunning WaFoVe to compare netlists...")
@@ -92,18 +89,8 @@ class WaveformCompareTool(CompareTool):
         print(f"Displaying waveforms via Gtkwave: {self.args.waveform}")
         print(f"Displaying waveforms via Vivado: {self.args.vivado}\n")
 
-        log_path = self.work_dir / self.LOG_FILE_NAME
-        generate_comparison = ToolProduct(None, log_path, self.check_compare_status)
-        status = self.get_prev_run_status(
-            tool_products=(generate_comparison,),
-            dependency_modified_time=max(
-                pathlib.Path(__file__).stat().st_mtime,
-                design.reversed_netlist_path.stat().st_mtime,
-            ),
-        )
-
+        status = self.up_to_date(self.check_compare_status)
         if status is not None:
-            self.print_skipping_compare()
             return status
 
         self.print_running_compare()
@@ -114,8 +101,8 @@ class WaveformCompareTool(CompareTool):
             bfasst.paths.ROOT_PATH / ("third_party/yosys/techlibs/xilinx/cells_sim.v"),
             bfasst.paths.ROOT_PATH / ("third_party/WaFoVe/wafove/templates/sample_tb.v"),
             bfasst.paths.ROOT_PATH / ("third_party/WaFoVe/wafove/tools/"),
-            design.impl_netlist_path,
-            design.reversed_netlist_path,
+            self.design.impl_netlist_path,
+            self.design.reversed_netlist_path,
         )
 
         if self.args.waveform & (paths["vcd"][0].exists() & paths["vcd"][1].exists()):

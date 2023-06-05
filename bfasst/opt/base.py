@@ -12,8 +12,8 @@ class OptTool(Tool):
 
     success_status = Status(OptStatus.SUCCESS)
 
-    def __init__(self, cwd, flow_args="") -> None:
-        super().__init__(cwd)
+    def __init__(self, cwd, design, flow_args="") -> None:
+        super().__init__(cwd, design)
 
         # Implementation options
         self.create_arg_parser("opt", flow_args)
@@ -30,7 +30,7 @@ class OptTool(Tool):
     #   - in_files: A list of design files to run the optimizer on
     #   - lib_files: A list of tuples containing VHDL library paths and library files
     @abc.abstractmethod
-    def create_netlist(self, design, in_files, lib_files):
+    def create_netlist(self, in_files, lib_files):
         pass
 
     def print_running_opt(self):

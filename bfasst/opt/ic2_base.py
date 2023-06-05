@@ -17,16 +17,18 @@ class Ic2BaseOptTool(OptTool):
 
     TOOL_WORK_DIR = "ic2_opt"
 
-    def create_netlist(self, design, in_files, lib_files, force_run=False):
+    def create_netlist(self, in_files, lib_files, force_run=False):
         """Create netlist"""
 
         # Save edif netlist path to design object
-        design.netlist_path = self.cwd / (design.top + ".edf")
+        self.design.netlist_path = self.cwd / (self.design.top + ".edf")
 
         status = self.get_prev_run_status(
-            tool_products=[ToolProduct(design.netlist_path, self.log_path, self.check_opt_log)],
+            tool_products=[ToolProduct(self.design.netlist_path,
+                                       self.log_path,
+                                       self.check_opt_log)],
             dependency_modified_time=max(
-                pathlib.Path(__file__).stat().st_mtime, design.last_modified_time()
+                pathlib.Path(__file__).stat().st_mtime, self.design.last_modified_time()
             ),
         )
 
@@ -34,10 +36,10 @@ class Ic2BaseOptTool(OptTool):
             self.print_skipping_opt()
             return status
 
-        edif_path_temp = self.work_dir / (design.top + ".edf")
+        edif_path_temp = self.work_dir / (self.design.top + ".edf")
 
         # Create Icecube 2 LSE synthesis project file
-        prj_path = self.create_project_file(design, edif_path_temp, in_files, lib_files)
+        prj_path = self.create_project_file(edif_path_temp, in_files, lib_files)
 
         # Run Icecube 2 LSE synthesis
         try:
@@ -56,7 +58,7 @@ class Ic2BaseOptTool(OptTool):
         # Copy edif netlist out of project directory3
         if not edif_path_temp.is_file():
             return Status(OptStatus.ERROR)
-        shutil.copyfile(edif_path_temp, design.netlist_path)
+        shutil.copyfile(edif_path_temp, self.design.netlist_path)
 
         # self.write_result_file(design)
         return Status(OptStatus.SUCCESS)
@@ -67,7 +69,7 @@ class Ic2BaseOptTool(OptTool):
         raise NotImplementedError
 
     @abstractmethod
-    def create_project_file(self, design, edif_path, in_files, lib_files):
+    def create_project_file(self, edif_path, in_files, lib_files):
         """create project file for icecube2"""
         raise NotImplementedError
 

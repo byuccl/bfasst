@@ -11,8 +11,8 @@ class SynthesisTool(tool.Tool):
 
     success_status = Status(SynthStatus.SUCCESS)
 
-    def __init__(self, cwd, flow_args="") -> None:
-        super().__init__(cwd)
+    def __init__(self, cwd, design, flow_args="") -> None:
+        super().__init__(cwd, design)
 
         # Sythesis options
         self.create_arg_parser("synth", flow_args)
@@ -28,7 +28,7 @@ class SynthesisTool(tool.Tool):
     #   - netlist is the path to the produced netlist file
     #   - status is a Status object from bfasst.status
     @abc.abstractmethod
-    def create_netlist(self, design, build_dir):
+    def create_netlist(self, build_dir):
         pass
 
     opt_tool = None

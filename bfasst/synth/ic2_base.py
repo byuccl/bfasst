@@ -9,10 +9,10 @@ class Ic2BaseSynthesisTool(SynthesisTool):
 
     TOOL_WORK_DIR = "ic2_synth"
 
-    def create_netlist(self, design):
+    def create_netlist(self):
         """Create netlist"""
         # Save edif netlist path to design object
-        design.netlist_path = self.cwd / (design.top + ".edf")
+        self.design.netlist_path = self.cwd / (self.design.top + ".edf")
 
         # Use the LSE optimizer -- it will perform the functions of our synthesis
         self.opt_tool = self.get_tool()
@@ -21,14 +21,14 @@ class Ic2BaseSynthesisTool(SynthesisTool):
         force_new_opt_run = True
 
         # build a list of files and libs
-        design_files = [design.top_file]
-        design_files.extend(design.verilog_files)
-        design_files.extend(design.vhdl_files)
-        lib_files = design.vhdl_libs.items()
+        design_files = [self.design.top_file]
+        design_files.extend(self.design.verilog_files)
+        design_files.extend(self.design.vhdl_files)
+        lib_files = self.design.vhdl_libs.items()
 
         # call the lse optimizer
         status = self.opt_tool.create_netlist(
-            design, design_files, lib_files, force_run=force_new_opt_run
+            self.design, design_files, lib_files, force_run=force_new_opt_run
         )
 
         return status

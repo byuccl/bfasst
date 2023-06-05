@@ -3,8 +3,6 @@
 from fnmatch import fnmatch
 import pathlib
 import re
-import subprocess
-import sys
 
 from bidict import bidict
 import jpype
@@ -95,8 +93,8 @@ class XilinxPhysNetlist(TransformTool):
         ),
     }
 
-    def __init__(self, work_dir):
-        super().__init__(work_dir)
+    def __init__(self, work_dir, design):
+        super().__init__(work_dir, design)
         self.bufgctrl_edif_cell = None
         self.vcc_edif_net = None
 
@@ -107,15 +105,15 @@ class XilinxPhysNetlist(TransformTool):
         # Cell to use for all new LUTs
         self.lut6_2_edif_cell = None
 
-    def run(self, design):
+    def run(self):
         """Transform the logical netlist into a netlist with only physical primitives"""
-        phys_netlist_verilog_path = design.impl_edif_path.parent / (
-            design.impl_edif_path.stem + "_physical.v"
+        phys_netlist_verilog_path = self.design.impl_edif_path.parent / (
+            self.design.impl_edif_path.stem + "_physical.v"
         )
-        phys_netlist_edif_path = design.impl_edif_path.parent / (
-            design.impl_edif_path.stem + "_physical.edf"
+        phys_netlist_edif_path = self.design.impl_edif_path.parent / (
+            self.design.impl_edif_path.stem + "_physical.edf"
         )
-        design.impl_netlist_path = phys_netlist_verilog_path
+        self.design.impl_netlist_path = phys_netlist_verilog_path
 
         # Redirect rapidwright output to file
         System.setOut(PrintStream(File(str(self.work_dir / "rapidwright_stdout.log"))))
@@ -127,8 +125,8 @@ class XilinxPhysNetlist(TransformTool):
             ],
             dependency_modified_time=max(
                 pathlib.Path(__file__).stat().st_mtime,
-                design.xilinx_impl_checkpoint_path.stat().st_mtime,
-                design.impl_edif_path.stat().st_mtime,
+                self.design.xilinx_impl_checkpoint_path.stat().st_mtime,
+                self.design.impl_edif_path.stat().st_mtime,
             ),
         )
 
@@ -140,8 +138,8 @@ class XilinxPhysNetlist(TransformTool):
         self.log_color(
             TermColor.GREEN,
             "Starting logical to physical netlist conversion for",
-            design.xilinx_impl_checkpoint_path,
-            design.impl_edif_path,
+            self.design.xilinx_impl_checkpoint_path,
+            self.design.impl_edif_path,
             add_timestamp=True,
         )
 
@@ -151,7 +149,7 @@ class XilinxPhysNetlist(TransformTool):
         # and so cannot be handled properly by multiprocessing
         # Don't raise from as this is also problematic.
         try:
-            self.run_rapidwright(design, phys_netlist_checkpoint, phys_netlist_edif_path)
+            self.run_rapidwright(phys_netlist_checkpoint, phys_netlist_edif_path)
         except jpype.JException as exc:
             raise RapidwrightException(str(exc))  # pylint: disable=raise-missing-from
 
@@ -187,12 +185,13 @@ class XilinxPhysNetlist(TransformTool):
 
         return vcc_edif_net
 
-    def run_rapidwright(self, design, phys_netlist_checkpoint, phys_netlist_edif_path):
+    def run_rapidwright(self, phys_netlist_checkpoint, phys_netlist_edif_path):
         """Do all rapidwright related processing on the netlist"""
 
         # Read the checkpoint into rapidwright, and get the netlist
+
         self.rw_design = Design.readCheckpoint(
-            design.xilinx_impl_checkpoint_path, design.impl_edif_path
+            self.design.xilinx_impl_checkpoint_path, self.design.impl_edif_path
         )
         self.rw_netlist = self.rw_design.getNetlist()
 
@@ -333,27 +332,17 @@ class XilinxPhysNetlist(TransformTool):
             fp.write("exit\n")
 
         vivado_log_path = self.work_dir / "vivado_edf_to_v.txt"
+        cmd = [
+            VIVADO_BIN_PATH,
+            phys_netlist_checkpoint,
+            "-mode",
+            "batch",
+            "-source",
+            vivado_tcl_path,
+        ]
+        cwd = None
         with open(vivado_log_path, "w") as fp:
-            proc = subprocess.Popen(
-                [
-                    VIVADO_BIN_PATH,
-                    phys_netlist_checkpoint,
-                    "-mode",
-                    "batch",
-                    "-source",
-                    vivado_tcl_path,
-                ],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                universal_newlines=True,
-            )
-            for line in proc.stdout:
-                sys.stdout.write(line)
-                sys.stdout.flush()
-                fp.write(line)
-                fp.flush()
-            proc.communicate()
-            if proc.returncode:
+            if self.exec_and_log(cmd, cwd, fp).returncode:
                 return Status(TransformStatus.ERROR)
 
         status = self.check_vivado_output(vivado_log_path)
