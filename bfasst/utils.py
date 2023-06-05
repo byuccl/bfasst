@@ -2,7 +2,6 @@
 import re
 import sys
 import shutil
-import subprocess
 
 import bfasst
 

@@ -17,19 +17,10 @@ class YosysCompareTool(CompareTool):
         log_path = self.work_dir / self.LOG_FILE_NAME
 
         generate_comparison = ToolProduct(None, log_path, self.check_compare_status)
-        status = self.get_prev_run_status(
-            tool_products=(generate_comparison,),
-            dependency_modified_time=max(
-                pathlib.Path(__file__).stat().st_mtime,
-                self.design.reversed_netlist_path.stat().st_mtime,
-            ),
-        )
 
+        status = self.up_to_date(generate_comparison)
         if status is not None:
-            self.print_skipping_compare()
             return status
-
-        self.print_running_compare()
 
         # Run Yosys
         cmd = ["./yosys", self.create_script_file()]
