@@ -42,6 +42,20 @@ jobs:
         pylint ${{ env.GIT_DIFF_FILTERED }}
       if: env.GIT_DIFF
 
+  format:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run format
+      run: |
+        make format
+    - name: Check for formatting errors
+      run: |
+        git diff --exit-code
+        if [ $? -eq 1 ]; then
+          echo "Formatting errors detected. Please run 'make format' and commit the changes."
+          exit 1
+        fi
 
   doctest:
     runs-on: ubuntu-latest
