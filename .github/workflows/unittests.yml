@@ -49,6 +49,14 @@ jobs:
       run: |
         source .venv/bin/activate
         python scripts/run_experiment.py ${{ matrix.experiment }} -j8 --print_period 0
+    - name: 'Experiments artifacts'
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ matrix.experiment }}
+        path: |
+          build/**/log.txt
+          build/**/*.log
 
   # Don't use WIP tests until Github UI is fixed (https://github.com/orgs/community/discussions/15452)
   #
