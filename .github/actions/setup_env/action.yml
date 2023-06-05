@@ -27,7 +27,7 @@ runs:
     run: |
       make install_fasm2bels
 
-  - name: fasm2bels_artifcats
+  - name: fasm2bels_artifacts
     if: failure()
     uses: actions/upload-artifact@v3
     with:
