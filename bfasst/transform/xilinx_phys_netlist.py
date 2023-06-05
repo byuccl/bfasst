@@ -14,7 +14,7 @@ from bfasst.config import VIVADO_BIN_PATH
 from bfasst.status import Status, TransformStatus
 from bfasst.tool import ToolProduct
 from bfasst.transform.base import TransformTool
-from bfasst.utils import TermColor, print_color, tee
+from bfasst.utils import TermColor, print_color
 
 
 # pylint: disable=wrong-import-position,wrong-import-order
@@ -341,8 +341,9 @@ class XilinxPhysNetlist(TransformTool):
             vivado_tcl_path,
         ]
         cwd = None
-        if tee(cmd, cwd, vivado_log_path):
-            return Status(TransformStatus.ERROR)
+        with open(vivado_log_path, "w") as fp:
+            if self.exec_and_log(cmd, cwd, fp).returncode:
+                return Status(TransformStatus.ERROR)
 
         status = self.check_vivado_output(vivado_log_path)
         if status:
