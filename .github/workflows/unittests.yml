@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
+      fname: ${{ steps.set-matrix.outputs.fname }}
       # matrix-wip: ${{ steps.set-matrix-wip.outputs.matrix-wip }}
     steps:
     - uses: actions/checkout@v3
