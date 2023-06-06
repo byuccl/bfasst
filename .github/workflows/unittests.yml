@@ -36,7 +36,8 @@ jobs:
     strategy:
       matrix:
         experiment: ${{ fromJson(needs.collect-experiments.outputs.matrix) }}
-        fname: ${{ fromJson(needs.collect-experiments.outputs.fname) }}
+      fname: 
+        experiment: ${{ fromJson(needs.collect-experiments.outputs.fname) }}
     steps:
     - name: 'Cleanup build folder'
       run: |
