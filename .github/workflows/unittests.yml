@@ -53,7 +53,7 @@ jobs:
       # if: failure()
       uses: actions/upload-artifact@v3
       with:
-        name: ${{ matrix.experiment }}
+        name: ${{ replace(matrix.experiment, '/', '_') }}
         path: |
           build/**/log.txt
           build/**/*.log
