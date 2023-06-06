@@ -38,6 +38,7 @@ jobs:
     strategy:
       matrix:
         experiment: ${{ fromJson(needs.collect-experiments.outputs.matrix) }}
+        fname: ${{ fromJson(needs.collect-experiments.outputs.fname) }}
     steps:
     - name: 'Cleanup build folder'
       run: |
@@ -58,7 +59,7 @@ jobs:
       # if: failure()
       uses: actions/upload-artifact@v3
       with:
-        name: ${{ fromJson(needs.collect-experiments.outputs.fname) }}
+        name: ${{ matrix.fname }}
         path: |
           build/**/log.txt
           build/**/*.log
