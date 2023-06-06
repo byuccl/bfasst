@@ -18,16 +18,12 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
-      fname: ${{ steps.set-fname.outputs.fname }}
       # matrix-wip: ${{ steps.set-matrix-wip.outputs.matrix-wip }}
     steps:
     - uses: actions/checkout@v3
     - id: set-matrix
       run: |
         echo "matrix=$(ls experiments/tests/*.yaml | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
-    - id: set-fname
-      run: |
-        echo "fname=$(ls experiments/tests/*.yaml | xargs -n1 basename | jq -R -s -c 'split("\n")[:-1] | map(split("/")[-1])')" >> $GITHUB_OUTPUT
     # - id: set-matrix-wip
     #   run: echo "matrix-wip=$(ls experiments/wip/*.yaml | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
 
@@ -38,7 +34,6 @@ jobs:
     strategy:
       matrix:
         experiment: ${{ fromJson(needs.collect-experiments.outputs.matrix) }}
-        fname: ${{ fromJson(needs.collect-experiments.outputs.fname) }}
     steps:
     - name: 'Cleanup build folder'
       run: |
@@ -55,11 +50,17 @@ jobs:
       run: |
         source .venv/bin/activate
         python scripts/run_experiment.py ${{ matrix.experiment }} -j8 --print_period 0
-    - name: 'Experiments artifacts'
+    - name: 'Create fname'
+      id: set-fname
+      run: >-
+        echo "::set-output name=fname::$(
+          basename ${{ matrix.experiment }}
+        )"
+    - name: 'Upload artifacts'
       # if: failure()
       uses: actions/upload-artifact@v3
       with:
-        name: ${{ matrix.fname }}
+        name: ${{ steps.set-fname.outputs.fname }}
         path: |
           build/**/log.txt
           build/**/*.log
