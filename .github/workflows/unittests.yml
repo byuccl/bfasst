@@ -52,10 +52,7 @@ jobs:
         python scripts/run_experiment.py ${{ matrix.experiment }} -j8 --print_period 0
     - name: 'Create fname'
       id: set-fname
-      run: >-
-        echo "::set-output name=fname::$(
-          basename ${{ matrix.experiment }}
-        )"
+      run: echo "fname=$(basename ${{ matrix.experiment }})" >> $GITHUB_OUTPUT
     - name: 'Upload artifacts'
       # if: failure()
       uses: actions/upload-artifact@v3
