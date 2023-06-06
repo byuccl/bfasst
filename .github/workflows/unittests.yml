@@ -22,7 +22,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - id: set-matrix
-      run: echo "matrix=$(ls experiments/tests/*.yaml | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+      run: |
+        echo "matrix=$(ls experiments/tests/*.yaml | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
     # - id: set-matrix-wip
     #   run: echo "matrix-wip=$(ls experiments/wip/*.yaml | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
 
@@ -49,6 +50,18 @@ jobs:
       run: |
         source .venv/bin/activate
         python scripts/run_experiment.py ${{ matrix.experiment }} -j8 --print_period 0
+    - name: 'Create fname'
+      if: failure()
+      id: set-fname
+      run: echo "fname=$(basename ${{ matrix.experiment }} .yaml)" >> $GITHUB_OUTPUT
+    - name: 'Upload artifacts'
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ steps.set-fname.outputs.fname }}
+        path: |
+          build/**/log.txt
+          build/**/*.log
 
   # Don't use WIP tests until Github UI is fixed (https://github.com/orgs/community/discussions/15452)
   #
