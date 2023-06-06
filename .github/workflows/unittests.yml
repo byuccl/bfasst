@@ -51,6 +51,7 @@ jobs:
         source .venv/bin/activate
         python scripts/run_experiment.py ${{ matrix.experiment }} -j8 --print_period 0
     - name: 'Create fname'
+      if: failure()
       id: set-fname
       run: echo "fname=$(basename ${{ matrix.experiment }} .yaml)" >> $GITHUB_OUTPUT
     - name: 'Upload artifacts'
