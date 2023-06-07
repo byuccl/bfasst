@@ -85,6 +85,8 @@ env: venv rapidwright
 	echo "export VIVADO_PATH=$(VIVADO_PATH)" >> ".venv/bin/activate"
 	echo "unset VIVADO_PATH" > ".venv/bin/deactivate"
 	echo "unset INTERCHANGE_SCHEMA_PATH" >> ".venv/bin/deactivate"
+	echo "export PYTHONUSERSITE=1" >> ".venv/bin/activate"
+	echo "unset PYTHONUSERSITE" >> ".venv/bin/deactivate"
 
 install_yosys:
 	# Yosys
