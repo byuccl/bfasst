@@ -65,7 +65,7 @@ rapidwright: submodules
 	$(IN_ENV) python scripts/rapidwright_get_data_files.py
 
 install_fasm2bels: submodules
-	cd third_party/fasm2bels && make env
+	$(IN_ENV) cd third_party/fasm2bels && make env
 	$(IN_ENV) cd third_party/fasm2bels && make build
 	$(IN_ENV) cd third_party/fasm2bels && make test-py
 
@@ -85,6 +85,8 @@ env: venv rapidwright
 	echo "export VIVADO_PATH=$(VIVADO_PATH)" >> ".venv/bin/activate"
 	echo "unset VIVADO_PATH" > ".venv/bin/deactivate"
 	echo "unset INTERCHANGE_SCHEMA_PATH" >> ".venv/bin/deactivate"
+	echo "export PYTHONNOUSERSITE=1" >> ".venv/bin/activate"
+	echo "unset PYTHONNOUSERSITE" >> ".venv/bin/deactivate"
 
 install_yosys:
 	# Yosys
