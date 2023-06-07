@@ -175,7 +175,7 @@ class Design:
     def enum_vhdl_libs(self, vhdl_paths):
         result = {}
         libraries = (
-            (self.path / library, (self.path / library).rglob("*.vhd")) for library in vhdl_paths
+            (library.split("/")[-1], (self.path / library).rglob("*.vhd")) for library in vhdl_paths
         )
         for library in libraries:
             for source in library[1]:
