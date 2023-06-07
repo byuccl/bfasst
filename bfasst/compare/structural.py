@@ -27,8 +27,8 @@ class StructuralCompareTool(CompareTool):
     def compare_netlists(self):
         """Map the golden and reversed netlists through automated block mapping"""
 
-        impl_netlist = self.design.impl_netlist_path
-        netlist_b = self.design.reversed_netlist_path
+        impl_netlist = self.args.gold_netlist
+        netlist_b = self.args.rev_netlist
 
         self.open_new_log()
 

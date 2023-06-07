@@ -14,6 +14,7 @@ ONESPIN_PY_TEMPLATE = "run_onespin.py"
 
 class OneSpinCompareTool(CompareTool):
     """OneSpin compare tool."""
+
     TOOL_WORK_DIR = "onespin"
 
     def compare_netlists(self):
@@ -26,7 +27,7 @@ class OneSpinCompareTool(CompareTool):
         print("copying reversed netlist", self.design.reversed_netlist_path)
         shutil.copyfile(
             self.design.reversed_netlist_path,
-            self.work_dir / self.design.reversed_netlist_filename()
+            self.work_dir / self.design.reversed_netlist_filename(),
         )
 
         if self.design.corrupt_netlist_paths is not None:
@@ -39,8 +40,8 @@ class OneSpinCompareTool(CompareTool):
         for f in rtl_paths:
             shutil.copyfile(f, self.work_dir / "rtl" / f.name)
 
-        yaml_data["golden_files"] = self.design.compare_golden_files
-        yaml_data["revised_file"] = self.design.reversed_netlist_filename()
+        yaml_data["golden_files"] = self.args.gold_netlist
+        yaml_data["revised_file"] = self.args.rev_netlist
         # yaml_data["revised_file"] = design.compare_revised_file
         yaml_data["rtl_files"] = ["rtl/" + f.name for f in rtl_paths]
 
@@ -110,23 +111,13 @@ class OneSpinCompareTool(CompareTool):
         # using golden_is_verilog should work here since we only
         #   are looking at the top module
         if self.design.golden_is_verilog:
-            fp.write(
-                "set_elaborate_option -golden -top {Verilog!work." 
-                + self.design.top
-                + "}\n"
-            )
+            fp.write("set_elaborate_option -golden -top {Verilog!work." + self.design.top + "}\n")
 
     def save_results(self, fp, tcl_name):
         # what output file names should be used?
         # What about the RTL check?
         out_name = "results_" + tcl_name[12:-4] + ".log"
-        fp.write(
-            "save_result_file /home/jgoeders/temp/"
-            + self.design.top
-            + "/"
-            + out_name
-            + "\n"
-        )
+        fp.write("save_result_file /home/jgoeders/temp/" + self.design.top + "/" + out_name + "\n")
 
     def map_internal_net_names(self, fp, gold_is_rtl):
         """Add extra commands to map internal net names to try to help comparison."""

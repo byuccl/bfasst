@@ -134,6 +134,9 @@ def flow_ic2_lse_conformal(design, flow_args, build_dir):
     design.compare_golden_files_paths.append(design.path / design.top_file)
     design.compare_golden_files_paths.extend([design.path / f for f in design.get_support_files()])
     design.golden_is_verilog = design.top_is_verilog()
+
+    flow_args[ToolType.CMP] += f" {str(design.netlist_path)} {str(design.reversed_netlist_path)}"
+
     status = conformal_cmp(design, build_dir, flow_args)
     return status
 
@@ -146,6 +149,8 @@ def flow_conformal_only(design, flow_args, build_dir):
     design.golden_sources = [
         design.netlist_path,
     ]
+    flow_args[ToolType.CMP] += f" {str(design.golden_sources)} {str(design.reversed_netlist_path)}"
+
     status = conformal_cmp(design, build_dir, flow_args)
     return status
 
@@ -196,6 +201,11 @@ def flow_xilinx_phys_netlist_cmp(design, flow_args, build_dir):
 
     status = flow_xilinx_phys_netlist(design, flow_args, build_dir)
     status = xray_rev(design, build_dir, flow_args)
+
+    flow_args[
+        ToolType.CMP
+    ] += f" {str(design.imp_netlist_path)} {str(design.reversed_netlist_path)}"
+
     status = structural_cmp(design, build_dir, flow_args)
     return status
 
@@ -205,6 +215,9 @@ def flow_xilinx_conformal(design, flow_args, build_dir):
     status = vivado_synth(design, build_dir, flow_args)
     status = vivado_impl(design, build_dir, flow_args)
     status = xray_rev(design, build_dir, flow_args)
+
+    flow_args[ToolType.CMP] += f" {str(design.netlist_path)} {str(design.reversed_netlist_path)}"
+
     status = conformal_cmp(design, build_dir, flow_args)
     return status
 
@@ -233,6 +246,8 @@ def flow_xilinx_conformal_impl(design, flow_args, build_dir):
     #        design, args[FlowArgs.MAP_STAGE.value]
     #    )
 
+    flow_args[ToolType.CMP] += f" {str(design.golden_sources)} {str(design.reversed_netlist_path)}"
+
     status = conformal_cmp(design, build_dir, flow_args)
     return status
 
@@ -245,6 +260,9 @@ def flow_xilinx_yosys_impl(design, flow_args, build_dir):
     # Run X-ray and fasm2bel
     status = xray_rev(design, build_dir, flow_args)
 
+    flow_args[
+        ToolType.CMP
+    ] += f" {str(design.impl_netlist_path)} {str(design.reversed_netlist_path)}"
     status = yosys_cmp(design, build_dir, flow_args)
     return status
 
@@ -260,6 +278,9 @@ def flow_wafove(design, flow_args, build_dir):
     # Input number of tests to run, seed to base random on, whether or not to show all signals
     # Whether or not to open gtkwave and analyze graphs, and whether or not to open Vivado and
     # analyze graphs.
+    flow_args[
+        ToolType.CMP
+    ] += f" {str(design.impl_netlist_path)} {str(design.reversed_netlist_path)}"
     status = wave_cmp(design, build_dir, flow_args)
 
     return status
@@ -284,6 +305,7 @@ def flow_ic2_synplify_conformal(design, flow_args, build_dir):
     design.golden_is_verilog = design.top_is_verilog()
 
     # TODO no vendor was originally specified here
+    flow_args[ToolType.CMP] += f" {str(design.netlist_path)} {str(design.reversed_netlist_path)}"
     status = conformal_cmp(design, build_dir, flow_args)
 
     return status
@@ -306,6 +328,9 @@ def flow_synplify_ic2_icestorm_onespin(design, flow_args, build_dir):
     design.compare_golden_files_paths.extend([design.path / f for f in design.get_support_files()])
     design.golden_is_verilog = design.top_is_verilog()
 
+    flow_args[
+        ToolType.CMP
+    ] += f" {str(design.compare_golden_files)} {str(design.reversed_netlist_filename())}"
     status = onespin_cmp(design, build_dir, flow_args)
 
     return status
@@ -332,6 +357,7 @@ def flow_yosys_tech_lse_conformal(design, flow_args, build_dir):
 
     # Run conformal
     # TODO no vendor was originally specified here
+    flow_args[ToolType.CMP] += f" {str(design.netlist_path)} {str(design.reversed_netlist_path)}"
     status = conformal_cmp(design, build_dir, flow_args)
 
     return status
@@ -358,6 +384,7 @@ def flow_yosys_tech_synplify_conformal(design, flow_args, build_dir):
 
     # Run conformal
     # TODO No Vendor was originally specified
+    flow_args[ToolType.CMP] += f" {str(design.netlist_path)} {str(design.reversed_netlist_path)}"
     status = conformal_cmp(design, build_dir, flow_args)
 
     return status
@@ -383,6 +410,9 @@ def flow_yosys_tech_synplify_onespin(design, flow_args, build_dir):
     status = icestorm_rev_bit(design, build_dir, flow_args)
 
     design.compare_revised_file = design.reversed_netlist_filename()
+    flow_args[
+        ToolType.CMP
+    ] += f" {str(design.compare_golden_files)} {str(design.reversed_netlist_filename())}"
     status = onespin_cmp(design, build_dir, flow_args)
     return status
 
@@ -417,12 +447,18 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
     status = icestorm_rev_bit(design, build_dir, flow_args)
 
     design.compare_revised_file = design.reversed_netlist_filename()
+    flow_args[
+        ToolType.CMP
+    ] += f" {str(design.compare_golden_files)} {str(design.reversed_netlist_filename())}"
     status = onespin_cmp(design, build_dir, flow_args)
 
     # Also use the compare tool to make a compare script for rtl to yosys
     design.compare_revised_file = yosys_netlist_path.name
     design.compare_golden_files = design.get_support_files()
     design.compare_golden_files.append(pathlib.Path(design.top_path()).name)
+    flow_args[
+        ToolType.CMP
+    ] += f" {str(design.compare_golden_files)} {str(design.reversed_netlist_filename())}"
     status = onespin_cmp(design, build_dir, flow_args)
 
     # Run synth, impl, icestorm, and onespin on each corrupted netlist
@@ -449,6 +485,9 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
 
         # Run compare to create a onespin tcl for yosys->corrupt reversed netlist
         design.compare_revised_file = design.reversed_netlist_filename()
+        flow_args[
+            ToolType.CMP
+        ] += f" {str(design.compare_golden_files)} {str(design.reversed_netlist_filename())}"
         compare_tool = OneSpinCompareTool(build_dir, design)
         with onespin_lock:
             status = compare_tool.compare_netlists()

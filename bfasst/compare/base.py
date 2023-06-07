@@ -22,6 +22,8 @@ class CompareTool(Tool):
 
     def add_args(self):
         """Default arguments for all compare tools"""
+        self.arg_parser.add_argument("gold_netlist", type=str)
+        self.arg_parser.add_argument("rev_netlist", type=str)
 
     # This method should run netlist comparison.  It should return
     # a status

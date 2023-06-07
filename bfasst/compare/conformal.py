@@ -35,6 +35,9 @@ class ConformalCompareTool(CompareTool):
         assert isinstance(vendor, Vendor)
         self.vendor = vendor
 
+        self.gold_netlist = self.args.gold_netlist
+        self.rev_netlist = self.args.rev_netlist
+
         self.remote_libs_dir_path = None
         self.local_libs_paths = None
 
@@ -179,7 +182,7 @@ class ConformalCompareTool(CompareTool):
 
             fp.write(
                 "read design "
-                + self.design.reversed_netlist_path.name
+                + self.design.rev_netlist.name
                 + " -Verilog -Revised -sensitive -continuousassignment Bidirectional"
                 + " -nokeep_unreach -nosupply\n"
             )
