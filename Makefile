@@ -65,7 +65,7 @@ rapidwright: submodules
 	$(IN_ENV) python scripts/rapidwright_get_data_files.py
 
 install_fasm2bels: submodules
-	cd third_party/fasm2bels && make env
+	$(IN_ENV) cd third_party/fasm2bels && make env
 	$(IN_ENV) cd third_party/fasm2bels && make build
 	$(IN_ENV) cd third_party/fasm2bels && make test-py
 
