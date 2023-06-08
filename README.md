@@ -1,5 +1,6 @@
 ![example workflow](https://github.com/byuccl/bfasst/actions/workflows/python.yml/badge.svg)
 ![example workflow](https://github.com/byuccl/bfasst/actions/workflows/unittests.yml/badge.svg)
+![example workflow](https://github.com/byuccl/bfasst/actions/workflows/weeklytests.yml/badge.svg)
 
 
 # BFASST (BYU FPGA Assurance Tool)
