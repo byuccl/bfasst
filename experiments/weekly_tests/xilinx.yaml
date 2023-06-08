@@ -1,5 +1,4 @@
 design_dirs:
-  - ooc/
   - base/
 
 flow: xilinx
