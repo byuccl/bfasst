@@ -63,6 +63,7 @@ class Design:
         self.constraints_path = None
         self.reversed_netlist_path = None
         self.results_summary_path = None
+        self.corrupted_netlist_path = None
 
         # Toolchain-specific paths
         self.xilinx_impl_checkpoint_path = None

@@ -7,6 +7,7 @@ Helper functions for vendor tools are defined.
 from enum import Enum
 from enum import unique as enum_unique
 import pathlib
+import random
 import shutil
 from bfasst.compare.onespin import OneSpinCompareTool
 
@@ -18,7 +19,7 @@ from bfasst.netlist_mapping.structural_mapping import structurally_map_netlists
 from bfasst.opt.ic2_lse import Ic2LseOptTool
 from bfasst.opt.ic2_synplify import Ic2SynplifyOptTool
 from bfasst.reverse_bit.icestorm import IcestormReverseBitTool
-from bfasst.status import Status, MapStatus
+from bfasst.status import Status, MapStatus, CompareStatus, TransformStatus
 from bfasst.synth.ic2_lse import Ic2LseSynthesisTool
 from bfasst.synth.ic2_synplify import Ic2SynplifySynthesisTool
 from bfasst.synth.yosys import YosysTechSynthTool
@@ -41,6 +42,7 @@ from bfasst.tool_wrappers import (
     yosys_cmp,
     yosys_synth,
     vivado_ooc,
+    error_injection
 )
 from bfasst.utils import error
 from bfasst.locks import onespin_lock
@@ -208,6 +210,27 @@ def flow_xilinx_phys_netlist_cmp(design, flow_args, build_dir):
     )
     return status
 
+def flow_xilinx_structural_error_injection(design, flow_args, build_dir):
+    """Inject errors into FASM2BELS netlist and compare with Conformal"""
+    status = flow_xilinx_phys_netlist(design, flow_args, build_dir)
+    status = xray_rev(design, build_dir, flow_args)
+    
+    injection_types = ["BIT_FLIP", "WIRE_SWAP"]
+
+    random.seed(0)
+
+    for err in injection_types:
+        num_problems = 0
+        for _ in range (100):
+            status = error_injection(design, build_dir, err)
+            if status == TransformStatus.ERROR:
+                return status
+            status = structural_cmp(design, build_dir, flow_args)
+            if status == CompareStatus.SUCCESS:
+                num_problems += 1 # An error was injected, but not detected
+
+
+    return status
 
 def flow_xilinx_conformal(design, flow_args, build_dir):
     """Run Xilinx synthesis and implementation and compare with conformal"""
