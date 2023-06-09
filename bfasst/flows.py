@@ -135,7 +135,9 @@ def flow_ic2_lse_conformal(design, flow_args, build_dir):
     design.compare_golden_files_paths.extend([design.path / f for f in design.get_support_files()])
     design.golden_is_verilog = design.top_is_verilog()
 
-    flow_args[ToolType.CMP] += f" {str(design.netlist_path)} {str(design.reversed_netlist_path)}"
+    flow_args[
+        ToolType.CMP
+    ] += f" {str(design.netlist_path)} {str(design.reversed_netlist_path.name)}"
 
     status = conformal_cmp(design, build_dir, flow_args)
     return status
@@ -149,7 +151,9 @@ def flow_conformal_only(design, flow_args, build_dir):
     design.golden_sources = [
         design.netlist_path,
     ]
-    flow_args[ToolType.CMP] += f" {str(design.golden_sources)} {str(design.reversed_netlist_path)}"
+    flow_args[
+        ToolType.CMP
+    ] += f" {str(design.golden_sources)} {str(design.reversed_netlist_path.name)}"
 
     status = conformal_cmp(design, build_dir, flow_args)
     return status
@@ -204,7 +208,7 @@ def flow_xilinx_phys_netlist_cmp(design, flow_args, build_dir):
 
     flow_args[
         ToolType.CMP
-    ] += f" {str(design.imp_netlist_path)} {str(design.reversed_netlist_path)}"
+    ] += f" {str(design.impl_netlist_path)} {str(design.reversed_netlist_path)}"
 
     status = structural_cmp(design, build_dir, flow_args)
     return status
@@ -216,7 +220,9 @@ def flow_xilinx_conformal(design, flow_args, build_dir):
     status = vivado_impl(design, build_dir, flow_args)
     status = xray_rev(design, build_dir, flow_args)
 
-    flow_args[ToolType.CMP] += f" {str(design.netlist_path)} {str(design.reversed_netlist_path)}"
+    flow_args[
+        ToolType.CMP
+    ] += f" {str(design.netlist_path)} {str(design.reversed_netlist_path.name)}"
 
     status = conformal_cmp(design, build_dir, flow_args)
     return status
@@ -246,7 +252,9 @@ def flow_xilinx_conformal_impl(design, flow_args, build_dir):
     #        design, args[FlowArgs.MAP_STAGE.value]
     #    )
 
-    flow_args[ToolType.CMP] += f" {str(design.golden_sources)} {str(design.reversed_netlist_path)}"
+    flow_args[
+        ToolType.CMP
+    ] += f" {str(design.golden_sources)} {str(design.reversed_netlist_path.name)}"
 
     status = conformal_cmp(design, build_dir, flow_args)
     return status
@@ -305,7 +313,9 @@ def flow_ic2_synplify_conformal(design, flow_args, build_dir):
     design.golden_is_verilog = design.top_is_verilog()
 
     # TODO no vendor was originally specified here
-    flow_args[ToolType.CMP] += f" {str(design.netlist_path)} {str(design.reversed_netlist_path)}"
+    flow_args[
+        ToolType.CMP
+    ] += f" {str(design.netlist_path)} {str(design.reversed_netlist_path.name)}"
     status = conformal_cmp(design, build_dir, flow_args)
 
     return status
@@ -357,7 +367,9 @@ def flow_yosys_tech_lse_conformal(design, flow_args, build_dir):
 
     # Run conformal
     # TODO no vendor was originally specified here
-    flow_args[ToolType.CMP] += f" {str(design.netlist_path)} {str(design.reversed_netlist_path)}"
+    flow_args[
+        ToolType.CMP
+    ] += f" {str(design.netlist_path)} {str(design.reversed_netlist_path.name)}"
     status = conformal_cmp(design, build_dir, flow_args)
 
     return status
@@ -384,7 +396,9 @@ def flow_yosys_tech_synplify_conformal(design, flow_args, build_dir):
 
     # Run conformal
     # TODO No Vendor was originally specified
-    flow_args[ToolType.CMP] += f" {str(design.netlist_path)} {str(design.reversed_netlist_path)}"
+    flow_args[
+        ToolType.CMP
+    ] += f" {str(design.netlist_path)} {str(design.reversed_netlist_path.name)}"
     status = conformal_cmp(design, build_dir, flow_args)
 
     return status
