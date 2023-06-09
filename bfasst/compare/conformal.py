@@ -182,7 +182,7 @@ class ConformalCompareTool(CompareTool):
 
             fp.write(
                 "read design "
-                + self.design.rev_netlist.name
+                + self.args.rev_netlist
                 + " -Verilog -Revised -sensitive -continuousassignment Bidirectional"
                 + " -nokeep_unreach -nosupply\n"
             )
