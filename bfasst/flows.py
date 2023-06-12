@@ -76,6 +76,9 @@ class Flows(Enum):
     GATHER_IMPL_DATA = "gather_impl_data"
     CONFORMAL_ONLY = "conformal_only"
 
+    # These flows are not tested and may not work
+    XILINX_STRUCTURAL_ERROR_INJECTION = "xilinx_structural_error_injection"
+
 
 # This uses a lambda so that I don't have to define all of the functions before this point
 flow_fcn_map = {
@@ -98,6 +101,7 @@ flow_fcn_map = {
     Flows.STRUCTURAL_MAP: lambda: flow_struct_mapping,
     Flows.XILINX_OOC: lambda: flow_xilinx_ooc,
     Flows.XILINX_PHYS_NETLIST_COMPARE: lambda: flow_xilinx_phys_netlist_cmp,
+    Flows.XILINX_STRUCTURAL_ERROR_INJECTION: lambda: flow_xilinx_structural_error_injection,
     Flows.XILINX_AND_REVERSED: lambda: flow_xilinx_and_reversed,
 }
 
@@ -215,21 +219,28 @@ def flow_xilinx_structural_error_injection(design, flow_args, build_dir):
     status = flow_xilinx_phys_netlist(design, flow_args, build_dir)
     status = xray_rev(design, build_dir, flow_args)
 
-    injection_types = ["BIT_FLIP", "WIRE_SWAP"]
+    injection_types = ["BIT_FLIP"]
 
     random.seed(0)
 
     for err in injection_types:
         num_problems = 0
-        for _ in range (100):
+        num_runs = 10
+        for _ in range (num_runs):
             status = error_injection(design, build_dir, err)
             if status == TransformStatus.ERROR:
                 return status
             status = structural_cmp(design, build_dir, flow_args)
             if status == CompareStatus.SUCCESS:
                 num_problems += 1 # An error was injected, but not detected
+                status = CompareStatus.ERROR
 
-
+        with open(build_dir / "error_injection.log", "a") as f:
+            if num_problems == 0:
+                f.write(f"All errors detected successfully for {err}s.\n")
+            else:
+                f.write(f"{err}: {num_problems} / {num_runs}\n")
+                
     return status
 
 def flow_xilinx_conformal(design, flow_args, build_dir):
