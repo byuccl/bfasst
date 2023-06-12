@@ -286,9 +286,7 @@ def flow_wafove(design, flow_args, build_dir):
     # Input number of tests to run, seed to base random on, whether or not to show all signals
     # Whether or not to open gtkwave and analyze graphs, and whether or not to open Vivado and
     # analyze graphs.
-    flow_args[
-        ToolType.CMP
-    ] += f" {str(design.impl_netlist_path)} {str(design.reversed_netlist_path)}"
+    flow_args[ToolType.CMP] += f" {design.impl_netlist_path} {design.reversed_netlist_path}"
     status = wave_cmp(design, build_dir, flow_args)
 
     return status
