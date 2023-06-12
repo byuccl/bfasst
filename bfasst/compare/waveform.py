@@ -101,9 +101,12 @@ class WaveformCompareTool(CompareTool):
             bfasst.paths.ROOT_PATH / ("third_party/yosys/techlibs/xilinx/cells_sim.v"),
             bfasst.paths.ROOT_PATH / ("third_party/WaFoVe/wafove/templates/sample_tb.v"),
             bfasst.paths.ROOT_PATH / ("third_party/WaFoVe/wafove/tools/"),
-            self.design.impl_netlist_path,
-            self.design.reversed_netlist_path,
+            self.gold_netlist,
+            self.rev_netlist,
         )
+
+        # self.design.impl_netlist_path,
+        # self.design.reversed_netlist_path,
 
         if self.args.waveform & (paths["vcd"][0].exists() & paths["vcd"][1].exists()):
             if self.args.vivado:

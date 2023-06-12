@@ -40,8 +40,8 @@ class OneSpinCompareTool(CompareTool):
         for f in rtl_paths:
             shutil.copyfile(f, self.work_dir / "rtl" / f.name)
 
-        yaml_data["golden_files"] = self.args.gold_netlist
-        yaml_data["revised_file"] = self.args.rev_netlist
+        yaml_data["golden_files"] = self.gold_netlist
+        yaml_data["revised_file"] = self.rev_netlist
         # yaml_data["revised_file"] = design.compare_revised_file
         yaml_data["rtl_files"] = ["rtl/" + f.name for f in rtl_paths]
 

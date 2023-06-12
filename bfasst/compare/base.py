@@ -15,15 +15,16 @@ class CompareTool(Tool):
 
     LOG_FILE_NAME = "log.txt"
 
-    def __init__(self, cwd, design, flow_args="") -> None:
+    def __init__(self, cwd, design, gold_netlist, rev_netlist, flow_args="") -> None:
         super().__init__(cwd, design)
         # Implementation options
         self.create_arg_parser("compare", flow_args)
 
+        self.gold_netlist = gold_netlist
+        self.rev_netlist = rev_netlist
+
     def add_args(self):
         """Default arguments for all compare tools"""
-        self.arg_parser.add_argument("gold_netlist", type=str)
-        self.arg_parser.add_argument("rev_netlist", type=str)
 
     # This method should run netlist comparison.  It should return
     # a status
