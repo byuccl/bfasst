@@ -214,7 +214,7 @@ def flow_xilinx_structural_error_injection(design, flow_args, build_dir):
     """Inject errors into FASM2BELS netlist and compare with Conformal"""
     status = flow_xilinx_phys_netlist(design, flow_args, build_dir)
     status = xray_rev(design, build_dir, flow_args)
-    
+
     injection_types = ["BIT_FLIP", "WIRE_SWAP"]
 
     random.seed(0)
