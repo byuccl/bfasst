@@ -128,7 +128,7 @@ class SpydrNetErrorInjector(TransformTool):
     def get_unisim_outer_pin_inputs(self, instance):
         """Collect all the pins for a UNISIM cell that are inputs"""
 
-        cell_inputs_and_outputs = (
+        cell_inputs = (
             (("LUT6_2",), ("I0", "I1", "I2", "I3", "I4", "I5")),
             (("IBUF", "OBUF", "OBUFT"), ("I", "T")),
             (("GND",), ()),
@@ -140,7 +140,7 @@ class SpydrNetErrorInjector(TransformTool):
         )
 
         outer_pin_inputs = []
-        for name, inputs in cell_inputs_and_outputs:
+        for name, inputs in cell_inputs:
             if instance.reference.name in name:
                 pins = [pin for pin in instance.pins]
                 for pin in pins:
@@ -163,7 +163,7 @@ class SpydrNetErrorInjector(TransformTool):
     def get_unisim_outer_pin_outputs(self, instance):
         """Collect all the pins for a UNISIM cell that are outputs"""
 
-        cell_inputs_and_outputs = (
+        cell_outputs = (
             (("LUT6_2",), ("O5", "O6")),
             (("IBUF", "OBUF", "OBUFT"), ("O",)),
             (("GND",), ("G",)),
@@ -175,7 +175,7 @@ class SpydrNetErrorInjector(TransformTool):
         )
 
         outer_pin_outputs = []
-        for name, outputs in cell_inputs_and_outputs:
+        for name, outputs in cell_outputs:
             if instance.reference.name in name:
                 pins = [pin for pin in instance.pins]
                 for pin in pins:
