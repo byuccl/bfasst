@@ -105,7 +105,7 @@ class WaveformCompareTool(CompareTool):
             self.rev_netlist,
         )
 
-        # self.design.impl_netlist_path,
+        # self.design.flow_paths["impl_netlist_path"],
         # self.design.reversed_netlist_path,
 
         if self.args.waveform & (paths["vcd"][0].exists() & paths["vcd"][1].exists()):

@@ -53,7 +53,8 @@ class XRayReverseBitTool(ReverseBitTool):
         status = self.get_prev_run_status(
             [generate_fasm, generate_netlist],
             dependency_modified_time=max(
-                pathlib.Path(__file__).stat().st_mtime, self.design.bitstream_path.stat().st_mtime
+                pathlib.Path(__file__).stat().st_mtime,
+                self.design.flow_paths["bitstream_path"].stat().st_mtime,
             ),
         )
 
@@ -65,13 +66,16 @@ class XRayReverseBitTool(ReverseBitTool):
         self.open_new_log()
 
         # Bitstream to fasm file
-        status = self.convert_bit_to_fasm(self.design.bitstream_path, fasm_path)
+        status = self.convert_bit_to_fasm(self.design.flow_paths["bitstream_path"], fasm_path)
 
         # fasm to netlist
         xdc_path = self.work_dir / (self.design.top + "_reversed.xdc")
         try:
             status = self.convert_fasm_to_netlist(
-                fasm_path, self.design.constraints_path, self.design.reversed_netlist_path, xdc_path
+                fasm_path,
+                self.design.flow_paths["constraints_path"],
+                self.design.reversed_netlist_path,
+                xdc_path,
             )
         except BfasstException as e:
             # See if the log parser can find an error message
@@ -156,10 +160,10 @@ class XRayReverseBitTool(ReverseBitTool):
     # def write_to_results_file(self, design, netlist_path, need_to_run):
     #     raise NotImplementedError
 
-    #     if design.results_summary_path is None:
+    #     if design.flow_paths["results_summary_path"] is None:
     #         print("No results path set!")
     #         return
-    #     with open(design.results_summary_path, "a") as res_f:
+    #     with open(design.flow_paths["results_summary_path"], "a") as res_f:
     #         time_modified = time.ctime(os.path.getmtime(netlist_path))
     #         res_f.write("Results from icestorm netlist (" + time_modified + "):\n")
     #         if not need_to_run:

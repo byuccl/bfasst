@@ -55,15 +55,17 @@ class Design:
 
         ############## Flow paths ###############
         self.netlist_path = None
-        self.yosys_netlist_path = None
-        self.impl_netlist_path = None
-        self.impl_edif_path = None
-        self.bitstream_path = None
-        self.phys_netlist_path = None
-        self.constraints_path = None
         self.reversed_netlist_path = None
-        self.results_summary_path = None
-        self.corrupted_netlist_path = self.path / "corrupted_netlist.v"
+        self.flow_paths = {
+            "yosys_netlist_path": None,
+            "impl_netlist_path": None,
+            "impl_edif_path": None,
+            "bitstream_path": None,
+            "phys_netlist_path": None,
+            "constraints_path": None,
+            "results_summary_path": None,
+            "corrupted_netlist_path": self.path / "corrupted_netlist.v",
+        }
 
         # Toolchain-specific paths
         self.xilinx_impl_checkpoint_path = None

@@ -31,7 +31,7 @@ class YosysTechSynthTool(SynthesisTool):
 
         # Create the yosys script that generates the netlist
         self.create_yosys_script(self.design.netlist_path)
-        self.design.yosys_netlist_path = self.design.netlist_path
+        self.design.flow_paths["yosys_netlist_path"] = self.design.netlist_path
 
         # Run Yosys on the design
         # This assumes that the VHDL module *is* installed!
@@ -88,7 +88,7 @@ class YosysTechSynthTool(SynthesisTool):
 
     def write_to_results_file(self, log_path):
         """Write the results of the run to the log"""
-        with open(self.design.results_summary_path, "a") as res_f:
+        with open(self.design.flow_paths["results_summary_path"], "a") as res_f:
             time_modified = time.ctime(os.path.getmtime(log_path))
             res_f.write("Results Summary (Yosys) (" + time_modified + ")\n")
             with open(log_path, "r") as log_f:

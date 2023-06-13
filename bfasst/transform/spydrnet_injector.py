@@ -83,7 +83,7 @@ class SpydrNetErrorInjector(TransformTool):
 
     def compose_corrupt_netlist(self):
         """Writes the netlist to the corrupted netlist path in the design"""
-        sdn.compose(self.clean_netlist, self.design.corrupted_netlist_path)
+        sdn.compose(self.clean_netlist, self.design.flow_paths["corrupted_netlist_path"])
 
     def inject_wire_swap(self):
         """Injects a wire swap error into the netlist"""

@@ -40,7 +40,9 @@ class ImplementationTool(Tool):
         """Commmon startup code for Implementation tools that first checks if
         prevous run can be used, and if not starts a new run"""
         status = self.get_prev_run_status(
-            tool_products=[ToolProduct(self.design.bitstream_path, self.log_path, log_check_fcn)],
+            tool_products=[
+                ToolProduct(self.design.flow_paths["bitstream_path"], self.log_path, log_check_fcn)
+            ],
             dependency_modified_time=max(
                 pathlib.Path(__file__).stat().st_mtime, self.design.netlist_path.stat().st_mtime
             ),

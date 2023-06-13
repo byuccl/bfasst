@@ -104,10 +104,10 @@ class Ic2LseOptTool(Ic2BaseOptTool):
 
     # def write_result_file(self, design):
     #     """write out results to file"""
-    #     if design.results_summary_path is None:
+    #     if design.flow_paths["results_summary_path"] is None:
     #         print("No results path set!")
     #         return
-    #     with open(design.results_summary_path, "a") as res_f:
+    #     with open(design.flow_paths["results_summary_path"], "a") as res_f:
     #         res_f.write("LSE results summary:\n")
     #         with open(design.netlist_path, "r") as net_f:
     #             netlist = net_f.read()

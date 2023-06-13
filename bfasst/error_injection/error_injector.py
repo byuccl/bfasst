@@ -15,6 +15,7 @@ from bfasst.status import Status, ErrorInjectionStatus
 
 class ErrorInjector(ErrorInjectionTool):
     """Error injector tool"""
+
     TOOL_WORK_DIR = "injection"
 
     # This picks enum and map pick a flow function to run, very similar (i.e.
@@ -64,8 +65,10 @@ class ErrorInjector(ErrorInjectionTool):
         for flow in error_flow_info["error_injection_flows"]:
             corrupt_netlist_path = self.work_dir / (self.design.top + "_" + flow["name"] + ".v")
             corrupt_netlist_path = self.design.netlist_path.parent / corrupt_netlist_path
-            print(self.design.yosys_netlist_path)
-            netlist_buffer = self.read_netlist_to_buffer(self.design.yosys_netlist_path)
+            print(self.design.flow_paths["yosys_netlist_path"])
+            netlist_buffer = self.read_netlist_to_buffer(
+                self.design.flow_paths["yosys_netlist_path"]
+            )
             for curr_pass in flow["passes"]:
                 flow_name = curr_pass[0]
                 num_iterations = curr_pass[1]
@@ -194,10 +197,12 @@ class ErrorInjector(ErrorInjectionTool):
 
     def add_signal_tap(self, netlist_buffer):
         """Adds a signal tap to a random wire in the design"""
-        (module_decl_line,
-         output_decl_line,
-         assign_statement_line,
-         wire_list) = self.find_design_statements(netlist_buffer)
+        (
+            module_decl_line,
+            output_decl_line,
+            assign_statement_line,
+            wire_list,
+        ) = self.find_design_statements(netlist_buffer)
         if (
             module_decl_line is None
             or output_decl_line is None

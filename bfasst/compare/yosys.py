@@ -35,7 +35,7 @@ class YosysCompareTool(CompareTool):
         script_file_path = self.work_dir / self.SCRIPT_FILE_NAME
 
         with open(script_file_path, "w") as fp:
-            ##fp.write("read_verilog " + str(design.impl_netlist_path) + "\n")
+            ##fp.write("read_verilog " + str(design.flow_paths["impl_netlist_path"]) + "\n")
             ##fp.write("rename -top gold\n")
             ##fp.write("splitnets -ports;;\n")
             ##fp.write("design -stash gold\n")

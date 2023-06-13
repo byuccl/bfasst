@@ -42,7 +42,7 @@ from bfasst.tool_wrappers import (
     yosys_cmp,
     yosys_synth,
     vivado_ooc,
-    error_injection
+    error_injection,
 )
 from bfasst.utils import error
 from bfasst.locks import onespin_lock
@@ -210,14 +210,20 @@ def flow_xilinx_phys_netlist_cmp(design, flow_args, build_dir):
     status = xray_rev(design, build_dir, flow_args)
 
     status = structural_cmp(
-        design, build_dir, design.phys_netlist_path, design.reversed_netlist_path, flow_args
+        design,
+        build_dir,
+        design.flow_paths["phys_netlist_path"],
+        design.reversed_netlist_path,
+        flow_args,
     )
     return status
 
+
 def flow_xilinx_structural_error_injection(design, flow_args, build_dir):
     """Inject errors into FASM2BELS netlist and compare with Conformal"""
+
     def get_corrupt_netlist_path():
-        return pathlib.Path(design.corrupted_netlist_path)
+        return pathlib.Path(design.flow_paths["corrupted_netlist_path"])
 
     def generate_path_to_save_corrupted_netlist(num_problems, err):
         return pathlib.Path(build_dir, "spydrnet_injector", f"{err}_error_{num_problems}.v")
@@ -236,7 +242,7 @@ def flow_xilinx_structural_error_injection(design, flow_args, build_dir):
     for err in injection_types:
         num_problems = 0
         num_runs = 100
-        for _ in range (num_runs):
+        for _ in range(num_runs):
             status = error_injection(design, build_dir, err)
             if status == TransformStatus.ERROR:
                 return status
@@ -244,11 +250,11 @@ def flow_xilinx_structural_error_injection(design, flow_args, build_dir):
                 design,
                 build_dir,
                 design.reversed_netlist_path,
-                design.corrupted_netlist_path,
-                flow_args
+                design.flow_paths["corrupted_netlist_path"],
+                flow_args,
             )
             if status == CompareStatus.SUCCESS:
-                num_problems += 1 # An error was injected, but not detected
+                num_problems += 1  # An error was injected, but not detected
                 new_path = generate_path_to_save_corrupted_netlist(num_problems, err)
                 get_corrupt_netlist_path().rename(new_path)
             get_corrupt_netlist_path().unlink()
@@ -265,6 +271,7 @@ def flow_xilinx_structural_error_injection(design, flow_args, build_dir):
     fp.close()
 
     return status
+
 
 def flow_xilinx_conformal(design, flow_args, build_dir):
     """Run Xilinx synthesis and implementation and compare with conformal"""
@@ -289,7 +296,7 @@ def flow_xilinx_conformal_impl(design, flow_args, build_dir):
 
     # Use conformal to compare against IMPL netlist
     design.golden_sources = [
-        design.impl_netlist_path,
+        design.flow_paths["impl_netlist_path"],
     ]
 
     # TODO Conformal_CompareTool.compare_netlists does not take a mapping arg
@@ -317,7 +324,11 @@ def flow_xilinx_yosys_impl(design, flow_args, build_dir):
     status = xray_rev(design, build_dir, flow_args)
 
     status = yosys_cmp(
-        design, build_dir, design.impl_netlist_path, design.reversed_netlist_path, flow_args
+        design,
+        build_dir,
+        design.flow_paths["impl_netlist_path"],
+        design.reversed_netlist_path,
+        flow_args,
     )
     return status
 
@@ -335,7 +346,11 @@ def flow_wafove(design, flow_args, build_dir):
     # analyze graphs.
 
     status = wave_cmp(
-        design, build_dir, design.impl_netlist_path, design.reversed_netlist_path, flow_args
+        design,
+        build_dir,
+        design.flow_paths["impl_netlist_path"],
+        design.reversed_netlist_path,
+        flow_args,
     )
 
     return status
@@ -490,7 +505,7 @@ def flow_yosys_synplify_error_onespin(design, flow_args, build_dir):
     with icecube2 Synplify, reverse with icestorm, and compare
     with Onespin"""
     # Set the results file path so it can be used in the different tools
-    design.results_summary_path = build_dir / "results_summary.txt"
+    design.flow_paths["results_summary_path"] = build_dir / "results_summary.txt"
 
     # Run the Yosys synthesizer
     status = yosys_synth(design, build_dir, flow_args)
@@ -588,7 +603,7 @@ def flow_gather_impl_data(design, flow_args, build_dir):
     compare their physical results (e.g. LUT counts, FF counts, etc)"""
 
     # Set the results file path so it can be used in the different tools
-    design.results_summary_path = build_dir / "results_summary.txt"
+    design.flow_paths["results_summary_path"] = build_dir / "results_summary.txt"
 
     # Start with an RTL->Synplify->IC2->Icestorm flow
     # Run Icecube2 Synplify synthesis

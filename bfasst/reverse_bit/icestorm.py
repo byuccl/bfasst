@@ -14,6 +14,7 @@ from bfasst.status import Status, BitReverseStatus
 
 class IcestormReverseBitTool(ReverseBitTool):
     """IceStorm reverse bitstream tool"""
+
     TOOL_WORK_DIR = "icestorm"
 
     def reverse_bitstream(self):
@@ -35,20 +36,20 @@ class IcestormReverseBitTool(ReverseBitTool):
         # Run if reverse netlist file is out of date
         rev_netlist_mtime = self.design.reversed_netlist_path.stat().st_mtime
         netlist_mtime = self.design.netlist_path.stat().st_mtime
-        need_to_run |= (not need_to_run) and (
-            rev_netlist_mtime < netlist_mtime
-        )
+        need_to_run |= (not need_to_run) and (rev_netlist_mtime < netlist_mtime)
 
         if need_to_run:
             # First go through and remove any added stuff from pcf port names
             self.fix_pcf_names()
             # Bitstream to ascii file
             asc_path = self.work_dir / (self.design.top + ".asc")
-            status = self.convert_bit_to_asc(self.design.bitstream_path, asc_path)
+            status = self.convert_bit_to_asc(self.design.flow_paths["bitstream_path"], asc_path)
 
             # Ascii to netlist
             status = self.convert_asc_to_netlist(
-                asc_path, self.design.constraints_path, self.design.reversed_netlist_path
+                asc_path,
+                self.design.flow_paths["constraints_path"],
+                self.design.reversed_netlist_path,
             )
 
         self.write_to_results_file(self.design.reversed_netlist_path, need_to_run)
@@ -97,11 +98,11 @@ class IcestormReverseBitTool(ReverseBitTool):
         the I/O signal names.
         """
         set_io_lines = []
-        with open(self.design.constraints_path, "r") as pcf:
+        with open(self.design.flow_paths["constraints_path"], "r") as pcf:
             for line in pcf:
                 if line.split()[0] == "set_io":
                     set_io_lines.append(line)
-        with open(self.design.constraints_path, "w") as pcf:
+        with open(self.design.flow_paths["constraints_path"], "w") as pcf:
             for line in set_io_lines:
                 new_line = re.sub("_ibuf", "", line)
                 new_line = re.sub("ibuf_", "", new_line)
@@ -120,10 +121,10 @@ class IcestormReverseBitTool(ReverseBitTool):
 
     def write_to_results_file(self, netlist_path, need_to_run):
         """Writes the results of the reverse bitstream tool to the results file."""
-        if self.design.results_summary_path is None:
+        if self.design.flow_paths["results_summary_path"] is None:
             print("No results path set!")
             return
-        with open(self.design.results_summary_path, "a") as res_f:
+        with open(self.design.flow_paths["results_summary_path"], "a") as res_f:
             time_modified = time.ctime(os.path.getmtime(netlist_path))
             res_f.write("Results from icestorm netlist (" + time_modified + "):\n")
             if not need_to_run:
