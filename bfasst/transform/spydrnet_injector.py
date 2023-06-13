@@ -4,6 +4,7 @@ import spydrnet as sdn
 from bfasst.transform.base import TransformTool
 from bfasst.status import Status, TransformStatus
 
+
 class SpydrNetErrorInjector(TransformTool):
     """Tool to inject errors into a netlist"""
 
@@ -68,22 +69,16 @@ class SpydrNetErrorInjector(TransformTool):
 
         if config_as_binary[bit_number] == "1":
             config_as_binary = (
-                config_as_binary[:bit_number] +
-                "0" + 
-                config_as_binary[bit_number + 1:]
+                config_as_binary[:bit_number] + "0" + config_as_binary[bit_number + 1 :]
             )
         else:
             config_as_binary = (
-                config_as_binary[:bit_number] +
-                "1" + 
-                config_as_binary[bit_number + 1:]
+                config_as_binary[:bit_number] + "1" + config_as_binary[bit_number + 1 :]
             )
 
         config_as_hex = hex(int(config_as_binary, 2))
         lut_properties["INIT"] = (
-            config_string_prefixed.split("H")[0] +
-            "h" +
-            str(config_as_hex).upper()[2:]
+            config_string_prefixed.split("H")[0] + "h" + str(config_as_hex).upper()[2:]
         )
 
     def compose_corrupt_netlist(self):
@@ -107,7 +102,8 @@ class SpydrNetErrorInjector(TransformTool):
     def get_random_instances(self, num_instances):
         """Gets a list of random instances from the netlist"""
         instances = [
-            instance for instance in self.clean_netlist.get_instances()
+            instance
+            for instance in self.clean_netlist.get_instances()
             if "GND" not in instance.reference.name.upper()
             and "VCC" not in instance.reference.name.upper()
             and "VDD" not in instance.reference.name.upper()
@@ -116,10 +112,7 @@ class SpydrNetErrorInjector(TransformTool):
 
     def get_outer_pin_inputs(self, instance):
         """Gets all the outer pins of the given instance that are inputs"""
-        outer_pin_inputs = [
-            pin for pin in instance.pins
-            if pin.inner_pin.port.direction is sdn.IN
-        ]
+        outer_pin_inputs = [pin for pin in instance.pins if pin.inner_pin.port.direction is sdn.IN]
         if not outer_pin_inputs:
             outer_pin_inputs = self.get_unisim_outer_pin_inputs(instance)
 
@@ -142,7 +135,7 @@ class SpydrNetErrorInjector(TransformTool):
         outer_pin_inputs = []
         for name, inputs in cell_inputs:
             if instance.reference.name in name:
-                pins = [pin for pin in instance.pins]
+                pins = list(instance.pins)
                 for pin in pins:
                     if pin.inner_pin.port.name in inputs:
                         outer_pin_inputs.append(pin)
@@ -152,8 +145,7 @@ class SpydrNetErrorInjector(TransformTool):
     def get_outer_pin_outputs(self, instance):
         """Gets all the outer pins of the given instance that are outputs"""
         outer_pin_outputs = [
-            pin for pin in instance.pins
-            if pin.inner_pin.port.direction is sdn.OUT
+            pin for pin in instance.pins if pin.inner_pin.port.direction is sdn.OUT
         ]
         if not outer_pin_outputs:
             outer_pin_outputs = self.get_unisim_outer_pin_outputs(instance)
@@ -177,7 +169,7 @@ class SpydrNetErrorInjector(TransformTool):
         outer_pin_outputs = []
         for name, outputs in cell_outputs:
             if instance.reference.name in name:
-                pins = [pin for pin in instance.pins]
+                pins = list(instance.pins)
                 for pin in pins:
                     if pin.inner_pin.port.name in outputs:
                         outer_pin_outputs.append(pin)
@@ -189,6 +181,7 @@ class SpydrNetErrorInjector(TransformTool):
         sources = [pin for pin in pin.wire.pins if pin.inner_pin.port.direction is sdn.OUT]
         if sources:
             return sources[0]
+        return None
 
     def get_new_driver(self, driving_pin, instance_2, instance_3):
         """Gets the new driver for the given driving pin"""
