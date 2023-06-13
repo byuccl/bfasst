@@ -113,7 +113,7 @@ class XilinxPhysNetlist(TransformTool):
         phys_netlist_edif_path = self.design.impl_edif_path.parent / (
             self.design.impl_edif_path.stem + "_physical.edf"
         )
-        self.design.impl_netlist_path = phys_netlist_verilog_path
+        self.design.phys_netlist_path = phys_netlist_verilog_path
 
         # Redirect rapidwright output to file
         System.setOut(PrintStream(File(str(self.work_dir / "rapidwright_stdout.log"))))

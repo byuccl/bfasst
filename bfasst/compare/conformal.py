@@ -29,8 +29,8 @@ class ConformalCompareTool(CompareTool):
     GUI_FILE_NAME = "run_conformal_gui.sh"
     MAPPED_POINTS_FILE_NAME = "mapped_points.txt"
 
-    def __init__(self, cwd, design, flow_args, vendor):
-        super().__init__(cwd, design, flow_args)
+    def __init__(self, cwd, design, gold_netlist, rev_netlist, flow_args, vendor):
+        super().__init__(cwd, design, gold_netlist, rev_netlist, flow_args)
 
         assert isinstance(vendor, Vendor)
         self.vendor = vendor
@@ -179,7 +179,7 @@ class ConformalCompareTool(CompareTool):
 
             fp.write(
                 "read design "
-                + self.design.reversed_netlist_path.name
+                + self.rev_netlist.name
                 + " -Verilog -Revised -sensitive -continuousassignment Bidirectional"
                 + " -nokeep_unreach -nosupply\n"
             )

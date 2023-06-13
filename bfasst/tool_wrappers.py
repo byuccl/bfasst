@@ -42,22 +42,24 @@ def icestorm_rev_bit(design, build_dir, flow_args):
     return reverse_bit_tool.reverse_bitstream()
 
 
-def conformal_cmp(design, build_dir, flow_args, vendor=Vendor.XILINX):
+def conformal_cmp(design, build_dir, gold_netlist, rev_netlist, flow_args, vendor=Vendor.XILINX):
     """Compare netlists using Conformal"""
     from bfasst.compare.conformal import ConformalCompareTool
 
     compare_tool = ConformalCompareTool(
-        build_dir, design, flow_args[ToolType.CMP], vendor
+        build_dir, design, gold_netlist, rev_netlist, flow_args[ToolType.CMP], vendor
     )  # TODO vendor should be flow arg
     with conformal_lock:
         return compare_tool.compare_netlists()
 
 
-def structural_cmp(design, build_dir, flow_args):
+def structural_cmp(design, build_dir, gold_netlist, rev_netlist, flow_args):
     """Structural compare and map"""
     from bfasst.compare.structural import StructuralCompareTool
 
-    struct_cmp = StructuralCompareTool(build_dir, design, flow_args[ToolType.CMP])
+    struct_cmp = StructuralCompareTool(
+        build_dir, design, gold_netlist, rev_netlist, flow_args[ToolType.CMP]
+    )
     return struct_cmp.compare_netlists()
 
 
@@ -85,27 +87,33 @@ def yosys_synth(design, build_dir, flow_args):
     return synth_tool.create_netlist()
 
 
-def yosys_cmp(design, build_dir, flow_args):
+def yosys_cmp(design, build_dir, gold_netlist, rev_netlist, flow_args):
     """Compare netlists using yosys"""
     from bfasst.compare.yosys import YosysCompareTool
 
-    compare_tool = YosysCompareTool(build_dir, design, flow_args[ToolType.CMP])
+    compare_tool = YosysCompareTool(
+        build_dir, design, gold_netlist, rev_netlist, flow_args[ToolType.CMP]
+    )
     return compare_tool.compare_netlists()
 
 
-def wave_cmp(design, build_dir, flow_args):
+def wave_cmp(design, build_dir, gold_netlist, rev_netlist, flow_args):
     """Compare netlists via waveforms"""
     from bfasst.compare.waveform import WaveformCompareTool
 
-    tool = WaveformCompareTool(build_dir, design, flow_args[ToolType.CMP])
+    tool = WaveformCompareTool(
+        build_dir, design, gold_netlist, rev_netlist, flow_args[ToolType.CMP]
+    )
     return tool.compare_netlists()
 
 
-def onespin_cmp(design, build_dir, flow_args):
+def onespin_cmp(design, build_dir, gold_netlist, rev_netlist, flow_args):
     """Compare netlists using Onespin"""
     from bfasst.compare.onespin import OneSpinCompareTool
 
-    compare_tool = OneSpinCompareTool(build_dir, design, flow_args[ToolType.CMP])
+    compare_tool = OneSpinCompareTool(
+        build_dir, design, gold_netlist, rev_netlist, flow_args[ToolType.CMP]
+    )
     with onespin_lock:
         return compare_tool.compare_netlists()
 
