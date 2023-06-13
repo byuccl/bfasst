@@ -65,9 +65,9 @@ def structural_cmp(design, build_dir, gold_netlist, rev_netlist, flow_args):
 
 def error_injection(design, build_dir, error_type):
     """Inject errrors into a netlist"""
-    from bfasst.transform.spydrnet_injector import SpydrNetErrorInjector
+    from bfasst.transform.error_injector import ErrorInjector
 
-    error_injector = SpydrNetErrorInjector(build_dir, design)
+    error_injector = ErrorInjector(build_dir, design)
     return error_injector.inject(error_type)
 
 
