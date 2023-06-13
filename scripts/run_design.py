@@ -27,7 +27,7 @@ def run_design(design_path, flow, error_flow, flow_args):
     print(flow)
     print(design.path)
     print(paths.DESIGNS_PATH)
-    build_dir = Path.cwd() / "build" / flow / design.path.parent #change made here
+    build_dir = Path.cwd() / "build" / flow / "<external>" / design_path.name
     build_dir.mkdir(parents=True, exist_ok=True)
 
     # Store the error flow for later
