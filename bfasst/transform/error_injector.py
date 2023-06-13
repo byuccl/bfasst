@@ -1,21 +1,23 @@
 """Tool to inject errors into a netlist"""
+from enum import Enum
 from random import randrange, sample
 import spydrnet as sdn
 from bfasst.transform.base import TransformTool
 from bfasst.status import Status, TransformStatus
 
+class ErrorType(Enum):
+    """Types of errors that can be injected"""
+    BIT_FLIP = "BIT_FLIP"
+    WIRE_SWAP = "WIRE_SWAP"
 
-class SpydrNetErrorInjector(TransformTool):
+class ErrorInjector(TransformTool):
     """Tool to inject errors into a netlist"""
-
-    success_status = Status(TransformStatus.SUCCESS)
-    TOOL_WORK_DIR = "spydrnet_injector"
 
     def __init__(self, cwd, design) -> None:
         super().__init__(cwd, design)
         self.clean_netlist = sdn.parse(self.design.reversed_netlist_path)
         self.hierarchical_luts = []
-        self.flattened_luts = None
+        self.all_luts = None
 
     def inject(self, error_type):
         """Injects an error into the netlist of the given type"""
@@ -30,7 +32,7 @@ class SpydrNetErrorInjector(TransformTool):
     def inject_bit_flip(self):
         """Injects a bit flip error into the netlist"""
         num_luts = self.pick_luts_from_netlist()
-        self.flatten_luts()
+        self.get_all_luts()
         lut_number = randrange(num_luts)
         lut_size = self.get_lut_size(lut_number)
         bit_number = randrange(lut_size)
@@ -47,19 +49,22 @@ class SpydrNetErrorInjector(TransformTool):
                     self.hierarchical_luts.append(definition.references)
         return num_luts
 
-    def flatten_luts(self):
+    def get_all_luts(self):
         """Flattens the LUTs into a single list"""
-        self.flattened_luts = [lut for sublist in self.hierarchical_luts for lut in sublist]
+        self.all_luts = [lut for sublist in self.hierarchical_luts for lut in sublist]
 
     def get_lut_size(self, lut_number):
-        """Gets the size of the LUT init string for the given LUT"""
-        lut = self.flattened_luts[lut_number]
+        """
+        Gets the size of the LUT init string for the given LUT by reading the init string.
+        The init string is in the format "X'h####" where X is the size of the LUT.
+        """
+        lut = self.all_luts[lut_number]
         init_string = lut.data["VERILOG.Parameters"]["INIT"].upper()
         return int(init_string.split("'")[0])
 
     def flip_bit(self, lut_number, bit_number):
         """Flips the bit at the given index"""
-        lut = self.flattened_luts[lut_number]
+        lut = self.all_luts[lut_number]
         lut_properties = lut.data["VERILOG.Parameters"]
 
         config_string_prefixed = lut_properties["INIT"].upper()
@@ -87,11 +92,18 @@ class SpydrNetErrorInjector(TransformTool):
 
     def inject_wire_swap(self):
         """Injects a wire swap error into the netlist"""
+
+        # Pick three random instances
         three_instances = self.get_random_instances(3)
+        # Get the outer pins of the first instance that are inputs
         first_instance_pins = self.get_outer_pin_inputs(three_instances[0])
 
+        # Pick a random input from the first instance
         selected_input = first_instance_pins[randrange(len(first_instance_pins))]
+        # Get the source of the input
         driving_pin = self.get_source(selected_input)
+        # Get a new driver for the input. It will be an output pin of one of the other two instances
+        # that is not already driving the input.
         new_driver = self.get_new_driver(driving_pin, three_instances[1], three_instances[2])
 
         self.detach_wire(selected_input)
