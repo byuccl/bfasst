@@ -46,6 +46,7 @@ from bfasst.tool_wrappers import (
 )
 from bfasst.utils import error
 from bfasst.locks import onespin_lock
+from bfasst.transform.error_injector import ErrorType
 
 
 @enum_unique
@@ -59,6 +60,7 @@ class Flows(Enum):
     XILINX_PHYS_NETLIST = "xilinx_phys_netlist"
     XILINX_PHYS_NETLIST_COMPARE = "xilinx_phys_netlist_cmp"
     STRUCTURAL_MAP = "structural_map"
+    XILINX_STRUCTURAL_ERROR_INJECTION = "xilinx_structural_error_injection"
 
     # These flows may be legacy and need unit tests to verify they are working
     CCL_MAP = "ccl_map"
@@ -75,9 +77,6 @@ class Flows(Enum):
     XILINX_YOSYS_WAFOVE = "xilinx_yosys_wafove"
     GATHER_IMPL_DATA = "gather_impl_data"
     CONFORMAL_ONLY = "conformal_only"
-
-    # These flows are not tested and may not work
-    XILINX_STRUCTURAL_ERROR_INJECTION = "xilinx_structural_error_injection"
 
 
 # This uses a lambda so that I don't have to define all of the functions before this point
@@ -222,53 +221,50 @@ def flow_xilinx_phys_netlist_cmp(design, flow_args, build_dir):
 def flow_xilinx_structural_error_injection(design, flow_args, build_dir):
     """Inject errors into FASM2BELS netlist and compare with Conformal"""
 
+    error_logs_path = pathlib.Path(build_dir, "spydrnet_injector")
+    error_logs_path.mkdir(parents=True, exist_ok=True)
+
     def get_corrupt_netlist_path():
-        return pathlib.Path(design.flow_paths["corrupted_netlist_path"])
+        return design.flow_paths["corrupted_netlist_path"]
 
     def generate_path_to_save_corrupted_netlist(num_problems, err):
-        return pathlib.Path(build_dir, "spydrnet_injector", f"{err}_error_{num_problems}.v")
+        return error_logs_path / f"{err}_error_{num_problems}.v"
 
     status = flow_xilinx_phys_netlist(design, flow_args, build_dir)
     status = xray_rev(design, build_dir, flow_args)
 
     random.seed(0)
+    injection_types = [ErrorType.BIT_FLIP, ErrorType.WIRE_SWAP]
 
-    error_logs_path = pathlib.Path(build_dir, "spydrnet_injector")
-    error_logs_path.mkdir(parents=True, exist_ok=True)
-    fp = open(error_logs_path / "error_injection.log", "w")
+    with open(error_logs_path / "error_injection.log", "w") as fp:
+        for err in injection_types:
+            num_problems = 0
+            num_runs = 100
+            for _ in range(num_runs):
+                status = error_injection(design, build_dir, err)
+                if status == TransformStatus.ERROR:
+                    return status
+                status = structural_cmp(
+                    design,
+                    build_dir,
+                    design.reversed_netlist_path,
+                    design.flow_paths["corrupted_netlist_path"],
+                    flow_args,
+                )
+                if status == CompareStatus.SUCCESS:
+                    num_problems += 1  # An error was injected, but not detected
+                    new_path = generate_path_to_save_corrupted_netlist(num_problems, err)
+                    get_corrupt_netlist_path().rename(new_path)
+                get_corrupt_netlist_path().unlink()
 
-    injection_types = ["BIT_FLIP", "WIRE_SWAP"]
+            if num_problems == 0:
+                fp.write(f"All errors detected successfully for {err}s.\n")
+                status = ErrorInjectionStatus.SUCCESS
 
-    for err in injection_types:
-        num_problems = 0
-        num_runs = 100
-        for _ in range(num_runs):
-            status = error_injection(design, build_dir, err)
-            if status == TransformStatus.ERROR:
-                return status
-            status = structural_cmp(
-                design,
-                build_dir,
-                design.reversed_netlist_path,
-                design.flow_paths["corrupted_netlist_path"],
-                flow_args,
-            )
-            if status == CompareStatus.SUCCESS:
-                num_problems += 1  # An error was injected, but not detected
-                new_path = generate_path_to_save_corrupted_netlist(num_problems, err)
-                get_corrupt_netlist_path().rename(new_path)
-            get_corrupt_netlist_path().unlink()
-
-        if num_problems == 0:
-            fp.write(f"All errors detected successfully for {err}s.\n")
-            status = ErrorInjectionStatus.SUCCESS
-
-        else:
-            num_correct = num_runs - num_problems
-            fp.write(f"{err}: {num_correct} / {num_runs} injections detected successfully.\n")
-            status = ErrorInjectionStatus.ERROR
-
-    fp.close()
+            else:
+                num_correct = num_runs - num_problems
+                fp.write(f"{err}: {num_correct} / {num_runs} injections detected successfully.\n")
+                status = ErrorInjectionStatus.ERROR
 
     return status
 
