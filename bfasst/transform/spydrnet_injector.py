@@ -15,7 +15,6 @@ class SpydrNetErrorInjector(TransformTool):
         self.clean_netlist = sdn.parse(self.design.reversed_netlist_path)
         self.hierarchical_luts = []
         self.flattened_luts = None
-        self.output_pins = []
 
     def inject(self, error_type):
         """Injects an error into the netlist of the given type"""
