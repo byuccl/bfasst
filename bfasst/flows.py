@@ -240,7 +240,13 @@ def flow_xilinx_structural_error_injection(design, flow_args, build_dir):
             status = error_injection(design, build_dir, err)
             if status == TransformStatus.ERROR:
                 return status
-            status = structural_cmp(design, build_dir, flow_args)
+            status = structural_cmp(
+                design,
+                build_dir,
+                design.reversed_netlist_path,
+                design.corrupted_netlist_path,
+                flow_args
+            )
             if status == CompareStatus.SUCCESS:
                 num_problems += 1 # An error was injected, but not detected
                 new_path = generate_path_to_save_corrupted_netlist(num_problems, err)
