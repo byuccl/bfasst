@@ -55,7 +55,6 @@ def _get_stream(original):
     :return: The inner function for use in the LocalProxy object.
     :rtype: ``function``
     """
-
     def proxy():
         """
         Returns the original stream if the current thread is not proxied,
