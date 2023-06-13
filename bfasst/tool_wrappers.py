@@ -62,12 +62,14 @@ def structural_cmp(design, build_dir, gold_netlist, rev_netlist, flow_args):
     )
     return struct_cmp.compare_netlists()
 
+
 def error_injection(design, build_dir, error_type):
     """Inject errrors into a netlist"""
     from bfasst.transform.spydrnet_injector import SpydrNetErrorInjector
 
     error_injector = SpydrNetErrorInjector(build_dir, design)
     return error_injector.inject(error_type)
+
 
 def vivado_synth(design, build_dir, flow_args):
     """Synthesize using Vivado"""
