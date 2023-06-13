@@ -41,7 +41,7 @@ class SpydrNetErrorInjector(TransformTool):
         num_luts = 0
         for library in self.clean_netlist.libraries:
             for definition in library.definitions:
-                if "lut" in definition.name.lower():
+                if "LUT" in definition.name.upper():
                     num_luts += len(definition.references)
                     self.hierarchical_luts.append(definition.references)
         return num_luts
@@ -92,20 +92,16 @@ class SpydrNetErrorInjector(TransformTool):
 
     def inject_wire_swap(self):
         """Injects a wire swap error into the netlist"""
-        # Algorithm
-        # 1. Choose three instances (random)
         three_instances = self.get_random_instances(3)
-        # 2. Get all the outer pins with inward direction from the definition of the first instance
         first_instance_pins = self.get_outer_pin_inputs(three_instances[0])
-        # 3. Pick a random input pin from the first instance
+
         selected_input = first_instance_pins[randrange(len(first_instance_pins))]
-        # 5. If it is an input, get the source pin
         driving_pin = self.get_source(selected_input)
-            # 5a. If the source pin is from instance 2, get the source pin from instance 3
         new_driver = self.get_new_driver(driving_pin, three_instances[1], three_instances[2])
-            # 5b. Attach the correct source pin to the input pin
+
         self.detach_wire(selected_input)
         self.attach_wire(selected_input, new_driver)
+
         self.compose_corrupt_netlist()
 
     def get_random_instances(self, num_instances):
