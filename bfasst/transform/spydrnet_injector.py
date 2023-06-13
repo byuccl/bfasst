@@ -1,7 +1,6 @@
 """Tool to inject errors into a netlist"""
 from random import randrange, sample
 import spydrnet as sdn
-from spydrnet.util.selection import Selection
 from bfasst.transform.base import TransformTool
 from bfasst.status import Status, TransformStatus
 
@@ -94,177 +93,119 @@ class SpydrNetErrorInjector(TransformTool):
 
     def inject_wire_swap(self):
         """Injects a wire swap error into the netlist"""
-
-        #Algorithm
-        # 1. Get all the output pins in the netlist that have a wire
-        self.collect_input_pins()
-        # 2. Pick 2 random output pins
-        two_pins = sample(self.output_pins, 2)
-        # 3. Get all of the inputs for the first output pin
-        input_pins = self.get_sinks(two_pins[0])
-        # 4. Pick a random input pin from the first output pin
-        selected_input = input_pins[randrange(len(input_pins))]
-        # 5. Disconnect the wire from that pin
-        self.disconnect_wire(selected_input)
-        # 6. Connect the second output pin to the input pin
-        self.connect_wire(two_pins[1], selected_input)
-        # 7. Compose the corrupted netlist
+        # Algorithm
+        # 1. Choose three instances (random)
+        three_instances = self.get_random_instances(3)
+        # 2. Get all the outer pins with inward direction from the definition of the first instance
+        first_instance_pins = self.get_outer_pin_inputs(three_instances[0])
+        # 3. Pick a random input pin from the first instance
+        selected_input = first_instance_pins[randrange(len(first_instance_pins))]
+        # 5. If it is an input, get the source pin
+        driving_pin = self.get_source(selected_input)
+            # 5a. If the source pin is from instance 2, get the source pin from instance 3
+        new_driver = self.get_new_driver(driving_pin, three_instances[1], three_instances[2])
+            # 5b. Attach the correct source pin to the input pin
+        self.detach_wire(selected_input)
+        self.attach_wire(selected_input, new_driver)
         self.compose_corrupt_netlist()
 
-    def collect_output_pins(self):
-        """Gets all the output pins in the netlist that have a wire"""
-        for instance in self.clean_netlist.get_instances():
-            for outgoing_pin in instance.get_pins(
-                selection = Selection.OUTSIDE,
-                filter = lambda x: x.inner_pin.port.direction is sdn.OUT
-            ):
-                if outgoing_pin.wire:
-                    self.output_pins.append(outgoing_pin)
+    def get_random_instances(self, num_instances):
+        """Gets a list of random instances from the netlist"""
+        instances = [
+            instance for instance in self.clean_netlist.get_instances()
+            if "GND" not in instance.reference.name.upper()
+            and "VCC" not in instance.reference.name.upper()
+            and "VDD" not in instance.reference.name.upper()
+        ]
+        return sample(instances, num_instances)
 
-    def get_sinks(self, pin):
-        """Gets all the sinks of the given source pin"""
-        sinks = []
-        for outer_pin in pin.wire.pins:
-            if outer_pin.inner_pin.port.direction is sdn.IN:
-                sinks.append(outer_pin)
-        return sinks
+    def get_outer_pin_inputs(self, instance):
+        """Gets all the outer pins of the given instance that are inputs"""
+        outer_pin_inputs = [
+            pin for pin in instance.pins
+            if pin.inner_pin.port.direction is sdn.IN
+        ]
+        if not outer_pin_inputs:
+            outer_pin_inputs = self.get_unisim_outer_pin_inputs(instance)
 
-    def disconnect_wire(self, pin):
-        """Disconnects the wire from the given pin"""
-        pin.wire.disconnect_pin(pin)
+        return outer_pin_inputs
 
-    def connect_wire(self, source, sink):
-        """Connects the given pin to the given sink"""
-        source.wire.connect_pin(sink)
-
-
-
-class Net:
-    """Wrapper class around spydernet Wire to add some helper properties"""
-
-    def __init__(self, wire, tool):
-        self.wire = wire
-        self.tool = tool
-        self.alias_wires = []
-        self.driver_pin = None
-        self.is_vdd = None
-        self.is_gnd = None
-
-    def add_alias_wire(self, wire):
-        assert wire not in self.alias_wires
-        self.alias_wires.append(wire)
-
-    def find_driver(self):
-        """Determine the pin that drives this wire"""
-
-        # If wire is not connected to any pins, just return
-        if not self.wire.pins:
-            return
-
-        # Find the pin that drives this wire
-        for pin in self.wire.pins:
-            # If connected to top-level input
-            if isinstance(pin, sdn.ir.InnerPin):
-                if pin.port.direction == sdn.ir.Port.Direction.IN:
-                    self.set_driver_pin(pin)
-            else:
-                pin_direction = self.get_direction_for_unisim(
-                    pin.instance.reference.name, pin.inner_pin.port.name
-                )
-                if pin_direction == sdn.ir.Port.Direction.OUT:
-                    self.set_driver_pin(pin)
-
-        # if self.driver_pin is None:
-        #     print(self.name)
-        # assert self.driver_pin is not None
-
-    def set_driver_pin(self, pin):
-        """Set the driver pin"""
-        assert self.driver_pin is None
-        self.driver_pin = pin
-
-        # Check for constant GND/VDD.  Top-level I/O will not be GND/VDD
-        if isinstance(pin, sdn.OuterPin) and self.driver_pin.instance.reference.name == "GND":
-            self.is_gnd = True
-        else:
-            self.is_gnd = False
-        if isinstance(pin, sdn.OuterPin) and self.driver_pin.instance.reference.name == "VDD":
-            self.is_vdd = True
-        else:
-            self.is_vdd = False
-
-    @property
-    def name(self):
-        return self.wire.cable.name
-
-    @staticmethod
-    def get_direction_for_unisim(cell_type_name, port_name):
-        """Get a pin direction for a UNISIM cell"""
+    def get_unisim_outer_pin_inputs(self, instance):
+        """Collect all the pins for a UNISIM cell that are inputs"""
 
         cell_inputs_and_outputs = (
-            (("LUT6_2",), ("I0", "I1", "I2", "I3", "I4", "I5"), ("O5", "O6")),
-            (("IBUF", "OBUF", "OBUFT"), ("I", "T"), ("O",)),
-            (("GND",), (), ("G",)),
-            (("VCC",), (), ("P",)),
-            (("FDSE", "FDRE"), ("D", "CE", "R", "C", "S"), ("Q",)),
-            (("CARRY4",), ("CI", "CYINIT", "DI", "S"), ("O", "CO")),
-            (("BUFGCTRL",), ("CE0", "CE1", "I0", "I1", "IGNORE0", "IGNORE1", "S0", "S1"), ("O",)),
-            (("MUXF7", "MUXF8"), ("I0", "I1", "S"), ("O",)),
+            (("LUT6_2",), ("I0", "I1", "I2", "I3", "I4", "I5")),
+            (("IBUF", "OBUF", "OBUFT"), ("I", "T")),
+            (("GND",), ()),
+            (("VCC",), ()),
+            (("FDSE", "FDRE"), ("D", "CE", "R", "C", "S")),
+            (("CARRY4",), ("CI", "CYINIT", "DI", "S")),
+            (("BUFGCTRL",), ("CE0", "CE1", "I0", "I1", "IGNORE0", "IGNORE1", "S0", "S1")),
+            (("MUXF7", "MUXF8"), ("I0", "I1", "S")),
         )
 
-        for cell_types, inputs, outputs in cell_inputs_and_outputs:
-            if cell_type_name in cell_types:
-                if port_name in inputs:
-                    return sdn.ir.Port.Direction.IN
-                if port_name in outputs:
-                    return sdn.ir.Port.Direction.OUT
-                raise NotImplementedError(cell_type_name, port_name)
+        outer_pin_inputs = []
+        for name, inputs in cell_inputs_and_outputs:
+            if instance.reference.name in name:
+                pins = [pin for pin in instance.pins]
+                for pin in pins:
+                    if pin.inner_pin.port.name in inputs:
+                        outer_pin_inputs.append(pin)
 
-        if cell_type_name.startswith("SDN_VERILOG_ASSIGNMENT"):
-            if port_name == "i":
-                return sdn.ir.Port.Direction.IN
-            # Shouldn't be possible to get here.  The way the code is set up, this function
-            # is never called on alias wires (wires driven by assign statement)
-            assert False
+        return outer_pin_inputs
 
-        raise NotImplementedError(cell_type_name, port_name)
+    def get_outer_pin_outputs(self, instance):
+        """Gets all the outer pins of the given instance that are outputs"""
+        outer_pin_outputs = [
+            pin for pin in instance.pins
+            if pin.inner_pin.port.direction is sdn.OUT
+        ]
+        if not outer_pin_outputs:
+            outer_pin_outputs = self.get_unisim_outer_pin_outputs(instance)
 
-    # @staticmethod
-    # def get_assign_statement(wire):
-    #     """Check if a wire is connected to an assign statement and return the pin"""
+        return outer_pin_outputs
 
-    #     return None
+    def get_unisim_outer_pin_outputs(self, instance):
+        """Collect all the pins for a UNISIM cell that are outputs"""
 
-    @staticmethod
-    def wire_is_alias(wire):
-        """Return whether wire is an alias of another wire (ie derived from assign statement)"""
-        for pin in wire.pins:
-            # assign statements don't have InnerPins
-            if isinstance(pin, sdn.InnerPin):
-                continue
+        cell_inputs_and_outputs = (
+            (("LUT6_2",), ("O5", "O6")),
+            (("IBUF", "OBUF", "OBUFT"), ("O",)),
+            (("GND",), ("G",)),
+            (("VCC",), ("P",)),
+            (("FDSE", "FDRE"), ("Q",)),
+            (("CARRY4",), ("O", "CO")),
+            (("BUFGCTRL",), ("O",)),
+            (("MUXF7", "MUXF8"), ("O",)),
+        )
 
-            if (
-                pin.instance.reference.name.startswith("SDN_VERILOG_ASSIGNMENT")
-                and pin.inner_pin.port.name == "o"
-            ):
-                return True
-        return False
+        outer_pin_outputs = []
+        for name, outputs in cell_inputs_and_outputs:
+            if instance.reference.name in name:
+                pins = [pin for pin in instance.pins]
+                for pin in pins:
+                    if pin.inner_pin.port.name in outputs:
+                        outer_pin_outputs.append(pin)
 
-    @staticmethod
-    def wire_derived_from(wire):
-        """If a wire is derived from another wire via assign statement, return the driver wire"""
-        for pin in wire.pins:
-            # assign statements don't have InnerPins
-            if isinstance(pin, sdn.InnerPin):
-                continue
+        return outer_pin_outputs
 
-            if (
-                pin.instance.reference.name.startswith("SDN_VERILOG_ASSIGNMENT")
-                and pin.inner_pin.port.name == "o"
-            ):
-                # Get the wire driving the assign statement
-                if pin.inner_pin.port.name == list(pin.instance.pins)[0].inner_pin.port.name:
-                    return list(pin.instance.pins)[1].wire
-                return list(pin.instance.pins)[0].wire
+    def get_source(self, pin):
+        """Gets the source pin of the given pin. The pin must be a sink pin."""
+        sources = [pin for pin in pin.wire.pins if pin.inner_pin.port.direction is sdn.OUT]
+        if sources:
+            return sources[0]
 
-        return None
+    def get_new_driver(self, driving_pin, instance_2, instance_3):
+        """Gets the new driver for the given driving pin"""
+        if driving_pin in instance_2.pins:
+            return self.get_outer_pin_outputs(instance_3)[0]
+
+        return self.get_outer_pin_outputs(instance_2)[0]
+
+    def detach_wire(self, pin):
+        """Detaches the wire from the given pin"""
+        pin.wire.disconnect_pin(pin)
+
+    def attach_wire(self, sink_pin, new_driver):
+        """Attaches the given sink to the new_driver"""
+        new_driver.wire.connect_pin(sink_pin)
