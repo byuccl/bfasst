@@ -204,7 +204,7 @@ def flow_xilinx_phys_netlist_cmp(design, flow_args, build_dir):
     status = xray_rev(design, build_dir, flow_args)
 
     status = structural_cmp(
-        design, build_dir, design.impl_netlist_path, design.reversed_netlist_path, flow_args
+        design, build_dir, design.phys_netlist_path, design.reversed_netlist_path, flow_args
     )
     return status
 

@@ -59,6 +59,7 @@ class Design:
         self.impl_netlist_path = None
         self.impl_edif_path = None
         self.bitstream_path = None
+        self.phys_netlist_path = None
         self.constraints_path = None
         self.reversed_netlist_path = None
         self.results_summary_path = None
