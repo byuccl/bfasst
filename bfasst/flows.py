@@ -19,7 +19,7 @@ from bfasst.netlist_mapping.structural_mapping import structurally_map_netlists
 from bfasst.opt.ic2_lse import Ic2LseOptTool
 from bfasst.opt.ic2_synplify import Ic2SynplifyOptTool
 from bfasst.reverse_bit.icestorm import IcestormReverseBitTool
-from bfasst.status import Status, MapStatus, CompareStatus, TransformStatus
+from bfasst.status import Status, MapStatus, CompareStatus, TransformStatus, ErrorInjectionStatus
 from bfasst.synth.ic2_lse import Ic2LseSynthesisTool
 from bfasst.synth.ic2_synplify import Ic2SynplifySynthesisTool
 from bfasst.synth.yosys import YosysTechSynthTool
@@ -216,16 +216,26 @@ def flow_xilinx_phys_netlist_cmp(design, flow_args, build_dir):
 
 def flow_xilinx_structural_error_injection(design, flow_args, build_dir):
     """Inject errors into FASM2BELS netlist and compare with Conformal"""
+    def get_corrupt_netlist_path():
+        return pathlib.Path(design.corrupted_netlist_path)
+
+    def generate_path_to_save_corrupted_netlist(num_problems, err):
+        return pathlib.Path(build_dir, "spydrnet_injector", f"{err}_error_{num_problems}.v")
+
     status = flow_xilinx_phys_netlist(design, flow_args, build_dir)
     status = xray_rev(design, build_dir, flow_args)
 
-    injection_types = ["BIT_FLIP"]
-
     random.seed(0)
+
+    error_logs_path = pathlib.Path(build_dir, "spydrnet_injector")
+    error_logs_path.mkdir(parents=True, exist_ok=True)
+    fp = open(error_logs_path / "error_injection.log", "w")
+
+    injection_types = ["BIT_FLIP", "WIRE_SWAP"]
 
     for err in injection_types:
         num_problems = 0
-        num_runs = 10
+        num_runs = 100
         for _ in range (num_runs):
             status = error_injection(design, build_dir, err)
             if status == TransformStatus.ERROR:
@@ -233,14 +243,21 @@ def flow_xilinx_structural_error_injection(design, flow_args, build_dir):
             status = structural_cmp(design, build_dir, flow_args)
             if status == CompareStatus.SUCCESS:
                 num_problems += 1 # An error was injected, but not detected
-                status = CompareStatus.ERROR
+                new_path = generate_path_to_save_corrupted_netlist(num_problems, err)
+                get_corrupt_netlist_path().rename(new_path)
+            get_corrupt_netlist_path().unlink()
 
-        with open(build_dir / "error_injection.log", "a") as f:
-            if num_problems == 0:
-                f.write(f"All errors detected successfully for {err}s.\n")
-            else:
-                f.write(f"{err}: {num_problems} / {num_runs}\n")
-                
+        if num_problems == 0:
+            fp.write(f"All errors detected successfully for {err}s.\n")
+            status = ErrorInjectionStatus.SUCCESS
+
+        else:
+            num_correct = num_runs - num_problems
+            fp.write(f"{err}: {num_correct} / {num_runs} injections detected successfully.\n")
+            status = ErrorInjectionStatus.ERROR
+
+    fp.close()
+
     return status
 
 def flow_xilinx_conformal(design, flow_args, build_dir):
