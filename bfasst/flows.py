@@ -213,7 +213,6 @@ def flow_xilinx_phys_netlist_cmp(design, flow_args, build_dir):
         build_dir,
         design.phys_netlist_path,
         design.reversed_netlist_path,
-        None,
         flow_args,
     )
     return status
