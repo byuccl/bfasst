@@ -25,6 +25,15 @@ class ErrorInjector(TransformTool):
         self.clean_netlist = sdn.parse(self.design.reversed_netlist_path)
         self.hierarchical_luts = []
         self.all_luts = None
+        self.all_instances = self.get_all_instances()
+
+    def get_all_instances(self):
+        return [
+            instance for instance in self.clean_netlist.get_instances()
+            if "GND" not in instance.reference.name.upper()
+            and "VCC" not in instance.reference.name.upper()
+            and "VDD" not in instance.reference.name.upper()
+        ]
 
     def inject(self, error_type):
         """Injects an error into the netlist of the given type"""
@@ -92,34 +101,39 @@ class ErrorInjector(TransformTool):
     def inject_wire_swap(self):
         """Injects a wire swap error into the netlist"""
 
-        # Pick three random instances
-        three_instances = self.get_random_instances(3)
+        # Pick two random instances
+        two_instances = self.get_random_instances(2)
         # Get the outer pins of the first instance that are inputs
-        first_instance_pins = self.get_outer_pin_inputs(three_instances[0])
+        first_instance_pins = self.get_outer_pin_inputs(two_instances[0])
+        # Get the outer pins of the second instance that are inputs
+        second_instance_pins = self.get_outer_pin_inputs(two_instances[1])
 
         # Pick a random input from the first instance
         selected_input = first_instance_pins[randrange(len(first_instance_pins))]
         # Get the source of the input
         driving_pin = self.get_source(selected_input)
-        # Get a new driver for the input. It will be an output pin of one of the other two instances
-        # that is not already driving the input.
-        new_driver = self.get_new_driver(driving_pin, three_instances[1], three_instances[2])
+        # Do the same for the second instance
+        selected_input2 = second_instance_pins[randrange(len(second_instance_pins))]
+        driving_pin2 = self.get_source(selected_input2)
 
+        # If the driving pin is the same for both inputs
+        # or is a None type, we can't swap them.
+        # Try the algorithm again.
+        if driving_pin == driving_pin2 or driving_pin is None or driving_pin2 is None:
+            self.inject_wire_swap()
+            return
+
+        # Detach the wire from both inputs, and swap their driving pins
         self.detach_wire(selected_input)
-        self.attach_wire(selected_input, new_driver)
+        self.detach_wire(selected_input2)
+        self.attach_wire(selected_input, driving_pin2)
+        self.attach_wire(selected_input2, driving_pin)
 
         self.compose_corrupt_netlist()
 
     def get_random_instances(self, num_instances):
-        """Gets a list of random instances from the netlist"""
-        instances = [
-            instance
-            for instance in self.clean_netlist.get_instances()
-            if "GND" not in instance.reference.name.upper()
-            and "VCC" not in instance.reference.name.upper()
-            and "VDD" not in instance.reference.name.upper()
-        ]
-        return sample(instances, num_instances)
+        """Gets a sample of random instances from the netlist"""
+        return sample(self.all_instances, num_instances)
 
     def get_outer_pin_inputs(self, instance):
         """Gets all the outer pins of the given instance that are inputs"""
@@ -189,10 +203,37 @@ class ErrorInjector(TransformTool):
 
     def get_source(self, pin):
         """Gets the source pin of the given pin. The pin must be a sink pin."""
-        sources = [pin for pin in pin.wire.pins if pin.inner_pin.port.direction is sdn.OUT]
-        if sources:
-            return sources[0]
+        for curr_pin in pin.wire.pins:
+            if self.get_direction(curr_pin) is sdn.OUT:
+                return curr_pin
         return None
+
+    def get_direction(self, pin):
+        """Gets the direction of the given pin"""
+        if isinstance(pin, sdn.InnerPin):
+            return pin.port.direction
+        else:
+            return self.get_unisim_pin_direction(pin)
+
+    def get_unisim_pin_direction(self, pin):
+        """Gets the direction of the given outer pin"""
+        cell_directions = (
+            (("LUT6_2",), ("O5", "O6")),
+            (("IBUF", "OBUF", "OBUFT"), ("O",)),
+            (("GND",), ("G",)),
+            (("VCC",), ("P",)),
+            (("FDSE", "FDRE"), ("Q",)),
+            (("CARRY4",), ("O", "CO")),
+            (("BUFGCTRL",), ("O",)),
+            (("MUXF7", "MUXF8"), ("O",)),
+        )
+
+        for name, outputs in cell_directions:
+            if pin.instance.reference.name in name:
+                if pin.inner_pin.port.name in outputs:
+                    return sdn.OUT
+
+        return sdn.IN
 
     def get_new_driver(self, driving_pin, instance_2, instance_3):
         """Gets the new driver for the given driving pin"""
