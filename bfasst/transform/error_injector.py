@@ -4,6 +4,7 @@ from random import randrange, sample
 import spydrnet as sdn
 from bfasst.transform.base import TransformTool
 from bfasst.status import Status, TransformStatus
+from bfasst.utils import convert_verilog_literal_to_int
 
 class ErrorType(Enum):
     """Types of errors that can be injected"""
@@ -12,6 +13,9 @@ class ErrorType(Enum):
 
 class ErrorInjector(TransformTool):
     """Tool to inject errors into a netlist"""
+
+    success_status = Status(TransformStatus.SUCCESS)
+    TOOL_WORK_DIR = "spydrnet_injector"
 
     def __init__(self, cwd, design) -> None:
         super().__init__(cwd, design)
@@ -71,22 +75,11 @@ class ErrorInjector(TransformTool):
         lut_properties = lut.data["VERILOG.Parameters"]
 
         config_string_prefixed = lut_properties["INIT"].upper()
-        config_string_digits = config_string_prefixed.split("H")[1]
-        lut_size = self.get_lut_init_size(lut_number)
-        config_as_binary = bin(int(config_string_digits, 16))[2:].zfill(lut_size)
+        config_string_int = convert_verilog_literal_to_int(config_string_prefixed)
 
-        if config_as_binary[bit_number] == "1":
-            config_as_binary = (
-                config_as_binary[:bit_number] + "0" + config_as_binary[bit_number + 1 :]
-            )
-        else:
-            config_as_binary = (
-                config_as_binary[:bit_number] + "1" + config_as_binary[bit_number + 1 :]
-            )
-
-        config_as_hex = hex(int(config_as_binary, 2))
+        new_config = hex(config_string_int ^ (1 << bit_number))
         lut_properties["INIT"] = (
-            config_string_prefixed.split("H")[0] + "h" + str(config_as_hex).upper()[2:]
+            config_string_prefixed.split("H")[0] + "h" + str(new_config).upper()[2:]
         )
 
     def compose_corrupt_netlist(self):
