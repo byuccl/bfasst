@@ -413,6 +413,7 @@ class Netlist:
                     f"to net {net.name}[{net.wire.index()}]",
                 )
                 net.add_alias_wire(wire)
+                self.wire_to_net[wire] = net
                 processed_alias_wires.append(wire)
 
             # Remove wires we processed
