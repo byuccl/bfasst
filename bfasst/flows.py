@@ -251,7 +251,6 @@ def flow_xilinx_structural_error_injection(design, flow_args, build_dir):
                     design.phys_netlist_path,
                     design.corrupted_netlist_path,
                     flow_args,
-                    fp
                 )
                 if status == CompareStatus.SUCCESS:
                     num_problems += 1  # An error was injected, but not detected

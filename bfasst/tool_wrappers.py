@@ -53,12 +53,12 @@ def conformal_cmp(design, build_dir, gold_netlist, rev_netlist, flow_args, vendo
         return compare_tool.compare_netlists()
 
 
-def structural_cmp(design, build_dir, gold_netlist, rev_netlist, flow_args, fp):
+def structural_cmp(design, build_dir, gold_netlist, rev_netlist, flow_args):
     """Structural compare and map"""
     from bfasst.compare.structural import StructuralCompareTool
 
     struct_cmp = StructuralCompareTool(
-        build_dir, design, gold_netlist, rev_netlist, fp, flow_args[ToolType.CMP]
+        build_dir, design, gold_netlist, rev_netlist, flow_args[ToolType.CMP]
     )
     return struct_cmp.compare_netlists()
 
