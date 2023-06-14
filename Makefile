@@ -62,7 +62,7 @@ submodules:
 rapidwright: submodules
 	cd third_party/RapidWright && ./gradlew compileJava
 	cd third_party/RapidWright/interchange/ && make
-	$(IN_ENV) cd third_party/RapidWright && ./gradlew compileJava ; export PATH=`pwd`/bin:$$PATH ; \
+	$(IN_ENV) cd third_party/RapidWright ; export PATH=`pwd`/bin:$$PATH ; \
 	rapidwright jython -c 'FileTools.ensureDataFilesAreStaticInstallFriendly("xc7a200t")'
 
 install_fasm2bels: submodules
