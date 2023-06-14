@@ -395,7 +395,12 @@ class Netlist:
 
         # Now add alias wires iteratively until they are all added
         alias_wires = [wire for wire in self.library.get_wires() if Net.wire_is_alias(wire)]
-        while alias_wires:
+
+        self.tool.log("Processing alias wires (derived from assign statements)")
+
+        progress = True
+        while alias_wires and progress:
+            progress = False
             processed_alias_wires = []
             for wire in alias_wires:
                 driver_wire = Net.wire_derived_from(wire)
@@ -408,18 +413,26 @@ class Netlist:
                     f"to net {net.name}[{net.wire.index()}]",
                 )
                 net.add_alias_wire(wire)
+                self.wire_to_net[wire] = net
                 processed_alias_wires.append(wire)
 
             # Remove wires we processed
+            old_len = len(alias_wires)
             alias_wires = [wire for wire in alias_wires if wire not in processed_alias_wires]
+            if len(alias_wires) != old_len:
+                progress = True
+
+        if alias_wires and not progress:
+            self.tool.log("Failed to process all alias wires:", [w.cable.name for w in alias_wires])
+            raise RuntimeError("Failed to process all alias wires")
 
         # Now determine the driver for each net
-        for net in self.wire_to_net.values():
+        for net in self.nets:
             net.find_driver()
 
     @property
     def nets(self):
-        return self.wire_to_net.values()
+        return set(self.wire_to_net.values())
 
 
 class Pin:
