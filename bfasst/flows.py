@@ -213,6 +213,7 @@ def flow_xilinx_phys_netlist_cmp(design, flow_args, build_dir):
         build_dir,
         design.phys_netlist_path,
         design.reversed_netlist_path,
+        None,
         flow_args,
     )
     return status
@@ -221,7 +222,7 @@ def flow_xilinx_phys_netlist_cmp(design, flow_args, build_dir):
 def flow_xilinx_structural_error_injection(design, flow_args, build_dir):
     """Inject errors into FASM2BELS netlist and compare with Conformal"""
 
-    error_logs_path = build_dir / "error_logs"
+    error_logs_path = build_dir / "error_injection"
     error_logs_path.mkdir(parents=True, exist_ok=True)
 
     def get_corrupt_netlist_path():
@@ -234,12 +235,12 @@ def flow_xilinx_structural_error_injection(design, flow_args, build_dir):
     status = xray_rev(design, build_dir, flow_args)
 
     random.seed(0)
-    injection_types = [ErrorType.BIT_FLIP, ErrorType.WIRE_SWAP]
+    injection_types = [ErrorType.WIRE_SWAP]
 
     with open(error_logs_path / "error_injection.log", "w") as fp:
         for err in injection_types:
             num_problems = 0
-            num_runs = 100
+            num_runs = 1
             for _ in range(num_runs):
                 status = error_injection(design, build_dir, err)
                 if status == TransformStatus.ERROR:
@@ -247,9 +248,10 @@ def flow_xilinx_structural_error_injection(design, flow_args, build_dir):
                 status = structural_cmp(
                     design,
                     build_dir,
-                    design.reversed_netlist_path,
+                    design.phys_netlist_path,
                     design.corrupted_netlist_path,
                     flow_args,
+                    fp
                 )
                 if status == CompareStatus.SUCCESS:
                     num_problems += 1  # An error was injected, but not detected

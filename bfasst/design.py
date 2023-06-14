@@ -75,6 +75,10 @@ class Design:
         self.error_flow_names = []
         self.nets_to_remove_from_pcf = set()
 
+        self.process_yaml()
+
+    def process_yaml(self):
+        """process the yaml file to set the paths for the design netlists, etc."""
         if not self.yaml_path.is_file():
             error("Design YAML file", self.yaml_path, "does not exist")
 

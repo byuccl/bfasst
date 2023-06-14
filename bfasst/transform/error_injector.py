@@ -18,7 +18,7 @@ class ErrorInjector(TransformTool):
     """Tool to inject errors into a netlist"""
 
     success_status = Status(TransformStatus.SUCCESS)
-    TOOL_WORK_DIR = "spydrnet_injector"
+    TOOL_WORK_DIR = "error_injection"
 
     def __init__(self, cwd, design) -> None:
         super().__init__(cwd, design)
@@ -28,9 +28,9 @@ class ErrorInjector(TransformTool):
 
     def inject(self, error_type):
         """Injects an error into the netlist of the given type"""
-        if error_type == "BIT_FLIP":
+        if error_type == ErrorType.BIT_FLIP:
             self.inject_bit_flip()
-        elif error_type == "WIRE_SWAP":
+        elif error_type == ErrorType.WIRE_SWAP:
             self.inject_wire_swap()
         else:
             return Status(TransformStatus.ERROR, "Invalid error type")
@@ -77,7 +77,7 @@ class ErrorInjector(TransformTool):
         lut = self.all_luts[lut_number]
         lut_properties = lut.data["VERILOG.Parameters"]
 
-        config_string_prefixed = lut_properties["INIT"].upper()
+        config_string_prefixed = lut_properties["INIT"].lower() # must be lower for int conversion
         config_string_int = convert_verilog_literal_to_int(config_string_prefixed)
 
         new_config = hex(config_string_int ^ (1 << bit_number))

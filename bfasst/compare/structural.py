@@ -13,7 +13,7 @@ class StructuralCompareTool(CompareTool):
 
     TOOL_WORK_DIR = "struct_cmp"
 
-    def __init__(self, cwd, design, gold_netlist, rev_netlist, flow_args="") -> None:
+    def __init__(self, cwd, design, gold_netlist, rev_netlist, fp, flow_args="") -> None:
         super().__init__(cwd, design, gold_netlist, rev_netlist, flow_args)
 
         self.named_netlist = None
@@ -21,6 +21,7 @@ class StructuralCompareTool(CompareTool):
 
         self.block_mapping = bidict()
         self.net_mapping = bidict()
+        self.fp = fp
 
         jpype_jvm.start()
 
@@ -35,6 +36,7 @@ class StructuralCompareTool(CompareTool):
         self.log_title("Building netlist A", impl_netlist)
 
         # Loads the first netlist as intermediate representation (ir1)
+        self.fp.write("Building netlist A\n")
         ir_a = sdn.parse(str(impl_netlist))
         library_a = ir_a.libraries[0]
         netlist_a = self.get_netlist(library_a)
@@ -43,6 +45,8 @@ class StructuralCompareTool(CompareTool):
         self.log_title("Building netlist B", netlist_b)
 
         # Loads the second netlist as intermediate representation (ir2)
+        self.fp.write("Building netlist B\n")
+        self.fp.flush()
         ir_b = sdn.parse(str(netlist_b))
         library_b = ir_b.libraries[0]
         netlist_b = self.get_netlist(library_b)
@@ -359,6 +363,8 @@ class Netlist:
         # Nets
         self.wire_to_net = {}
         self.build_nets()
+        self.tool.fp.write("nets built\n")
+        self.tool.fp.flush()
 
         # Instances
         instances = [Instance(i, self) for i in library.get_instances()]
@@ -385,20 +391,23 @@ class Netlist:
 
     def build_nets(self):
         """Setup Net objects"""
-
         # First construct net objects for each wire, skipping alias wires
+        self.tool.fp.write("Building nets for non-alias wires\n")
+        self.tool.fp.flush()
         non_alias_wires = [wire for wire in self.library.get_wires() if not Net.wire_is_alias(wire)]
         for wire in non_alias_wires:
             net = Net(wire, self.tool)
             self.tool.log(f"New Net for wire {wire.cable.name}[{wire.index()}]")
             self.wire_to_net[wire] = net
 
+        self.tool.fp.write("Building nets for alias wires\n")
+        self.tool.fp.flush()
         # Now add alias wires iteratively until they are all added
         alias_wires = [wire for wire in self.library.get_wires() if Net.wire_is_alias(wire)]
         while alias_wires:
             processed_alias_wires = []
             for wire in alias_wires:
-                driver_wire = Net.wire_derived_from(wire)
+                driver_wire = Net.wire_derived_from(wire) #This line has a problem for bit flips
                 if driver_wire not in self.wire_to_net:
                     continue
 
@@ -413,6 +422,8 @@ class Netlist:
             # Remove wires we processed
             alias_wires = [wire for wire in alias_wires if wire not in processed_alias_wires]
 
+        self.tool.fp.write("Finding drivers for nets\n")
+        self.tool.fp.flush()
         # Now determine the driver for each net
         for net in self.wire_to_net.values():
             net.find_driver()
