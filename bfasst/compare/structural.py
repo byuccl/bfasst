@@ -427,12 +427,12 @@ class Netlist:
             raise RuntimeError("Failed to process all alias wires")
 
         # Now determine the driver for each net
-        for net in set(self.wire_to_net.values()):
+        for net in self.nets()
             net.find_driver()
 
     @property
     def nets(self):
-        return self.wire_to_net.values()
+        return set(self.wire_to_net.values())
 
 
 class Pin:
