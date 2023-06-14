@@ -73,6 +73,42 @@ def print_tcl_cmd_catch(fp, cmd, return_code=1):
 
     fp.write("if { [catch { " + cmd + " } ] } { exit " + str(return_code) + " }\n")
 
+def convert_verilog_literal_to_int(prop):
+    """
+    Convert a Verilog literal to an integer
+
+    >>> convert_verilog_literal_to_int("4'b1001")
+    9
+    >>> convert_verilog_literal_to_int("32'hdeadbeef")
+    3735928559
+    """
+    # Not a string? just return the prop
+    if not isinstance(prop, str):
+        return prop
+
+    # Try to convert to int
+    try:
+        prop = int(prop)
+        return prop
+    except ValueError:
+        pass
+
+    # Decimal literal
+    matches = re.match(r"\d+'d(\d+)", prop)
+    if matches:
+        return int(matches.group(1))
+
+    # Binary literal
+    matches = re.match(r"\d+'b([01]+)", prop)
+    if matches:
+        return int(matches.group(1), 2)
+
+    # Hex literal
+    matches = re.match(r"\d+'h([0-9a-fA-F]+)", prop)
+    if matches:
+        return int(matches.group(1), 16)
+
+    return prop
 
 def properties_are_equal(prop1, prop2):
     """Compare Verilog property strings for equivalence
@@ -86,34 +122,4 @@ def properties_are_equal(prop1, prop2):
     >>> properties_are_equal(1, "1'b1")
     True
     """
-
-    def convert_to_val(prop):
-        # Not a string? just return the prop
-        if not isinstance(prop, str):
-            return prop
-
-        # Try to convert to int
-        try:
-            prop = int(prop)
-            return prop
-        except ValueError:
-            pass
-
-        # Decimal literal
-        matches = re.match(r"\d+'d(\d+)", prop)
-        if matches:
-            return int(matches.group(1))
-
-        # Binary literal
-        matches = re.match(r"\d+'b([01]+)", prop)
-        if matches:
-            return int(matches.group(1), 2)
-
-        # Hex literal
-        matches = re.match(r"\d+'h([0-9a-fA-F]+)", prop)
-        if matches:
-            return int(matches.group(1), 16)
-
-        return prop
-
-    return convert_to_val(prop1) == convert_to_val(prop2)
+    return convert_verilog_literal_to_int(prop1) == convert_verilog_literal_to_int(prop2)
