@@ -34,7 +34,7 @@ class ErrorInjector(TransformTool):
         num_luts = self.pick_luts_from_netlist()
         self.get_all_luts()
         lut_number = randrange(num_luts)
-        lut_size = self.get_lut_size(lut_number)
+        lut_size = self.get_lut_init_size(lut_number)
         bit_number = randrange(lut_size)
         self.flip_bit(lut_number, bit_number)
         self.compose_corrupt_netlist()
@@ -53,10 +53,13 @@ class ErrorInjector(TransformTool):
         """Flattens the LUTs into a single list"""
         self.all_luts = [lut for sublist in self.hierarchical_luts for lut in sublist]
 
-    def get_lut_size(self, lut_number):
+    def get_lut_init_size(self, lut_number):
         """
         Gets the size of the LUT init string for the given LUT by reading the init string.
-        The init string is in the format "X'h####" where X is the size of the LUT.
+        The init string is "X'h####" where X is the size of the LUT init string in bits.
+        X is always 2^n where n is the number of inputs to the LUT.
+        For example, a LUT5 would have an init string of "32'h####" 
+        and this function would return 32 as the size.
         """
         lut = self.all_luts[lut_number]
         init_string = lut.data["VERILOG.Parameters"]["INIT"].upper()
@@ -69,7 +72,7 @@ class ErrorInjector(TransformTool):
 
         config_string_prefixed = lut_properties["INIT"].upper()
         config_string_digits = config_string_prefixed.split("H")[1]
-        lut_size = self.get_lut_size(lut_number)
+        lut_size = self.get_lut_init_size(lut_number)
         config_as_binary = bin(int(config_string_digits, 16))[2:].zfill(lut_size)
 
         if config_as_binary[bit_number] == "1":
