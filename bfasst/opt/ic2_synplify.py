@@ -102,10 +102,10 @@ class Ic2SynplifyOptTool(Ic2BaseOptTool):
         return Status(OptStatus.SUCCESS)
 
     # def write_result_file(self, design):
-    #     if design.flow_paths["results_summary_path"] is None:
+    #     if design.results_summary_path is None:
     #         print("No results path set!")
     #         return
-    #     with open(design.flow_paths["results_summary_path"], "a") as res_f:
+    #     with open(design.results_summary_path, "a") as res_f:
     #         res_f.write("Synplify results summary:\n")
     #         with open(design.netlist_path, "r") as net_f:
     #             netlist = net_f.read()

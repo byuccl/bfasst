@@ -163,7 +163,7 @@ class OneSpinCompareTool(CompareTool):
 
         gold_is_rtl = False
         gold_is_yosys = False
-        if self.design.compare_golden_files[0] == self.design.flow_paths["yosys_netlist_path"]:
+        if self.design.compare_golden_files[0] == self.design.yosys_netlist_path.name:
             gold_is_yosys = True
         else:
             gold_is_rtl = True
@@ -171,7 +171,7 @@ class OneSpinCompareTool(CompareTool):
             print(
                 "gold is not rtl or yosys!",
                 self.design.compare_golden_files[0],
-                self.design.design.flow_paths["yosys_netlist_path"].name,
+                self.design.yosys_netlist_path.name,
             )
         revised_is_reversed = False
         if self.design.compare_revised_file == self.design.reversed_netlist_filename():

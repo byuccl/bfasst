@@ -17,7 +17,7 @@ class Ic2ImplementationTool(ImplementationTool):
     TOOL_WORK_DIR = "ic2_impl"
 
     def implement_bitstream(self):
-        self.design.flow_paths["bitstream_path"] = self.cwd / (self.design.top + ".bit")
+        self.design.bitstream_path = self.cwd / (self.design.top + ".bit")
 
         status = self.common_startup(self.check_impl_status)
         if status:
@@ -42,7 +42,7 @@ class Ic2ImplementationTool(ImplementationTool):
             self.work_dir / "sbt" / "outputs" / "bitmap" / (self.design.top + "_bitmap.bin")
         )
         try:
-            shutil.copyfile(bitstream_proj_path, self.design.flow_paths["bitstream_path"])
+            shutil.copyfile(bitstream_proj_path, self.design.bitstream_path)
         except FileNotFoundError:
             return Status(ImplStatus.ERROR)
 
@@ -50,14 +50,14 @@ class Ic2ImplementationTool(ImplementationTool):
         constraints_proj_path = (
             self.work_dir / "sbt" / "outputs" / "placer" / (self.design.top + "_sbt.pcf")
         )
-        self.design.flow_paths["constraints_path"] = self.cwd / (self.design.top + ".pcf")
+        self.design.constraints_path = self.cwd / (self.design.top + ".pcf")
         try:
-            shutil.copyfile(constraints_proj_path, self.design.flow_paths["constraints_path"])
+            shutil.copyfile(constraints_proj_path, self.design.constraints_path)
         except FileNotFoundError:
             return Status(ImplStatus.ERROR)
 
         # Always set the constraints path since we need it later
-        # design.flow_paths["constraints_path"] = self.cwd/(design.top + ".pcf")
+        # design.constraints_path = self.cwd/(design.top + ".pcf")
 
         return Status(ImplStatus.SUCCESS)
 
@@ -125,10 +125,10 @@ class Ic2ImplementationTool(ImplementationTool):
 
     # def write_to_results_file(self, design, log_path, need_to_run):
 
-    #     if design.flow_paths["results_summary_path"] is None:
+    #     if design.results_summary_path is None:
     #         print("No results path set!")
     #     else:
-    #         with open(design.flow_paths["results_summary_path"], "a") as res_f:
+    #         with open(design.results_summary_path, "a") as res_f:
     #             time_modified = time.ctime(os.path.getmtime(log_path))
     #             res_f.write("Results summary (IC2) (" + time_modified + ")\n")
     #             # How can I differentiate between different versions of the design?

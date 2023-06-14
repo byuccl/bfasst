@@ -26,7 +26,7 @@ def write_xdc(pinmap, stream):
 
 
 def extract_contraints(design, report_io_path):
-    with open(design.flow_paths["constraints_path"], "w") as fp:
+    with open(design.constraints_path, "w") as fp:
         design.mapped_io = tuple(vivado_ioparse.map_pins(report_io_path))
         write_xdc(design.mapped_io, fp)
 
@@ -41,15 +41,15 @@ class VivadoSynthesisTool(SynthesisTool):
 
         # Save edif netlist path to design object
         self.design.netlist_path = self.cwd / f"{self.design.top}.edf"
-        self.design.flow_paths["constraints_path"] = self.cwd / "constraints.xdc"
+        self.design.constraints_path = self.cwd / "constraints.xdc"
 
-        generate_netlist = ToolProduct(
-            self.design.netlist_path, self.log_path, self.check_synth_log
-        )
+        generate_netlist = ToolProduct(self.design.netlist_path,
+                                       self.log_path,
+                                       self.check_synth_log)
         if self.args.out_of_context:
             tool_products = [generate_netlist]
         else:
-            generate_constraints = ToolProduct(self.design.flow_paths["constraints_path"])
+            generate_constraints = ToolProduct(self.design.constraints_path)
             tool_products = [generate_netlist, generate_constraints]
 
         return self.get_prev_run_status(

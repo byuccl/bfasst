@@ -107,13 +107,13 @@ class XilinxPhysNetlist(TransformTool):
 
     def run(self):
         """Transform the logical netlist into a netlist with only physical primitives"""
-        phys_netlist_verilog_path = self.design.flow_paths["impl_edif_path"].parent / (
-            self.design.flow_paths["impl_edif_path"].stem + "_physical.v"
+        phys_netlist_verilog_path = self.design.impl_edif_path.parent / (
+            self.design.impl_edif_path.stem + "_physical.v"
         )
-        phys_netlist_edif_path = self.design.flow_paths["impl_edif_path"].parent / (
-            self.design.flow_paths["impl_edif_path"].stem + "_physical.edf"
+        phys_netlist_edif_path = self.design.impl_edif_path.parent / (
+            self.design.impl_edif_path.stem + "_physical.edf"
         )
-        self.design.flow_paths["phys_netlist_path"] = phys_netlist_verilog_path
+        self.design.phys_netlist_path = phys_netlist_verilog_path
 
         # Redirect rapidwright output to file
         System.setOut(PrintStream(File(str(self.work_dir / "rapidwright_stdout.log"))))
@@ -126,7 +126,7 @@ class XilinxPhysNetlist(TransformTool):
             dependency_modified_time=max(
                 pathlib.Path(__file__).stat().st_mtime,
                 self.design.xilinx_impl_checkpoint_path.stat().st_mtime,
-                self.design.flow_paths["impl_edif_path"].stat().st_mtime,
+                self.design.impl_edif_path.stat().st_mtime,
             ),
         )
 
@@ -139,7 +139,7 @@ class XilinxPhysNetlist(TransformTool):
             TermColor.GREEN,
             "Starting logical to physical netlist conversion for",
             self.design.xilinx_impl_checkpoint_path,
-            self.design.flow_paths["impl_edif_path"],
+            self.design.impl_edif_path,
             add_timestamp=True,
         )
 
@@ -191,7 +191,7 @@ class XilinxPhysNetlist(TransformTool):
         # Read the checkpoint into rapidwright, and get the netlist
 
         self.rw_design = Design.readCheckpoint(
-            self.design.xilinx_impl_checkpoint_path, self.design.flow_paths["impl_edif_path"]
+            self.design.xilinx_impl_checkpoint_path, self.design.impl_edif_path
         )
         self.rw_netlist = self.rw_design.getNetlist()
 

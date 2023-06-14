@@ -20,13 +20,11 @@ class VivadoImplementationTool(ImplementationTool):
 
     def init_design(self):
         """Initialize design object with paths to files needed for implementation"""
-        self.design.flow_paths["impl_netlist_path"] = self.cwd / (self.design.top + "_impl.v")
-        self.design.flow_paths["impl_edif_path"] = self.design.flow_paths[
-            "impl_netlist_path"
-        ].with_suffix(".edf")
+        self.design.impl_netlist_path = self.cwd / (self.design.top + "_impl.v")
+        self.design.impl_edif_path = self.design.impl_netlist_path.with_suffix(".edf")
         self.design.xilinx_impl_checkpoint_path = self.work_dir / "design.dcp"
         self.design.utilization_path = self.work_dir / "utilization.txt"
-        self.design.flow_paths["bitstream_path"] = self.cwd / (self.design.top + ".bit")
+        self.design.bitstream_path = self.cwd / (self.design.top + ".bit")
 
     def implement_bitstream(self):
         """Run vivado executable to perform implementation"""
@@ -53,7 +51,7 @@ class VivadoImplementationTool(ImplementationTool):
         fp.write("set_property top_file " + str(self.design.netlist_path) + " [current_fileset]\n")
         fp.write("link_design -part " + bfasst.config.PART + "\n")
         if not self.args.out_of_context:
-            fp.write("read_xdc " + str(self.design.flow_paths["constraints_path"]) + "\n")
+            fp.write("read_xdc " + str(self.design.constraints_path) + "\n")
 
     def write_impl(self, fp):
         fp.write("set_property design_mode GateLvl [current_fileset]\n")
@@ -62,18 +60,14 @@ class VivadoImplementationTool(ImplementationTool):
         fp.write("route_design\n")
 
     def write_outputs(self, fp):
-        fp.write(
-            "write_checkpoint -force -file " + str(self.design.xilinx_impl_checkpoint_path) + "\n"
-        )
-        fp.write("write_edif -force -file " + str(self.design.flow_paths["impl_edif_path"]) + "\n")
-        fp.write(
-            "write_verilog -force -file " + str(self.design.flow_paths["impl_netlist_path"]) + "\n"
-        )
+        fp.write("write_checkpoint -force -file "
+                 + str(self.design.xilinx_impl_checkpoint_path)
+                 + "\n")
+        fp.write("write_edif -force -file " + str(self.design.impl_edif_path) + "\n")
+        fp.write("write_verilog -force -file " + str(self.design.impl_netlist_path) + "\n")
         fp.write("report_utilization -file " + str(self.design.utilization_path) + "\n")
         if not self.args.out_of_context:
-            fp.write(
-                "write_bitstream -force " + str(self.design.flow_paths["bitstream_path"]) + "\n"
-            )
+            fp.write("write_bitstream -force " + str(self.design.bitstream_path) + "\n")
 
     def write_footer(self, fp):
         fp.write("} ] } { exit 1 }\n")
@@ -133,10 +127,10 @@ class VivadoImplementationTool(ImplementationTool):
     def write_to_results_file(self, log_path, need_to_run):
         """This function writes results to a file.  Not sure if it's used anymore?"""
 
-        if self.design.flow_paths["results_summary_path"] is None:
+        if self.design.results_summary_path is None:
             print("No results path set!")
         else:
-            with open(self.design.flow_paths["results_summary_path"], "a") as res_f:
+            with open(self.design.results_summary_path, "a") as res_f:
                 time_modified = time.ctime(os.path.getmtime(log_path))
                 res_f.write("Results summary (IC2) (" + time_modified + ")\n")
                 # How can I differentiate between different versions of the design?
