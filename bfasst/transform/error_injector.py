@@ -6,10 +6,13 @@ from bfasst.transform.base import TransformTool
 from bfasst.status import Status, TransformStatus
 from bfasst.utils import convert_verilog_literal_to_int
 
+
 class ErrorType(Enum):
     """Types of errors that can be injected"""
+
     BIT_FLIP = "BIT_FLIP"
     WIRE_SWAP = "WIRE_SWAP"
+
 
 class ErrorInjector(TransformTool):
     """Tool to inject errors into a netlist"""
@@ -62,7 +65,7 @@ class ErrorInjector(TransformTool):
         Gets the size of the LUT init string for the given LUT by reading the init string.
         The init string is "X'h####" where X is the size of the LUT init string in bits.
         X is always 2^n where n is the number of inputs to the LUT.
-        For example, a LUT5 would have an init string of "32'h####" 
+        For example, a LUT5 would have an init string of "32'h####"
         and this function would return 32 as the size.
         """
         lut = self.all_luts[lut_number]
