@@ -427,7 +427,7 @@ class Netlist:
             raise RuntimeError("Failed to process all alias wires")
 
         # Now determine the driver for each net
-        for net in self.wire_to_net.values():
+        for net in set(self.wire_to_net.values()):
             net.find_driver()
 
     @property
