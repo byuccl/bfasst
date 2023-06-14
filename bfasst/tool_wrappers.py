@@ -183,7 +183,7 @@ def vivado_ooc(design, build_dir, flow_args):
             impl_status = impl_tool.get_prev_run_status(
                 tool_products=[
                     ToolProduct(
-                        design.flow_paths["bitstream_path"],
+                        design.bitstream_path,
                         impl_tool.log_path,
                         impl_tool.check_impl_status,
                     )
