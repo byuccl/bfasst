@@ -73,6 +73,7 @@ def print_tcl_cmd_catch(fp, cmd, return_code=1):
 
     fp.write("if { [catch { " + cmd + " } ] } { exit " + str(return_code) + " }\n")
 
+
 def convert_verilog_literal_to_int(prop):
     """
     Convert a Verilog literal to an integer
@@ -109,6 +110,7 @@ def convert_verilog_literal_to_int(prop):
         return int(matches.group(1), 16)
 
     return prop
+
 
 def properties_are_equal(prop1, prop2):
     """Compare Verilog property strings for equivalence
