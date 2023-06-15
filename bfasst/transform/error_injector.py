@@ -150,7 +150,7 @@ class ErrorInjector(TransformTool):
         cell_inputs = get_unisim_cell_inputs_and_outputs()
 
         outer_pin_inputs = []
-        for name, inputs in cell_inputs:
+        for name, inputs, _ in cell_inputs:
             if instance.reference.name in name:
                 pins = list(instance.pins)
                 for pin in pins:
