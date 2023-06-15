@@ -30,7 +30,8 @@ class ErrorInjector(TransformTool):
 
     def get_all_instances(self):
         return [
-            instance for instance in self.clean_netlist.get_instances()
+            instance
+            for instance in self.clean_netlist.get_instances()
             if "GND" not in instance.reference.name.upper()
             and "VCC" not in instance.reference.name.upper()
             and "VDD" not in instance.reference.name.upper()
@@ -87,7 +88,7 @@ class ErrorInjector(TransformTool):
         lut = self.all_luts[lut_number]
         lut_properties = lut.data["VERILOG.Parameters"]
 
-        config_string_prefixed = lut_properties["INIT"].lower() # must be lower for int conversion
+        config_string_prefixed = lut_properties["INIT"].lower()  # must be lower for int conversion
         config_string_int = convert_verilog_literal_to_int(config_string_prefixed)
 
         new_config = hex(config_string_int ^ (1 << bit_number))
@@ -195,8 +196,7 @@ class ErrorInjector(TransformTool):
         """Gets the direction of the given pin"""
         if isinstance(pin, sdn.InnerPin):
             return pin.port.direction
-        else:
-            return self.get_unisim_pin_direction(pin)
+        return self.get_unisim_pin_direction(pin)
 
     def get_unisim_pin_direction(self, pin):
         """Gets the direction of the given outer pin"""
