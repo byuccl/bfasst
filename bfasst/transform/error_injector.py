@@ -5,6 +5,7 @@ import spydrnet as sdn
 from bfasst.transform.base import TransformTool
 from bfasst.status import Status, TransformStatus
 from bfasst.utils import convert_verilog_literal_to_int
+from bfasst.vendor_utils.xilinx import get_unisim_cell_inputs_and_outputs
 
 
 class ErrorType(Enum):
@@ -146,16 +147,7 @@ class ErrorInjector(TransformTool):
     def get_unisim_outer_pin_inputs(self, instance):
         """Collect all the pins for a UNISIM cell that are inputs"""
 
-        cell_inputs = (
-            (("LUT6_2",), ("I0", "I1", "I2", "I3", "I4", "I5")),
-            (("IBUF", "OBUF", "OBUFT"), ("I", "T")),
-            (("GND",), ()),
-            (("VCC",), ()),
-            (("FDSE", "FDRE"), ("D", "CE", "R", "C", "S")),
-            (("CARRY4",), ("CI", "CYINIT", "DI", "S")),
-            (("BUFGCTRL",), ("CE0", "CE1", "I0", "I1", "IGNORE0", "IGNORE1", "S0", "S1")),
-            (("MUXF7", "MUXF8"), ("I0", "I1", "S")),
-        )
+        cell_inputs = get_unisim_cell_inputs_and_outputs()
 
         outer_pin_inputs = []
         for name, inputs in cell_inputs:
@@ -180,19 +172,10 @@ class ErrorInjector(TransformTool):
     def get_unisim_outer_pin_outputs(self, instance):
         """Collect all the pins for a UNISIM cell that are outputs"""
 
-        cell_outputs = (
-            (("LUT6_2",), ("O5", "O6")),
-            (("IBUF", "OBUF", "OBUFT"), ("O",)),
-            (("GND",), ("G",)),
-            (("VCC",), ("P",)),
-            (("FDSE", "FDRE"), ("Q",)),
-            (("CARRY4",), ("O", "CO")),
-            (("BUFGCTRL",), ("O",)),
-            (("MUXF7", "MUXF8"), ("O",)),
-        )
+        cell_outputs = get_unisim_cell_inputs_and_outputs()
 
         outer_pin_outputs = []
-        for name, outputs in cell_outputs:
+        for name, _, outputs in cell_outputs:
             if instance.reference.name in name:
                 pins = list(instance.pins)
                 for pin in pins:
@@ -217,18 +200,9 @@ class ErrorInjector(TransformTool):
 
     def get_unisim_pin_direction(self, pin):
         """Gets the direction of the given outer pin"""
-        cell_directions = (
-            (("LUT6_2",), ("O5", "O6")),
-            (("IBUF", "OBUF", "OBUFT"), ("O",)),
-            (("GND",), ("G",)),
-            (("VCC",), ("P",)),
-            (("FDSE", "FDRE"), ("Q",)),
-            (("CARRY4",), ("O", "CO")),
-            (("BUFGCTRL",), ("O",)),
-            (("MUXF7", "MUXF8"), ("O",)),
-        )
+        cell_directions = get_unisim_cell_inputs_and_outputs()
 
-        for name, outputs in cell_directions:
+        for name, _, outputs in cell_directions:
             if pin.instance.reference.name in name:
                 if pin.inner_pin.port.name in outputs:
                     return sdn.OUT
