@@ -1,4 +1,4 @@
-black
+black==23.3.0
 in_place
 paramiko
 scp
