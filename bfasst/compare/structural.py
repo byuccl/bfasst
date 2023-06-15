@@ -26,7 +26,6 @@ class StructuralCompareTool(CompareTool):
 
     def compare_netlists(self):
         """Map the golden and reversed netlists through automated block mapping"""
-        return Status(CompareStatus.COULD_NOT_MAP, "There was a problem")
         impl_netlist = self.gold_netlist
         netlist_b = self.rev_netlist
 

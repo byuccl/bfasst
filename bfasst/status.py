@@ -97,23 +97,25 @@ msg_map = {
 
 
 class BfasstException(Exception):
-    def __init__(self, err, msg):
+    def __init__(self, err, msg, creator=None):
         super().__init__(msg)
         self.error = err
+        self.msg = msg
+        self.creator = creator
 
 
 class Status:
+    """Represents the status of a BFASST tool after it has run"""
     def __init__(self, status, msg="", raise_excep=True):
         self.status = status
         self.msg = msg if msg else ""
         self.error = bool(status.value)
         if status.value and raise_excep:
-            if msg != "":
-                raise BfasstException(status, f"{msg_map[self.status]}: {self.msg}")
-            else:
-                raise BfasstException(status, msg_map[self.status])
+            if msg and msg not in msg_map[self.status]:
+                raise BfasstException(status, f"{msg_map[self.status]}: {self.msg}", self)
+            raise BfasstException(status, msg_map[self.status], self)
 
     def __str__(self):
-        if self.msg in msg_map[self.status]:
-            return msg_map[self.status]
-        return f"{msg_map[self.status]}{self.msg}"
+        if self.msg not in msg_map[self.status]:
+            return f"{msg_map[self.status]}: {self.msg}"
+        return msg_map[self.status]
