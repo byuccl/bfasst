@@ -544,8 +544,7 @@ class XilinxPhysNetlist(TransformTool):
                     # Connect inputs to GND
                     for logical_port in XilinxPhysNetlist.STD_PIN_MAP_BY_CELL["LUT6_2"]:
                         if logical_port.startswith("I"):
-                            port = new_cell_inst.getPortInst(logical_port)
-                            assert not port
+                            assert not new_cell_inst.getPortInst(logical_port)
                             self.get_or_create_const_net(Unisim.GND).createPortInst(
                                 new_cell_inst.getPort(logical_port), new_cell_inst
                             )
