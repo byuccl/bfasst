@@ -108,7 +108,12 @@ class Status:
         self.msg = msg if msg else ""
         self.error = bool(status.value)
         if status.value and raise_excep:
-            raise BfasstException(status, f": {self.msg}")
+            if msg != "":
+                raise BfasstException(status, f"{msg_map[self.status]}: {self.msg}")
+            else:
+                raise BfasstException(status, msg_map[self.status])
 
     def __str__(self):
+        if self.msg in msg_map[self.status]:
+            return msg_map[self.status]
         return f"{msg_map[self.status]}{self.msg}"
