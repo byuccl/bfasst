@@ -109,6 +109,7 @@ class BfasstException(Exception):
 
 class Status:
     """Represents the status of a BFASST tool after it has run"""
+
     def __init__(self, status, msg="", raise_excep=True):
         self.status = status
         self.msg = msg if msg else ""
