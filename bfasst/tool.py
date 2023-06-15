@@ -65,6 +65,13 @@ class Tool(abc.ABC):
         """Add arguments for argparser.  This should be done using this
         function for all child tool classes."""
         raise NotImplementedError
+    
+    @abc.abstractmethod
+    def reset(self):
+        """Reset the tool to its initial state.
+        This is called if the tool must be run from scratch
+        multiple times in a single flow."""
+        raise NotImplementedError
 
     def create_arg_parser(self, name, args):
         """Create the arg parser object then add arguments by

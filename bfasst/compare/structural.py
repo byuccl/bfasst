@@ -25,6 +25,10 @@ class StructuralCompareTool(CompareTool):
 
         jpype_jvm.start()
 
+    def reset(self):
+        self.block_mapping = bidict()
+        self.net_mapping = bidict()
+
     def compare_netlists(self):
         """Map the golden and reversed netlists through automated block mapping"""
 
