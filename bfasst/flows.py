@@ -234,12 +234,12 @@ def flow_xilinx_structural_error_injection(design, flow_args, build_dir):
     status = xray_rev(design, build_dir, flow_args)
 
     random.seed(0)
-    injection_types = [ErrorType.WIRE_SWAP]
+    injection_types = [ErrorType.BIT_FLIP, ErrorType.WIRE_SWAP]
 
     with open(error_logs_path / "error_injection.log", "w") as fp:
         for err in injection_types:
             num_problems = 0
-            num_runs = 1
+            num_runs = 100
             for _ in range(num_runs):
                 status = error_injection(design, build_dir, err)
                 if status == TransformStatus.ERROR:
