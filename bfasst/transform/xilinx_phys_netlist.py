@@ -157,33 +157,38 @@ class XilinxPhysNetlist(TransformTool):
 
         return status
 
-    def get_or_create_vcc_net(self):
-        """Create an edif vcc cell/net if it doesn't exist"""
-        vcc_edif_cell = self.rw_netlist.getHDIPrimitive(Unisim.VCC)
+    def get_or_create_const_net(self, unisim_cell):
+        """Create an edif const cell/net if it doesn't exist"""
+        assert unisim_cell in (Unisim.GND, Unisim.VCC)
+        port_name = "G" if unisim_cell == Unisim.GND else "P"
 
-        vcc_insts = [
+        edif_cell = self.rw_netlist.getHDIPrimitive(unisim_cell)
+
+        cell_insts = [
             inst
             for inst in self.rw_netlist.getTopCell().getCellInsts()
-            if inst.getCellType() == vcc_edif_cell
+            if inst.getCellType() == edif_cell
         ]
-        assert len(vcc_insts) <= 1
+        assert len(cell_insts) <= 1
 
-        if vcc_insts:
-            return vcc_insts[0].getPortInst("P").getNet()
+        if cell_insts:
+            return cell_insts[0].getPortInst(port_name).getNet()
 
         # Create new VCC instance as part of top-level
+        name = "gnd" if unisim_cell == Unisim.GND else "vcc"
+
         vcc_edif_inst = self.rw_netlist.getTopCell().createChildCellInst(
-            "vcc_phys_netlist", vcc_edif_cell
+            name + "_phys_netlist", edif_cell
         )
 
         # Create VCC net as part of top-level
-        vcc_edif_net = EDIFNet("vcc_net_phys_netlist", self.rw_netlist.getTopCell())
+        edif_net = EDIFNet(name + "_net_phys_netlist", self.rw_netlist.getTopCell())
 
-        port = vcc_edif_inst.getPort("P")
+        port = vcc_edif_inst.getPort(port_name)
         assert port
-        vcc_edif_net.createPortInst(port, vcc_edif_inst)
+        edif_net.createPortInst(port, vcc_edif_inst)
 
-        return vcc_edif_net
+        return edif_net
 
     def run_rapidwright(self, phys_netlist_checkpoint, phys_netlist_edif_path):
         """Do all rapidwright related processing on the netlist"""
@@ -199,7 +204,7 @@ class XilinxPhysNetlist(TransformTool):
         self.bufgctrl_edif_cell = self.rw_netlist.getHDIPrimitive(Unisim.BUFGCTRL)
 
         # Get/Create the VCC EDIF Net
-        vcc_edif_net = self.get_or_create_vcc_net()
+        vcc_edif_net = self.get_or_create_const_net(Unisim.VCC)
 
         self.vcc_edif_net = vcc_edif_net
 
@@ -535,6 +540,14 @@ class XilinxPhysNetlist(TransformTool):
                         )
                     else:
                         new_net.createPortInst(routed_to_port_inst.getPort(), routed_to_cell_inst)
+
+                    # Connect inputs to VCC
+                    for logical_port in XilinxPhysNetlist.STD_PIN_MAP_BY_CELL["LUT6_2"]:
+                        if logical_port.startswith("I"):
+                            assert not new_cell_inst.getPortInst(logical_port)
+                            self.get_or_create_const_net(Unisim.VCC).createPortInst(
+                                new_cell_inst.getPort(logical_port), new_cell_inst
+                            )
 
     def process_lut(self, lut6_cell, lut5_cell):
         """This function takes a LUT* from the netlist and replaces with with a LUT6_2
