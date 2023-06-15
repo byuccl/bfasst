@@ -77,7 +77,6 @@ def check_for_potential_mapping(
         instances_matching += 1
         saved_instance = potential_instances[0][0]
     elif len(potential_instances) > 1:
-
         higher_potential_instances = get_higher_potential_instances(
             potential_instances, higher_potential_instances
         )

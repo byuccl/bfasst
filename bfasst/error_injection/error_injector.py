@@ -15,6 +15,7 @@ from bfasst.status import Status, ErrorInjectionStatus
 
 class ErrorInjector(ErrorInjectionTool):
     """Error injector tool"""
+
     TOOL_WORK_DIR = "injection"
 
     # This picks enum and map pick a flow function to run, very similar (i.e.
@@ -194,10 +195,12 @@ class ErrorInjector(ErrorInjectionTool):
 
     def add_signal_tap(self, netlist_buffer):
         """Adds a signal tap to a random wire in the design"""
-        (module_decl_line,
-         output_decl_line,
-         assign_statement_line,
-         wire_list) = self.find_design_statements(netlist_buffer)
+        (
+            module_decl_line,
+            output_decl_line,
+            assign_statement_line,
+            wire_list,
+        ) = self.find_design_statements(netlist_buffer)
         if (
             module_decl_line is None
             or output_decl_line is None

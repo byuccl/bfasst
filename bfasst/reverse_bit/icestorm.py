@@ -14,6 +14,7 @@ from bfasst.status import Status, BitReverseStatus
 
 class IcestormReverseBitTool(ReverseBitTool):
     """IceStorm reverse bitstream tool"""
+
     TOOL_WORK_DIR = "icestorm"
 
     def reverse_bitstream(self):
@@ -35,9 +36,7 @@ class IcestormReverseBitTool(ReverseBitTool):
         # Run if reverse netlist file is out of date
         rev_netlist_mtime = self.design.reversed_netlist_path.stat().st_mtime
         netlist_mtime = self.design.netlist_path.stat().st_mtime
-        need_to_run |= (not need_to_run) and (
-            rev_netlist_mtime < netlist_mtime
-        )
+        need_to_run |= (not need_to_run) and (rev_netlist_mtime < netlist_mtime)
 
         if need_to_run:
             # First go through and remove any added stuff from pcf port names

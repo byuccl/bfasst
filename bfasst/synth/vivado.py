@@ -43,9 +43,9 @@ class VivadoSynthesisTool(SynthesisTool):
         self.design.netlist_path = self.cwd / f"{self.design.top}.edf"
         self.design.constraints_path = self.cwd / "constraints.xdc"
 
-        generate_netlist = ToolProduct(self.design.netlist_path,
-                                       self.log_path,
-                                       self.check_synth_log)
+        generate_netlist = ToolProduct(
+            self.design.netlist_path, self.log_path, self.check_synth_log
+        )
         if self.args.out_of_context:
             tool_products = [generate_netlist]
         else:
