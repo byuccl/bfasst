@@ -72,7 +72,11 @@ def run_design(print_lock, running_list, design, work_path, flow_fcn, flow_args)
     try:
         status = flow_fcn(design=design, build_dir=work_path, flow_args=flow_args)
     except BfasstException as e:
-        status = Status(status=e.error, msg=str(e), raise_excep=False)
+        status = (
+            e.creator
+            if e.creator is not None
+            else Status(status=e.error, msg=str(e), raise_excep=False)
+        )
     finally:
         with open(work_path / LOG_FILE_NAME, "w") as f:
             buf.seek(0)
