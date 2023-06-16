@@ -1,0 +1,17 @@
+{
+    "[python]": {
+        "editor.formatOnSave": true,
+    },
+    "python.analysis.extraPaths": [
+        "scripts",
+        "third_party/fasm2bels/fasm2bels"
+    ],
+    "python.pythonPath": ".venv/bin/python3",
+    "git.enableCommitSigning": false,
+    "python.formatting.blackArgs": [
+        "--line-length","100"
+    ],
+    "python.formatting.provider": "black",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true
+}
