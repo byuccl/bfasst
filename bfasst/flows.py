@@ -25,7 +25,7 @@ from bfasst.status import (
     MapStatus,
     CompareStatus,
     TransformStatus,
-    ErrorInjectionStatus
+    ErrorInjectionStatus,
 )
 from bfasst.synth.ic2_lse import Ic2LseSynthesisTool
 from bfasst.synth.ic2_synplify import Ic2SynplifySynthesisTool
@@ -242,11 +242,11 @@ def flow_xilinx_structural_error_injection(design, flow_args, build_dir):
     injection_types = [ErrorType.BIT_FLIP, ErrorType.WIRE_SWAP]
 
     compare_tool = StructuralCompareTool(
-        cwd = build_dir,
-        design = design,
-        gold_netlist = design.phys_netlist_path,
-        rev_netlist = design.corrupted_netlist_path,
-        flow_args = flow_args[ToolType.CMP]
+        cwd=build_dir,
+        design=design,
+        gold_netlist=design.phys_netlist_path,
+        rev_netlist=design.corrupted_netlist_path,
+        flow_args=flow_args[ToolType.CMP],
     )
     error_injector = SdnErrorInjector(cwd=build_dir, design=design)
 
@@ -273,7 +273,7 @@ def flow_xilinx_structural_error_injection(design, flow_args, build_dir):
             except BfasstException as e:
                 status = e.creator
 
-            if status == CompareStatus.SUCCESS: # An error was injected, but not detected
+            if status == CompareStatus.SUCCESS:  # An error was injected, but not detected
                 num_problems += 1
                 new_path = generate_path_to_save_corrupted_netlist(num_problems, err)
                 get_corrupt_netlist_path().rename(new_path)
@@ -282,7 +282,7 @@ def flow_xilinx_structural_error_injection(design, flow_args, build_dir):
             get_corrupt_netlist_path().unlink()
 
     if num_problems == 0:
-        return Status(ErrorInjectionStatus.SUCCESS, "All errors detected", raise_excep = False)
+        return Status(ErrorInjectionStatus.SUCCESS, "All errors detected", raise_excep=False)
     return Status(ErrorInjectionStatus.ERROR, "Some errors were not caught")
 
 

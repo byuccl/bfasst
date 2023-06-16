@@ -1,5 +1,6 @@
 """Module for xilinx utilities"""
 
+
 def get_unisim_cell_inputs_and_outputs():
     """
     Gets the inputs and outputs for UNISIM cells. The format for a cell
