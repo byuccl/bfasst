@@ -4,6 +4,7 @@ from bidict import bidict
 import spydrnet as sdn
 from bfasst import jpype_jvm
 from bfasst.compare.base import CompareTool
+import bfasst.rw_helpers as rw
 from bfasst.status import CompareStatus, Status
 from bfasst.utils import TermColor, error, properties_are_equal
 
@@ -324,10 +325,19 @@ class StructuralCompareTool(CompareTool):
         """Return the list of properties that must match for a given cell type
         for the cell to be considered equivalent."""
 
+        prims = ["LUT6_2", "FDSE", "FDRE", "FDCE", "FDPE", "RAM32X1S", "RAM32X1D", "RAM32X1S_1", "RAM32X1D_1", "RAM32M", "RAMB36E1", "BUFGCTRL","IBUF", "OBUF", "OBUFT", "MUXF7", "MUXF8", "CARRY4"]
+
         if cell_type == "LUT6_2":
             return ("INIT",)
-        if cell_type in ("FDSE", "FDRE"):
+        if cell_type in ("FDSE", "FDRE", "FDCE", "FDPE"):
             return ("INIT",)
+        if cell_type in ("RAM32X1S", "RAM32X1D", "RAM32X1S_1", "RAM32X1D_1"):
+            return ("INIT",)
+        if cell_type in ("RAM32M",):
+            return ("INIT_A", "INIT_B", "INIT_C", "INIT_D")
+        if cell_type == "RAMB36E1":
+            props = [f"INIT_{i:02X}" for i in range(int("0x80", base=16))]
+            return tuple(props)
         if cell_type == "BUFGCTRL":
             return (
                 "INIT_OUT",
@@ -341,7 +351,7 @@ class StructuralCompareTool(CompareTool):
                 "PRESELECT_I1",
             )
         if cell_type in ("IBUF", "OBUF", "OBUFT", "MUXF7", "MUXF8", "CARRY4"):
-            return ()
+            return ()        
 
         raise KeyError(f"Unhandled properties for type {cell_type}")
 
@@ -470,7 +480,6 @@ class Pin:
 
     @property
     def net(self):
-        # print()
         # print(self.instance.name, self.name, self.pin.wire)
         return self.netlist.wire_to_net.get(self.pin.wire)
 
@@ -480,7 +489,6 @@ class Pin:
 
 
 class Net:
-
     """Wrapper class around spydernet Wire to add some helper properties"""
 
     def __init__(self, wire, tool):
@@ -542,25 +550,6 @@ class Net:
     def get_direction_for_unisim(cell_type_name, port_name):
         """Get a pin direction for a UNISIM cell"""
 
-        cell_inputs_and_outputs = (
-            (("LUT6_2",), ("I0", "I1", "I2", "I3", "I4", "I5"), ("O5", "O6")),
-            (("IBUF", "OBUF", "OBUFT"), ("I", "T"), ("O",)),
-            (("GND",), (), ("G",)),
-            (("VCC",), (), ("P",)),
-            (("FDSE", "FDRE"), ("D", "CE", "R", "C", "S"), ("Q",)),
-            (("CARRY4",), ("CI", "CYINIT", "DI", "S"), ("O", "CO")),
-            (("BUFGCTRL",), ("CE0", "CE1", "I0", "I1", "IGNORE0", "IGNORE1", "S0", "S1"), ("O",)),
-            (("MUXF7", "MUXF8"), ("I0", "I1", "S"), ("O",)),
-        )
-
-        for cell_types, inputs, outputs in cell_inputs_and_outputs:
-            if cell_type_name in cell_types:
-                if port_name in inputs:
-                    return sdn.ir.Port.Direction.IN
-                if port_name in outputs:
-                    return sdn.ir.Port.Direction.OUT
-                raise NotImplementedError(cell_type_name, port_name)
-
         if cell_type_name.startswith("SDN_VERILOG_ASSIGNMENT"):
             if port_name == "i":
                 return sdn.ir.Port.Direction.IN
@@ -568,7 +557,7 @@ class Net:
             # is never called on alias wires (wires driven by assign statement)
             assert False
 
-        raise NotImplementedError(cell_type_name, port_name)
+        return rw.get_sdn_direction_for_unisim(cell_type_name, port_name)
 
     # @staticmethod
     # def get_assign_statement(wire):

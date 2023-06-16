@@ -1,0 +1,55 @@
+designs:
+# Some designs in the OOC directory have too many I/Os to be placed
+# Also VHDL designs do not compile right due to missing packages
+  - ooc/EX_stage
+  - ooc/ID_stage
+  - ooc/IF_stage
+  - ooc/MEM_stage
+  - ooc/WB_stage
+  - ooc/a25_coprocessor
+  # - ooc/a25_fetch  - Too many I/Os
+  # - ooc/a25_decode - Too many I/Os
+  # - ooc/a25_mem - Too many I/Os
+  - ooc/a25_write_back
+  # - ooc/a25_wishbone - Too many I/Os
+  # - ooc/aes128 - Too many I/Os
+  # - ooc/amber - Too many I/Os
+  - ooc/atahost 
+  - ooc/basicrsa 
+  - ooc/bcd_adder 
+  - ooc/big_counter
+  # - ooc/bubblesort - Too many I/Os  
+  - ooc/control_unit
+  - ooc/counter
+  - ooc/cpu8080
+  - ooc/data_path
+  - ooc/fixed_point_sqrt
+  - ooc/fm_3d_core
+  - ooc/graphiti
+  - ooc/hight
+  # - ooc/jpegencode - Fails placement when max_dsp is 0. Not an I/O issue, just a internal timing/routing issue with a clock net. No problems in Vivado flow when DSPs allowed
+  - ooc/m32632
+  - ooc/median
+  - ooc/mips_16
+  - ooc/mpeg2fpga
+  - ooc/natalius_8bit_risc
+  - ooc/natalius_processor
+  - ooc/neo430
+  - ooc/pci_mini
+  - ooc/pic
+  - ooc/pid
+  - ooc/pid_simple
+  - ooc/potato
+  - ooc/pwm
+  - ooc/quadratic_func
+  - ooc/random_pulse_generator
+  # - ooc/sap - Implementation fails: ERROR: [DRC LUTLP-1] Combinatorial Loop Alert (4x)
+  - ooc/simon_core
+  - ooc/tiny_encryption_algorithm
+  - ooc/uart2spi
+  - ooc/vga
+  - ooc/wb_lcd
+
+flow: xilinx_phys_netlist_cmp
+
+synth: " --flatten --max_dsp 0"

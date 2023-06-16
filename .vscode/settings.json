@@ -13,5 +13,10 @@
     ],
     "python.formatting.provider": "black",
     "python.linting.enabled": true,
-    "python.linting.pylintEnabled": true
+    "python.linting.pylintEnabled": true,
+    "files.associations": {
+        "*.sv": "systemverilog",
+        "*.ttml": "xml",
+        "*.ttss": "css"
+    }
 }

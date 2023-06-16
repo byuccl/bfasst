@@ -200,9 +200,14 @@ def flow_xilinx_phys_netlist_cmp(design, flow_args, build_dir):
     if "--max_dsp" not in flow_args[ToolType.SYNTH]:
         flow_args[ToolType.SYNTH] += " --max_dsp 0"
 
-    status = flow_xilinx_phys_netlist(design, flow_args, build_dir)
-    status = xray_rev(design, build_dir, flow_args)
+    # status = flow_xilinx_phys_netlist(design, flow_args, build_dir)
+    if "--flatten" not in flow_args[ToolType.SYNTH]:
+        flow_args[ToolType.SYNTH] += " --flatten"
 
+    status = vivado_synth(design, build_dir, flow_args)
+    status = vivado_impl(design, build_dir, flow_args)
+    status = xray_rev(design, build_dir, flow_args)
+    status = xilinx_phys_netlist(design, build_dir)
     status = structural_cmp(
         design, build_dir, design.phys_netlist_path, design.reversed_netlist_path, flow_args
     )
