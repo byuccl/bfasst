@@ -480,7 +480,6 @@ class XilinxPhysNetlist(TransformTool):
 
         type_name = cell.getEDIFCellInst().getCellType().getName()
         self.log_color(TermColor.BLUE, f"\nProcessing {type_name}", cell)
-        code.interact(local=dict(globals(), **locals()))
         if rw.PinMapping.cell_is_default_mapping(cell):
             self.log("  Inputs not permuted, skipping")
             return []
