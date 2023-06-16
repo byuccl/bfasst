@@ -325,7 +325,26 @@ class StructuralCompareTool(CompareTool):
         """Return the list of properties that must match for a given cell type
         for the cell to be considered equivalent."""
 
-        prims = ["LUT6_2", "FDSE", "FDRE", "FDCE", "FDPE", "RAM32X1S", "RAM32X1D", "RAM32X1S_1", "RAM32X1D_1", "RAM32M", "RAMB36E1", "BUFGCTRL","IBUF", "OBUF", "OBUFT", "MUXF7", "MUXF8", "CARRY4"]
+        prims = [
+            "LUT6_2",
+            "FDSE",
+            "FDRE",
+            "FDCE",
+            "FDPE",
+            "RAM32X1S",
+            "RAM32X1D",
+            "RAM32X1S_1",
+            "RAM32X1D_1",
+            "RAM32M",
+            "RAMB36E1",
+            "BUFGCTRL",
+            "IBUF",
+            "OBUF",
+            "OBUFT",
+            "MUXF7",
+            "MUXF8",
+            "CARRY4",
+        ]
 
         if cell_type == "LUT6_2":
             return ("INIT",)
@@ -351,7 +370,7 @@ class StructuralCompareTool(CompareTool):
                 "PRESELECT_I1",
             )
         if cell_type in ("IBUF", "OBUF", "OBUFT", "MUXF7", "MUXF8", "CARRY4"):
-            return ()        
+            return ()
 
         raise KeyError(f"Unhandled properties for type {cell_type}")
 

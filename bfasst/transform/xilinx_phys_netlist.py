@@ -254,7 +254,10 @@ class XilinxPhysNetlist(TransformTool):
                     cells_already_visited.add(lut6_cell)
                     # Sanity check, pretty sure clk is not inverted when this value is one, so if there
                     # is a case where this changes, investigate the design to see.
-                    assert lut6_cell.getEDIFCellInst().getProperty("IS_CLK_INVERTED").getValue() == "1'b1"
+                    assert (
+                        lut6_cell.getEDIFCellInst().getProperty("IS_CLK_INVERTED").getValue()
+                        == "1'b1"
+                    )
                     # TODO: handle possible gnd net
                     continue
                 elif len(lut_rams) > 1:
@@ -388,7 +391,7 @@ class XilinxPhysNetlist(TransformTool):
 
         prefix = ["A", "B", "C", "D"]
         props = {f"INIT_{i}": c.getProperty("INIT") for i, c in zip(prefix, edif_cells)}
-        
+
         for i, c in zip(prefix, edif_cells):
             val = str(c.getProperty("INIT").getValue())[4:]
             ram32m.addProperty(f"INIT_{i}", f"64'h{int(val, base=16):0{16}X}")
@@ -428,7 +431,10 @@ class XilinxPhysNetlist(TransformTool):
                 ram32x1s_cell = hier_cell.getInst()
                 if rw.get_net_from_edif_port(lut6_cell, "WE", ram32x1s_cell).getName() != we_net:
                     break
-                if rw.get_net_from_edif_port(lut6_cell, "WCLK", ram32x1s_cell).getName() != wclk_net:
+                if (
+                    rw.get_net_from_edif_port(lut6_cell, "WCLK", ram32x1s_cell).getName()
+                    != wclk_net
+                ):
                     break
             else:
                 self.process_ram32m(lut_rams, site_inst)
@@ -449,7 +455,12 @@ class XilinxPhysNetlist(TransformTool):
                 wclk_net2 = rw.get_net_from_edif_port(lut6_cell, "WCLK", ram32x1s_cell).getName()
                 din_net2 = rw.get_net_from_edif_port(lut6_cell, "D", ram32x1s_cell).getName()
                 init2 = lut6_cell.getProperty("INIT")
-                if we_net == we_net2 and wclk_net == wclk_net2 and din_net == din_net2 and init == init2:
+                if (
+                    we_net == we_net2
+                    and wclk_net == wclk_net2
+                    and din_net == din_net2
+                    and init == init2
+                ):
                     lut_ram_cells.append(lut6_cell)
                     self.process_ram32x1d(lut_ram_cells, site_inst)
                     return lut_rams
@@ -458,7 +469,7 @@ class XilinxPhysNetlist(TransformTool):
                 din_net = din_net2
                 init = init2
                 lut_ram_cells = [lut6_cell]
-                    
+
         return lut_rams
 
     def process_muxf7_muxf8(self, cell):

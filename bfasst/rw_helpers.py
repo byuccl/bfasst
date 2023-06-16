@@ -7,19 +7,24 @@ from spydrnet.ir.Port import Direction as SdnDirection
 
 # pylint: disable=wrong-import-position,wrong-import-order
 from bfasst import jpype_jvm
+
 jpype_jvm.start()
 from com.xilinx.rapidwright.design import Design, Unisim
 from com.xilinx.rapidwright.edif import EDIFDirection as RwDirection
 from java.util import ArrayList as JArrayList
+
 # pylint: enable=wrong-import-position,wrong-import-order
+
 
 class RapidwrightException(Exception):
     pass
+
 
 class _PinMapping:
     """
     Check default pin mappings for unisim types.
     """
+
     # TODO see if this can be pulled out of rw.
     # Maybe place an UNISIM cell and then check the l2p port mapping?
     CELL_PIN_MAP = {
@@ -109,20 +114,25 @@ class _PinMapping:
 
         return True
 
+
 PinMapping = _PinMapping()
 
+
 def cell_is_6lut(cell):
-        """Return whether this cell is using the 6LUT BEL"""
-        return fnmatch(str(cell.getBELName()), "?6LUT")
+    """Return whether this cell is using the 6LUT BEL"""
+    return fnmatch(str(cell.getBELName()), "?6LUT")
+
 
 def cell_is_5lut(cell):
     """Return whether this cell is using the 5LUT BEL"""
     return fnmatch(str(cell.getBELName()), "?5LUT")
 
+
 def generate_combinded_cell_name(edif_cells):
     root_name = commonprefix([str(c.getName()) for c in edif_cells])
-    leaves = [str(c.getName())[len(root_name):] for c in edif_cells]
+    leaves = [str(c.getName())[len(root_name) :] for c in edif_cells]
     return f"{root_name}ram32m_{'_'.join(leaves)}_phys"
+
 
 def get_net_from_edif_port(cell, port_name, edif_cell=None):
     if edif_cell is None:
@@ -131,6 +141,7 @@ def get_net_from_edif_port(cell, port_name, edif_cell=None):
         edif_port = edif_cell.getPortInst(port_name)
     site_pin = cell.getSitePinFromPortInst(edif_port, JArrayList())
     return site_pin.getNet()
+
 
 def valid_bus_transfer(logical_pins, dest_bus, old_edif_cell_inst, new_edif_cell_inst):
     """
@@ -159,6 +170,7 @@ def valid_bus_transfer(logical_pins, dest_bus, old_edif_cell_inst, new_edif_cell
 
         logical_net.createPortInst(new_port, new_edif_cell_inst)
         logical_net.removePortInst(old_port)
+
 
 def valid_net_transfer(logical_pin, physical_pin, old_edif_cell_inst, new_edif_cell_inst):
     """
@@ -190,6 +202,7 @@ def valid_net_transfer(logical_pin, physical_pin, old_edif_cell_inst, new_edif_c
     logical_net.createPortInst(new_port, new_edif_cell_inst)
     logical_net.removePortInst(old_port)
 
+
 def process_lut_eqn(cell, is_lut5, log=print):
     """Transform a logical lut equation into a physical lut equation"""
 
@@ -207,9 +220,7 @@ def process_lut_eqn(cell, is_lut5, log=print):
         assert len(physical_pins) == 1
         physical_pin = str(physical_pins[0])
         eqn = "O=I" + str(int(physical_pin[1]) - 1)
-        log(
-            f"  LUT{s6_or_5} is routethru using physical pin {physical_pin}, creating eqn {eqn}"
-        )
+        log(f"  LUT{s6_or_5} is routethru using physical pin {physical_pin}, creating eqn {eqn}")
         return eqn
 
     # First get an equation from the logical INIT string
@@ -239,6 +250,7 @@ def process_lut_eqn(cell, is_lut5, log=print):
     log(f"  New LUT{s6_or_5} eqn:", eqn)
     return eqn
 
+
 def process_lut_init(lut6_cell, lut5_cell, new_cell_inst, log=print):
     """Fix the LUT INIT property for the new_cell_inst"""
 
@@ -260,10 +272,11 @@ def process_lut_init(lut6_cell, lut5_cell, new_cell_inst, log=print):
     log("  New LUT INIT:", init_str)
     new_cell_inst.addProperty("INIT", init_str)
 
+
 def get_sdn_direction_for_unisim(cell_type_name, port_name):
     """
     Get a pin direction for a UNISIM cell
-    
+
     Parameters:
     cell_type_name (str) -> UNISIM cell type
     port_name (str) -> port name
