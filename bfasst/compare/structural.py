@@ -23,11 +23,17 @@ class StructuralCompareTool(CompareTool):
         self.block_mapping = bidict()
         self.net_mapping = bidict()
 
+        self.run_num = None
+
         jpype_jvm.start()
 
-    def reset(self):
+    def reset_mappings(self):
         self.block_mapping = bidict()
         self.net_mapping = bidict()
+
+    def check_log_path(self):
+        if self.run_num is not None:
+            self.log_path = self.work_dir / f"compare_log_{self.run_num}.txt"
 
     def compare_netlists(self):
         """Map the golden and reversed netlists through automated block mapping"""
@@ -35,6 +41,7 @@ class StructuralCompareTool(CompareTool):
         impl_netlist = self.gold_netlist
         netlist_b = self.rev_netlist
 
+        self.check_log_path()
         self.open_new_log()
 
         self.log_title("Building netlist A", impl_netlist)
