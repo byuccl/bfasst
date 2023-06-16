@@ -31,6 +31,8 @@ from bfasst.status import (
 from bfasst.synth.ic2_lse import Ic2LseSynthesisTool
 from bfasst.synth.ic2_synplify import Ic2SynplifySynthesisTool
 from bfasst.synth.yosys import YosysTechSynthTool
+from bfasst.transform.error_injector import ErrorInjector as SdnErrorInjector
+from bfasst.compare.structural import StructuralCompareTool
 from bfasst.tool_wrappers import (
     ToolType,
     conformal_cmp,
@@ -227,8 +229,6 @@ def flow_xilinx_phys_netlist_cmp(design, flow_args, build_dir):
 
 def flow_xilinx_structural_error_injection(design, flow_args, build_dir):
     """Inject errors into FASM2BELS netlist and compare with Conformal"""
-    from bfasst.transform.error_injector import ErrorInjector as SdnErrorInjector
-    from bfasst.compare.structural import StructuralCompareTool
 
     def get_corrupt_netlist_path():
         return design.corrupted_netlist_path
