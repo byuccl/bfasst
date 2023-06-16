@@ -127,14 +127,15 @@ class ErrorInjector(TransformTool):
 
     def __log_bit_flip(self, lut_number, bit_number):
         """Logs the bit flip that occurred to a log file"""
-        log_path = self.__get_bit_flip_log()
-        with open(log_path, "w") as fp:
-            lut_name = self.all_luts[lut_number].name
-            lut_type = self.all_luts[lut_number].reference.name
-            fp.write(f"LUT {lut_name} of type {lut_type} ")
-            fp.write(f"had bit {bit_number} flipped ")
-            fp.write(f"resulting in a change from {self.old_lut_init} to {self.new_lut_init}")
-            fp.write("\n")
+        self.log_path = self.__get_bit_flip_log()
+        lut_name = self.all_luts[lut_number].name
+        lut_type = self.all_luts[lut_number].reference.name
+        log_msg = (
+            f"LUT {lut_name} of type {lut_type} "
+            + f"had bit {bit_number} flipped "
+            + f"resulting in a change from {self.old_lut_init} to {self.new_lut_init}"
+        )
+        self.log(log_msg)
 
     def __get_bit_flip_log(self):
         return self.work_dir / f"bit_flip_log_{self.run_num}.log"
@@ -235,11 +236,13 @@ class ErrorInjector(TransformTool):
 
     def __log_wire_swap(self, selected_input, selected_input2):
         """Logs the wire swap to the log file"""
-        log_path = self.__get_wire_swap_log()
-        with open(log_path, "w") as fp:
-            fp.write(f"Wire swap of {selected_input.wire.cable.name} ")
-            fp.write(f"and {selected_input2.wire.cable.name} ")
-            fp.write("was successful.\n")
+        self.log_path = self.__get_wire_swap_log()
+        log_msg = (
+            f"Wire swap of {selected_input.wire.cable.name} "
+            + f"and {selected_input2.wire.cable.name} "
+            + "was successful.\n"
+        )
+        self.log(log_msg)
 
     def __get_wire_swap_log(self):
         return self.work_dir / f"wire_swap_log_{self.run_num}.log"
