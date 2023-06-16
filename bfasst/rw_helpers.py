@@ -146,6 +146,12 @@ def get_net_from_edif_port(cell, port_name, edif_cell=None):
     return site_pin.getNet()
 
 
+def get_net_names_from_edif_ports(cell, port_names, edif_cell=None):
+    return [
+        get_net_from_edif_port(cell, port_name, edif_cell).getName() for port_name in port_names
+    ]
+
+
 def valid_bus_transfer(logical_pins, dest_bus, old_edif_cell_inst, new_edif_cell_inst):
     """
     Check valid pin format and wire up logical pins from old cell to bus on new cell.
@@ -301,7 +307,9 @@ def get_sdn_direction_for_unisim(unisim, port_name):
     unisim_cell = Design.getUnisimCell(Unisim.valueOf(unisim))
     if unisim_cell.getPort(port_name).getDirection() == RwDirection.IN:
         return sdn.IN
-    elif unisim_cell.getPort(port_name).getDirection() == RwDirection.OUT:
+    if unisim_cell.getPort(port_name).getDirection() == RwDirection.OUT:
         return sdn.OUT
-    elif unisim_cell.getPort(port_name).getDirection() == RwDirection.INOUT:
+    if unisim_cell.getPort(port_name).getDirection() == RwDirection.INOUT:
         return sdn.INOUT
+
+    raise RapidwrightException(f"Unknown direction for {unisim} {port_name}")

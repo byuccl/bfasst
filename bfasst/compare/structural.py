@@ -24,6 +24,39 @@ class StructuralCompareTool(CompareTool):
         self.block_mapping = bidict()
         self.net_mapping = bidict()
 
+        init_only = (
+            "LUT6_2",
+            "FDSE",
+            "FDRE",
+            "FDCE",
+            "FDPE",
+            "RAM32X1S",
+            "RAM32X1D",
+            "RAM32X1S_1",
+            "RAM32X1D_1",
+        )
+        no_props = ("IBUF", "OBUF", "OBUFT", "MUXF7", "MUXF8", "CARRY4")
+
+        _cell_props = {x: ("INIT",) for x in init_only}
+        _cell_props.update({x: () for x in no_props})
+        _cell_props["RAM32M"] = ("INIT_A", "INIT_B", "INIT_C", "INIT_D")
+        _cell_props["RAMB36E1"] = tuple(
+            f"INIT_{i:02X}" for i in range(int("0x80", base=16))
+        )  # TODO add INIT_A, INIT_B, INITP_00 - INITP_0F
+        _cell_props["BUFGCTRL"] = (
+            "INIT_OUT",
+            "IS_CE0_INVERTED",
+            "IS_CE1_INVERTED",
+            "IS_IGNORE0_INVERTED",
+            "IS_IGNORE1_INVERTED",
+            "IS_S0_INVERTED",
+            "IS_S1_INVERTED",
+            "PRESELECT_I0",
+            "PRESELECT_I1",
+        )
+
+        self._cell_props = _cell_props
+
         self.run_num = None
 
         jpype_jvm.start()
@@ -345,54 +378,8 @@ class StructuralCompareTool(CompareTool):
     def get_properties_for_type(self, cell_type):
         """Return the list of properties that must match for a given cell type
         for the cell to be considered equivalent."""
-
-        prims = [
-            "LUT6_2",
-            "FDSE",
-            "FDRE",
-            "FDCE",
-            "FDPE",
-            "RAM32X1S",
-            "RAM32X1D",
-            "RAM32X1S_1",
-            "RAM32X1D_1",
-            "RAM32M",
-            "RAMB36E1",
-            "BUFGCTRL",
-            "IBUF",
-            "OBUF",
-            "OBUFT",
-            "MUXF7",
-            "MUXF8",
-            "CARRY4",
-        ]
-
-        if cell_type == "LUT6_2":
-            return ("INIT",)
-        if cell_type in ("FDSE", "FDRE", "FDCE", "FDPE"):
-            return ("INIT",)
-        if cell_type in ("RAM32X1S", "RAM32X1D", "RAM32X1S_1", "RAM32X1D_1"):
-            return ("INIT",)
-        if cell_type in ("RAM32M",):
-            return ("INIT_A", "INIT_B", "INIT_C", "INIT_D")
-        if cell_type == "RAMB36E1":
-            props = [f"INIT_{i:02X}" for i in range(int("0x80", base=16))]
-            return tuple(props)
-        if cell_type == "BUFGCTRL":
-            return (
-                "INIT_OUT",
-                "IS_CE0_INVERTED",
-                "IS_CE1_INVERTED",
-                "IS_IGNORE0_INVERTED",
-                "IS_IGNORE1_INVERTED",
-                "IS_S0_INVERTED",
-                "IS_S1_INVERTED",
-                "PRESELECT_I0",
-                "PRESELECT_I1",
-            )
-        if cell_type in ("IBUF", "OBUF", "OBUFT", "MUXF7", "MUXF8", "CARRY4"):
-            return ()
-
+        if cell_type in self._cell_props:
+            return self._cell_props[cell_type]
         raise KeyError(f"Unhandled properties for type {cell_type}")
 
     def get_netlist(self, library):

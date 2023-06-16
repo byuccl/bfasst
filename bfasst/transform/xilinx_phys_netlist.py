@@ -248,16 +248,16 @@ class XilinxPhysNetlist(TransformTool):
                 if lut6_cell and lut6_cell.getType() == "RAMS32":
                     lut_rams.append(lut6_cell)
                     cells_already_visited.add(lut6_cell)
-                    # Sanity check, pretty sure clk is not inverted when this value is one, so if there
-                    # is a case where this changes, investigate the design to see.
+                    # Sanity check, pretty sure clk is not inverted when this value is one,
+                    # so if there is a case where this changes, investigate the design to see.
                     assert (
                         lut6_cell.getEDIFCellInst().getProperty("IS_CLK_INVERTED").getValue()
                         == "1'b1"
                     )
                     # TODO: handle possible gnd net
                     continue
-                elif len(lut_rams) > 1:
-                    self.process_lutrams(lut_rams, site_inst)
+                if len(lut_rams) > 1:
+                    self.process_lutrams(lut_rams)
 
                 lut_rams = []
 
@@ -289,7 +289,7 @@ class XilinxPhysNetlist(TransformTool):
                     cells_already_visited.add(lut5_cell)
 
             if len(lut_rams) > 1:
-                self.process_lutrams(lut_rams, site_inst)
+                self.process_lutrams(lut_rams)
 
     def export_new_netlist(self, phys_netlist_checkpoint, phys_netlist_verilog_path):
         """Export the new netlist to a Verilog netlist file"""
@@ -334,20 +334,43 @@ class XilinxPhysNetlist(TransformTool):
             return Status(TransformStatus.ERROR, matches.group(1))
         return self.success_status
 
-    def process_ram32x1d(self, cells, site_inst):
+    def check_ram32x1d(self, lut_rams, parents):
+        """Check if cells can be combined to RAM32X1D"""
+        same_nets = ["WE", "WCLK", "D"]
+
+        # check for ram32x1d (2 luts)
+        lut6_cell = lut_rams[0]
+        ram32x1s_cell = parents[0].getInst()
+        nets_lh = rw.get_net_names_from_edif_ports(lut6_cell, same_nets, ram32x1s_cell)
+        init = lut6_cell.getProperty("INIT")
+        for lut6_cell_rh, hier_cell in zip(lut_rams[1:], parents[1:]):
+            ram32x1s_cell = hier_cell.getInst()
+            nets_rh = rw.get_net_names_from_edif_ports(lut6_cell_rh, same_nets, ram32x1s_cell)
+            init2 = lut6_cell_rh.getProperty("INIT")
+            if init != init2:
+                nets_lh = nets_rh
+                init = init2
+                lut6_cell = lut6_cell_rh
+                continue
+
+            for lh, rh in zip(nets_lh, nets_rh):
+                if lh != rh:
+                    nets_lh = nets_rh
+                    init = init2
+                    lut6_cell = lut6_cell_rh
+                    break
+            else:
+                self.process_ram32x1d((lut6_cell, lut6_cell_rh))
+                return lut_rams
+
+    def process_ram32x1d(self, cells):
         """
         Replace two RAM32X1S cells with a single RAM32X1D cell.
         """
-        hedif_cells = [c.getEDIFHierCellInst() for c in cells]
-        edif_cells = [c.getParent().getInst() for c in hedif_cells]
+        parent, edif_cells = self.lutram_assertions(cells)
         new_cell_name = rw.generate_combinded_cell_name(edif_cells)
         cell_str = f"2 LUT_RAMS ({' '.join([str(n.getName()) for n in cells])})"
         self.log_color(TermColor.BLUE, f"\nConverting {cell_str} to RAM32X1D {new_cell_name}")
-
-        # Need to go up 2 levels: True parent -> RAM32X1S -> RAMS32 (current cell)
-        parent = {c.getParent().getParent() for c in hedif_cells}
-        assert len(parent) == 1
-        parent = parent.pop().getCellType()
 
         ram32x1d = parent.createChildCellInst(new_cell_name, self.ram32x1d_edif_cell)
 
@@ -368,105 +391,79 @@ class XilinxPhysNetlist(TransformTool):
 
         return ram32x1d
 
-    def process_ram32m(self, cells, site_inst):
+    def process_ram32m(self, cells):
         """
         Replace four RAM32X1S cells with a single RAM32M cell.
         """
-        hedif_cells = [c.getEDIFHierCellInst() for c in cells]
-        edif_cells = [c.getParent().getInst() for c in hedif_cells]
+        parent, edif_cells = self.lutram_assertions(cells)
         new_cell_name = rw.generate_combinded_cell_name(edif_cells)
         cell_str = f"4 LUT_RAMS ({' '.join([str(n.getName()) for n in cells])})"
         self.log_color(TermColor.BLUE, f"\nConverting {cell_str} to RAM32M {new_cell_name}")
 
-        # Need to go up 2 levels: True parent -> RAM32X1S -> RAMS32 (current cell)
-        parent = {c.getParent().getParent() for c in hedif_cells}
-        assert len(parent) == 1
-        parent = parent.pop().getCellType()
-
         ram32m = parent.createChildCellInst(new_cell_name, self.ram32m_edif_cell)
 
         prefix = ["A", "B", "C", "D"]
-        props = {f"INIT_{i}": c.getProperty("INIT") for i, c in zip(prefix, edif_cells)}
-
-        for i, c in zip(prefix, edif_cells):
-            val = str(c.getProperty("INIT").getValue())[4:]
+        for i, cell in zip(prefix, edif_cells):
+            val = str(cell.getProperty("INIT").getValue())[4:]
             ram32m.addProperty(f"INIT_{i}", f"64'h{int(val, base=16):0{16}X}")
 
         rw.valid_net_transfer("WE", ["WE"], edif_cells[0], ram32m)
         rw.valid_net_transfer("WCLK", ["WCLK"], edif_cells[0], ram32m)
 
         addrs = ["A0", "A1", "A2", "A3", "A4"]
-        for i, c in zip(prefix, edif_cells):
-            rw.valid_bus_transfer(addrs, f"ADDR{i}", c, ram32m)
-            rw.valid_bus_transfer("D", f"DI{i}", c, ram32m)
-            rw.valid_bus_transfer("O", f"DO{i}", c, ram32m)
+        for i, cell in zip(prefix, edif_cells):
+            rw.valid_bus_transfer(addrs, f"ADDR{i}", cell, ram32m)
+            rw.valid_bus_transfer("D", f"DI{i}", cell, ram32m)
+            rw.valid_bus_transfer("O", f"DO{i}", cell, ram32m)
 
         return ram32m
 
-    def process_lutrams(self, lut_rams, site_inst):
+    def lutram_assertions(self, lut_rams):
         """
-        Look at LUTRAMs in a site and see if they should be combined into a
-        single RAM primitive.  RAMS32 is wrapped in RAM32X1S (parent cell), so
-        LUTRAMs only need processed if they can be combined.
-        """
+        Run sanity assertions on LUTRAMs.
 
+        Returns:
+        (EDIFCell, [EDIFCellInst]) -> (parent cell, [child insts])
+        """
         hedif_cells = [c.getEDIFHierCellInst() for c in lut_rams]
         parents1 = [c.getParent() for c in hedif_cells]
         test_type = {t.getCellType().getName() for t in parents1}
         test_type.add("RAM32X1S")
         assert len(test_type) == 1
 
+        # Need to go up 2 levels: True parent -> RAM32X1S -> RAMS32 (current cell)
+        parent = {c.getParent().getParent() for c in hedif_cells}
+        assert len(parent) == 1
+
+        return (parent.pop().getCellType(), [c.getParent().getInst() for c in hedif_cells])
+
+    def process_lutrams(self, lut_rams):
+        """
+        Look at LUTRAMs in a site and see if they should be combined into a
+        single RAM primitive.  RAMS32 is wrapped in RAM32X1S (parent cell), so
+        LUTRAMs only need processed if they can be combined.
+        """
+
+        if len(lut_rams) == 1:
+            return lut_rams
+
+        parents = [c.getEDIFHierCellInst().getParent() for c in lut_rams]
+
         if len(lut_rams) == 4:
-            # check we and wclk are the same -> ram32m (4 luts)
-            # else -> ram32x1d
+            same_nets = ["WE", "WCLK"]
             lut6_cell = lut_rams[0]
-            ram32x1s_cell = parents1[0].getInst()
-            we_net = rw.get_net_from_edif_port(lut6_cell, "WE", ram32x1s_cell).getName()
-            wclk_net = rw.get_net_from_edif_port(lut6_cell, "WCLK", ram32x1s_cell).getName()
-            for lut6_cell, hier_cell in zip(lut_rams[1:], parents1[1:]):
+            ram32x1s_cell = parents[0].getInst()
+            nets_lh = rw.get_net_names_from_edif_ports(lut6_cell, same_nets, ram32x1s_cell)
+            for lut6_cell, hier_cell in zip(lut_rams[1:], parents[1:]):
                 ram32x1s_cell = hier_cell.getInst()
-                if rw.get_net_from_edif_port(lut6_cell, "WE", ram32x1s_cell).getName() != we_net:
-                    break
-                if (
-                    rw.get_net_from_edif_port(lut6_cell, "WCLK", ram32x1s_cell).getName()
-                    != wclk_net
-                ):
-                    break
-            else:
-                self.process_ram32m(lut_rams, site_inst)
-                return lut_rams
+                nets_rh = rw.get_net_names_from_edif_ports(lut6_cell, same_nets, ram32x1s_cell)
+                for lh, rh in zip(nets_lh, nets_rh):
+                    if lh != rh:
+                        return self.check_ram32x1d(lut_rams, parents)
+            self.process_ram32m(lut_rams)
+            return lut_rams
 
-        if len(lut_rams) >= 2:
-            # check for ram32x1d (2 luts)
-            lut6_cell = lut_rams[0]
-            lut_ram_cells = [lut6_cell]
-            ram32x1s_cell = parents1[0].getInst()
-            we_net = rw.get_net_from_edif_port(lut6_cell, "WE", ram32x1s_cell).getName()
-            wclk_net = rw.get_net_from_edif_port(lut6_cell, "WCLK", ram32x1s_cell).getName()
-            din_net = rw.get_net_from_edif_port(lut6_cell, "D", ram32x1s_cell).getName()
-            init = lut6_cell.getProperty("INIT")
-            for lut6_cell, hier_cell in zip(lut_rams[1:], parents1[1:]):
-                ram32x1s_cell = hier_cell.getInst()
-                we_net2 = rw.get_net_from_edif_port(lut6_cell, "WE", ram32x1s_cell).getName()
-                wclk_net2 = rw.get_net_from_edif_port(lut6_cell, "WCLK", ram32x1s_cell).getName()
-                din_net2 = rw.get_net_from_edif_port(lut6_cell, "D", ram32x1s_cell).getName()
-                init2 = lut6_cell.getProperty("INIT")
-                if (
-                    we_net == we_net2
-                    and wclk_net == wclk_net2
-                    and din_net == din_net2
-                    and init == init2
-                ):
-                    lut_ram_cells.append(lut6_cell)
-                    self.process_ram32x1d(lut_ram_cells, site_inst)
-                    return lut_rams
-                we_net = we_net2
-                wclk_net = wclk_net2
-                din_net = din_net2
-                init = init2
-                lut_ram_cells = [lut6_cell]
-
-        return lut_rams
+        return self.check_ram32x1d(lut_rams, parents)
 
     def process_muxf7_muxf8(self, cell):
         """Process MUXF7/MUXF8 primitive
