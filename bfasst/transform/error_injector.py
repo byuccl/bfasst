@@ -32,13 +32,16 @@ class ErrorInjector(TransformTool):
         self.new_lut_init = None
 
     def get_all_instances(self):
-        return [
+        """Get all the instances in the netlist, sorted by their name"""
+        unsorted_instances = [
             instance
             for instance in self.clean_netlist.get_instances()
             if "GND" not in instance.reference.name.upper()
             and "VCC" not in instance.reference.name.upper()
             and "VDD" not in instance.reference.name.upper()
         ]
+
+        return sorted(unsorted_instances, key=lambda x: x.name)
 
     def inject(self, error_type):
         """Injects an error into the netlist of the given type"""
@@ -54,6 +57,7 @@ class ErrorInjector(TransformTool):
         """Injects a bit flip error into the netlist"""
         num_luts = self.pick_luts_from_netlist()
         self.get_all_luts()
+        self.sort_all_luts()
         lut_number = randrange(num_luts)
         lut_size = self.get_lut_init_size(lut_number)
         bit_number = randrange(lut_size)
@@ -74,6 +78,10 @@ class ErrorInjector(TransformTool):
     def get_all_luts(self):
         """Flattens the LUTs into a single list"""
         self.all_luts = [lut for sublist in self.hierarchical_luts for lut in sublist]
+
+    def sort_all_luts(self):
+        """Sorts all luts by their instance name"""
+        self.all_luts.sort(key=lambda x: x.name)
 
     def get_lut_init_size(self, lut_number):
         """
@@ -96,11 +104,27 @@ class ErrorInjector(TransformTool):
         self.old_lut_init = config_string_prefixed
         config_string_int = convert_verilog_literal_to_int(config_string_prefixed)
 
-        new_config = hex(config_string_int ^ (1 << bit_number))
+        config_with_flipped_bit = config_string_int ^ (1 << bit_number)
+
+        # Convert the config to hex and pad it with zeros to the size of the LUT init string
+        config_as_hex = hex(config_with_flipped_bit)
+        new_config = self.pad_hex_val(
+            config_as_hex,
+            self.get_lut_init_size(lut_number)
+        )
+
         lut_properties["INIT"] = (
             config_string_prefixed.split("h")[0] + "h" + str(new_config)[2:]
         )
         self.new_lut_init = lut_properties["INIT"]
+
+    def pad_hex_val(self, val, lut_size):
+        """
+        Takes a hex value, and pads it with zeros to
+        the size of the LUT init string passed in.
+        """
+        padding = lut_size // 4
+        return '0x' + val[2:].zfill(padding)
 
     def compose_corrupt_netlist(self):
         """Writes the netlist to the corrupted netlist path in the design"""
