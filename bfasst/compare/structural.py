@@ -578,16 +578,7 @@ class Net:
     def get_direction_for_unisim(cell_type_name, port_name):
         """Get a pin direction for a UNISIM cell"""
 
-        cell_inputs_and_outputs = (
-            (("LUT6_2",), ("I0", "I1", "I2", "I3", "I4", "I5"), ("O5", "O6")),
-            (("IBUF", "OBUF", "OBUFT"), ("I", "T"), ("O",)),
-            (("GND",), (), ("G",)),
-            (("VCC",), (), ("P",)),
-            (("FDSE", "FDRE"), ("D", "CE", "R", "C", "S"), ("Q",)),
-            (("CARRY4",), ("CI", "CYINIT", "DI", "S"), ("O", "CO")),
-            (("BUFGCTRL",), ("CE0", "CE1", "I0", "I1", "IGNORE0", "IGNORE1", "S0", "S1"), ("O",)),
-            (("MUXF7", "MUXF8"), ("I0", "I1", "S"), ("O",)),
-        )
+        cell_inputs_and_outputs = get_unisim_cell_inputs_and_outputs()
 
         for cell_types, inputs, outputs in cell_inputs_and_outputs:
             if cell_type_name in cell_types:
