@@ -342,7 +342,9 @@ good-names=i,
            val,
            y,
            z,
-           clk
+           clk,
+           lh,
+           rh
 
 
 # Good variable names regexes, separated by a comma. If names match any regex,
