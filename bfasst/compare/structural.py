@@ -6,6 +6,7 @@ from bfasst import jpype_jvm
 from bfasst.compare.base import CompareTool
 from bfasst.status import CompareStatus, Status
 from bfasst.utils import TermColor, error, properties_are_equal
+from bfasst.vendor_utils.xilinx import get_unisim_cell_inputs_and_outputs
 
 
 class StructuralCompareTool(CompareTool):
@@ -15,6 +16,7 @@ class StructuralCompareTool(CompareTool):
 
     def __init__(self, cwd, design, gold_netlist, rev_netlist, flow_args="") -> None:
         super().__init__(cwd, design, gold_netlist, rev_netlist, flow_args)
+        self.remove_logs()
 
         self.named_netlist = None
         self.reversed_netlist = None
@@ -22,7 +24,17 @@ class StructuralCompareTool(CompareTool):
         self.block_mapping = bidict()
         self.net_mapping = bidict()
 
+        self.run_num = None
+
         jpype_jvm.start()
+
+    def reset_mappings(self):
+        self.block_mapping = bidict()
+        self.net_mapping = bidict()
+
+    def check_log_path(self):
+        if self.run_num is not None:
+            self.log_path = self.work_dir / f"compare_log_{self.run_num}.txt"
 
     def compare_netlists(self):
         """Map the golden and reversed netlists through automated block mapping"""
@@ -30,6 +42,7 @@ class StructuralCompareTool(CompareTool):
         impl_netlist = self.gold_netlist
         netlist_b = self.rev_netlist
 
+        self.check_log_path()
         self.open_new_log()
 
         self.log_title("Building netlist A", impl_netlist)
@@ -394,7 +407,6 @@ class Netlist:
 
     def build_nets(self):
         """Setup Net objects"""
-
         # First construct net objects for each wire, skipping alias wires
         non_alias_wires = [wire for wire in self.library.get_wires() if not Net.wire_is_alias(wire)]
         for wire in non_alias_wires:
@@ -566,16 +578,7 @@ class Net:
     def get_direction_for_unisim(cell_type_name, port_name):
         """Get a pin direction for a UNISIM cell"""
 
-        cell_inputs_and_outputs = (
-            (("LUT6_2",), ("I0", "I1", "I2", "I3", "I4", "I5"), ("O5", "O6")),
-            (("IBUF", "OBUF", "OBUFT"), ("I", "T"), ("O",)),
-            (("GND",), (), ("G",)),
-            (("VCC",), (), ("P",)),
-            (("FDSE", "FDRE"), ("D", "CE", "R", "C", "S"), ("Q",)),
-            (("CARRY4",), ("CI", "CYINIT", "DI", "S"), ("O", "CO")),
-            (("BUFGCTRL",), ("CE0", "CE1", "I0", "I1", "IGNORE0", "IGNORE1", "S0", "S1"), ("O",)),
-            (("MUXF7", "MUXF8"), ("I0", "I1", "S"), ("O",)),
-        )
+        cell_inputs_and_outputs = get_unisim_cell_inputs_and_outputs()
 
         for cell_types, inputs, outputs in cell_inputs_and_outputs:
             if cell_type_name in cell_types:

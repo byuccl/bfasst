@@ -4,9 +4,11 @@ Create your own flow and add it to the Flows class and the flow_fcn_map.
 Helper functions for vendor tools are defined.
 """
 
+# pylint: disable=import-outside-toplevel
 from enum import Enum
 from enum import unique as enum_unique
 import pathlib
+import random
 import shutil
 from bfasst.compare.onespin import OneSpinCompareTool
 
@@ -18,10 +20,19 @@ from bfasst.netlist_mapping.structural_mapping import structurally_map_netlists
 from bfasst.opt.ic2_lse import Ic2LseOptTool
 from bfasst.opt.ic2_synplify import Ic2SynplifyOptTool
 from bfasst.reverse_bit.icestorm import IcestormReverseBitTool
-from bfasst.status import Status, MapStatus
+from bfasst.status import (
+    BfasstException,
+    Status,
+    MapStatus,
+    CompareStatus,
+    TransformStatus,
+    ErrorInjectionStatus,
+)
 from bfasst.synth.ic2_lse import Ic2LseSynthesisTool
 from bfasst.synth.ic2_synplify import Ic2SynplifySynthesisTool
 from bfasst.synth.yosys import YosysTechSynthTool
+from bfasst.transform.error_injector import ErrorInjector as SdnErrorInjector
+from bfasst.compare.structural import StructuralCompareTool
 from bfasst.tool_wrappers import (
     ToolType,
     conformal_cmp,
@@ -44,6 +55,7 @@ from bfasst.tool_wrappers import (
 )
 from bfasst.utils import error
 from bfasst.locks import onespin_lock
+from bfasst.transform.error_injector import ErrorType
 
 
 @enum_unique
@@ -57,6 +69,7 @@ class Flows(Enum):
     XILINX_PHYS_NETLIST = "xilinx_phys_netlist"
     XILINX_PHYS_NETLIST_COMPARE = "xilinx_phys_netlist_cmp"
     STRUCTURAL_MAP = "structural_map"
+    XILINX_STRUCTURAL_ERROR_INJECTION = "xilinx_structural_error_injection"
 
     # These flows may be legacy and need unit tests to verify they are working
     CCL_MAP = "ccl_map"
@@ -96,6 +109,7 @@ flow_fcn_map = {
     Flows.STRUCTURAL_MAP: lambda: flow_struct_mapping,
     Flows.XILINX_OOC: lambda: flow_xilinx_ooc,
     Flows.XILINX_PHYS_NETLIST_COMPARE: lambda: flow_xilinx_phys_netlist_cmp,
+    Flows.XILINX_STRUCTURAL_ERROR_INJECTION: lambda: flow_xilinx_structural_error_injection,
     Flows.XILINX_AND_REVERSED: lambda: flow_xilinx_and_reversed,
 }
 
@@ -204,9 +218,73 @@ def flow_xilinx_phys_netlist_cmp(design, flow_args, build_dir):
     status = xray_rev(design, build_dir, flow_args)
 
     status = structural_cmp(
-        design, build_dir, design.phys_netlist_path, design.reversed_netlist_path, flow_args
+        design,
+        build_dir,
+        design.phys_netlist_path,
+        design.reversed_netlist_path,
+        flow_args,
     )
     return status
+
+
+def flow_xilinx_structural_error_injection(design, flow_args, build_dir):
+    """Inject errors into FASM2BELS netlist and compare with Conformal"""
+
+    def get_corrupt_netlist_path():
+        return design.corrupted_netlist_path
+
+    def generate_path_to_save_corrupted_netlist(num_problems, err):
+        return design.path / f"{err}_error_{num_problems}.v"
+
+    status = flow_xilinx_phys_netlist(design, flow_args, build_dir)
+    status = xray_rev(design, build_dir, flow_args)
+
+    random.seed(0)
+    injection_types = [ErrorType.BIT_FLIP, ErrorType.WIRE_SWAP]
+
+    compare_tool = StructuralCompareTool(
+        cwd=build_dir,
+        design=design,
+        gold_netlist=design.phys_netlist_path,
+        rev_netlist=design.corrupted_netlist_path,
+        flow_args=flow_args[ToolType.CMP],
+    )
+    error_injector = SdnErrorInjector(cwd=build_dir, design=design)
+
+    for err in injection_types:
+        num_problems = 0
+        num_runs = 100
+        for i in range(1, num_runs + 1):
+            # Give the injector a number for logging the run, and run the injection
+            error_injector.run_num = i
+            status = error_injector.inject(err)
+            if status == TransformStatus.ERROR:
+                return status
+
+            # Reset the mappings in the compare tool, give it a number for logging the run,
+            # and run the comparison
+            compare_tool.reset_mappings()
+
+            # The compare tool should only reset its logs once per flow,
+            # not per error type, but should be unaware of what type of error is being injected
+            compare_tool.run_num = i if err == injection_types[0] else i + num_runs
+
+            try:
+                status = compare_tool.compare_netlists()
+            except BfasstException as e:
+                status = e.creator
+
+            if status == CompareStatus.SUCCESS:  # An error was injected, but not detected
+                num_problems += 1
+                new_path = generate_path_to_save_corrupted_netlist(num_problems, err)
+                get_corrupt_netlist_path().rename(new_path)
+
+            # Remove the corrupt netlist so that it can be regenerated
+            get_corrupt_netlist_path().unlink()
+
+    if num_problems == 0:
+        return Status(ErrorInjectionStatus.SUCCESS, "All errors detected", raise_excep=False)
+    return Status(ErrorInjectionStatus.ERROR, "Some errors were not caught")
 
 
 def flow_xilinx_conformal(design, flow_args, build_dir):
@@ -260,7 +338,11 @@ def flow_xilinx_yosys_impl(design, flow_args, build_dir):
     status = xray_rev(design, build_dir, flow_args)
 
     status = yosys_cmp(
-        design, build_dir, design.impl_netlist_path, design.reversed_netlist_path, flow_args
+        design,
+        build_dir,
+        design.impl_netlist_path,
+        design.reversed_netlist_path,
+        flow_args,
     )
     return status
 
@@ -278,7 +360,11 @@ def flow_wafove(design, flow_args, build_dir):
     # analyze graphs.
 
     status = wave_cmp(
-        design, build_dir, design.impl_netlist_path, design.reversed_netlist_path, flow_args
+        design,
+        build_dir,
+        design.impl_netlist_path,
+        design.reversed_netlist_path,
+        flow_args,
     )
 
     return status

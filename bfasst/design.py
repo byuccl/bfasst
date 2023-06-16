@@ -55,14 +55,15 @@ class Design:
 
         ############## Flow paths ###############
         self.netlist_path = None
+        self.reversed_netlist_path = None
         self.yosys_netlist_path = None
         self.impl_netlist_path = None
         self.impl_edif_path = None
         self.bitstream_path = None
         self.phys_netlist_path = None
         self.constraints_path = None
-        self.reversed_netlist_path = None
         self.results_summary_path = None
+        self.corrupted_netlist_path = self.path / "corrupted_netlist.v"
 
         # Toolchain-specific paths
         self.xilinx_impl_checkpoint_path = None
@@ -74,6 +75,10 @@ class Design:
         self.error_flow_names = []
         self.nets_to_remove_from_pcf = set()
 
+        self.process_yaml()
+
+    def process_yaml(self):
+        """process the yaml file to set the paths for the design netlists, etc."""
         if not self.yaml_path.is_file():
             error("Design YAML file", self.yaml_path, "does not exist")
 
