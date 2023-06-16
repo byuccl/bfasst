@@ -5,6 +5,11 @@ import pathlib
 from bfasst.status import ImplStatus, Status
 from bfasst.utils import print_color
 from bfasst.tool import Tool, ToolProduct
+from bfasst.bfasst_exception import BfasstException
+
+
+class ImplementationException(BfasstException):
+    """Base class for all exceptions in the implementation package"""
 
 
 class ImplementationTool(Tool):

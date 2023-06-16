@@ -6,6 +6,11 @@ from bfasst.status import CompareStatus, Status
 
 from bfasst.tool import Tool, ToolProduct
 from bfasst.utils import print_color
+from bfasst.bfasst_exception import BfasstException
+
+
+class CompareException(BfasstException):
+    """Base class for all exceptions in the compare package"""
 
 
 class CompareTool(Tool):

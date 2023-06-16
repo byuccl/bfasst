@@ -3,6 +3,11 @@ import abc
 
 from bfasst.tool import Tool
 from bfasst.status import Status, ErrorInjectionStatus
+from bfasst.bfasst_exception import BfasstException
+
+
+class ErrorInjectionException(BfasstException):
+    """Base class for all exceptions in the error injection package"""
 
 
 class ErrorInjectionTool(Tool):

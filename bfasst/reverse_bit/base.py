@@ -4,6 +4,10 @@ import abc
 from bfasst.tool import Tool
 from bfasst.utils import print_color
 from bfasst.status import Status, BitReverseStatus
+from bfasst.bfasst_exception import BfasstException
+
+class ReverseBitException(BfasstException):
+    """Base class for all exceptions in the reverse_bit package"""
 
 
 class ReverseBitTool(Tool):

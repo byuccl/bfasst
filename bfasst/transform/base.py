@@ -1,6 +1,11 @@
 """ This is use to perform some transformation on a design file(s)"""
 
 from bfasst import tool
+from bfasst.bfasst_exception import BfasstException
+
+
+class TransformException(BfasstException):
+    """Base class for all exceptions in the transform package"""
 
 
 class TransformTool(tool.Tool):

@@ -5,6 +5,10 @@ from bfasst.status import OptStatus
 from bfasst.tool import Tool
 from bfasst.status import Status
 from bfasst.utils import print_color
+from bfasst.bfasst_exception import BfasstException
+
+class OptException(BfasstException):
+    """Base class for all exceptions in the opt package"""
 
 
 class OptTool(Tool):
