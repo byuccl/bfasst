@@ -47,6 +47,10 @@ class Tool(abc.ABC):
         # Arguments (after parsing)
         self.args = None
 
+    def __del__(self):
+        if self.log_fp is not None:
+            self.log_fp.close()
+
     @property
     @classmethod
     @abc.abstractclassmethod
