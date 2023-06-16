@@ -1,15 +1,18 @@
 """Helper functions for interacting with RapidWright"""
 
-from bidict import bidict
 from fnmatch import fnmatch
 from os.path import commonprefix
-from spydrnet.ir.Port import Direction as SdnDirection
+import re
+
+from bidict import bidict
+import spydrnet as sdn
 
 # pylint: disable=wrong-import-position,wrong-import-order
 from bfasst import jpype_jvm
 
 jpype_jvm.start()
 from com.xilinx.rapidwright.design import Design, Unisim
+from com.xilinx.rapidwright.design.tools import LUTTools
 from com.xilinx.rapidwright.edif import EDIFDirection as RwDirection
 from java.util import ArrayList as JArrayList
 
@@ -256,10 +259,10 @@ def process_lut_init(lut6_cell, lut5_cell, new_cell_inst, log=print):
 
     log("Fixing INIT string")
 
-    lut6_eqn_phys = self.process_lut_eqn(lut6_cell, False, log)
+    lut6_eqn_phys = process_lut_eqn(lut6_cell, False, log)
 
     if lut5_cell:
-        lut5_eqn_phys = self.process_lut_eqn(lut5_cell, True, log)
+        lut5_eqn_phys = process_lut_eqn(lut5_cell, True, log)
 
     if not lut5_cell:
         init_str = "64'h" + LUTTools.getLUTInitFromEquation(lut6_eqn_phys, 6)[4:].zfill(16)
@@ -273,22 +276,32 @@ def process_lut_init(lut6_cell, lut5_cell, new_cell_inst, log=print):
     new_cell_inst.addProperty("INIT", init_str)
 
 
-def get_sdn_direction_for_unisim(cell_type_name, port_name):
+def get_unisim_inputs(unisim):
+    unisim_cell = Design.getUnisimCell(Unisim.valueOf(unisim))
+    return [p.getName() for p in unisim_cell.getPorts() if p.getDirection() == RwDirection.IN]
+
+
+def get_unisim_outputs(unisim):
+    unisim_cell = Design.getUnisimCell(Unisim.valueOf(unisim))
+    return [p.getName() for p in unisim_cell.getPorts() if p.getDirection() == RwDirection.OUT]
+
+
+def get_sdn_direction_for_unisim(unisim, port_name):
     """
     Get a pin direction for a UNISIM cell
 
     Parameters:
-    cell_type_name (str) -> UNISIM cell type
+    unisim (str) -> UNISIM cell name
     port_name (str) -> port name
 
     Return:
     spydrnet.ir.Port.Direction
     """
 
-    unisim_cell = Design.getUnisimCell(cell_type_name)
+    unisim_cell = Design.getUnisimCell(Unisim.valueOf(unisim))
     if unisim_cell.getPort(port_name).getDirection() == RwDirection.IN:
-        return SdnDirection.IN
+        return sdn.IN
     elif unisim_cell.getPort(port_name).getDirection() == RwDirection.OUT:
-        return SdnDirection.OUT
+        return sdn.OUT
     elif unisim_cell.getPort(port_name).getDirection() == RwDirection.INOUT:
-        return SdnDirection.INOUT
+        return sdn.INOUT

@@ -1,10 +1,8 @@
 """ Creates a xilinx netlist that has only physical primitives"""
 
-import code
 import pathlib
 import re
 
-from bidict import bidict
 import jpype
 import jpype.imports
 from jpype.types import JInt
@@ -23,10 +21,8 @@ jpype_jvm.start()
 from com.xilinx.rapidwright.device import SiteTypeEnum
 from com.xilinx.rapidwright.design import Design, Unisim
 from com.xilinx.rapidwright.edif import EDIFDirection, EDIFNet, EDIFPropertyValue, EDIFValueType
-from com.xilinx.rapidwright.design.tools import LUTTools
 from java.lang import System
 from java.io import PrintStream, File
-from java.util import ArrayList as JArrayList
 
 # pylint: enable=wrong-import-position,wrong-import-order
 
@@ -712,7 +708,7 @@ class XilinxPhysNetlist(TransformTool):
             self.create_lut_routethru_net(lut5_cell, True, new_cell_inst)
 
         # Fix the new LUT INIT property based on the new pin mappings
-        self.process_lut_init(lut6_cell, lut5_cell, new_cell_inst, self.log)
+        rw.process_lut_init(lut6_cell, lut5_cell, new_cell_inst, self.log)
 
         # Return the cells to be removed
         cells_to_remove = []
