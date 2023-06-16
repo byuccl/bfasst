@@ -96,30 +96,13 @@ msg_map = {
 }
 
 
-class BfasstException(Exception):
-    # The creator is the object that raised the exception
-    # If the creator is not none, then the exception was raised from a bfasst
-    # status object
-    def __init__(self, err, msg, creator=None):
-        super().__init__(msg)
-        self.error = err
-        self.msg = msg
-        self.creator = creator
-
-
 class Status:
     """Represents the status of a BFASST tool after it has run"""
 
-    def __init__(self, status, msg="", raise_excep=True):
+    def __init__(self, status, msg=""):
         self.status = status
         self.msg = msg if msg else ""
         self.error = bool(status.value)
-        if status.value and raise_excep:
-            # If the msg exists and is not in the msg_map, then it is a custom message
-            # and should be included in the exception
-            if msg and msg not in msg_map[self.status]:
-                raise BfasstException(status, f"{msg_map[self.status]}: {self.msg}", self)
-            raise BfasstException(status, msg_map[self.status], self)
 
     def __str__(self):
         # If the msg exists and is not in the msg_map, then it is a custom message
