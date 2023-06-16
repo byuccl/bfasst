@@ -27,6 +27,9 @@ class ErrorInjector(TransformTool):
         self.hierarchical_luts = []
         self.all_luts = None
         self.all_instances = self.get_all_instances()
+        self.run_num = 1
+        self.old_lut_init = None
+        self.new_lut_init = None
 
     def get_all_instances(self):
         return [
@@ -56,6 +59,7 @@ class ErrorInjector(TransformTool):
         bit_number = randrange(lut_size)
         self.flip_bit(lut_number, bit_number)
         self.compose_corrupt_netlist()
+        self.log_bit_flip(lut_number, bit_number)
 
     def pick_luts_from_netlist(self):
         """Calculates the number of LUTs in the netlist"""
@@ -89,16 +93,32 @@ class ErrorInjector(TransformTool):
         lut_properties = lut.data["VERILOG.Parameters"]
 
         config_string_prefixed = lut_properties["INIT"].lower()  # must be lower for int conversion
+        self.old_lut_init = config_string_prefixed
         config_string_int = convert_verilog_literal_to_int(config_string_prefixed)
 
         new_config = hex(config_string_int ^ (1 << bit_number))
         lut_properties["INIT"] = (
-            config_string_prefixed.split("H")[0] + "h" + str(new_config).upper()[2:]
+            config_string_prefixed.split("h")[0] + "h" + str(new_config)[2:]
         )
+        self.new_lut_init = lut_properties["INIT"]
 
     def compose_corrupt_netlist(self):
         """Writes the netlist to the corrupted netlist path in the design"""
         sdn.compose(self.clean_netlist, self.design.corrupted_netlist_path)
+
+    def log_bit_flip(self, lut_number, bit_number):
+        """Logs the bit flip that occurred to a log file"""
+        log_path = self.get_bit_flip_log()
+        with open(log_path, "w") as fp:
+            lut_name = self.all_luts[lut_number].name
+            lut_type = self.all_luts[lut_number].reference.name
+            fp.write(f"LUT {lut_name} of type {lut_type} ")
+            fp.write(f"had bit {bit_number} flipped ")
+            fp.write(f"resulting in a change from {self.old_lut_init} to {self.new_lut_init}")
+            fp.write("\n")
+
+    def get_bit_flip_log(self):
+        return self.work_dir / f"bit_flip_log_{self.run_num}.log"
 
     def inject_wire_swap(self):
         """Injects a wire swap error into the netlist"""
@@ -132,6 +152,8 @@ class ErrorInjector(TransformTool):
         self.attach_wire(selected_input2, driving_pin)
 
         self.compose_corrupt_netlist()
+
+        self.log_wire_swap(selected_input, selected_input2)
 
     def get_random_instances(self, num_instances):
         """Gets a sample of random instances from the netlist"""
@@ -223,3 +245,15 @@ class ErrorInjector(TransformTool):
     def attach_wire(self, sink_pin, new_driver):
         """Attaches the given sink to the new_driver"""
         new_driver.wire.connect_pin(sink_pin)
+
+    def log_wire_swap(self, selected_input, selected_input2):
+        """Logs the wire swap to the log file"""
+        log_path = self.get_wire_swap_log()
+        with open(log_path, "w") as fp:
+            fp.write(f"Wire swap of {selected_input.wire.cable.name} ")
+            fp.write(f"and {selected_input2.wire.cable.name} ")
+            fp.write("was successful.\n")
+
+    def get_wire_swap_log(self):
+        return self.work_dir / f"wire_swap_log_{self.run_num}.log"
+    
