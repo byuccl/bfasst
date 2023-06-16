@@ -135,6 +135,7 @@ class ErrorInjector(TransformTool):
             + f"had bit {bit_number} flipped "
             + f"resulting in a change from {self.old_lut_init} to {self.new_lut_init}"
         )
+        self.open_new_log()
         self.log(log_msg)
 
     def __get_bit_flip_log(self):
@@ -242,6 +243,7 @@ class ErrorInjector(TransformTool):
             + f"and {selected_input2.wire.cable.name} "
             + "was successful.\n"
         )
+        self.open_new_log()
         self.log(log_msg)
 
     def __get_wire_swap_log(self):
