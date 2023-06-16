@@ -64,6 +64,16 @@ class Tool(abc.ABC):
     def success_status(self):
         raise NotImplementedError
 
+    def remove_logs(self):
+        """
+        Iterate over the log files that already exist in the work directory and remove them.
+        This method need only be called in the constructors of 
+        child tools that will be used multiple times in a single flow.
+        """
+        for log in self.work_dir.iterdir():
+            if log.is_file():
+                log.unlink()
+
     @abc.abstractmethod
     def add_args(self):
         """Add arguments for argparser.  This should be done using this

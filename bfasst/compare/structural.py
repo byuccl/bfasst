@@ -16,6 +16,7 @@ class StructuralCompareTool(CompareTool):
 
     def __init__(self, cwd, design, gold_netlist, rev_netlist, flow_args="") -> None:
         super().__init__(cwd, design, gold_netlist, rev_netlist, flow_args)
+        self.remove_logs()
 
         self.named_netlist = None
         self.reversed_netlist = None

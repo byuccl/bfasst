@@ -23,6 +23,7 @@ class ErrorInjector(TransformTool):
 
     def __init__(self, cwd, design) -> None:
         super().__init__(cwd, design)
+        self.remove_logs()
         self.clean_netlist = sdn.parse(self.design.reversed_netlist_path)
         self.hierarchical_luts = []
         self.all_luts = None
