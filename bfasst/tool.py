@@ -67,7 +67,7 @@ class Tool(abc.ABC):
     def remove_logs(self):
         """
         Iterate over the log files that already exist in the work directory and remove them.
-        This method need only be called in the constructors of 
+        This method need only be called in the constructors of
         child tools that will be used multiple times in a single flow.
         """
         for log in self.work_dir.iterdir():
