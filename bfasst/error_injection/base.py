@@ -3,7 +3,7 @@ import abc
 
 from bfasst.tool import Tool
 from bfasst.status import Status, ErrorInjectionStatus
-from bfasst.bfasst_exception import BfasstException
+from bfasst.tool import BfasstException
 
 
 class ErrorInjectionException(BfasstException):

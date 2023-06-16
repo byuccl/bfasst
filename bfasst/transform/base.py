@@ -1,7 +1,7 @@
 """ This is use to perform some transformation on a design file(s)"""
 
 from bfasst import tool
-from bfasst.bfasst_exception import BfasstException
+from bfasst.tool import BfasstException
 
 
 class TransformException(BfasstException):

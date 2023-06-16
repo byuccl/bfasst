@@ -4,7 +4,7 @@ import abc
 from bfasst import tool
 from bfasst.utils import print_color
 from bfasst.status import SynthStatus, Status
-from bfasst.bfasst_exception import BfasstException
+from bfasst.tool import BfasstException
 
 
 class SynthesisException(BfasstException):

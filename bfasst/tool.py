@@ -13,6 +13,10 @@ from dataclasses import dataclass
 from bfasst.utils import TermColor, print_color
 
 
+class BfasstException(Exception):
+    """Base class for all tool exceptions in the bfasst package."""
+
+
 @dataclass
 class ToolProduct:
     """A file product of any tool.  If the tool producesd a log file, then you can also provide
