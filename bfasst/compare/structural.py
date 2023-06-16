@@ -70,8 +70,12 @@ class StructuralCompareTool(CompareTool):
         # Structurally map the rest of the netlists
         self.perform_mapping()
 
-        self.log_title("Mapping Report")
+        self.log_title("Mapping (Instances)")
         for key, val in self.block_mapping.items():
+            self.log(f"{key.name} -> {val.name}")
+        self.log()
+        self.log_title("Mapping (Nets)")
+        for key, val in self.net_mapping.items():
             self.log(f"{key.name} -> {val.name}")
 
         self.log_title("Finalizing")
@@ -87,14 +91,19 @@ class StructuralCompareTool(CompareTool):
         ]:
             self.log(f"    {block.name}")
 
-        self.log(
-            "Number of mapped nets:", f"{len(self.net_mapping)} of {self.named_netlist.num_wires()}"
-        )
+        num_mapped_nets = len([net for net in self.net_mapping if net.is_connected()])
+        num_total_nets = len(self.named_netlist.get_connected_nets())
+        self.log("Number of mapped nets:", num_mapped_nets, "of", num_total_nets)
+
         self.log("  Unmapped nets:")
-        for net in [net for net in self.named_netlist.nets if net not in self.net_mapping]:
+        for net in [
+            net for net in self.named_netlist.get_connected_nets() if net not in self.net_mapping
+        ]:
             self.log(f"    {net.name}")
 
-        if len(self.block_mapping) < len(self.named_netlist.instances_to_map):
+        if len(self.block_mapping) != len(self.named_netlist.instances_to_map):
+            return Status(CompareStatus.COULD_NOT_MAP)
+        if num_mapped_nets != num_total_nets:
             return Status(CompareStatus.COULD_NOT_MAP)
 
         # TODO: After establishing mapping, verify equivalence
@@ -434,6 +443,10 @@ class Netlist:
     def nets(self):
         return set(self.wire_to_net.values())
 
+    def get_connected_nets(self):
+        """Return a list of nets that are connected to something"""
+        return [net for net in self.nets if net.is_connected()]
+
 
 class Pin:
     """Wrapper class around spydernet InnerPin/OuterPin to add some helper properties"""
@@ -495,6 +508,15 @@ class Net:
         assert wire not in self.alias_wires
         self.alias_wires.append(wire)
 
+    def is_connected(self):
+        """Determine if this net drives anything"""
+        if len(self.wire.pins) == 1:
+            assert self.wire.pins[0] == self.driver_pin
+            return False
+        if not self.wire.pins:
+            return False
+        return True
+
     def find_driver(self):
         """Determine the pin that drives this wire"""
 
@@ -536,6 +558,8 @@ class Net:
 
     @property
     def name(self):
+        if len(self.wire.cable.wires) > 1:
+            return f"{self.wire.cable.name}[{self.wire.index()}]"
         return self.wire.cable.name
 
     @staticmethod
