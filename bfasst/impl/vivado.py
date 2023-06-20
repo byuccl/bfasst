@@ -5,8 +5,7 @@ import os
 import time
 
 import bfasst
-from bfasst.impl.base import ImplementationTool
-from bfasst.status import Status, ImplStatus
+from bfasst.impl.base import ImplementationTool, ImplementationException
 from bfasst.config import VIVADO_COMMAND
 
 
@@ -35,10 +34,10 @@ class VivadoImplementationTool(ImplementationTool):
             return status
 
         # Run implementation
-        status = self.run_implementation()
+        self.run_implementation()
 
         # Check implementation log
-        status = self.check_impl_status(self.log_path)
+        self.check_impl_status(self.log_path)
 
         # Update a file in the main directory with info about impl results
         # self.write_to_results_file(design, log_path, need_to_run)
@@ -87,9 +86,9 @@ class VivadoImplementationTool(ImplementationTool):
         cmd = VIVADO_COMMAND + ["-source", str(tcl_path)]
         proc = self.exec_and_log(cmd)
         if proc.returncode:
-            return Status(ImplStatus.ERROR)
-
-        return self.success_status
+            raise ImplementationException(
+                f"Implementation failed with return code {proc.returncode}"
+            )
 
     def check_impl_status(self, log_path):
         """Checks the status of Vivado execution for errors"""
@@ -97,18 +96,22 @@ class VivadoImplementationTool(ImplementationTool):
 
         matches = re.search(r"^ERROR:\s*(.*?)$", text, re.M)
         if matches:
-            return Status(ImplStatus.ERROR, matches.group(1).strip())
+            raise ImplementationException("An error occurred: " + matches.group(1).strip())
 
         matches = re.search(
             r"^Design LUT Count \((\d+)\) exceeded Device LUT Count \((\d+)\)$", text, re.M
         )
         if matches:
-            return Status(ImplStatus.TOO_MANY_LUTS, matches.group(1) + "/" + matches.group(2))
+            raise ImplementationException(
+                "Too many luts: " + matches.group(1) + "/" + matches.group(2)
+            )
         matches = re.search(
             r"^Design FF Count \((\d+)\) exceeded Device FF Count \((\d+)\)$", text, re.M
         )
         if matches:
-            return Status(ImplStatus.TOO_MANY_FF, matches.group(1) + "/" + matches.group(2))
+            raise ImplementationException(
+                "Too many FF: " + matches.group(1) + "/" + matches.group(2)
+            )
 
         # Too many I/Os
         matches = re.search(
@@ -120,9 +123,9 @@ class VivadoImplementationTool(ImplementationTool):
             re.M | re.S,
         )
         if matches:
-            return Status(ImplStatus.TOO_MANY_IO, matches.group(2) + "/" + matches.group(1))
-
-        return self.success_status
+            raise ImplementationException(
+                "Too many IO: " + matches.group(2) + "/" + matches.group(1)
+            )
 
     def write_to_results_file(self, log_path, need_to_run):
         """This function writes results to a file.  Not sure if it's used anymore?"""
