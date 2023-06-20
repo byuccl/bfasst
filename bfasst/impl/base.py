@@ -41,20 +41,18 @@ class ImplementationTool(Tool):
     def print_skipping_impl(self):
         print_color(self.TERM_COLOR_STAGE, "Implementation already run")
 
-    def common_startup(self, log_check_fcn):
+    def up_to_date(self, log_check_fcn):
         """Commmon startup code for Implementation tools that first checks if
         prevous run can be used, and if not starts a new run"""
-        status = self.get_prev_run_status(
+        if not self.need_to_rerun(
             tool_products=[ToolProduct(self.design.bitstream_path, self.log_path, log_check_fcn)],
             dependency_modified_time=max(
                 pathlib.Path(__file__).stat().st_mtime, self.design.netlist_path.stat().st_mtime
             ),
-        )
-
-        if status is not None:
+        ):
             self.print_skipping_impl()
-            return status
+            return True
 
         self.print_running_impl()
         self.open_new_log()
-        return None
+        return False
