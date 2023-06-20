@@ -117,7 +117,7 @@ class XilinxPhysNetlist(TransformTool):
         System.setOut(PrintStream(File(str(self.work_dir / "rapidwright_stdout.log"))))
 
         # Check for up to date previous run
-        status = self.get_prev_run_status(
+        if not self.need_to_rerun(
             tool_products=[
                 ToolProduct(phys_netlist_verilog_path),
             ],
@@ -126,10 +126,9 @@ class XilinxPhysNetlist(TransformTool):
                 self.design.xilinx_impl_checkpoint_path.stat().st_mtime,
                 self.design.impl_edif_path.stat().st_mtime,
             ),
-        )
-
-        if status is not None:
+        ):
             print_color(self.TERM_COLOR_STAGE, "Physical Netlist conversion already run")
+            return
 
         self.open_new_log()
         self.log_color(
