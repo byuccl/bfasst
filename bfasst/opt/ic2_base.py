@@ -8,7 +8,6 @@ import subprocess
 
 import bfasst
 from bfasst.opt.base import OptException, OptTool
-from bfasst.status import OptStatus, Status
 from bfasst.tool import ToolProduct
 
 
