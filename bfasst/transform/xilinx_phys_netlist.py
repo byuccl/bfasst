@@ -11,9 +11,8 @@ from jpype.types import JInt
 
 from bfasst import jpype_jvm
 from bfasst.config import VIVADO_BIN_PATH
-from bfasst.status import Status, TransformStatus
 from bfasst.tool import ToolProduct
-from bfasst.transform.base import TransformTool
+from bfasst.transform.base import TransformTool, TransformException
 from bfasst.utils import TermColor, print_color
 
 
@@ -36,7 +35,6 @@ class RapidwrightException(Exception):
 class XilinxPhysNetlist(TransformTool):
     """Creates a xilinx netlist that has only physical primitives"""
 
-    success_status = Status(TransformStatus.SUCCESS)
     TOOL_WORK_DIR = "xilinx_phys_netlist"
 
     STD_PIN_MAP_BY_CELL = {
@@ -132,7 +130,6 @@ class XilinxPhysNetlist(TransformTool):
 
         if status is not None:
             print_color(self.TERM_COLOR_STAGE, "Physical Netlist conversion already run")
-            return status
 
         self.open_new_log()
         self.log_color(
@@ -153,9 +150,7 @@ class XilinxPhysNetlist(TransformTool):
         except jpype.JException as exc:
             raise RapidwrightException(str(exc))  # pylint: disable=raise-missing-from
 
-        status = self.export_new_netlist(phys_netlist_checkpoint, phys_netlist_verilog_path)
-
-        return status
+        self.export_new_netlist(phys_netlist_checkpoint, phys_netlist_verilog_path)
 
     def get_or_create_const_net(self, unisim_cell):
         """Create an edif const cell/net if it doesn't exist"""
@@ -255,10 +250,7 @@ class XilinxPhysNetlist(TransformTool):
 
             # TODO: Handle other primitives? RAM*, BUFG->BUFGCTRL, etc.
             print(cell)
-            return Status(
-                TransformStatus.ERROR,
-                f"Unhandled primitive {cell_type}",
-            )
+            raise TransformException(f"Unsupported cell type {cell_type}")
 
         # Remove old unusued cells
         self.log("Removing old cells...")
@@ -348,14 +340,11 @@ class XilinxPhysNetlist(TransformTool):
         cwd = None
         with open(vivado_log_path, "w") as fp:
             if self.exec_and_log(cmd, cwd, fp).returncode:
-                return Status(TransformStatus.ERROR)
+                raise TransformException("Vivado failed to export new netlist to verilog")
 
-        status = self.check_vivado_output(vivado_log_path)
-        if status:
-            return status
+        self.check_vivado_output(vivado_log_path)
 
         self.log("Exported new netlist to", phys_netlist_verilog_path)
-        return self.success_status
 
     def check_vivado_output(self, vivado_log_path):
         """Check the log output of the Vivado exeuction for ERROR messages"""
@@ -364,8 +353,7 @@ class XilinxPhysNetlist(TransformTool):
         # Check for ERROR message:
         matches = re.search("^ERROR: (.*)$", txt, re.M)
         if matches:
-            return Status(TransformStatus.ERROR, matches.group(1))
-        return self.success_status
+            raise TransformException(f"Vivado reported an error: {matches.group(1)}")
 
     def cell_is_default_mapping(self, cell):
         """This checks whether the cell is using the default logical to physical mappings"""
