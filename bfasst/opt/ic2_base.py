@@ -52,17 +52,14 @@ class Ic2BaseOptTool(OptTool):
             raise e
 
         # Parse synthesis log for errors
-        status = self.check_opt_log(self.log_path)
-        if status.error:
-            return status
+        self.check_opt_log(self.log_path)
 
         # Copy edif netlist out of project directory3
         if not edif_path_temp.is_file():
-            return Status(OptStatus.ERROR)
+            raise OptException("Synthesis failed to produce netlist")
         shutil.copyfile(edif_path_temp, self.design.netlist_path)
 
         # self.write_result_file(design)
-        return Status(OptStatus.SUCCESS)
 
     @abstractmethod
     def run_sythesis(self, prj_path):
