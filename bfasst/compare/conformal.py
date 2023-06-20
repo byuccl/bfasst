@@ -40,9 +40,8 @@ class ConformalCompareTool(CompareTool):
 
     def compare_netlists(self):
         """Compare given netlists"""
-        status = self.up_to_date(self.check_compare_status)
-        if status is not None:
-            return status
+        if self.up_to_date(self.check_compare_status):
+            return
 
         log_path = self.work_dir / self.LOG_FILE_NAME
 

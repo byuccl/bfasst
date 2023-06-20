@@ -17,9 +17,8 @@ class YosysCompareTool(CompareTool):
 
         generate_comparison = ToolProduct(None, log_path, self.check_compare_status)
 
-        status = self.up_to_date(generate_comparison)
-        if status is not None:
-            return status
+        if self.up_to_date(generate_comparison):
+            return
 
         # Run Yosys
         cmd = ["./yosys", self.create_script_file()]

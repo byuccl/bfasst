@@ -88,9 +88,8 @@ class WaveformCompareTool(CompareTool):
         print(f"Displaying waveforms via Gtkwave: {self.args.waveform}")
         print(f"Displaying waveforms via Vivado: {self.args.vivado}\n")
 
-        status = self.up_to_date(self.check_compare_status)
-        if status is not None:
-            return status
+        if self.up_to_date(self.check_compare_status):
+            return
 
         self.print_running_compare()
 
