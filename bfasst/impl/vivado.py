@@ -29,9 +29,8 @@ class VivadoImplementationTool(ImplementationTool):
         """Run vivado executable to perform implementation"""
         self.init_design()
 
-        status = self.common_startup(self.check_impl_status)
-        if status:
-            return status
+        if self.up_to_date(self.check_impl_status):
+            return
 
         # Run implementation
         self.run_implementation()
