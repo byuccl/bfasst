@@ -2,8 +2,7 @@
 from enum import Enum
 from random import randrange, sample
 import spydrnet as sdn
-from bfasst.transform.base import TransformTool
-from bfasst.status import Status, TransformStatus
+from bfasst.transform.base import TransformTool, TransformException
 from bfasst.utils import convert_verilog_literal_to_int
 from bfasst.vendor_utils.xilinx import get_unisim_cell_inputs_and_outputs
 
@@ -18,7 +17,6 @@ class ErrorType(Enum):
 class ErrorInjector(TransformTool):
     """Tool to inject errors into a netlist"""
 
-    success_status = Status(TransformStatus.SUCCESS)
     TOOL_WORK_DIR = "error_injection"
 
     def __init__(self, cwd, design) -> None:
@@ -51,8 +49,7 @@ class ErrorInjector(TransformTool):
         elif error_type == ErrorType.WIRE_SWAP:
             self.__inject_wire_swap()
         else:
-            return Status(TransformStatus.ERROR, "Invalid error type")
-        return Status(TransformStatus.SUCCESS)
+            raise TransformException("Invalid error type")
 
     def __inject_bit_flip(self):
         """Injects a bit flip error into the netlist"""
