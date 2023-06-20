@@ -7,8 +7,8 @@ import shutil
 import subprocess
 
 import bfasst
-from bfasst.opt.base import OptTool
-from bfasst.status import BfasstException, OptStatus, Status
+from bfasst.opt.base import OptException, OptTool
+from bfasst.status import OptStatus, Status
 from bfasst.tool import ToolProduct
 
 
@@ -23,18 +23,19 @@ class Ic2BaseOptTool(OptTool):
         # Save edif netlist path to design object
         self.design.netlist_path = self.cwd / (self.design.top + ".edf")
 
-        status = self.get_prev_run_status(
-            tool_products=[
-                ToolProduct(self.design.netlist_path, self.log_path, self.check_opt_log)
-            ],
-            dependency_modified_time=max(
-                pathlib.Path(__file__).stat().st_mtime, self.design.last_modified_time()
-            ),
-        )
-
-        if status is not None and not force_run:
+        if (
+            not self.need_to_rerun(
+                tool_products=[
+                    ToolProduct(self.design.netlist_path, self.log_path, self.check_opt_log)
+                ],
+                dependency_modified_time=max(
+                    pathlib.Path(__file__).stat().st_mtime, self.design.last_modified_time()
+                ),
+            )
+            and not force_run
+        ):
             self.print_skipping_opt()
-            return status
+            return
 
         edif_path_temp = self.work_dir / (self.design.top + ".edf")
 
@@ -44,9 +45,9 @@ class Ic2BaseOptTool(OptTool):
         # Run Icecube 2 LSE synthesis
         try:
             self.run_sythesis(prj_path)
-        except BfasstException as e:
+        except OptException as e:
             # If generic error, see if log has something more specific
-            if e.error == OptStatus.ERROR:
+            if e == OptException("Synthesis failed"):
                 self.check_opt_log(self.log_path)
             raise e
 
@@ -81,8 +82,7 @@ class Ic2BaseOptTool(OptTool):
     def exec_synth_tool(self, cmd, env):
         try:
             proc = self.exec_and_log(cmd, env=env, timeout=bfasst.config.I2C_LSE_TIMEOUT)
-        except subprocess.TimeoutExpired:
-            return Status(OptStatus.TIMEOUT)
+        except subprocess.TimeoutExpired as e:
+            raise OptException("Synthesis timed out") from e
         if proc.returncode != 0:
-            return Status(OptStatus.ERROR)
-        return Status(OptStatus.SUCCESS)
+            raise OptException("Synthesis failed")
