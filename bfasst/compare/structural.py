@@ -360,7 +360,7 @@ class StructuralCompareTool(CompareTool):
         if cell_type in ("IBUF", "OBUF", "OBUFT", "MUXF7", "MUXF8", "CARRY4"):
             return ()
 
-        raise KeyError(f"Unhandled properties for type {cell_type}")
+        raise CompareException(f"Unhandled properties for type {cell_type}")
 
     def get_netlist(self, library):
         return Netlist(library, self)
