@@ -35,7 +35,7 @@ class VivadoSynthesisTool(SynthesisTool):
 
     TOOL_WORK_DIR = "vivado_synth"
 
-    def check_runs(self):
+    def up_to_date(self):
         """Check if synthesis has already been run"""
 
         # Save edif netlist path to design object
@@ -51,7 +51,7 @@ class VivadoSynthesisTool(SynthesisTool):
             generate_constraints = ToolProduct(self.design.constraints_path)
             tool_products = [generate_netlist, generate_constraints]
 
-        return self.get_prev_run_status(
+        return not self.need_to_rerun(
             tool_products,
             dependency_modified_time=max(
                 pathlib.Path(__file__).stat().st_mtime, self.design.last_modified_time()
@@ -61,10 +61,8 @@ class VivadoSynthesisTool(SynthesisTool):
     def create_netlist(self):
         """create netlist from design"""
 
-        status = self.check_runs()
-        if status is not None:
+        if self.up_to_date():
             self.print_skipping_synth()
-            return status
 
         # Run synthesis flow
         self.print_running_synth()
@@ -80,7 +78,7 @@ class VivadoSynthesisTool(SynthesisTool):
             extract_contraints(self.design, report_io_path)
 
         # Check synthesis log
-        return self.check_synth_log(self.log_path)
+        self.check_synth_log(self.log_path)
 
     def write_header(self, stream):
         stream.write("if { [ catch {\n")
