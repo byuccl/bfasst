@@ -7,8 +7,8 @@ import in_place
 
 import bfasst
 from bfasst import paths
+from bfasst.opt.base import OptException
 from bfasst.opt.ic2_base import Ic2BaseOptTool
-from bfasst.status import Status, OptStatus
 from bfasst.utils import error
 
 PROJECT_TEMPLATE_FILE = "template_lse.prj"
@@ -62,9 +62,7 @@ class Ic2LseOptTool(Ic2BaseOptTool):
         """check optimization log for errors"""
         text = open(synth_log).read()
         if re.search("^Timeout$", text, re.M):
-            return Status(OptStatus.TIMEOUT)
-
-        return Status(OptStatus.SUCCESS)
+            raise OptException("LSE timed out")
 
     def fix_lut_inits(self):
         """This function goes through the generated netlist and
