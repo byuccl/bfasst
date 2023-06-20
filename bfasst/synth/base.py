@@ -3,7 +3,6 @@ import abc
 
 from bfasst import tool
 from bfasst.utils import print_color
-from bfasst.status import SynthStatus, Status
 from bfasst.tool import BfasstException
 
 
@@ -13,8 +12,6 @@ class SynthesisException(BfasstException):
 
 class SynthesisTool(tool.Tool):
     """Base synthesis tool class"""
-
-    success_status = Status(SynthStatus.SUCCESS)
 
     def __init__(self, cwd, design, flow_args="") -> None:
         super().__init__(cwd, design)
