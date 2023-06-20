@@ -50,3 +50,6 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: ${{ steps.set-fname.outputs.fname }}
+        path: |
+          build/**/log.txt
+          build/**/*.log
