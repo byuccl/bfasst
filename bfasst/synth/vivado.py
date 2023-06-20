@@ -5,9 +5,8 @@ import pathlib
 
 import bfasst
 from bfasst.design import HdlType
-from bfasst.synth.base import SynthesisTool
+from bfasst.synth.base import SynthesisTool, SynthesisException
 from bfasst.synth import vivado_ioparse
-from bfasst.status import Status, SynthStatus
 from bfasst.config import VIVADO_COMMAND
 from bfasst.tool import ToolProduct
 
@@ -152,15 +151,11 @@ class VivadoSynthesisTool(SynthesisTool):
         cmd = VIVADO_COMMAND + ["-source", str(tcl_path)]
         proc = self.exec_and_log(cmd)
         if proc.returncode:
-            return Status(SynthStatus.ERROR)
-
-        return self.success_status
+            raise SynthesisException(f"Vivado synthesis failed with return code {proc.returncode}")
 
     def check_synth_log(self, log_path):
         text = open(log_path).read()
 
         match = re.search(r"^ERROR:\s*(.*?)$", text, re.M)
         if match:
-            return Status(SynthStatus.ERROR, match.group(1).strip())
-
-        return self.success_status
+            raise SynthesisException(f"Vivado synthesis failed with error: {match.group(1)}")
