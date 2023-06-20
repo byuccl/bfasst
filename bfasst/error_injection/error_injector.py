@@ -9,8 +9,7 @@ import yaml
 
 import bfasst
 from bfasst import paths
-from bfasst.error_injection.base import ErrorInjectionTool
-from bfasst.status import Status, ErrorInjectionStatus
+from bfasst.error_injection.base import ErrorInjectionTool, ErrorInjectionException
 
 
 class ErrorInjector(ErrorInjectionTool):
@@ -57,7 +56,7 @@ class ErrorInjector(ErrorInjectionTool):
 
         # Open the YAML file (if there is one) and read the flow information
         if self.design.error_flow_yaml is None:
-            return (Status(ErrorInjectionStatus.NO_YAML), None)
+            raise ErrorInjectionException("No error flow YAML file specified")
         with open(paths.ERROR_FLOW_PATH / self.design.error_flow_yaml) as fp:
             error_flow_info = yaml.safe_load(fp)
 
@@ -80,8 +79,6 @@ class ErrorInjector(ErrorInjectionTool):
         # Get a list of the names of flows we're using to return as well
         flow_name_list = [flow["name"] for flow in error_flow_info["error_injection_flows"]]
         self.design.error_flow_names = flow_name_list
-        tuple_list = list(zip(corrupt_netlists, flow_name_list))
-        return (Status(ErrorInjectionStatus.SUCCESS), tuple_list)
 
     def read_netlist_to_buffer(self, netlist):
         lines = []
@@ -115,7 +112,7 @@ class ErrorInjector(ErrorInjectionTool):
             lineno += 1
         if len(init_linenos) == 0:
             print("No inits in netlist!")
-            return (Status(ErrorInjectionStatus.FCN_ERROR), netlist_buffer)
+            raise ErrorInjectionException("No inits in netlist!")
         # Pick a random LUT to flip
         lut_to_change_idx = random.randint(0, len(init_linenos) - 1)
         lut_to_change = netlist_buffer[init_linenos[lut_to_change_idx]]
@@ -141,7 +138,6 @@ class ErrorInjector(ErrorInjectionTool):
             "on line",
             init_linenos[lut_to_change_idx] + 1,
         )
-        return (Status(ErrorInjectionStatus.FCN_SUCCESS), netlist_buffer)
 
     def cross_lut_wires_fcn(self, netlist_buffer):
         """Swaps the outputs of two LUTs in the netlist"""
@@ -153,7 +149,7 @@ class ErrorInjector(ErrorInjectionTool):
         # if there's fewer than 2 LUTs, don't do anything.
         # TODO: probably return a different status
         if len(lut_out_linenos) < 2:
-            return (Status(ErrorInjectionStatus.FCN_SUCCESS), netlist_buffer)
+            return
         # select two to swap
         random.shuffle(lut_out_linenos)
         lut1_lineno = lut_out_linenos[0]
@@ -167,7 +163,6 @@ class ErrorInjector(ErrorInjectionTool):
         netlist_buffer[lut1_lineno] = new_lut1_out
         netlist_buffer[lut2_lineno] = new_lut2_out
         print("Swapped LUT outputs on lines", lut1_lineno, "and", lut2_lineno)
-        return (Status(ErrorInjectionStatus.FCN_SUCCESS), netlist_buffer)
 
     def find_design_statements(self, netlist_buffer):
         """Finds the module declaration, wire statements, output
@@ -208,7 +203,9 @@ class ErrorInjector(ErrorInjectionTool):
             or len(wire_list) == 0
         ):
             print("Couldn't find one or more of module, output, assign, or wires in design!\n")
-            return (Status(ErrorInjectionStatus.FCN_SUCCESS), netlist_buffer)
+            raise ErrorInjectionException(
+                "Couldn't find one or more of module, output, assign, or wires in design!\n"
+            )
         # Select a random wire to tap
         random.shuffle(wire_list)
         print("tapping line", wire_list[0])
@@ -247,5 +244,3 @@ class ErrorInjector(ErrorInjectionTool):
             self.design.nets_to_remove_from_pcf.add(wire_to_tap[1:])
         else:
             self.design.nets_to_remove_from_pcf.add(wire_to_tap)
-
-        return (Status(ErrorInjectionStatus.FCN_SUCCESS), netlist_buffer)
