@@ -49,16 +49,14 @@ class XRayReverseBitTool(ReverseBitTool):
                 self.design.top + "_" + self.design.cur_error_flow_name + "_reversed.v"
             )
 
-        status = self.get_prev_run_status(
+        if not self.need_to_rerun(
             [generate_fasm, generate_netlist],
             dependency_modified_time=max(
                 pathlib.Path(__file__).stat().st_mtime, self.design.bitstream_path.stat().st_mtime
             ),
-        )
-
-        if status is not None:
+        ):
             self.print_skipping_reverse_bit()
-            return status
+            return
 
         self.print_running_reverse_bit()
         self.open_new_log()
@@ -78,7 +76,7 @@ class XRayReverseBitTool(ReverseBitTool):
                 self.to_netlist_log_parser(self.to_netlist_log)
             raise e
 
-        return self.to_netlist_log_parser(self.to_netlist_log)
+        self.to_netlist_log_parser(self.to_netlist_log)
 
     def convert_bit_to_fasm(self, bitstream_path, fasm_path):
         """Convert bitstream to FASM file"""
