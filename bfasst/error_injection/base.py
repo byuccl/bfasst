@@ -2,7 +2,6 @@
 import abc
 
 from bfasst.tool import Tool
-from bfasst.status import Status, ErrorInjectionStatus
 from bfasst.tool import BfasstException
 
 
@@ -12,8 +11,6 @@ class ErrorInjectionException(BfasstException):
 
 class ErrorInjectionTool(Tool):
     """Base class for error injection tools"""
-
-    success_status = Status(ErrorInjectionStatus.SUCCESS)
 
     def __init__(self, cwd, design, flow_args="") -> None:
         super().__init__(cwd, design)

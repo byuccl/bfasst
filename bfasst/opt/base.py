@@ -1,9 +1,7 @@
 """ Base class for logic optimization tools"""
 import abc
-from bfasst.status import OptStatus
 
 from bfasst.tool import Tool
-from bfasst.status import Status
 from bfasst.utils import print_color
 from bfasst.tool import BfasstException
 
@@ -14,8 +12,6 @@ class OptException(BfasstException):
 
 class OptTool(Tool):
     """Base class for logic optimization tools"""
-
-    success_status = Status(OptStatus.SUCCESS)
 
     def __init__(self, cwd, design, flow_args="") -> None:
         super().__init__(cwd, design)

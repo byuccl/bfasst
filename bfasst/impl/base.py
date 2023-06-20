@@ -2,7 +2,6 @@
 import abc
 import pathlib
 
-from bfasst.status import ImplStatus, Status
 from bfasst.utils import print_color
 from bfasst.tool import Tool, ToolProduct
 from bfasst.tool import BfasstException
@@ -14,8 +13,6 @@ class ImplementationException(BfasstException):
 
 class ImplementationTool(Tool):
     """Base class for implementation tools"""
-
-    success_status = Status(ImplStatus.SUCCESS)
 
     def __init__(self, cwd, design, flow_args="") -> None:
         super().__init__(cwd, design)
