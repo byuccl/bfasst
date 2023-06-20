@@ -41,8 +41,6 @@ class VivadoImplementationTool(ImplementationTool):
         # Update a file in the main directory with info about impl results
         # self.write_to_results_file(design, log_path, need_to_run)
 
-        return self.success_status
-
     def write_header(self, fp):
         fp.write("if { [ catch {\n")
         fp.write("read_edif " + str(self.design.netlist_path) + "\n")
