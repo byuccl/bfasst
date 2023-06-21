@@ -2,24 +2,24 @@
 * aes128 top level module that incorporates the random number generator
 * to allow bitstream generation without Vivado interferance
 */
-`default_nettype none
+`include "../random_number_generator.sv"
 
 module aes128_random(
-    input wire logic clk;
-    input wire logic reset;
-    output logic [127:0] out;
+    input logic clk,
+    input logic reset,
+    output logic [127:0] out
 );
 
 logic [127:0] a1; 
 logic [127:0] a2;
 
-RandomNumberGenerator #(3) generator1(
+RandomNumberGenerator #(128, 3) rng1(
   .clk(clk),
   .reset(reset),
   .random_number(a1)
 );
 
-RandomNumberGenerator #(17) generator2(
+RandomNumberGenerator #(128, 17) rng2(
   .clk(clk),
   .reset(reset),
   .random_number(a2)
