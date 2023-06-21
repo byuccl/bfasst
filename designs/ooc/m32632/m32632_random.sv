@@ -36,7 +36,7 @@ output logic HLDA,
 input logic DMA_CHK,
 output logic COP_GO,
 output logic [23:0] COP_OP,
-output logic [127:0] COP_OUT,
+    // output logic [127:0] COP_OUT,
 input logic COP_DONE
 );
 
@@ -48,6 +48,8 @@ logic [2:0]	DWCTRL;
 logic [2:0]	IWCTRL;
 logic [27:4] DMA_AA;
 logic [63:0] COP_IN;
+
+logic [127:0] COP_OUT; // unused output, to avoid overuse of i/o's
 
 RandomNumberGenerator #(3, 3) rng_DRAMSZ (
     .clk(clk),
