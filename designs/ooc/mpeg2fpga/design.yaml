@@ -1,4 +1,4 @@
-top: mpeg2fpga
+top: mpeg2fpga_random
 
 verilog_files:
   # - fifo_size.v
