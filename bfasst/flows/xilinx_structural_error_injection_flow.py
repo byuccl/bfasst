@@ -2,11 +2,11 @@
 
 import random
 
-from bfasst.compare.base import CompareException
 from bfasst.compare.structural import StructuralCompareTool
 from bfasst.flows.flow import Flow
 from bfasst.flows.xilinx_phys_netlist_xrev_flow import XilinxPhysNetlistXrevFlow
-from bfasst.transform.error_injector import ErrorInjector as SdnErrorInjector
+from bfasst.job import Job
+from bfasst.transform.error_injector import ErrorInjector
 from bfasst.transform.error_injector import ErrorType
 from bfasst.types import ToolType
 
@@ -20,50 +20,56 @@ class XilinxStructuralErrorInjectionFlow(Flow):
     def generate_path_to_save_corrupted_netlist(self, num_problems, err):
         return self.design.path / f"{err}_error_{num_problems}.v"
 
-    def _run(self):
+    def create(self):
         """Inject errors into FASM2BELS netlist and compare with Conformal"""
 
         if "--max_dsp" not in self.flow_args[ToolType.SYNTH]:
             self.flow_args[ToolType.SYNTH] += " --max_dsp 0"
 
+        # All other jobs depend on the last one returned from this sub flow
         self.job_list.extend(XilinxPhysNetlistXrevFlow(self.design, self.flow_args).create())
 
-        random.seed(0)
-        injection_types = [ErrorType.BIT_FLIP, ErrorType.WIRE_SWAP]
-
-        error_injector = SdnErrorInjector(cwd=self.design.build_dir, design=self.design)
-
+        # Get a reference to the dependency job that generates the netlist
         phys_netlist_rev_job = self.job_list[-1]
 
-        for err in injection_types:
-            num_problems = 0
+        # Seed the main flow's random number generator so that the same errors are injected
+        random.seed(0)
+        error_type = [ErrorType.BIT_FLIP, ErrorType.WIRE_SWAP]
+
+        # For each error type
+        random_seed_multiplier = 1
+        for error in error_type:
             num_runs = 100
+
             for i in range(1, num_runs + 1):
-                # Give the injector a number for logging the run, and run the injection
-                error_injector.run_num = i
-                error_injector.inject(err)
+                error_injector = ErrorInjector(
+                    self.design.build_dir,
+                    self.design,
+                    log_num=i,
+                    random_generator=random.Random(random_seed_multiplier * i),
+                )
 
-                # Reset the mappings in the compare tool, give it a number for logging the run,
-                # and run the comparison
-                compare_tool.reset_mappings()
+                # Create a job to inject the correct type of error
+                error_function = error_injector.get_injection_function(error)
+                comparison_job = Job(error_function, [phys_netlist_rev_job])
+                self.job_list.append(comparison_job)
 
-                # The compare tool should only reset its logs once per flow,
-                # not per error type, but should be unaware of what type of error is being injected
-                compare_tool.run_num = i if err == injection_types[0] else i + num_runs
+                compare_tool = StructuralCompareTool(
+                    cwd=self.design.build_dir,
+                    design=self.design,
+                    gold_netlist=self.design.phys_netlist_path,
+                    rev_netlist=self.design.corrupted_netlist_path,
+                    flow_args=self.flow_args[ToolType.CMP],
+                )
 
-                try:
-                    compare_tool.compare_netlists()
-                    # An error was injected, but not detected
-                    num_problems += 1
-                    new_path = self.generate_path_to_save_corrupted_netlist(num_problems, err)
-                    self.get_corrupt_netlist_path().rename(new_path)
-                except CompareException:
-                    # An error was injected and detected
-                    pass
+                # Create a job for comparison
+                comparison_job = Job(compare_tool.compare_netlists)
 
-                # Remove the corrupt netlist so that it can be regenerated
-                self.get_corrupt_netlist_path().unlink()
+                # Rather than append to the job list,
+                # we wrap it in a new job that will invert its exception handling.
+                # If the comparison fails with an exception, we've caught the injected error.
+                self.job_list.append(Job(comparison_job.invert_job, [self.job_list[-1]]))
 
-        if num_problems != 0:
-            return "ErrorInjectionException: Some errors were not caught"
-        return None
+            random_seed_multiplier += 1
+
+        return self.job_list
