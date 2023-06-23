@@ -51,8 +51,8 @@ class XilinxStructuralErrorInjectionFlow(Flow):
 
                 # Create a job to inject the correct type of error
                 error_function = error_injector.get_injection_function(error)
-                comparison_job = Job(error_function, [phys_netlist_rev_job])
-                self.job_list.append(comparison_job)
+                curr_job = Job(error_function, [phys_netlist_rev_job])
+                self.job_list.append(curr_job)
 
                 compare_tool = StructuralCompareTool(
                     cwd=self.design.build_dir,
