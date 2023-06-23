@@ -27,11 +27,9 @@ class Ic2BaseSynthesisTool(SynthesisTool):
         lib_files = self.design.vhdl_libs.items()
 
         # call the lse optimizer
-        status = self.opt_tool.create_netlist(
+        self.opt_tool.create_netlist(
             self.design, design_files, lib_files, force_run=force_new_opt_run
         )
-
-        return status
 
     @abstractmethod
     def get_tool(self):

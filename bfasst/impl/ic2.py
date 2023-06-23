@@ -7,8 +7,7 @@ import os
 
 import bfasst
 from bfasst import paths
-from bfasst.impl.base import ImplementationTool
-from bfasst.status import Status, ImplStatus
+from bfasst.impl.base import ImplementationTool, ImplementationException
 
 
 class Ic2ImplementationTool(ImplementationTool):
@@ -19,9 +18,8 @@ class Ic2ImplementationTool(ImplementationTool):
     def implement_bitstream(self):
         self.design.bitstream_path = self.cwd / (self.design.top + ".bit")
 
-        status = self.common_startup(self.check_impl_status)
-        if status:
-            return status
+        if self.up_to_date(self.check_impl_status):
+            return
 
         # Create impl tcl script
         tcl_path = self.create_run_tcl()
@@ -31,10 +29,10 @@ class Ic2ImplementationTool(ImplementationTool):
         shutil.copyfile(self.design.netlist_path, new_netlist_path)
 
         # Run implementation
-        status = self.run_implementation(new_netlist_path, tcl_path)
+        self.run_implementation(new_netlist_path, tcl_path)
 
         # Check implementation log
-        status = self.check_impl_status(self.log_path)
+        self.check_impl_status(self.log_path)
 
         # if need_to_run:
         # Copy bitstream out of working directory
@@ -43,8 +41,8 @@ class Ic2ImplementationTool(ImplementationTool):
         )
         try:
             shutil.copyfile(bitstream_proj_path, self.design.bitstream_path)
-        except FileNotFoundError:
-            return Status(ImplStatus.ERROR)
+        except FileNotFoundError as e:
+            raise ImplementationException("File not found: " + str(bitstream_proj_path)) from e
 
         # Copy constraints out of working directory
         constraints_proj_path = (
@@ -53,13 +51,11 @@ class Ic2ImplementationTool(ImplementationTool):
         self.design.constraints_path = self.cwd / (self.design.top + ".pcf")
         try:
             shutil.copyfile(constraints_proj_path, self.design.constraints_path)
-        except FileNotFoundError:
-            return Status(ImplStatus.ERROR)
+        except FileNotFoundError as e:
+            raise ImplementationException("File not found: " + str(constraints_proj_path)) from e
 
         # Always set the constraints path since we need it later
         # design.constraints_path = self.cwd/(design.top + ".pcf")
-
-        return Status(ImplStatus.SUCCESS)
 
     def run_implementation(self, netlist_path, tcl_path):
         """Run implemention"""
@@ -73,9 +69,7 @@ class Ic2ImplementationTool(ImplementationTool):
                 cmd, stdout=fp, stderr=subprocess.STDOUT, cwd=self.work_dir, env=env
             )
             if proc.returncode != 0:
-                return Status(ImplStatus.ERROR)
-
-        return Status(ImplStatus.SUCCESS)
+                raise ImplementationException("IceCube2 failed while running tcl script")
 
     def create_run_tcl(self):
         tcl_path = self.work_dir / "run_impl.tcl"
@@ -90,12 +84,12 @@ class Ic2ImplementationTool(ImplementationTool):
             r"^Design LUT Count \((\d+)\) exceeded Device LUT Count \((\d+)\)$", text, re.M
         )
         if match:
-            return Status(ImplStatus.TOO_MANY_LUTS, match.group(1) + "/" + match.group(2))
+            raise ImplementationException("Too many luts: " + match.group(1) + "/" + match.group(2))
         match = re.search(
             r"^Design FF Count \((\d+)\) exceeded Device FF Count \((\d+)\)$", text, re.M
         )
         if match:
-            return Status(ImplStatus.TOO_MANY_FF, match.group(1) + "/" + match.group(2))
+            raise ImplementationException("Too many FF: " + match.group(1) + "/" + match.group(2))
 
         # Too many I/Os
         match = re.search(
@@ -107,7 +101,7 @@ class Ic2ImplementationTool(ImplementationTool):
             re.M | re.S,
         )
         if match:
-            return Status(ImplStatus.TOO_MANY_IO, match.group(2) + "/" + match.group(1))
+            raise ImplementationException("Too many IO: " + match.group(2) + "/" + match.group(1))
 
         # if too_large_str:
         #     err_str += "Design does not fit. " + too_large_str
@@ -120,8 +114,6 @@ class Ic2ImplementationTool(ImplementationTool):
         # if (err_str):
         #     sys.stdout.write(err_str)
         #     return True
-
-        return Status(ImplStatus.SUCCESS)
 
     # def write_to_results_file(self, design, log_path, need_to_run):
 

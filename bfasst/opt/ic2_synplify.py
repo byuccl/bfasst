@@ -7,7 +7,7 @@ import bfasst
 from bfasst import paths
 from bfasst.design import Design
 from bfasst.opt.ic2_base import Ic2BaseOptTool
-from bfasst.status import Status, OptStatus
+from bfasst.opt.base import OptException
 
 PROJECT_TEMPLATE_FILE = "template_sp.prj"
 IC2_SYNPLIFY_PROJ_FILE = "synplify_project.prj"
@@ -38,7 +38,7 @@ class Ic2SynplifyOptTool(Ic2BaseOptTool):
 
         return self.exec_synth_tool(cmd, env)
 
-    def create_project_file(self, edif_path, in_files, lib_files):
+    def create_project_file(self, edif_path, lib_files):
         """Create icecube2 project file"""
         assert isinstance(self.design, Design)
 
@@ -48,7 +48,7 @@ class Ic2SynplifyOptTool(Ic2BaseOptTool):
 
         with open(project_file, "a") as fp:
             fp.write("set_option -top_module " + self.design.top + "\n")
-            for design_file in in_files:
+            for design_file in self.yosys_netlist_path:
                 if os.path.splitext(design_file)[1].lower() == ".v":
                     fp.write(
                         "add_file -verilog -lib work "
@@ -75,7 +75,7 @@ class Ic2SynplifyOptTool(Ic2BaseOptTool):
         text = open(synth_log).read()
 
         if re.search("^Timeout$", text, re.M):
-            return Status(OptStatus.TIMEOUT)
+            raise OptException("Synplify timed out")
 
         match = re.search(
             r'Job: "compiler" terminated with error status: \d+\nSee log file: "(.*?)"', text, re.M
@@ -84,8 +84,8 @@ class Ic2SynplifyOptTool(Ic2BaseOptTool):
             text = open(match.group(1)).read()
             match = re.search(r"^@E:\s*(.*?)$", text, re.M)
             if match:
-                return Status(OptStatus.COMPILE_ERROR, match.group(1))
-            return Status(OptStatus.COMPILE_ERROR)
+                raise OptException("Compile error: " + match.group(1))
+            raise OptException("Compile error")
 
         match = re.search(
             r'Job: "fpga_mapper" terminated with error status: \d+\nSee log file: "(.*?)"',
@@ -96,10 +96,8 @@ class Ic2SynplifyOptTool(Ic2BaseOptTool):
             text = open(match.group(1)).read()
             match = re.search(r"^@E:\s*(.*?)$", text, re.M)
             if match:
-                return Status(OptStatus.MAPPER_ERROR, match.group(1))
-            return Status(OptStatus.MAPPER_ERROR)
-
-        return Status(OptStatus.SUCCESS)
+                raise OptException("A mapper error occurred: " + match.group(1))
+            raise OptException("A mapper error occurred")
 
     # def write_result_file(self, design):
     #     if design.results_summary_path is None:

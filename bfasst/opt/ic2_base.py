@@ -7,8 +7,7 @@ import shutil
 import subprocess
 
 import bfasst
-from bfasst.opt.base import OptTool
-from bfasst.status import BfasstException, OptStatus, Status
+from bfasst.opt.base import OptException, OptTool
 from bfasst.tool import ToolProduct
 
 
@@ -17,51 +16,49 @@ class Ic2BaseOptTool(OptTool):
 
     TOOL_WORK_DIR = "ic2_opt"
 
-    def create_netlist(self, in_files, lib_files, force_run=False):
+    def create_netlist(self, lib_files=None, force_run=False):
         """Create netlist"""
 
         # Save edif netlist path to design object
         self.design.netlist_path = self.cwd / (self.design.top + ".edf")
 
-        status = self.get_prev_run_status(
-            tool_products=[
-                ToolProduct(self.design.netlist_path, self.log_path, self.check_opt_log)
-            ],
-            dependency_modified_time=max(
-                pathlib.Path(__file__).stat().st_mtime, self.design.last_modified_time()
-            ),
-        )
-
-        if status is not None and not force_run:
+        if (
+            not self.need_to_rerun(
+                tool_products=[
+                    ToolProduct(self.design.netlist_path, self.log_path, self.check_opt_log)
+                ],
+                dependency_modified_time=max(
+                    pathlib.Path(__file__).stat().st_mtime, self.design.last_modified_time()
+                ),
+            )
+            and not force_run
+        ):
             self.print_skipping_opt()
-            return status
+            return
 
         edif_path_temp = self.work_dir / (self.design.top + ".edf")
 
         # Create Icecube 2 LSE synthesis project file
-        prj_path = self.create_project_file(edif_path_temp, in_files, lib_files)
+        prj_path = self.create_project_file(edif_path_temp, lib_files)
 
         # Run Icecube 2 LSE synthesis
         try:
             self.run_sythesis(prj_path)
-        except BfasstException as e:
+        except OptException as e:
             # If generic error, see if log has something more specific
-            if e.error == OptStatus.ERROR:
+            if e == OptException("Synthesis failed"):
                 self.check_opt_log(self.log_path)
             raise e
 
         # Parse synthesis log for errors
-        status = self.check_opt_log(self.log_path)
-        if status.error:
-            return status
+        self.check_opt_log(self.log_path)
 
         # Copy edif netlist out of project directory3
         if not edif_path_temp.is_file():
-            return Status(OptStatus.ERROR)
+            raise OptException("Synthesis failed to produce netlist")
         shutil.copyfile(edif_path_temp, self.design.netlist_path)
 
         # self.write_result_file(design)
-        return Status(OptStatus.SUCCESS)
 
     @abstractmethod
     def run_sythesis(self, prj_path):
@@ -69,7 +66,7 @@ class Ic2BaseOptTool(OptTool):
         raise NotImplementedError
 
     @abstractmethod
-    def create_project_file(self, edif_path, in_files, lib_files):
+    def create_project_file(self, edif_path, lib_files):
         """create project file for icecube2"""
         raise NotImplementedError
 
@@ -81,8 +78,7 @@ class Ic2BaseOptTool(OptTool):
     def exec_synth_tool(self, cmd, env):
         try:
             proc = self.exec_and_log(cmd, env=env, timeout=bfasst.config.I2C_LSE_TIMEOUT)
-        except subprocess.TimeoutExpired:
-            return Status(OptStatus.TIMEOUT)
+        except subprocess.TimeoutExpired as e:
+            raise OptException("Synthesis timed out") from e
         if proc.returncode != 0:
-            return Status(OptStatus.ERROR)
-        return Status(OptStatus.SUCCESS)
+            raise OptException("Synthesis failed")

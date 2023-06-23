@@ -6,37 +6,33 @@ from pathlib import Path
 
 from bfasst.design import Design
 from bfasst import paths
-from bfasst.flows import Flows, run_flow, get_flow_fcn_by_name
-from bfasst.tool_wrappers import ToolType
+from bfasst.flows.flow import get_flow, get_flows
+from bfasst.types import ToolType
 
 
 def run_design(design_path, flow, error_flow, flow_args):
     """Run a design through a given flow"""
 
-    if flow_args[ToolType.MAP]:
-        flow = Flows(flow)
-        status = get_flow_fcn_by_name(flow)(None, flow_args, None)
-        print(status)
-        return
-
-    # Load the design
-    design = Design(design_path)
-
     # Create temp folder
     build_dir = Path.cwd() / "build" / flow / (design.path.relative_to(paths.DESIGNS_PATH))
     build_dir.mkdir(parents=True, exist_ok=True)
+
+    # Load the design
+    design = Design(design_path, build_dir)
 
     # Store the error flow for later
     if error_flow:
         design.error_flow_yaml = error_flow + ".yaml"
 
     # Get the flow object
-    flow = Flows(flow)
+    flow = get_flow(flow)(design, flow_args)
 
     # Run the design
-    status = run_flow(design, flow, flow_args, build_dir)
-
-    print(status)
+    status = flow.run()
+    if status:
+        print(status)
+    else:
+        print("Success!")
 
 
 def main():
@@ -45,7 +41,7 @@ def main():
     parser = ArgumentParser()
 
     parser.add_argument("design_path", help="Path to design in examples directory.")
-    parser.add_argument("flow", choices=sorted([e.value for e in Flows]))
+    parser.add_argument("flow", choices=sorted([e.value for e in get_flows()]))
     parser.add_argument("--synth", help="Synthesis args", type=str, default="")
     parser.add_argument("--impl", help="Implementation args", type=str, default="")
     parser.add_argument("--map", help="Mapping args", type=str, default="")

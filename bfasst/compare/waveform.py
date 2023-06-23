@@ -7,9 +7,8 @@ from wafove.templates import get_paths
 from wafove.tools import analyze_graph
 
 import bfasst
-from bfasst.compare.base import CompareTool
+from bfasst.compare.base import CompareTool, CompareException
 from bfasst.config import VIVADO_BIN_PATH
-from bfasst.status import Status, CompareStatus
 
 
 class WaveformCompareTool(CompareTool):
@@ -89,9 +88,8 @@ class WaveformCompareTool(CompareTool):
         print(f"Displaying waveforms via Gtkwave: {self.args.waveform}")
         print(f"Displaying waveforms via Vivado: {self.args.vivado}\n")
 
-        status = self.up_to_date(self.check_compare_status)
-        if status is not None:
-            return status
+        if self.up_to_date(self.check_compare_status):
+            return
 
         self.print_running_compare()
 
@@ -128,8 +126,7 @@ class WaveformCompareTool(CompareTool):
                     self.args.fullScreen,
                 )
             if paths["diff"].exists():
-                return Status(CompareStatus.NOT_EQUIVALENT)
-            return Status(CompareStatus.SUCCESS)
+                raise CompareException("The netlists are not equivalent.")
 
         for i in range(2):
             if paths["tb"][i].exists():
@@ -139,10 +136,8 @@ class WaveformCompareTool(CompareTool):
             paths, self.args.tests, self.args.seed, self.args.allSignals
         )
 
-        if compare_waveforms.run_test(paths):
-            return Status(CompareStatus.SUCCESS)
-
-        return Status(CompareStatus.NOT_EQUIVALENT)
+        if not compare_waveforms.run_test(paths):
+            raise CompareException("The netlists are not equivalent.")
 
     def check_compare_status(self, log_path):
         """Used to confirm whether a design is equivalent or not."""
@@ -151,10 +146,9 @@ class WaveformCompareTool(CompareTool):
 
         # Check for timeout
         if re.search("^Timeout$", log_text, re.M):
-            return Status(CompareStatus.TIMEOUT)
+            raise CompareException("The waveform tool timed out.")
 
         # Regex search for result
         i = re.search(r"^6\. Compare Results:\s+(.*)$", log_text, re.M)
-        if i.group(1) == "PASS":
-            return Status(CompareStatus.SUCCESS)
-        return Status(CompareStatus.NOT_EQUIVALENT, i.group(1))
+        if i.group(1) != "PASS":
+            raise CompareException(f"Not equivalent: {i.group(1)}")

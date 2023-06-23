@@ -1,0 +1,4 @@
+designs:
+  - byu/alu
+
+flow: xilinx_structural_error_injection

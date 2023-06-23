@@ -6,7 +6,7 @@ import yaml
 
 from bfasst import paths
 from bfasst.compare.base import CompareTool
-from bfasst.status import Status, CompareStatus
+from bfasst.locks import onespin_lock
 
 ONESPIN_TCL_TEMPLATE = "run_onespin.tcl"
 ONESPIN_PY_TEMPLATE = "run_onespin.py"
@@ -18,6 +18,10 @@ class OneSpinCompareTool(CompareTool):
     TOOL_WORK_DIR = "onespin"
 
     def compare_netlists(self):
+        with onespin_lock:
+            self._compare_netlists()
+
+    def _compare_netlists(self):
         yaml_data = {}
 
         # TODO: I DON'T THINK THIS IS COPYING ALL OF GOLDEN?
@@ -60,8 +64,6 @@ class OneSpinCompareTool(CompareTool):
             yaml.dump(yaml_data, fp)
 
         self.write_compare_tcl()
-
-        return Status(CompareStatus.NEED_TO_RUN_ONESPIN)
 
     def read_golden(self, fp, gold_is_rtl):
         """Read the golden file."""

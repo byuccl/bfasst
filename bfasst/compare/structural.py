@@ -3,8 +3,7 @@
 from bidict import bidict
 import spydrnet as sdn
 from bfasst import jpype_jvm
-from bfasst.compare.base import CompareTool
-from bfasst.status import CompareStatus, Status
+from bfasst.compare.base import CompareTool, CompareException
 from bfasst.utils import TermColor, error, properties_are_equal
 from bfasst.vendor_utils.xilinx import get_unisim_cell_inputs_and_outputs
 
@@ -43,7 +42,6 @@ class StructuralCompareTool(CompareTool):
         netlist_b = self.rev_netlist
 
         self.check_log_path()
-        self.open_new_log()
 
         self.log_title("Building netlist A", impl_netlist)
 
@@ -115,16 +113,14 @@ class StructuralCompareTool(CompareTool):
             self.log(f"    {net.name}")
 
         if len(self.block_mapping) != len(self.named_netlist.instances_to_map):
-            return Status(CompareStatus.COULD_NOT_MAP)
+            raise CompareException("Could not map all blocks")
         if num_mapped_nets != num_total_nets:
-            return Status(CompareStatus.COULD_NOT_MAP)
+            raise CompareException("Could not map all nets")
 
         # TODO: After establishing mapping, verify equivalence
         # Basically make sure all outputs are mapped, and then everything is identical
         # Maybe this will already be guaranteed by the mapping algorithm? ...good to
         # double check.
-
-        return self.success_status
 
     def perform_mapping(self):
         """Maps netlists based on their cells and nets"""
@@ -173,9 +169,8 @@ class StructuralCompareTool(CompareTool):
                     # self.log(f"  {instances_matching} matches")
 
                     if not instances_matching:
-                        return Status(
-                            CompareStatus.NOT_EQUIVALENT,
-                            f"{instance.name} has no possible match in netlist",
+                        raise CompareException(
+                            f"Not equivalent. {instance.name} has no possible match in the netlist."
                         )
 
                     if len(instances_matching) > 1:
@@ -195,7 +190,6 @@ class StructuralCompareTool(CompareTool):
                     continue
 
             iteration += 1
-        return self.success_status
 
     def add_block_mapping(self, instance, matched_instance):
         """Add mapping point between two Instances"""
@@ -365,7 +359,7 @@ class StructuralCompareTool(CompareTool):
         if cell_type in ("IBUF", "OBUF", "OBUFT", "MUXF7", "MUXF8", "CARRY4"):
             return ()
 
-        raise KeyError(f"Unhandled properties for type {cell_type}")
+        raise CompareException(f"Unhandled properties for type {cell_type}")
 
     def get_netlist(self, library):
         return Netlist(library, self)

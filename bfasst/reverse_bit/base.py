@@ -3,13 +3,15 @@ import abc
 
 from bfasst.tool import Tool
 from bfasst.utils import print_color
-from bfasst.status import Status, BitReverseStatus
+from bfasst.tool import BfasstException
+
+
+class ReverseBitException(BfasstException):
+    """Base class for all exceptions in the reverse_bit package"""
 
 
 class ReverseBitTool(Tool):
     """Base class for bitstream to netlist tools"""
-
-    success_status = Status(BitReverseStatus.SUCCESS)
 
     def __init__(self, cwd, design, flow_args="") -> None:
         super().__init__(cwd, design)

@@ -1,19 +1,21 @@
 """ Base class for logic optimization tools"""
 import abc
-from bfasst.status import OptStatus
 
 from bfasst.tool import Tool
-from bfasst.status import Status
 from bfasst.utils import print_color
+from bfasst.tool import BfasstException
+
+
+class OptException(BfasstException):
+    """Base class for all exceptions in the opt package"""
 
 
 class OptTool(Tool):
     """Base class for logic optimization tools"""
 
-    success_status = Status(OptStatus.SUCCESS)
-
     def __init__(self, cwd, design, flow_args="") -> None:
         super().__init__(cwd, design)
+        self.yosys_netlist_path = [str(self.design.netlist_path)]
 
         # Implementation options
         self.create_arg_parser("opt", flow_args)
@@ -30,7 +32,7 @@ class OptTool(Tool):
     #   - in_files: A list of design files to run the optimizer on
     #   - lib_files: A list of tuples containing VHDL library paths and library files
     @abc.abstractmethod
-    def create_netlist(self, in_files, lib_files):
+    def create_netlist(self, lib_files):
         pass
 
     def print_running_opt(self):

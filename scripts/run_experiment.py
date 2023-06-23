@@ -19,7 +19,8 @@ import traceback
 import bfasst
 import bfasst.experiment
 from bfasst.output_cntrl import redirect, cleanup_redirect, enable_proxy
-from bfasst.status import BfasstException, Status
+from bfasst.flows.flow import get_flow, get_flows
+from bfasst.status import Status
 from bfasst.utils import TermColor, print_color
 
 

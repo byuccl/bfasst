@@ -22,7 +22,7 @@ class HdlType(enum.Enum):
 class Design:
     "class holding paths and other metadata for a given design" ""
 
-    def __init__(self, dir_path):
+    def __init__(self, dir_path, build_dir):
         if not dir_path.is_dir() and (paths.DESIGNS_PATH / dir_path).is_dir():
             dir_path = paths.DESIGNS_PATH / dir_path
         dir_path = dir_path.absolute()
@@ -31,6 +31,7 @@ class Design:
             error("Design folder", dir_path, " does not exist.")
 
         self.path = dir_path
+        self.build_dir = build_dir
         self.rel_path = self.path.relative_to(paths.DESIGNS_PATH)
         self.yaml_path = self.path / DESIGN_YAML_NAME
 
