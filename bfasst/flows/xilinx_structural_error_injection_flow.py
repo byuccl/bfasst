@@ -1,5 +1,7 @@
 """XilinxStructuralErrorInjection flow"""
 
+from functools import partial
+from os import unlink
 import random
 
 from bfasst.compare.structural import StructuralCompareTool
@@ -58,17 +60,23 @@ class XilinxStructuralErrorInjectionFlow(Flow):
                     cwd=self.design.build_dir,
                     design=self.design,
                     gold_netlist=self.design.phys_netlist_path,
-                    rev_netlist=self.design.corrupted_netlist_path,
+                    rev_netlist=error_injector.corrupted_netlist_path,
                     flow_args=self.flow_args[ToolType.CMP],
                 )
 
-                # Create a job for comparison
-                comparison_job = Job(compare_tool.compare_netlists)
+                comparison_job = Job(compare_tool.compare_netlists, [self.job_list[-1]])
 
                 # Rather than append to the job list,
-                # we wrap it in a new job that will invert its exception handling.
+                # we create a new job that inverts its exception handling.
                 # If the comparison fails with an exception, we've caught the injected error.
-                self.job_list.append(Job(comparison_job.invert_job, [self.job_list[-1]]))
+                self.job_list.append(comparison_job.invert())
+
+                # Clean up the corrupted netlist if the comparison passes
+                curr_job = Job(
+                    partial(unlink, error_injector.corrupted_netlist_path),
+                    [self.job_list[-1]],
+                )
+                self.job_list.append(curr_job)
 
             random_seed_multiplier += 1
 

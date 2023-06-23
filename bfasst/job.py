@@ -11,12 +11,11 @@ class Job:
         self.function = function
         self.dependencies = dependencies
 
-    def invert_job(self):
+    def invert(self):
         """This can be called in the case where we want to invert the job's exception handling"""
-        self.invert_job_helper()
+        return Job(self.inverter, self.dependencies)
 
-    def invert_job_helper(self):
-        """Helper function for invert_job"""
+    def inverter(self):
         try:
             self.function()
         except BfasstException:
