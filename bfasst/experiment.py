@@ -6,7 +6,8 @@ import yaml
 
 from bfasst import paths
 from bfasst.design import Design
-from bfasst.flows import get_flow_fcn_by_name, ToolType
+from bfasst.flows.flow import get_flow
+from bfasst.types import ToolType
 from bfasst.utils import error
 
 
@@ -26,7 +27,7 @@ class Experiment:
         # Get the flow fcn pointer
         if not "flow" in experiment_props:
             error("'flow' property missing from experiment YAML", yaml_path)
-        self.flow_fcn = get_flow_fcn_by_name(experiment_props.pop("flow"))
+        self.flow_fcn = get_flow(experiment_props.pop("flow")).create
 
         # Create design objects for all designs
         self.design_paths = []
@@ -35,13 +36,18 @@ class Experiment:
         if "post_run" in experiment_props:
             self.post_run = getattr(self, experiment_props.pop("post_run"))
 
+        if work_dir is None:
+            work_dir = pathlib.Path.cwd() / "build" / self.name
+        work_dir.mkdir(exist_ok=True, parents=True)
+        self.work_dir = work_dir
+
         # Uniquify
         self.design_paths = list(set(self.design_paths))
         self.design_paths.sort()
 
         self.designs = []
         for design_path in self.design_paths:
-            design = Design(paths.DESIGNS_PATH / design_path)
+            design = Design(paths.DESIGNS_PATH / design_path, self.work_dir)
             self.designs.append(design)
 
         for design in self.designs:
@@ -54,12 +60,6 @@ class Experiment:
                 self.flow_args[key] = val
             except KeyError:
                 continue
-
-        # Create temp folder
-        if work_dir is None:
-            work_dir = pathlib.Path.cwd() / "build" / self.name
-        work_dir.mkdir(exist_ok=True, parents=True)
-        self.work_dir = work_dir
 
     def collect_designs(self, experiment_props):
         """Get all designs from the config YAML"""
