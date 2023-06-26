@@ -22,7 +22,7 @@ class SynplifyIc2IcestormOnespinFlow(Flow):
         synplify_synth_tool = Ic2SynplifySynthesisTool(
             self.design.build_dir, self.design, self.flow_args[ToolType.SYNTH]
         )
-        curr_job = Job(synplify_synth_tool.create_netlist)
+        curr_job = Job(synplify_synth_tool.create_netlist, self.design.rel_path)
         self.job_list.append(curr_job)
 
         impl_and_rev_sub_flow = Ic2ImplAndIceRevFlow(self.design, self.flow_args)
@@ -31,7 +31,7 @@ class SynplifyIc2IcestormOnespinFlow(Flow):
         self.job_list.extend(impl_and_rev_sub_flow.job_list)
 
         # Run onespin
-        curr_job = Job(self.adjust_design_object, [self.job_list[-1]])
+        curr_job = Job(self.adjust_design_object, self.design.rel_path, [self.job_list[-1]])
         self.job_list.append(curr_job)
 
         cmp_tool = OneSpinCompareTool(
@@ -41,7 +41,7 @@ class SynplifyIc2IcestormOnespinFlow(Flow):
             self.design.reversed_netlist_filename(),
             self.flow_args[ToolType.CMP],
         )
-        curr_job = Job(cmp_tool.compare_netlists, [self.job_list[-1]])
+        curr_job = Job(cmp_tool.compare_netlists, self.design.rel_path, [self.job_list[-1]])
         self.job_list.append(curr_job)
 
         return self.job_list

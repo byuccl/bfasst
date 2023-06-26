@@ -23,7 +23,7 @@ class XilinxAndReversedFlow(Flow):
         xray_rev_tool = XRayReverseBitTool(
             self.design.build_dir, self.design, self.flow_args[ToolType.REVERSE]
         )
-        curr_job = Job(xray_rev_tool.reverse_bitstream, [self.job_list[-1]])
+        curr_job = Job(xray_rev_tool.reverse_bitstream, self.design.rel_path, [self.job_list[-1]])
         self.job_list.append(curr_job)
 
         return self.job_list

@@ -25,7 +25,7 @@ class WafoveFlow(Flow):
         xray_rev_bit_tool = XRayReverseBitTool(
             self.design.build_dir, self.design, self.flow_args[ToolType.REVERSE]
         )
-        curr_job = Job(xray_rev_bit_tool.reverse_bitstream, [self.job_list[-1]])
+        curr_job = Job(xray_rev_bit_tool.reverse_bitstream, self.design.rel_path, [self.job_list[-1]])
         self.job_list.append(curr_job)
 
         # Input number of tests to run, seed to base random on, whether or not to show all signals
@@ -39,7 +39,7 @@ class WafoveFlow(Flow):
             self.design.reversed_netlist_path,
             self.flow_args[ToolType.CMP],
         )
-        curr_job = Job(waveform_cmp_tool.compare_netlists, [self.job_list[-1]])
+        curr_job = Job(waveform_cmp_tool.compare_netlists, self.design.rel_path, [self.job_list[-1]])
         self.job_list.append(curr_job)
 
         return self.job_list

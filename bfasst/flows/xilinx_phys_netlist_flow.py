@@ -22,7 +22,9 @@ class XilinxPhysNetlistFlow(Flow):
         self.job_list.extend(XilinxFlow(self.design, self.flow_args).create())
 
         curr_job = Job(
-            XilinxPhysNetlist(self.design.build_dir, self.design).run, [self.job_list[-1]]
+            XilinxPhysNetlist(self.design.build_dir, self.design).run,
+            self.design.rel_path,
+            [self.job_list[-1]],
         )
         self.job_list.append(curr_job)
 

@@ -19,7 +19,7 @@ class Ic2LseConformalFlow(Flow):
         lse_synth_tool = Ic2LseSynthesisTool(
             self.design.build_dir, self.design, self.flow_args[ToolType.SYNTH]
         )
-        curr_job = Job(lse_synth_tool.create_netlist)
+        curr_job = Job(lse_synth_tool.create_netlist, self.design.rel_path)
         self.job_list.append(curr_job)
 
         # Run icecube implementation and icestorm bitstream reversal
@@ -29,7 +29,7 @@ class Ic2LseConformalFlow(Flow):
         self.job_list.extend(impl_and_rev_sub_flow.job_list)
 
         # Run conformal
-        curr_job = Job(self.adjust_design_object, [self.job_list[-1]])
+        curr_job = Job(self.adjust_design_object, self.design.rel_path, [self.job_list[-1]])
 
         conformal_sub_flow = ConformalOnlyFlow(self.design, self.flow_args)
         conformal_sub_flow.create()

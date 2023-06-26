@@ -30,7 +30,7 @@ class XilinxOocFlow(Flow):
             impl_tool.print_skipping_impl()
             return self.job_list
 
-        curr_job = Job(self.run_ooc_job)
+        curr_job = Job(self.run_ooc_job, self.design.rel_path)
         self.job_list.append(curr_job)
 
         return self.job_list

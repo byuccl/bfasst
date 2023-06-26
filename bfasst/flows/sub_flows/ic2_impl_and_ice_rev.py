@@ -21,7 +21,8 @@ class Ic2ImplAndIceRevFlow(Flow):
         curr_job = Job(
             Ic2ImplementationTool(
                 self.design.build_dir, self.design, self.flow_args[ToolType.IMPL]
-            ).implement_bitstream
+            ).implement_bitstream,
+            self.design.rel_path,
         )
         self.job_list.append(curr_job)
 
@@ -29,6 +30,7 @@ class Ic2ImplAndIceRevFlow(Flow):
             IcestormReverseBitTool(
                 self.design.build_dir, self.design, self.flow_args[ToolType.REVERSE]
             ).reverse_bitstream,
+            self.design.rel_path,
             [self.job_list[-1]],
         )
         self.job_list.append(curr_job)

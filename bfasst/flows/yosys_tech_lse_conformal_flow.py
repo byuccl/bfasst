@@ -27,20 +27,20 @@ class YosysTechLseConformalFlow(Flow):
         yosys_synth_tool = YosysTechSynthTool(
             self.design.build_dir, self.design, self.flow_args[ToolType.SYNTH]
         )
-        curr_job = Job(yosys_synth_tool.create_netlist)
+        curr_job = Job(yosys_synth_tool.create_netlist, self.design.rel_path)
         self.job_list.append(curr_job)
 
         # Now run the LSE synthesizer on the Yosys output
-        curr_job = Job(self.adjust_design_object, [self.job_list[-1]])
+        curr_job = Job(self.adjust_design_object, self.design.rel_path, [self.job_list[-1]])
         self.job_list.append(curr_job)
 
         lse_opt_tool = Ic2LseOptTool(self.design.build_dir, self.design, self.flow_args)
-        curr_job = Job(lse_opt_tool.create_netlist, [self.job_list[-1]])
+        curr_job = Job(lse_opt_tool.create_netlist, self.design.rel_path, [self.job_list[-1]])
         self.job_list.append(curr_job)
 
         # Try fixing the netlist LUT inits (there's some issue with how LSE
         # generates them)
-        curr_job = Job(lse_opt_tool.fix_lut_inits, [self.job_list[-1]])
+        curr_job = Job(lse_opt_tool.fix_lut_inits, self.design.rel_path, [self.job_list[-1]])
         self.job_list.append(curr_job)
 
         Ic2ImplementationTool(

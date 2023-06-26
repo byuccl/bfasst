@@ -29,6 +29,6 @@ class ConformalOnlyFlow(Flow):
             vendor,
         )
 
-        curr_job = Job(compare_tool.compare_netlists)
+        curr_job = Job(compare_tool.compare_netlists, self.design.rel_path)
         self.job_list.append(curr_job)
         return self.job_list

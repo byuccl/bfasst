@@ -21,7 +21,10 @@ class OnespinCmpFlow(Flow):
             self.design.reversed_netlist_filename(),
             self.flow_args[ToolType.CMP],
         )
-        curr_job = Job(compare_tool.compare_netlists)
+        curr_job = Job(
+            compare_tool.compare_netlists,
+            self.design.rel_path,
+        )
 
         self.job_list.append(curr_job)
 

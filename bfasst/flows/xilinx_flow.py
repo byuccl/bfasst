@@ -17,14 +17,16 @@ class XilinxFlow(Flow):
         vivado_synth_tool = VivadoSynthesisTool(
             self.design.build_dir, self.design, self.flow_args[ToolType.SYNTH]
         )
-        curr_job = Job(vivado_synth_tool.create_netlist)
+        curr_job = Job(vivado_synth_tool.create_netlist, self.design.rel_path)
         self.job_list.append(curr_job)
 
         # Create a job for Vivado implementation
         vivado_impl_tool = VivadoImplementationTool(
             self.design.build_dir, self.design, self.flow_args[ToolType.IMPL]
         )
-        curr_job = Job(vivado_impl_tool.implement_bitstream, [self.job_list[-1]])
+        curr_job = Job(
+            vivado_impl_tool.implement_bitstream, self.design.rel_path, [self.job_list[-1]]
+        )
         self.job_list.append(curr_job)
 
         return self.job_list

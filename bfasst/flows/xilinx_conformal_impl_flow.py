@@ -18,7 +18,7 @@ class XilinxConformalImplFlow(Flow):
         self.job_list.extend(XilinxAndReversedFlow(self.design, self.flow_args).create())
 
         # Use conformal to compare against IMPL netlist
-        curr_job = Job(self.adjust_design_object, [self.job_list[-1]])
+        curr_job = Job(self.adjust_design_object, self.design.rel_path, [self.job_list[-1]])
         self.job_list.append(curr_job)
 
         # TODO Conformal_CompareTool.compare_netlists does not take a mapping arg

@@ -28,7 +28,9 @@ class XilinxPhysNetlistCmpFlow(Flow):
             self.design.reversed_netlist_path,
             self.flow_args[ToolType.CMP],
         )
-        curr_job = Job(structural_compare_tool.compare_netlists, [self.job_list[-1]])
+        curr_job = Job(
+            structural_compare_tool.compare_netlists, self.design.rel_path, [self.job_list[-1]]
+        )
         self.job_list.append(curr_job)
 
         return self.job_list

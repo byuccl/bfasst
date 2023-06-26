@@ -53,7 +53,7 @@ class XilinxStructuralErrorInjectionFlow(Flow):
 
                 # Create a job to inject the correct type of error
                 error_function = error_injector.get_injection_function(error)
-                curr_job = Job(error_function, [phys_netlist_rev_job])
+                curr_job = Job(error_function, self.design.rel_path, [phys_netlist_rev_job])
                 self.job_list.append(curr_job)
 
                 compare_tool = StructuralCompareTool(
@@ -64,7 +64,9 @@ class XilinxStructuralErrorInjectionFlow(Flow):
                     flow_args=self.flow_args[ToolType.CMP],
                 )
 
-                comparison_job = Job(compare_tool.compare_netlists, [self.job_list[-1]])
+                comparison_job = Job(
+                    compare_tool.compare_netlists, self.design.rel_path, [self.job_list[-1]]
+                )
 
                 # Rather than append to the job list,
                 # we create a new job that inverts its exception handling.
@@ -74,6 +76,7 @@ class XilinxStructuralErrorInjectionFlow(Flow):
                 # Clean up the corrupted netlist if the comparison passes
                 curr_job = Job(
                     partial(unlink, error_injector.corrupted_netlist_path),
+                    self.design.rel_path,
                     [self.job_list[-1]],
                 )
                 self.job_list.append(curr_job)
