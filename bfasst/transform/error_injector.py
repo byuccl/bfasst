@@ -21,15 +21,19 @@ class ErrorInjector(TransformTool):
     def __init__(self, cwd, design, log_num, random_generator) -> None:
         super().__init__(cwd, design)
         self.remove_logs()
-        self.clean_netlist = sdn.parse(self.design.reversed_netlist_path)
+        self.clean_netlist = None
         self.hierarchical_luts = []
         self.all_luts = None
-        self.all_instances = self.__get_all_instances()
+        self.all_instances = None
         self.log_num = log_num
         self.random_generator = random_generator
         self.corrupted_netlist_path = None
         self.old_lut_init = None
         self.new_lut_init = None
+
+    def __setup_netlist(self):
+        self.clean_netlist = sdn.parse(self.design.clean_netlist_path)
+        self.all_instances = self.__get_all_instances()
 
     def __get_all_instances(self):
         """Get all the instances in the netlist, sorted by their name"""
@@ -54,6 +58,7 @@ class ErrorInjector(TransformTool):
 
     def inject_bit_flip(self):
         """Injects a bit flip error into the netlist"""
+        self.__setup_netlist()
         self.corrupted_netlist_path = self.design.path / f"bit_flip_{self.log_num}.v"
         num_luts = self.__pick_luts_from_netlist()
         self.__get_all_luts()
@@ -142,6 +147,7 @@ class ErrorInjector(TransformTool):
 
     def inject_wire_swap(self):
         """Injects a wire swap error into the netlist"""
+        self.__setup_netlist()
         self.corrupted_netlist_path = self.design.path / f"wire_swap_{self.log_num}.v"
 
         # Pick two random instances
