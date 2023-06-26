@@ -115,7 +115,7 @@ class Experiment:
             self.__add_error_flow_to_design(design)
 
             # Create the top level flow for the design
-            flow = get_flow(self.experiment_props.pop("flow"))(design, self.flow_args)
+            flow = get_flow(self.experiment_props["flow"])(design, self.flow_args)
             self.flows.append(flow)
 
     def __add_error_flow_to_design(self, design):
