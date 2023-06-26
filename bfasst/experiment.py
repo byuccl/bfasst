@@ -121,3 +121,6 @@ class Experiment:
     def __add_error_flow_to_design(self, design):
         if "error_flow" in self.experiment_props:
             design.error_flow_yaml = self.experiment_props.pop("error_flow") + ".yaml"
+
+    def get_length_of_longest_design_name(self):
+        return max(len(str(design.rel_path)) for design in self.designs)
