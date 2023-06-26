@@ -93,7 +93,7 @@ class Tool(abc.ABC):
         work_dir = self.cwd / self.TOOL_WORK_DIR
 
         if not work_dir.is_dir():
-            work_dir.mkdir()
+            work_dir.mkdir(parents=True, exist_ok=True)
         return work_dir
 
     def log_title(self, *msg):
