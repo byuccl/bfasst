@@ -1,5 +1,6 @@
 """ Run experiment which runs multiple designs/flows in parallel """
 from argparse import ArgumentParser
+from collections import Counter
 import datetime
 import functools
 import multiprocessing
@@ -30,7 +31,7 @@ def main(experiment_yaml, num_threads, print_period=1):
     experiment = Experiment(experiment_yaml)
 
     # Create and populate job queue
-    jobs = create_job_queue(experiment)
+    job_queue = create_job_queue(experiment)
 
     # Ensure one thread minimum
     num_threads = max(1, num_threads)
@@ -52,45 +53,50 @@ def main(experiment_yaml, num_threads, print_period=1):
     if print_period:
         update_process = multiprocessing.Process(
             target=update_runtimes_thread,
-            args=[print_lock, len(experiment.designs), running_list, statuses],
+            args=[print_lock, len(job_queue), running_list, statuses],
         )
         update_process.start()
 
-    # Create process pool
+    # Create process pool and run jobs
     with concurrent.futures.ProcessPoolExecutor(
         max_workers=num_threads, mp_context=multiprocessing.get_context("spawn")
     ) as pool:
         try:
-            while jobs:
+            while job_queue:
                 current_job_futures = []
-                for job in jobs:
+                for job in job_queue:
                     if not job.dependencies:
                         future = pool.submit(run_job, print_lock, running_list, job)
                         future.add_done_callback(
                             functools.partial(
-                                clean_job_queue,
-                                future,
-                                jobs,
-                                job_queue_lock,
+                                print_job_status, experiment, print_lock, statuses, job
                             )
                         )
-                        future.add_done_callback(
-                            functools.partial(
-                                print_job_status,
-                                experiment,
-                                print_lock,
-                                running_list,
-                                statuses,
-                                future,
-                            )
-                        )
+                        # concurrent.futures.as_completed(fs, timeout=None)
+                        # future.add_done_callback(
+                        #     functools.partial(
+                        #         clean_job_queue,
+                        #         future,
+                        #         job_queue,
+                        #         job_queue_lock,
+                        #     )
+                        # )
 
                         current_job_futures.append(future)
-                        concurrent.futures.wait(
-                            current_job_futures,
-                            timeout=None,
-                            return_when=concurrent.futures.ALL_COMPLETED,
-                        )
+                        # concurrent.futures.wait(
+                        #     current_job_futures,
+                        #     timeout=None,
+                        #     return_when=concurrent.futures.ALL_COMPLETED,
+                        # )
+                        # for finished_job in concurrent.futures.as_completed(current_job_futures):
+                        #     clean_job_queue(finished_job)
+                        #     for job in job_queue:
+                        #         if not job.dependencies:
+                        #             future = pool.submit
+                        #             future.add_done_callback(print_job_status)
+                        #             current_job_futures.append(future) # can you edit this list at this point?
+                        #             break
+                        check_design_statuses(job_queue, job, running_list)
         except KeyboardInterrupt:
             # If interupted, kill all processes
             os.killpg(0, signal.SIGKILL)
@@ -109,11 +115,11 @@ def main(experiment_yaml, num_threads, print_period=1):
 
 def create_job_queue(experiment):
     """Create and populate job queue"""
-    jobs = []
+    job_queue = []
     for flow in experiment.flows:
-        jobs.extend(flow.create())
+        job_queue.extend(flow.create())
 
-    return jobs
+    return job_queue
 
 
 def update_runtimes_thread(print_lock, num_jobs, running_list, statuses, print_period=1):
@@ -149,9 +155,8 @@ def print_running_list(running_list):
 
 def run_job(print_lock, running_list, job):
     """Run a single job and update running_list"""
-    enable_proxy()
 
-    running_list[job.design.rel_path] = datetime.datetime.now()
+    running_list[job.design_rel_path] = datetime.datetime.now()
     with print_lock:
         print_running_list(running_list)
 
@@ -160,9 +165,23 @@ def run_job(print_lock, running_list, job):
         job.function()
         status = ""
     except BfasstException as e:
-        status = f"{type(e).__name__}: {e}"
+        status = f"{type(e).__name__}: {e}\n"
 
     return (job, status)
+
+
+def print_job_status(experiment, print_lock, statuses, job, future):
+    """Print job status"""
+    ljust = experiment.get_length_of_longest_design_name() + 5
+    with print_lock:
+        status = future.result()[1]
+        if status != "":
+            sys.stdout.write("\r\033[K")
+            sys.stdout.write(str(job.design_rel_path.name).ljust(ljust))
+            sys.stdout.flush()
+            sys.stdout.write(str(status))
+
+    statuses.append(status)
 
 
 def clean_job_queue(future, job_queue, job_queue_lock):
@@ -178,21 +197,46 @@ def clean_job_queue(future, job_queue, job_queue_lock):
         job_queue.remove(curr_job)
 
 
-def print_job_status(experiment, print_lock, running_list, statuses, future):
-    """Print job status"""
-    ljust = experiment.get_length_of_longest_design_name() + 5
-    with print_lock:
-        status = future.result()[1]
+def check_design_statuses(job_queue, curr_job, running_list):
+    for job in job_queue:
+        if curr_job.design_rel_path == job.design_rel_path:
+            return
+    del running_list[curr_job.design_rel_path]
+    print_running_list(running_list)
 
-        sys.stdout.write("\r\033[K")
-        sys.stdout.write(str(design.rel_path.name).ljust(ljust))
-        sys.stdout.flush()
-        sys.stdout.write(str(status))
 
-        del running_list[design.rel_path]
-        print_running_list(running_list)
+def print_ending_stats(statuses, runtime):
+    """Print statistcs upon completion of all jobs"""
+    print_color(TermColor.BLUE, f"\nRan {len(statuses)} jobs")
+    print("")
+    print("-" * 80)
+    print("Status By Type:")
+    print("-" * 80)
 
-    statuses.append(status)
+    exception_exists = any(s != "" for s in statuses)
+
+    # Convert empty strings to "Success"
+    statuses = ["Success" if status == "" else status for status in statuses]
+
+    # Print status by type
+    if statuses:
+        status_counts = Counter(statuses)
+
+        padding = min(max(len(status) for status in status_counts) + 10, 80)
+        for status, count in status_counts.items():
+            print(f"{status.ljust(padding)} {count}")
+
+    print("-" * 80)
+    print(f"Execution took {round(runtime, 1)} seconds")
+    if exception_exists:
+        print_color(
+            TermColor.YELLOW, "Exception(s) occurred. See log files for full exception trace."
+        )
+
+    if exception_exists:
+        sys.exit(1)
+    else:
+        print("Completed successfully")
 
 
 if __name__ == "__main__":
