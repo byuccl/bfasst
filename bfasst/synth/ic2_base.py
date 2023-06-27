@@ -11,6 +11,7 @@ class Ic2BaseSynthesisTool(SynthesisTool):
 
     def create_netlist(self):
         """Create netlist"""
+        self.open_log()
         # Save edif netlist path to design object
         self.design.netlist_path = self.cwd / (self.design.top + ".edf")
 

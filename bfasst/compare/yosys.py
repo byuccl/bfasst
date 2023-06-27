@@ -13,6 +13,7 @@ class YosysCompareTool(CompareTool):
     SCRIPT_FILE_NAME = "compare.ys"
 
     def compare_netlists(self):
+        self.open_log()
         log_path = self.work_dir / self.LOG_FILE_NAME
 
         generate_comparison = ToolProduct(None, log_path, self.check_compare_status)

@@ -18,7 +18,7 @@ class IcestormReverseBitTool(ReverseBitTool):
 
     def reverse_bitstream(self):
         # print("Running ReverseBit")
-
+        self.open_log()
         if self.design.cur_error_flow_name is None:
             self.design.reversed_netlist_path = self.cwd / (self.design.top + "_reversed.v")
         else:

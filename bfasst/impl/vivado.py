@@ -28,7 +28,7 @@ class VivadoImplementationTool(ImplementationTool):
 
     def implement_bitstream(self):
         """Run vivado executable to perform implementation"""
-
+        self.open_log()
         if self.up_to_date(self.check_impl_status):
             return
 

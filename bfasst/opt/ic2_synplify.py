@@ -18,6 +18,7 @@ class Ic2SynplifyOptTool(Ic2BaseOptTool):
 
     def run_sythesis(self, prj_path):
         """Run synthesis tool"""
+        self.open_log()
         cmd = [
             bfasst.config.IC2_INSTALL_DIR
             / "sbt_backend"

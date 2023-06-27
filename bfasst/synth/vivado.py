@@ -60,7 +60,7 @@ class VivadoSynthesisTool(SynthesisTool):
 
     def create_netlist(self):
         """create netlist from design"""
-
+        self.open_log()
         if self.up_to_date():
             self.print_skipping_synth()
             return

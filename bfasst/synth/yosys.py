@@ -21,6 +21,8 @@ class YosysTechSynthTool(SynthesisTool):
     TOOL_WORK_DIR = "yosys_synth"
 
     def create_netlist(self):
+        """Create netlist"""
+        self.open_log()
         # Target netlist output
         self.design.netlist_path = self.cwd / (self.design.top + "_yosys_tech.v")
 

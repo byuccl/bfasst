@@ -40,6 +40,7 @@ class ConformalCompareTool(CompareTool):
         self.local_libs_paths = None
 
     def compare_netlists(self):
+        self.open_log()
         with conformal_lock:
             self._compare_netlists()
 

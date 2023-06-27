@@ -16,6 +16,7 @@ class Ic2ImplementationTool(ImplementationTool):
     TOOL_WORK_DIR = "ic2_impl"
 
     def implement_bitstream(self):
+        self.open_log()
         self.design.bitstream_path = self.cwd / (self.design.top + ".bit")
 
         if self.up_to_date(self.check_impl_status):

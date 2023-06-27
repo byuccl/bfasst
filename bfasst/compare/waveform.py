@@ -80,7 +80,7 @@ class WaveformCompareTool(CompareTool):
 
     def compare_netlists(self):
         """The function that compares the netlists."""
-
+        self.open_log()
         print("\nRunning WaFoVe to compare netlists...")
         print(f"Number of tests being run: {self.args.tests}")
         print(f"Seed: {self.args.seed}")

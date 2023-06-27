@@ -20,6 +20,7 @@ class Ic2LseOptTool(Ic2BaseOptTool):
 
     def run_sythesis(self, prj_path):
         """run synthesis on netlist"""
+        self.open_log()
         syth_bin_path = bfasst.config.IC2_INSTALL_DIR / "LSE" / "bin" / "lin64" / "synthesis"
         if not syth_bin_path.is_file():
             error(syth_bin_path, "does not exist")

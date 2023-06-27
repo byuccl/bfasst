@@ -43,7 +43,7 @@ class Tool(abc.ABC):
         self.design = design
         self.work_dir = self.make_work_dir()
         self.log_path = self.work_dir / "log.txt"
-        self.log_fp = self.log_path.open("w")
+        self.log_fp = None
 
         # Argument parser
         self.arg_parser = None
@@ -61,6 +61,10 @@ class Tool(abc.ABC):
     def TOOL_WORK_DIR(self):  # pylint: disable=invalid-name
         """The subdirectory in the build folder to used for this tool."""
         raise NotImplementedError
+
+    def open_log(self):
+        """Open the log file for writing"""
+        self.log_fp = self.log_path.open("w")
 
     def remove_logs(self):
         """

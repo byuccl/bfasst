@@ -18,6 +18,7 @@ class OneSpinCompareTool(CompareTool):
     TOOL_WORK_DIR = "onespin"
 
     def compare_netlists(self):
+        self.open_log()
         with onespin_lock:
             self._compare_netlists()
 

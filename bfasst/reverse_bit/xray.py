@@ -34,6 +34,7 @@ class XRayReverseBitTool(ReverseBitTool):
 
     def reverse_bitstream(self):
         """Run bitstream to netlist conversion"""
+        self.open_log()
         # To fasm process
         fasm_path = self.work_dir / (self.design.top + ".fasm")
         generate_fasm = ToolProduct(fasm_path)
