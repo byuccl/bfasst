@@ -284,12 +284,12 @@ def process_lut_init(lut6_cell, lut5_cell, new_cell_inst, log=print):
 
 def get_unisim_inputs(unisim):
     unisim_cell = Design.getUnisimCell(Unisim.valueOf(unisim))
-    return [p.getName() for p in unisim_cell.getPorts() if p.getDirection() == RwDirection.IN]
+    return [p.getName() for p in unisim_cell.getPorts() if p.getDirection() == RwDirection.INPUT]
 
 
 def get_unisim_outputs(unisim):
     unisim_cell = Design.getUnisimCell(Unisim.valueOf(unisim))
-    return [p.getName() for p in unisim_cell.getPorts() if p.getDirection() == RwDirection.OUT]
+    return [p.getName() for p in unisim_cell.getPorts() if p.getDirection() == RwDirection.OUTPUT]
 
 
 def get_sdn_direction_for_unisim(unisim, port_name):
@@ -305,11 +305,11 @@ def get_sdn_direction_for_unisim(unisim, port_name):
     """
 
     unisim_cell = Design.getUnisimCell(Unisim.valueOf(unisim))
-    if unisim_cell.getPort(port_name).getDirection() == RwDirection.IN:
+    if unisim_cell.getPort(port_name).getDirection() == RwDirection.INPUT:
         return sdn.IN
-    if unisim_cell.getPort(port_name).getDirection() == RwDirection.OUT:
+    if unisim_cell.getPort(port_name).getDirection() == RwDirection.OUTPUT:
         return sdn.OUT
-    if unisim_cell.getPort(port_name).getDirection() == RwDirection.INOUT:
+    if unisim_cell.getPort(port_name).getDirection() == RwDirection.INPUTOUT:
         return sdn.INOUT
 
     raise RapidwrightException(f"Unknown direction for {unisim} {port_name}")
