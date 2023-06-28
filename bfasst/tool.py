@@ -46,10 +46,6 @@ class Tool(abc.ABC):
         self.work_dir = self.make_work_dir()
         self.log_path = self.work_dir / "log.txt"
 
-        # Clean up old logs, so that we can safely append to the
-        # log file whenever log() is called
-        self.remove_logs()
-
         # Argument parser
         self.arg_parser = None
 
@@ -107,7 +103,7 @@ class Tool(abc.ABC):
             if add_timestamp:
                 time_now = datetime.datetime.now()
                 text = time_now.strftime(Tool.TIMESTAMP_FORMAT) + text
-            print(text)
+            # print(text)
             log_fp.write(f"{text}\n")
             log_fp.flush()
 
@@ -118,7 +114,7 @@ class Tool(abc.ABC):
             if add_timestamp:
                 time_now = datetime.datetime.now()
                 text = time_now.strftime(Tool.TIMESTAMP_FORMAT) + text
-            print_color(color, text)
+            # print_color(color, text)
             log_fp.write(f"{text}\n")
             log_fp.flush()
 
