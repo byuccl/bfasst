@@ -25,7 +25,9 @@ class XilinxYosysImplFlow(Flow):
             self.design.reversed_netlist_path,
             self.flow_args[ToolType.CMP],
         )
-        curr_job = Job(yosys_cmp_tool.compare_netlists, self.design.rel_path, [self.job_list[-1]])
+        curr_job = Job(
+            yosys_cmp_tool.compare_netlists, self.design.rel_path, set(self.job_list[-1].uuid)
+        )
         self.job_list.append(curr_job)
 
         return self.job_list

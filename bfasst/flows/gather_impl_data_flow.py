@@ -38,27 +38,29 @@ class GatherImplDataFlow(Flow):
         # Create a job for icecube2 implementation and bitstream reversal
         impl_and_rev_sub_flow = Ic2ImplAndIceRevFlow(self.design, self.flow_args)
         impl_and_rev_sub_flow.create()
-        impl_and_rev_sub_flow.modify_first_job_dependencies([self.job_list[-1]])
+        impl_and_rev_sub_flow.modify_first_job_dependencies(set(self.job_list[-1].uuid))
         self.job_list.extend(impl_and_rev_sub_flow.job_list)
 
         # Create a job to clean up project directories so we get fresh results later
-        curr_job = Job(self.clean_up_synplify, self.design.rel_path, [self.job_list[-1]])
+        curr_job = Job(self.clean_up_synplify, self.design.rel_path, set(self.job_list[-1].uuid))
         self.job_list.append(curr_job)
 
         # Now create a new RTL->LSE->IC2->Icestorm job
         lse_synth_tool = Ic2LseSynthesisTool(
             self.design.build_dir, self.design, self.flow_args[ToolType.SYNTH]
         )
-        curr_job = Job(lse_synth_tool.create_netlist, self.design.rel_path, [self.job_list[-1]])
+        curr_job = Job(
+            lse_synth_tool.create_netlist, self.design.rel_path, set(self.job_list[-1].uuid)
+        )
         self.job_list.append(curr_job)
 
         # Run Icecube2 implementations and icestorm bitstream reversal
         impl_and_rev_sub_flow.create()
-        impl_and_rev_sub_flow.modify_first_job_dependencies([self.job_list[-1]])
+        impl_and_rev_sub_flow.modify_first_job_dependencies(set(self.job_list[-1].uuid))
         self.job_list.extend(impl_and_rev_sub_flow.job_list)
 
         # Clean up project directories so we get fresh results later
-        lse_clean_job = Job(self.clean_up_lse, self.design.rel_path, [self.job_list[-1]])
+        lse_clean_job = Job(self.clean_up_lse, self.design.rel_path, set(self.job_list[-1].uuid))
         self.job_list.append(lse_clean_job)
 
         # Now do Yosys->Synplify->IC2->Icestorm
@@ -66,36 +68,44 @@ class GatherImplDataFlow(Flow):
         yosys_synth_tool = YosysTechSynthTool(
             self.design.build_dir, self.design, self.flow_args[ToolType.SYNTH]
         )
-        curr_job = Job(yosys_synth_tool.create_netlist, self.design.rel_path, [self.job_list[-1]])
+        curr_job = Job(
+            yosys_synth_tool.create_netlist, self.design.rel_path, set(self.job_list[-1].uuid)
+        )
         self.job_list.append(curr_job)
 
         # Now run the Synplify synthesizer on the Yosys output
         synplify_opt_tool = Ic2SynplifyOptTool(self.design.build_dir, self.design, self.flow_args)
-        curr_job = Job(synplify_opt_tool.create_netlist, self.design.rel_path, [self.job_list[-1]])
+        curr_job = Job(
+            synplify_opt_tool.create_netlist, self.design.rel_path, set(self.job_list[-1].uuid)
+        )
         self.job_list.append(curr_job)
 
         # Run IC2 Implementation and Icestorm bitstream reversal
         impl_and_rev_sub_flow.create()
-        impl_and_rev_sub_flow.modify_first_job_dependencies([self.job_list[-1]])
+        impl_and_rev_sub_flow.modify_first_job_dependencies(set(self.job_list[-1].uuid))
         self.job_list.extend(impl_and_rev_sub_flow.job_list)
 
         # Clean up project directories so we get fresh results later
-        curr_job = Job(self.clean_up_yosys, [self.job_list[-1]])
+        curr_job = Job(self.clean_up_yosys, set(self.job_list[-1].uuid))
         self.job_list.append(curr_job)
 
         # Now do Yosys->LSE->IC2->Icestorm
         # Run the Yosys synthesizer
-        curr_job = Job(yosys_synth_tool.create_netlist, self.design.rel_path, [self.job_list[-1]])
+        curr_job = Job(
+            yosys_synth_tool.create_netlist, self.design.rel_path, set(self.job_list[-1].uuid)
+        )
         self.job_list.append(curr_job)
 
         # Now run the LSE synthesizer on the Yosys output
         lse_opt_tool = Ic2LseOptTool(self.design.build_dir, self.design, self.flow_args)
-        curr_job = Job(lse_opt_tool.create_netlist, self.design.rel_path, [self.job_list[-1]])
+        curr_job = Job(
+            lse_opt_tool.create_netlist, self.design.rel_path, set(self.job_list[-1].uuid)
+        )
         self.job_list.append(curr_job)
 
         # Run IC2 Implementation and Icestorm bitstream reversal
         impl_and_rev_sub_flow.create()
-        impl_and_rev_sub_flow.modify_first_job_dependencies([self.job_list[-1]])
+        impl_and_rev_sub_flow.modify_first_job_dependencies(set(self.job_list[-1].uuid))
         self.job_list.extend(impl_and_rev_sub_flow.job_list)
 
         return self.job_list

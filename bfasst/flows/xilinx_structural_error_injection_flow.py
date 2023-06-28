@@ -65,7 +65,7 @@ class XilinxStructuralErrorInjectionFlow(Flow):
                 )
 
                 comparison_job = Job(
-                    compare_tool.compare_netlists, self.design.rel_path, [self.job_list[-1]]
+                    compare_tool.compare_netlists, self.design.rel_path, set(self.job_list[-1].uuid)
                 )
 
                 # Rather than append to the job list,
@@ -77,7 +77,7 @@ class XilinxStructuralErrorInjectionFlow(Flow):
                 curr_job = Job(
                     partial(unlink, error_injector.corrupted_netlist_path),
                     self.design.rel_path,
-                    [self.job_list[-1]],
+                    set(self.job_list[-1].uuid),
                 )
                 self.job_list.append(curr_job)
 

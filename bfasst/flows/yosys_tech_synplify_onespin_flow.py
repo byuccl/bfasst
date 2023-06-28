@@ -29,26 +29,28 @@ class YosysTechSynplifyOnespinFlow(Flow):
         self.job_list.append(curr_job)
 
         # Now run the Synplify synthesizer on the Yosys output
-        curr_job = Job(self.adjust_design_object, self.design.rel_path, [self.job_list[-1]])
+        curr_job = Job(self.adjust_design_object, self.design.rel_path, set(self.job_list[-1].uuid))
         self.job_list.append(curr_job)
 
         synplify_opt_tool = Ic2SynplifyOptTool(self.design.build_dir, self.design, self.flow_args)
-        curr_job = Job(synplify_opt_tool.create_netlist, self.design.rel_path, [self.job_list[-1]])
+        curr_job = Job(
+            synplify_opt_tool.create_netlist, self.design.rel_path, set(self.job_list[-1].uuid)
+        )
         self.job_list.append(curr_job)
 
         impl_and_rev_sub_flow = Ic2ImplAndIceRevFlow(self.design, self.flow_args)
         impl_and_rev_sub_flow.create()
-        impl_and_rev_sub_flow.modify_first_job_dependencies([self.job_list[-1]])
+        impl_and_rev_sub_flow.modify_first_job_dependencies(set(self.job_list[-1].uuid))
         self.job_list.extend(impl_and_rev_sub_flow.job_list)
 
         curr_job = Job(
-            self.change_compare_revised_file_path, self.design.rel_path, [self.job_list[-1]]
+            self.change_compare_revised_file_path, self.design.rel_path, set(self.job_list[-1].uuid)
         )
         self.job_list.append(curr_job)
 
         onespin_cmp_sub_flow = OnespinCmpFlow(self.design, self.flow_args)
         onespin_cmp_sub_flow.create()
-        onespin_cmp_sub_flow.modify_first_job_dependencies([self.job_list[-1]])
+        onespin_cmp_sub_flow.modify_first_job_dependencies(set(self.job_list[-1].uuid))
         self.job_list.extend(onespin_cmp_sub_flow.job_list)
 
         return self.job_list

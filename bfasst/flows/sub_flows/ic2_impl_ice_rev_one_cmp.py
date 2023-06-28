@@ -17,7 +17,7 @@ class Ic2ImplIceRevOneCmpFlow(Flow):
 
         onespin_sub_flow = OnespinCmpFlow(self.design, self.flow_args)
         onespin_sub_flow.create()
-        onespin_sub_flow.modify_first_job_dependencies([self.job_list[-1]])
+        onespin_sub_flow.modify_first_job_dependencies(set(self.job_list[-1].uuid))
         self.job_list.extend(onespin_sub_flow.job_list)
 
         return self.job_list

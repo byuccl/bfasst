@@ -24,7 +24,7 @@ class XilinxPhysNetlistFlow(Flow):
         curr_job = Job(
             XilinxPhysNetlist(self.design.build_dir, self.design).run,
             self.design.rel_path,
-            [self.job_list[-1]],
+            set(self.job_list[-1].uuid),
         )
         self.job_list.append(curr_job)
 
