@@ -18,9 +18,10 @@ class OneSpinCompareTool(CompareTool):
     TOOL_WORK_DIR = "onespin"
 
     def compare_netlists(self):
-        self.open_log()
+        self.launch()
         with onespin_lock:
             self._compare_netlists()
+        self.cleanup()
 
     def _compare_netlists(self):
         yaml_data = {}

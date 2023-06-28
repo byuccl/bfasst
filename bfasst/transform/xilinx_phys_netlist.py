@@ -105,7 +105,6 @@ class XilinxPhysNetlist(TransformTool):
 
     def run(self):
         """Transform the logical netlist into a netlist with only physical primitives"""
-        self.open_log()
         phys_netlist_verilog_path = self.design.impl_edif_path.parent / (
             self.design.impl_edif_path.stem + "_physical.v"
         )

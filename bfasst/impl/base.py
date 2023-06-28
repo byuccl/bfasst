@@ -16,9 +16,15 @@ class ImplementationTool(Tool):
 
     def __init__(self, cwd, design, flow_args="") -> None:
         super().__init__(cwd, design)
+        self.flow_args = flow_args
 
-        # Implementation options
-        self.create_arg_parser("impl", flow_args)
+    def launch(self):
+        """Perform setup for the tool to begin running"""
+        self.create_arg_parser("impl", self.flow_args)
+
+    def cleanup(self):
+        """Perform cleanup after the tool has finished running"""
+        self.arg_parser = None
 
     def add_args(self):
         """Default arguments for all impl tools"""

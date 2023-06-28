@@ -18,11 +18,17 @@ class CompareTool(Tool):
 
     def __init__(self, cwd, design, gold_netlist, rev_netlist, flow_args="") -> None:
         super().__init__(cwd, design)
-        # Implementation options
-        self.create_arg_parser("compare", flow_args)
-
+        self.flow_args = flow_args
         self.gold_netlist = gold_netlist
         self.rev_netlist = rev_netlist
+
+    def launch(self):
+        """Perform setup for the tool to begin running"""
+        self.create_arg_parser("compare", self.flow_args)
+
+    def cleanup(self):
+        """Perform cleanup after the tool has finished running"""
+        self.arg_parser = None
 
     def add_args(self):
         """Default arguments for all compare tools"""

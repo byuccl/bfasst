@@ -37,7 +37,7 @@ class StructuralCompareTool(CompareTool):
 
     def compare_netlists(self):
         """Map the golden and reversed netlists through automated block mapping"""
-        self.open_log()
+        self.launch()
         impl_netlist = self.gold_netlist
         netlist_b = self.rev_netlist
 
@@ -116,6 +116,8 @@ class StructuralCompareTool(CompareTool):
             raise CompareException("Could not map all blocks")
         if num_mapped_nets != num_total_nets:
             raise CompareException("Could not map all nets")
+        
+        self.cleanup()
 
         # TODO: After establishing mapping, verify equivalence
         # Basically make sure all outputs are mapped, and then everything is identical

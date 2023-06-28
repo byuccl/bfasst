@@ -20,7 +20,7 @@ class Ic2LseOptTool(Ic2BaseOptTool):
 
     def run_sythesis(self, prj_path):
         """run synthesis on netlist"""
-        self.open_log()
+        self.launch()
         syth_bin_path = bfasst.config.IC2_INSTALL_DIR / "LSE" / "bin" / "lin64" / "synthesis"
         if not syth_bin_path.is_file():
             error(syth_bin_path, "does not exist")
@@ -31,7 +31,7 @@ class Ic2LseOptTool(Ic2BaseOptTool):
         env["FOUNDRY"] = bfasst.config.IC2_INSTALL_DIR / "LSE"
         env["SBT_DIR"] = bfasst.config.IC2_INSTALL_DIR / "sbt_backend"
 
-        return self.exec_synth_tool(cmd, env)
+        self.exec_synth_tool(cmd, env)
 
     def create_project_file(self, edif_path, lib_files):
         """create project file for icecube2 lse"""

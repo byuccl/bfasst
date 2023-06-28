@@ -1,5 +1,6 @@
 """ Track a BFASST experiment configuration (flow with multiple designs)"""
 
+import datetime
 import pathlib
 
 import yaml
@@ -124,3 +125,7 @@ class Experiment:
 
     def get_length_of_longest_design_name(self):
         return max(len(str(design.rel_path)) for design in self.designs)
+
+    def init_design_start_times(self, running_list):
+        for design in self.designs:
+            running_list[design.rel_path] = datetime.datetime.now()

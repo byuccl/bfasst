@@ -5,10 +5,12 @@ import argparse
 import datetime
 import pathlib
 import shlex
+from shutil import copyfileobj
 import subprocess
 import sys
 import types
 from dataclasses import dataclass
+from bfasst.output_cntrl import cleanup_redirect, enable_proxy, redirect
 
 from bfasst.utils import TermColor, print_color
 
@@ -43,7 +45,10 @@ class Tool(abc.ABC):
         self.design = design
         self.work_dir = self.make_work_dir()
         self.log_path = self.work_dir / "log.txt"
-        self.log_fp = None
+
+        # Clean up old logs, so that we can safely append to the
+        # log file whenever log() is called
+        self.remove_logs()
 
         # Argument parser
         self.arg_parser = None
@@ -51,20 +56,12 @@ class Tool(abc.ABC):
         # Arguments (after parsing)
         self.args = None
 
-    def __del__(self):
-        if self.log_fp is not None:
-            self.log_fp.close()
-
     @property
     @classmethod
     @abc.abstractclassmethod
     def TOOL_WORK_DIR(self):  # pylint: disable=invalid-name
         """The subdirectory in the build folder to used for this tool."""
         raise NotImplementedError
-
-    def open_log(self):
-        """Open the log file for writing"""
-        self.log_fp = self.log_path.open("w")
 
     def remove_logs(self):
         """
@@ -105,22 +102,25 @@ class Tool(abc.ABC):
 
     def log(self, *msg, add_timestamp=False):
         """Write text to the log file and stdout"""
-        text = " ".join(str(s) for s in msg)
-        if add_timestamp:
-            time_now = datetime.datetime.now()
-            text = time_now.strftime(Tool.TIMESTAMP_FORMAT) + text
-        print(text)
-        self.log_fp.write(text + "\n")
-        self.log_fp.flush()
+        with open(self.log_path, "a") as log_fp:
+            text = " ".join(str(s) for s in msg)
+            if add_timestamp:
+                time_now = datetime.datetime.now()
+                text = time_now.strftime(Tool.TIMESTAMP_FORMAT) + text
+            print(text)
+            log_fp.write(f"{text}\n")
+            log_fp.flush()
 
     def log_color(self, color, *msg, add_timestamp=False):
-        text = " ".join(str(s) for s in msg)
-        if add_timestamp:
-            time_now = datetime.datetime.now()
-            text = time_now.strftime(Tool.TIMESTAMP_FORMAT) + text
-        print_color(color, text)
-        self.log_fp.write(text + "\n")
-        self.log_fp.flush()
+        """Write text in a given color to stdout and normally to the log file"""
+        with open(self.log_path, "a") as log_fp:
+            text = " ".join(str(s) for s in msg)
+            if add_timestamp:
+                time_now = datetime.datetime.now()
+                text = time_now.strftime(Tool.TIMESTAMP_FORMAT) + text
+            print_color(color, text)
+            log_fp.write(f"{text}\n")
+            log_fp.flush()
 
     def need_to_rerun(self, tool_products, dependency_modified_time):
         """Determines whether previous run data can be reused or if the tool needs to be rerun."""
@@ -139,7 +139,7 @@ class Tool(abc.ABC):
 
                 # If log file has an error, raise an exception
                 status = tool_product.check_log_fcn(tool_product.log_path)
-                if status.error:
+                if status is not None and status.error:
                     raise BfasstException(f"Previous run of tool had an error: {status.msg}")
 
                 # If log file doesn't have an error, but output file is expected and missing, re-run
@@ -167,6 +167,8 @@ class Tool(abc.ABC):
         # Can't provide an fp_err without an fp
         assert fp_err is None or fp is not None
 
+        enable_proxy()
+        buf = redirect()
         proc = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
@@ -175,6 +177,11 @@ class Tool(abc.ABC):
             cwd=cwd,
             env=env,
         )
+
+        with open(self.log_path, "a") as f:
+            buf.seek(0)
+            copyfileobj(buf, f)
+        cleanup_redirect()
 
         # Print stdout to log
         for line in proc.stdout:

@@ -18,7 +18,7 @@ class IcestormReverseBitTool(ReverseBitTool):
 
     def reverse_bitstream(self):
         # print("Running ReverseBit")
-        self.open_log()
+        self.launch()
         if self.design.cur_error_flow_name is None:
             self.design.reversed_netlist_path = self.cwd / (self.design.top + "_reversed.v")
         else:
@@ -50,6 +50,7 @@ class IcestormReverseBitTool(ReverseBitTool):
             )
 
         self.write_to_results_file(self.design.reversed_netlist_path, need_to_run)
+        self.cleanup()
 
     def convert_bit_to_asc(self, bitstream_path, asc_path):
         cmd = [bfasst.config.ICESTORM_INSTALL_DIR / "icepack" / "iceunpack", bitstream_path]

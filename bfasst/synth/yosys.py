@@ -22,7 +22,7 @@ class YosysTechSynthTool(SynthesisTool):
 
     def create_netlist(self):
         """Create netlist"""
-        self.open_log()
+        self.launch()
         # Target netlist output
         self.design.netlist_path = self.cwd / (self.design.top + "_yosys_tech.v")
 
@@ -55,6 +55,7 @@ class YosysTechSynthTool(SynthesisTool):
             raise SynthesisException(f"Yosys synthesis failed with return code {proc.returncode}")
 
         self.write_to_results_file(log_path)
+        self.cleanup()
 
     def create_yosys_script(self, netlist_path):
         """Create the yosys script that generates the netlist"""

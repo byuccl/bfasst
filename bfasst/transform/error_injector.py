@@ -58,7 +58,6 @@ class ErrorInjector(TransformTool):
 
     def inject_bit_flip(self):
         """Injects a bit flip error into the netlist"""
-        self.open_log()
         self.__setup_netlist()
         self.corrupted_netlist_path = self.design.path / f"bit_flip_{self.log_num}.v"
         num_luts = self.__pick_luts_from_netlist()
@@ -148,7 +147,6 @@ class ErrorInjector(TransformTool):
 
     def inject_wire_swap(self):
         """Injects a wire swap error into the netlist"""
-        self.open_log()
         self.__setup_netlist()
         self.corrupted_netlist_path = self.design.path / f"wire_swap_{self.log_num}.v"
 

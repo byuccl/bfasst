@@ -80,7 +80,7 @@ class WaveformCompareTool(CompareTool):
 
     def compare_netlists(self):
         """The function that compares the netlists."""
-        self.open_log()
+        self.launch()
         print("\nRunning WaFoVe to compare netlists...")
         print(f"Number of tests being run: {self.args.tests}")
         print(f"Seed: {self.args.seed}")
@@ -138,6 +138,8 @@ class WaveformCompareTool(CompareTool):
 
         if not compare_waveforms.run_test(paths):
             raise CompareException("The netlists are not equivalent.")
+        
+        self.cleanup()
 
     def check_compare_status(self, log_path):
         """Used to confirm whether a design is equivalent or not."""

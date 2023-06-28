@@ -16,9 +16,11 @@ class OptTool(Tool):
     def __init__(self, cwd, design, flow_args="") -> None:
         super().__init__(cwd, design)
         self.yosys_netlist_path = [str(self.design.netlist_path)]
+        self.flow_args = flow_args
 
-        # Implementation options
-        self.create_arg_parser("opt", flow_args)
+    def launch(self):
+        """Perform setup for the tool to begin running"""
+        self.create_arg_parser("opt", self.flow_args)
 
     def add_args(self):
         """Default arguments for all opt tools"""

@@ -16,7 +16,7 @@ class Ic2ImplementationTool(ImplementationTool):
     TOOL_WORK_DIR = "ic2_impl"
 
     def implement_bitstream(self):
-        self.open_log()
+        self.launch()
         self.design.bitstream_path = self.cwd / (self.design.top + ".bit")
 
         if self.up_to_date(self.check_impl_status):
@@ -57,6 +57,8 @@ class Ic2ImplementationTool(ImplementationTool):
 
         # Always set the constraints path since we need it later
         # design.constraints_path = self.cwd/(design.top + ".pcf")
+
+        self.cleanup()
 
     def run_implementation(self, netlist_path, tcl_path):
         """Run implemention"""

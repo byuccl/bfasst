@@ -13,7 +13,7 @@ class YosysCompareTool(CompareTool):
     SCRIPT_FILE_NAME = "compare.ys"
 
     def compare_netlists(self):
-        self.open_log()
+        self.launch()
         log_path = self.work_dir / self.LOG_FILE_NAME
 
         generate_comparison = ToolProduct(None, log_path, self.check_compare_status)
@@ -27,6 +27,8 @@ class YosysCompareTool(CompareTool):
         with open(log_path, "w") as fp:
             if self.exec_and_log(cmd, cwd, fp).returncode:
                 raise CompareException("The netlists are not equivalent")
+
+        self.cleanup()
 
     def create_script_file(self):
         """Creates a Tcl script that asserts equivalence between the two designs"""

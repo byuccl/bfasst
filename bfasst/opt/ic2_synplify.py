@@ -18,7 +18,7 @@ class Ic2SynplifyOptTool(Ic2BaseOptTool):
 
     def run_sythesis(self, prj_path):
         """Run synthesis tool"""
-        self.open_log()
+        self.launch()
         cmd = [
             bfasst.config.IC2_INSTALL_DIR
             / "sbt_backend"
@@ -36,8 +36,7 @@ class Ic2SynplifyOptTool(Ic2BaseOptTool):
         )
         env["SYNPLIFY_PATH"] = bfasst.config.IC2_INSTALL_DIR / "synpbase"
         env["SBT_DIR"] = bfasst.config.IC2_INSTALL_DIR / "sbt_backend"
-
-        return self.exec_synth_tool(cmd, env)
+        self.exec_synth_tool(cmd, env)
 
     def create_project_file(self, edif_path, lib_files):
         """Create icecube2 project file"""

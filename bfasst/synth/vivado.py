@@ -60,9 +60,10 @@ class VivadoSynthesisTool(SynthesisTool):
 
     def create_netlist(self):
         """create netlist from design"""
-        self.open_log()
+        self.launch()
         if self.up_to_date():
             self.print_skipping_synth()
+            self.cleanup()
             return
 
         # Run synthesis flow
@@ -79,6 +80,8 @@ class VivadoSynthesisTool(SynthesisTool):
 
         # Check synthesis log
         self.check_synth_log(self.log_path)
+
+        self.cleanup()
 
     def write_header(self, stream):
         stream.write("if { [ catch {\n")
@@ -152,8 +155,9 @@ class VivadoSynthesisTool(SynthesisTool):
             raise SynthesisException(f"Vivado synthesis failed with return code {proc.returncode}")
 
     def check_synth_log(self, log_path):
-        text = open(log_path).read()
+        with open(log_path) as log_file:
+            text = log_file.read()
 
-        match = re.search(r"^ERROR:\s*(.*?)$", text, re.M)
-        if match:
-            raise SynthesisException(f"Vivado synthesis failed with error: {match.group(1)}")
+            match = re.search(r"^ERROR:\s*(.*?)$", text, re.M)
+            if match:
+                raise SynthesisException(f"Vivado synthesis failed with error: {match.group(1)}")
