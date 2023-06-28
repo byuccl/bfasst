@@ -1,4 +1,4 @@
-top: sap
+top: sap_random
 top_architecture: struct
 
 include_all_vhdl_files: True

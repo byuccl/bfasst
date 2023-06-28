@@ -1,4 +1,4 @@
-top: ahbjtag
+top: ahbjtag_random
 top_architecture: struct
 
 vhdl_libs:

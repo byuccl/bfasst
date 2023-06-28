@@ -1,4 +1,4 @@
-top: leon3s
+top: leon3s_random
 top_architecture: rtl
 
 vhdl_libs:

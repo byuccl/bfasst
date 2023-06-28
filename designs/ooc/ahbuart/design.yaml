@@ -1,4 +1,4 @@
-top: ahbuart
+top: ahbuart_random
 top_architecture: struct
 
 vhdl_libs:
