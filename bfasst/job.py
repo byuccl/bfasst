@@ -1,5 +1,6 @@
 """Job class for a job function and dependency list"""
 
+import uuid
 
 from bfasst.tool import BfasstException
 
@@ -11,6 +12,11 @@ class Job:
         self.function = function
         self.design_rel_path = design_rel_path
         self.dependencies = dependencies
+        self.__set_uuid()
+
+    def __set_uuid(self):
+        """Set the UUID for this job"""
+        self.uuid = uuid.uuid4().int
 
     def invert(self):
         """This can be called in the case where we want to invert the job's exception handling"""
