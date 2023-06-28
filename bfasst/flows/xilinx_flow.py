@@ -25,7 +25,7 @@ class XilinxFlow(Flow):
             self.design.build_dir, self.design, self.flow_args[ToolType.IMPL]
         )
         curr_job = Job(
-            vivado_impl_tool.implement_bitstream, self.design.rel_path, set(self.job_list[-1].uuid)
+            vivado_impl_tool.implement_bitstream, self.design.rel_path, {self.job_list[-1].uuid}
         )
         self.job_list.append(curr_job)
 

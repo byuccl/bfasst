@@ -22,7 +22,7 @@ class XilinxConformalFlow(Flow):
 
         conformal_sub_flow = ConformalOnlyFlow(self.design, self.flow_args)
         conformal_sub_flow.create()
-        conformal_sub_flow.modify_first_job_dependencies(set(self.job_list[-1].uuid))
+        conformal_sub_flow.modify_first_job_dependencies({self.job_list[-1].uuid})
         self.job_list.extend(conformal_sub_flow.job_list)
 
         return self.job_list

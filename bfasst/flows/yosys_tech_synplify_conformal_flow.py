@@ -29,25 +29,25 @@ class YosysTechSynplifyConformalFlow(Flow):
         self.job_list.append(curr_job)
 
         # Now run the Synplify synthesizer on the Yosys output
-        curr_job = Job(self.adjust_design_object, self.design.rel_path, set(self.job_list[-1].uuid))
+        curr_job = Job(self.adjust_design_object, self.design.rel_path, {self.job_list[-1].uuid})
         self.job_list.append(curr_job)
 
         synplify_opt_tool = Ic2SynplifyOptTool(self.design.build_dir, self.design, self.flow_args)
         curr_job = Job(
-            synplify_opt_tool.create_netlist, self.design.rel_path, set(self.job_list[-1].uuid)
+            synplify_opt_tool.create_netlist, self.design.rel_path, {self.job_list[-1].uuid}
         )
         self.job_list.append(curr_job)
 
         # Run icecube2 implementation and icestorm reverse bitstream
         impl_and_rev_sub_flow = Ic2ImplAndIceRevFlow(self.design, self.flow_args)
         impl_and_rev_sub_flow.create()
-        impl_and_rev_sub_flow.modify_first_job_dependencies(set(self.job_list[-1].uuid))
+        impl_and_rev_sub_flow.modify_first_job_dependencies({self.job_list[-1].uuid})
         self.job_list.extend(impl_and_rev_sub_flow.job_list)
 
         # Run conformal
         conformal_sub_flow = ConformalOnlyFlow(self.design, self.flow_args)
         conformal_sub_flow.create()
-        conformal_sub_flow.modify_first_job_dependencies(set(self.job_list[-1].uuid))
+        conformal_sub_flow.modify_first_job_dependencies({self.job_list[-1].uuid})
         self.job_list.extend(conformal_sub_flow.job_list)
 
     def adjust_design_object(self):

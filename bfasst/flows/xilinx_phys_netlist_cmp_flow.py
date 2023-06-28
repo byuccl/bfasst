@@ -31,7 +31,7 @@ class XilinxPhysNetlistCmpFlow(Flow):
         curr_job = Job(
             structural_compare_tool.compare_netlists,
             self.design.rel_path,
-            set(self.job_list[-1].uuid),
+            {self.job_list[-1].uuid},
         )
         self.job_list.append(curr_job)
 

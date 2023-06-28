@@ -26,7 +26,7 @@ class WafoveFlow(Flow):
             self.design.build_dir, self.design, self.flow_args[ToolType.REVERSE]
         )
         curr_job = Job(
-            xray_rev_bit_tool.reverse_bitstream, self.design.rel_path, set(self.job_list[-1].uuid)
+            xray_rev_bit_tool.reverse_bitstream, self.design.rel_path, {self.job_list[-1].uuid}
         )
         self.job_list.append(curr_job)
 
@@ -42,7 +42,7 @@ class WafoveFlow(Flow):
             self.flow_args[ToolType.CMP],
         )
         curr_job = Job(
-            waveform_cmp_tool.compare_netlists, self.design.rel_path, set(self.job_list[-1].uuid)
+            waveform_cmp_tool.compare_netlists, self.design.rel_path, {self.job_list[-1].uuid}
         )
         self.job_list.append(curr_job)
 

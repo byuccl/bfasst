@@ -31,7 +31,7 @@ class Ic2ImplAndIceRevFlow(Flow):
                 self.design.build_dir, self.design, self.flow_args[ToolType.REVERSE]
             ).reverse_bitstream,
             self.design.rel_path,
-            set(self.job_list[-1].uuid),
+            {self.job_list[-1].uuid},
         )
         self.job_list.append(curr_job)
 
