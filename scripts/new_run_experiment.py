@@ -3,10 +3,10 @@ from argparse import ArgumentParser
 import code
 from collections import Counter
 import datetime
-import functools
 import multiprocessing
 import os
 import pathlib
+from shutil import copyfileobj
 import signal
 import sys
 import threading
@@ -14,9 +14,11 @@ import time
 import concurrent.futures
 from bfasst.experiment import Experiment
 
-from bfasst.output_cntrl import enable_proxy
+from bfasst.output_cntrl import redirect, cleanup_redirect, enable_proxy
 from bfasst.tool import BfasstException
 from bfasst.utils import TermColor, print_color
+
+LOG_FILE_NAME = "log.txt"
 
 
 def main(experiment_yaml, num_threads, print_period=1):
@@ -31,20 +33,22 @@ def main(experiment_yaml, num_threads, print_period=1):
     # Build experiment object
     experiment = Experiment(experiment_yaml)
 
-    # Create and populate job queue
-    job_list = create_job_list(experiment)
-
     # Ensure one thread minimum
     num_threads = max(1, num_threads)
 
     # Create shared memory
+    jobs = multiprocessing.Manager().list(create_jobs(experiment))
     statuses = multiprocessing.Manager().list()
     running_list = multiprocessing.Manager().dict()
     print_lock = multiprocessing.Manager().Lock()
-    job_list_lock = multiprocessing.Manager().Lock()
+    jobs_lock = multiprocessing.Manager().Lock()
 
     # Print number of designs
     print_color(TermColor.BLUE, f"Running {len(experiment.designs)} designs")
+    print_color(TermColor.BLUE, f"Running {len(jobs)} jobs")
+
+    # set the running_list to initial starttimes
+    experiment.init_design_start_times(running_list)
 
     # Start the timer
     t_start = time.perf_counter()
@@ -54,38 +58,48 @@ def main(experiment_yaml, num_threads, print_period=1):
     if print_period:
         update_process = multiprocessing.Process(
             target=update_runtimes_thread,
-            args=[print_lock, len(job_list), running_list, statuses],
+            args=[print_lock, len(jobs), running_list, statuses],
         )
         update_process.start()
 
+    # Create a process pool executor to run the jobs
     with concurrent.futures.ProcessPoolExecutor(
         max_workers=num_threads, mp_context=multiprocessing.get_context("spawn")
     ) as pool:
         try:
-            # while there are objects in the job list
-            while job_list:
-                # for each job in the job list
-                for job in job_list:
-                    # if the job has no dependencies
+            while jobs:
+                fs = []
+                for job in jobs:
                     if not job.dependencies:
-                        # submit the job to the pool
-                        future = pool.submit(run_job, print_lock, running_list, job)
-                        # add a callback to print the job status if an exception is raised
-                        future.add_done_callback(
-                            functools.partial(
-                                print_job_status, experiment, print_lock, statuses, job
-                            )
+                        future = pool.submit(
+                            run_job,
+                            print_lock,
+                            running_list,
+                            job,
+                            jobs_lock,
+                            statuses,
+                            experiment,
+                            jobs,
                         )
-                        # add a callback to remove the job from the job list when it is done
-                        future.add_done_callback(
-                            functools.partial(clean_job_list, job_list, job_list_lock)
-                        )
-                        # add a callback to print the design status if all related jobs are done
-                        future.add_done_callback(
-                            functools.partial(check_design_statuses, job_list, job, running_list)
-                        )
+                        fs.append(future)
+                # for future in concurrent.futures.as_completed(fs):
+                #     job = future.result()[0]
+                #     status = future.result()[1]
+                #     jobs.remove(job)
+                #     jobs_to_remove = []
+                #     for dep in jobs:
+                #         if job in dep.dependencies:
+                #             if status:
+                #                 dep.dependencies.remove(job)
+                #             else:
+                #                 jobs_to_remove.append(dep)
+                #     for j in jobs_to_remove:
+                #         jobs.remove(j)
+
         except KeyboardInterrupt:
             os.killpg(0, signal.SIGKILL)
+        # except TypeError:
+        #     os.killpg(0, signal.SIGKILL)
 
     if print_period:
         update_process.terminate()
@@ -99,20 +113,19 @@ def main(experiment_yaml, num_threads, print_period=1):
     print_ending_stats(statuses, t_end - t_start)
 
 
-def create_job_list(experiment):
-    """Create and populate job queue"""
-    job_list = []
+def create_jobs(experiment):
+    """Create and populate job container"""
+    jobs = []
     for flow in experiment.flows:
-        job_list.extend(flow.create())
+        jobs.extend(flow.create())
 
-    return job_list
+    return jobs
 
 
 def update_runtimes_thread(print_lock, num_jobs, running_list, statuses, print_period=1):
     """This function calls print_running_list every print_period seconds
     until all jobs are done or it is terminated. It runs in its own thread.
     """
-
     if len(statuses) == num_jobs:
         sys.stdout.write("\r\033[K")
         print("All done")
@@ -139,28 +152,50 @@ def print_running_list(running_list):
     sys.stdout.flush()
 
 
-def run_job(print_lock, running_list, job):
+def run_job(print_lock, running_list, job, jobs_lock, statuses, experiment, jobs):
     """Run a single job and update running_list"""
 
-    running_list[job.design_rel_path] = str(datetime.datetime.now())
+    enable_proxy()
+
     with print_lock:
         print_running_list(running_list)
 
+    buf = redirect()
     # Run the job:
     try:
         job.function()
         status = ""
     except BfasstException as e:
         status = f"{type(e).__name__}: {e}\n"
-    code.interact(local=locals())
-    return (job, status)
+    finally:
+        with open(experiment.work_dir / job.design_rel_path) as f:
+            buf.seek(0)
+            copyfileobj(buf, f)
+        cleanup_redirect()
+
+    try:
+        # print the job status
+        print_job_status(experiment, print_lock, statuses, job, status)
+
+        # clean up jobs
+        clean_jobs(jobs, jobs_lock, job, status)
+
+        # check the design statuses
+        check_design_statuses(jobs, job, running_list)
+    except Exception as e:
+        with print_lock:
+            print(e)
+    finally:
+        with print_lock:
+            print(f"num jobs left: {len(jobs)}")
+    return (job.uuid, status)
 
 
-def print_job_status(experiment, print_lock, statuses, job, future):
+def print_job_status(experiment, print_lock, statuses, job, status):
     """Print job status"""
+
     ljust = experiment.get_length_of_longest_design_name() + 5
     with print_lock:
-        status = future.result()[1]
         if status != "":
             sys.stdout.write("\r\033[K")
             sys.stdout.write(str(job.design_rel_path.name).ljust(ljust))
@@ -170,23 +205,26 @@ def print_job_status(experiment, print_lock, statuses, job, future):
     statuses.append(status)
 
 
-def clean_job_list(job_list, job_list_lock, future):
-    curr_job, status = future.result()
-    with job_list_lock:
+def clean_jobs(jobs, jobs_lock, curr_job, status):
+    """Remove jobs from the job list that can have completed or can no longer be run"""
+    with jobs_lock:
         if status != "":
-            # remove all jobs from the queue that depend on this job
-            for job in job_list:
-                if curr_job in job.dependencies:
-                    job_list.remove(job)
-
-        # remove this job from the queue
-        job_list.remove(curr_job)
+            clean_jobs_recursive(jobs, jobs_lock, curr_job)
+            return
+        print(jobs, curr_job)
+        jobs.remove(curr_job)
 
 
-def check_design_statuses(
-    job_list, curr_job, running_list, future
-):  # pylint: disable=unused-argument
-    for job in job_list:
+def clean_jobs_recursive(jobs, jobs_lock, curr_job):
+    """Recursive helper to resolve job dependencies and remove jobs from the job list"""
+    jobs.remove(curr_job)
+    for job in jobs:
+        if curr_job in job.dependencies:
+            clean_jobs_recursive(jobs, jobs_lock, job)
+
+
+def check_design_statuses(jobs, curr_job, running_list):
+    for job in jobs:
         if curr_job.design_rel_path == job.design_rel_path:
             return
     del running_list[curr_job.design_rel_path]
