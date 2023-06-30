@@ -29,3 +29,5 @@ conformal/
 # Generated local environment
 env.sh
 
+# Xray Databases
+*_db

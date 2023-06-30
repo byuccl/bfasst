@@ -1,9 +1,14 @@
 """Tool to inject errors into a netlist"""
 from enum import Enum
 import spydrnet as sdn
+<<<<<<< HEAD
 from bfasst.transform.base import TransformTool, TransformException
+=======
+from bfasst.transform.base import TransformTool
+from bfasst.rw_helpers import get_sdn_direction_for_unisim, get_unisim_inputs
+from bfasst.status import Status, TransformStatus
+>>>>>>> main
 from bfasst.utils import convert_verilog_literal_to_int
-from bfasst.vendor_utils.xilinx import get_unisim_cell_inputs_and_outputs
 
 
 class ErrorType(Enum):
@@ -194,22 +199,7 @@ class ErrorInjector(TransformTool):
         """Gets all the outer pins of the given instance that are inputs"""
         outer_pin_inputs = [pin for pin in instance.pins if pin.inner_pin.port.direction is sdn.IN]
         if not outer_pin_inputs:
-            outer_pin_inputs = self.__get_unisim_outer_pin_inputs(instance)
-
-        return outer_pin_inputs
-
-    def __get_unisim_outer_pin_inputs(self, instance):
-        """Collect all the pins for a UNISIM cell that are inputs"""
-
-        cell_inputs = get_unisim_cell_inputs_and_outputs()
-
-        outer_pin_inputs = []
-        for name, inputs, _ in cell_inputs:
-            if instance.reference.name in name:
-                pins = list(instance.pins)
-                for pin in pins:
-                    if pin.inner_pin.port.name in inputs:
-                        outer_pin_inputs.append(pin)
+            outer_pin_inputs = get_unisim_inputs(instance.reference.name)
 
         return outer_pin_inputs
 
@@ -224,18 +214,7 @@ class ErrorInjector(TransformTool):
         """Gets the direction of the given pin"""
         if isinstance(pin, sdn.InnerPin):
             return pin.port.direction
-        return self.__get_unisim_pin_direction(pin)
-
-    def __get_unisim_pin_direction(self, pin):
-        """Gets the direction of the given outer pin"""
-        cell_directions = get_unisim_cell_inputs_and_outputs()
-
-        for name, _, outputs in cell_directions:
-            if pin.instance.reference.name in name:
-                if pin.inner_pin.port.name in outputs:
-                    return sdn.OUT
-
-        return sdn.IN
+        return get_sdn_direction_for_unisim(pin.instance.reference.name, pin.inner_pin.port.name)
 
     def __detach_wire(self, pin):
         """Detaches the wire from the given pin"""

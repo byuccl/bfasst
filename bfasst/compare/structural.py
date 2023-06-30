@@ -3,9 +3,16 @@
 from bidict import bidict
 import spydrnet as sdn
 from bfasst import jpype_jvm
+<<<<<<< HEAD
 from bfasst.compare.base import CompareTool, CompareException
 from bfasst.utils import error, properties_are_equal
 from bfasst.vendor_utils.xilinx import get_unisim_cell_inputs_and_outputs
+=======
+from bfasst.compare.base import CompareTool
+import bfasst.rw_helpers as rw
+from bfasst.status import CompareStatus, Status
+from bfasst.utils import TermColor, error, properties_are_equal
+>>>>>>> main
 
 
 class StructuralCompareTool(CompareTool):
@@ -22,6 +29,39 @@ class StructuralCompareTool(CompareTool):
 
         self.block_mapping = bidict()
         self.net_mapping = bidict()
+
+        init_only = (
+            "LUT6_2",
+            "FDSE",
+            "FDRE",
+            "FDCE",
+            "FDPE",
+            "RAM32X1S",
+            "RAM32X1D",
+            "RAM32X1S_1",
+            "RAM32X1D_1",
+        )
+        no_props = ("IBUF", "OBUF", "OBUFT", "MUXF7", "MUXF8", "CARRY4")
+
+        _cell_props = {x: ("INIT",) for x in init_only}
+        _cell_props.update({x: () for x in no_props})
+        _cell_props["RAM32M"] = ("INIT_A", "INIT_B", "INIT_C", "INIT_D")
+        _cell_props["RAMB36E1"] = tuple(
+            f"INIT_{i:02X}" for i in range(int("0x80", base=16))
+        )  # TODO add INIT_A, INIT_B, INITP_00 - INITP_0F
+        _cell_props["BUFGCTRL"] = (
+            "INIT_OUT",
+            "IS_CE0_INVERTED",
+            "IS_CE1_INVERTED",
+            "IS_IGNORE0_INVERTED",
+            "IS_IGNORE1_INVERTED",
+            "IS_S0_INVERTED",
+            "IS_S1_INVERTED",
+            "PRESELECT_I0",
+            "PRESELECT_I1",
+        )
+
+        self._cell_props = _cell_props
 
         self.run_num = None
 
@@ -337,6 +377,7 @@ class StructuralCompareTool(CompareTool):
     def get_properties_for_type(self, cell_type):
         """Return the list of properties that must match for a given cell type
         for the cell to be considered equivalent."""
+<<<<<<< HEAD
 
         if cell_type == "LUT6_2":
             return ("INIT",)
@@ -358,6 +399,11 @@ class StructuralCompareTool(CompareTool):
             return ()
 
         raise CompareException(f"Unhandled properties for type {cell_type}")
+=======
+        if cell_type in self._cell_props:
+            return self._cell_props[cell_type]
+        raise KeyError(f"Unhandled properties for type {cell_type}")
+>>>>>>> main
 
     def get_netlist(self, library):
         return Netlist(library, self)
@@ -487,7 +533,6 @@ class Pin:
 
     @property
     def net(self):
-        # print()
         # print(self.instance.name, self.name, self.pin.wire)
         return self.netlist.wire_to_net.get(self.pin.wire)
 
@@ -497,7 +542,6 @@ class Pin:
 
 
 class Net:
-
     """Wrapper class around spydernet Wire to add some helper properties"""
 
     def __init__(self, wire, tool):
@@ -570,16 +614,6 @@ class Net:
     def get_direction_for_unisim(cell_type_name, port_name):
         """Get a pin direction for a UNISIM cell"""
 
-        cell_inputs_and_outputs = get_unisim_cell_inputs_and_outputs()
-
-        for cell_types, inputs, outputs in cell_inputs_and_outputs:
-            if cell_type_name in cell_types:
-                if port_name in inputs:
-                    return sdn.ir.Port.Direction.IN
-                if port_name in outputs:
-                    return sdn.ir.Port.Direction.OUT
-                raise NotImplementedError(cell_type_name, port_name)
-
         if cell_type_name.startswith("SDN_VERILOG_ASSIGNMENT"):
             if port_name == "i":
                 return sdn.ir.Port.Direction.IN
@@ -587,7 +621,7 @@ class Net:
             # is never called on alias wires (wires driven by assign statement)
             assert False
 
-        raise NotImplementedError(cell_type_name, port_name)
+        return rw.get_sdn_direction_for_unisim(cell_type_name, port_name)
 
     # @staticmethod
     # def get_assign_statement(wire):

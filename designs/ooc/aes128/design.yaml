@@ -1,3 +1,3 @@
-top: aes128
+top: aes128_random
 
 include_all_verilog_files: yes
