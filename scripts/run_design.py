@@ -15,7 +15,7 @@ def run_design(design_path, flow, error_flow, flow_args):
     """Run a design through a given flow"""
 
     # Create temp folder
-    build_dir = Path.cwd() / "build" / flow / (design_path.relative_to(paths.DESIGNS_PATH))
+    build_dir = Path.cwd() / "build" / flow
     build_dir.mkdir(parents=True, exist_ok=True)
 
     # Load the design
