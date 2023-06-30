@@ -29,8 +29,6 @@ module ahbjtag_random(
     output logic tapo_iupd
     );
 
-
-
 ahbjtag ahbjtag (
     .clk(clk),
     .rst(reset),
