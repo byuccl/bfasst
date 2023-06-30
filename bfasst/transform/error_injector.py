@@ -1,13 +1,8 @@
 """Tool to inject errors into a netlist"""
 from enum import Enum
 import spydrnet as sdn
-<<<<<<< HEAD
 from bfasst.transform.base import TransformTool, TransformException
-=======
-from bfasst.transform.base import TransformTool
 from bfasst.rw_helpers import get_sdn_direction_for_unisim, get_unisim_inputs
-from bfasst.status import Status, TransformStatus
->>>>>>> main
 from bfasst.utils import convert_verilog_literal_to_int
 
 
