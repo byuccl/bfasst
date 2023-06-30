@@ -1,4 +1,4 @@
-"""GatherImplData flow"""
+"""Run various synth and implementation tools so that utilization reports are available"""
 
 # pylint: disable=duplicate-code
 
