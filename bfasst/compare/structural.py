@@ -4,7 +4,7 @@ from bidict import bidict
 import spydrnet as sdn
 from bfasst import jpype_jvm
 from bfasst.compare.base import CompareTool, CompareException
-from bfasst.utils import TermColor, error, properties_are_equal
+from bfasst.utils import error, properties_are_equal
 from bfasst.vendor_utils.xilinx import get_unisim_cell_inputs_and_outputs
 
 

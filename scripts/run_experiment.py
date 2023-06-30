@@ -1,12 +1,10 @@
 """ Run experiment which runs multiple designs/flows in parallel """
 from argparse import ArgumentParser
-import code
 from collections import Counter
 import datetime
 import multiprocessing
 import os
 import pathlib
-from shutil import copyfileobj
 import signal
 import sys
 import threading
@@ -14,7 +12,7 @@ import time
 import concurrent.futures
 from bfasst.experiment import Experiment
 
-from bfasst.output_cntrl import redirect, cleanup_redirect, enable_proxy
+from bfasst.output_cntrl import enable_proxy
 from bfasst.tool import BfasstException
 from bfasst.utils import TermColor, print_color
 
@@ -43,7 +41,6 @@ def main(experiment_yaml, num_threads, print_period=1):
     statuses = multiprocessing.Manager().list()
     running_list = multiprocessing.Manager().dict()
     print_lock = multiprocessing.Manager().Lock()
-    jobs_lock = multiprocessing.Manager().Lock()
 
     # Print number of designs
     print_color(TermColor.BLUE, f"Running {len(experiment.designs)} designs and {len(jobs)} jobs")
@@ -77,26 +74,13 @@ def main(experiment_yaml, num_threads, print_period=1):
                             print_lock,
                             running_list,
                             job,
-                            jobs_lock,
                             statuses,
                             experiment,
                             jobs,
                         )
                         futures.append(future)
                 for future in concurrent.futures.as_completed(futures):
-                    print(f"Before clean: {len(jobs)}")
                     clean_jobs(jobs, future, statuses)
-                    print(f"After clean: {len(jobs)}")
-                    for j in jobs:
-                        print(f"{j.design_rel_path} {j.function}")
-                    # print(f"\nnum jobs: {len(jobs)}")
-                    # for my_job in jobs:
-                    #     deps = [uuid for uuid in my_job.dependencies] if my_job.dependencies else []
-                    #     my_dep = str(deps[0])[-5:] if deps else "None"
-                    #     print(
-                    #         f"{my_job.design_rel_path} {str(my_job.uuid)[-5:]} {my_dep} {my_job.function}"
-                    #     )
-                    # print("-" * 80)
 
         except KeyboardInterrupt:
             jobs = None
@@ -155,7 +139,7 @@ def print_running_list(running_list):
     sys.stdout.flush()
 
 
-def run_job(print_lock, running_list, job, jobs_lock, statuses, experiment, jobs):
+def run_job(print_lock, running_list, job, statuses, experiment, jobs):
     """Run a single job and update running_list"""
     with print_lock:
         print_running_list(running_list)

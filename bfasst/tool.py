@@ -12,7 +12,7 @@ import types
 from dataclasses import dataclass
 from bfasst.output_cntrl import cleanup_redirect, enable_proxy, redirect
 
-from bfasst.utils import TermColor, print_color
+from bfasst.utils import TermColor
 
 
 class BfasstException(Exception):

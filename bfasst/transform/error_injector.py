@@ -52,10 +52,9 @@ class ErrorInjector(TransformTool):
         """Injects an error into the netlist of the given type"""
         if error_type == ErrorType.BIT_FLIP:
             return self.inject_bit_flip
-        elif error_type == ErrorType.WIRE_SWAP:
+        if error_type == ErrorType.WIRE_SWAP:
             return self.inject_wire_swap
-        else:
-            raise TransformException("Invalid error type")
+        raise TransformException("Invalid error type")
 
     def inject_bit_flip(self):
         """Injects a bit flip error into the netlist"""

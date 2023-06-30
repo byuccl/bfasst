@@ -2,7 +2,6 @@
 import abc
 
 from bfasst import tool
-from bfasst.utils import print_color
 from bfasst.tool import BfasstException
 
 

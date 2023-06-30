@@ -13,7 +13,7 @@ from bfasst import jpype_jvm
 from bfasst.config import VIVADO_BIN_PATH
 from bfasst.tool import ToolProduct
 from bfasst.transform.base import TransformTool, TransformException
-from bfasst.utils import TermColor, print_color
+from bfasst.utils import TermColor
 
 
 # pylint: disable=wrong-import-position,wrong-import-order
