@@ -7,6 +7,7 @@ from pathlib import Path
 from bfasst.design import Design
 from bfasst import paths
 from bfasst.flows.flow import get_flow, get_flows
+from bfasst.tool import BfasstException
 from bfasst.types import ToolType
 
 
@@ -14,7 +15,7 @@ def run_design(design_path, flow, error_flow, flow_args):
     """Run a design through a given flow"""
 
     # Create temp folder
-    build_dir = Path.cwd() / "build" / flow / (design.path.relative_to(paths.DESIGNS_PATH))
+    build_dir = Path.cwd() / "build" / flow / (design_path.relative_to(paths.DESIGNS_PATH))
     build_dir.mkdir(parents=True, exist_ok=True)
 
     # Load the design
@@ -27,12 +28,18 @@ def run_design(design_path, flow, error_flow, flow_args):
     # Get the flow object
     flow = get_flow(flow)(design, flow_args)
 
-    # Run the design
-    status = flow.run()
-    if status:
-        print(status)
-    else:
-        print("Success!")
+    # Create the jobs
+    jobs = flow.create()
+
+    while jobs:
+        for job in jobs:
+            try:
+                job.function()
+            except BfasstException as e:
+                print(e)
+                return
+
+    print("Success!")
 
 
 def main():
