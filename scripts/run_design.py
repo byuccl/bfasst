@@ -55,7 +55,7 @@ def main():
     parser = ArgumentParser()
 
     parser.add_argument("design_path", help="Path to design in examples directory.")
-    parser.add_argument("flow", choices=sorted([e for e in get_flows()]))
+    parser.add_argument("flow", choices=sorted(list(get_flows())))
     parser.add_argument("--synth", help="Synthesis args", type=str, default="")
     parser.add_argument("--impl", help="Implementation args", type=str, default="")
     parser.add_argument("--map", help="Mapping args", type=str, default="")
