@@ -40,10 +40,9 @@ def run_design(design_path, flow, error_flow, flow_args):
                 except BfasstException as e:
                     print(e)
                     return
-    
     print("Success!")
-    
-    
+
+
 def cleanup(curr_job, jobs):
     jobs.remove(curr_job)
     for job in jobs:

@@ -15,9 +15,7 @@ class FlowException(BfasstException):
 
 def get_flows():
     """Get all flows in the flows directory"""
-    flows = [
-        flow.stem for flow in Path(__file__).parent.glob("*.py") if flow.stem != "__init__"
-    ]
+    flows = [flow.stem for flow in Path(__file__).parent.glob("*.py") if flow.stem != "__init__"]
     return flows
 
 
