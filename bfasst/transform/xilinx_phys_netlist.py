@@ -352,7 +352,7 @@ class XilinxPhysNetlist(TransformTool):
         parent, edif_cells = self.lutram_assertions(cells)
         new_cell_name = rw.generate_combinded_cell_name(edif_cells)
         cell_str = f"2 LUT_RAMS ({' '.join([str(n.getName()) for n in cells])})"
-        self.log_color(TermColor.BLUE, f"\nConverting {cell_str} to RAM32X1D {new_cell_name}")
+        self.log(f"\nConverting {cell_str} to RAM32X1D {new_cell_name}")
 
         ram32x1d = parent.createChildCellInst(new_cell_name, self.ram32x1d_edif_cell)
 
@@ -380,7 +380,7 @@ class XilinxPhysNetlist(TransformTool):
         parent, edif_cells = self.lutram_assertions(cells)
         new_cell_name = rw.generate_combinded_cell_name(edif_cells)
         cell_str = f"4 LUT_RAMS ({' '.join([str(n.getName()) for n in cells])})"
-        self.log_color(TermColor.BLUE, f"\nConverting {cell_str} to RAM32M {new_cell_name}")
+        self.log(f"\nConverting {cell_str} to RAM32M {new_cell_name}")
 
         ram32m = parent.createChildCellInst(new_cell_name, self.ram32m_edif_cell)
 
