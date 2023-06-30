@@ -3,13 +3,13 @@
 # pylint: disable=duplicate-code
 
 from bfasst.flows.flow import Flow
-from bfasst.flows.xilinx_flow import XilinxFlow
+from bfasst.flows.xilinx import Xilinx
 from bfasst.job import Job
 from bfasst.reverse_bit.xray import XRayReverseBitTool
 from bfasst.types import ToolType
 
 
-class XilinxAndReversedFlow(Flow):
+class XilinxAndReversed(Flow):
     """XilinxAndReversed flow"""
 
     def create(self):
@@ -20,7 +20,7 @@ class XilinxAndReversedFlow(Flow):
         if "--max_dsp" not in self.flow_args[ToolType.SYNTH]:
             self.flow_args[ToolType.SYNTH] += " --max_dsp 0"
 
-        self.job_list.extend(XilinxFlow(self.design, self.flow_args).create())
+        self.job_list.extend(Xilinx(self.design, self.flow_args).create())
 
         xray_rev_tool = XRayReverseBitTool(
             self.design.build_dir, self.design, self.flow_args[ToolType.REVERSE]

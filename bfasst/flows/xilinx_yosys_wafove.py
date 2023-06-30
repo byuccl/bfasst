@@ -4,13 +4,13 @@
 
 from bfasst.compare.waveform import WaveformCompareTool
 from bfasst.flows.flow import Flow
-from bfasst.flows.xilinx_flow import XilinxFlow
+from bfasst.flows.xilinx import Xilinx
 from bfasst.job import Job
 from bfasst.reverse_bit.xray import XRayReverseBitTool
 from bfasst.types import ToolType
 
 
-class XilinxYosysWafoveFlow(Flow):
+class XilinxYosysWafove(Flow):
     """Wafove flow"""
 
     def create(self):
@@ -21,7 +21,7 @@ class XilinxYosysWafoveFlow(Flow):
         # Reset job list in case this flow is called multiple times
         self.job_list = []
 
-        self.job_list.extend(XilinxFlow(self.design, self.flow_args).create())
+        self.job_list.extend(Xilinx(self.design, self.flow_args).create())
 
         # Run X-ray and fasm2bel
         xray_rev_bit_tool = XRayReverseBitTool(

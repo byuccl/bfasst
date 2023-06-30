@@ -6,14 +6,14 @@ import random
 
 from bfasst.compare.structural import StructuralCompareTool
 from bfasst.flows.flow import Flow
-from bfasst.flows.xilinx_phys_netlist_xrev_flow import XilinxPhysNetlistXrevFlow
+from bfasst.flows.xilinx_phys_netlist_xrev import XilinxPhysNetlistXrev
 from bfasst.job import Job
 from bfasst.transform.error_injector import ErrorInjector
 from bfasst.transform.error_injector import ErrorType
 from bfasst.types import ToolType
 
 
-class XilinxStructuralErrorInjectionFlow(Flow):
+class XilinxStructuralErrorInjection(Flow):
     """XilinxStructuralErrorInjection flow"""
 
     def get_corrupt_netlist_path(self):
@@ -29,7 +29,7 @@ class XilinxStructuralErrorInjectionFlow(Flow):
             self.flow_args[ToolType.SYNTH] += " --max_dsp 0"
 
         # All other jobs depend on the last one returned from this sub flow
-        self.job_list.extend(XilinxPhysNetlistXrevFlow(self.design, self.flow_args).create())
+        self.job_list.extend(XilinxPhysNetlistXrev(self.design, self.flow_args).create())
 
         # Get a reference to the dependency job that generates the netlist
         phys_netlist_rev_job = self.job_list[-1]

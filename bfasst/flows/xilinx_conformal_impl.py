@@ -2,13 +2,13 @@
 
 # pylint: disable=duplicate-code
 
-from bfasst.flows.sub_flows.conformal_only_flow import ConformalOnlyFlow
+from bfasst.flows.sub_flows.conformal import Conformal
 from bfasst.flows.flow import Flow
-from bfasst.flows.xilinx_and_reversed_flow import XilinxAndReversedFlow
+from bfasst.flows.xilinx_and_reversed import XilinxAndReversed
 from bfasst.job import Job
 
 
-class XilinxConformalImplFlow(Flow):
+class XilinxConformalImpl(Flow):
     """XilinxConformalImpl flow"""
 
     def _run(self):
@@ -17,7 +17,7 @@ class XilinxConformalImplFlow(Flow):
         # Reset job list in case this flow is called multiple times
         self.job_list = []
 
-        self.job_list.extend(XilinxAndReversedFlow(self.design, self.flow_args).create())
+        self.job_list.extend(XilinxAndReversed(self.design, self.flow_args).create())
 
         # Use conformal to compare against IMPL netlist
         curr_job = Job(self.adjust_design_object, self.design.rel_path, {self.job_list[-1].uuid})
@@ -32,7 +32,7 @@ class XilinxConformalImplFlow(Flow):
         #    compare_tool.compare_netlists(
         #        self.design, args[FlowArgs.MAP_STAGE.value]
         #    )
-        conformal_sub_flow = ConformalOnlyFlow(self.design, self.flow_args)
+        conformal_sub_flow = Conformal(self.design, self.flow_args)
         conformal_sub_flow.create()
         conformal_sub_flow.modify_first_job_dependencies({self.job_list[-1].uuid})
         self.job_list.extend(conformal_sub_flow.job_list)

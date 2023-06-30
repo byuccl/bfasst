@@ -1,50 +1,47 @@
-"""SynplifyIc2IcestormOnespin flow"""
+"""Ic2SynplifyConformal flow"""
 
 # pylint: disable=duplicate-code
 
-from bfasst.compare.onespin import OneSpinCompareTool
 from bfasst.flows.flow import Flow
-from bfasst.flows.sub_flows.ic2_impl_and_ice_rev import Ic2ImplAndIceRevFlow
+from bfasst.flows.sub_flows.conformal import Conformal
+from bfasst.flows.sub_flows.ic2_impl_and_ice_rev import Ic2ImplAndIceRev
 from bfasst.job import Job
 from bfasst.synth.ic2_synplify import Ic2SynplifySynthesisTool
 from bfasst.types import ToolType
 
 
-class SynplifyIc2IcestormOnespinFlow(Flow):
-    """SynplifyIc2IcestormOnespin flow"""
+class Ic2SynplifyConformal(Flow):
+    """Ic2SynplifyConformal flow"""
 
     def create(self):
         """
         Icecube2 Synplify synthesis and implementation, reverse with
-        icestorm, compare with onespin.
+        icestorm, compare with Conformal.
         """
         # Reset job list in case this flow is called multiple times
         self.job_list = []
 
+        # Run Icecube2 Synplify synthesis
         synplify_synth_tool = Ic2SynplifySynthesisTool(
             self.design.build_dir, self.design, self.flow_args[ToolType.SYNTH]
         )
         curr_job = Job(synplify_synth_tool.create_netlist, self.design.rel_path)
         self.job_list.append(curr_job)
 
-        impl_and_rev_sub_flow = Ic2ImplAndIceRevFlow(self.design, self.flow_args)
+        # Run icecube implementation and icestorm bitstream reversal
+        impl_and_rev_sub_flow = Ic2ImplAndIceRev(self.design, self.flow_args)
         impl_and_rev_sub_flow.create()
         impl_and_rev_sub_flow.modify_first_job_dependencies({self.job_list[-1].uuid})
         self.job_list.extend(impl_and_rev_sub_flow.job_list)
 
-        # Run onespin
+        # Run conformal
         curr_job = Job(self.adjust_design_object, self.design.rel_path, {self.job_list[-1].uuid})
         self.job_list.append(curr_job)
 
-        cmp_tool = OneSpinCompareTool(
-            self.design.build_dir,
-            self.design,
-            self.design.compare_golden_files,
-            self.design.reversed_netlist_filename(),
-            self.flow_args[ToolType.CMP],
-        )
-        curr_job = Job(cmp_tool.compare_netlists, self.design.rel_path, {self.job_list[-1].uuid})
-        self.job_list.append(curr_job)
+        conformal_sub_flow = Conformal(self.design, self.flow_args)
+        conformal_sub_flow.create()
+        conformal_sub_flow.modify_first_job_dependencies({self.job_list[-1].uuid})
+        self.job_list.extend(conformal_sub_flow.job_list)
 
         return self.job_list
 

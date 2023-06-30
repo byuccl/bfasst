@@ -7,7 +7,7 @@ from bfasst.types import ToolType
 from bfasst.job import Job
 
 
-class XilinxFlow(Flow):
+class Xilinx(Flow):
     """Xilinx flow"""
 
     def create(self):

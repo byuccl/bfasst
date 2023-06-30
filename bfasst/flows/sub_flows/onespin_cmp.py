@@ -8,7 +8,7 @@ from bfasst.job import Job
 from bfasst.types import ToolType
 
 
-class OnespinCmpFlow(Flow):
+class OnespinCmp(Flow):
     """Subflow for running onespin comparison"""
 
     def create(self):

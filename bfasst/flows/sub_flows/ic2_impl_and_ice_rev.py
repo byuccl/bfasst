@@ -7,7 +7,7 @@ from bfasst.reverse_bit.icestorm import IcestormReverseBitTool
 from bfasst.types import ToolType
 
 
-class Ic2ImplAndIceRevFlow(Flow):
+class Ic2ImplAndIceRev(Flow):
     """Subflow for running IC2 Implementation and then Icestrom Reversal"""
 
     def create(self):

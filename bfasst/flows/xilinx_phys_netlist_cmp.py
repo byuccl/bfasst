@@ -2,12 +2,12 @@
 
 from bfasst.compare.structural import StructuralCompareTool
 from bfasst.flows.flow import Flow
-from bfasst.flows.xilinx_phys_netlist_xrev_flow import XilinxPhysNetlistXrevFlow
+from bfasst.flows.xilinx_phys_netlist_xrev import XilinxPhysNetlistXrev
 from bfasst.job import Job
 from bfasst.types import ToolType
 
 
-class XilinxPhysNetlistCmpFlow(Flow):
+class XilinxPhysNetlistCmp(Flow):
     """XilinxPhysNetlistCmp flow"""
 
     def create(self):
@@ -19,7 +19,7 @@ class XilinxPhysNetlistCmpFlow(Flow):
         if "--max_dsp" not in self.flow_args[ToolType.SYNTH]:
             self.flow_args[ToolType.SYNTH] += " --max_dsp 0"
 
-        self.job_list.extend(XilinxPhysNetlistXrevFlow(self.design, self.flow_args).create())
+        self.job_list.extend(XilinxPhysNetlistXrev(self.design, self.flow_args).create())
 
         # Set the paths for the physical netlist comparison
         phys_netlist_path = self.design.impl_edif_path.parent / (

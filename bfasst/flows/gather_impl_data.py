@@ -14,10 +14,10 @@ from bfasst.synth.ic2_synplify import Ic2SynplifySynthesisTool
 from bfasst.synth.yosys import YosysTechSynthTool
 from bfasst.types import ToolType
 from bfasst.job import Job
-from bfasst.flows.sub_flows.ic2_impl_and_ice_rev import Ic2ImplAndIceRevFlow
+from bfasst.flows.sub_flows.ic2_impl_and_ice_rev import Ic2ImplAndIceRev
 
 
-class GatherImplDataFlow(Flow):
+class GatherImplData(Flow):
     """GatherImplData flow"""
 
     def create(self):
@@ -38,7 +38,7 @@ class GatherImplDataFlow(Flow):
         self.job_list.append(curr_job)
 
         # Create a job for icecube2 implementation and bitstream reversal
-        impl_and_rev_sub_flow = Ic2ImplAndIceRevFlow(self.design, self.flow_args)
+        impl_and_rev_sub_flow = Ic2ImplAndIceRev(self.design, self.flow_args)
         impl_and_rev_sub_flow.create()
         impl_and_rev_sub_flow.modify_first_job_dependencies({self.job_list[-1].uuid})
         self.job_list.extend(impl_and_rev_sub_flow.job_list)

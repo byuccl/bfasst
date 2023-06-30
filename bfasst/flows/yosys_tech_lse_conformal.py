@@ -2,8 +2,8 @@
 
 # pylint: disable=duplicate-code
 
-from bfasst.flows.sub_flows.conformal_only_flow import ConformalOnlyFlow
-from bfasst.flows.sub_flows.ic2_impl_and_ice_rev import Ic2ImplAndIceRevFlow
+from bfasst.flows.sub_flows.conformal import Conformal
+from bfasst.flows.sub_flows.ic2_impl_and_ice_rev import Ic2ImplAndIceRev
 from bfasst.flows.flow import Flow
 from bfasst.impl.ic2 import Ic2ImplementationTool
 from bfasst.job import Job
@@ -13,7 +13,7 @@ from bfasst.synth.yosys import YosysTechSynthTool
 from bfasst.types import ToolType
 
 
-class YosysTechLseConformalFlow(Flow):
+class YosysTechLseConformal(Flow):
     """YosysTechLseConformal flow"""
 
     def create(self):
@@ -52,12 +52,12 @@ class YosysTechLseConformalFlow(Flow):
             self.design.build_dir, self.design, self.flow_args[ToolType.REVERSE]
         ).reverse_bitstream()
 
-        impl_and_rev_sub_flow = Ic2ImplAndIceRevFlow(self.design, self.flow_args)
+        impl_and_rev_sub_flow = Ic2ImplAndIceRev(self.design, self.flow_args)
         impl_and_rev_sub_flow.create()
         impl_and_rev_sub_flow.modify_first_job_dependencies(self.job_list[-1])
         self.job_list.extend(impl_and_rev_sub_flow.job_list)
 
-        conformal_sub_flow = ConformalOnlyFlow(self.design, self.flow_args)
+        conformal_sub_flow = Conformal(self.design, self.flow_args)
         conformal_sub_flow.create()
         conformal_sub_flow.modify_first_job_dependencies(self.job_list[-1])
         self.job_list.extend(conformal_sub_flow.job_list)

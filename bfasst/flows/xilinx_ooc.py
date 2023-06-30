@@ -9,7 +9,7 @@ from bfasst.synth.vivado import VivadoSynthesisTool
 from bfasst.types import ToolType
 
 
-class XilinxOocFlow(Flow):
+class XilinxOoc(Flow):
     """XilinxOoc flow"""
 
     def create(self):

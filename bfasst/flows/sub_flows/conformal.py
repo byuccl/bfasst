@@ -6,7 +6,7 @@ from bfasst.job import Job
 from bfasst.types import ToolType, Vendor
 
 
-class ConformalOnlyFlow(Flow):
+class Conformal(Flow):
     """ConformalOnly flow"""
 
     def create(self):

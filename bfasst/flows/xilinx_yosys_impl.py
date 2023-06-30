@@ -4,12 +4,12 @@
 
 from bfasst.compare.yosys import YosysCompareTool
 from bfasst.flows.flow import Flow
-from bfasst.flows.xilinx_and_reversed_flow import XilinxAndReversedFlow
+from bfasst.flows.xilinx_and_reversed import XilinxAndReversed
 from bfasst.job import Job
 from bfasst.types import ToolType
 
 
-class XilinxYosysImplFlow(Flow):
+class XilinxYosysImpl(Flow):
     """XilinxYosysImpl flow"""
 
     def _run(self):
@@ -18,7 +18,7 @@ class XilinxYosysImplFlow(Flow):
         # Reset job list in case this flow is called multiple times
         self.job_list = []
 
-        self.job_list.extend(XilinxAndReversedFlow(self.design, self.flow_args).create())
+        self.job_list.extend(XilinxAndReversed(self.design, self.flow_args).create())
 
         yosys_cmp_tool = YosysCompareTool(
             self.design.build_dir,
