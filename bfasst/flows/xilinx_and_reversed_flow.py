@@ -1,5 +1,7 @@
 """XilinxAndReversed flow"""
 
+# pylint: disable=duplicate-code
+
 from bfasst.flows.flow import Flow
 from bfasst.flows.xilinx_flow import XilinxFlow
 from bfasst.job import Job

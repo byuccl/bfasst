@@ -1,5 +1,7 @@
 """GatherImplData flow"""
 
+# pylint: disable=duplicate-code
+
 import shutil
 
 from bfasst.flows.flow import Flow

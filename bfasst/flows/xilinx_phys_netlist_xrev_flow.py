@@ -1,5 +1,7 @@
 """Subflow that combines xilinx phys netlist and xray/f2b reversal."""
 
+# pylint: disable=duplicate-code
+
 from bfasst.flows.flow import Flow
 from bfasst.flows.xilinx_phys_netlist_flow import XilinxPhysNetlistFlow
 from bfasst.job import Job

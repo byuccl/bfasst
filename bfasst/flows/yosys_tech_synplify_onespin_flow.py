@@ -1,5 +1,7 @@
 """YosysTechSynplifyOnespin flow"""
 
+# pylint: disable=duplicate-code
+
 from bfasst.flows.flow import Flow
 from bfasst.flows.sub_flows.ic2_impl_and_ice_rev import Ic2ImplAndIceRevFlow
 from bfasst.flows.sub_flows.onespin_cmp import OnespinCmpFlow

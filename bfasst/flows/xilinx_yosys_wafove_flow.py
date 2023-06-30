@@ -1,5 +1,7 @@
 """Wafove flow"""
 
+# pylint: disable=duplicate-code
+
 from bfasst.compare.waveform import WaveformCompareTool
 from bfasst.flows.flow import Flow
 from bfasst.flows.xilinx_flow import XilinxFlow

@@ -1,5 +1,7 @@
 """XilinxConformal flow"""
 
+# pylint: disable=duplicate-code
+
 from bfasst.flows.sub_flows.conformal_only_flow import ConformalOnlyFlow
 from bfasst.flows.flow import Flow
 from bfasst.flows.xilinx_and_reversed_flow import XilinxAndReversedFlow

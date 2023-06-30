@@ -1,5 +1,7 @@
 """XilinxYosysImpl flow"""
 
+# pylint: disable=duplicate-code
+
 from bfasst.compare.yosys import YosysCompareTool
 from bfasst.flows.flow import Flow
 from bfasst.flows.xilinx_and_reversed_flow import XilinxAndReversedFlow

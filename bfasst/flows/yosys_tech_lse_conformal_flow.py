@@ -1,5 +1,7 @@
 """YosysTechLseConformal flow"""
 
+# pylint: disable=duplicate-code
+
 from bfasst.flows.sub_flows.conformal_only_flow import ConformalOnlyFlow
 from bfasst.flows.sub_flows.ic2_impl_and_ice_rev import Ic2ImplAndIceRevFlow
 from bfasst.flows.flow import Flow

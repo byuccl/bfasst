@@ -1,5 +1,7 @@
 """Subflow for running onespin comparison"""
 
+# pylint: disable=duplicate-code
+
 from bfasst.compare.onespin import OneSpinCompareTool
 from bfasst.flows.flow import Flow
 from bfasst.job import Job
