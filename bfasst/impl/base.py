@@ -2,7 +2,6 @@
 import abc
 import pathlib
 
-from bfasst.utils import print_color
 from bfasst.tool import Tool, ToolProduct
 from bfasst.tool import BfasstException
 
@@ -39,18 +38,23 @@ class ImplementationTool(Tool):
         pass
 
     def print_running_impl(self):
-        print_color(self.TERM_COLOR_STAGE, "Running Implementation")
+        self.log("Running implementation")
 
     def print_skipping_impl(self):
-        print_color(self.TERM_COLOR_STAGE, "Implementation already run")
+        self.log("Implementation already run")
 
-    def up_to_date(self, log_check_fcn):
+    def up_to_date(self, log_check_fcn, file):
         """Commmon startup code for Implementation tools that first checks if
         prevous run can be used, and if not starts a new run"""
+
+        # Save edif netlist path to design object
+        self.design.netlist_path = self.cwd / f"{self.design.top}.edf"
+        self.design.constraints_path = self.cwd / "constraints.xdc"
+
         if not self.need_to_rerun(
             tool_products=[ToolProduct(self.design.bitstream_path, self.log_path, log_check_fcn)],
             dependency_modified_time=max(
-                pathlib.Path(__file__).stat().st_mtime, self.design.netlist_path.stat().st_mtime
+                pathlib.Path(file).stat().st_mtime, self.design.netlist_path.stat().st_mtime
             ),
         ):
             self.print_skipping_impl()

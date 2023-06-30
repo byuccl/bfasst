@@ -66,6 +66,7 @@ class XRayReverseBitTool(ReverseBitTool):
 
         # fasm to netlist
         xdc_path = self.work_dir / (self.design.top + "_reversed.xdc")
+        self.design.constraints_path = self.cwd / "constraints.xdc"
         try:
             self.convert_fasm_to_netlist(
                 fasm_path, self.design.constraints_path, self.design.reversed_netlist_path, xdc_path

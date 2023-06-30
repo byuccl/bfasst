@@ -29,3 +29,6 @@ class Job:
             return
 
         raise BfasstException("Job succeeded but was expected to fail")
+
+    def __eq__(self, other):
+        return self.uuid == other.uuid

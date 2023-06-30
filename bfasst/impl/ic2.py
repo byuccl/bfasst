@@ -19,7 +19,7 @@ class Ic2ImplementationTool(ImplementationTool):
         self.launch()
         self.design.bitstream_path = self.cwd / (self.design.top + ".bit")
 
-        if self.up_to_date(self.check_impl_status):
+        if self.up_to_date(self.check_impl_status, __file__):
             return
 
         # Create impl tcl script

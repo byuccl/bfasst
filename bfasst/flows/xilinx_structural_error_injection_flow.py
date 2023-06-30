@@ -41,7 +41,7 @@ class XilinxStructuralErrorInjectionFlow(Flow):
         # For each error type
         random_seed_multiplier = 1
         for error in error_type:
-            num_runs = 100
+            num_runs = 1
 
             for i in range(1, num_runs + 1):
                 error_injector = ErrorInjector(
@@ -53,14 +53,23 @@ class XilinxStructuralErrorInjectionFlow(Flow):
 
                 # Create a job to inject the correct type of error
                 error_function = error_injector.get_injection_function(error)
-                curr_job = Job(error_function, self.design.rel_path, [phys_netlist_rev_job])
+                curr_job = Job(error_function, self.design.rel_path, {phys_netlist_rev_job.uuid})
                 self.job_list.append(curr_job)
+
+                # Set the paths for the compare tool's copy of design
+                phys_netlist_path = self.design.impl_edif_path.parent / (
+                    self.design.impl_edif_path.stem + "_physical.v"
+                )
+                if error == ErrorType.BIT_FLIP:
+                    corrupt_netlist_path = self.design.path / f"bit_flip_{i}.v"
+                elif error == ErrorType.WIRE_SWAP:
+                    corrupt_netlist_path = self.design.path / f"wire_swap_{i}.v"
 
                 compare_tool = StructuralCompareTool(
                     cwd=self.design.build_dir,
                     design=self.design,
-                    gold_netlist=self.design.phys_netlist_path,
-                    rev_netlist=error_injector.corrupted_netlist_path,
+                    gold_netlist=phys_netlist_path,
+                    rev_netlist=corrupt_netlist_path,
                     flow_args=self.flow_args[ToolType.CMP],
                 )
 
@@ -75,7 +84,7 @@ class XilinxStructuralErrorInjectionFlow(Flow):
 
                 # Clean up the corrupted netlist if the comparison passes
                 curr_job = Job(
-                    partial(unlink, error_injector.corrupted_netlist_path),
+                    partial(unlink, corrupt_netlist_path),
                     self.design.rel_path,
                     {self.job_list[-1].uuid},
                 )

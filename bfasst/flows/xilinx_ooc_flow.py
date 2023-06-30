@@ -25,7 +25,7 @@ class XilinxOocFlow(Flow):
             self.design.build_dir, self.design, self.flow_args[ToolType.IMPL]
         )
 
-        if synth_tool.up_to_date() and impl_tool.up_to_date(impl_tool.check_impl_status):
+        if synth_tool.up_to_date() and impl_tool.up_to_date(impl_tool.check_impl_status, __file__):
             synth_tool.print_skipping_synth()
             impl_tool.print_skipping_impl()
             return self.job_list
@@ -43,6 +43,10 @@ class XilinxOocFlow(Flow):
         impl_tool = VivadoImplementationTool(
             self.design.build_dir, self.design, self.flow_args[ToolType.IMPL]
         )
+
+        # Setup tools for ooc
+        synth_tool.launch()
+        impl_tool.launch()
 
         synth_tool.args.out_of_context = True
         impl_tool.args.out_of_context = True
@@ -63,3 +67,6 @@ class XilinxOocFlow(Flow):
 
         cmd = [str(VIVADO_BIN_PATH), "-mode", "tcl", "-source", str(tcl_path)]
         synth_tool.exec_and_log(cmd)
+
+        synth_tool.cleanup()
+        impl_tool.cleanup()

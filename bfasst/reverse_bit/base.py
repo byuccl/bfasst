@@ -37,7 +37,7 @@ class ReverseBitTool(Tool):
         pass
 
     def print_running_reverse_bit(self):
-        print_color(self.TERM_COLOR_STAGE, "Running bitstream reversal")
+        self.log("Running bitstream reversal")
 
     def print_skipping_reverse_bit(self):
-        print_color(self.TERM_COLOR_STAGE, "Bitstream reversal already run")
+        self.log("Bitstream reversal already run")

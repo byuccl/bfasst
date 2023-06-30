@@ -81,12 +81,12 @@ class WaveformCompareTool(CompareTool):
     def compare_netlists(self):
         """The function that compares the netlists."""
         self.launch()
-        print("\nRunning WaFoVe to compare netlists...")
-        print(f"Number of tests being run: {self.args.tests}")
-        print(f"Seed: {self.args.seed}")
-        print(f"Testing against all internal signals: {self.args.allSignals}")
-        print(f"Displaying waveforms via Gtkwave: {self.args.waveform}")
-        print(f"Displaying waveforms via Vivado: {self.args.vivado}\n")
+        self.log("\nRunning WaFoVe to compare netlists...")
+        self.log(f"Number of tests being run: {self.args.tests}")
+        self.log(f"Seed: {self.args.seed}")
+        self.log(f"Testing against all internal signals: {self.args.allSignals}")
+        self.log(f"Displaying waveforms via Gtkwave: {self.args.waveform}")
+        self.log(f"Displaying waveforms via Vivado: {self.args.vivado}\n")
 
         if self.up_to_date(self.check_compare_status):
             return
@@ -138,7 +138,8 @@ class WaveformCompareTool(CompareTool):
 
         if not compare_waveforms.run_test(paths):
             raise CompareException("The netlists are not equivalent.")
-        
+
+        self.log("Equivalent")
         self.cleanup()
 
     def check_compare_status(self, log_path):
@@ -151,6 +152,5 @@ class WaveformCompareTool(CompareTool):
             raise CompareException("The waveform tool timed out.")
 
         # Regex search for result
-        i = re.search(r"^6\. Compare Results:\s+(.*)$", log_text, re.M)
-        if i.group(1) != "PASS":
-            raise CompareException(f"Not equivalent: {i.group(1)}")
+        if re.search("^Not equivalent$", log_text, re.M):
+            raise CompareException("Not equivalent")

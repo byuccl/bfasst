@@ -3,7 +3,6 @@ import abc
 import pathlib
 
 from bfasst.tool import Tool, ToolProduct
-from bfasst.utils import print_color
 from bfasst.tool import BfasstException
 
 
@@ -40,10 +39,10 @@ class CompareTool(Tool):
         pass
 
     def print_running_compare(self):
-        print_color(self.TERM_COLOR_STAGE, "Running comparison")
+        self.log("Running comparison")
 
     def print_skipping_compare(self):
-        print_color(self.TERM_COLOR_STAGE, "Comparison already run")
+        self.log("Comparison already run")
 
     def generate_comparison(self, check_log_fcn):
         """Check if comparison was successful"""
@@ -53,6 +52,8 @@ class CompareTool(Tool):
 
     def up_to_date(self, check_log_fcn):
         """Determine whether to skip or run the comparison"""
+        self.design.reversed_netlist_path = self.cwd / f"{self.design.top}_reversed.v"
+
         if not self.need_to_rerun(
             tool_products=(self.generate_comparison(check_log_fcn),),
             dependency_modified_time=max(

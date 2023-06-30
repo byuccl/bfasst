@@ -116,7 +116,6 @@ class StructuralCompareTool(CompareTool):
             raise CompareException("Could not map all blocks")
         if num_mapped_nets != num_total_nets:
             raise CompareException("Could not map all nets")
-        
         self.cleanup()
 
         # TODO: After establishing mapping, verify equivalence
@@ -149,13 +148,11 @@ class StructuralCompareTool(CompareTool):
         iteration = 0
         while len(self.block_mapping) < len(self.named_netlist.instances_to_map):
             if not progress:
-                self.log_color(
-                    TermColor.RED, f"No more progress can be made. Failed at iteration {iteration}."
-                )
+                self.log(f"No more progress can be made. Failed at iteration {iteration}.")
                 break
             progress = False
 
-            self.log_color(TermColor.BLUE, f"===== Mapping Iteration {iteration} =====")
+            self.log(f"===== Mapping Iteration {iteration} =====")
 
             # Loop through reversed netlist blocks
             for instance in self.named_netlist.instances_to_map:
@@ -258,7 +255,7 @@ class StructuralCompareTool(CompareTool):
         ]
 
         if not instances_matching_cell_type:
-            self.log_color(TermColor.RED, "No unmapped instances of type", named_instance.cell_type)
+            self.log("No unmapped instances of type", named_instance.cell_type)
             return instances_matching_cell_type
         self.log(
             f"  {len(instances_matching_cell_type)} unmapped {named_instance.cell_type} instance(s)"
@@ -286,8 +283,7 @@ class StructuralCompareTool(CompareTool):
                 and properties_are_equal(properties[prop], i.properties[prop])
             ]
         if not instances_matching_props:
-            self.log_color(
-                TermColor.RED,
+            self.log(
                 f"No unmapped instances of {named_instance.cell_type} with matching properties",
                 ",".join(p + "=" + properties[p] for p in properties_to_match),
                 "\n  "

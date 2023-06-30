@@ -107,17 +107,6 @@ class Tool(abc.ABC):
             log_fp.write(f"{text}\n")
             log_fp.flush()
 
-    def log_color(self, color, *msg, add_timestamp=False):
-        """Write text in a given color to stdout and normally to the log file"""
-        with open(self.log_path, "a") as log_fp:
-            text = " ".join(str(s) for s in msg)
-            if add_timestamp:
-                time_now = datetime.datetime.now()
-                text = time_now.strftime(Tool.TIMESTAMP_FORMAT) + text
-            # print_color(color, text)
-            log_fp.write(f"{text}\n")
-            log_fp.flush()
-
     def need_to_rerun(self, tool_products, dependency_modified_time):
         """Determines whether previous run data can be reused or if the tool needs to be rerun."""
 
@@ -131,6 +120,7 @@ class Tool(abc.ABC):
 
                 # If log file is out of date, need to re-run
                 if dependency_modified_time > tool_product.log_path.stat().st_mtime:
+                    self.log_path.unlink()
                     return True
 
                 # If log file has an error, raise an exception
@@ -140,6 +130,7 @@ class Tool(abc.ABC):
 
                 # If log file doesn't have an error, but output file is expected and missing, re-run
                 if (tool_product.file_path is not None) and (not tool_product.file_path.is_file()):
+                    self.log_path.unlink()
                     return True
             else:
                 # This ToolProduct doesn't produce a log file

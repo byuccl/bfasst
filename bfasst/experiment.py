@@ -81,7 +81,7 @@ class Experiment:
 
                 for dir_item in design_dir_path.iterdir():
                     item_path = design_dir_path / dir_item
-                    if item_path:
+                    if item_path.is_dir():
                         self.design_paths.append(pathlib.Path(design_dir) / dir_item.name)
 
     def __check_for_post_run(self):

@@ -42,7 +42,7 @@ class SynthesisTool(tool.Tool):
     opt_tool = None
 
     def print_running_synth(self):
-        print_color(self.TERM_COLOR_STAGE, "Running synthesis")
+        self.log("Running synthesis")
 
     def print_skipping_synth(self):
-        print_color(self.TERM_COLOR_STAGE, "Synthesis already run")
+        self.log("Synthesis already run")

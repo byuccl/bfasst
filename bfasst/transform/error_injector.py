@@ -32,7 +32,8 @@ class ErrorInjector(TransformTool):
         self.new_lut_init = None
 
     def __setup_netlist(self):
-        self.clean_netlist = sdn.parse(self.design.clean_netlist_path)
+        self.design.reversed_netlist_path = self.cwd / (self.design.top + "_reversed.v")
+        self.clean_netlist = sdn.parse(self.design.reversed_netlist_path)
         self.all_instances = self.__get_all_instances()
 
     def __get_all_instances(self):

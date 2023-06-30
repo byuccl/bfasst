@@ -21,11 +21,17 @@ class XilinxPhysNetlistCmpFlow(Flow):
 
         self.job_list.extend(XilinxPhysNetlistXrevFlow(self.design, self.flow_args).create())
 
+        # Set the paths for the physical netlist comparison
+        phys_netlist_path = self.design.impl_edif_path.parent / (
+            self.design.impl_edif_path.stem + "_physical.v"
+        )
+        reversed_netlist_path = self.design.build_dir / (self.design.top + "_reversed.v")
+
         structural_compare_tool = StructuralCompareTool(
             self.design.build_dir,
             self.design,
-            self.design.phys_netlist_path,
-            self.design.reversed_netlist_path,
+            phys_netlist_path,
+            reversed_netlist_path,
             self.flow_args[ToolType.CMP],
         )
         curr_job = Job(

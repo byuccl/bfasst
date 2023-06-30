@@ -8,7 +8,7 @@ from bfasst.reverse_bit.xray import XRayReverseBitTool
 from bfasst.types import ToolType
 
 
-class WafoveFlow(Flow):
+class XilinxYosysWafoveFlow(Flow):
     """Wafove flow"""
 
     def create(self):
@@ -33,6 +33,12 @@ class WafoveFlow(Flow):
         # Input number of tests to run, seed to base random on, whether or not to show all signals
         # Whether or not to open gtkwave and analyze graphs, and whether or not to open Vivado and
         # analyze graphs.
+
+        # Set the paths for the comparison tool
+        self.design.impl_netlist_path = self.design.build_dir / (self.design.top + "_impl.v")
+        self.design.reversed_netlist_path = self.design.build_dir / (
+            self.design.top + "_reversed.v"
+        )
 
         waveform_cmp_tool = WaveformCompareTool(
             self.design.build_dir,
