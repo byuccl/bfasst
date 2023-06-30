@@ -33,13 +33,21 @@ def run_design(design_path, flow, error_flow, flow_args):
 
     while jobs:
         for job in jobs:
-            try:
-                job.function()
-            except BfasstException as e:
-                print(e)
-                return
-
+            if not job.dependencies:
+                try:
+                    job.function()
+                    cleanup(job, jobs)
+                except BfasstException as e:
+                    print(e)
+                    return
+    
     print("Success!")
+    
+    
+def cleanup(curr_job, jobs):
+    jobs.remove(curr_job)
+    for job in jobs:
+        job.dependencies.discard(curr_job.uuid)
 
 
 def main():
