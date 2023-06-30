@@ -51,6 +51,12 @@ class Flow(abc.ABC):
         return None
 
     def modify_first_job_dependencies(self, new_dependencies: list):
+        """
+        Allows the dependency list of the first job returned from a flow to be modified
+        after the job has been created
+        This is useful for adding dependencies to the first job returned from a subflow
+        when the subflow jobs occur in the middle of the master flow
+        """
         first_job = self._get_first_job()
         if first_job is None:
             raise BfasstException("There were no jobs in the subflow")
