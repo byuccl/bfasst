@@ -3,16 +3,9 @@
 from bidict import bidict
 import spydrnet as sdn
 from bfasst import jpype_jvm
-<<<<<<< HEAD
 from bfasst.compare.base import CompareTool, CompareException
 from bfasst.utils import error, properties_are_equal
-from bfasst.vendor_utils.xilinx import get_unisim_cell_inputs_and_outputs
-=======
-from bfasst.compare.base import CompareTool
 import bfasst.rw_helpers as rw
-from bfasst.status import CompareStatus, Status
-from bfasst.utils import TermColor, error, properties_are_equal
->>>>>>> main
 
 
 class StructuralCompareTool(CompareTool):
@@ -377,33 +370,9 @@ class StructuralCompareTool(CompareTool):
     def get_properties_for_type(self, cell_type):
         """Return the list of properties that must match for a given cell type
         for the cell to be considered equivalent."""
-<<<<<<< HEAD
-
-        if cell_type == "LUT6_2":
-            return ("INIT",)
-        if cell_type in ("FDSE", "FDRE"):
-            return ("INIT",)
-        if cell_type == "BUFGCTRL":
-            return (
-                "INIT_OUT",
-                "IS_CE0_INVERTED",
-                "IS_CE1_INVERTED",
-                "IS_IGNORE0_INVERTED",
-                "IS_IGNORE1_INVERTED",
-                "IS_S0_INVERTED",
-                "IS_S1_INVERTED",
-                "PRESELECT_I0",
-                "PRESELECT_I1",
-            )
-        if cell_type in ("IBUF", "OBUF", "OBUFT", "MUXF7", "MUXF8", "CARRY4"):
-            return ()
-
-        raise CompareException(f"Unhandled properties for type {cell_type}")
-=======
         if cell_type in self._cell_props:
             return self._cell_props[cell_type]
-        raise KeyError(f"Unhandled properties for type {cell_type}")
->>>>>>> main
+        raise CompareException(f"Unhandled properties for type {cell_type}")
 
     def get_netlist(self, library):
         return Netlist(library, self)
