@@ -10,14 +10,9 @@ from jpype.types import JInt
 from bfasst import jpype_jvm
 from bfasst.config import VIVADO_BIN_PATH
 from bfasst.tool import ToolProduct
-<<<<<<< HEAD
 from bfasst.transform.base import TransformTool, TransformException
 from bfasst.utils import TermColor
-=======
-from bfasst.transform.base import TransformTool
 import bfasst.rw_helpers as rw
-from bfasst.utils import TermColor, print_color
->>>>>>> main
 
 
 # pylint: disable=wrong-import-position,wrong-import-order
@@ -459,14 +454,8 @@ class XilinxPhysNetlist(TransformTool):
         they are permuted in some way."""
 
         type_name = cell.getEDIFCellInst().getCellType().getName()
-<<<<<<< HEAD
         self.log(f"\nProcessing {type_name}", cell)
-
-        if self.cell_is_default_mapping(cell):
-=======
-        self.log_color(TermColor.BLUE, f"\nProcessing {type_name}", cell)
         if rw.PinMapping.cell_is_default_mapping(cell):
->>>>>>> main
             self.log("  Inputs not permuted, skipping")
             return []
 
