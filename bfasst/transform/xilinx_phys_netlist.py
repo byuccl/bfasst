@@ -9,11 +9,10 @@ from jpype.types import JInt
 
 from bfasst import jpype_jvm
 from bfasst.config import VIVADO_BIN_PATH
-from bfasst.status import Status, TransformStatus
 from bfasst.tool import ToolProduct
-from bfasst.transform.base import TransformTool
+from bfasst.transform.base import TransformTool, TransformException
+from bfasst.utils import TermColor
 import bfasst.rw_helpers as rw
-from bfasst.utils import TermColor, print_color
 
 
 # pylint: disable=wrong-import-position,wrong-import-order
@@ -30,7 +29,6 @@ from java.io import PrintStream, File
 class XilinxPhysNetlist(TransformTool):
     """Creates a xilinx netlist that has only physical primitives"""
 
-    success_status = Status(TransformStatus.SUCCESS)
     TOOL_WORK_DIR = "xilinx_phys_netlist"
 
     def __init__(self, work_dir, design):
@@ -63,7 +61,7 @@ class XilinxPhysNetlist(TransformTool):
         System.setOut(PrintStream(File(str(self.work_dir / "rapidwright_stdout.log"))))
 
         # Check for up to date previous run
-        status = self.get_prev_run_status(
+        if not self.need_to_rerun(
             tool_products=[
                 ToolProduct(phys_netlist_verilog_path),
             ],
@@ -72,15 +70,11 @@ class XilinxPhysNetlist(TransformTool):
                 self.design.xilinx_impl_checkpoint_path.stat().st_mtime,
                 self.design.impl_edif_path.stat().st_mtime,
             ),
-        )
+        ):
+            self.log("Physical netlist conversion already run")
+            return
 
-        if status is not None:
-            print_color(self.TERM_COLOR_STAGE, "Physical Netlist conversion already run")
-            return status
-
-        self.open_new_log()
-        self.log_color(
-            TermColor.GREEN,
+        self.log(
             "Starting logical to physical netlist conversion for",
             self.design.xilinx_impl_checkpoint_path,
             self.design.impl_edif_path,
@@ -97,9 +91,7 @@ class XilinxPhysNetlist(TransformTool):
         except jpype.JException as exc:
             raise rw.RapidwrightException(str(exc))  # pylint: disable=raise-missing-from
 
-        status = self.export_new_netlist(phys_netlist_checkpoint, phys_netlist_verilog_path)
-
-        return status
+        self.export_new_netlist(phys_netlist_checkpoint, phys_netlist_verilog_path)
 
     def get_or_create_const_net(self, unisim_cell):
         """Create an edif const cell/net if it doesn't exist"""
@@ -171,8 +163,7 @@ class XilinxPhysNetlist(TransformTool):
         for cell in self.rw_design.getCells():
             edif_cell_inst = cell.getEDIFCellInst()
 
-            self.log_color(
-                TermColor.RED,
+            self.log(
                 cell.getName(),
                 f"({edif_cell_inst.getCellType().getName() if edif_cell_inst else 'None'})",
             )
@@ -203,10 +194,7 @@ class XilinxPhysNetlist(TransformTool):
 
             # TODO: Handle other primitives? SRL, FIFO36, DSP48E1, etc.
             print(cell)
-            return Status(
-                TransformStatus.ERROR,
-                f"Unhandled primitive {cell_type}",
-            )
+            raise TransformException(f"Unsupported cell type {cell_type}")
 
         # Remove old unusued cells
         self.log("Removing old cells...")
@@ -221,7 +209,7 @@ class XilinxPhysNetlist(TransformTool):
         self.rw_design.unplaceDesign()
         self.rw_design.writeCheckpoint(phys_netlist_checkpoint)
 
-        self.log_color(TermColor.BLUE, "\nWriting EDIF phsyical netlist:", phys_netlist_edif_path)
+        self.log("\nWriting EDIF phsyical netlist:", phys_netlist_edif_path)
         self.rw_netlist.exportEDIF(phys_netlist_edif_path)
 
     def process_all_luts(self, cells_already_visited):
@@ -294,9 +282,7 @@ class XilinxPhysNetlist(TransformTool):
     def export_new_netlist(self, phys_netlist_checkpoint, phys_netlist_verilog_path):
         """Export the new netlist to a Verilog netlist file"""
 
-        self.log_color(
-            TermColor.BLUE, "\nUsing Vivado to create new netlist:", phys_netlist_verilog_path
-        )
+        self.log("\nUsing Vivado to create new netlist:", phys_netlist_verilog_path)
 
         vivado_tcl_path = self.work_dir / "vivado_checkpoint_to_netlist.tcl"
         with open(vivado_tcl_path, "w") as fp:
@@ -315,14 +301,11 @@ class XilinxPhysNetlist(TransformTool):
         cwd = None
         with open(vivado_log_path, "w") as fp:
             if self.exec_and_log(cmd, cwd, fp).returncode:
-                return Status(TransformStatus.ERROR)
+                raise TransformException("Vivado failed to export new netlist to verilog")
 
-        status = self.check_vivado_output(vivado_log_path)
-        if status:
-            return status
+        self.check_vivado_output(vivado_log_path)
 
         self.log("Exported new netlist to", phys_netlist_verilog_path)
-        return self.success_status
 
     def check_vivado_output(self, vivado_log_path):
         """Check the log output of the Vivado exeuction for ERROR messages"""
@@ -331,8 +314,7 @@ class XilinxPhysNetlist(TransformTool):
         # Check for ERROR message:
         matches = re.search("^ERROR: (.*)$", txt, re.M)
         if matches:
-            return Status(TransformStatus.ERROR, matches.group(1))
-        return self.success_status
+            raise TransformException(f"Vivado reported an error: {matches.group(1)}")
 
     def check_ram32x1d(self, lut_rams, parents):
         """Check if cells can be combined to RAM32X1D"""
@@ -370,7 +352,7 @@ class XilinxPhysNetlist(TransformTool):
         parent, edif_cells = self.lutram_assertions(cells)
         new_cell_name = rw.generate_combinded_cell_name(edif_cells)
         cell_str = f"2 LUT_RAMS ({' '.join([str(n.getName()) for n in cells])})"
-        self.log_color(TermColor.BLUE, f"\nConverting {cell_str} to RAM32X1D {new_cell_name}")
+        self.log(f"\nConverting {cell_str} to RAM32X1D {new_cell_name}")
 
         ram32x1d = parent.createChildCellInst(new_cell_name, self.ram32x1d_edif_cell)
 
@@ -398,7 +380,7 @@ class XilinxPhysNetlist(TransformTool):
         parent, edif_cells = self.lutram_assertions(cells)
         new_cell_name = rw.generate_combinded_cell_name(edif_cells)
         cell_str = f"4 LUT_RAMS ({' '.join([str(n.getName()) for n in cells])})"
-        self.log_color(TermColor.BLUE, f"\nConverting {cell_str} to RAM32M {new_cell_name}")
+        self.log(f"\nConverting {cell_str} to RAM32M {new_cell_name}")
 
         ram32m = parent.createChildCellInst(new_cell_name, self.ram32m_edif_cell)
 
@@ -472,7 +454,7 @@ class XilinxPhysNetlist(TransformTool):
         they are permuted in some way."""
 
         type_name = cell.getEDIFCellInst().getCellType().getName()
-        self.log_color(TermColor.BLUE, f"\nProcessing {type_name}", cell)
+        self.log(f"\nProcessing {type_name}", cell)
         if rw.PinMapping.cell_is_default_mapping(cell):
             self.log("  Inputs not permuted, skipping")
             return []
@@ -485,7 +467,7 @@ class XilinxPhysNetlist(TransformTool):
         assume they can't be and throw a NotImplementedError exception if
         they are permuted in some way."""
         type_name = cell.getEDIFCellInst().getCellType().getName()
-        self.log_color(TermColor.BLUE, f"\nProcessing {type_name}", cell)
+        self.log(f"\nProcessing {type_name}", cell)
 
         if rw.PinMapping.cell_is_default_mapping(cell):
             self.log("  Inputs not permuted, skipping")
@@ -499,7 +481,7 @@ class XilinxPhysNetlist(TransformTool):
         assert bufg_edif_inst
 
         type_name = bufg_edif_inst.getCellType().getName()
-        self.log_color(TermColor.BLUE, f"\nProcessing {type_name}", bufg_cell)
+        self.log(f"\nProcessing {type_name}", bufg_cell)
 
         assert rw.PinMapping.cell_is_default_mapping(bufg_cell)
 
@@ -540,7 +522,7 @@ class XilinxPhysNetlist(TransformTool):
         """Process a LUT that isn't part of the design (ie no cell), but
         is configured to generate a GND signal"""
 
-        self.log_color(
+        self.log(
             TermColor.BLUE,
             f"\nProcessing LUT GND at site {site_inst}, pin(s):",
             ",".join(str(p) for p in pins),
@@ -614,8 +596,7 @@ class XilinxPhysNetlist(TransformTool):
         with logical mapping equal to the physical mapping."""
 
         assert lut6_cell is not None
-        self.log_color(
-            TermColor.BLUE,
+        self.log(
             "\nProcessing and replacing LUT(s):",
             ",".join(
                 str(lut_cell) + ("(routethru)" if lut_cell.isRoutethru() else "")

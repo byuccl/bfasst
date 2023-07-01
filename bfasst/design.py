@@ -22,7 +22,7 @@ class HdlType(enum.Enum):
 class Design:
     "class holding paths and other metadata for a given design" ""
 
-    def __init__(self, dir_path):
+    def __init__(self, dir_path, experiment_dir):
         if not dir_path.is_dir() and (paths.DESIGNS_PATH / dir_path).is_dir():
             dir_path = paths.DESIGNS_PATH / dir_path
         dir_path = dir_path.absolute()
@@ -32,6 +32,7 @@ class Design:
 
         self.path = dir_path
         self.rel_path = self.path.relative_to(paths.DESIGNS_PATH)
+        self.build_dir = experiment_dir / self.rel_path
         self.yaml_path = self.path / DESIGN_YAML_NAME
 
         self.top = None
@@ -63,7 +64,6 @@ class Design:
         self.phys_netlist_path = None
         self.constraints_path = None
         self.results_summary_path = None
-        self.corrupted_netlist_path = self.path / "corrupted_netlist.v"
 
         # Toolchain-specific paths
         self.xilinx_impl_checkpoint_path = None

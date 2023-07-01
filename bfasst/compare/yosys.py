@@ -1,8 +1,7 @@
 """Yosys equivalence checker"""
 import pathlib
 import re
-from bfasst.compare.base import CompareTool
-from bfasst.status import Status, CompareStatus
+from bfasst.compare.base import CompareException, CompareTool
 from bfasst.tool import ToolProduct
 
 
@@ -14,21 +13,22 @@ class YosysCompareTool(CompareTool):
     SCRIPT_FILE_NAME = "compare.ys"
 
     def compare_netlists(self):
+        self.launch()
         log_path = self.work_dir / self.LOG_FILE_NAME
 
         generate_comparison = ToolProduct(None, log_path, self.check_compare_status)
 
-        status = self.up_to_date(generate_comparison)
-        if status is not None:
-            return status
+        if self.up_to_date(generate_comparison):
+            return
 
         # Run Yosys
         cmd = ["./yosys", self.create_script_file()]
         cwd = str(pathlib.Path.cwd()) + "/third_party/yosys"
         with open(log_path, "w") as fp:
             if self.exec_and_log(cmd, cwd, fp).returncode:
-                return Status(CompareStatus.NOT_EQUIVALENT)
-        return Status(CompareStatus.SUCCESS)
+                raise CompareException("The netlists are not equivalent")
+
+        self.cleanup()
 
     def create_script_file(self):
         """Creates a Tcl script that asserts equivalence between the two designs"""
@@ -95,15 +95,15 @@ class YosysCompareTool(CompareTool):
 
         # Check for timeout
         if re.search(r"^Timeout$", log_text, re.M):
-            return Status(CompareStatus.TIMEOUT)
+            raise CompareException("The yosys tool timed out")
 
         # Regex search for result
         match = re.search(r"Equivalence successfully proven!", log_text, re.M)
         if match:
-            return Status(CompareStatus.SUCCESS)
+            return
 
         match = re.search(r"ERROR", log_text, re.M)
         if match:
-            return Status(CompareStatus.NOT_EQUIVALENT)
+            raise CompareException("The netlists are not equivalent")
 
-        return Status(CompareStatus.PARSE_PROBLEM)
+        raise CompareException("There was a parsing error in the yosys log file")

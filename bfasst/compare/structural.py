@@ -3,10 +3,9 @@
 from bidict import bidict
 import spydrnet as sdn
 from bfasst import jpype_jvm
-from bfasst.compare.base import CompareTool
+from bfasst.compare.base import CompareTool, CompareException
+from bfasst.utils import error, properties_are_equal
 import bfasst.rw_helpers as rw
-from bfasst.status import CompareStatus, Status
-from bfasst.utils import TermColor, error, properties_are_equal
 
 
 class StructuralCompareTool(CompareTool):
@@ -71,12 +70,11 @@ class StructuralCompareTool(CompareTool):
 
     def compare_netlists(self):
         """Map the golden and reversed netlists through automated block mapping"""
-
+        self.launch()
         impl_netlist = self.gold_netlist
         netlist_b = self.rev_netlist
 
         self.check_log_path()
-        self.open_new_log()
 
         self.log_title("Building netlist A", impl_netlist)
 
@@ -148,16 +146,15 @@ class StructuralCompareTool(CompareTool):
             self.log(f"    {net.name}")
 
         if len(self.block_mapping) != len(self.named_netlist.instances_to_map):
-            return Status(CompareStatus.COULD_NOT_MAP)
+            raise CompareException("Could not map all blocks")
         if num_mapped_nets != num_total_nets:
-            return Status(CompareStatus.COULD_NOT_MAP)
+            raise CompareException("Could not map all nets")
+        self.cleanup()
 
         # TODO: After establishing mapping, verify equivalence
         # Basically make sure all outputs are mapped, and then everything is identical
         # Maybe this will already be guaranteed by the mapping algorithm? ...good to
         # double check.
-
-        return self.success_status
 
     def perform_mapping(self):
         """Maps netlists based on their cells and nets"""
@@ -184,13 +181,11 @@ class StructuralCompareTool(CompareTool):
         iteration = 0
         while len(self.block_mapping) < len(self.named_netlist.instances_to_map):
             if not progress:
-                self.log_color(
-                    TermColor.RED, f"No more progress can be made. Failed at iteration {iteration}."
-                )
+                self.log(f"No more progress can be made. Failed at iteration {iteration}.")
                 break
             progress = False
 
-            self.log_color(TermColor.BLUE, f"===== Mapping Iteration {iteration} =====")
+            self.log(f"===== Mapping Iteration {iteration} =====")
 
             # Loop through reversed netlist blocks
             for instance in self.named_netlist.instances_to_map:
@@ -206,9 +201,8 @@ class StructuralCompareTool(CompareTool):
                     # self.log(f"  {instances_matching} matches")
 
                     if not instances_matching:
-                        return Status(
-                            CompareStatus.NOT_EQUIVALENT,
-                            f"{instance.name} has no possible match in netlist",
+                        raise CompareException(
+                            f"Not equivalent. {instance.name} has no possible match in the netlist."
                         )
 
                     if len(instances_matching) > 1:
@@ -228,7 +222,6 @@ class StructuralCompareTool(CompareTool):
                     continue
 
             iteration += 1
-        return self.success_status
 
     def add_block_mapping(self, instance, matched_instance):
         """Add mapping point between two Instances"""
@@ -295,7 +288,7 @@ class StructuralCompareTool(CompareTool):
         ]
 
         if not instances_matching_cell_type:
-            self.log_color(TermColor.RED, "No unmapped instances of type", named_instance.cell_type)
+            self.log("No unmapped instances of type", named_instance.cell_type)
             return instances_matching_cell_type
         self.log(
             f"  {len(instances_matching_cell_type)} unmapped {named_instance.cell_type} instance(s)"
@@ -323,8 +316,7 @@ class StructuralCompareTool(CompareTool):
                 and properties_are_equal(properties[prop], i.properties[prop])
             ]
         if not instances_matching_props:
-            self.log_color(
-                TermColor.RED,
+            self.log(
                 f"No unmapped instances of {named_instance.cell_type} with matching properties",
                 ",".join(p + "=" + properties[p] for p in properties_to_match),
                 "\n  "
@@ -380,7 +372,7 @@ class StructuralCompareTool(CompareTool):
         for the cell to be considered equivalent."""
         if cell_type in self._cell_props:
             return self._cell_props[cell_type]
-        raise KeyError(f"Unhandled properties for type {cell_type}")
+        raise CompareException(f"Unhandled properties for type {cell_type}")
 
     def get_netlist(self, library):
         return Netlist(library, self)

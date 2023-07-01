@@ -7,8 +7,8 @@ import in_place
 
 import bfasst
 from bfasst import paths
+from bfasst.opt.base import OptException
 from bfasst.opt.ic2_base import Ic2BaseOptTool
-from bfasst.status import Status, OptStatus
 from bfasst.utils import error
 
 PROJECT_TEMPLATE_FILE = "template_lse.prj"
@@ -20,6 +20,7 @@ class Ic2LseOptTool(Ic2BaseOptTool):
 
     def run_sythesis(self, prj_path):
         """run synthesis on netlist"""
+        self.launch()
         syth_bin_path = bfasst.config.IC2_INSTALL_DIR / "LSE" / "bin" / "lin64" / "synthesis"
         if not syth_bin_path.is_file():
             error(syth_bin_path, "does not exist")
@@ -30,9 +31,9 @@ class Ic2LseOptTool(Ic2BaseOptTool):
         env["FOUNDRY"] = bfasst.config.IC2_INSTALL_DIR / "LSE"
         env["SBT_DIR"] = bfasst.config.IC2_INSTALL_DIR / "sbt_backend"
 
-        return self.exec_synth_tool(cmd, env)
+        self.exec_synth_tool(cmd, env)
 
-    def create_project_file(self, edif_path, in_files, lib_files):
+    def create_project_file(self, edif_path, lib_files):
         """create project file for icecube2 lse"""
         assert isinstance(self.design, bfasst.design.Design)
 
@@ -43,7 +44,7 @@ class Ic2LseOptTool(Ic2BaseOptTool):
         with open(project_file, "a") as fp:
             fp.write("-p " + str(self.design.full_path) + "\n")
 
-            for design_file in in_files:
+            for design_file in self.yosys_netlist_path:
                 if os.path.splitext(design_file)[1].lower() == ".v":
                     fp.write("-lib work -ver " + design_file + "\n")
                 elif os.path.splitext(design_file)[1].lower() == ".vhd":
@@ -62,9 +63,7 @@ class Ic2LseOptTool(Ic2BaseOptTool):
         """check optimization log for errors"""
         text = open(synth_log).read()
         if re.search("^Timeout$", text, re.M):
-            return Status(OptStatus.TIMEOUT)
-
-        return Status(OptStatus.SUCCESS)
+            raise OptException("LSE timed out")
 
     def fix_lut_inits(self):
         """This function goes through the generated netlist and

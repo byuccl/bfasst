@@ -7,9 +7,8 @@ from wafove.templates import get_paths
 from wafove.tools import analyze_graph
 
 import bfasst
-from bfasst.compare.base import CompareTool
+from bfasst.compare.base import CompareTool, CompareException
 from bfasst.config import VIVADO_BIN_PATH
-from bfasst.status import Status, CompareStatus
 
 
 class WaveformCompareTool(CompareTool):
@@ -81,17 +80,16 @@ class WaveformCompareTool(CompareTool):
 
     def compare_netlists(self):
         """The function that compares the netlists."""
+        self.launch()
+        self.log("\nRunning WaFoVe to compare netlists...")
+        self.log(f"Number of tests being run: {self.args.tests}")
+        self.log(f"Seed: {self.args.seed}")
+        self.log(f"Testing against all internal signals: {self.args.allSignals}")
+        self.log(f"Displaying waveforms via Gtkwave: {self.args.waveform}")
+        self.log(f"Displaying waveforms via Vivado: {self.args.vivado}\n")
 
-        print("\nRunning WaFoVe to compare netlists...")
-        print(f"Number of tests being run: {self.args.tests}")
-        print(f"Seed: {self.args.seed}")
-        print(f"Testing against all internal signals: {self.args.allSignals}")
-        print(f"Displaying waveforms via Gtkwave: {self.args.waveform}")
-        print(f"Displaying waveforms via Vivado: {self.args.vivado}\n")
-
-        status = self.up_to_date(self.check_compare_status)
-        if status is not None:
-            return status
+        if self.up_to_date(self.check_compare_status):
+            return
 
         self.print_running_compare()
 
@@ -128,8 +126,7 @@ class WaveformCompareTool(CompareTool):
                     self.args.fullScreen,
                 )
             if paths["diff"].exists():
-                return Status(CompareStatus.NOT_EQUIVALENT)
-            return Status(CompareStatus.SUCCESS)
+                raise CompareException("The netlists are not equivalent.")
 
         for i in range(2):
             if paths["tb"][i].exists():
@@ -139,10 +136,11 @@ class WaveformCompareTool(CompareTool):
             paths, self.args.tests, self.args.seed, self.args.allSignals
         )
 
-        if compare_waveforms.run_test(paths):
-            return Status(CompareStatus.SUCCESS)
+        if not compare_waveforms.run_test(paths):
+            raise CompareException("The netlists are not equivalent.")
 
-        return Status(CompareStatus.NOT_EQUIVALENT)
+        self.log("Equivalent")
+        self.cleanup()
 
     def check_compare_status(self, log_path):
         """Used to confirm whether a design is equivalent or not."""
@@ -151,10 +149,8 @@ class WaveformCompareTool(CompareTool):
 
         # Check for timeout
         if re.search("^Timeout$", log_text, re.M):
-            return Status(CompareStatus.TIMEOUT)
+            raise CompareException("The waveform tool timed out.")
 
         # Regex search for result
-        i = re.search(r"^6\. Compare Results:\s+(.*)$", log_text, re.M)
-        if i.group(1) == "PASS":
-            return Status(CompareStatus.SUCCESS)
-        return Status(CompareStatus.NOT_EQUIVALENT, i.group(1))
+        if re.search("^Not equivalent$", log_text, re.M):
+            raise CompareException("Not equivalent")

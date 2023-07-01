@@ -1,10 +1,8 @@
 """Tool to inject errors into a netlist"""
 from enum import Enum
-from random import randrange, sample
 import spydrnet as sdn
-from bfasst.transform.base import TransformTool
+from bfasst.transform.base import TransformTool, TransformException
 from bfasst.rw_helpers import get_sdn_direction_for_unisim, get_unisim_inputs
-from bfasst.status import Status, TransformStatus
 from bfasst.utils import convert_verilog_literal_to_int
 
 
@@ -18,19 +16,25 @@ class ErrorType(Enum):
 class ErrorInjector(TransformTool):
     """Tool to inject errors into a netlist"""
 
-    success_status = Status(TransformStatus.SUCCESS)
     TOOL_WORK_DIR = "error_injection"
 
-    def __init__(self, cwd, design) -> None:
+    def __init__(self, cwd, design, log_num, random_generator) -> None:
         super().__init__(cwd, design)
         self.remove_logs()
-        self.clean_netlist = sdn.parse(self.design.reversed_netlist_path)
+        self.clean_netlist = None
         self.hierarchical_luts = []
         self.all_luts = None
-        self.all_instances = self.__get_all_instances()
-        self.run_num = 1
+        self.all_instances = None
+        self.log_num = log_num
+        self.random_generator = random_generator
+        self.corrupted_netlist_path = None
         self.old_lut_init = None
         self.new_lut_init = None
+
+    def __setup_netlist(self):
+        self.design.reversed_netlist_path = self.cwd / (self.design.top + "_reversed.v")
+        self.clean_netlist = sdn.parse(self.design.reversed_netlist_path)
+        self.all_instances = self.__get_all_instances()
 
     def __get_all_instances(self):
         """Get all the instances in the netlist, sorted by their name"""
@@ -44,24 +48,24 @@ class ErrorInjector(TransformTool):
 
         return sorted(unsorted_instances, key=lambda x: x.name)
 
-    def inject(self, error_type):
+    def get_injection_function(self, error_type):
         """Injects an error into the netlist of the given type"""
         if error_type == ErrorType.BIT_FLIP:
-            self.__inject_bit_flip()
-        elif error_type == ErrorType.WIRE_SWAP:
-            self.__inject_wire_swap()
-        else:
-            return Status(TransformStatus.ERROR, "Invalid error type")
-        return Status(TransformStatus.SUCCESS)
+            return self.inject_bit_flip
+        if error_type == ErrorType.WIRE_SWAP:
+            return self.inject_wire_swap
+        raise TransformException("Invalid error type")
 
-    def __inject_bit_flip(self):
+    def inject_bit_flip(self):
         """Injects a bit flip error into the netlist"""
+        self.__setup_netlist()
+        self.corrupted_netlist_path = self.design.path / f"bit_flip_{self.log_num}.v"
         num_luts = self.__pick_luts_from_netlist()
         self.__get_all_luts()
         self.__sort_all_luts()
-        lut_number = randrange(num_luts)
+        lut_number = self.random_generator.randrange(num_luts)
         lut_size = self.__get_lut_init_size(lut_number)
-        bit_number = randrange(lut_size)
+        bit_number = self.random_generator.randrange(lut_size)
         self.__flip_bit(lut_number, bit_number)
         self.__compose_corrupt_netlist()
         self.__log_bit_flip(lut_number, bit_number)
@@ -124,7 +128,7 @@ class ErrorInjector(TransformTool):
 
     def __compose_corrupt_netlist(self):
         """Writes the netlist to the corrupted netlist path in the design"""
-        sdn.compose(self.clean_netlist, self.design.corrupted_netlist_path)
+        sdn.compose(self.clean_netlist, self.corrupted_netlist_path)
 
     def __log_bit_flip(self, lut_number, bit_number):
         """Logs the bit flip that occurred to a log file"""
@@ -136,14 +140,15 @@ class ErrorInjector(TransformTool):
             + f"had bit {bit_number} flipped "
             + f"resulting in a change from {self.old_lut_init} to {self.new_lut_init}"
         )
-        self.open_new_log()
         self.log(log_msg)
 
     def __get_bit_flip_log(self):
-        return self.work_dir / f"bit_flip_log_{self.run_num}.log"
+        return self.work_dir / f"bit_flip_log_{self.log_num}.log"
 
-    def __inject_wire_swap(self):
+    def inject_wire_swap(self):
         """Injects a wire swap error into the netlist"""
+        self.__setup_netlist()
+        self.corrupted_netlist_path = self.design.path / f"wire_swap_{self.log_num}.v"
 
         # Pick two random instances
         two_instances = self.__get_random_instances(2)
@@ -153,18 +158,22 @@ class ErrorInjector(TransformTool):
         second_instance_pins = self.__get_outer_pin_inputs(two_instances[1])
 
         # Pick a random input from the first instance
-        selected_input = first_instance_pins[randrange(len(first_instance_pins))]
+        selected_input = first_instance_pins[
+            self.random_generator.randrange(len(first_instance_pins))
+        ]
         # Get the source of the input
         driving_pin = self.__get_source(selected_input)
         # Do the same for the second instance
-        selected_input2 = second_instance_pins[randrange(len(second_instance_pins))]
+        selected_input2 = second_instance_pins[
+            self.random_generator.randrange(len(second_instance_pins))
+        ]
         driving_pin2 = self.__get_source(selected_input2)
 
         # If the driving pin is the same for both inputs
         # or is a None type, we can't swap them.
         # Try the algorithm again.
         if driving_pin == driving_pin2 or driving_pin is None or driving_pin2 is None:
-            self.__inject_wire_swap()
+            self.inject_wire_swap()
             return
 
         # Detach the wire from both inputs, and swap their driving pins
@@ -179,7 +188,7 @@ class ErrorInjector(TransformTool):
 
     def __get_random_instances(self, num_instances):
         """Gets a sample of random instances from the netlist"""
-        return sample(self.all_instances, num_instances)
+        return self.random_generator.sample(self.all_instances, num_instances)
 
     def __get_outer_pin_inputs(self, instance):
         """Gets all the outer pins of the given instance that are inputs"""
@@ -218,8 +227,7 @@ class ErrorInjector(TransformTool):
             + f"and {selected_input2.wire.cable.name} "
             + "was successful.\n"
         )
-        self.open_new_log()
         self.log(log_msg)
 
     def __get_wire_swap_log(self):
-        return self.work_dir / f"wire_swap_log_{self.run_num}.log"
+        return self.work_dir / f"wire_swap_log_{self.log_num}.log"

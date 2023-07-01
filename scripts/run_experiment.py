@@ -1,29 +1,127 @@
 """ Run experiment which runs multiple designs/flows in parallel """
-
 from argparse import ArgumentParser
-import collections
+from collections import Counter
 import datetime
-import functools
 import multiprocessing
 import os
 import pathlib
-from shutil import copyfileobj
 import signal
 import sys
 import threading
 import time
 import concurrent.futures
-import traceback
+from bfasst.experiment import Experiment
 
-
-import bfasst
-import bfasst.experiment
-from bfasst.output_cntrl import redirect, cleanup_redirect, enable_proxy
-from bfasst.status import BfasstException, Status
+from bfasst.output_cntrl import enable_proxy
+from bfasst.tool import BfasstException
 from bfasst.utils import TermColor, print_color
 
-
 LOG_FILE_NAME = "log.txt"
+
+
+def main(experiment_yaml, num_threads, print_period=1):
+    """Setup and run experiment as multiple processes"""
+
+    # Capture Ctrl+C
+    signal.signal(signal.SIGINT, signal.default_int_handler)
+
+    # enable STDOUT redirects
+    enable_proxy()
+
+    # Build experiment object
+    experiment = Experiment(experiment_yaml)
+
+    # Ensure one thread minimum
+    num_threads = max(1, num_threads)
+
+    # Create jobs
+    jobs = create_jobs(experiment)
+
+    # Create shared memory
+    statuses = multiprocessing.Manager().list()
+    running_list = multiprocessing.Manager().dict()
+    print_lock = multiprocessing.Manager().Lock()
+
+    # Print number of designs
+    print_color(TermColor.BLUE, f"Running {len(experiment.designs)} designs and {len(jobs)} jobs")
+
+    # set the running_list to initial starttimes
+    experiment.init_design_start_times(running_list)
+
+    # Start the timer
+    t_start = time.perf_counter()
+    sys.stdout.write("\033[s")
+
+    # Create update process and start it
+    if print_period:
+        update_process = multiprocessing.Process(
+            target=update_runtimes_thread,
+            args=[print_lock, jobs, running_list, statuses],
+        )
+        update_process.start()
+
+    # Create a process pool executor to run the jobs
+    with concurrent.futures.ProcessPoolExecutor(
+        max_workers=num_threads, mp_context=multiprocessing.get_context("spawn")
+    ) as pool:
+        try:
+            while jobs:
+                futures = []
+                for job in jobs:
+                    if not job.dependencies:
+                        future = pool.submit(
+                            run_job,
+                            print_lock,
+                            running_list,
+                            job,
+                            statuses,
+                            experiment,
+                            jobs,
+                        )
+                        futures.append(future)
+                for future in concurrent.futures.as_completed(futures):
+                    clean_jobs(jobs, future, statuses)
+
+        except KeyboardInterrupt:
+            jobs = None
+            os.killpg(0, signal.SIGKILL)
+        # except TypeError:
+        #     os.killpg(0, signal.SIGKILL)
+
+    if print_period:
+        update_process.terminate()
+        update_process.join()
+
+    t_end = time.perf_counter()
+
+    if experiment.post_run is not None:
+        experiment.post_run(experiment.work_dir)
+
+    print_ending_stats(statuses, t_end - t_start)
+
+
+def create_jobs(experiment):
+    """Create and populate job container"""
+    jobs = []
+    for flow in experiment.flows:
+        jobs.extend(flow.create())
+
+    return jobs
+
+
+def update_runtimes_thread(print_lock, jobs, running_list, statuses, print_period=1):
+    """This function calls print_running_list every print_period seconds
+    until all jobs are done or it is terminated. It runs in its own thread.
+    """
+    if len(jobs) == len(statuses):
+        sys.stdout.write("\r\033[K")
+        print("All done")
+        return
+    with print_lock:
+        print_running_list(running_list)
+    threading.Timer(
+        print_period, update_runtimes_thread, args=[print_lock, jobs, running_list, statuses]
+    ).start()
 
 
 def print_running_list(running_list):
@@ -41,194 +139,123 @@ def print_running_list(running_list):
     sys.stdout.flush()
 
 
-def update_runtimes_thread(print_lock, num_jobs, running_list, statuses, period=1):
-    """This function, designed to run in its own thread,
-    calls print_running_list() periodically, until all jobs are done,
-    or it is terminated."""
-
-    if len(statuses) == num_jobs:
-        sys.stdout.write("\r\033[K")
-        print("All done")
-        return
+def run_job(print_lock, running_list, job, statuses, experiment, jobs):
+    """Run a single job and update running_list"""
     with print_lock:
         print_running_list(running_list)
-    threading.Timer(
-        period,
-        update_runtimes_thread,
-        (print_lock, num_jobs, running_list, statuses),
-    ).start()
-
-
-def run_design(print_lock, running_list, design, work_path, flow_fcn, flow_args):
-    """This function runs a single job, running the selected CAD flow for one design"""
-
-    enable_proxy()  # Enable STDOUT redirects
-
-    running_list[design.rel_path] = datetime.datetime.now()
-    with print_lock:
-        print_running_list(running_list)
-
-    buf = redirect()
+    # Run the job:
     try:
-        status = flow_fcn(design=design, build_dir=work_path, flow_args=flow_args)
+        job.function()
+        status = ""
     except BfasstException as e:
-        status = (
-            e.creator
-            if e.creator is not None
-            else Status(status=e.error, msg=str(e), raise_excep=False)
-        )
-    finally:
-        with open(work_path / LOG_FILE_NAME, "w") as f:
-            buf.seek(0)
-            copyfileobj(buf, f)
-        cleanup_redirect()
-    return (design, status)
+        status = f"{type(e).__name__}: {e}\n"
+
+    # print the job status
+    print_job_status(experiment, print_lock, statuses, job, status)
+
+    # check the design statuses
+    check_design_statuses(jobs, job, running_list)
+
+    return (job.uuid, status)
 
 
-def job_done(experiment, print_lock, running_list, design, work_path, statuses, future):
-    """Removes job from the running_list, prints the job completion status,
-    and saves the return status."""
+def clean_jobs(jobs, future, statuses):
+    """Method to clean jobs as each job finishes"""
 
-    ljust = experiment.get_longest_design_name() + 5
+    # read the result from the future
+    finished_job_uuid = future.result()[0]
+    status = future.result()[1]
 
+    # Get the job object associated with the finished job
+    for job in jobs:
+        if job.uuid == finished_job_uuid:
+            finished_job = job
+            break
+
+    if finished_job is None:
+        raise ValueError("Finished job not found in jobs list")
+
+    # Remove the job and return if it was successful
+    if not status:
+        jobs.remove(finished_job)
+        for job in jobs:
+            if job.dependencies is not None:
+                job.dependencies.discard(finished_job_uuid)
+        return
+
+    # If the job failed, trim that branch of the job tree
+    jobs_to_remove = []
+    clean_jobs_recursive(jobs, finished_job, jobs_to_remove, statuses)
+    for job in jobs_to_remove:
+        jobs.remove(job)
+
+
+def clean_jobs_recursive(jobs, curr_job, jobs_to_remove, statuses):
+    """Recursive helper to resolve job dependencies and remove jobs from the job list"""
+    jobs_to_remove.append(curr_job)
+    for job in jobs:
+        if curr_job.uuid in job.dependencies:
+            statuses.append("Parent job failed")
+            clean_jobs_recursive(jobs, job, jobs_to_remove, statuses)
+
+
+def print_job_status(experiment, print_lock, statuses, job, status):
+    """Print job status"""
+
+    ljust = experiment.get_length_of_longest_design_name() + 5
     with print_lock:
-        if future.exception():
-            status = future.exception()
-
-            with open(work_path / LOG_FILE_NAME, "a") as f:
-                traceback.print_exception(status, value=status, tb=status.__traceback__, file=f)
-        else:
-            status = future.result()[1]
-
-        sys.stdout.write("\r\033[K")
-        # sys.stdout.write("\033[u")
-        sys.stdout.write(str(design.rel_path).ljust(ljust))
-        sys.stdout.flush()
-        sys.stdout.write(str(status))
-        sys.stdout.write("\n")
-        # sys.stdout.write("\033[s")
-
-        del running_list[design.rel_path]
-        print_running_list(running_list)
+        if status != "":
+            sys.stdout.write("\r\033[K")
+            sys.stdout.write(str(job.design_rel_path.name).ljust(ljust))
+            sys.stdout.flush()
+            sys.stdout.write(str(status))
 
     statuses.append(status)
 
 
-def main(experiment_yaml, num_threads, print_period=1):
-    """Setup and run experiment as multiple processes"""
-    # os.setpgrp()  # create new process group, become its leader
-
-    # Make sure we capture Ctrl+C
-    signal.signal(signal.SIGINT, signal.default_int_handler)
-
-    enable_proxy()  # Enable STDOUT redirects
-
-    # Build experiment object
-    experiment = bfasst.experiment.Experiment(experiment_yaml)
-
-    # Don't run with less than one thread
-    num_threads = max(1, num_threads)
-
-    statuses = multiprocessing.Manager().list()
-    running_list = multiprocessing.Manager().dict()
-    print_lock = multiprocessing.Manager().Lock()
-
-    print_color(TermColor.BLUE, "Running", len(experiment.designs), "designs")
-
-    t_start = time.perf_counter()
-    sys.stdout.write("\033[s")
-
-    if print_period:
-        update_process = multiprocessing.Process(
-            target=update_runtimes_thread,
-            args=[print_lock, len(experiment.designs), running_list, statuses],
-        )
-        update_process.start()
-
-    results = []
-
-    # https://github.com/jpype-project/jpype/issues/1024
-    with concurrent.futures.ProcessPoolExecutor(
-        max_workers=num_threads, mp_context=multiprocessing.get_context("spawn")
-    ) as pool:
-        for design in experiment.designs:
-            design_dir = experiment.work_dir / design.rel_path
-            design_dir.mkdir(parents=True, exist_ok=True)
-
-            future = pool.submit(
-                run_design,
-                print_lock,
-                running_list,
-                design,
-                design_dir,
-                experiment.flow_fcn,
-                experiment.flow_args,
-            )
-            future.add_done_callback(
-                functools.partial(
-                    job_done, experiment, print_lock, running_list, design, design_dir, statuses
-                )
-            )
-            results.append(future)
-
-        try:
-            pool.shutdown(wait=True)
-        except KeyboardInterrupt:
-            os.killpg(0, signal.SIGKILL)  # kill all processes in my group
-
-    if print_period:
-        update_process.terminate()
-        update_process.join()
-    t_end = time.perf_counter()
-
-    if experiment.post_run is not None:
-        experiment.post_run(experiment.work_dir)
-
-    print_ending_stats(statuses, t_end - t_start)
+def check_design_statuses(jobs, curr_job, running_list):
+    for job in jobs:
+        if curr_job.design_rel_path == job.design_rel_path:
+            return
+    del running_list[curr_job.design_rel_path]
+    print_running_list(running_list)
 
 
 def print_ending_stats(statuses, runtime):
-    """Print statistics once complete"""
-    print_color(TermColor.BLUE, "\nRan", len(statuses), "jobs")
-    print("")
+    """Print statistcs upon completion of all jobs"""
+    print_color(TermColor.BLUE, f"\nRan {len(statuses)} jobs")
     print("-" * 80)
-    print("Status By Type")
+    print("Status By Type:")
     print("-" * 80)
 
-    exception_exists = any(isinstance(s, Exception) for s in statuses)
-    error_exists = any(isinstance(s, Status) and s.error for s in statuses)
+    exception_exists = any(s != "" for s in statuses)
 
-    # Convert exceptions to strings
-    statuses = [f"Exception: {str(s).strip()}" if isinstance(s, Exception) else s for s in statuses]
+    # Convert empty strings to "Success"
+    statuses = ["Success" if status == "" else status for status in statuses]
 
-    # Convert statuses to enums
-    statuses = [s.status if isinstance(s, Status) else s for s in statuses]
-
+    # Print status by type
     if statuses:
-        status_counts = collections.Counter(statuses)
+        status_counts = Counter(statuses)
 
-        pad = min(max(len(str(status)) for status in status_counts) + 10, 80)
+        padding = min(max(len(status) for status in status_counts) + 10, 80)
         for status, count in status_counts.items():
-            print(str(status).strip().ljust(pad), count)
+            print(f"{status.strip().ljust(padding)} {count}")
 
     print("-" * 80)
-    print("Execution took", round(runtime, 1), "seconds")
+    print(f"Execution took {round(runtime, 1)} seconds")
     if exception_exists:
         print_color(
-            TermColor.YELLOW, "Exception(s) occurred.  See log files for full exception trace."
+            TermColor.YELLOW, "Exception(s) occurred. See log files for full exception trace."
         )
-    if error_exists:
-        print_color(TermColor.YELLOW, "Error(s) occurred.")
 
-    if exception_exists or error_exists:
-        sys.exit(-1)
+    if exception_exists:
+        sys.exit(1)
     else:
         print("Completed successfully")
 
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    # Set up command line arguments
     parser.add_argument("experiment_yaml", type=pathlib.Path, help="Experiment yaml file.")
     parser.add_argument("-j", "--threads", type=int, default=1, help="Number of threads")
     parser.add_argument("--print_period", type=int, default=1)

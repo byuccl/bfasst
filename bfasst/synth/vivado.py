@@ -5,9 +5,8 @@ import pathlib
 
 import bfasst
 from bfasst.design import HdlType
-from bfasst.synth.base import SynthesisTool
+from bfasst.synth.base import SynthesisTool, SynthesisException
 from bfasst.synth import vivado_ioparse
-from bfasst.status import Status, SynthStatus
 from bfasst.config import VIVADO_COMMAND
 from bfasst.tool import ToolProduct
 
@@ -36,10 +35,11 @@ class VivadoSynthesisTool(SynthesisTool):
 
     TOOL_WORK_DIR = "vivado_synth"
 
-    def check_runs(self):
+    def up_to_date(self):
         """Check if synthesis has already been run"""
 
         # Save edif netlist path to design object
+        self.launch()
         self.design.netlist_path = self.cwd / f"{self.design.top}.edf"
         self.design.constraints_path = self.cwd / "constraints.xdc"
 
@@ -52,24 +52,25 @@ class VivadoSynthesisTool(SynthesisTool):
             generate_constraints = ToolProduct(self.design.constraints_path)
             tool_products = [generate_netlist, generate_constraints]
 
-        return self.get_prev_run_status(
+        out_of_date = self.need_to_rerun(
             tool_products,
             dependency_modified_time=max(
                 pathlib.Path(__file__).stat().st_mtime, self.design.last_modified_time()
             ),
         )
 
+        self.cleanup()
+        return not out_of_date
+
     def create_netlist(self):
         """create netlist from design"""
-
-        status = self.check_runs()
-        if status is not None:
+        if self.up_to_date():
             self.print_skipping_synth()
-            return status
+            return
 
         # Run synthesis flow
+        self.launch()
         self.print_running_synth()
-        self.open_new_log()
 
         report_io_path = self.work_dir / "report_io.txt"
 
@@ -81,7 +82,9 @@ class VivadoSynthesisTool(SynthesisTool):
             extract_contraints(self.design, report_io_path)
 
         # Check synthesis log
-        return self.check_synth_log(self.log_path)
+        self.check_synth_log(self.log_path)
+
+        self.cleanup()
 
     def write_header(self, stream):
         stream.write("if { [ catch {\n")
@@ -152,15 +155,12 @@ class VivadoSynthesisTool(SynthesisTool):
         cmd = VIVADO_COMMAND + ["-source", str(tcl_path)]
         proc = self.exec_and_log(cmd)
         if proc.returncode:
-            return Status(SynthStatus.ERROR)
-
-        return self.success_status
+            raise SynthesisException(f"Vivado synthesis failed with return code {proc.returncode}")
 
     def check_synth_log(self, log_path):
-        text = open(log_path).read()
+        with open(log_path) as log_file:
+            text = log_file.read()
 
-        match = re.search(r"^ERROR:\s*(.*?)$", text, re.M)
-        if match:
-            return Status(SynthStatus.ERROR, match.group(1).strip())
-
-        return self.success_status
+            match = re.search(r"^ERROR:\s*(.*?)$", text, re.M)
+            if match:
+                raise SynthesisException(f"Vivado synthesis failed with error: {match.group(1)}")

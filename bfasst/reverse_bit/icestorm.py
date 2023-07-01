@@ -5,8 +5,7 @@ import time
 import os
 
 import bfasst
-from bfasst.reverse_bit.base import ReverseBitTool
-from bfasst.status import Status, BitReverseStatus
+from bfasst.reverse_bit.base import ReverseBitTool, ReverseBitException
 
 # PROJECT_TEMPLATE_FILE = 'template_lse.prj'
 # IC2_LSE_PROJ_FILE = 'lse_project.prj'
@@ -19,7 +18,7 @@ class IcestormReverseBitTool(ReverseBitTool):
 
     def reverse_bitstream(self):
         # print("Running ReverseBit")
-
+        self.launch()
         if self.design.cur_error_flow_name is None:
             self.design.reversed_netlist_path = self.cwd / (self.design.top + "_reversed.v")
         else:
@@ -43,16 +42,15 @@ class IcestormReverseBitTool(ReverseBitTool):
             self.fix_pcf_names()
             # Bitstream to ascii file
             asc_path = self.work_dir / (self.design.top + ".asc")
-            status = self.convert_bit_to_asc(self.design.bitstream_path, asc_path)
+            self.convert_bit_to_asc(self.design.bitstream_path, asc_path)
 
             # Ascii to netlist
-            status = self.convert_asc_to_netlist(
+            self.convert_asc_to_netlist(
                 asc_path, self.design.constraints_path, self.design.reversed_netlist_path
             )
 
         self.write_to_results_file(self.design.reversed_netlist_path, need_to_run)
-
-        return status
+        self.cleanup()
 
     def convert_bit_to_asc(self, bitstream_path, asc_path):
         cmd = [bfasst.config.ICESTORM_INSTALL_DIR / "icepack" / "iceunpack", bitstream_path]
@@ -61,9 +59,7 @@ class IcestormReverseBitTool(ReverseBitTool):
             process = subprocess.run(cmd, stdout=fp, stderr=subprocess.STDOUT, cwd=self.work_dir)
 
             if process.returncode:
-                return Status(BitReverseStatus.ERROR)
-
-        return Status(BitReverseStatus.SUCCESS)
+                raise ReverseBitException("Error converting bitstream to ASCII file.")
 
     def convert_asc_to_netlist(self, asc_path, constraints_path, netlist_path):
         """Converts an ASC file to a netlist using IceStorm tools."""
@@ -79,9 +75,7 @@ class IcestormReverseBitTool(ReverseBitTool):
             process = subprocess.run(cmd, stdout=fp, stderr=subprocess.STDOUT, cwd=self.work_dir)
 
             if process.returncode:
-                return Status(BitReverseStatus.ERROR)
-
-        return Status(BitReverseStatus.SUCCESS)
+                raise ReverseBitException("Error converting ASC file to netlist.")
 
     # TODO: Ideally, this function should probably check against the top-level
     #       I/O on the original RTL to make sure that none of the signals have

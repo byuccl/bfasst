@@ -14,10 +14,11 @@ import scp
 import bfasst
 from bfasst import paths
 from bfasst.design import HdlType
-from bfasst.status import BfasstException, Status, CompareStatus
-from bfasst.compare.base import CompareTool
+from bfasst.tool import BfasstException
+from bfasst.compare.base import CompareException, CompareTool
 from bfasst.types import Vendor
 from bfasst.utils import error
+from bfasst.locks import conformal_lock
 
 
 class ConformalCompareTool(CompareTool):
@@ -39,10 +40,15 @@ class ConformalCompareTool(CompareTool):
         self.local_libs_paths = None
 
     def compare_netlists(self):
+        self.launch()
+        with conformal_lock:
+            self._compare_netlists()
+        self.cleanup()
+
+    def _compare_netlists(self):
         """Compare given netlists"""
-        status = self.up_to_date(self.check_compare_status)
-        if status is not None:
-            return status
+        if self.up_to_date(self.check_compare_status):
+            return
 
         log_path = self.work_dir / self.LOG_FILE_NAME
 
@@ -85,24 +91,16 @@ class ConformalCompareTool(CompareTool):
 
         # Run conformal remotely
         try:
-            status = self.run_conformal(client)
+            self.run_conformal(client)
         except BfasstException as e:
-            if e.error != CompareStatus.TIMEOUT:
-                raise e
-            status = e
+            raise e
 
         # Copy back conformal log file
         self.copy_log_from_remote_machine(client)
         client.close()
 
-        if status.status == CompareStatus.TIMEOUT:
-            with open(log_path, "a") as fp:
-                fp.write("\nTimeout\n")
-
         # Check conformal log
-        status = self.check_compare_status(log_path)
-
-        return self.success_status
+        self.check_compare_status(log_path)
 
     def connect_to_remote_machine(self):
         client = paramiko.SSHClient()
@@ -138,14 +136,12 @@ class ConformalCompareTool(CompareTool):
         try:
             stdout.read()
             stdout.channel.recv_exit_status()
-        except socket.timeout:
-            return Status(CompareStatus.TIMEOUT)
+        except socket.timeout as e:
+            raise CompareException("The conformal tool timed out") from e
 
         stderr = stderr.read().decode()
         if "License check failed" in stderr:
-            return Status(CompareStatus.NO_LICENSE)
-
-        return Status(CompareStatus.SUCCESS)
+            raise CompareException("The conformal tool failed to run due to license issues")
 
     def create_do_file(self):
         """Create the conformal do file"""
@@ -259,12 +255,11 @@ class ConformalCompareTool(CompareTool):
 
         # Check for timeout
         if re.search(r"^Timeout$", log_text, re.M):
-            return Status(CompareStatus.TIMEOUT)
+            raise CompareException("Conformal timed out")
 
         # Regex search for result
         match = re.search(r"^6\. Compare Results:\s+(.*)$", log_text, re.M)
         if not match:
-            return Status(CompareStatus.PARSE_PROBLEM)
-        if match.group(1) == "PASS":
-            return Status(CompareStatus.SUCCESS)
-        return Status(CompareStatus.NOT_EQUIVALENT, match.group(1))
+            raise CompareException("There was a parse problem with the comparison log file")
+        if match.group(1) != "PASS":
+            raise CompareException("The netlists are not equivalent")

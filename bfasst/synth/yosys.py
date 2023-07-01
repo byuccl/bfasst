@@ -8,8 +8,7 @@ import time
 
 import bfasst
 from bfasst import paths
-from bfasst.synth.base import SynthesisTool
-from bfasst.status import Status, SynthStatus
+from bfasst.synth.base import SynthesisException, SynthesisTool
 
 YOSYS_SCRIPT_TEMPLATE = "ex_yos_tech.yos"
 YOSYS_SCRIPT_FILE = "script.yos"
@@ -22,6 +21,8 @@ class YosysTechSynthTool(SynthesisTool):
     TOOL_WORK_DIR = "yosys_synth"
 
     def create_netlist(self):
+        """Create netlist"""
+        self.launch()
         # Target netlist output
         self.design.netlist_path = self.cwd / (self.design.top + "_yosys_tech.v")
 
@@ -47,14 +48,14 @@ class YosysTechSynthTool(SynthesisTool):
 
         try:
             proc = self.exec_and_log(cmd, timeout=bfasst.config.YOSYS_TIMEOUT)
-        except subprocess.TimeoutExpired:
+        except subprocess.TimeoutExpired as e:
             # TODO: Write to logs here
-            return Status(SynthStatus.TIMEOUT)
+            raise SynthesisException("Yosys synthesis timed out") from e
         if proc.returncode != 0:
-            return Status(SynthStatus.ERROR)
+            raise SynthesisException(f"Yosys synthesis failed with return code {proc.returncode}")
 
         self.write_to_results_file(log_path)
-        return Status(SynthStatus.SUCCESS)
+        self.cleanup()
 
     def create_yosys_script(self, netlist_path):
         """Create the yosys script that generates the netlist"""
@@ -79,12 +80,12 @@ class YosysTechSynthTool(SynthesisTool):
                 "-v" + str(netlist_path),
             ]
             proc = self.exec_and_log(cmd, timeout=bfasst.config.I2C_LSE_TIMEOUT)
-        except subprocess.TimeoutExpired:
-            return Status(SynthStatus.TIMEOUT)
+        except subprocess.TimeoutExpired as e:
+            raise SynthesisException("Yosys script generation timed out") from e
         if proc.returncode != 0:
-            return Status(SynthStatus.ERROR)
-
-        return Status(SynthStatus.SUCCESS)
+            raise SynthesisException(
+                f"Yosys script generation failed with return code {proc.returncode}"
+            )
 
     def write_to_results_file(self, log_path):
         """Write the results of the run to the log"""

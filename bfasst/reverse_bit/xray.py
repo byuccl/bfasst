@@ -3,8 +3,7 @@ import os
 import re
 import pathlib
 
-from bfasst.reverse_bit.base import ReverseBitTool
-from bfasst.status import BfasstException, Status, BitReverseStatus
+from bfasst.reverse_bit.base import ReverseBitTool, ReverseBitException
 from bfasst import paths, config
 from bfasst.tool import ToolProduct
 
@@ -35,6 +34,7 @@ class XRayReverseBitTool(ReverseBitTool):
 
     def reverse_bitstream(self):
         """Run bitstream to netlist conversion"""
+        self.launch()
         # To fasm process
         fasm_path = self.work_dir / (self.design.top + ".fasm")
         generate_fasm = ToolProduct(fasm_path)
@@ -50,36 +50,35 @@ class XRayReverseBitTool(ReverseBitTool):
                 self.design.top + "_" + self.design.cur_error_flow_name + "_reversed.v"
             )
 
-        status = self.get_prev_run_status(
+        if not self.need_to_rerun(
             [generate_fasm, generate_netlist],
             dependency_modified_time=max(
                 pathlib.Path(__file__).stat().st_mtime, self.design.bitstream_path.stat().st_mtime
             ),
-        )
-
-        if status is not None:
+        ):
             self.print_skipping_reverse_bit()
-            return status
+            return
 
         self.print_running_reverse_bit()
-        self.open_new_log()
 
         # Bitstream to fasm file
-        status = self.convert_bit_to_fasm(self.design.bitstream_path, fasm_path)
+        self.convert_bit_to_fasm(self.design.bitstream_path, fasm_path)
 
         # fasm to netlist
         xdc_path = self.work_dir / (self.design.top + "_reversed.xdc")
+        self.design.constraints_path = self.cwd / "constraints.xdc"
         try:
-            status = self.convert_fasm_to_netlist(
+            self.convert_fasm_to_netlist(
                 fasm_path, self.design.constraints_path, self.design.reversed_netlist_path, xdc_path
             )
-        except BfasstException as e:
+        except ReverseBitException as e:
             # See if the log parser can find an error message
             if self.to_netlist_log.is_file():
                 self.to_netlist_log_parser(self.to_netlist_log)
             raise e
 
-        return self.to_netlist_log_parser(self.to_netlist_log)
+        self.to_netlist_log_parser(self.to_netlist_log)
+        self.cleanup()
 
     def convert_bit_to_fasm(self, bitstream_path, fasm_path):
         """Convert bitstream to FASM file"""
@@ -103,9 +102,7 @@ class XRayReverseBitTool(ReverseBitTool):
         with open(fasm_path, "w") as fp, open(self.to_fasm_log, "w") as fp_err:
             proc = self.exec_and_log(cmd, fp=fp, fp_err=fp_err, env=my_env)
             if proc.returncode:
-                return Status(BitReverseStatus.ERROR)
-
-        return Status(BitReverseStatus.SUCCESS)
+                raise ReverseBitException("Failed to convert bitstream to FASM file")
 
     def convert_fasm_to_netlist(self, fasm_path, constraints_path, netlist_path, xdc_path):
         """Convert the FASM file to a netlist"""
@@ -134,9 +131,7 @@ class XRayReverseBitTool(ReverseBitTool):
         with open(self.to_netlist_log, "w") as fp:
             proc = self.exec_and_log(cmd, fp=fp, cwd=self.fasm2bels_path)
         if proc.returncode:
-            return Status(BitReverseStatus.ERROR)
-
-        return Status(BitReverseStatus.SUCCESS)
+            raise ReverseBitException("Failed to convert FASM to netlist")
 
     def to_netlist_log_parser(self, log_path):
         """Parse the 'To netlist' log file for errors"""
@@ -144,14 +139,15 @@ class XRayReverseBitTool(ReverseBitTool):
 
         matches = re.search(r"^\s*(assert .*?)$", text, re.M)
         if matches:
-            return Status(BitReverseStatus.ERROR, matches.group(1).strip())
+            raise ReverseBitException(
+                "FASM to netlist assertion failed: " + matches.group(1).strip()
+            )
 
         matches = re.search(r"^\s*KeyError: '(DSP_[LR])'\s*$", text, re.M)
         if matches:
-            return Status(BitReverseStatus.UNSUPPORTED_PRIMITVE, matches.group(1).strip())
+            raise ReverseBitException("Unsupported Primitive: " + matches.group(1).strip())
 
         # KeyError: 'DSP_L'
-        return Status(BitReverseStatus.SUCCESS)
 
     # def write_to_results_file(self, design, netlist_path, need_to_run):
     #     raise NotImplementedError
