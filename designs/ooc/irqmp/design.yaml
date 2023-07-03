@@ -1,4 +1,4 @@
-top: irqmp
+top: irqmp_random
 top_architecture: rtl
 
 vhdl_libs:

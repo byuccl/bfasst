@@ -1,12 +1,5 @@
 designs:
-  - ooc/a25_mem
-  - ooc/a25_fetch
-  - ooc/aes128
-  - ooc/m32632
-  - ooc/amber
-  - ooc/mpeg2fpga
-  - ooc/a25_execute
-  - ooc/a25_decode
+  - ooc/
 
 flow: xilinx
 

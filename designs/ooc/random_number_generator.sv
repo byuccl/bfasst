@@ -1,5 +1,5 @@
 /*
-* Generates a random number using the $urandom system task
+* Generates a random number based on a linear feedback shift register.
 */
 
 module RandomNumberGenerator #(

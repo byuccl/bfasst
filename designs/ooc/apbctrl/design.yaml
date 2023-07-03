@@ -1,4 +1,4 @@
-top: apbctrl
+top: apbctrl_random
 top_architecture: struct
 
 vhdl_libs:

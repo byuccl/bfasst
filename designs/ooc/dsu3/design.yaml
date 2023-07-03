@@ -1,4 +1,4 @@
-top: dsu3
+top: dsu3_random
 top_architecture: rtl
 
 vhdl_libs:

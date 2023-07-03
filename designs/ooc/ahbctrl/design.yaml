@@ -1,4 +1,4 @@
-top: ahbctrl
+top: ahbctrl_random
 top_architecture: rtl
 
 vhdl_libs:

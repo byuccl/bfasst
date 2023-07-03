@@ -1,3 +1,3 @@
-top: des3_perf
+top: des3_perf_random
 
 include_all_verilog_files: True

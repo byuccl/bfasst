@@ -1,4 +1,4 @@
-top: spimctrl
+top: spimctrl_random
 top_architecture: rtl
 
 vhdl_libs:
