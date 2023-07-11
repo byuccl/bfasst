@@ -6,47 +6,41 @@ from pathlib import Path
 
 from bfasst.design import Design
 from bfasst import paths
-from bfasst.flows.flow import get_flow, get_flows
-from bfasst.tool import BfasstException
-from bfasst.types import ToolType
+from bfasst.flows import Flows, run_flow, get_flow_fcn_by_name
+from bfasst.tool_wrappers import ToolType
 
 
 def run_design(design_path, flow, error_flow, flow_args):
     """Run a design through a given flow"""
 
-    # Create temp folder
-    build_dir = Path.cwd() / "build" / flow
-    build_dir.mkdir(parents=True, exist_ok=True)
+    if flow_args[ToolType.MAP]:
+        flow = Flows(flow)
+        status = get_flow_fcn_by_name(flow)(None, flow_args, None)
+        print(status)
+        return
 
     # Load the design
-    design = Design(design_path, build_dir)
+    design = Design(design_path)
+
+    # Create temp folder
+    print(Path.cwd())
+    print(flow)
+    print(design.path)
+    print(paths.DESIGNS_PATH)
+    build_dir = Path.cwd() / "build" / flow / "<external>" / design_path.name #change made here
+    build_dir.mkdir(parents=True, exist_ok=True)
 
     # Store the error flow for later
     if error_flow:
         design.error_flow_yaml = error_flow + ".yaml"
 
     # Get the flow object
-    flow = get_flow(flow)(design, flow_args)
+    flow = Flows(flow)
 
-    # Create the jobs
-    jobs = flow.create()
+    # Run the design
+    status = run_flow(design, flow, flow_args, build_dir)
 
-    while jobs:
-        for job in jobs:
-            if not job.dependencies:
-                try:
-                    job.function()
-                    cleanup(job, jobs)
-                except BfasstException as e:
-                    print(e)
-                    return
-    print("Success!")
-
-
-def cleanup(curr_job, jobs):
-    jobs.remove(curr_job)
-    for job in jobs:
-        job.dependencies.discard(curr_job.uuid)
+    print(status)
 
 
 def main():
@@ -55,7 +49,7 @@ def main():
     parser = ArgumentParser()
 
     parser.add_argument("design_path", help="Path to design in examples directory.")
-    parser.add_argument("flow", choices=sorted(list(get_flows())))
+    parser.add_argument("flow", choices=sorted([e.value for e in Flows]))
     parser.add_argument("--synth", help="Synthesis args", type=str, default="")
     parser.add_argument("--impl", help="Implementation args", type=str, default="")
     parser.add_argument("--map", help="Mapping args", type=str, default="")
