@@ -11,7 +11,7 @@ from bfasst.job import Job
 class XilinxConformalImpl(Flow):
     """XilinxConformalImpl flow"""
 
-    def _run(self):
+    def create(self):
         """Vivado synthesis and implementation, reverse with xray, compare with conformal"""
 
         # Reset job list in case this flow is called multiple times
@@ -32,6 +32,18 @@ class XilinxConformalImpl(Flow):
         #    compare_tool.compare_netlists(
         #        self.design, args[FlowArgs.MAP_STAGE.value]
         #    )
+
+        # Set paths for conformal
+        self.design.netlist_path = self.design.path / (self.design.top + ".v")
+        if self.design.cur_error_flow_name is None:
+            self.design.reversed_netlist_path = self.design.build_dir / (
+                self.design.top + "_reversed.v"
+                )
+        else:
+            self.design.reversed_netlist_path = self.design.build_dir / (
+                self.design.top + "_" + self.design.cur_error_flow_name + "_reversed.v"
+            )
+
         conformal_sub_flow = Conformal(self.design, self.flow_args)
         conformal_sub_flow.create()
         conformal_sub_flow.modify_first_job_dependencies({self.job_list[-1].uuid})

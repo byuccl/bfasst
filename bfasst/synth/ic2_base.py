@@ -20,17 +20,16 @@ class Ic2BaseSynthesisTool(SynthesisTool):
 
         # TODO: Improve the logic here
         force_new_opt_run = True
+        force_run=force_new_opt_run
 
         # build a list of files and libs
-        design_files = [self.design.top_file]
-        design_files.extend(self.design.verilog_files)
-        design_files.extend(self.design.vhdl_files)
+        design_files = [self.design.top_file_path]
+        design_files.extend(self.design.verilog_file_paths)
+        design_files.extend(self.design.vhdl_file_paths)
         lib_files = self.design.vhdl_libs.items()
 
         # call the lse optimizer
-        self.opt_tool.create_netlist(
-            self.design, design_files, lib_files, force_run=force_new_opt_run
-        )
+        self.opt_tool.create_netlist(lib_files, force_run)
 
         self.cleanup()
 

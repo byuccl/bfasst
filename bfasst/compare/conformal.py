@@ -82,7 +82,6 @@ class ConformalCompareTool(CompareTool):
         # Create remote machine folders
         cmd = "mkdir -p bfasst_libs;" + "mkdir -p bfasst_libs/xilinx;" + "mkdir -p bfasst_work;"
 
-        print(cmd)
         # (stdin, stdout, stderr) =
         client.exec_command(cmd, timeout=bfasst.config.CONFORMAL_TIMEOUT)
 
@@ -128,7 +127,6 @@ class ConformalCompareTool(CompareTool):
             + " -NOGui"
         )
 
-        print(cmd)
         (stdin, stdout, stderr) = client.exec_command(cmd, timeout=bfasst.config.CONFORMAL_TIMEOUT)
 
         stdin.write("yes\n")

@@ -12,7 +12,7 @@ from bfasst.types import ToolType
 class XilinxYosysImpl(Flow):
     """XilinxYosysImpl flow"""
 
-    def _run(self):
+    def create(self):
         """Vivado synthesis and implementation, reverse with xray, compare with yosys"""
 
         # Reset job list in case this flow is called multiple times
@@ -20,10 +20,21 @@ class XilinxYosysImpl(Flow):
 
         self.job_list.extend(XilinxAndReversed(self.design, self.flow_args).create())
 
+        # Set paths for yosys
+        self.design.netlist_path = self.design.path / (self.design.top + ".v")
+        if self.design.cur_error_flow_name is None:
+            self.design.reversed_netlist_path = self.design.build_dir / (
+                self.design.top + "_reversed.v"
+                )
+        else:
+            self.design.reversed_netlist_path = self.design.build_dir / (
+                self.design.top + "_" + self.design.cur_error_flow_name + "_reversed.v"
+            )
+
         yosys_cmp_tool = YosysCompareTool(
             self.design.build_dir,
             self.design,
-            self.design.impl_netlist_path,
+            self.design.netlist_path,
             self.design.reversed_netlist_path,
             self.flow_args[ToolType.CMP],
         )
