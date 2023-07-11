@@ -7,6 +7,7 @@ import os
 import pathlib
 import signal
 import sys
+import traceback
 import threading
 import time
 import concurrent.futures
@@ -149,6 +150,9 @@ def run_job(print_lock, running_list, job, statuses, experiment, jobs):
         status = ""
     except BfasstException as e:
         status = f"{type(e).__name__}: {e}\n"
+    except AssertionError as e:
+        formatted_lines = traceback.format_exc().splitlines()
+        status = f"AssertionErrror: {formatted_lines[-3]}"
 
     # print the job status
     print_job_status(experiment, print_lock, statuses, job, status)
