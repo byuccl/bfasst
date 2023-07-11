@@ -150,7 +150,7 @@ def run_job(print_lock, running_list, job, statuses, experiment, jobs):
         status = ""
     except BfasstException as e:
         status = f"{type(e).__name__}: {e}\n"
-    except AssertionError as e:
+    except AssertionError:
         formatted_lines = traceback.format_exc().splitlines()
         status = f"AssertionErrror: {formatted_lines[-3]}"
 
