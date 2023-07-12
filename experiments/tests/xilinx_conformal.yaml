@@ -2,4 +2,4 @@ designs:
     - byu/
     
     
-flow: xilinx
+flow: xilinx_conformal

@@ -1,0 +1,4 @@
+designs:
+  - byu/
+
+flow: xilinx_conformal_impl
