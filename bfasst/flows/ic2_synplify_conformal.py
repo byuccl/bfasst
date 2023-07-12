@@ -35,7 +35,7 @@ class Ic2SynplifyConformal(Flow):
         self.job_list.extend(impl_and_rev_sub_flow.job_list)
 
         # Set paths for Conformal
-        self.design.netlist_path = self.design.path / (self.design.top + ".v")
+        self.design.netlist_path = self.design.build_dir / (self.design.top + "_impl.v")
         if self.design.cur_error_flow_name is None:
             self.design.reversed_netlist_path = self.design.build_dir / (
                 self.design.top + "_reversed.v"

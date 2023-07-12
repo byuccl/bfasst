@@ -34,7 +34,7 @@ class XilinxConformalImpl(Flow):
         #    )
 
         # Set paths for conformal
-        self.design.netlist_path = self.design.path / (self.design.top + ".v")
+        self.design.netlist_path = self.design.build_dir / (self.design.top + "_impl.v")
         if self.design.cur_error_flow_name is None:
             self.design.reversed_netlist_path = self.design.build_dir / (
                 self.design.top + "_reversed.v"
