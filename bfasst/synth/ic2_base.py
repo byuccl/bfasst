@@ -20,7 +20,7 @@ class Ic2BaseSynthesisTool(SynthesisTool):
 
         # TODO: Improve the logic here
         force_new_opt_run = True
-        force_run=force_new_opt_run
+        force_run = force_new_opt_run
 
         # build a list of files and libs
         design_files = [self.design.top_file_path]

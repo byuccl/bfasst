@@ -37,7 +37,7 @@ class SynplifyIc2IcestormOnespin(Flow):
         if self.design.cur_error_flow_name is None:
             self.design.reversed_netlist_path = self.design.build_dir / (
                 self.design.top + "_reversed.v"
-                )
+            )
         else:
             self.design.reversed_netlist_path = self.design.build_dir / (
                 self.design.top + "_" + self.design.cur_error_flow_name + "_reversed.v"
