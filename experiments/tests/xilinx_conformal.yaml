@@ -1,15 +1,15 @@
 designs:
-    - byu/alu
-    - byu/buttoncount
-    - byu/calc
-    - byu/debouncer
-    - byu/lightwave
-    - byu/mux8to1
-    - byu/oneshot
-    - byu/sevensegment
-    - byu/shiftreg
-    - byu/stopwatch
-    - byu/UpDownButtonCount
+  - byu/alu
+  - byu/buttoncount
+  - byu/calc
+  - byu/debouncer
+  - byu/lightWave
+  - byu/mux8to1
+  - byu/oneshot
+  - byu/seven_segment
+  - byu/shiftReg
+  - byu/stopwatch
+  - byu/UpDownButtonCount
     
     
 flow: xilinx_conformal
