@@ -5,8 +5,8 @@ CAPNPJ := $(shell which capnpc-java)
 install: submodules venv python_packages rapidwright env install_fasm2bels install_yosys install_wafove
 
 venv:
-	python3 -m venv .venv
-	$(IN_ENV) python3 -m pip install -U pip
+	if [ -e /usr/bin/python3.11]; then python3.11 -m venv .venv; else python3.10 -m venv .venv; fi
+	$(IN_ENV) python -m pip install -U pip
 
 packages:
 	apt-get update
@@ -44,8 +44,8 @@ packages:
 		zlib1g-dev
 	
 python_packages:
-	$(IN_ENV) python3 -m pip install -r requirements.txt
-	$(IN_ENV) python3 -m pip install -e .
+	$(IN_ENV) python -m pip install -r requirements.txt
+	$(IN_ENV) python -m pip install -e .
 
 capnproto_java:
 ifeq "$(CAPNPJ)" ""
@@ -74,7 +74,7 @@ install_fasm2bels: submodules
 	$(IN_ENV) python scripts/run_design.py designs/basic/and3/ xilinx_and_reversed
 
 install_wafove: submodules
-	$(IN_ENV) python3 -m pip install -e third_party/WaFoVe
+	$(IN_ENV) python -m pip install -e third_party/WaFoVe
 	$(IN_ENV) cd third_party/WaFoVe && make build
 
 env: venv rapidwright 
