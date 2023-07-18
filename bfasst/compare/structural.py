@@ -147,9 +147,9 @@ class StructuralCompareTool(CompareTool):
         for net in [
             net for net in self.named_netlist.get_connected_nets() if net not in self.net_mapping
         ]:
-            if net.is_vdd or net.is_gnd:
-                num_total_nets -= 1
-                continue
+            # if net.is_vdd or net.is_gnd:
+            #     num_total_nets -= 1
+            #     continue
             self.log(f"    {net.name}")
 
         if len(self.block_mapping) != len(self.named_netlist.instances_to_map):
