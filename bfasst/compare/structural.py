@@ -253,7 +253,8 @@ class StructuralCompareTool(CompareTool):
                 continue
 
             if instance.cell_type != "RAM32M" or not pin.name.startswith("D"):
-                # for some reason RW sets DI* to the wrong bit, and SDN reads DO* from the wrong bit for f2b netlist
+                # for some reason RW sets DI* to the wrong bit, and SDN reads
+                # DO* from the wrong bit for f2b netlist
                 idx = pin.index
             else:
                 idx = 0 if pin.index == 1 else 1
@@ -353,11 +354,6 @@ class StructuralCompareTool(CompareTool):
 
         instances_matching_connections = instances_matching_props[:]
 
-        if named_instance.cell_type == "RAM32X1D":
-            import code
-
-            code.interact(local=dict(globals(), **locals()))
-
         for pin in named_instance.pins:
             assert isinstance(pin, Pin)
 
@@ -378,7 +374,8 @@ class StructuralCompareTool(CompareTool):
             #     )
 
             if named_instance.cell_type != "RAM32M" or not pin.name.startswith("D"):
-                # for some reason RW sets DI* to the wrong bit, and SDN reads DO* from the wrong bit for f2b netlist
+                # for some reason RW sets DI* to the wrong bit, and SDN reads
+                # DO* from the wrong bit for f2b netlist
                 idx = pin.index
             else:
                 idx = 0 if pin.index == 1 else 1
@@ -508,13 +505,13 @@ class Pin:
         if isinstance(pin, sdn.OuterPin):
             self.name = self.pin.inner_pin.port.name
             self.index = self.pin.inner_pin.port.pins.index(self.pin.inner_pin)
-            self.ignore_net_equivalency = self._ignore_net_equivalency(instance)
+            self.ignore_net_equivalency = False
         else:
             self.name = self.pin.port.name
             self.index = self.pin.port.pins.index(self.pin)
             self.ignore_net_equivalency = False
 
-    def _ignore_net_equivalency(self, instance):
+    def _ignore_net_equivalency(self):
         """Determines whether the net equivalency should be ignored on this pin."""
         # Ignore net equivalency on constant LUT inputs
         # The logic function PROBABLY doesn't depend on this LUT input

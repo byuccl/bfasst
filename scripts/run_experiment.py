@@ -21,7 +21,7 @@ from bfasst.utils import TermColor, print_color
 LOG_FILE_NAME = "log.txt"
 
 
-def main(experiment, num_threads, print_period=1):
+def main(experiment, num_threads, print_period=1):  # pylint: disable=too-many-locals
     """Setup and run experiment as multiple processes"""
 
     # Capture Ctrl+C
