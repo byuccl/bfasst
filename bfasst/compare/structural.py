@@ -33,8 +33,9 @@ class StructuralCompareTool(CompareTool):
             "RAM32X1D",
             "RAM32X1S_1",
             "RAM32X1D_1",
+            "RAM256X1S",
         )
-        no_props = ("IBUF", "OBUF", "OBUFT", "MUXF7", "MUXF8", "CARRY4")
+        no_props = ("IBUF", "OBUF", "OBUFT", "MUXF7", "MUXF8", "CARRY4", "IOBUF")
 
         _cell_props = {x: ("INIT",) for x in init_only}
         _cell_props.update({x: () for x in no_props})
@@ -42,6 +43,9 @@ class StructuralCompareTool(CompareTool):
         _cell_props["RAMB36E1"] = tuple(
             f"INIT_{i:02X}" for i in range(int("0x80", base=16))
         )  # TODO add INIT_A, INIT_B, INITP_00 - INITP_0F
+        _cell_props["RAMB18E1"] = tuple(
+            f"INIT_{i:02X}" for i in range(int("0x40", base=16))
+        )  # TODO add INIT_A, INIT_B, INITP_00 - INITP_07
         _cell_props["BUFGCTRL"] = (
             "INIT_OUT",
             "IS_CE0_INVERTED",
@@ -143,6 +147,9 @@ class StructuralCompareTool(CompareTool):
         for net in [
             net for net in self.named_netlist.get_connected_nets() if net not in self.net_mapping
         ]:
+            if net.is_vdd or net.is_gnd:
+                num_total_nets -= 1
+                continue
             self.log(f"    {net.name}")
 
         if len(self.block_mapping) != len(self.named_netlist.instances_to_map):
@@ -245,12 +252,24 @@ class StructuralCompareTool(CompareTool):
             if net_a in self.net_mapping:
                 continue
 
-            net_b = matched_instance.get_pin(pin.name, pin.index).net
+            if instance.cell_type != "RAM32M" or not pin.name.startswith("D"):
+                # for some reason RW sets DI* to the wrong bit, and SDN reads DO* from the wrong bit for f2b netlist
+                idx = pin.index
+            else:
+                idx = 0 if pin.index == 1 else 1
+
+            net_b = matched_instance.get_pin(pin.name, idx).net
             assert isinstance(net_b, Net)
 
             if net_a in self.net_mapping:
                 assert net_b == self.net_mapping[net_a]
                 continue
+
+            if instance.cell_type == "RAM32M" and pin.name.startswith("DI"):
+                # DI* doesn't matter if the corresponding output bit is not used
+                out_net = matched_instance.get_pin(f"DO{pin.name[2]}", idx).net
+                if out_net is None or out_net.is_gnd or len(out_net.wire.pins) <= 1:
+                    continue
 
             self.log(
                 "    Net",
@@ -272,6 +291,7 @@ class StructuralCompareTool(CompareTool):
 
         assert net1 not in self.net_mapping
         assert net2 not in self.net_mapping.inverse
+
         self.net_mapping[net1] = net2
 
     def check_for_potential_mapping(self, named_instance):
@@ -333,6 +353,11 @@ class StructuralCompareTool(CompareTool):
 
         instances_matching_connections = instances_matching_props[:]
 
+        if named_instance.cell_type == "RAM32X1D":
+            import code
+
+            code.interact(local=dict(globals(), **locals()))
+
         for pin in named_instance.pins:
             assert isinstance(pin, Pin)
 
@@ -351,10 +376,16 @@ class StructuralCompareTool(CompareTool):
             #         instance.get_pin(pin.name, pin.index).name_with_index,
             #         instance.get_pin(pin.name, pin.index).net.name,
             #     )
+
+            if named_instance.cell_type != "RAM32M" or not pin.name.startswith("D"):
+                # for some reason RW sets DI* to the wrong bit, and SDN reads DO* from the wrong bit for f2b netlist
+                idx = pin.index
+            else:
+                idx = 0 if pin.index == 1 else 1
             instances_matching_connections = [
                 instance
                 for instance in instances_matching_connections
-                if instance.get_pin(pin.name, pin.index).net == other_net
+                if instance.get_pin(pin.name, idx).net == other_net
             ]
             self.log(
                 f"    {len(instances_matching_connections)} remaining:",
@@ -568,7 +599,10 @@ class Net:
             self.is_gnd = True
         else:
             self.is_gnd = False
-        if isinstance(pin, sdn.OuterPin) and self.driver_pin.instance.reference.name == "VDD":
+        if isinstance(pin, sdn.OuterPin) and self.driver_pin.instance.reference.name in (
+            "VDD",
+            "VCC",
+        ):
             self.is_vdd = True
         else:
             self.is_vdd = False
