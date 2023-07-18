@@ -6,12 +6,6 @@ on:
       - main
   pull_request:
 
-# Cancel earlier jobs on new PR commit
-concurrency: 
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
-
-
 jobs:
   # First list all the files in experiments/conformal_tests, and generate a JSON string of all the files
   collect-conformal-experiments:
