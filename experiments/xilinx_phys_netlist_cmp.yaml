@@ -7,13 +7,14 @@ designs:
   - ooc/MEM_stage
   - ooc/WB_stage
   - ooc/a25_coprocessor
-  # - ooc/a25_fetch  - Too many I/Os
-  # - ooc/a25_decode - Too many I/Os
-  # - ooc/a25_mem - Too many I/Os
+  - ooc/a25_execute
+  - ooc/a25_fetch
+  - ooc/a25_decode
+  - ooc/a25_mem
   - ooc/a25_write_back
   # - ooc/a25_wishbone - Too many I/Os
-  # - ooc/aes128 - Too many I/Os
-  # - ooc/amber - Too many I/Os
+  - ooc/aes128
+  - ooc/amber
   - ooc/atahost 
   - ooc/basicrsa 
   - ooc/bcd_adder 
@@ -49,6 +50,9 @@ designs:
   - ooc/uart2spi
   - ooc/vga
   - ooc/wb_lcd
+
+design_dirs:
+  - byu
 
 flow: xilinx_phys_netlist_cmp
 
