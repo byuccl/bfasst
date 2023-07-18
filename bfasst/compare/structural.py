@@ -519,8 +519,8 @@ class Pin:
         # Ignore net equivalency on constant LUT inputs
         # The logic function PROBABLY doesn't depend on this LUT input
         # TODO: Verify this by looking at the LUT INIT
-        if instance.cell_type == "LUT6_2" and self.net and (self.net.is_vdd or self.net.is_gnd):
-            return True
+        # if instance.cell_type == "LUT6_2" and self.net and (self.net.is_vdd or self.net.is_gnd):
+        #     return True
         return False
 
         # This didn't work unfortunately
