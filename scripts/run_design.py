@@ -3,6 +3,7 @@
 from argparse import ArgumentParser
 from collections import defaultdict
 from pathlib import Path
+import time
 
 from bfasst.design import Design
 from bfasst import paths
@@ -31,6 +32,7 @@ def run_design(design_path, flow, error_flow, flow_args):
     # Create the jobs
     jobs = flow.create()
 
+    t_start = time.perf_counter()
     while jobs:
         for job in jobs:
             if not job.dependencies:
@@ -40,7 +42,10 @@ def run_design(design_path, flow, error_flow, flow_args):
                 except BfasstException as e:
                     print(e)
                     return
+    t_end = time.perf_counter()
     print("Success!")
+    runtime = t_end - t_start
+    print(f"Execution took {round(runtime, 1)} seconds")
 
 
 def cleanup(curr_job, jobs):
