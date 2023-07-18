@@ -9,6 +9,7 @@
     xilinx_yosys_impl
     xilinx_yosys_wafove
     xilinx
+    xilinx_structural_error_injection
     yosys_tech_synplify_conformal
 
 ## These flows may be legacy and need unit tests to verify they are working
@@ -22,6 +23,5 @@
 
 #### These flows have other errors preventing their function
 
-    xilinx_structural_error_injection
     yosys_tech_lse_conformal
     yosys_tech_synplify_onespin
