@@ -1,11 +1,12 @@
 designs:
     - byu/alu
-    - byu/buttoncount
     - byu/calc
     - byu/lightWave
     - byu/mux8to1
+    - byu/oneshot
     - byu/seven_segment
     - byu/shiftReg
-    - byu/rx
-
-flow: xilinx_yosys_wafove
+    - byu/UpDownButtonCount
+    
+    
+flow: xilinx_yosys_impl

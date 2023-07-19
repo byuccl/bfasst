@@ -34,6 +34,9 @@ options:
 ```
 
 There are also several pre-configured *experiments*, which allow you to run a large set of designs and collect results.  These configurations are located within the `experiments` directory, and can be run using `python ./scripts/run_experiment.py`:
+
+*Note* : Conformal flows can only be run on a single thread.
+
 ```
 usage: run_experiment.py [-h] [-j THREADS] [--print_period PRINT_PERIOD] experiment_yaml
 

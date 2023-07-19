@@ -63,6 +63,8 @@ class YosysTechSynplifyConformal(Flow):
         conformal_sub_flow.modify_first_job_dependencies({self.job_list[-1].uuid})
         self.job_list.extend(conformal_sub_flow.job_list)
 
+        return self.job_list
+
     def adjust_design_object(self):
         yosys_netlist_path = self.design.netlist_path
         self.design.compare_golden_files.append(yosys_netlist_path.name)

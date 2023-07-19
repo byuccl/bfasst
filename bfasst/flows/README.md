@@ -1,4 +1,4 @@
-## These flows are currently functioning
+## These flows are currently functioning and have unit tests
     xilinx_and_reversed
     xilinx_conformal_impl
     xilinx_conformal
@@ -10,9 +10,8 @@
     xilinx_yosys_wafove
     xilinx
     xilinx_structural_error_injection
-    yosys_tech_synplify_conformal
 
-## These flows may be legacy and need unit tests to verify they are working
+## These flows may be legacy and need to be modified to work with the current code base
     
 #### These flows need access to icecube which is no longer in the code base
 
@@ -24,4 +23,5 @@
 #### These flows have other errors preventing their function
 
     yosys_tech_lse_conformal
+    yosys_tech_synplify_conformal
     yosys_tech_synplify_onespin
