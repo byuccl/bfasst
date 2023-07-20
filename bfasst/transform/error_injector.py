@@ -194,13 +194,20 @@ class ErrorInjector(TransformTool):
         """Gets all the outer pins of the given instance that are inputs"""
         outer_pin_inputs = [pin for pin in instance.pins if pin.inner_pin.port.direction is sdn.IN]
         if not outer_pin_inputs:
-            outer_pin_inputs = get_unisim_inputs(instance.reference.name)
-
+            cell_inputs = get_unisim_inputs(instance.reference.name)
+            pins = list(instance.pins)
+            for pin in pins:
+                if pin.inner_pin.port.name in cell_inputs:
+                    outer_pin_inputs.append(pin)
         return outer_pin_inputs
 
     def __get_source(self, pin):
         """Gets the source pin of the given pin. The pin must be a sink pin."""
         for curr_pin in pin.wire.pins:
+            if isinstance(curr_pin, sdn.OuterPin) and curr_pin.instance.reference.name.startswith(
+                "SDN_VERILOG_ASSIGNMENT"
+            ):
+                continue
             if self.__get_direction(curr_pin) is sdn.OUT:
                 return curr_pin
         return None
