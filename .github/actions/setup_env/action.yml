@@ -2,6 +2,11 @@
 # TODO: Use https://github.com/actions/cache to cache rapidwright tool 
 
 name: "Setup Environment"
+
+inputs:
+  cache_path:
+    description: "Path to local runner cache"
+    
 runs:
   using: "composite"
   steps:
@@ -22,10 +27,28 @@ runs:
     run: |
       make env
 
+  - name: fasm2bels_env
+    shell: bash
+    run: |
+      if [[ -n "${{ inputs.cache_path }}" ]]; then
+        echo "BFASST_PATH_FASM2BELS=${{ inputs.cache_path }}/fasm2bels" >> "$GITHUB_ENV"
+      fi
+
   - name: fasm2bels
     shell: bash
     run: |
-      make install_fasm2bels
+      if [[ -n "${{ inputs.cache_path }}" ]]; then
+        # Check if cache file matches current commit
+        FASM2BELS_COMMIT=$(git submodule status third_party/fasm2bels/ | awk '{print $1}')
+        if [ -f ${{ inputs.cache_path }}/fasm2bels_commit.txt ] && [ $FASM2BELS_COMMIT == $(cat ${{ inputs.cache_path }}/fasm2bels_commit.txt) ]; then
+          # Successful cache, do nothing
+          echo "Using cached version of fasm2bels"
+        else
+          echo "Installing cached version of fasm2bels"
+          . .venv/bin/activate && cd $GITHUB_ACTION_PATH && CACHE_PATH=${{ inputs.cache_path }} FASM2BELS_COMMIT=$FASM2BELS_COMMIT make install_fasm2bels
+          echo $FASM2BELS_COMMIT > ${{ inputs.cache_path }}/fasm2bels_commit.txt
+        fi
+      fi
 
   - name: fasm2bels_artifacts
     if: failure()
