@@ -34,6 +34,8 @@ class StructuralCompareTool(CompareTool):
             "RAM32X1S_1",
             "RAM32X1D_1",
             "RAM256X1S",
+            "SRL16E",
+            "SRLC32E",
         )
         no_props = ("IBUF", "OBUF", "OBUFT", "MUXF7", "MUXF8", "CARRY4", "IOBUF")
 
@@ -41,8 +43,9 @@ class StructuralCompareTool(CompareTool):
         _cell_props.update({x: () for x in no_props})
         _cell_props["RAM32M"] = ("INIT_A", "INIT_B", "INIT_C", "INIT_D")
         _cell_props["RAMB36E1"] = tuple(
-            f"INIT_{i:02X}" for i in range(int("0x80", base=16))
-        )  # TODO add INIT_A, INIT_B, INITP_00 - INITP_0F
+            [f"INIT_{i:02X}" for i in range(int("0x80", base=16))] + ["DOA_REG", "DOB_REG"]
+        )
+        # TODO add INIT_A, INIT_B, INITP_00 - INITP_0F
         _cell_props["RAMB18E1"] = tuple(
             f"INIT_{i:02X}" for i in range(int("0x40", base=16))
         )  # TODO add INIT_A, INIT_B, INITP_00 - INITP_07
@@ -326,7 +329,6 @@ class StructuralCompareTool(CompareTool):
         for prop in properties_to_match:
             if properties is None or prop not in properties:
                 error(prop, "not in properties:", properties)
-            assert prop in properties
 
             # Filter by properties match (case insensitive)
             instances_matching_props = [
@@ -354,8 +356,23 @@ class StructuralCompareTool(CompareTool):
 
         instances_matching_connections = instances_matching_props[:]
 
+        bram_do = named_instance.cell_type.startswith("RAMB") and properties["DOA_REG"] == "0"
+        if bram_do:
+            assert properties["DOB_REG"] == "0"
+
+        # if named_instance.cell_type == "RAMB36E1":
+        #     import code
+
+        #     code.interact(local=dict(globals(), **locals()))
+
         for pin in named_instance.pins:
             assert isinstance(pin, Pin)
+
+            # For RAMB18E1, "REGCEAREGCE" and "REGCEB" only depend on DOA_REG and DOB_REG, respectively
+            # Currently does not matter for our designs, but should be revisited if the assertion fails
+            if bram_do and pin.name in {"RSTREGARSTREG", "RSTREGB", "REGCEAREGCE", "REGCEB"}:
+                pin.ignore_net_equivalency = True
+                continue  # These pins are ignored when DO_REG is 0
 
             # Skip pin that is not yet mapped
             if pin.net not in self.net_mapping:
@@ -373,21 +390,30 @@ class StructuralCompareTool(CompareTool):
             #         instance.get_pin(pin.name, pin.index).net.name,
             #     )
 
+            # Extra step for LUTRAMS
             if named_instance.cell_type != "RAM32M" or not pin.name.startswith("D"):
                 # for some reason RW sets DI* to the wrong bit, and SDN reads
                 # DO* from the wrong bit for f2b netlist
                 idx = pin.index
             else:
                 idx = 0 if pin.index == 1 else 1
-            instances_matching_connections = [
-                instance
-                for instance in instances_matching_connections
-                if instance.get_pin(pin.name, idx).net == other_net
-            ]
-            self.log(
-                f"    {len(instances_matching_connections)} remaining:",
-                ",".join(i.name for i in instances_matching_connections),
+            try:
+                instances_matching_connections = [
+                    instance
+                    for instance in instances_matching_connections
+                    if instance.get_pin(pin.name, idx).net == other_net
+                ]
+            except KeyError:
+                self.log(f"KeyError on {pin.name}[{idx}]... skipping")
+                pin.ignore_net_equivalency = True
+                continue
+            num_instances = len(instances_matching_connections)
+            info = (
+                ": " + ",".join(i.name for i in instances_matching_connections)
+                if num_instances <= 10
+                else ""
             )
+            self.log(f"    {num_instances} remaining{info}")
 
         self.log(
             f"  {len(instances_matching_connections)} instance(s) after filtering on connections"

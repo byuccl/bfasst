@@ -195,6 +195,7 @@ class XilinxPhysNetlist(TransformTool):
         # First loop through all sites and deal with LUTs.  We can't the later loop that iterates
         # over Design.getCells() as it does not return LUT routethru objects.
         self.process_all_luts(cells_already_visited)
+        self.log("\nFinished processing LUTs")
 
         # Loop through all cells in the design
         for cell in self.rw_design.getCells():
@@ -269,35 +270,48 @@ class XilinxPhysNetlist(TransformTool):
                 lut6_cell = site_inst.getCell(lut6_bel)
                 lut5_cell = site_inst.getCell(lut5_bel)
 
-                cells_already_visited.update(
-                    self.check_lut_gnd_nets(
-                        lut6_cell, lut6_pin_out, lut5_cell, lut5_pin_out, gnd_nets, site_inst
-                    )
+                gnd_luts = self.check_lut_gnd_nets(
+                    lut6_cell, lut6_pin_out, lut5_cell, lut5_pin_out, gnd_nets, site_inst
                 )
-
-                if lut6_cell and str(lut6_cell.getType()).startswith("RAM"):
-                    lut_rams.append(lut6_cell)
-                    cells_already_visited.add(lut6_cell)
-                    # Sanity check, pretty sure clk is not inverted when this value is one,
-                    # so if there is a case where this changes, investigate the design to see.
-                    if (
-                        lut6_cell.getEDIFCellInst().getProperty("IS_CLK_INVERTED").getValue()
-                        == "1'b1"
-                    ):
-                        # RW sometimes reports inverted clks when vivado shows them as not inverted
-                        # raise TransformException("LUT6 RAM, clk inverted")
-                        self.log(
-                            "Warning: LUTRAM marked as inverted clock - this is assumed incorrect. "
-                            + "Check design if comparison fails."
-                        )
-                    if not lut5_cell:
-                        continue
-                if lut5_cell and str(lut5_cell.getType()).startswith("RAM"):
-                    cells_already_visited.add(lut5_cell)
-                    # Pretty sure this only happens when the LUT6 is a RAM
-                    assert lut6_cell.getType() == lut5_cell.getType()
-                    # Also pretty sure LUT5 cells are never combined? TBD if comparison fails
+                if gnd_luts:
+                    cells_already_visited.update(gnd_luts)
                     continue
+
+                if lut6_cell:
+                    cell_type = str(lut6_cell.getType())
+                    if cell_type.startswith("RAM"):
+                        lut_rams.append(lut6_cell)
+                        cells_already_visited.add(lut6_cell)
+                        # Sanity check, pretty sure clk is not inverted when this value is one,
+                        # so if there is a case where this changes, investigate the design to see.
+                        if (
+                            lut6_cell.getEDIFCellInst().getProperty("IS_CLK_INVERTED").getValue()
+                            == "1'b1"
+                        ):
+                            # RW sometimes reports inverted clks when vivado shows them as not inverted
+                            # raise TransformException("LUT6 RAM, clk inverted")
+                            self.log(
+                                "Warning: LUTRAM marked as inverted clock - this is assumed incorrect. "
+                                + "Check design if comparison fails."
+                            )
+                        if not lut5_cell:
+                            continue
+                    elif cell_type.startswith("SRL"):
+                        assert lut5_cell is None
+                        cells_already_visited.add(lut6_cell)
+                        continue
+                if lut5_cell:
+                    cell_type = str(lut5_cell.getType())
+                    if cell_type.startswith("RAM"):
+                        cells_already_visited.add(lut5_cell)
+                        # Pretty sure this only happens when the LUT6 is a RAM
+                        assert lut6_cell.getType() == lut5_cell.getType()
+                        # Also pretty sure LUT5 cells are never combined? TBD if comparison fails
+                        continue
+                    elif cell_type.startswith("SRL"):
+                        assert lut6_cell is None
+                        cells_already_visited.add(lut5_cell)
+                        continue
                 if len(lut_rams) > 1:
                     self.process_lutrams(lut_rams)
                     lut_rams = []
@@ -779,7 +793,6 @@ class XilinxPhysNetlist(TransformTool):
     def process_lut5_and_gnd_lut(self, lut5, gnd_pin, site_inst):
         """Process a LUT5 and GND LUT pair."""
         assert lut5 is not None
-        assert not lut5.isRoutethru()
         if str(lut5.getType()).startswith("RAM"):
             raise TransformException("LUTRAM paired with gnd LUT not supported")
 
@@ -791,13 +804,16 @@ class XilinxPhysNetlist(TransformTool):
         lut5_edif_cell_inst = lut5.getEDIFCellInst()
         assert lut5_edif_cell_inst
 
+        tmp = f"_routethru_{str(lut5.getBEL().getName())[0]}" if lut5.isRoutethru() else ""
+
         new_cell_inst = lut5_edif_cell_inst.getParentCell().createChildCellInst(
-            f"{lut5_edif_cell_inst.getName()}_{gnd_pin}_gnd_phys_shared", self.lut6_2_edif_cell
+            f"{lut5_edif_cell_inst.getName()}{tmp}_{gnd_pin}_gnd_phys_shared", self.lut6_2_edif_cell
         )
 
         #### Copy all properties from existing LUT to new LUT (INIT will be fixed later)
         new_cell_inst.setPropertiesMap(lut5_edif_cell_inst.createDuplicatePropertiesMap())
         self.log(f"Processing LUT {lut5.getName()}")
+
         for logical_pin, physical_pin in lut5.getPinMappingsL2P().items():
             assert len(physical_pin) == 1
             physical_pin = list(physical_pin)[0]
@@ -808,6 +824,18 @@ class XilinxPhysNetlist(TransformTool):
             self.lut_move_net_to_new_cell(
                 lut5_edif_cell_inst, new_cell_inst, logical_pin, physical_pin
             )
+
+        if lut5.isRoutethru():
+            assert len(lut5.getPinMappingsL2P()) == 1
+            in_pins = {"I0", "I1", "I2", "I3", "I4"}
+            rt_pin = (
+                f"I{int(physical_pin[1], base=10) - 1}"  # pylint: disable=undefined-loop-variable
+            )
+            in_pins.remove(rt_pin)
+            for pin in in_pins:
+                self.vcc.createPortInst(new_cell_inst.getPort(pin), new_cell_inst)
+            self.create_lut_routethru_net(lut5, True, new_cell_inst)
+
         # hook up A6 to VCC
         self.vcc.createPortInst(new_cell_inst.getPort("I5"), new_cell_inst)
 
