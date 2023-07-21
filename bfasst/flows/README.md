@@ -6,7 +6,6 @@
     xilinx_phys_netlist_cmp
     xilinx_phys_netlist_xrev
     xilinx_phys_netlist
-    xilinx_yosys_impl
     xilinx_yosys_wafove
     xilinx
     xilinx_structural_error_injection
@@ -22,6 +21,7 @@
 
 #### These flows have other errors preventing their function
 
+    xilinx_yosys_impl
     yosys_tech_lse_conformal
     yosys_tech_synplify_conformal
     yosys_tech_synplify_onespin

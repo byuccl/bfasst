@@ -6,6 +6,5 @@ designs:
     - byu/mux8to1
     - byu/seven_segment
     - byu/shiftReg
-    - byu/rx
 
 flow: xilinx_yosys_wafove
