@@ -97,20 +97,6 @@ class StructuralCompareTool(CompareTool):
         self.named_netlist = netlist_a
         self.reversed_netlist = netlist_b
 
-        # for instance in self.named_netlist.instances:
-        #     print(instance.instance.name)
-        #     if instance.instance.name.strip() == r"\count_i_reg[12]_i_6":
-        #         for pin in instance.pins:
-        #             print(
-        #                 pin.pin.inner_pin.port.name,
-        #                 pin.index,
-        #                 pin.pin.wire,
-        #                 pin.pin.wire.index() if pin.pin.wire else "",
-        #             )
-        #         raise NotImplementedError
-
-        # raise NotImplementedError
-
         # Structurally map the rest of the netlists
         self.perform_mapping()
 
@@ -149,12 +135,48 @@ class StructuralCompareTool(CompareTool):
             raise CompareException("Could not map all blocks")
         if num_mapped_nets != num_total_nets:
             raise CompareException("Could not map all nets")
-        self.cleanup()
 
         # TODO: After establishing mapping, verify equivalence
         # Basically make sure all outputs are mapped, and then everything is identical
         # Maybe this will already be guaranteed by the mapping algorithm? ...good to
         # double check.
+
+        # Loop through all instances and check for equivalence
+        self.log_title("Verifying equivalence")
+        for i, instance in enumerate(self.named_netlist.instances_to_map):
+            self.log(f"  {i+1}/{len(self.named_netlist.instances_to_map)}", instance.name)
+            mapped_instance = self.block_mapping.get(instance)
+            if mapped_instance is None:
+                raise CompareException(
+                    f"Not equivalent. Instance {instance.name} is not mapped to anything."
+                )
+
+            # Loop through all pins on instance and compare nets
+            for pin_a in instance.pins:
+                pin_b = mapped_instance.get_pin(pin_a.name, pin_a.index)
+
+                net_a = pin_a.net
+                net_b = pin_b.net
+                net_a_empty = net_a is None or not net_a.is_connected()
+                net_b_empty = net_b is None or not net_b.is_connected()
+                if net_a_empty and not net_b_empty:
+                    raise CompareException(
+                        f"Not equivalent. Pin {pin_b.name_with_index} of {mapped_instance.name} is connected to net {net_b.name}, but no connection on mapped instance {instance.name}."
+                    )
+
+                if net_b_empty and not net_a_empty:
+                    raise CompareException(
+                        f"Not equivalent. Pin {pin_a.name_with_index} of {instance.name} is connected to net {net_a.name}, but no connection on mapped instance {mapped_instance.name}."
+                    )
+
+                if (not net_a_empty) and self.net_mapping[net_a] != net_b:
+                    raise CompareException(
+                        f"Not equivalent. Net {net_a.name} is mapped to {self.net_mapping[net_a].name} but should be {net_b.name}"
+                    )
+
+        self.log("Equivalence verified")
+
+        self.cleanup()
 
     def perform_mapping(self):
         """Maps netlists based on their cells and nets"""
@@ -527,12 +549,22 @@ class Net:
 
     def is_connected(self):
         """Determine if this net drives anything"""
-        if len(self.wire.pins) == 1:
-            assert self.wire.pins[0] == self.driver_pin
+
+        # Net needs a driver pin (except VDD/GND have implicit drivers)
+        if not self.driver_pin and not self.is_vdd and not self.is_gnd:
             return False
-        if not self.wire.pins:
-            return False
-        return True
+
+        pins_that_drive = [
+            p
+            for wire in ([self.wire] + self.alias_wires)
+            for p in wire.pins
+            if p != self.driver_pin
+            and (
+                isinstance(p, sdn.InnerPin)
+                or not p.instance.reference.name.startswith("SDN_VERILOG_ASSIGNMENT_1")
+            )
+        ]
+        return bool(pins_that_drive)
 
     def find_driver(self):
         """Determine the pin that drives this wire"""
@@ -547,16 +579,20 @@ class Net:
             if isinstance(pin, sdn.ir.InnerPin):
                 if pin.port.direction == sdn.ir.Port.Direction.IN:
                     self.set_driver_pin(pin)
+                    return
             else:
                 pin_direction = self.get_direction_for_unisim(
                     pin.instance.reference.name, pin.inner_pin.port.name
                 )
                 if pin_direction == sdn.ir.Port.Direction.OUT:
                     self.set_driver_pin(pin)
+                    return
 
-        # if self.driver_pin is None:
-        #     print(self.name)
-        # assert self.driver_pin is not None
+        # Check for const0/const1 that may not have any driver
+        if self.wire.cable.name == "\<const0>":
+            self.is_gnd = True
+        elif self.wire.cable.name == "\<const1>":
+            self.is_vdd = True
 
     def set_driver_pin(self, pin):
         """Set the driver pin"""
@@ -652,10 +688,6 @@ class Instance:
                     pin_spydernet.inner_pin.port.pins.index(pin_spydernet.inner_pin),
                 )
             ] = pin
-            # print(pin.name, pin.ignore_net_equivalency)
-
-        # if self.name == "Sout_i_3_phys":
-        #     raise NotImplementedError
 
     @property
     def name(self):
