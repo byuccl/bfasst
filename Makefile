@@ -1,11 +1,16 @@
 VIVADO_PATH := "/tools/Xilinx/Vivado/2022.2/bin/vivado"
 IN_ENV = if [ -e .venv/bin/activate ]; then . .venv/bin/activate; fi;
 CAPNPJ := $(shell which capnpc-java)
+PYTHON311 := $(shell which python3.11)
 
 install: submodules venv python_packages rapidwright env install_fasm2bels install_yosys install_wafove
 
 venv:
-	if [ -e /usr/bin/python3.11]; then python3.11 -m venv .venv; else python3.10 -m venv .venv; fi
+ifneq "$(PYTHON311)" ""
+	python3.11 -m venv .venv
+else
+	python3.10 -m venv .venv
+endif
 	$(IN_ENV) python -m pip install -U pip
 
 packages:
