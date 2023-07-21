@@ -136,45 +136,8 @@ class StructuralCompareTool(CompareTool):
         if num_mapped_nets != num_total_nets:
             raise CompareException("Could not map all nets")
 
-        # TODO: After establishing mapping, verify equivalence
-        # Basically make sure all outputs are mapped, and then everything is identical
-        # Maybe this will already be guaranteed by the mapping algorithm? ...good to
-        # double check.
-
-        # Loop through all instances and check for equivalence
-        self.log_title("Verifying equivalence")
-        for i, instance in enumerate(self.named_netlist.instances_to_map):
-            self.log(f"  {i+1}/{len(self.named_netlist.instances_to_map)}", instance.name)
-            mapped_instance = self.block_mapping.get(instance)
-            if mapped_instance is None:
-                raise CompareException(
-                    f"Not equivalent. Instance {instance.name} is not mapped to anything."
-                )
-
-            # Loop through all pins on instance and compare nets
-            for pin_a in instance.pins:
-                pin_b = mapped_instance.get_pin(pin_a.name, pin_a.index)
-
-                net_a = pin_a.net
-                net_b = pin_b.net
-                net_a_empty = net_a is None or not net_a.is_connected()
-                net_b_empty = net_b is None or not net_b.is_connected()
-                if net_a_empty and not net_b_empty:
-                    raise CompareException(
-                        f"Not equivalent. Pin {pin_b.name_with_index} of {mapped_instance.name} is connected to net {net_b.name}, but no connection on mapped instance {instance.name}."
-                    )
-
-                if net_b_empty and not net_a_empty:
-                    raise CompareException(
-                        f"Not equivalent. Pin {pin_a.name_with_index} of {instance.name} is connected to net {net_a.name}, but no connection on mapped instance {mapped_instance.name}."
-                    )
-
-                if (not net_a_empty) and self.net_mapping[net_a] != net_b:
-                    raise CompareException(
-                        f"Not equivalent. Net {net_a.name} is mapped to {self.net_mapping[net_a].name} but should be {net_b.name}"
-                    )
-
-        self.log("Equivalence verified")
+        # After establishing mapping, verify equivalence
+        self.verify_equivalence()
 
         self.cleanup()
 
@@ -244,6 +207,60 @@ class StructuralCompareTool(CompareTool):
                     continue
 
             iteration += 1
+
+    def verify_equivalence(self):
+        """Verify equivalence by looping through all mapped instances and
+        checking that for each pin, the connected nets are also mapped
+        to each other."""
+
+        # Loop through all instances and check for equivalence
+        self.log_title("Verifying equivalence")
+        for i, instance in enumerate(self.named_netlist.instances_to_map):
+            self.log(
+                f"  {i+1}/{len(self.named_netlist.instances_to_map)} Instance {instance.name}:",
+                f"verifying net mapping of {len(instance.pins)} pins",
+            )
+            mapped_instance = self.block_mapping.get(instance)
+            if mapped_instance is None:
+                raise CompareException(
+                    f"Not equivalent. Instance {instance.name} is not mapped to anything."
+                )
+
+            # Loop through all pins on instance and compare nets
+            for pin_a in instance.pins:
+                pin_b = mapped_instance.get_pin(pin_a.name, pin_a.index)
+
+                net_a = pin_a.net
+                net_b = pin_b.net
+                net_a_empty = net_a is None or not net_a.is_connected()
+                net_b_empty = net_b is None or not net_b.is_connected()
+                if net_a_empty and not net_b_empty:
+                    raise CompareException(
+                        (
+                            f"Not equivalent. Pin {pin_b.name_with_index} of {mapped_instance.name}"
+                            f" is connected to net {net_b.name},"
+                            f" but no connection on mapped instance {instance.name}."
+                        )
+                    )
+
+                if net_b_empty and not net_a_empty:
+                    raise CompareException(
+                        (
+                            f"Not equivalent. Pin {pin_a.name_with_index} of {instance.name}"
+                            f" is connected to net {net_a.name},"
+                            f" but no connection on mapped instance {mapped_instance.name}."
+                        )
+                    )
+
+                if (not net_a_empty) and self.net_mapping[net_a] != net_b:
+                    raise CompareException(
+                        (
+                            f"Not equivalent. Net {net_a.name} is mapped to "
+                            f"{self.net_mapping[net_a].name} but should be {net_b.name}"
+                        )
+                    )
+
+        self.log("Equivalence verified")
 
     def add_block_mapping(self, instance, matched_instance):
         """Add mapping point between two Instances"""
@@ -589,9 +606,9 @@ class Net:
                     return
 
         # Check for const0/const1 that may not have any driver
-        if self.wire.cable.name == "\<const0>":
+        if self.wire.cable.name == r"\<const0>":
             self.is_gnd = True
-        elif self.wire.cable.name == "\<const1>":
+        elif self.wire.cable.name == r"\<const1>":
             self.is_vdd = True
 
     def set_driver_pin(self, pin):
