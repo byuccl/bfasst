@@ -41,7 +41,7 @@ class XilinxStructuralErrorInjection(Flow):
         # For each error type
         random_seed_multiplier = 1
         for error in error_type:
-            num_runs = 1
+            num_runs = 100
 
             for i in range(1, num_runs + 1):
                 error_injector = ErrorInjector(
