@@ -804,7 +804,7 @@ class XilinxPhysNetlist(TransformTool):
         lut5_edif_cell_inst = lut5.getEDIFCellInst()
         assert lut5_edif_cell_inst
 
-        tmp = f"_routethru_{str(lut5.getBEL().getName())[0]}" if lut5.isRoutethru() else ""
+        tmp = f"_routethru_{str(lut5.getBEL().getName())[0:2]}" if lut5.isRoutethru() else ""
 
         new_cell_inst = lut5_edif_cell_inst.getParentCell().createChildCellInst(
             f"{lut5_edif_cell_inst.getName()}{tmp}_{gnd_pin}_gnd_phys_shared", self.lut6_2_edif_cell
@@ -834,7 +834,7 @@ class XilinxPhysNetlist(TransformTool):
             in_pins.remove(rt_pin)
             for pin in in_pins:
                 self.vcc.createPortInst(new_cell_inst.getPort(pin), new_cell_inst)
-            self.create_lut_routethru_net(lut5, True, new_cell_inst)
+            self.create_lut_routethru_net(lut5, gnd_pin.endswith("O6"), new_cell_inst)
 
         # hook up A6 to VCC
         self.vcc.createPortInst(new_cell_inst.getPort("I5"), new_cell_inst)
