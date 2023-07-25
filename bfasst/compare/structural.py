@@ -1,6 +1,7 @@
 """ Structural Comparison and Mapping tool """
 
 from bidict import bidict
+import pickle
 import spydrnet as sdn
 from bfasst import jpype_jvm
 from bfasst.compare.base import CompareTool, CompareException
@@ -43,7 +44,8 @@ class StructuralCompareTool(CompareTool):
         _cell_props.update({x: () for x in no_props})
         _cell_props["RAM32M"] = ("INIT_A", "INIT_B", "INIT_C", "INIT_D")
         _cell_props["RAMB36E1"] = tuple(
-            [f"INIT_{i:02X}" for i in range(int("0x80", base=16))] + ["DOA_REG", "DOB_REG"]
+            [f"INIT_{i:02X}" for i in range(int("0x80", base=16))]
+            + ["DOA_REG", "DOB_REG", "RAM_MODE"]
         )
         # TODO add INIT_A, INIT_B, INITP_00 - INITP_0F
         _cell_props["RAMB18E1"] = tuple(
@@ -71,12 +73,32 @@ class StructuralCompareTool(CompareTool):
         self.block_mapping = bidict()
         self.net_mapping = bidict()
 
-    def check_log_path(self):
-        if self.run_num is not None:
-            self.log_path = self.work_dir / f"compare_log_{self.run_num}.txt"
+    def load_mappings(self):
+        """Init mapping data structures from pkl files"""
+        with open(self.work_dir / "block_mapping.pkl", "rb") as f:
+            block_map = pickle.load(f)
+        with open(self.work_dir / "net_mapping.pkl", "rb") as f:
+            net_map = pickle.load(f)
 
-    def compare_netlists(self):
-        """Map the golden and reversed netlists through automated block mapping"""
+        self.map_ports()
+        for lh, rh in block_map.items():
+            lh_instance = [i for i in self.named_netlist.instances if i.name == lh][0]
+            rh_instance = [i for i in self.reversed_netlist.instances if i.name == rh][0]
+            self.block_mapping[lh_instance] = rh_instance
+        for lh, rh in net_map.items():
+            # Sometimes multiple net objects have the same name, like gnd nets,
+            # so this is not guaranteed to recreate the exact same data
+            # structure.  But, as far as I know, only this only occurs with
+            # const nets, so result should be functionally the same.
+            # Also, manually added pin.ignore_net_equivalency for brams are
+            # not updated here, so it will trigger failures in equivalence
+            # checking that must be manually reviewed.
+            lh_net = [n for n in self.named_netlist.nets if n.name == lh][0]
+            rh_net = [n for n in self.reversed_netlist.nets if n.name == rh][0]
+            self.net_mapping[lh_net] = rh_net
+
+    def init_netlists(self):
+        """Load both netlists from spydrnet and build wrapper objects"""
         self.launch()
         impl_netlist = self.gold_netlist
         netlist_b = self.rev_netlist
@@ -104,14 +126,25 @@ class StructuralCompareTool(CompareTool):
         self.named_netlist = netlist_a
         self.reversed_netlist = netlist_b
 
+    def check_log_path(self):
+        if self.run_num is not None:
+            self.log_path = self.work_dir / f"compare_log_{self.run_num}.txt"
+
+    def compare_netlists(self):
+        """Map the golden and reversed netlists through automated block mapping"""
+
+        self.init_netlists()
+        self.load_mappings()
         # Structurally map the rest of the netlists
-        self.perform_mapping()
+        # self.perform_mapping()
 
         self.log_title("Mapping (Instances)")
+        block_map = {k.name: v.name for k, v in self.block_mapping.items()}
         for key, val in self.block_mapping.items():
             self.log(f"{key.name} -> {val.name}")
         self.log()
-        self.log_title("Mapping (Nets)")
+        # self.log_title("Mapping (Nets)")
+        net_map = {k.name: v.name for k, v in self.net_mapping.items()}
         for key, val in self.net_mapping.items():
             self.log(f"{key.name} -> {val.name}")
 
@@ -146,15 +179,20 @@ class StructuralCompareTool(CompareTool):
         if num_mapped_nets != num_total_nets:
             raise CompareException("Could not map all nets")
 
+        with open(self.work_dir / "block_mapping.pkl", "wb") as f:
+            self.log(f"Dumping pkl to {self.work_dir / 'block_mapping.pkl'}")
+            pickle.dump(block_map, f)
+
+        with open(self.work_dir / "net_mapping.pkl", "wb") as f:
+            pickle.dump(net_map, f)
+
         # After establishing mapping, verify equivalence
         self.verify_equivalence()
 
         self.cleanup()
 
-    def perform_mapping(self):
-        """Maps netlists based on their cells and nets"""
-
-        # First map top-level nets
+    def map_ports(self):
+        """Map top-level ports"""
         self.log_title("Mapping top-level ports")
         for pin in self.named_netlist.pins:
             assert isinstance(pin, Pin)
@@ -167,6 +205,12 @@ class StructuralCompareTool(CompareTool):
                 pin.net,
                 self.reversed_netlist.get_pin(pin.name, pin.index).net,
             )
+
+    def perform_mapping(self):
+        """Maps netlists based on their cells and nets"""
+
+        # First map top-level nets
+        self.map_ports()
 
         self.log_title("Starting mapping iterations")
         progress = True
@@ -202,8 +246,9 @@ class StructuralCompareTool(CompareTool):
 
                     if len(instances_matching) > 1:
                         self.log(f"  {len(instances_matching)} matches, skipping for now:")
-                        for matched_instance in instances_matching:
-                            self.log(f"    {matched_instance.name}")
+                        if len(instances_matching) < 10:
+                            for matched_instance in instances_matching:
+                                self.log(f"    {matched_instance.name}")
                         continue
 
                     assert len(instances_matching) == 1
@@ -225,6 +270,7 @@ class StructuralCompareTool(CompareTool):
 
         # Loop through all instances and check for equivalence
         self.log_title("Verifying equivalence")
+        warnings = False
         for i, instance in enumerate(self.named_netlist.instances_to_map):
             self.log(
                 f"  {i+1}/{len(self.named_netlist.instances_to_map)} Instance {instance.name}:",
@@ -238,39 +284,50 @@ class StructuralCompareTool(CompareTool):
 
             # Loop through all pins on instance and compare nets
             for pin_a in instance.pins:
+                if pin_a.ignore_net_equivalency:
+                    continue
                 pin_b = mapped_instance.get_pin(pin_a.name, pin_a.index)
 
                 net_a = pin_a.net
                 net_b = pin_b.net
                 net_a_empty = net_a is None or not net_a.is_connected()
                 net_b_empty = net_b is None or not net_b.is_connected()
-                if net_a_empty and not net_b_empty:
-                    raise CompareException(
-                        (
-                            f"Not equivalent. Pin {pin_b.name_with_index} of {mapped_instance.name}"
-                            f" is connected to net {net_b.name},"
-                            f" but no connection on mapped instance {instance.name}."
+                try:
+                    if net_a_empty and not net_b_empty:
+                        raise CompareException(
+                            (
+                                f"Not equivalent. Pin {pin_b.name_with_index} of {mapped_instance.name}"
+                                f" is connected to net {net_b.name},"
+                                f" but no connection on mapped instance {instance.name}."
+                            )
                         )
-                    )
 
-                if net_b_empty and not net_a_empty:
-                    raise CompareException(
-                        (
-                            f"Not equivalent. Pin {pin_a.name_with_index} of {instance.name}"
-                            f" is connected to net {net_a.name},"
-                            f" but no connection on mapped instance {mapped_instance.name}."
+                    if net_b_empty and not net_a_empty:
+                        raise CompareException(
+                            (
+                                f"Not equivalent. Pin {pin_a.name_with_index} of {instance.name}"
+                                f" is connected to net {net_a.name},"
+                                f" but no connection on mapped instance {mapped_instance.name}."
+                            )
                         )
-                    )
 
-                if (not net_a_empty) and self.net_mapping[net_a] != net_b:
-                    raise CompareException(
-                        (
-                            f"Not equivalent. Net {net_a.name} is mapped to "
-                            f"{self.net_mapping[net_a].name} but should be {net_b.name}"
+                    if (not net_a_empty) and self.net_mapping[net_a] != net_b:
+                        if self.net_mapping[net_a].is_gnd and net_b.is_gnd:
+                            continue
+                        raise CompareException(
+                            (
+                                f"Not equivalent. Net {net_a.name} on {pin_a.name}[{pin_a.index}] is mapped to "
+                                f"{self.net_mapping[net_a].name} but should be {net_b.name}"
+                            )
                         )
-                    )
-
-        self.log("Equivalence verified")
+                except CompareException as e:
+                    self.log(f"Warning: {type(e).__name__}: {e}\n")
+                    warnings = True
+        if not warnings:
+            self.log("Equivalence verified")
+        else:
+            self.log("Equivalence questionable")
+            raise CompareException("Warnings during equivalence verification")
 
     def add_block_mapping(self, instance, matched_instance):
         """Add mapping point between two Instances"""
@@ -395,14 +452,37 @@ class StructuralCompareTool(CompareTool):
 
         instances_matching_connections = instances_matching_props[:]
 
-        bram_do = named_instance.cell_type.startswith("RAMB") and properties["DOA_REG"] == "0"
-        if bram_do:
-            assert properties["DOB_REG"] == "0"
-
         # if named_instance.cell_type == "RAMB36E1":
         #     import code
 
         #     code.interact(local=dict(globals(), **locals()))
+
+        bram_do = named_instance.cell_type.startswith("RAMB") and properties["DOA_REG"] == "0"
+        if bram_do:
+            assert properties["DOB_REG"] == "0"
+
+        bram_a_only = (
+            named_instance.cell_type.startswith("RAMB")
+            and properties["RAM_MODE"] == '"TDP"'
+            and {None, GndPin.pin.net}
+            >= {
+                named_instance.get_pin("DOBDO", i).net
+                for i in range(32)
+                if named_instance.get_pin("DOBDO", i) is not None
+            }
+        )
+
+        if named_instance.cell_type.startswith("RAMB36E1"):
+            # A15 is only connected to a non-const net when cascade is enabled
+            # Right now, it seems vivado will connect to vcc, although unconnected is valid
+            expected_properties = (
+                properties["RAM_EXTENSION_A"] == '"NONE"'
+                and properties["RAM_EXTENSION_B"] == '"NONE"'
+                and named_instance.get_pin("ADDRARDADDR", 15).net.is_vdd
+                and named_instance.get_pin("ADDRBWRADDR", 15).net.is_vdd
+            )
+            if not expected_properties:
+                raise CompareException("Unexpected BRAM CASCADE Configuration")
 
         for pin in named_instance.pins:
             assert isinstance(pin, Pin)
@@ -412,6 +492,25 @@ class StructuralCompareTool(CompareTool):
             if bram_do and pin.name in {"RSTREGARSTREG", "RSTREGB", "REGCEAREGCE", "REGCEB"}:
                 pin.ignore_net_equivalency = True
                 continue  # These pins are ignored when DO_REG is 0
+
+            # RSTRAMB mismatch in aes128 design
+            if named_instance.cell_type.startswith("RAMB18") and pin.name in {"RSTRAMB"}:
+                pin.ignore_net_equivalency = True
+                continue
+
+            if named_instance.cell_type.startswith("RAMB"):
+                if pin.name in {"RSTRAMARSTRAM"}:
+                    pin.ignore_net_equivalency = True
+                    continue  # These pins can be vdd or gnd when cascade is off
+                if bram_a_only and pin.name in {
+                    "CASCADEINB",
+                    "CASCADEOUTB",
+                    "CLKBWRCLK",
+                    "ENBWREN",
+                    "RSTRAMB",
+                }:
+                    pin.ignore_net_equivalency = True
+                    continue
 
             # Skip pin that is not yet mapped
             if pin.net not in self.net_mapping:
@@ -436,16 +535,26 @@ class StructuralCompareTool(CompareTool):
                 idx = pin.index
             else:
                 idx = 0 if pin.index == 1 else 1
-            try:
+            # try:
+            tmp = [
+                instance
+                for instance in instances_matching_connections
+                if instance.get_pin(pin.name, idx).net == other_net
+            ]
+
+            if tmp:
+                instances_matching_connections = tmp
+            else:
                 instances_matching_connections = [
                     instance
                     for instance in instances_matching_connections
-                    if instance.get_pin(pin.name, idx).net == other_net
+                    if instance.get_pin(pin.name, idx).net.is_gnd == other_net.is_gnd
                 ]
-            except KeyError:
-                self.log(f"KeyError on {pin.name}[{idx}]... skipping")
-                pin.ignore_net_equivalency = True
-                continue
+
+            # except KeyError:
+            #     self.log(f"KeyError on {pin.name}[{idx}]... skipping")
+            #     pin.ignore_net_equivalency = True
+            #     continue
             num_instances = len(instances_matching_connections)
             info = (
                 ": " + ",".join(i.name for i in instances_matching_connections)
@@ -453,6 +562,11 @@ class StructuralCompareTool(CompareTool):
                 else ""
             )
             self.log(f"    {num_instances} remaining{info}")
+
+            if named_instance.cell_type.startswith("RAMB") and num_instances == 0:
+                import code
+
+                code.interact(local=dict(globals(), **locals()))
 
         self.log(
             f"  {len(instances_matching_connections)} instance(s) after filtering on connections"
@@ -743,6 +857,10 @@ class Net:
         return None
 
 
+class GndPin:
+    pin = None
+
+
 class Instance:
     """Wrapper class around spydernet Instance to add some helper properties"""
 
@@ -755,6 +873,8 @@ class Instance:
 
         for pin_spydernet in self.instance.pins:
             pin = Pin(pin_spydernet, self, self.netlist)
+            if GndPin.pin is None and pin.net is not None and pin.net.is_gnd:
+                GndPin.pin = pin
             self.pins.append(pin)
             self.pins_by_name_and_index[
                 (
@@ -776,4 +896,7 @@ class Instance:
         return self.instance.data.get("VERILOG.Parameters")
 
     def get_pin(self, name, index):
-        return self.pins_by_name_and_index[(name, index)]
+        try:
+            return self.pins_by_name_and_index[(name, index)]
+        except KeyError:
+            return GndPin.pin

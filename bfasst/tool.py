@@ -66,7 +66,7 @@ class Tool(abc.ABC):
         child tools that will be used multiple times in a single flow.
         """
         for log in self.work_dir.iterdir():
-            if log.is_file():
+            if log.is_file() and not log.name.endswith(".pkl"):
                 log.unlink()
 
     @abc.abstractmethod

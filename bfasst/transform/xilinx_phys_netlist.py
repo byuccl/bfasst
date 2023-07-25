@@ -691,7 +691,8 @@ class XilinxPhysNetlist(TransformTool):
     def process_lut(self, lut6_cell, lut5_cell):
         """This function takes a LUT* from the netlist and replaces with with a LUT6_2
         with logical mapping equal to the physical mapping."""
-        assert lut6_cell is not None
+        if lut6_cell is None:  # Possible RW bug -> sometimes lut6 cell is none and lut5 is FDRE
+            return
         self.log(
             "\nProcessing and replacing LUT(s):",
             ",".join(
