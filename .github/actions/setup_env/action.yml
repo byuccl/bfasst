@@ -48,6 +48,8 @@ runs:
           . .venv/bin/activate && cd $GITHUB_ACTION_PATH && FASM2BELS_COMMIT=$FASM2BELS_COMMIT make install_fasm2bels
           echo $FASM2BELS_COMMIT > ${{ inputs.cache_path }}/fasm2bels_commit.txt
         fi
+      else
+        make install_fasm2bels
       fi
 
   - name: fasm2bels_artifacts
