@@ -13,7 +13,7 @@ designs:
   - ooc/a25_mem
   - ooc/a25_write_back
   # - ooc/a25_wishbone - Too many I/Os
-  - ooc/aes128
+  # - ooc/aes128 turn off bram merge in f2b to run
   - ooc/amber
   - ooc/atahost 
   - ooc/basicrsa 
