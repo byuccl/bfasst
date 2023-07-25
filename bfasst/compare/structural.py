@@ -134,9 +134,9 @@ class StructuralCompareTool(CompareTool):
         """Map the golden and reversed netlists through automated block mapping"""
 
         self.init_netlists()
-        self.load_mappings()
+        # self.load_mappings()
         # Structurally map the rest of the netlists
-        # self.perform_mapping()
+        self.perform_mapping()
 
         self.log_title("Mapping (Instances)")
         block_map = {k.name: v.name for k, v in self.block_mapping.items()}
@@ -452,11 +452,6 @@ class StructuralCompareTool(CompareTool):
 
         instances_matching_connections = instances_matching_props[:]
 
-        # if named_instance.cell_type == "RAMB36E1":
-        #     import code
-
-        #     code.interact(local=dict(globals(), **locals()))
-
         bram_do = named_instance.cell_type.startswith("RAMB") and properties["DOA_REG"] == "0"
         if bram_do:
             assert properties["DOB_REG"] == "0"
@@ -562,11 +557,6 @@ class StructuralCompareTool(CompareTool):
                 else ""
             )
             self.log(f"    {num_instances} remaining{info}")
-
-            if named_instance.cell_type.startswith("RAMB") and num_instances == 0:
-                import code
-
-                code.interact(local=dict(globals(), **locals()))
 
         self.log(
             f"  {len(instances_matching_connections)} instance(s) after filtering on connections"
