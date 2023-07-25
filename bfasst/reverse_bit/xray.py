@@ -16,7 +16,7 @@ class XRayReverseBitTool(ReverseBitTool):
     def __init__(self, cwd, design, flow_args):
         super().__init__(cwd, design, flow_args)
 
-        self.fasm2bels_path = paths.ROOT_PATH / "third_party" / "fasm2bels"
+        self.fasm2bels_path = paths.get_fasm2bels_path()
         self.fasm2bels_python_path = (
             self.fasm2bels_path
             / "env"
