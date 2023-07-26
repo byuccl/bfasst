@@ -1,5 +1,11 @@
 designs:
-    - vtr_benchmarks/
-    
+    - vtr_benchmarks/bgm
+    - vtr_benchmarks/LU8PEEng
+    - vtr_benchmarks/LU32PEEng
+    - vtr_benchmarks/LU64PEEng
+    - vtr_benchmarks/mcml
+    - vtr_benchmarks/mkDelayWorker32B
+    - vtr_benchmarks/mkPktMerge
+    - vtr_benchmarks/mkSMAdapter4B
     
 flow: xilinx

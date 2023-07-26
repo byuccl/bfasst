@@ -1,1 +1,3 @@
 top: diffeq_paj_convert
+
+include_all_verilog_files: yes

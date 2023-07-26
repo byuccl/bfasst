@@ -1,1 +1,3 @@
-top: mkSMAdapter4B
+top: mkSMAdapter4B_random
+
+include_all_verilog_files: yes
