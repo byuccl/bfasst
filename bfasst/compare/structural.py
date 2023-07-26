@@ -222,13 +222,10 @@ class StructuralCompareTool(CompareTool):
             ]
 
             if not instances_matching_cell_type:
-                self.log("No unmapped instances of type", named_instance.cell_type)
+                self.log("No instances of type", named_instance.cell_type)
                 raise CompareException(
                     f"Not equivalent. {named_instance.name} has no possible match in the netlist."
                 )
-            self.log(
-                f"  {len(instances_matching_cell_type)} unmapped {named_instance.cell_type} instance(s)"
-            )
 
             ###############################################################
             # Now look at properties
@@ -257,7 +254,9 @@ class StructuralCompareTool(CompareTool):
                     "\n  "
                     + "\n  ".join(
                         str(i.name) + " " + str(i.properties) for i in instances_matching_cell_type
-                    ),
+                    )
+                    if len(instances_matching_cell_type) < 10
+                    else "",
                 )
                 raise CompareException(
                     f"Not equivalent. {named_instance.name} has no possible match in the netlist."
@@ -558,14 +557,13 @@ class StructuralCompareTool(CompareTool):
                 if instance.get_pin(pin.name, idx).net == other_net
             ]
 
-            if tmp:
-                instances_matching_connections = tmp
-            else:
-                instances_matching_connections = [
+            if not tmp:
+                tmp = [
                     instance
                     for instance in instances_matching_connections
                     if instance.get_pin(pin.name, idx).net.is_gnd == other_net.is_gnd
                 ]
+            instances_matching_connections = tmp
 
             num_instances = len(instances_matching_connections)
             info = (

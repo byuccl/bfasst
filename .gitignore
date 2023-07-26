@@ -16,6 +16,8 @@ __pycache__
 **/build
 **/icestorm
 **/source_list
+*wire_swap*
+*bit_flip*
 
 # Vivado files
 .Xil
