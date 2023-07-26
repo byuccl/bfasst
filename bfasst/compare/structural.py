@@ -43,6 +43,7 @@ class StructuralCompareTool(CompareTool):
         _cell_props = {x: ("INIT",) for x in init_only}
         _cell_props.update({x: () for x in no_props})
         _cell_props["RAM32M"] = ("INIT_A", "INIT_B", "INIT_C", "INIT_D")
+        _cell_props["RAM64M"] = ("INIT_A", "INIT_B", "INIT_C", "INIT_D")
         _cell_props["RAMB36E1"] = tuple(
             [f"INIT_{i:02X}" for i in range(int("0x80", base=16))]
             + ["DOA_REG", "DOB_REG", "RAM_MODE"]
@@ -609,8 +610,14 @@ class Netlist:
         self.instances_to_map = [
             i
             for i in self.instances
-            if i.cell_type not in ("GND", "VCC") and i.name != "\dmvector_aux_a_3_reg[3]_i_1"
+            if i.cell_type not in ("GND", "VCC")"
         ]
+
+        # sort instances to start with bigger primitives
+        brams = [i for i in self.instances_to_map if i.cell_type.startswith("RAMB")]
+        carry = [i for i in self.instances_to_map if i.cell_type.startswith("CARRY")]
+        extras = [i for i in self.instances_to_map if (not i.cell_type.startswith("RAMB")) and (not i.cell_type.startswith("CARRY"))]
+        self.instances_to_map = brams + carry + extras
 
         # Top-level IO pins
         self.pins = [Pin(pin, None, self) for pin in library.get_pins()]
