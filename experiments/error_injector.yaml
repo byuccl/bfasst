@@ -1,0 +1,16 @@
+designs:
+  - ooc/aes128
+  - ooc/EX_stage
+  - ooc/ID_stage
+  - ooc/IF_stage
+  - ooc/MEM_stage
+  - ooc/WB_stage
+  - ooc/a25_coprocessor
+  - ooc/random_pulse_generator
+
+design_dirs:
+  - byu
+
+flow: xilinx_structural_error_injection
+
+synth: " --flatten --max_dsp 0"
