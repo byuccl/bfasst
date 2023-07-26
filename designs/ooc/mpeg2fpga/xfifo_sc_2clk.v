@@ -109,7 +109,7 @@ module xfifo_sc_2clk (
     else prog_full <= (next_count > upper_threshold);
 
   // Dual-port RAM w/registered output
-  (* ram_style = "registers" *) reg [data_width-1:0] ram[(1 << addr_width)-1:0];
+   reg [data_width-1:0] ram[(1 << addr_width)-1:0];
 
   always @(posedge clk_rd)
     if (~rst) dout <= 0;

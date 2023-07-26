@@ -144,7 +144,7 @@ module xfifo_sc (
    * dual-port ram w/registered output
    */
 
-  (* ram_style = "registers" *) reg    [dta_width-1:0]ram[(1 << addr_width)-1:0];
+   reg    [dta_width-1:0]ram[(1 << addr_width)-1:0];
 
   always @(posedge clk)
     if (~rst) dout <= 0;
