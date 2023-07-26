@@ -297,7 +297,10 @@ class XilinxPhysNetlist(TransformTool):
                         if not lut5_cell:
                             continue
                     elif cell_type.startswith("SRL"):
-                        assert lut5_cell is None
+                        # assert lut5_cell is None
+                        if lut5_cell is not None:
+                            assert lut5_cell.getType() == lut6_cell.getType()
+                            cells_already_visited.add(lut5_cell)
                         cells_already_visited.add(lut6_cell)
                         continue
                 if lut5_cell:
@@ -691,8 +694,18 @@ class XilinxPhysNetlist(TransformTool):
     def process_lut(self, lut6_cell, lut5_cell):
         """This function takes a LUT* from the netlist and replaces with with a LUT6_2
         with logical mapping equal to the physical mapping."""
-        if lut6_cell is None:  # Possible RW bug -> sometimes lut6 cell is none and lut5 is FDRE
-            return
+        if (
+            lut6_cell is None and not lut5_cell.isRoutethru()
+        ):  # Possible RW bug -> sometimes lut6 cell is none and lut5 is FDRE
+            raise TransformException("LUT6 cell is None and LUT5 is not routethru")
+
+        lut5_rt = False
+        if lut6_cell is None and lut5_cell.isRoutethru():
+            lut6_cell = lut5_cell
+            lut5_cell = None
+            lut5_rt = True
+
+        site_str = f"X{lut6_cell.getSite().getInstanceX()},Y{lut6_cell.getSite().getInstanceY()}"
         self.log(
             "\nProcessing and replacing LUT(s):",
             ",".join(
@@ -701,17 +714,20 @@ class XilinxPhysNetlist(TransformTool):
                 if lut_cell is not None
             ),
         )
+
         lut6_edif_cell_inst = lut6_cell.getEDIFCellInst()
         assert lut6_edif_cell_inst
 
         #### Get name for new LUT6_2 cell
-        new_cell_name = lut6_edif_cell_inst.getName() + "_phys"
+        new_cell_name = lut6_edif_cell_inst.getName() + f"_{site_str}_phys"
 
         # Routethru only?
         if lut6_cell.isRoutethru() and (lut5_cell is None or lut5_cell.isRoutethru()):
             # Suffix routethru as _RT(ABCD)
             new_cell_name = (
-                lut6_edif_cell_inst.getName() + "_routethru_" + str(lut6_cell.getBEL().getName())[0]
+                lut6_edif_cell_inst.getName()
+                + f"_routethru_{site_str}:"
+                + str(lut6_cell.getBEL().getName())[0]
             )
 
         if lut5_cell:
@@ -776,7 +792,7 @@ class XilinxPhysNetlist(TransformTool):
         # goes straight to the FF), so now that the net is going to stop at the LUT input,
         # a new net is needed to connect LUT output to FF
         if lut6_cell.isRoutethru():
-            self.create_lut_routethru_net(lut6_cell, False, new_cell_inst)
+            self.create_lut_routethru_net(lut6_cell, lut5_rt, new_cell_inst)
         if lut5_cell and lut5_cell.isRoutethru():
             self.create_lut_routethru_net(lut5_cell, True, new_cell_inst)
 
@@ -806,9 +822,10 @@ class XilinxPhysNetlist(TransformTool):
         assert lut5_edif_cell_inst
 
         tmp = f"_routethru_{str(lut5.getBEL().getName())[0:2]}" if lut5.isRoutethru() else ""
-
+        site_str = f"X{lut5.getSite().getInstanceX()},Y{lut5.getSite().getInstanceY()}"
         new_cell_inst = lut5_edif_cell_inst.getParentCell().createChildCellInst(
-            f"{lut5_edif_cell_inst.getName()}{tmp}_{gnd_pin}_gnd_phys_shared", self.lut6_2_edif_cell
+            f"{lut5_edif_cell_inst.getName()}{site_str}{tmp}_{gnd_pin}_gnd_phys_shared",
+            self.lut6_2_edif_cell,
         )
 
         #### Copy all properties from existing LUT to new LUT (INIT will be fixed later)
@@ -896,10 +913,11 @@ class XilinxPhysNetlist(TransformTool):
 
         self.log("Creating routethru for", cell.getName())
 
+        site_str = f"X{cell.getSite().getInstanceX()},Y{cell.getSite().getInstanceY()}"
         # Create the new net
         new_net_name = (
             cell.getName()
-            + "_routethru_"
+            + f"_routethru_{site_str}:"
             + str(cell.getBEL().getName())[0]
             + ("6" if not is_lut5 else "5")
         )
