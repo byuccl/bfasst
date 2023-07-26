@@ -66,6 +66,7 @@ class StructuralCompareTool(CompareTool):
         self._cell_props = _cell_props
 
         self.run_num = None
+        self.possible_matches = {}
 
         jpype_jvm.start()
 
@@ -201,16 +202,78 @@ class StructuralCompareTool(CompareTool):
                 f"{pin.name}[{pin.index}] to",
                 f"{pin.name}[{pin.index}]",
             )
-            self.add_net_mapping(
-                pin.net,
-                self.reversed_netlist.get_pin(pin.name, pin.index).net,
+            try:
+                self.add_net_mapping(
+                    pin.net,
+                    self.reversed_netlist.get_pin(pin.name, pin.index).net,
+                )
+            except KeyError as e:
+                raise CompareException("KeyError during port mapping") from e
+
+    def init_matching_instances(self):
+        """Init possible_matches dict with all instances that match by cell type and properties"""
+        all_instances = self.reversed_netlist.instances
+        for named_instance in self.named_netlist.instances_to_map:
+            ###############################################################
+            # First find all instances of the same type that are unmapped
+            ###############################################################
+            instances_matching_cell_type = [
+                i
+                for i in all_instances
+                if i.cell_type == named_instance.cell_type and i not in self.block_mapping.inverse
+            ]
+
+            if not instances_matching_cell_type:
+                self.log("No unmapped instances of type", named_instance.cell_type)
+                raise CompareException(
+                    f"Not equivalent. {named_instance.name} has no possible match in the netlist."
+                )
+            self.log(
+                f"  {len(instances_matching_cell_type)} unmapped {named_instance.cell_type} instance(s)"
             )
+
+            ###############################################################
+            # Now look at properties
+            ###############################################################
+            properties_to_match = self.get_properties_for_type(named_instance.cell_type)
+
+            properties = named_instance.properties
+
+            instances_matching_props = instances_matching_cell_type[:]
+            for prop in properties_to_match:
+                if properties is None or prop not in properties:
+                    error(prop, "not in properties:", properties)
+
+                # Filter by properties match (case insensitive)
+                instances_matching_props = [
+                    i
+                    for i in instances_matching_cell_type
+                    if i not in self.block_mapping.inverse
+                    and prop in i.properties
+                    and properties_are_equal(properties[prop], i.properties[prop])
+                ]
+            if not instances_matching_props:
+                self.log(
+                    f"No unmapped instances of {named_instance.cell_type} with matching properties",
+                    ",".join(p + "=" + properties[p] for p in properties_to_match),
+                    "\n  "
+                    + "\n  ".join(
+                        str(i.name) + " " + str(i.properties) for i in instances_matching_cell_type
+                    ),
+                )
+                raise CompareException(
+                    f"Not equivalent. {named_instance.name} has no possible match in the netlist."
+                )
+            self.possible_matches[named_instance.name] = instances_matching_props
 
     def perform_mapping(self):
         """Maps netlists based on their cells and nets"""
 
         # First map top-level nets
         self.map_ports()
+
+        # Init possible_matches dict with all instances that match by cell type and properties
+        self.init_matching_instances()
 
         self.log_title("Starting mapping iterations")
         progress = True
@@ -272,10 +335,10 @@ class StructuralCompareTool(CompareTool):
         self.log_title("Verifying equivalence")
         warnings = False
         for i, instance in enumerate(self.named_netlist.instances_to_map):
-            self.log(
-                f"  {i+1}/{len(self.named_netlist.instances_to_map)} Instance {instance.name}:",
-                f"verifying net mapping of {len(instance.pins)} pins",
-            )
+            # self.log(
+            #     f"  {i+1}/{len(self.named_netlist.instances_to_map)} Instance {instance.name}:",
+            #     f"verifying net mapping of {len(instance.pins)} pins",
+            # )
             mapped_instance = self.block_mapping.get(instance)
             if mapped_instance is None:
                 raise CompareException(
@@ -396,69 +459,23 @@ class StructuralCompareTool(CompareTool):
 
     def check_for_potential_mapping(self, named_instance):
         """Returns cells that could map to the named_instance"""
-        all_instances = self.reversed_netlist.instances
-
-        ###############################################################
-        # First find all instances of the same type that are unmapped
-        ###############################################################
-        instances_matching_cell_type = [
-            i
-            for i in all_instances
-            if i.cell_type == named_instance.cell_type and i not in self.block_mapping.inverse
-        ]
-
-        if not instances_matching_cell_type:
-            self.log("No unmapped instances of type", named_instance.cell_type)
-            return instances_matching_cell_type
-        self.log(
-            f"  {len(instances_matching_cell_type)} unmapped {named_instance.cell_type} instance(s)"
-        )
-
-        ###############################################################
-        # Now look at properties
-        ###############################################################
-        properties_to_match = self.get_properties_for_type(named_instance.cell_type)
-
-        properties = named_instance.properties
-
-        instances_matching_props = instances_matching_cell_type[:]
-        for prop in properties_to_match:
-            if properties is None or prop not in properties:
-                error(prop, "not in properties:", properties)
-
-            # Filter by properties match (case insensitive)
-            instances_matching_props = [
-                i
-                for i in instances_matching_cell_type
-                if i not in self.block_mapping.inverse
-                and prop in i.properties
-                and properties_are_equal(properties[prop], i.properties[prop])
-            ]
-        if not instances_matching_props:
-            self.log(
-                f"No unmapped instances of {named_instance.cell_type} with matching properties",
-                ",".join(p + "=" + properties[p] for p in properties_to_match),
-                "\n  "
-                + "\n  ".join(
-                    str(i.name) + " " + str(i.properties) for i in instances_matching_cell_type
-                ),
-            )
-            return instances_matching_props
-        self.log(f"  {len(instances_matching_props)} instance(s) after filtering on properties")
 
         ###############################################################
         # Now look at connections
         ###############################################################
 
-        instances_matching_connections = instances_matching_props[:]
+        instances_matching_connections = self.possible_matches[named_instance.name]
 
-        bram_do = named_instance.cell_type.startswith("RAMB") and properties["DOA_REG"] == "0"
+        bram_do = (
+            named_instance.cell_type.startswith("RAMB")
+            and named_instance.properties["DOA_REG"] == "0"
+        )
         if bram_do:
-            assert properties["DOB_REG"] == "0"
+            assert named_instance.properties["DOB_REG"] == "0"
 
         bram_a_only = (
             named_instance.cell_type.startswith("RAMB")
-            and properties["RAM_MODE"] == '"TDP"'
+            and named_instance.properties["RAM_MODE"] == '"TDP"'
             and {None, GndPin.pin.net}
             >= {
                 named_instance.get_pin("DOBDO", i).net
@@ -471,8 +488,8 @@ class StructuralCompareTool(CompareTool):
             # A15 is only connected to a non-const net when cascade is enabled
             # Right now, it seems vivado will connect to vcc, although unconnected is valid
             expected_properties = (
-                properties["RAM_EXTENSION_A"] == '"NONE"'
-                and properties["RAM_EXTENSION_B"] == '"NONE"'
+                named_instance.properties["RAM_EXTENSION_A"] == '"NONE"'
+                and named_instance.properties["RAM_EXTENSION_B"] == '"NONE"'
                 and named_instance.get_pin("ADDRARDADDR", 15).net.is_vdd
                 and named_instance.get_pin("ADDRBWRADDR", 15).net.is_vdd
             )
@@ -561,7 +578,7 @@ class StructuralCompareTool(CompareTool):
         self.log(
             f"  {len(instances_matching_connections)} instance(s) after filtering on connections"
         )
-
+        self.possible_matches[named_instance.name] = instances_matching_connections
         return instances_matching_connections
 
     def get_properties_for_type(self, cell_type):
