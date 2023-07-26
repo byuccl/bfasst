@@ -218,9 +218,7 @@ class StructuralCompareTool(CompareTool):
             # First find all instances of the same type that are unmapped
             ###############################################################
             instances_matching_cell_type = [
-                i
-                for i in all_instances
-                if i.cell_type == named_instance.cell_type and i not in self.block_mapping.inverse
+                i for i in all_instances if i.cell_type == named_instance.cell_type
             ]
 
             if not instances_matching_cell_type:
@@ -464,37 +462,43 @@ class StructuralCompareTool(CompareTool):
         # Now look at connections
         ###############################################################
 
-        instances_matching_connections = self.possible_matches[named_instance.name]
+        instances_matching_connections = [
+            i
+            for i in self.possible_matches[named_instance.name]
+            if i not in self.block_mapping.inverse
+        ]
 
-        bram_do = (
-            named_instance.cell_type.startswith("RAMB")
-            and named_instance.properties["DOA_REG"] == "0"
-        )
-        if bram_do:
-            assert named_instance.properties["DOB_REG"] == "0"
+        bram_do = False
+        bram_a_only = False
+        bram = False
+        if named_instance.cell_type.startswith("RAMB"):
+            bram = True
+            ram18 = True
+            bram_do = named_instance.properties["DOA_REG"] == "0"
+            if bram_do:
+                assert named_instance.properties["DOB_REG"] == "0"
 
-        bram_a_only = (
-            named_instance.cell_type.startswith("RAMB")
-            and named_instance.properties["RAM_MODE"] == '"TDP"'
-            and {None, GndPin.pin.net}
-            >= {
+            bram_a_only = named_instance.properties["RAM_MODE"] == '"TDP"' and {
+                None,
+                GndPin.pin.net,
+            } >= {
                 named_instance.get_pin("DOBDO", i).net
                 for i in range(32)
                 if named_instance.get_pin("DOBDO", i) is not None
             }
-        )
 
-        if named_instance.cell_type.startswith("RAMB36E1"):
-            # A15 is only connected to a non-const net when cascade is enabled
-            # Right now, it seems vivado will connect to vcc, although unconnected is valid
-            expected_properties = (
-                named_instance.properties["RAM_EXTENSION_A"] == '"NONE"'
-                and named_instance.properties["RAM_EXTENSION_B"] == '"NONE"'
-                and named_instance.get_pin("ADDRARDADDR", 15).net.is_vdd
-                and named_instance.get_pin("ADDRBWRADDR", 15).net.is_vdd
-            )
-            if not expected_properties:
-                raise CompareException("Unexpected BRAM CASCADE Configuration")
+            if named_instance.cell_type.startswith("RAMB36E1"):
+                ram18 = False
+                # A15 is only connected to a non-const net when cascade is enabled
+                # Right now, it seems vivado will connect to vcc, although unconnected is valid
+                expected_properties = (
+                    named_instance.properties["RAM_EXTENSION_A"] == '"NONE"'
+                    and named_instance.properties["RAM_EXTENSION_B"] == '"NONE"'
+                    and named_instance.get_pin("ADDRARDADDR", 15).net.is_vdd
+                    and named_instance.get_pin("ADDRBWRADDR", 15).net.is_vdd
+                )
+                if not expected_properties:
+                    raise CompareException("Unexpected BRAM CASCADE Configuration")
 
         for pin in named_instance.pins:
             assert isinstance(pin, Pin)
@@ -506,11 +510,11 @@ class StructuralCompareTool(CompareTool):
                 continue  # These pins are ignored when DO_REG is 0
 
             # RSTRAMB mismatch in aes128 design
-            if named_instance.cell_type.startswith("RAMB18") and pin.name in {"RSTRAMB"}:
+            if bram and ram18 and pin.name == "RSTRAMB":
                 pin.ignore_net_equivalency = True
                 continue
 
-            if named_instance.cell_type.startswith("RAMB"):
+            if bram:
                 if pin.name in {"RSTRAMARSTRAM"}:
                     pin.ignore_net_equivalency = True
                     continue  # These pins can be vdd or gnd when cascade is off
@@ -547,7 +551,7 @@ class StructuralCompareTool(CompareTool):
                 idx = pin.index
             else:
                 idx = 0 if pin.index == 1 else 1
-            # try:
+
             tmp = [
                 instance
                 for instance in instances_matching_connections
@@ -563,10 +567,6 @@ class StructuralCompareTool(CompareTool):
                     if instance.get_pin(pin.name, idx).net.is_gnd == other_net.is_gnd
                 ]
 
-            # except KeyError:
-            #     self.log(f"KeyError on {pin.name}[{idx}]... skipping")
-            #     pin.ignore_net_equivalency = True
-            #     continue
             num_instances = len(instances_matching_connections)
             info = (
                 ": " + ",".join(i.name for i in instances_matching_connections)
@@ -608,7 +608,11 @@ class Netlist:
         # instances = [i for i in instances if i.cell_type not in ("VCC", "GND")]
         self.instances = instances
 
-        self.instances_to_map = [i for i in self.instances if i.cell_type not in ("GND", "VCC")]
+        self.instances_to_map = [
+            i
+            for i in self.instances
+            if i.cell_type not in ("GND", "VCC") and i.name != "\dmvector_aux_a_3_reg[3]_i_1"
+        ]
 
         # Top-level IO pins
         self.pins = [Pin(pin, None, self) for pin in library.get_pins()]
