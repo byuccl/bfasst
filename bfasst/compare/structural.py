@@ -85,7 +85,9 @@ class StructuralCompareTool(CompareTool):
         self.map_ports()
         for lh, rh in block_map.items():
             lh_instance = [i for i in self.named_netlist.instances if i.name == lh][0]
-            rh_instance = [i for i in self.reversed_netlist.instances if i.name == rh][0]
+            rh_instance = [i for i in self.reversed_netlist.instances if i.name == rh][
+                0
+            ]
             self.block_mapping[lh_instance] = rh_instance
         for lh, rh in net_map.items():
             # Sometimes multiple net objects have the same name, like gnd nets,
@@ -169,7 +171,9 @@ class StructuralCompareTool(CompareTool):
 
         self.log("  Unmapped nets:")
         for net in [
-            net for net in self.named_netlist.get_connected_nets() if net not in self.net_mapping
+            net
+            for net in self.named_netlist.get_connected_nets()
+            if net not in self.net_mapping
         ]:
             # if net.is_vdd or net.is_gnd:
             #     num_total_nets -= 1
@@ -254,7 +258,8 @@ class StructuralCompareTool(CompareTool):
                     ",".join(p + "=" + properties[p] for p in properties_to_match),
                     "\n  "
                     + "\n  ".join(
-                        str(i.name) + " " + str(i.properties) for i in instances_matching_cell_type
+                        str(i.name) + " " + str(i.properties)
+                        for i in instances_matching_cell_type
                     )
                     if len(instances_matching_cell_type) < 10
                     else "",
@@ -281,7 +286,9 @@ class StructuralCompareTool(CompareTool):
         iteration = 0
         while len(self.block_mapping) < len(self.named_netlist.instances_to_map):
             if not progress:
-                self.log(f"No more progress can be made. Failed at iteration {iteration}.")
+                self.log(
+                    f"No more progress can be made. Failed at iteration {iteration}."
+                )
                 break
             progress = False
 
@@ -306,7 +313,9 @@ class StructuralCompareTool(CompareTool):
                         )
 
                     if len(instances_matching) > 1:
-                        self.log(f"  {len(instances_matching)} matches, skipping for now:")
+                        self.log(
+                            f"  {len(instances_matching)} matches, skipping for now:"
+                        )
                         if len(instances_matching) < 10:
                             for matched_instance in instances_matching:
                                 self.log(f"    {matched_instance.name}")
@@ -505,7 +514,12 @@ class StructuralCompareTool(CompareTool):
 
             # For RAMB18E1, "REGCEAREGCE" and "REGCEB" only depend on DOA_REG and DOB_REG, respectively
             # Currently does not matter for our designs, but should be revisited if the assertion fails
-            if bram_do and pin.name in {"RSTREGARSTREG", "RSTREGB", "REGCEAREGCE", "REGCEB"}:
+            if bram_do and pin.name in {
+                "RSTREGARSTREG",
+                "RSTREGB",
+                "REGCEAREGCE",
+                "REGCEB",
+            }:
                 pin.ignore_net_equivalency = True
                 continue  # These pins are ignored when DO_REG is 0
 
@@ -608,15 +622,18 @@ class Netlist:
         self.instances = instances
 
         self.instances_to_map = [
-            i
-            for i in self.instances
-            if i.cell_type not in ("GND", "VCC")"
+            i for i in self.instances if i.cell_type not in ("GND", "VCC")
         ]
 
         # sort instances to start with bigger primitives
         brams = [i for i in self.instances_to_map if i.cell_type.startswith("RAMB")]
         carry = [i for i in self.instances_to_map if i.cell_type.startswith("CARRY")]
-        extras = [i for i in self.instances_to_map if (not i.cell_type.startswith("RAMB")) and (not i.cell_type.startswith("CARRY"))]
+        extras = [
+            i
+            for i in self.instances_to_map
+            if (not i.cell_type.startswith("RAMB"))
+            and (not i.cell_type.startswith("CARRY"))
+        ]
         self.instances_to_map = brams + carry + extras
 
         # Top-level IO pins
@@ -638,14 +655,18 @@ class Netlist:
     def build_nets(self):
         """Setup Net objects"""
         # First construct net objects for each wire, skipping alias wires
-        non_alias_wires = [wire for wire in self.library.get_wires() if not Net.wire_is_alias(wire)]
+        non_alias_wires = [
+            wire for wire in self.library.get_wires() if not Net.wire_is_alias(wire)
+        ]
         for wire in non_alias_wires:
             net = Net(wire, self.tool)
             self.tool.log(f"New Net for wire {wire.cable.name}[{wire.index()}]")
             self.wire_to_net[wire] = net
 
         # Now add alias wires iteratively until they are all added
-        alias_wires = [wire for wire in self.library.get_wires() if Net.wire_is_alias(wire)]
+        alias_wires = [
+            wire for wire in self.library.get_wires() if Net.wire_is_alias(wire)
+        ]
 
         self.tool.log("Processing alias wires (derived from assign statements)")
 
@@ -669,12 +690,17 @@ class Netlist:
 
             # Remove wires we processed
             old_len = len(alias_wires)
-            alias_wires = [wire for wire in alias_wires if wire not in processed_alias_wires]
+            alias_wires = [
+                wire for wire in alias_wires if wire not in processed_alias_wires
+            ]
             if len(alias_wires) != old_len:
                 progress = True
 
         if alias_wires and not progress:
-            self.tool.log("Failed to process all alias wires:", [w.cable.name for w in alias_wires])
+            self.tool.log(
+                "Failed to process all alias wires:",
+                [w.cable.name for w in alias_wires],
+            )
             raise RuntimeError("Failed to process all alias wires")
 
         # Now determine the driver for each net
@@ -801,11 +827,16 @@ class Net:
         self.driver_pin = pin
 
         # Check for constant GND/VDD.  Top-level I/O will not be GND/VDD
-        if isinstance(pin, sdn.OuterPin) and self.driver_pin.instance.reference.name == "GND":
+        if (
+            isinstance(pin, sdn.OuterPin)
+            and self.driver_pin.instance.reference.name == "GND"
+        ):
             self.is_gnd = True
         else:
             self.is_gnd = False
-        if isinstance(pin, sdn.OuterPin) and self.driver_pin.instance.reference.name in (
+        if isinstance(
+            pin, sdn.OuterPin
+        ) and self.driver_pin.instance.reference.name in (
             "VDD",
             "VCC",
         ):
@@ -866,7 +897,10 @@ class Net:
                 and pin.inner_pin.port.name == "o"
             ):
                 # Get the wire driving the assign statement
-                if pin.inner_pin.port.name == list(pin.instance.pins)[0].inner_pin.port.name:
+                if (
+                    pin.inner_pin.port.name
+                    == list(pin.instance.pins)[0].inner_pin.port.name
+                ):
                     return list(pin.instance.pins)[1].wire
                 return list(pin.instance.pins)[0].wire
 
