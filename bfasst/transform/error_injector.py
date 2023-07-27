@@ -60,9 +60,10 @@ class ErrorInjector(TransformTool):
         """Injects a bit flip error into the netlist"""
         self.__setup_netlist()
         self.corrupted_netlist_path = self.design.path / f"bit_flip_{self.log_num}.v"
-        num_luts = self.__pick_luts_from_netlist()
+        self.__pick_luts_from_netlist()
         self.__get_all_luts()
         self.__sort_all_luts()
+        num_luts = len(self.all_luts)
         lut_number = self.random_generator.randrange(num_luts)
         lut_size = self.__get_lut_init_size(lut_number)
         bit_number = self.random_generator.randrange(lut_size)
@@ -72,13 +73,10 @@ class ErrorInjector(TransformTool):
 
     def __pick_luts_from_netlist(self):
         """Calculates the number of LUTs in the netlist"""
-        num_luts = 0
         for library in self.clean_netlist.libraries:
             for definition in library.definitions:
                 if "LUT" in definition.name.upper():
-                    num_luts += len(definition.references)
                     self.hierarchical_luts.append(definition.references)
-        return num_luts
 
     def __get_all_luts(self):
         """Flattens the LUTs into a single list"""
@@ -86,7 +84,7 @@ class ErrorInjector(TransformTool):
         self.all_luts = []
         for lut in temp:
             init_string = lut.data["VERILOG.Parameters"]["INIT"].upper()
-            init_val = int(init_string.split("H")[1])
+            init_val = int(init_string.split("H")[1],base=16)
             if init_val != 0:
                 self.all_luts.append(lut)
 
@@ -253,7 +251,7 @@ class ErrorInjector(TransformTool):
             f"Wire swap of {two_instances[0].name} {selected_input.name} "
             + f"{selected_input.wire.cable.name} "
             + f"and {two_instances[1].name} {selected_input2.name} "
-            + f"{select_input2.wire.cable.name} "
+            + f"{selected_input2.wire.cable.name} "
             + "was successful.\n"
         )
         self.log(log_msg)
