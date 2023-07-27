@@ -82,7 +82,13 @@ class ErrorInjector(TransformTool):
 
     def __get_all_luts(self):
         """Flattens the LUTs into a single list"""
-        self.all_luts = [lut for sublist in self.hierarchical_luts for lut in sublist]
+        temp = [lut for sublist in self.hierarchical_luts for lut in sublist]
+        self.all_luts = []
+        for lut in temp:
+            init_string = lut.data["VERILOG.Parameters"]["INIT"].upper()
+            init_val = int(init_string.split("H")[1])
+            if init_val != 0:
+                self.all_luts.append(lut)
 
     def __sort_all_luts(self):
         """Sorts all luts by their instance name"""
