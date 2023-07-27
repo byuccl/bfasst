@@ -314,57 +314,25 @@ class StructuralCompareTool(CompareTool):
         self.log_title("Starting mapping iterations")
 
         # Loop until all blocks have been mapped or there is no more progress
-        overallprogress = True
+        overall_progress = True
         iteration = 0
         while self.named_netlist.instances_to_map:
-            if not overallprogress:
+            if not overall_progress:
                 self.log(f"No more progress can be made. Failed at iteration {iteration}.")
                 break
-            overallprogress = False
+            overall_progress = False
 
             self.log(f"===== Mapping Iteration {iteration} =====")
 
             # Loop through reversed netlist blocks
-            while True:
-                for instance in self.named_netlist.buf:
-                    if self.potential_mapping_wrapper(instance):
-                        overallprogress = True
-                        break
-                else:
-                    break
-
-            while True:
-                for instance in self.named_netlist.luts:
-                    if self.potential_mapping_wrapper(instance):
-                        overallprogress = True
-                        break  # do not continue iterating since luts is modified
-                else:
-                    break
-
-            while True:
-                for instance in self.named_netlist.carry:
-                    if self.potential_mapping_wrapper(instance):
-                        overallprogress = True
-                        break
-                else:
-                    break
-
-            while True:
-                for instance in self.named_netlist.brams:
-                    if self.potential_mapping_wrapper(instance):
-                        overallprogress = True
-                        break
-                else:
-                    break
-
-            while True:
-                for instance in self.named_netlist.extras:
-                    if self.potential_mapping_wrapper(instance):
-                        overallprogress = True
-                        break
-                else:
-                    break
-
+            instance_iter = iter(set(self.named_netlist.instances_to_map))
+            try:
+                while not overall_progress:
+                    overall_progress = self.potential_mapping_wrapper(next(instance_iter))
+                while True:
+                    self.potential_mapping_wrapper(next(instance_iter))
+            except StopIteration:
+                pass
             iteration += 1
 
     def verify_equivalence(self):
@@ -440,16 +408,16 @@ class StructuralCompareTool(CompareTool):
 
         self.block_mapping[instance] = matched_instance
         self.named_netlist.instances_to_map.remove(instance)
-        if instance in self.named_netlist.buf:
-            self.named_netlist.buf.remove(instance)
-        elif instance in self.named_netlist.brams:
-            self.named_netlist.brams.remove(instance)
-        elif instance in self.named_netlist.luts:
-            self.named_netlist.luts.remove(instance)
-        elif instance in self.named_netlist.carry:
-            self.named_netlist.carry.remove(instance)
-        elif instance in self.named_netlist.extras:
-            self.named_netlist.extras.remove(instance)
+        # if instance in self.named_netlist.buf:
+        #     self.named_netlist.buf.remove(instance)
+        # elif instance in self.named_netlist.brams:
+        #     self.named_netlist.brams.remove(instance)
+        # elif instance in self.named_netlist.luts:
+        #     self.named_netlist.luts.remove(instance)
+        # elif instance in self.named_netlist.carry:
+        #     self.named_netlist.carry.remove(instance)
+        # elif instance in self.named_netlist.extras:
+        #     self.named_netlist.extras.remove(instance)
 
         for pin in instance.pins:
             # Some pins should not be used to establish net mapping
@@ -627,10 +595,10 @@ class StructuralCompareTool(CompareTool):
                 else ""
             )
             self.log(f"    {num_instances} remaining{info}")
-            # if not num_instances:
-            #     import code
+            if not num_instances:
+                import code
 
-            #     code.interact(local=dict(globals(), **locals()))
+                code.interact(local=dict(globals(), **locals()))
 
         self.log(
             f"  {len(instances_matching_connections)} instance(s) after filtering on connections"
@@ -667,26 +635,27 @@ class Netlist:
 
         self.instances_to_map = {i for i in self.instances if i.cell_type not in ("GND", "VCC")}
 
+        # This made it slower
         # sort instances to start with bigger primitives
-        self.buf = {
-            i
-            for i in self.instances_to_map
-            if i.cell_type.startswith("OBUF") or i.cell_type.startswith("IBUF")
-        }
-        self.brams = {i for i in self.instances_to_map if i.cell_type.startswith("RAMB")}
-        self.carry = {i for i in self.instances_to_map if i.cell_type.startswith("CARRY")}
-        self.luts = {i for i in self.instances_to_map if i.cell_type.startswith("LUT")}
-        self.extras = {
-            i
-            for i in self.instances_to_map
-            if i not in self.buf
-            and i not in self.brams
-            and i not in self.carry
-            and i not in self.luts
-        }
-        assert len(self.instances_to_map) == (
-            len(self.brams) + len(self.carry) + len(self.luts) + len(self.extras) + len(self.buf)
-        )
+        # self.buf = {
+        #     i
+        #     for i in self.instances_to_map
+        #     if i.cell_type.startswith("OBUF") or i.cell_type.startswith("IBUF")
+        # }
+        # self.brams = {i for i in self.instances_to_map if i.cell_type.startswith("RAMB")}
+        # self.carry = {i for i in self.instances_to_map if i.cell_type.startswith("CARRY")}
+        # self.luts = {i for i in self.instances_to_map if i.cell_type.startswith("LUT")}
+        # self.extras = {
+        #     i
+        #     for i in self.instances_to_map
+        #     if i not in self.buf
+        #     and i not in self.brams
+        #     and i not in self.carry
+        #     and i not in self.luts
+        # }
+        # assert len(self.instances_to_map) == (
+        #     len(self.brams) + len(self.carry) + len(self.luts) + len(self.extras) + len(self.buf)
+        # )
 
         # Top-level IO pins
         self.pins = [Pin(pin, None, self) for pin in library.get_pins()]
@@ -710,7 +679,7 @@ class Netlist:
         non_alias_wires = [wire for wire in self.library.get_wires() if not Net.wire_is_alias(wire)]
         for wire in non_alias_wires:
             net = Net(wire, self.tool)
-            self.tool.log(f"New Net for wire {wire.cable.name}[{wire.index()}]")
+            # self.tool.log(f"New Net for wire {wire.cable.name}[{wire.index()}]")
             self.wire_to_net[wire] = net
 
         # Now add alias wires iteratively until they are all added
@@ -728,10 +697,10 @@ class Netlist:
                     continue
 
                 net = self.wire_to_net[driver_wire]
-                self.tool.log(
-                    f"Adding alias wire {wire.cable.name}[{wire.index()}]",
-                    f"to net {net.name}[{net.wire.index()}]",
-                )
+                # self.tool.log(
+                #     f"Adding alias wire {wire.cable.name}[{wire.index()}]",
+                #     f"to net {net.name}[{net.wire.index()}]",
+                # )
                 net.add_alias_wire(wire)
                 self.wire_to_net[wire] = net
                 processed_alias_wires.append(wire)
@@ -956,6 +925,8 @@ class Instance:
         self.instance = instance
         self.netlist = netlist
 
+        self.net_set = set()
+
         self.pins = []
         self.pins_by_name_and_index = {}
 
@@ -970,6 +941,12 @@ class Instance:
                     pin_spydernet.inner_pin.port.pins.index(pin_spydernet.inner_pin),
                 )
             ] = pin
+
+    def init_connectivity(self):
+        """Initialize connectivity for this instance"""
+        for pin in self.pins:
+            if pin.net is not None:
+                self.net_set.add(pin.net.name)
 
     @property
     def name(self):

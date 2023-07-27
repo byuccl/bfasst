@@ -662,7 +662,7 @@ class XilinxPhysNetlist(TransformTool):
             assert lut_out_port
             new_net.createPortInst(lut_out_port, new_cell_inst)
 
-            # Loop through ports this GND net needs to drive and connect them up
+            # Loop through ports this const net needs to drive and connect them up
             for pin_in in site_inst.getSiteWirePins(pin_out):
                 cell = site_inst.getCell(pin_in.getBEL())
                 if cell:
@@ -704,7 +704,9 @@ class XilinxPhysNetlist(TransformTool):
                 new_port = bus.getPortInstNameFromPort(bus.getPortIndexFromNameIndex(idx))
                 routed_to_port_inst = routed_to_cell_inst.getPortInst(new_port)
                 assert routed_to_port_inst
-                if routed_to_port_inst.getNet().getName() == self.gnd.getName():
+                if (
+                    is_gnd and routed_to_port_inst.getNet().getName() == self.gnd.getName()
+                ) or routed_to_port_inst.getNet().getName() == self.vcc.getName():
                     routed_to_port_inst.getNet().removePortInst(routed_to_port_inst)
                     new_net.createPortInst(new_port, routed_to_cell_inst)
 
@@ -861,7 +863,7 @@ class XilinxPhysNetlist(TransformTool):
 
         #### Copy all properties from existing LUT to new LUT (INIT will be fixed later)
         new_cell_inst.setPropertiesMap(lut5_edif_cell_inst.createDuplicatePropertiesMap())
-        self.log(f"Processing LUT {lut5.getName()}")
+        self.log(f"Processing LUT {lut5_edif_cell_inst.getName()}")
 
         for logical_pin, physical_pin in lut5.getPinMappingsL2P().items():
             assert len(physical_pin) == 1
@@ -884,6 +886,10 @@ class XilinxPhysNetlist(TransformTool):
             for pin in in_pins:
                 self.vcc.createPortInst(new_cell_inst.getPort(pin), new_cell_inst)
             self.create_lut_routethru_net(lut5, const_pin.endswith("O6"), new_cell_inst)
+
+        for logical_port in rw.PinMap["LUT6_2"]:
+            if logical_port.startswith("I") and not new_cell_inst.getPortInst(logical_port):
+                self.vcc.createPortInst(new_cell_inst.getPort(logical_port), new_cell_inst)
 
         # hook up A6 to VCC
         self.vcc.createPortInst(new_cell_inst.getPort("I5"), new_cell_inst)
@@ -952,7 +958,9 @@ class XilinxPhysNetlist(TransformTool):
             routed_to_port_inst = routed_to_cell_inst.getPortInst(new_port)
             assert routed_to_port_inst
 
-            if routed_to_port_inst.getNet().getName() == self.gnd.getName():
+            if (
+                is_gnd and routed_to_port_inst.getNet().getName() == self.gnd.getName()
+            ) or routed_to_port_inst.getNet().getName() == self.vcc.getName():
                 routed_to_port_inst.getNet().removePortInst(routed_to_port_inst)
                 new_net.createPortInst(new_port, routed_to_cell_inst)
 
