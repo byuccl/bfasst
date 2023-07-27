@@ -1163,7 +1163,7 @@ endmodule
 // Multiply
 //
 
-module mul_r2(clk, opa, opb, prod);
+(* use_dsp = "no" *) module mul_r2(clk, opa, opb, prod);
 input		clk;
 input	[23:0]	opa, opb;
 output	[47:0]	prod;
