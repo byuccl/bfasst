@@ -85,9 +85,7 @@ class StructuralCompareTool(CompareTool):
         self.map_ports()
         for lh, rh in block_map.items():
             lh_instance = [i for i in self.named_netlist.instances if i.name == lh][0]
-            rh_instance = [i for i in self.reversed_netlist.instances if i.name == rh][
-                0
-            ]
+            rh_instance = [i for i in self.reversed_netlist.instances if i.name == rh][0]
             self.block_mapping[lh_instance] = rh_instance
         for lh, rh in net_map.items():
             # Sometimes multiple net objects have the same name, like gnd nets,
@@ -171,9 +169,7 @@ class StructuralCompareTool(CompareTool):
 
         self.log("  Unmapped nets:")
         for net in [
-            net
-            for net in self.named_netlist.get_connected_nets()
-            if net not in self.net_mapping
+            net for net in self.named_netlist.get_connected_nets() if net not in self.net_mapping
         ]:
             # if net.is_vdd or net.is_gnd:
             #     num_total_nets -= 1
@@ -236,10 +232,12 @@ class StructuralCompareTool(CompareTool):
             # Now look at properties
             ###############################################################
             properties_to_match = self.get_properties_for_type(named_instance.cell_type)
+            if not properties_to_match:
+                self.possible_matches[named_instance.name] = instances_matching_cell_type
+                continue
 
             properties = named_instance.properties
 
-            instances_matching_props = instances_matching_cell_type[:]
             for prop in properties_to_match:
                 if properties is None or prop not in properties:
                     error(prop, "not in properties:", properties)
@@ -248,8 +246,7 @@ class StructuralCompareTool(CompareTool):
                 instances_matching_props = [
                     i
                     for i in instances_matching_cell_type
-                    if i not in self.block_mapping.inverse
-                    and prop in i.properties
+                    if prop in i.properties
                     and properties_are_equal(properties[prop], i.properties[prop])
                 ]
             if not instances_matching_props:
@@ -258,8 +255,7 @@ class StructuralCompareTool(CompareTool):
                     ",".join(p + "=" + properties[p] for p in properties_to_match),
                     "\n  "
                     + "\n  ".join(
-                        str(i.name) + " " + str(i.properties)
-                        for i in instances_matching_cell_type
+                        str(i.name) + " " + str(i.properties) for i in instances_matching_cell_type
                     )
                     if len(instances_matching_cell_type) < 10
                     else "",
@@ -268,6 +264,40 @@ class StructuralCompareTool(CompareTool):
                     f"Not equivalent. {named_instance.name} has no possible match in the netlist."
                 )
             self.possible_matches[named_instance.name] = instances_matching_props
+
+    def potential_mapping_wrapper(self, instance):
+        """Wrap check_for_potential_mapping some inital checks/postprocessing"""
+
+        # Skip assign statements (named netlist shouldn't have them)
+        # Update: just let the code break if this happens
+        # assert not instance.cell_type.startswith("SDN_VERILOG_ASSIGNMENT")
+
+        self.log(f"Considering {instance.name} ({instance.cell_type})")
+
+        # Get the implemented potential instance to map
+        instances_matching = self.check_for_potential_mapping(instance)
+
+        # self.log(f"  {instances_matching} matches")
+
+        if not instances_matching:
+            raise CompareException(
+                f"Not equivalent. {instance.name} has no possible match in the netlist."
+            )
+
+        if len(instances_matching) > 1:
+            self.log(f"  {len(instances_matching)} matches, skipping for now:")
+            if len(instances_matching) < 10:
+                for matched_instance in instances_matching:
+                    self.log(f"    {matched_instance.name}")
+            return False
+
+        assert len(instances_matching) == 1
+        matched_instance = instances_matching[0]
+
+        self.log(f"  Mapped to {matched_instance.name}")
+
+        self.add_block_mapping(instance, matched_instance)
+        return True
 
     def perform_mapping(self):
         """Maps netlists based on their cells and nets"""
@@ -279,57 +309,58 @@ class StructuralCompareTool(CompareTool):
         self.init_matching_instances()
 
         self.log_title("Starting mapping iterations")
-        progress = True
 
         # Loop until all blocks have been mapped or there is no more progress
-
+        overallprogress = True
         iteration = 0
-        while len(self.block_mapping) < len(self.named_netlist.instances_to_map):
-            if not progress:
-                self.log(
-                    f"No more progress can be made. Failed at iteration {iteration}."
-                )
+        while self.named_netlist.instances_to_map:
+            if not overallprogress:
+                self.log(f"No more progress can be made. Failed at iteration {iteration}.")
                 break
-            progress = False
+            overallprogress = False
 
             self.log(f"===== Mapping Iteration {iteration} =====")
 
             # Loop through reversed netlist blocks
-            for instance in self.named_netlist.instances_to_map:
-                if instance not in self.block_mapping:
-                    # Skip assign statements (named netlist shouldn't have them)
-                    assert not instance.cell_type.startswith("SDN_VERILOG_ASSIGNMENT")
+            while True:
+                for instance in self.named_netlist.buf:
+                    if self.potential_mapping_wrapper(instance):
+                        overallprogress = True
+                        break
+                else:
+                    break
 
-                    self.log(f"Considering {instance.name} ({instance.cell_type})")
+            while True:
+                for instance in self.named_netlist.luts:
+                    if self.potential_mapping_wrapper(instance):
+                        overallprogress = True
+                        break  # do not continue iterating since luts is modified
+                else:
+                    break
 
-                    # Get the implemented potential instance to map
-                    instances_matching = self.check_for_potential_mapping(instance)
+            while True:
+                for instance in self.named_netlist.carry:
+                    if self.potential_mapping_wrapper(instance):
+                        overallprogress = True
+                        break
+                else:
+                    break
 
-                    # self.log(f"  {instances_matching} matches")
+            while True:
+                for instance in self.named_netlist.brams:
+                    if self.potential_mapping_wrapper(instance):
+                        overallprogress = True
+                        break
+                else:
+                    break
 
-                    if not instances_matching:
-                        raise CompareException(
-                            f"Not equivalent. {instance.name} has no possible match in the netlist."
-                        )
-
-                    if len(instances_matching) > 1:
-                        self.log(
-                            f"  {len(instances_matching)} matches, skipping for now:"
-                        )
-                        if len(instances_matching) < 10:
-                            for matched_instance in instances_matching:
-                                self.log(f"    {matched_instance.name}")
-                        continue
-
-                    assert len(instances_matching) == 1
-                    matched_instance = instances_matching[0]
-
-                    self.log(f"  Mapped to {matched_instance.name}")
-
-                    self.add_block_mapping(instance, matched_instance)
-
-                    progress = True
-                    continue
+            while True:
+                for instance in self.named_netlist.extras:
+                    if self.potential_mapping_wrapper(instance):
+                        overallprogress = True
+                        break
+                else:
+                    break
 
             iteration += 1
 
@@ -405,6 +436,17 @@ class StructuralCompareTool(CompareTool):
         assert isinstance(matched_instance, Instance)
 
         self.block_mapping[instance] = matched_instance
+        self.named_netlist.instances_to_map.remove(instance)
+        if instance in self.named_netlist.buf:
+            self.named_netlist.buf.remove(instance)
+        elif instance in self.named_netlist.brams:
+            self.named_netlist.brams.remove(instance)
+        elif instance in self.named_netlist.luts:
+            self.named_netlist.luts.remove(instance)
+        elif instance in self.named_netlist.carry:
+            self.named_netlist.carry.remove(instance)
+        elif instance in self.named_netlist.extras:
+            self.named_netlist.extras.remove(instance)
 
         for pin in instance.pins:
             # Some pins should not be used to establish net mapping
@@ -452,8 +494,6 @@ class StructuralCompareTool(CompareTool):
             # self.log(pin.net.is_gnd)
             # self.log(pin.net.driver_pin)
             self.add_net_mapping(net_a, net_b)
-
-        # TODO: Update net mappings
 
     def add_net_mapping(self, net1, net2):
         assert isinstance(net1, Net)
@@ -512,23 +552,20 @@ class StructuralCompareTool(CompareTool):
         for pin in named_instance.pins:
             assert isinstance(pin, Pin)
 
-            # For RAMB18E1, "REGCEAREGCE" and "REGCEB" only depend on DOA_REG and DOB_REG, respectively
-            # Currently does not matter for our designs, but should be revisited if the assertion fails
-            if bram_do and pin.name in {
-                "RSTREGARSTREG",
-                "RSTREGB",
-                "REGCEAREGCE",
-                "REGCEB",
-            }:
-                pin.ignore_net_equivalency = True
-                continue  # These pins are ignored when DO_REG is 0
-
-            # RSTRAMB mismatch in aes128 design
-            if bram and ram18 and pin.name == "RSTRAMB":
-                pin.ignore_net_equivalency = True
-                continue
-
             if bram:
+                # For RAMB18E1, "REGCEAREGCE" and "REGCEB" only depend on DOA_REG and DOB_REG, respectively
+                # Currently does not matter for our designs, but should be revisited if the assertion fails
+                if bram_do and pin.name in {
+                    "RSTREGARSTREG",
+                    "RSTREGB",
+                    "REGCEAREGCE",
+                    "REGCEB",
+                }:
+                    pin.ignore_net_equivalency = True
+                    continue  # These pins are ignored when DO_REG is 0
+                if ram18 and pin.name == "RSTRAMB":  # RSTRAMB mismatch in aes128 design
+                    pin.ignore_net_equivalency = True
+                    continue
                 if pin.name in {"RSTRAMARSTRAM"}:
                     pin.ignore_net_equivalency = True
                     continue  # These pins can be vdd or gnd when cascade is off
@@ -587,6 +624,10 @@ class StructuralCompareTool(CompareTool):
                 else ""
             )
             self.log(f"    {num_instances} remaining{info}")
+            if not num_instances:
+                import code
+
+                code.interact(local=dict(globals(), **locals()))
 
         self.log(
             f"  {len(instances_matching_connections)} instance(s) after filtering on connections"
@@ -621,20 +662,28 @@ class Netlist:
         # instances = [i for i in instances if i.cell_type not in ("VCC", "GND")]
         self.instances = instances
 
-        self.instances_to_map = [
-            i for i in self.instances if i.cell_type not in ("GND", "VCC")
-        ]
+        self.instances_to_map = {i for i in self.instances if i.cell_type not in ("GND", "VCC")}
 
         # sort instances to start with bigger primitives
-        brams = [i for i in self.instances_to_map if i.cell_type.startswith("RAMB")]
-        carry = [i for i in self.instances_to_map if i.cell_type.startswith("CARRY")]
-        extras = [
+        self.buf = {
             i
             for i in self.instances_to_map
-            if (not i.cell_type.startswith("RAMB"))
-            and (not i.cell_type.startswith("CARRY"))
-        ]
-        self.instances_to_map = brams + carry + extras
+            if i.cell_type.startswith("OBUF") or i.cell_type.startswith("IBUF")
+        }
+        self.brams = {i for i in self.instances_to_map if i.cell_type.startswith("RAMB")}
+        self.carry = {i for i in self.instances_to_map if i.cell_type.startswith("CARRY")}
+        self.luts = {i for i in self.instances_to_map if i.cell_type.startswith("LUT")}
+        self.extras = {
+            i
+            for i in self.instances_to_map
+            if i not in self.buf
+            and i not in self.brams
+            and i not in self.carry
+            and i not in self.luts
+        }
+        assert len(self.instances_to_map) == (
+            len(self.brams) + len(self.carry) + len(self.luts) + len(self.extras) + len(self.buf)
+        )
 
         # Top-level IO pins
         self.pins = [Pin(pin, None, self) for pin in library.get_pins()]
@@ -655,18 +704,14 @@ class Netlist:
     def build_nets(self):
         """Setup Net objects"""
         # First construct net objects for each wire, skipping alias wires
-        non_alias_wires = [
-            wire for wire in self.library.get_wires() if not Net.wire_is_alias(wire)
-        ]
+        non_alias_wires = [wire for wire in self.library.get_wires() if not Net.wire_is_alias(wire)]
         for wire in non_alias_wires:
             net = Net(wire, self.tool)
             self.tool.log(f"New Net for wire {wire.cable.name}[{wire.index()}]")
             self.wire_to_net[wire] = net
 
         # Now add alias wires iteratively until they are all added
-        alias_wires = [
-            wire for wire in self.library.get_wires() if Net.wire_is_alias(wire)
-        ]
+        alias_wires = [wire for wire in self.library.get_wires() if Net.wire_is_alias(wire)]
 
         self.tool.log("Processing alias wires (derived from assign statements)")
 
@@ -690,9 +735,7 @@ class Netlist:
 
             # Remove wires we processed
             old_len = len(alias_wires)
-            alias_wires = [
-                wire for wire in alias_wires if wire not in processed_alias_wires
-            ]
+            alias_wires = [wire for wire in alias_wires if wire not in processed_alias_wires]
             if len(alias_wires) != old_len:
                 progress = True
 
@@ -827,16 +870,11 @@ class Net:
         self.driver_pin = pin
 
         # Check for constant GND/VDD.  Top-level I/O will not be GND/VDD
-        if (
-            isinstance(pin, sdn.OuterPin)
-            and self.driver_pin.instance.reference.name == "GND"
-        ):
+        if isinstance(pin, sdn.OuterPin) and self.driver_pin.instance.reference.name == "GND":
             self.is_gnd = True
         else:
             self.is_gnd = False
-        if isinstance(
-            pin, sdn.OuterPin
-        ) and self.driver_pin.instance.reference.name in (
+        if isinstance(pin, sdn.OuterPin) and self.driver_pin.instance.reference.name in (
             "VDD",
             "VCC",
         ):
@@ -897,10 +935,7 @@ class Net:
                 and pin.inner_pin.port.name == "o"
             ):
                 # Get the wire driving the assign statement
-                if (
-                    pin.inner_pin.port.name
-                    == list(pin.instance.pins)[0].inner_pin.port.name
-                ):
+                if pin.inner_pin.port.name == list(pin.instance.pins)[0].inner_pin.port.name:
                     return list(pin.instance.pins)[1].wire
                 return list(pin.instance.pins)[0].wire
 

@@ -718,7 +718,7 @@ class XilinxPhysNetlist(TransformTool):
             lut5_cell = None
             lut5_rt = True
 
-        site_str = f"X{lut6_cell.getSite().getInstanceX()},Y{lut6_cell.getSite().getInstanceY()}"
+        site_str = f"X{lut6_cell.getSite().getInstanceX()}Y{lut6_cell.getSite().getInstanceY()}"
         self.log(
             "\nProcessing and replacing LUT(s):",
             ",".join(
@@ -739,7 +739,7 @@ class XilinxPhysNetlist(TransformTool):
             # Suffix routethru as _RT(ABCD)
             new_cell_name = (
                 lut6_edif_cell_inst.getName()
-                + f"_routethru_{site_str}:"
+                + f"_routethru_{site_str}_"
                 + str(lut6_cell.getBEL().getName())[0]
             )
 
@@ -810,7 +810,10 @@ class XilinxPhysNetlist(TransformTool):
             self.create_lut_routethru_net(lut5_cell, True, new_cell_inst)
 
         # Fix the new LUT INIT property based on the new pin mappings
-        rw.process_lut_init(lut6_cell, lut5_cell, new_cell_inst, self.log)
+        if not lut5_rt:
+            rw.process_lut_init(lut6_cell, lut5_cell, new_cell_inst, self.log)
+        else:
+            rw.process_lut_init(None, lut6_cell, new_cell_inst, self.log)
 
         # Return the cells to be removed
         cells_to_remove = []
