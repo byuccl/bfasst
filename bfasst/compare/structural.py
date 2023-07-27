@@ -472,7 +472,8 @@ class StructuralCompareTool(CompareTool):
         assert isinstance(net2, Net)
 
         assert net1 not in self.net_mapping
-        assert net2 not in self.net_mapping.inverse
+        if net2 in self.net_mapping.inverse and not net2.is_gnd and not net2.is_vdd:
+            raise AssertionError(f"{net2.name} in net_mapping.inverse already. net1: {net1.name}")
 
         self.net_mapping[net1] = net2
 
