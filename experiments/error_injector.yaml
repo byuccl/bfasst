@@ -1,5 +1,5 @@
 designs:
-  - ooc/aes128
+  # - ooc/aes128
   - ooc/EX_stage
   - ooc/ID_stage
   - ooc/IF_stage
@@ -7,9 +7,18 @@ designs:
   - ooc/WB_stage
   - ooc/a25_coprocessor
   - ooc/random_pulse_generator
-
-design_dirs:
-  - byu
+  - ooc/pid
+  - ooc/calc
+  - byu/riscvSimpleDatapath
+  - byu/regfile
+  - byu/seven_segment
+  - ooc/median
+  - byu/debouncer
+  - byu/uart
+  - ooc/tiny_encryption_algorithm
+  - byu/mux8to1
+  - byu/alu
+  - byu/stopwatch
 
 flow: xilinx_structural_error_injection
 
