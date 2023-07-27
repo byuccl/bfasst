@@ -220,7 +220,7 @@ def clean_jobs_recursive(jobs, curr_job, jobs_to_remove, statuses):
     """Recursive helper to resolve job dependencies and remove jobs from the job list"""
     jobs_to_remove.append(curr_job)
     for job in jobs:
-        if curr_job.uuid in job.dependencies:
+        if job.dependencies and curr_job.uuid in job.dependencies:
             statuses.append("Parent job failed")
             clean_jobs_recursive(jobs, job, jobs_to_remove, statuses)
 

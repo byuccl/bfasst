@@ -1,0 +1,3 @@
+top: memory_controller
+
+include_all_verilog_files: yes

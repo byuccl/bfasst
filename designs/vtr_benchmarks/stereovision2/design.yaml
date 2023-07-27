@@ -1,0 +1,3 @@
+top: sv_chip2_hierarchy_no_mem
+
+include_all_verilog_files: yes
