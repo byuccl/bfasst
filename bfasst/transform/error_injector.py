@@ -190,7 +190,7 @@ class ErrorInjector(TransformTool):
 
         self.__compose_corrupt_netlist()
 
-        self.__log_wire_swap(selected_input, selected_input2)
+        self.__log_wire_swap(selected_input, selected_input2, two_instances)
 
     def __get_random_instances(self, num_instances):
         """Gets a sample of random instances from the netlist"""
@@ -246,12 +246,14 @@ class ErrorInjector(TransformTool):
         """Attaches the given sink to the new_driver"""
         new_driver.wire.connect_pin(sink_pin)
 
-    def __log_wire_swap(self, selected_input, selected_input2):
+    def __log_wire_swap(self, selected_input, selected_input2, two_instances):
         """Logs the wire swap to the log file"""
         self.log_path = self.__get_wire_swap_log()
         log_msg = (
-            f"Wire swap of {selected_input.wire.cable.name} "
-            + f"and {selected_input2.wire.cable.name} "
+            f"Wire swap of {two_instances[0].name} {selected_input.name} "
+            + f"{selected_input.wire.cable.name} "
+            + f"and {two_instances[1].name} {selected_input2.name} "
+            + f"{select_input2.wire.cable.name} "
             + "was successful.\n"
         )
         self.log(log_msg)
