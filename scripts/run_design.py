@@ -41,6 +41,9 @@ def run_design(design_path, flow, error_flow, flow_args):
                     cleanup(job, jobs)
                 except BfasstException as e:
                     print(e)
+                    t_end = time.perf_counter()
+                    runtime = t_end - t_start
+                    print(f"Execution took {round(runtime, 1)} seconds")
                     return
     t_end = time.perf_counter()
     print("Success!")
