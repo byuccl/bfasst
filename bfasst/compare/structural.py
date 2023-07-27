@@ -151,6 +151,9 @@ class StructuralCompareTool(CompareTool):
             self.log(f"{key.name} -> {val.name}")
 
         self.log_title("Finalizing")
+        self.named_netlist.instances_to_map = {
+            i for i in self.named_netlist.instances if i.cell_type not in ("GND", "VCC")
+        }
         self.log(
             "Number of mapped blocks: ",
             f"{len(self.block_mapping)} of {len(self.named_netlist.instances_to_map)}",
