@@ -627,10 +627,10 @@ class StructuralCompareTool(CompareTool):
                 else ""
             )
             self.log(f"    {num_instances} remaining{info}")
-            if not num_instances:
-                import code
+            # if not num_instances:
+            #     import code
 
-                code.interact(local=dict(globals(), **locals()))
+            #     code.interact(local=dict(globals(), **locals()))
 
         self.log(
             f"  {len(instances_matching_connections)} instance(s) after filtering on connections"
