@@ -209,20 +209,34 @@ class ErrorInjector(TransformTool):
 
     def __get_source(self, pin):
         """Gets the source pin of the given pin. The pin must be a sink pin."""
-        for curr_pin in pin.wire.pins:
-            if isinstance(curr_pin, sdn.OuterPin) and curr_pin.instance.reference.name.startswith(
-                "SDN_VERILOG_ASSIGNMENT"
-            ):
-                continue
-            if self.__get_direction(curr_pin) is sdn.OUT:
-                return curr_pin
-        return None
+        # Check for const0/const1 that may not have any driver
+        if pin.wire.cable.name == r"\<const0>":
+            return None
+        elif pin.wire.cable.name == r"\<const1>":
+            return None
+        for pin in pin.wire.pins:
+            # If connected to top-level input
+            if isinstance(pin, sdn.ir.InnerPin):
+                if pin.port.direction == sdn.ir.Port.Direction.IN:
+                    return pin
+            else:
+                pin_direction = self.get_direction_for_unisim(
+                    pin.instance.reference.name, pin.inner_pin.port.name
+                )
+                if pin_direction == sdn.ir.Port.Direction.OUT:
+                    return pin
 
-    def __get_direction(self, pin):
-        """Gets the direction of the given pin"""
-        if isinstance(pin, sdn.InnerPin):
-            return pin.port.direction
-        return get_sdn_direction_for_unisim(pin.instance.reference.name, pin.inner_pin.port.name)
+    def get_direction_for_unisim(self, cell_type_name, port_name):
+        """Get a pin direction for a UNISIM cell"""
+
+        if cell_type_name.startswith("SDN_VERILOG_ASSIGNMENT"):
+            if port_name == "i":
+                return sdn.ir.Port.Direction.IN
+            # Shouldn't be possible to get here.  The way the code is set up, this function
+            # is never called on alias wires (wires driven by assign statement)
+            assert False
+
+        return get_sdn_direction_for_unisim(cell_type_name, port_name)
 
     def __detach_wire(self, pin):
         """Detaches the wire from the given pin"""
