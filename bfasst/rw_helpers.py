@@ -191,12 +191,13 @@ def process_lut_eqn(cell, is_lut5, log=print):
     return eqn
 
 
-def process_shared_gnd_lut_eqn(lut5, gnd_pin, new_cell_inst, log=print):
+def process_shared_gnd_lut_eqn(lut5, gnd_pin, new_cell_inst, is_gnd, log=print):
     lut5_eqn = process_lut_eqn(lut5, True, log)
+    const_str = "00000000" if is_gnd else "FFFFFFFF"
     if gnd_pin.endswith("O5"):
-        init_str = "64'h" + LUTTools.getLUTInitFromEquation(lut5_eqn, 5)[4:].zfill(8) + "00000000"
+        init_str = "64'h" + LUTTools.getLUTInitFromEquation(lut5_eqn, 5)[4:].zfill(8) + const_str
     else:
-        init_str = "64'h00000000" + LUTTools.getLUTInitFromEquation(lut5_eqn, 5)[4:].zfill(8)
+        init_str = f"64'h{const_str}" + LUTTools.getLUTInitFromEquation(lut5_eqn, 5)[4:].zfill(8)
     log("  New LUT INIT:", init_str)
     new_cell_inst.addProperty("INIT", init_str)
 
