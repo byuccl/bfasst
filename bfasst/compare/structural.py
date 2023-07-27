@@ -37,6 +37,7 @@ class StructuralCompareTool(CompareTool):
             "RAM256X1S",
             "SRL16E",
             "SRLC32E",
+            "LDCE",
         )
         no_props = ("IBUF", "OBUF", "OBUFT", "MUXF7", "MUXF8", "CARRY4", "IOBUF")
 
@@ -595,10 +596,6 @@ class StructuralCompareTool(CompareTool):
                 else ""
             )
             self.log(f"    {num_instances} remaining{info}")
-            if not num_instances:
-                import code
-
-                code.interact(local=dict(globals(), **locals()))
 
         self.log(
             f"  {len(instances_matching_connections)} instance(s) after filtering on connections"

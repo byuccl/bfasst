@@ -237,6 +237,7 @@ class XilinxPhysNetlist(TransformTool):
                 "FDPE",
                 "RAMB36E1",
                 "RAMB18E1",
+                "LDCE",
             ):
                 continue
 
@@ -744,7 +745,7 @@ class XilinxPhysNetlist(TransformTool):
         assert lut6_edif_cell_inst
 
         #### Get name for new LUT6_2 cell
-        new_cell_name = lut6_edif_cell_inst.getName() + f"_{site_str}_phys"
+        new_cell_name = lut6_edif_cell_inst.getName() + f"_{site_str}_{lut6_cell.getBELName()}_phys"
 
         # Routethru only?
         if lut6_cell.isRoutethru() and (lut5_cell is None or lut5_cell.isRoutethru()):
