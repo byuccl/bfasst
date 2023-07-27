@@ -8,7 +8,7 @@ designs:
   - ooc/a25_coprocessor
   - ooc/random_pulse_generator
   - ooc/pid
-  - ooc/calc
+  - byu/calc
   - byu/riscvSimpleDatapath
   - byu/regfile
   - byu/seven_segment
