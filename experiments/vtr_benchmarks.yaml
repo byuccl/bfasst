@@ -1,11 +1,25 @@
 designs:
     - vtr_benchmarks/bgm
+    - vtr_benchmarks/blob_merge
+    - vtr_benchmarks/boundtop
+    - vtr_benchmarks/ch_intrinsics
+    - vtr_benchmarks/diffeq1
+    - vtr_benchmarks/diffeq2
     - vtr_benchmarks/LU8PEEng
     - vtr_benchmarks/LU32PEEng
-    - vtr_benchmarks/LU64PEEng
+    #- vtr_benchmarks/LU64PEEng failed implementation due to size
     - vtr_benchmarks/mcml
     - vtr_benchmarks/mkDelayWorker32B
     - vtr_benchmarks/mkPktMerge
     - vtr_benchmarks/mkSMAdapter4B
-    
+    - vtr_benchmarks/or1200
+    - vtr_benchmarks/raygentop
+    - vtr_benchmarks/sha
+    - vtr_benchmarks/single_ff
+    - vtr_benchmarks/single_wire
+    - vtr_benchmarks/stereovision0
+    - vtr_benchmarks/stereovision1
+    - vtr_benchmarks/stereovision2
+    - vtr_benchmarks/stereovision3
+        
 flow: xilinx
