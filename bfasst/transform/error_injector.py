@@ -247,10 +247,18 @@ class ErrorInjector(TransformTool):
     def __log_wire_swap(self, selected_input, selected_input2, two_instances):
         """Logs the wire swap to the log file"""
         self.log_path = self.__get_wire_swap_log()
+        if isinstance(selected_input, sdn.OuterPin):
+            p1 = selected_input.inner_pin.port.name
+        else:
+            p1 = selected_input.port.name
+        if isinstance(selected_input2, sdn.OuterPin):
+            p2 = selected_input2.inner_pin.port.name
+        else:
+            p2 = selected_input2.port.name
         log_msg = (
-            f"Wire swap of {two_instances[0].name} {selected_input.name} "
+            f"Wire swap of {two_instances[0].name} {p1} "
             + f"{selected_input.wire.cable.name} "
-            + f"and {two_instances[1].name} {selected_input2.name} "
+            + f"and {two_instances[1].name} {p2} "
             + f"{selected_input2.wire.cable.name} "
             + "was successful.\n"
         )
