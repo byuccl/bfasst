@@ -1,58 +1,88 @@
 designs:
 # Some designs in the OOC directory have too many I/Os to be placed
 # Also VHDL designs do not compile right due to missing packages
-  - ooc/EX_stage
-  - ooc/ID_stage
-  - ooc/IF_stage
-  - ooc/MEM_stage
-  - ooc/WB_stage
-  - ooc/a25_coprocessor
-  - ooc/a25_execute
-  - ooc/a25_fetch
-  - ooc/a25_decode
-  - ooc/a25_mem
-  - ooc/a25_write_back
-  # - ooc/a25_wishbone - Too many I/Os
-  # - ooc/aes128 turn off bram merge in f2b to run
-  - ooc/amber
-  - ooc/atahost 
-  - ooc/basicrsa 
-  - ooc/bcd_adder 
-  - ooc/big_counter
-  # - ooc/bubblesort - Too many I/Os  
-  - ooc/control_unit
-  - ooc/counter
-  - ooc/cpu8080
-  - ooc/data_path
-  - ooc/fixed_point_sqrt
-  - ooc/fm_3d_core
-  - ooc/graphiti
-  - ooc/hight
-  # - ooc/jpegencode - Fails placement when max_dsp is 0. Not an I/O issue, just a internal timing/routing issue with a clock net. No problems in Vivado flow when DSPs allowed
-  - ooc/m32632
-  - ooc/median
-  - ooc/mips_16
-  - ooc/mpeg2fpga
-  - ooc/natalius_8bit_risc
-  - ooc/natalius_processor
-  - ooc/neo430
-  - ooc/pci_mini
-  - ooc/pic
-  - ooc/pid
-  - ooc/pid_simple
-  - ooc/potato
-  - ooc/pwm
-  - ooc/quadratic_func
-  - ooc/random_pulse_generator
-  # - ooc/sap - Implementation fails: ERROR: [DRC LUTLP-1] Combinatorial Loop Alert (4x)
-  - ooc/simon_core
-  - ooc/tiny_encryption_algorithm
-  - ooc/uart2spi
-  - ooc/vga
-  - ooc/wb_lcd
+  - byu/alu 
+  - byu//buttoncount 
+  - byu/calc 
+  - byu/counter 
+  - byu/counters 
+  - byu/debouncer 
+  - byu/lightWave 
+  - byu/mux8to1 
+  - byu/oneshot 
+  - byu/regfile 
+  - byu/riscvSimpleDatapath 
+  - byu/riscv_final 
+  - byu/rx 
+  - byu/seven_segment 
+  - byu/shiftReg 
+  - byu/Sout_reg 
+  - byu/stopwatch 
+  - byu/tx 
+  - byu/uart 
+  - byu/uart_debouncer 
+  - byu/uart_rx 
+  - byu/uart_ssc 
+  - byu/uart_tx 
+  - byu/UpDownButtonCount 
+  - ooc/EX_stage 
+  - ooc/ID_stage 
+  - ooc/IF_stage 
+  - ooc/MEM_stage 
+  - ooc/WB_stage 
+  - ooc/a25_coprocessor 
+  # - ooc/a25_execute - Fasm2bels Error:  missing a FDRE that propogates vcc
+  # - ooc/a25_fetch - Fasm2bels Error:  swapped the init for an SRL (placed SRLs on the lut5 & lut6, lu6 is disconnected but has the init string that should be on lut5).
+  - ooc/a25_decode 
+  # - ooc/a25_mem - Fasm2bels Error: SRL miswired
+  - ooc/a25_write_back 
+  - ooc/a25_wishbone 
+  # - ooc/aes128 Succes - turn off bram merge in f2b to run
+  # - ooc/atahost Failed on iteration with 5 blocks unmapped and 5 blocks remaining - no progresss to be made. 
+  - ooc/basicrsa  
+  - ooc/bcd_adder  
+  # - ooc/big_counter Fasm2bels Error: swapped init for SRL
+  - ooc/bubblesort 
+  - ooc/control_unit 
+  - ooc/cpu8080 
+  - ooc/data_path 
+  # - ooc/fixed_point_sqrt - SDN Error: SDN imported net-pin wrong
+  # - ooc/fm_3d_core - SDN Error: SDN imported net-pin wrong
+  # - ooc/graphiti - SDN Error: SDN doesn't import all of the i/o ports correctly
+  - ooc/hight 
+  # - ooc/m32632 - Fasm2bels to netlist fails
+  - ooc/median 
+  - ooc/mips_16 
+  # - ooc/natalius_8bit_risc Fasm2bels Error: Parity signals on BRAM are tied wrong
+  - ooc/natalius_processor 
+  # - ooc/neo430 SDN Error: SDN doesn't import all nets on all pins
+  - ooc/pci_mini 
+  - ooc/pic 
+  - ooc/pid 
+  - ooc/pid_simple 
+  - ooc/pwm 
+  - ooc/quadratic_func 
+  - ooc/random_pulse_generator 
+  - ooc/simon_core 
+  - ooc/tiny_encryption_algorithm 
+  - ooc/uart2spi 
+  # - ooc/vga SDN Error -> OBUF net not imported correctly
+  - ooc/wb_lcd 
+  # - vtr_benchmarks/bgm Fasm2bels Error: Misrouted net
+  - vtr_benchmarks/mkPktMerge 
+  - vtr_benchmarks/mkSMAdapter4B 
 
-design_dirs:
-  - byu
+  # - vtr_benchmarks/LU8PEEng - DO_REGs enabled, CASCADE is 0, runtime at least 2 hours
+  # - vtr_benchmarks/LU32PEEng - Timeout 13 hrs (estimated)
+
+  # - vtr_benchmarks/mkDelayWorker32B - Imp Design not support: DO Registers enabled
+  # - vtr_benchmarks/LU64PEEng - Imp Design not supported: Too many LUTs
+  # - vtr_benchmarks/mcml - Imp Design not supported: Has cascaded brams
+  # - ooc/amber Needs LUTRAM work
+  # - ooc/mpeg2fpga BRAM Configuration not supported
+  # - ooc/potato Imp Design not supported: RAM64M not fully implemented in phys netlist
+  # - ooc/sap - Imp Design not supported: Implementation fails: ERROR: [DRC LUTLP-1] Combinatorial Loop Alert (4x)
+  # - ooc/jpegencode - Imp Design not supported: Fails placement when max_dsp is 0. Not an I/O issue, just a internal timing/routing issue with a clock net. No problems in Vivado flow when DSPs allowed
 
 flow: xilinx_phys_netlist_cmp
 
