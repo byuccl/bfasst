@@ -43,7 +43,6 @@ def run_design(design_path, flow, error_flow, flow_args):
         print("Success!")
     except BfasstException as e:
         print(e)
-        return
     except AssertionError:
         formatted_lines = traceback.format_exc().splitlines()
         line = ""

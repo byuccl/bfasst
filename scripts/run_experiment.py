@@ -12,8 +12,8 @@ import traceback
 import threading
 import time
 import concurrent.futures
-from bfasst.experiment import Experiment
 
+from bfasst.experiment import Experiment
 from bfasst.output_cntrl import enable_proxy
 from bfasst.tool import BfasstException
 from bfasst.utils import TermColor, print_color
