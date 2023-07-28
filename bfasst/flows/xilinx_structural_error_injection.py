@@ -61,11 +61,11 @@ class XilinxStructuralErrorInjection(Flow):
                     self.design.impl_edif_path.stem + "_physical.v"
                 )
                 if error == ErrorType.BIT_FLIP:
-                    log_suffix = f"bit_flip_{i}"
-                    corrupt_netlist_path = self.design.path / f"bit_flip_{i}.v"
+                    log_prefix = f"bit_flip_{i}_"
+                    corrupt_netlist_path = error_injector.work_dir / f"bit_flip_{i}.v"
                 elif error == ErrorType.WIRE_SWAP:
-                    log_suffix = f"wire_swap_{i}"
-                    corrupt_netlist_path = self.design.path / f"wire_swap_{i}.v"
+                    log_prefix = f"wire_swap_{i}_"
+                    corrupt_netlist_path = error_injector.work_dir / f"wire_swap_{i}.v"
 
                 compare_tool = StructuralCompareTool(
                     cwd=self.design.build_dir,
@@ -73,7 +73,7 @@ class XilinxStructuralErrorInjection(Flow):
                     gold_netlist=phys_netlist_path,
                     rev_netlist=corrupt_netlist_path,
                     flow_args=self.flow_args[ToolType.CMP],
-                    log_suffix=log_suffix,
+                    log_prefix=log_prefix,
                 )
 
                 comparison_job = Job(
