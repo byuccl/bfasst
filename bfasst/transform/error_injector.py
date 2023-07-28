@@ -44,6 +44,7 @@ class ErrorInjector(TransformTool):
             if "GND" not in instance.reference.name.upper()
             and "VCC" not in instance.reference.name.upper()
             and "VDD" not in instance.reference.name.upper()
+            and not instance.reference.name.startswith("SDN_VERILOG_ASSIGNMENT")
         ]
 
         return sorted(unsorted_instances, key=lambda x: x.name)
@@ -60,9 +61,10 @@ class ErrorInjector(TransformTool):
         """Injects a bit flip error into the netlist"""
         self.__setup_netlist()
         self.corrupted_netlist_path = self.design.path / f"bit_flip_{self.log_num}.v"
-        num_luts = self.__pick_luts_from_netlist()
+        self.__pick_luts_from_netlist()
         self.__get_all_luts()
         self.__sort_all_luts()
+        num_luts = len(self.all_luts)
         lut_number = self.random_generator.randrange(num_luts)
         lut_size = self.__get_lut_init_size(lut_number)
         bit_number = self.random_generator.randrange(lut_size)
@@ -72,17 +74,20 @@ class ErrorInjector(TransformTool):
 
     def __pick_luts_from_netlist(self):
         """Calculates the number of LUTs in the netlist"""
-        num_luts = 0
         for library in self.clean_netlist.libraries:
             for definition in library.definitions:
                 if "LUT" in definition.name.upper():
-                    num_luts += len(definition.references)
                     self.hierarchical_luts.append(definition.references)
-        return num_luts
 
     def __get_all_luts(self):
         """Flattens the LUTs into a single list"""
-        self.all_luts = [lut for sublist in self.hierarchical_luts for lut in sublist]
+        temp = [lut for sublist in self.hierarchical_luts for lut in sublist]
+        self.all_luts = []
+        for lut in temp:
+            init_string = lut.data["VERILOG.Parameters"]["INIT"].upper()
+            init_val = int(init_string.split("H")[1], base=16)
+            if init_val != 0:
+                self.all_luts.append(lut)
 
     def __sort_all_luts(self):
         """Sorts all luts by their instance name"""
@@ -184,7 +189,7 @@ class ErrorInjector(TransformTool):
 
         self.__compose_corrupt_netlist()
 
-        self.__log_wire_swap(selected_input, selected_input2)
+        self.__log_wire_swap(selected_input, selected_input2, two_instances)
 
     def __get_random_instances(self, num_instances):
         """Gets a sample of random instances from the netlist"""
@@ -203,20 +208,34 @@ class ErrorInjector(TransformTool):
 
     def __get_source(self, pin):
         """Gets the source pin of the given pin. The pin must be a sink pin."""
-        for curr_pin in pin.wire.pins:
-            if isinstance(curr_pin, sdn.OuterPin) and curr_pin.instance.reference.name.startswith(
-                "SDN_VERILOG_ASSIGNMENT"
-            ):
-                continue
-            if self.__get_direction(curr_pin) is sdn.OUT:
-                return curr_pin
-        return None
+        # Check for const0/const1 that may not have any driver
+        if pin.wire.cable.name == r"\<const0>":
+            return None
+        elif pin.wire.cable.name == r"\<const1>":
+            return None
+        for pin in pin.wire.pins:
+            # If connected to top-level input
+            if isinstance(pin, sdn.ir.InnerPin):
+                if pin.port.direction == sdn.ir.Port.Direction.IN:
+                    return pin
+            else:
+                pin_direction = self.get_direction_for_unisim(
+                    pin.instance.reference.name, pin.inner_pin.port.name
+                )
+                if pin_direction == sdn.ir.Port.Direction.OUT:
+                    return pin
 
-    def __get_direction(self, pin):
-        """Gets the direction of the given pin"""
-        if isinstance(pin, sdn.InnerPin):
-            return pin.port.direction
-        return get_sdn_direction_for_unisim(pin.instance.reference.name, pin.inner_pin.port.name)
+    def get_direction_for_unisim(self, cell_type_name, port_name):
+        """Get a pin direction for a UNISIM cell"""
+
+        if cell_type_name.startswith("SDN_VERILOG_ASSIGNMENT"):
+            if port_name == "i":
+                return sdn.ir.Port.Direction.IN
+            # Shouldn't be possible to get here.  The way the code is set up, this function
+            # is never called on alias wires (wires driven by assign statement)
+            assert False
+
+        return get_sdn_direction_for_unisim(cell_type_name, port_name)
 
     def __detach_wire(self, pin):
         """Detaches the wire from the given pin"""
@@ -226,12 +245,22 @@ class ErrorInjector(TransformTool):
         """Attaches the given sink to the new_driver"""
         new_driver.wire.connect_pin(sink_pin)
 
-    def __log_wire_swap(self, selected_input, selected_input2):
+    def __log_wire_swap(self, selected_input, selected_input2, two_instances):
         """Logs the wire swap to the log file"""
         self.log_path = self.__get_wire_swap_log()
+        if isinstance(selected_input, sdn.OuterPin):
+            p1 = selected_input.inner_pin.port.name
+        else:
+            p1 = selected_input.port.name
+        if isinstance(selected_input2, sdn.OuterPin):
+            p2 = selected_input2.inner_pin.port.name
+        else:
+            p2 = selected_input2.port.name
         log_msg = (
-            f"Wire swap of {selected_input.wire.cable.name} "
-            + f"and {selected_input2.wire.cable.name} "
+            f"Wire swap of {two_instances[0].name} {p1} "
+            + f"{selected_input.wire.cable.name} "
+            + f"and {two_instances[1].name} {p2} "
+            + f"{selected_input2.wire.cable.name} "
             + "was successful.\n"
         )
         self.log(log_msg)

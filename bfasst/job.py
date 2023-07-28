@@ -34,8 +34,10 @@ class Job:
             self.function()
         except BfasstException:
             return
+        except AssertionError:
+            return
 
-        raise BfasstException("Job succeeded but was expected to fail")
+        raise BfasstException(f"Job succeeded but was expected to fail")
 
     def __eq__(self, other):
         return self.uuid == other.uuid
