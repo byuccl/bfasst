@@ -18,8 +18,9 @@ class StructuralCompareTool(CompareTool):
 
     TOOL_WORK_DIR = "struct_cmp"
 
-    def __init__(self, cwd, design, gold_netlist, rev_netlist, flow_args="") -> None:
+    def __init__(self, cwd, design, gold_netlist, rev_netlist, log_suffix="", flow_args="") -> None:
         super().__init__(cwd, design, gold_netlist, rev_netlist, flow_args)
+        self.log_path = self.work_dir / f"{log_suffix}_log.txt"
         self.remove_logs()
 
         self.named_netlist = None
