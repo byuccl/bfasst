@@ -1,6 +1,6 @@
 """ Structural Comparison and Mapping tool """
 
-import time
+
 from bidict import bidict
 import pickle
 import spydrnet as sdn
@@ -20,10 +20,13 @@ class StructuralCompareTool(CompareTool):
 
     TOOL_WORK_DIR = "struct_cmp"
 
-    def __init__(self, cwd, design, gold_netlist, rev_netlist, log_prefix="", flow_args="") -> None:
+    def __init__(
+        self, cwd, design, gold_netlist, rev_netlist, log_prefix="", flow_args="", rm_net=False
+    ) -> None:
         super().__init__(cwd, design, gold_netlist, rev_netlist, flow_args)
         self.log_path = self.work_dir / f"{log_prefix}log.txt"
         self.remove_logs()
+        self.rm_net = rm_net
 
         self.named_netlist = None
         self.reversed_netlist = None
@@ -225,6 +228,8 @@ class StructuralCompareTool(CompareTool):
         vtime = round(t_end - t_begin, 1)
         self.log(f"Equivalence verification time: {vtime} seconds")
         self.log(f"Total time: {mtime + vtime} seconds")
+        if self.rm_net:
+            self.rev_netlist.unlink()
         self.cleanup()
 
         self.end_time = time.time()
