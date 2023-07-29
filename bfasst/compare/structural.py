@@ -18,9 +18,9 @@ class StructuralCompareTool(CompareTool):
 
     TOOL_WORK_DIR = "struct_cmp"
 
-    def __init__(self, cwd, design, gold_netlist, rev_netlist, log_suffix="", flow_args="") -> None:
+    def __init__(self, cwd, design, gold_netlist, rev_netlist, log_prefix="", flow_args="") -> None:
         super().__init__(cwd, design, gold_netlist, rev_netlist, flow_args)
-        self.log_path = self.work_dir / f"{log_suffix}_log.txt"
+        self.log_path = self.work_dir / f"{log_prefix}log.txt"
         self.remove_logs()
 
         self.named_netlist = None
@@ -334,27 +334,27 @@ class StructuralCompareTool(CompareTool):
         iteration = 0
         while self.named_netlist.instances_to_map:
             if not overall_progress:
-                # num_mapped_nets = (
-                #     len([net for net in self.net_mapping if net.is_connected()])
-                #     + len(self.vcc_mappings)
-                #     + len(self.gnd_mappings)
-                # )
-                # num_total_nets = len(self.named_netlist.get_connected_nets())
-                # cell_type = {i.cell_type for i in self.named_netlist.instances_to_map}
-                # if len(cell_type) == 1 and num_mapped_nets == num_total_nets:
-                #     reversed_remaining = [
-                #         self.possible_matches[i.name] for i in self.named_netlist.instances_to_map
-                #     ]
-                #     remaining = set()
-                #     for i in reversed_remaining:
-                #         for j in i:
-                #             remaining.add(j.name)
-                #     if len(remaining) == len(reversed_remaining[0]):
-                #         for named, rev in zip(
-                #             self.named_netlist.instances_to_map, reversed_remaining[0]
-                #         ):
-                #             self.add_block_mapping(named, rev)
-                #         break
+                num_mapped_nets = (
+                    len([net for net in self.net_mapping if net.is_connected()])
+                    + len(self.vcc_mappings)
+                    + len(self.gnd_mappings)
+                )
+                num_total_nets = len(self.named_netlist.get_connected_nets())
+                cell_type = {i.cell_type for i in self.named_netlist.instances_to_map}
+                if len(cell_type) == 1 and num_mapped_nets == num_total_nets:
+                    reversed_remaining = [
+                        self.possible_matches[i.name] for i in self.named_netlist.instances_to_map
+                    ]
+                    remaining = set()
+                    for i in reversed_remaining:
+                        for j in i:
+                            remaining.add(j.name)
+                    if len(remaining) == len(reversed_remaining[0]):
+                        for named, rev in zip(
+                            self.named_netlist.instances_to_map, reversed_remaining[0]
+                        ):
+                            self.add_block_mapping(named, rev)
+                        break
 
                 self.log(f"No more progress can be made. Failed at iteration {iteration}.")
                 break
@@ -363,7 +363,7 @@ class StructuralCompareTool(CompareTool):
             self.log(f"===== Mapping Iteration {iteration} =====")
 
             # Loop through reversed netlist blocks
-            instance_iter = iter(set(self.named_netlist.instances_to_map))
+            instance_iter = iter(self.named_netlist.instances_to_map)
             try:
                 while not overall_progress:
                     overall_progress = self.potential_mapping_wrapper(next(instance_iter))
@@ -451,16 +451,6 @@ class StructuralCompareTool(CompareTool):
 
         self.block_mapping[instance] = matched_instance
         self.named_netlist.instances_to_map.remove(instance)
-        # if instance in self.named_netlist.buf:
-        #     self.named_netlist.buf.remove(instance)
-        # elif instance in self.named_netlist.brams:
-        #     self.named_netlist.brams.remove(instance)
-        # elif instance in self.named_netlist.luts:
-        #     self.named_netlist.luts.remove(instance)
-        # elif instance in self.named_netlist.carry:
-        #     self.named_netlist.carry.remove(instance)
-        # elif instance in self.named_netlist.extras:
-        #     self.named_netlist.extras.remove(instance)
 
         for pin in instance.pins:
             # Some pins should not be used to establish net mapping
@@ -512,9 +502,7 @@ class StructuralCompareTool(CompareTool):
             self.add_net_mapping(net_a, net_b)
 
     def add_net_mapping(self, net1, net2):
-        # assert isinstance(net1, Net)
-        # assert isinstance(net2, Net)
-
+        """Add mapping point between two Nets"""
         assert net1 not in self.net_mapping
         if net2 in self.net_mapping.inverse:
             if net2.is_gnd:
