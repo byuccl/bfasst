@@ -1,13 +1,13 @@
 """ Structural Comparison and Mapping tool """
 
+from collections import defaultdict
 import time
 from bidict import bidict
 import pickle
 import spydrnet as sdn
-import time
 from bfasst import jpype_jvm
 from bfasst.compare.base import CompareTool, CompareException
-from bfasst.utils import error, properties_are_equal
+from bfasst.utils import convert_verilog_literal_to_int, error, properties_are_equal
 import bfasst.rw_helpers as rw
 
 GND_NAMES = set()
@@ -250,57 +250,39 @@ class StructuralCompareTool(CompareTool):
 
     def init_matching_instances(self):
         """Init possible_matches dict with all instances that match by cell type and properties"""
-        all_instances = self.reversed_netlist.instances
+        all_instances = [i for i in self.reversed_netlist.instances if not i.cell_type.startswith("SDN_VERILOG")]
+
+        grouped_by_cell_type = defaultdict(list)
+        for instance in all_instances:
+            properties = {}
+            for prop in self.get_properties_for_type(instance.cell_type):
+                properties[prop] = convert_verilog_literal_to_int(instance.properties[prop])
+                
+            grouped_by_cell_type[(instance.cell_type, hash(frozenset(properties)))].append(instance)
+            if len(grouped_by_cell_type) > 10:
+                break
+
+
         for named_instance in self.named_netlist.instances_to_map:
             ###############################################################
-            # First find all instances of the same type that are unmapped
+            # First find all instances of the same type and same properties
             ###############################################################
-            instances_matching_cell_type = [
-                i for i in all_instances if i.cell_type == named_instance.cell_type
-            ]
 
-            if not instances_matching_cell_type:
-                self.log("No instances of type", named_instance.cell_type)
+            # Compute a hash of this instance's properties
+            properties = {}
+            for prop in self.get_properties_for_type(named_instance.cell_type):
+                properties[prop] = convert_verilog_literal_to_int(named_instance.properties[prop])
+            my_hash = hash(frozenset(properties))
+
+            instances_matching = grouped_by_cell_type[(named_instance.cell_type, my_hash)]
+
+            if not instances_matching:
+                self.log("No instances of type", named_instance.cell_type, "with properties", properties)
                 raise CompareException(
                     f"Not equivalent. {named_instance.name} has no possible match in the netlist."
                 )
-
-            ###############################################################
-            # Now look at properties
-            ###############################################################
-            properties_to_match = self.get_properties_for_type(named_instance.cell_type)
-            if not properties_to_match:
-                self.possible_matches[named_instance.name] = instances_matching_cell_type
-                continue
-
-            properties = named_instance.properties
-
-            for prop in properties_to_match:
-                if properties is None or prop not in properties:
-                    error(prop, "not in properties:", properties)
-
-                # Filter by properties match (case insensitive)
-                instances_matching_props = [
-                    i
-                    for i in instances_matching_cell_type
-                    if prop in i.properties
-                    and properties_are_equal(properties[prop], i.properties[prop])
-                ]
-            if not instances_matching_props:
-                self.log(
-                    f"No unmapped instances of {named_instance.cell_type} with matching properties",
-                    ",".join(p + "=" + properties[p] for p in properties_to_match),
-                    "\n  "
-                    + "\n  ".join(
-                        str(i.name) + " " + str(i.properties) for i in instances_matching_cell_type
-                    )
-                    if len(instances_matching_cell_type) < 10
-                    else "",
-                )
-                raise CompareException(
-                    f"Not equivalent. {named_instance.name} has no possible match in the netlist."
-                )
-            self.possible_matches[named_instance.name] = instances_matching_props
+            
+            self.possible_matches[named_instance] = instances_matching.copy()
 
     def potential_mapping_wrapper(self, instance):
         """Wrap check_for_potential_mapping some inital checks/postprocessing"""
@@ -362,7 +344,7 @@ class StructuralCompareTool(CompareTool):
                 cell_type = {i.cell_type for i in self.named_netlist.instances_to_map}
                 if len(cell_type) == 1 and num_mapped_nets == num_total_nets:
                     reversed_remaining = [
-                        self.possible_matches[i.name] for i in self.named_netlist.instances_to_map
+                        self.possible_matches[i] for i in self.named_netlist.instances_to_map
                     ]
                     remaining = set()
                     for i in reversed_remaining:
@@ -547,7 +529,7 @@ class StructuralCompareTool(CompareTool):
 
         instances_matching_connections = [
             i
-            for i in self.possible_matches[named_instance.name]
+            for i in self.possible_matches[named_instance]
             if i not in self.block_mapping.inverse
         ]
 
@@ -681,7 +663,7 @@ class StructuralCompareTool(CompareTool):
         self.log(
             f"  {len(instances_matching_connections)} instance(s) after filtering on connections"
         )
-        self.possible_matches[named_instance.name] = instances_matching_connections
+        self.possible_matches[named_instance] = instances_matching_connections
         return instances_matching_connections
 
     def get_properties_for_type(self, cell_type):
