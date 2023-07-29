@@ -148,6 +148,9 @@ class StructuralCompareTool(CompareTool):
 
         t_begin = time.perf_counter()
         self.init_netlists()
+
+        print("Time after init_netlists:".ljust(35), time.perf_counter() - t_begin)
+
         # self.load_mappings()
         # Structurally map the rest of the netlists
         self.perform_mapping()
@@ -180,7 +183,7 @@ class StructuralCompareTool(CompareTool):
             self.log(f"    {block.name}")
 
         num_mapped_nets = (
-            len([net for net in self.net_mapping if net.is_connected()])
+            len([net for net in self.net_mapping if net.is_connected])
             + len(self.vcc_mappings)
             + len(self.gnd_mappings)
         )
@@ -225,7 +228,7 @@ class StructuralCompareTool(CompareTool):
         self.cleanup()
 
         self.end_time = time.time()
-        self.log(f"Total time: {self.end_time - self.start_time:.2f} seconds")
+        print("Total time:".ljust(35), self.end_time - self.start_time)
 
     def map_ports(self):
         """Map top-level ports"""
@@ -341,8 +344,7 @@ class StructuralCompareTool(CompareTool):
 
         # Init possible_matches dict with all instances that match by cell type and properties
         self.init_matching_instances()
-        self.this_time = time.time()
-        print("Runtime after matching instances:", self.this_time - self.start_time)
+        print("Time after initial cache:".ljust(35), time.time() - self.start_time)
 
         self.log_title("Starting mapping iterations")
 
@@ -417,8 +419,8 @@ class StructuralCompareTool(CompareTool):
 
                 net_a = pin_a.net
                 net_b = pin_b.net
-                net_a_empty = net_a is None or not net_a.is_connected()
-                net_b_empty = net_b is None or not net_b.is_connected()
+                net_a_empty = net_a is None or not net_a.is_connected
+                net_b_empty = net_b is None or not net_b.is_connected
                 try:
                     if net_a_empty and not net_b_empty:
                         raise CompareException(
@@ -702,7 +704,10 @@ class Netlist:
 
         # Nets
         self.wire_to_net = {}
+
+        t1 = time.time()
         self.build_nets()
+        t2 = time.time()
 
         # Instances
         instances = [Instance(i, self) for i in library.get_instances()]
@@ -803,13 +808,17 @@ class Netlist:
         for net in self.nets:
             net.find_driver()
 
+        # Now determine whether they are connected
+        for net in self.nets:
+            net.determine_is_connected()
+
     @property
     def nets(self):
         return set(self.wire_to_net.values())
 
     def get_connected_nets(self):
         """Return a list of nets that are connected to something"""
-        return [net for net in self.nets if net.is_connected()]
+        return [net for net in self.nets if net.is_connected]
 
 
 class Pin:
@@ -865,12 +874,13 @@ class Net:
         self.driver_pin = None
         self.is_vdd = None
         self.is_gnd = None
+        self.is_connected = None
 
     def add_alias_wire(self, wire):
         assert wire not in self.alias_wires
         self.alias_wires.append(wire)
 
-    def is_connected(self):
+    def determine_is_connected(self):
         """Determine if this net drives anything"""
 
         # Net needs a driver pin (except VDD/GND have implicit drivers)
@@ -887,7 +897,7 @@ class Net:
                 or not p.instance.reference.name.startswith("SDN_VERILOG_ASSIGNMENT_1")
             )
         ]
-        return bool(pins_that_drive)
+        self.is_connected = bool(pins_that_drive)
 
     def find_driver(self):
         """Determine the pin that drives this wire"""
