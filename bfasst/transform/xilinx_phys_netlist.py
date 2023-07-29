@@ -2,6 +2,7 @@
 
 import pathlib
 import re
+import time
 
 import jpype
 import jpype.imports
@@ -96,6 +97,7 @@ class XilinxPhysNetlist(TransformTool):
 
         phys_netlist_checkpoint = self.work_dir / "phys_netlist.dcp"
 
+        start_time = time.time()
         # Catch all Java exceptions since they are not picklable,
         # and so cannot be handled properly by multiprocessing
         # Don't raise from as this is also problematic.
@@ -103,7 +105,7 @@ class XilinxPhysNetlist(TransformTool):
             self.run_rapidwright(phys_netlist_checkpoint, phys_netlist_edif_path)
         except jpype.JException as exc:
             raise rw.RapidwrightException from exc  # pylint: disable=bad-exception-cause
-
+        end_time = time.time()
         self.log("\nUsing Vivado to create new netlist:", phys_netlist_verilog_path)
 
         vivado_tcl_path = self.work_dir / "vivado_checkpoint_to_netlist.tcl"
@@ -128,6 +130,9 @@ class XilinxPhysNetlist(TransformTool):
         self.check_vivado_output(vivado_log_path)
 
         self.log("Exported new netlist to", phys_netlist_verilog_path)
+        self.log(f"Transformation time {end_time - start_time:.2f} seconds")
+        with open(self.work_dir / "transformation_time.txt", "w") as fp:
+            fp.write(f"{end_time - start_time:.2f}\n")
 
     def init_const_nets(self):
         """Init VCC and GND nets"""

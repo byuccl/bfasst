@@ -234,6 +234,8 @@ class StructuralCompareTool(CompareTool):
 
         self.end_time = time.time()
         self.log("Total time:".ljust(35), self.end_time - self.start_time)
+        with open(self.work_dir / "comparison_time.txt", "w") as f:
+            f.write(f"{self.end_time - self.start_time}\n")
 
     def map_ports(self):
         """Map top-level ports"""

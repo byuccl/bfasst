@@ -78,6 +78,7 @@ class XilinxStructuralErrorInjection(Flow):
                     rev_netlist=corrupt_netlist_path,
                     flow_args=self.flow_args[ToolType.CMP],
                     log_prefix=log_prefix,
+                    rm_net=True,
                 )
 
                 comparison_job = Job(
@@ -90,12 +91,12 @@ class XilinxStructuralErrorInjection(Flow):
                 self.job_list.append(comparison_job.invert())
 
                 # Clean up the corrupted netlist if the comparison passes
-                curr_job = Job(
-                    partial(unlink, corrupt_netlist_path),
-                    self.design.rel_path,
-                    {self.job_list[-1].uuid},
-                )
-                self.job_list.append(curr_job)
+                # curr_job = Job(
+                #     partial(unlink, corrupt_netlist_path),
+                #     self.design.rel_path,
+                #     {self.job_list[-1].uuid},
+                # )
+                # self.job_list.append(curr_job)
 
             random_seed_multiplier += 1
 
