@@ -1,10 +1,10 @@
 """ Structural Comparison and Mapping tool """
 
+from collections import defaultdict
 import time
 from bidict import bidict
 import pickle
 import spydrnet as sdn
-import time
 from bfasst import jpype_jvm
 from bfasst.compare.base import CompareTool, CompareException
 from bfasst.utils import error, properties_are_equal
@@ -251,13 +251,18 @@ class StructuralCompareTool(CompareTool):
     def init_matching_instances(self):
         """Init possible_matches dict with all instances that match by cell type and properties"""
         all_instances = self.reversed_netlist.instances
+
+        grouped_by_cell_type = defaultdict(list)
+        for instance in all_instances:
+            grouped_by_cell_type[instance.cell_type].append(instance)
+
+
         for named_instance in self.named_netlist.instances_to_map:
             ###############################################################
             # First find all instances of the same type that are unmapped
             ###############################################################
-            instances_matching_cell_type = [
-                i for i in all_instances if i.cell_type == named_instance.cell_type
-            ]
+            instances_matching_cell_type =  grouped_by_cell_type[named_instance.cell_type]
+
 
             if not instances_matching_cell_type:
                 self.log("No instances of type", named_instance.cell_type)
