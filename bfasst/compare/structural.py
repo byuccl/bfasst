@@ -1,5 +1,6 @@
 """ Structural Comparison and Mapping tool """
 
+import time
 from bidict import bidict
 import pickle
 import spydrnet as sdn
@@ -142,6 +143,7 @@ class StructuralCompareTool(CompareTool):
 
     def compare_netlists(self):
         """Map the golden and reversed netlists through automated block mapping"""
+        self.start_time = time.time()
 
         self.init_netlists()
         # self.load_mappings()
@@ -211,6 +213,9 @@ class StructuralCompareTool(CompareTool):
         self.verify_equivalence()
 
         self.cleanup()
+
+        self.end_time = time.time()
+        self.log(f"Total time: {self.end_time - self.start_time:.2f} seconds")
 
     def map_ports(self):
         """Map top-level ports"""
@@ -326,6 +331,8 @@ class StructuralCompareTool(CompareTool):
 
         # Init possible_matches dict with all instances that match by cell type and properties
         self.init_matching_instances()
+        self.this_time = time.time()
+        print("Runtime after matching instances:", self.this_time - self.start_time)
 
         self.log_title("Starting mapping iterations")
 
