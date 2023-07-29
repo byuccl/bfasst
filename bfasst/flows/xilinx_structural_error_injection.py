@@ -51,21 +51,25 @@ class XilinxStructuralErrorInjection(Flow):
                     random_generator=random.Random(random_seed_multiplier * i),
                 )
 
-                # Create a job to inject the correct type of error
-                error_function = error_injector.get_injection_function(error)
-                curr_job = Job(error_function, self.design.rel_path, {phys_netlist_rev_job.uuid})
-                self.job_list.append(curr_job)
-
-                # Set the paths for the compare tool's copy of design
-                phys_netlist_path = self.design.impl_edif_path.parent / (
-                    self.design.impl_edif_path.stem + "_physical.v"
-                )
                 if error == ErrorType.BIT_FLIP:
                     log_prefix = f"bit_flip_{i}_"
                     corrupt_netlist_path = error_injector.work_dir / f"bit_flip_{i}.v"
                 elif error == ErrorType.WIRE_SWAP:
                     log_prefix = f"wire_swap_{i}_"
                     corrupt_netlist_path = error_injector.work_dir / f"wire_swap_{i}.v"
+
+                # Create a job to inject the correct type of error
+                if not corrupt_netlist_path.exists():  # Use this to resume from failed generation
+                    error_function = error_injector.get_injection_function(error)
+                    curr_job = Job(
+                        error_function, self.design.rel_path, {phys_netlist_rev_job.uuid}
+                    )
+                    self.job_list.append(curr_job)
+
+                # Set the paths for the compare tool's copy of design
+                phys_netlist_path = self.design.impl_edif_path.parent / (
+                    self.design.impl_edif_path.stem + "_physical.v"
+                )
 
                 compare_tool = StructuralCompareTool(
                     cwd=self.design.build_dir,

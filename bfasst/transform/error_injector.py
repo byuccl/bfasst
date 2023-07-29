@@ -65,6 +65,8 @@ class ErrorInjector(TransformTool):
         self.__get_all_luts()
         self.__sort_all_luts()
         num_luts = len(self.all_luts)
+        if not num_luts:
+            raise TransformException("No LUTs elligble for bit flip")
         lut_number = self.random_generator.randrange(num_luts)
         lut_size = self.__get_lut_init_size(lut_number)
         bit_number = self.random_generator.randrange(lut_size)

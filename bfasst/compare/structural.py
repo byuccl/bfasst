@@ -149,7 +149,7 @@ class StructuralCompareTool(CompareTool):
         t_begin = time.perf_counter()
         self.init_netlists()
 
-        print("Time after init_netlists:".ljust(35), time.perf_counter() - t_begin)
+        self.log("Time after init_netlists:".ljust(35), time.perf_counter() - t_begin)
 
         # self.load_mappings()
         # Structurally map the rest of the netlists
@@ -228,7 +228,7 @@ class StructuralCompareTool(CompareTool):
         self.cleanup()
 
         self.end_time = time.time()
-        print("Total time:".ljust(35), self.end_time - self.start_time)
+        self.log("Total time:".ljust(35), self.end_time - self.start_time)
 
     def map_ports(self):
         """Map top-level ports"""
@@ -344,7 +344,7 @@ class StructuralCompareTool(CompareTool):
 
         # Init possible_matches dict with all instances that match by cell type and properties
         self.init_matching_instances()
-        print("Time after initial cache:".ljust(35), time.time() - self.start_time)
+        self.log("Time after initial cache:".ljust(35), time.time() - self.start_time)
 
         self.log_title("Starting mapping iterations")
 
@@ -849,14 +849,14 @@ class Pin:
         # This didn't work unfortunately
         # if instance.cell_type == "LUT6_2":
         #     eqn = LUTTools.getLUTEquation(instance.properties["INIT"])
-        #     print(instance.properties["INIT"])
-        #     # print(eqn)
+        #     self.log(instance.properties["INIT"])
+        #     # self.log(eqn)
         #     return self.name not in eqn
         # return False
 
     @property
     def net(self):
-        # print(self.instance.name, self.name, self.pin.wire)'
+        # self.log(self.instance.name, self.name, self.pin.wire)'
         return self.netlist.wire_to_net.get(self.pin.wire)
 
     @property
