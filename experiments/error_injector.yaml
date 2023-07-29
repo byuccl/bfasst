@@ -1,5 +1,4 @@
 designs:
-  designs:
 # Some designs in the OOC directory have too many I/Os to be placed
 # Also VHDL designs do not compile right due to missing packages
   - byu/alu 
