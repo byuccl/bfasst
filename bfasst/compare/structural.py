@@ -268,8 +268,6 @@ class StructuralCompareTool(CompareTool):
                 properties[prop] = convert_verilog_literal_to_int(instance.properties[prop])
 
             grouped_by_cell_type[(instance.cell_type, hash(frozenset(properties)))].append(instance)
-            if len(grouped_by_cell_type) > 10:
-                break
 
         for named_instance in self.named_netlist.instances_to_map:
             ###############################################################
