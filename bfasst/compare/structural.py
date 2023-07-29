@@ -3,6 +3,7 @@
 from bidict import bidict
 import pickle
 import spydrnet as sdn
+import time
 from bfasst import jpype_jvm
 from bfasst.compare.base import CompareTool, CompareException
 from bfasst.utils import error, properties_are_equal
@@ -143,10 +144,12 @@ class StructuralCompareTool(CompareTool):
     def compare_netlists(self):
         """Map the golden and reversed netlists through automated block mapping"""
 
+        t_begin = time.perf_counter()
         self.init_netlists()
         # self.load_mappings()
         # Structurally map the rest of the netlists
         self.perform_mapping()
+        t_end = time.perf_counter()
 
         self.log_title("Mapping (Instances)")
         block_map = {k.name: v.name for k, v in self.block_mapping.items()}
@@ -207,9 +210,16 @@ class StructuralCompareTool(CompareTool):
         with open(self.work_dir / "net_mapping.pkl", "wb") as f:
             pickle.dump(net_map, f)
 
-        # After establishing mapping, verify equivalence
-        self.verify_equivalence()
+        mtime = round(t_end - t_begin, 1)
+        self.log(f"Mapping time: {mtime} seconds")
 
+        # After establishing mapping, verify equivalence
+        t_begin = time.perf_counter()
+        self.verify_equivalence()
+        t_end = time.perf_counter()
+        vtime = round(t_end - t_begin, 1)
+        self.log(f"Equivalence verification time: {vtime} seconds")
+        self.log(f"Total time: {mtime + vtime} seconds")
         self.cleanup()
 
     def map_ports(self):
@@ -363,7 +373,7 @@ class StructuralCompareTool(CompareTool):
             self.log(f"===== Mapping Iteration {iteration} =====")
 
             # Loop through reversed netlist blocks
-            instance_iter = iter(self.named_netlist.instances_to_map)
+            instance_iter = iter(set(self.named_netlist.instances_to_map))
             try:
                 while not overall_progress:
                     overall_progress = self.potential_mapping_wrapper(next(instance_iter))
