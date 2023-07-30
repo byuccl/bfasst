@@ -263,9 +263,10 @@ class StructuralCompareTool(CompareTool):
 
         grouped_by_cell_type = defaultdict(list)
         for instance in all_instances:
-            properties = {}
+            properties = set()
             for prop in self.get_properties_for_type(instance.cell_type):
-                properties[prop] = convert_verilog_literal_to_int(instance.properties[prop])
+                properties.add(f"{prop}{convert_verilog_literal_to_int(instance.properties[prop])}")
+                # properties[prop] = convert_verilog_literal_to_int(instance.properties[prop])
 
             grouped_by_cell_type[(instance.cell_type, hash(frozenset(properties)))].append(instance)
 
@@ -275,9 +276,12 @@ class StructuralCompareTool(CompareTool):
             ###############################################################
 
             # Compute a hash of this instance's properties
-            properties = {}
+            properties = set()
             for prop in self.get_properties_for_type(named_instance.cell_type):
-                properties[prop] = convert_verilog_literal_to_int(named_instance.properties[prop])
+                properties.add(
+                    f"{prop}{convert_verilog_literal_to_int(named_instance.properties[prop])}"
+                )
+                # properties[prop] = convert_verilog_literal_to_int(named_instance.properties[prop])
             my_hash = hash(frozenset(properties))
 
             instances_matching = grouped_by_cell_type[(named_instance.cell_type, my_hash)]
@@ -290,7 +294,7 @@ class StructuralCompareTool(CompareTool):
                     f"Not equivalent. {named_instance.name} has no possible match in the netlist."
                 )
 
-            self.possible_matches[named_instance] = instances_matching.copy()
+            self.possible_matches[named_instance] = instances_matching
 
     def potential_mapping_wrapper(self, instance):
         """Wrap check_for_potential_mapping some inital checks/postprocessing"""
