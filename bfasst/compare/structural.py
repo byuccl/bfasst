@@ -294,7 +294,7 @@ class StructuralCompareTool(CompareTool):
                     f"Not equivalent. {named_instance.name} has no possible match in the netlist."
                 )
 
-            self.possible_matches[named_instance] = instances_matching
+            self.possible_matches[named_instance] = instances_matching.copy()
 
     def potential_mapping_wrapper(self, instance):
         """Wrap check_for_potential_mapping some inital checks/postprocessing"""
