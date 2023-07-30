@@ -45,6 +45,8 @@ class ErrorInjector(TransformTool):
             if "GND" not in instance.reference.name.upper()
             and "VCC" not in instance.reference.name.upper()
             and "VDD" not in instance.reference.name.upper()
+            and "IBUF" not in instance.reference.name.upper()
+            and "OBUF" not in instance.reference.name.upper()
             and not instance.reference.name.startswith("SDN_VERILOG_ASSIGNMENT")
         ]
 
