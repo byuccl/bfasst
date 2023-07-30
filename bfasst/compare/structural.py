@@ -632,7 +632,7 @@ class StructuralCompareTool(CompareTool):
                 if instance.get_pin(pin.name, idx).net == other_net
             ]
 
-            if not tmp and named_instance.cell_type == "BUFGCTRL" and pin.name[0] == "I":
+            if named_instance.cell_type == "BUFGCTRL" and pin.name[0] == "I" and len(tmp) < len(instances_matching_connections):
                 # sometimes f2b routes the clk net to both inputs
                 other_pin = f"I{'1' if pin.name[1] == '0' else '0'}"
                 tmp = [
