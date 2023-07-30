@@ -2,7 +2,7 @@ import csv
 import json
 from pathlib import Path
 
-ROOT_DIR = Path("/home/reilly/equiv/bfasst/build/xilinx_phys_netlist_cmp")
+ROOT_DIR = Path("/home/reilly/bfasst/build/xilinx_phys_netlist_cmp")
 
 results = "build/xilinx_phys_netlist_cmp/results.json"
 
@@ -15,6 +15,7 @@ with open(results, "r") as f:
 
 rows = []
 for design, status in data.items():
+    status = "Success" if not status else status
     row = {
         "Design": design.split("/")[1],
         "Status": status,
@@ -48,9 +49,9 @@ for design, status in data.items():
                 row["BRAM"] = line.split("|")[2].strip()
 
     with open(ROOT_DIR / f"{design}/xilinx_phys_netlist/transformation_time.txt", "r") as f:
-        row["T_TIME"] = f.read().strip()
+        row["T_TIME"] = round(float(f.read().strip()), 2)
     with open(ROOT_DIR / f"{design}/struct_cmp/comparison_time.txt", "r") as f:
-        row["S_TIME"] = f.read().strip()
+        row["S_TIME"] = round(float(f.read().strip()), 2)
     rows.append(row)
 
 with open(out, "w", newline="") as f:
