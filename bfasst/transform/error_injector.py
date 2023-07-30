@@ -23,7 +23,8 @@ class ErrorInjector(TransformTool):
         self.remove_logs()
         self.clean_netlist = None
         self.hierarchical_luts = []
-        self.all_luts = None
+        self.all_luts = []
+        self.all_rams = []
         self.all_instances = None
         self.log_num = log_num
         self.random_generator = random_generator
@@ -62,40 +63,50 @@ class ErrorInjector(TransformTool):
         self.__setup_netlist()
         self.corrupted_netlist_path = self.work_dir / f"bit_flip_{self.log_num}.v"
         self.__pick_luts_from_netlist()
-        self.__get_all_luts()
-        self.__sort_all_luts()
         num_luts = len(self.all_luts)
+        prims = self.all_luts
         if not num_luts:
-            raise TransformException("No LUTs elligble for bit flip")
+            self.__pick_rams_from_netlist()
+            if not self.all_rams:
+                raise TransformException("No LUTs elligble for bit flip")
+            num_luts = len(self.all_rams)
+            prims = self.all_rams
+            
         lut_number = self.random_generator.randrange(num_luts)
-        lut_size = self.__get_lut_init_size(lut_number)
+        lut_size = self.__get_lut_init_size(prims[lut_number])
         bit_number = self.random_generator.randrange(lut_size)
-        self.__flip_bit(lut_number, bit_number)
+        self.__flip_bit(prims[lut_number], bit_number)
         self.__compose_corrupt_netlist()
-        self.__log_bit_flip(lut_number, bit_number)
+        self.__log_bit_flip(prims[lut_number], bit_number)
 
     def __pick_luts_from_netlist(self):
-        """Calculates the number of LUTs in the netlist"""
+        """Gets LUTS from netlist"""
+        tmp = []
         for library in self.clean_netlist.libraries:
             for definition in library.definitions:
                 if "LUT" in definition.name.upper():
-                    self.hierarchical_luts.append(definition.references)
-
-    def __get_all_luts(self):
-        """Flattens the LUTs into a single list"""
-        temp = [lut for sublist in self.hierarchical_luts for lut in sublist]
-        self.all_luts = []
-        for lut in temp:
+                    tmp.extend(definition.references)
+        for lut in tmp:
             init_string = lut.data["VERILOG.Parameters"]["INIT"].upper()
             init_val = int(init_string.split("H")[1], base=16)
             if init_val != 0:
                 self.all_luts.append(lut)
-
-    def __sort_all_luts(self):
-        """Sorts all luts by their instance name"""
         self.all_luts.sort(key=lambda x: x.name)
 
-    def __get_lut_init_size(self, lut_number):
+    def __pick_rams_from_netlist(self):
+        """Gets RAMs"""
+        tmp = []
+        for library in self.clean_netlist.libraries:
+            for definition in library.definitions:
+                if "RAM" in definition.name.upper():
+                    tmp.extend(definition.references)
+        for lut in tmp:
+            init_string = lut.data["VERILOG.Parameters"]["INIT"].upper()
+            init_val = int(init_string.split("H")[1], base=16)
+            self.all_rams.append(lut)
+        self.all_rams.sort(key=lambda x: x.name)
+
+    def __get_lut_init_size(self, lut):
         """
         Gets the size of the LUT init string for the given LUT by reading the init string.
         The init string is "X'h####" where X is the size of the LUT init string in bits.
@@ -103,13 +114,12 @@ class ErrorInjector(TransformTool):
         For example, a LUT5 would have an init string of "32'h####"
         and this function would return 32 as the size.
         """
-        lut = self.all_luts[lut_number]
         init_string = lut.data["VERILOG.Parameters"]["INIT"].upper()
         return int(init_string.split("'")[0])
 
-    def __flip_bit(self, lut_number, bit_number):
+    def __flip_bit(self, lut, bit_number):
         """Flips the bit at the given index"""
-        lut = self.all_luts[lut_number]
+        
         lut_properties = lut.data["VERILOG.Parameters"]
 
         config_string_prefixed = lut_properties["INIT"].lower()  # must be lower for int conversion
@@ -120,7 +130,7 @@ class ErrorInjector(TransformTool):
 
         # Convert the config to hex and pad it with zeros to the size of the LUT init string
         config_as_hex = hex(config_with_flipped_bit)
-        new_config = self.__pad_hex_val(config_as_hex, self.__get_lut_init_size(lut_number))
+        new_config = self.__pad_hex_val(config_as_hex, self.__get_lut_init_size(lut))
 
         lut_properties["INIT"] = config_string_prefixed.split("h")[0] + "h" + str(new_config)[2:]
         self.new_lut_init = lut_properties["INIT"]
@@ -137,11 +147,11 @@ class ErrorInjector(TransformTool):
         """Writes the netlist to the corrupted netlist path in the design"""
         sdn.compose(self.clean_netlist, self.corrupted_netlist_path)
 
-    def __log_bit_flip(self, lut_number, bit_number):
+    def __log_bit_flip(self, lut, bit_number):
         """Logs the bit flip that occurred to a log file"""
         self.log_path = self.__get_bit_flip_log()
-        lut_name = self.all_luts[lut_number].name
-        lut_type = self.all_luts[lut_number].reference.name
+        lut_name = lut.name
+        lut_type = lut.reference.name
         log_msg = (
             f"LUT {lut_name} of type {lut_type} "
             + f"had bit {bit_number} flipped "
