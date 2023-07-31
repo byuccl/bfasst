@@ -32,6 +32,12 @@ class ErrorInjector(TransformTool):
         self.old_lut_init = None
         self.new_lut_init = None
 
+        self.__setup_netlist()
+        for i in range(1,251):
+            self.log_num=i
+            self.inject_bit_flip()
+            self.inject_wire_swap()
+
     def __setup_netlist(self):
         self.design.reversed_netlist_path = self.cwd / (self.design.top + "_reversed.v")
         self.clean_netlist = sdn.parse(self.design.reversed_netlist_path)
@@ -83,29 +89,22 @@ class ErrorInjector(TransformTool):
 
     def __pick_luts_from_netlist(self):
         """Gets LUTS from netlist"""
-        tmp = []
         for library in self.clean_netlist.libraries:
             for definition in library.definitions:
                 if "LUT" in definition.name.upper():
-                    tmp.extend(definition.references)
-        for lut in tmp:
-            init_string = lut.data["VERILOG.Parameters"]["INIT"].upper()
-            init_val = int(init_string.split("H")[1], base=16)
-            if init_val != 0:
-                self.all_luts.append(lut)
+                    for lut in definition.references:
+                        init_string = lut.data["VERILOG.Parameters"]["INIT"]
+                        init_val = int(init_string[4:], base=16)
+                        if init_val: # Avoid hanging luts in f2b netlist
+                            self.all_luts.append(lut)
         self.all_luts.sort(key=lambda x: x.name)
 
     def __pick_rams_from_netlist(self):
         """Gets RAMs"""
-        tmp = []
         for library in self.clean_netlist.libraries:
             for definition in library.definitions:
                 if "RAM" in definition.name.upper():
-                    tmp.extend(definition.references)
-        for lut in tmp:
-            init_string = lut.data["VERILOG.Parameters"]["INIT"].upper()
-            init_val = int(init_string.split("H")[1], base=16)
-            self.all_rams.append(lut)
+                    self.all_rams.extend(definition.references)
         self.all_rams.sort(key=lambda x: x.name)
 
     def __get_lut_init_size(self, lut):
@@ -121,21 +120,13 @@ class ErrorInjector(TransformTool):
 
     def __flip_bit(self, lut, bit_number):
         """Flips the bit at the given index"""
-        
-        lut_properties = lut.data["VERILOG.Parameters"]
-
-        config_string_prefixed = lut_properties["INIT"].lower()  # must be lower for int conversion
-        self.old_lut_init = config_string_prefixed
-        config_string_int = convert_verilog_literal_to_int(config_string_prefixed)
-
-        config_with_flipped_bit = config_string_int ^ (1 << bit_number)
-
-        # Convert the config to hex and pad it with zeros to the size of the LUT init string
-        config_as_hex = hex(config_with_flipped_bit)
-        new_config = self.__pad_hex_val(config_as_hex, self.__get_lut_init_size(lut))
-
-        lut_properties["INIT"] = config_string_prefixed.split("h")[0] + "h" + str(new_config)[2:]
-        self.new_lut_init = lut_properties["INIT"]
+        init = lut.data["VERILOG.Parameters"]["INIT"]
+        self.old_lut_init = init
+        init_size = init.split("'")[0]
+        corrupted_init = convert_verilog_literal_to_int(init) ^ (1 << bit_number)
+        hex_str = f"{corrupted_init:0{int(init_size) // 4}X}"
+        self.new_lut_init = f"{init_size}'h{hex_str}"
+        lut.data["VERILOG.Parameters"]["INIT"] = self.new_lut_init
 
     def __pad_hex_val(self, val, lut_size):
         """
@@ -170,40 +161,25 @@ class ErrorInjector(TransformTool):
         self.corrupted_netlist_path = self.work_dir / f"wire_swap_{self.log_num}.v"
 
         # Pick two random instances
-        two_instances = self.__get_random_instances(2)
-        # Get the outer pins of the first instance that are inputs
-        first_instance_pins = self.__get_outer_pin_inputs(two_instances[0])
-        # Get the outer pins of the second instance that are inputs
-        second_instance_pins = self.__get_outer_pin_inputs(two_instances[1])
-
-        # Pick a random input from the first instance
-        selected_input = first_instance_pins[
-            self.random_generator.randrange(len(first_instance_pins))
-        ]
-        # Get the source of the input
-        driving_pin = self.__get_source(selected_input)
-        # Do the same for the second instance
-        selected_input2 = second_instance_pins[
-            self.random_generator.randrange(len(second_instance_pins))
-        ]
-        driving_pin2 = self.__get_source(selected_input2)
-
-        # If the driving pin is the same for both inputs
-        # or is a None type, we can't swap them.
-        # Try the algorithm again.
-        if driving_pin == driving_pin2 or driving_pin is None or driving_pin2 is None:
-            self.inject_wire_swap()
-            return
+        instances = [None, None]
+        inputs = [None, None]
+        drivers = [None, None]
+        for i in (0, 1):
+            while drivers[i] is None or (drivers[0] == drivers[1]):
+                instances[i] = self.__get_random_instances(1)[0]
+                instance_pins = self.__get_outer_pin_inputs(instances[i])
+                inputs[i] = instance_pins[self.random_generator.randrange(len(instance_pins))]
+                drivers[i] = self.__get_source(inputs[i])
 
         # Detach the wire from both inputs, and swap their driving pins
-        self.__detach_wire(selected_input)
-        self.__detach_wire(selected_input2)
-        self.__attach_wire(selected_input, driving_pin2)
-        self.__attach_wire(selected_input2, driving_pin)
+        self.__detach_wire(inputs[0])
+        self.__detach_wire(inputs[1])
+        self.__attach_wire(inputs[0], drivers[1])
+        self.__attach_wire(inputs[1], drivers[0])
 
         self.__compose_corrupt_netlist()
 
-        self.__log_wire_swap(selected_input, selected_input2, two_instances)
+        self.__log_wire_swap(inputs[0], inputs[1], instances)
 
     def __get_random_instances(self, num_instances):
         """Gets a sample of random instances from the netlist"""

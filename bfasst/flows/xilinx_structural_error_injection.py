@@ -41,7 +41,7 @@ class XilinxStructuralErrorInjection(Flow):
         # For each error type
         random_seed_multiplier = 1
         for error in error_type:
-            num_runs = 50
+            num_runs = 1
 
             for i in range(1, num_runs + 1):
                 error_injector = ErrorInjector(
@@ -59,12 +59,13 @@ class XilinxStructuralErrorInjection(Flow):
                     corrupt_netlist_path = error_injector.work_dir / f"wire_swap_{i}.v"
 
                 # Create a job to inject the correct type of error
-                if not corrupt_netlist_path.exists():  # Use this to resume from failed generation
-                    error_function = error_injector.get_injection_function(error)
-                    curr_job = Job(
-                        error_function, self.design.rel_path, {phys_netlist_rev_job.uuid}
-                    )
-                    self.job_list.append(curr_job)
+                error_function = error_injector.get_injection_function(error)
+                curr_job = Job(
+                    error_function, self.design.rel_path, {phys_netlist_rev_job.uuid}
+                )
+                self.job_list.append(curr_job)
+
+                return self.job_list
 
                 # Set the paths for the compare tool's copy of design
                 phys_netlist_path = self.design.impl_edif_path.parent / (
@@ -81,7 +82,7 @@ class XilinxStructuralErrorInjection(Flow):
                 )
 
                 comparison_job = Job(
-                    compare_tool.compare_netlists, self.design.rel_path, {self.job_list[-1].uuid}
+                    compare_tool.compare_netlists, self.design.rel_path, {self.job_list[-1].uuid}, partial(unlink, corrupt_netlist_path)
                 )
 
                 # Rather than append to the job list,
@@ -90,13 +91,12 @@ class XilinxStructuralErrorInjection(Flow):
                 self.job_list.append(comparison_job.invert())
 
                 # Clean up the corrupted netlist if the comparison passes
-                curr_job = Job(
-                    partial(unlink, corrupt_netlist_path),
-                    self.design.rel_path,
-                    {self.job_list[-1].uuid},
-                )
-                self.job_list.append(curr_job)
+                # curr_job = Job(
+                #     partial(unlink, corrupt_netlist_path),
+                #     self.design.rel_path,
+                #     {self.job_list[-1].uuid},
+                # )
+                # self.job_list.append(curr_job)
 
             random_seed_multiplier += 1
-
         return self.job_list
