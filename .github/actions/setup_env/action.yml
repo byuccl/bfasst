@@ -45,6 +45,7 @@ runs:
           echo "Using cached version of fasm2bels"
         else
           echo "Installing cached version of fasm2bels"
+          rm -rf ${{ inputs.cache_path }}/fasm2bels_commit.txt
           . .venv/bin/activate && cd $GITHUB_ACTION_PATH && FASM2BELS_COMMIT=$FASM2BELS_COMMIT make install_fasm2bels
           echo $FASM2BELS_COMMIT > ${{ inputs.cache_path }}/fasm2bels_commit.txt
         fi
