@@ -23,15 +23,22 @@ class Design:
     "class holding paths and other metadata for a given design" ""
 
     def __init__(self, dir_path, experiment_dir):
-        if not dir_path.is_dir() and (paths.DESIGNS_PATH / dir_path).is_dir():
+        if not dir_path.is_dir() and dir_path.is_absolute():
+            dir_path = dir_path
+        elif not dir_path.is_dir() and (paths.DESIGNS_PATH / dir_path).is_dir():
             dir_path = paths.DESIGNS_PATH / dir_path
-        dir_path = dir_path.absolute()
+
+        dir_path = paths.ROOT_PATH / dir_path.absolute()
 
         if not dir_path.is_dir():
             error("Design folder", dir_path, " does not exist.")
 
         self.path = dir_path
-        self.rel_path = self.path.relative_to(paths.DESIGNS_PATH)
+        if self.path.relative_to(paths.DESIGNS_PATH) != None:
+            self.rel_path = self.path.relative_to(paths.DESIGNS_PATH)
+        else:
+            self.rel_path=self.path.resolve()
+        
         self.build_dir = experiment_dir / self.rel_path
         self.yaml_path = self.path / DESIGN_YAML_NAME
 

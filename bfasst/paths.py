@@ -7,6 +7,7 @@ ROOT_PATH = pathlib.Path(__file__).resolve().parent.parent
 
 DESIGNS_PATH = ROOT_PATH / "designs"
 EXPERIMENTS_PATH = ROOT_PATH / "experiments"
+
 RESOURCES_PATH = ROOT_PATH / "resources"
 SCRIPTS_PATH = ROOT_PATH / "scripts"
 ERROR_FLOW_PATH = ROOT_PATH / "error_flows"
