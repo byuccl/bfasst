@@ -3,7 +3,6 @@
 from argparse import ArgumentParser
 from collections import defaultdict
 from pathlib import Path
-import os
 
 from bfasst.design import Design
 from bfasst import paths
@@ -12,11 +11,11 @@ from bfasst.tool import BfasstException
 from bfasst.types import ToolType
 
 
-def run_design(design_path, flow, error_flow, flow_args, experiment_dir):
+def run_design(design_path, flow, error_flow, flow_args):
     """Run a design through a given flow"""
 
     # Create temp folder
-    build_dir = experiment_dir / "build" / flow
+    build_dir = Path.cwd() / "build" / flow
     build_dir.mkdir(parents=True, exist_ok=True)
 
     # Load the design
@@ -64,7 +63,6 @@ def main():
     parser.add_argument("--reverse", help="Reverse args", type=str, default="")
     parser.add_argument("--err", help="Error flow args", type=str, default="")
     parser.add_argument("--quiet", action="store_true")
-    parser.add_argument("--experiment_dir", help="Experiment directory", type=str, default=None)
 
     error_flows = []
     for dir_item in paths.ERROR_FLOW_PATH.iterdir():
@@ -92,15 +90,8 @@ def main():
     for arg_name, enum in flow_args_map.items():
         flow_args[enum] = getattr(args, arg_name)
 
-    # Convert the design path to an absolute path
-    design_path = Path(os.path.expanduser(args.design_path))
-
-    # Set experiment_dir to the current working directory if not provided
-    experiment_dir = Path.cwd() if args.experiment_dir is None else Path(os.path.expanduser(args.experiment_dir))
-
-    run_design(design_path, args.flow, args.error_flow, flow_args=flow_args, experiment_dir=experiment_dir)
+    run_design(Path(args.design_path), args.flow, args.error_flow, flow_args=flow_args)
 
 
 if __name__ == "__main__":
     main()
-
