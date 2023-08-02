@@ -160,7 +160,8 @@ class StructuralCompareTool(CompareTool):
                 )
             except KeyError as e:
                 raise CompareException(
-                    f"KeyError during port mapping {pin.name} {pin.index}, is a top level I/O a reserved HDL keyword?"
+                    f"KeyError during port mapping {pin.name}, "
+                    + "is a top level I/O a reserved HDL keyword?"
                 ) from e
 
         self.log_title("Starting mapping iterations")
