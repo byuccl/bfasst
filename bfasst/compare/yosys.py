@@ -60,7 +60,7 @@ class YosysCompareTool(CompareTool):
                 + "/third_party/yosys/techlibs/xilinx/cells_sim.v"
                 + "; "
             )
-            fp.write("read_verilog " + self.gold_netlist + "; ")
+            fp.write("read_verilog " + str(self.gold_netlist) + "; ")
             fp.write("prep -flatten; ")
             fp.write("hierarchy -auto-top; ")
             fp.write("rename -top gold; ")
@@ -72,7 +72,7 @@ class YosysCompareTool(CompareTool):
                 + "/third_party/yosys/techlibs/xilinx/cells_sim.v"
                 + "; "
             )
-            fp.write("read_verilog " + self.rev_netlist + "; ")
+            fp.write("read_verilog " + str(self.rev_netlist) + "; ")
             fp.write("prep -flatten; ")
             fp.write("hierarchy -auto-top; ")
             fp.write("rename -top gate; ")

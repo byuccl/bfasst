@@ -1,0 +1,5 @@
+designs:
+  - byu/alu
+  - byu/buttoncount
+
+flow: xilinx_conformal_impl
