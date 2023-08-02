@@ -9,28 +9,28 @@ from bfasst import paths
 from bfasst.flows.flow import get_flow, get_flows
 from bfasst.tool import BfasstException
 from bfasst.types import ToolType
-from bfasst.types import ToolType
-from bfasst.types import ToolType
 
 
 def run_design(design_path, flow, error_flow, flow_args):
-    if error_flow:
+    """Run a design through a given flow"""
+
+    # Create temp folder
     build_dir = Path.cwd() / "build" / flow
-        for job in jobs:
+    build_dir.mkdir(parents=True, exist_ok=True)
+
     # Load the design
     design = Design(design_path, build_dir)
-    design = Design(design_path, build_dir)
-            if not job.dependencies:
-                try:
-                    job.function()
-                    cleanup(job, jobs)
-                except BfasstException as e:
-                    print(e)
+
+    # Store the error flow for later
+    if error_flow:
+        design.error_flow_yaml = error_flow + ".yaml"
+
+    # Get the flow object
     flow = get_flow(flow)(design, flow_args)
-    print("Success!")
+
     # Create the jobs
     jobs = flow.create()
-def cleanup(curr_job, jobs):
+
     while jobs:
         for job in jobs:
             if not job.dependencies:
@@ -41,23 +41,19 @@ def cleanup(curr_job, jobs):
                     print(e)
                     return
     print("Success!")
-    print("Success!")
-def cleanup(curr_job, jobs):
+
+
 def cleanup(curr_job, jobs):
     jobs.remove(curr_job)
-    for job in jobs:
-        job.dependencies.discard(curr_job.uuid)
-    for job in jobs:
-        job.dependencies.discard(curr_job.uuid)
     for job in jobs:
         job.dependencies.discard(curr_job.uuid)
 
 
 def main():
     """Parse argument and run design"""
-    parser.add_argument("flow", choices=sorted(list(get_flows())))
+
     parser = ArgumentParser()
-    parser.add_argument("flow", choices=sorted(list(get_flows())))
+
     parser.add_argument("design_path", help="Path to design in examples directory.")
     parser.add_argument("flow", choices=sorted(list(get_flows())))
     parser.add_argument("--synth", help="Synthesis args", type=str, default="")
