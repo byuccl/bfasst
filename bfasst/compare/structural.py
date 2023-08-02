@@ -159,7 +159,9 @@ class StructuralCompareTool(CompareTool):
                     self.reversed_netlist.get_pin(pin.name, pin.index).net,
                 )
             except KeyError as e:
-                raise CompareException(f"KeyError during port mapping {pin.name} {pin.index}, is a top level I/O a reserved HDL keyword?") from e
+                raise CompareException(
+                    f"KeyError during port mapping {pin.name} {pin.index}, is a top level I/O a reserved HDL keyword?"
+                ) from e
 
         self.log_title("Starting mapping iterations")
         progress = True
