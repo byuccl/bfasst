@@ -1,0 +1,10 @@
+build {{ synth_output }}/synth.tcl: template {{ json }} {{ synth_library }}/viv_synth.tcl.mustache
+
+{{#in_context}}
+build {{ synth_output }}/{{ top }}.xdc: vivado_ioparse {{ synth_output }}/iofile.txt
+{{/in_context}}
+
+build {{ synth_output }}/viv_synth.edif {{ synth_output }}/synth.dcp {{#in_context}}{{ synth_output }}/iofile.txt{{/in_context}}: vivado {{ synth_output }}/synth.tcl | {{#verilog}}{{ . }} {{/verilog}} {{#system_verilog}}{{ . }} {{/system_verilog}}
+    journal = {{ synth_output }}/vivado.jou
+    log = {{ synth_output }}/vivado.log
+

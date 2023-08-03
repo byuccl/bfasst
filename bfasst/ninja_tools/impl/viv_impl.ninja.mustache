@@ -1,0 +1,6 @@
+build {{ impl_output }}/impl.tcl: template {{ json }} {{ impl_library }}/viv_impl.tcl.mustache
+
+build {{ impl_output }}/viv_impl.v {{ impl_output }}/viv_impl.edif {{ impl_output }}/impl.dcp {{#in_context}}{{ impl_output }}/{{ top }}.bit{{/in_context}} {{ impl_output }}/utilization.txt: vivado {{ impl_output}}/impl.tcl | {{ synth_output }}/{{ synth_edif }} {{#in_context}}{{ synth_output }}/{{ top }}.xdc{{/in_context}}
+    journal = {{ impl_output }}/vivado.jou
+    log = {{ impl_output }}/vivado.log
+

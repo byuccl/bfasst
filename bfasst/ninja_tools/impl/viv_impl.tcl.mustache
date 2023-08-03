@@ -1,0 +1,22 @@
+if { [ catch {
+read_edif {{ synth_output }}/{{ synth_edif }}
+set_property top_file {{ synth_output }}/{{ synth_edif }} [current_fileset]
+link_design -part {{ part }}
+{{#xdc}}
+read_xdc {{ . }}
+
+{{/xdc}}
+set_property design_mode GateLvl [current_fileset]
+opt_design
+place_design
+route_design
+write_checkpoint -force -file {{ impl_output }}/{{ dcp }}
+write_edif -force -file {{ impl_output }}/{{ impl_edif }}
+write_verilog -force -file {{ impl_output }}/{{ netlist }}
+report_utilization -file {{ impl_output }}/{{ util_file }}
+{{#bit}}
+write_bitstream -force {{ . }}
+
+{{/bit}}
+} ] } { exit 1 }
+exit

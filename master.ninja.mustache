@@ -1,0 +1,5 @@
+rule configure
+    command = python3 {{ top_level_flow_path }}
+    generator = 1
+
+build build.ninja: configure {{#deps}}{{ . }}{{/deps}}

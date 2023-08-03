@@ -1,0 +1,11 @@
+rule vivado
+    command = vivado -mode batch -journal $journal -log $log -source $in >&-
+    description = vivado $in
+
+rule template
+    command = chevron -d $in >$out
+
+rule vivado_ioparse
+    command = python3 {{ utils }}/vivado_ioparse.py <$in >$out
+    description = vivado_ioparse <$in >$out
+

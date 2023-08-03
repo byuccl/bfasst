@@ -1,0 +1,25 @@
+if { [ catch {
+set_part {{ part }}
+
+{{#verilog}}
+read_verilog {{ . }}
+
+{{/verilog}}
+{{#system_verilog}}
+read_verilog -sv {{ . }}
+
+{{/system_verilog}}
+synth_design -top {{ top }}
+{{#io}}
+place_ports
+
+{{/io}}
+write_edif -force {{ synth_output }}/{{ edif }}
+write_checkpoint -force -file {{ synth_output }}/{{ dcp }}
+
+{{#io}}
+report_io -force -file {{ . }}
+
+{{/io}}
+} ] } { exit 1 }
+exit
