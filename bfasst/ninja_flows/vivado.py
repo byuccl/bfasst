@@ -67,6 +67,7 @@ class Vivado:
                 f,
                 {
                     "utils": str(NINJA_UTILS_PATH),
+                    "in_context": not self.ooc,
                 },
             )
         with open(NINJA_BUILD_PATH, "a") as f:
@@ -84,8 +85,6 @@ class Vivado:
             "verilog": self.verilog,
             "system_verilog": self.system_verilog,
             "top": self.top,
-            "edif": "viv_synth.edif",
-            "dcp": "synth.dcp",
             "io": str(self.synth_output / "iofile.txt") if not self.ooc else False,
             "synth_output": str(self.synth_output),
         }
@@ -102,13 +101,8 @@ class Vivado:
         """Specify implementation arguments in json file.
         Chevron will use json file to fill in the tcl template"""
         impl = {
-            "synth_edif": "viv_synth.edif",
             "part": self.part,
             "xdc": str(self.synth_output / (self.top + ".xdc")) if not self.ooc else False,
-            "dcp": "impl.dcp",
-            "impl_edif": "viv_impl.edif",
-            "netlist": "viv_impl.v",
-            "util_file": "utilization.txt",
             "bit": str(self.impl_output / (self.top + ".bit")) if not self.ooc else False,
             "impl_output": str(self.impl_output),
             "synth_output": str(self.synth_output),
@@ -134,8 +128,6 @@ class Vivado:
                 {
                     "in_context": not self.ooc,
                     "synth_output": str(self.synth_output),
-                    "json": str(self.synth_output / "synth.json"),
-                    "utils": str(NINJA_UTILS_PATH),
                     "synth_library": NINJA_SYNTH_TOOLS_PATH,
                     "top": self.top,
                     "verilog": self.verilog,
@@ -155,9 +147,7 @@ class Vivado:
                     "in_context": not self.ooc,
                     "impl_output": str(self.impl_output),
                     "synth_output": str(self.synth_output),
-                    "json": str(self.impl_output / "impl.json"),
                     "impl_library": NINJA_IMPL_TOOLS_PATH,
-                    "synth_edif": "viv_synth.edif",
                     "top": self.top,
                 },
             )
@@ -178,11 +168,16 @@ class Vivado:
         return deps
 
     def get_top_level_flow_path(self):
-        return str(NINJA_FLOWS_PATH / "vivado.py")
+        path = (
+            str(NINJA_FLOWS_PATH / "vivado.py")
+            if not self.ooc
+            else str(NINJA_FLOWS_PATH / "vivado_ooc.py")
+        )
+        return path
 
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("--design", type=str, help="Design to run")
+    parser.add_argument("--design", type=str, required=True, help="Design to run")
     args = parser.parse_args()
     Vivado(args.design).create()

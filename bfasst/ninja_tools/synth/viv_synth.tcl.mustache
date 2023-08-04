@@ -14,8 +14,8 @@ synth_design -top {{ top }}
 place_ports
 
 {{/io}}
-write_edif -force {{ synth_output }}/{{ edif }}
-write_checkpoint -force -file {{ synth_output }}/{{ dcp }}
+write_edif -force {{ synth_output }}/viv_synth.edif
+write_checkpoint -force -file {{ synth_output }}/synth.dcp
 
 {{#io}}
 report_io -force -file {{ . }}
