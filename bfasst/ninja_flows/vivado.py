@@ -13,7 +13,7 @@ from bfasst.paths import (
     NINJA_FLOWS_PATH,
     VIVADO_RULES_PATH,
 )
-from bfasst.utils import compare_json, only_once
+from bfasst.utils import compare_json
 from bfasst.yaml_parser import YamlParser
 
 
@@ -55,13 +55,7 @@ class Vivado:
             elif child.suffix == ".sv":
                 self.system_verilog.append(str(child))
 
-    def create(self):
-        self.__create_rule_snippets()
-        self.__write_json_files()
-        self.__create_build_snippets()
-
-    @only_once
-    def __create_rule_snippets(self):
+    def create_rule_snippets(self):
         with open(VIVADO_RULES_PATH, "r") as f:
             vivado_ninja = chevron.render(
                 f,
@@ -72,6 +66,10 @@ class Vivado:
             )
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(vivado_ninja)
+
+    def create_build_snippets(self):
+        self.__write_json_files()
+        self.__append_build_snippets()
 
     def __write_json_files(self):
         self.__write_synth_json()
@@ -116,11 +114,11 @@ class Vivado:
             with open(self.impl_output / "impl.json", "w") as f:
                 f.write(impl_json)
 
-    def __create_build_snippets(self):
-        self.__create_synth_ninja()
-        self.__create_impl_ninja()
+    def __append_build_snippets(self):
+        self.__append_synth_snippets()
+        self.__append_impl_snippets()
 
-    def __create_synth_ninja(self):
+    def __append_synth_snippets(self):
         """Create ninja snippets for vivado synthesis in build.ninja"""
         with open(NINJA_TOOLS_PATH / "synth" / "viv_synth.ninja.mustache") as f:
             synth_ninja = chevron.render(
@@ -138,7 +136,7 @@ class Vivado:
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(synth_ninja)
 
-    def __create_impl_ninja(self):
+    def __append_impl_snippets(self):
         """Create ninja snippets for vivado implementation in build.ninja"""
         with open(NINJA_TOOLS_PATH / "impl" / "viv_impl.ninja.mustache") as f:
             impl_ninja = chevron.render(
@@ -155,7 +153,6 @@ class Vivado:
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(impl_ninja)
 
-    @only_once
     def add_ninja_deps(self, deps=None):
         """Add dependencies to the master ninja file that would cause it to rebuild if modified"""
         if not deps:
@@ -180,4 +177,4 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--design", type=str, required=True, help="Design to run")
     args = parser.parse_args()
-    Vivado(args.design).create()
+    Vivado(args.design).create_build_snippets()

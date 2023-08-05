@@ -1,5 +1,4 @@
 """ Utility functions"""
-import functools
 import json
 import re
 import sys
@@ -146,18 +145,3 @@ def sort_json(item):
     if isinstance(item, list):
         return sorted(sort_json(x) for x in item)
     return item
-
-
-def only_once(func):
-    """Decorator to ensure a function is only called once per program run
-    (singleton method for non-singleton class)."""
-    # pylint: disable=protected-access, inconsistent-return-statements
-    func.__called = False
-
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        if not func.__called:
-            func.__called = True
-            return func(*args, **kwargs)
-
-    return wrapper

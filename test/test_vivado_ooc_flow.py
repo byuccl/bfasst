@@ -18,7 +18,8 @@ class TestVivadoOocFlow(unittest.TestCase):
             f.write("")
 
         cls.flow = VivadoOoc("byu/alu")
-        cls.flow.create()
+        cls.flow.create_rule_snippets()
+        cls.flow.create_build_snippets()
 
     def test_ooc_default(self):
         # test that the flow is ooc by default

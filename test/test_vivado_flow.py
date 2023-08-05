@@ -21,7 +21,8 @@ class TestVivadoFlow(unittest.TestCase):
             f.write("")
 
         cls.flow = Vivado("byu/alu")
-        cls.flow.create()
+        cls.flow.create_rule_snippets()
+        cls.flow.create_build_snippets()
 
     def test_in_context_default(self):
         # test that the flow is in-context by default
@@ -81,10 +82,6 @@ class TestVivadoFlow(unittest.TestCase):
         ]
 
         self.assertEqual(observed, expected)
-
-        # add_ninja_deps is only allowed to be called once.
-        # Subsequent calls should return None.
-        self.assertEqual(self.flow.add_ninja_deps([]), None)
 
     def test_get_top_level_flow_path(self):
         self.assertEqual(self.flow.get_top_level_flow_path(), f"{NINJA_FLOWS_PATH}/vivado.py")

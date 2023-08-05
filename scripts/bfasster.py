@@ -32,9 +32,12 @@ class ApplicationRunner:
         # populate the master ninja template
         self.__create_master_ninja()
 
-        # run the flows to generate ninja build commands
+        # get the ninja rule snippets off the first flow
+        self.flows[0].create_rule_snippets()
+
+        # run each flow to generate ninja build snippets for each design
         for flow in self.flows:
-            flow.create()
+            flow.create_build_snippets()
 
         # run the build.ninja file
         self.__run_ninja()
