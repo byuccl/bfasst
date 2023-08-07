@@ -66,5 +66,6 @@ class TestVivadoAndReversedFlow(unittest.TestCase):
             self.flow.get_top_level_flow_path(), f"{NINJA_FLOWS_PATH}/vivado_and_reversed.py"
         )
 
+
 if __name__ == "__main__":
     unittest.main()
