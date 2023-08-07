@@ -3,3 +3,4 @@ rule configure
     generator = 1
 
 build build.ninja: configure {{#deps}}{{ . }}{{/deps}}
+

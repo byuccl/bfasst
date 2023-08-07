@@ -46,7 +46,7 @@ class VivadoAndReversed(Flow):
         self.fasm_path = self.build / (self.top + ".fasm")
         self.reversed_netlist_path = self.build / (self.top + "_reversed.v")
         self.xdc_path = self.build / (self.top + "_reversed.xdc")
-        self.constraints_path = self.build / "constraints.xdc"
+        self.constraints_path = str(self.vivado_flow.synth_output / self.top) + ".xdc"
 
     def __create_build_dirs(self):
         self.build.mkdir(parents=True, exist_ok=True)
@@ -67,10 +67,13 @@ class VivadoAndReversed(Flow):
             build_rules = chevron.render(
                 f,
                 {
+                    "bitstream_path": str(self.vivado_flow.impl_output / self.top) + ".bit",
+                    "xray_output": self.build,
                     "fasm2bels_python_path": self.fasm2bels_python_path,
                     "bit_to_fasm_path": self.xray_path / "utils" / "bit2fasm.py",
                     "db_root": self.db_root,
                     "part": config.PART,
+                    "top": self.top,
                     "fasm_file": self.fasm_path,
                     "verilog_file": self.reversed_netlist_path,
                     "xdc_file": self.xdc_path,

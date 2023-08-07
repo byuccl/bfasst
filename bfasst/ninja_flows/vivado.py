@@ -161,7 +161,7 @@ class Vivado(Flow):
         deps.append(f"{NINJA_SYNTH_TOOLS_PATH}/viv_synth.ninja.mustache ")
         deps.append(f"{NINJA_IMPL_TOOLS_PATH}/viv_impl.ninja.mustache ")
         deps.append(f"{NINJA_FLOWS_PATH}/vivado.py ")
-        deps.append(f"{VIVADO_RULES_PATH}\n")
+        deps.append(f"{VIVADO_RULES_PATH} ")
 
         return deps
 
