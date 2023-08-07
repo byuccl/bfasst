@@ -9,7 +9,6 @@ from bfasst.paths import (
     NINJA_BUILD_PATH,
     ROOT_PATH,
     NINJA_SYNTH_TOOLS_PATH,
-    NINJA_TOOLS_PATH,
     NINJA_UTILS_PATH,
     NINJA_FLOWS_PATH,
     VIVADO_RULES_PATH,
