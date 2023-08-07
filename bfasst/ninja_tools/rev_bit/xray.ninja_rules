@@ -1,0 +1,7 @@
+rule bit_to_fasm
+    command = $fasm2bels_python_path $bit_to_fasm_path --db-root $db_root --part $part $in
+    description = convert $bitstream_path to fasm file
+
+rule fasm_to_netlist
+    command = $fasm2bels_python_path -mfasm2bels --connection_database $part_db --db_root $db_root --part $part --fasm_file $fasm_file --verilog_file $verilog_file --xdc_file $xdc_file --input_xdc $input_xdc
+
