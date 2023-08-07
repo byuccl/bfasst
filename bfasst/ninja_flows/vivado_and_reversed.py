@@ -2,10 +2,10 @@
 from argparse import ArgumentParser
 import chevron
 from bfasst import config
+from bfasst.ninja_flows.flow import Flow
 from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado import Vivado
 from bfasst.paths import (
-    DESIGNS_PATH,
     NINJA_BUILD_PATH,
     NINJA_FLOWS_PATH,
     REV_BIT_TOOLS_PATH,
@@ -15,11 +15,11 @@ from bfasst.paths import (
 from bfasst.yaml_parser import YamlParser
 
 
-class VivadoAndReversed:
+class VivadoAndReversed(Flow):
     """Flow to reverse a netlist from a bitstream using xray."""
 
     def __init__(self, design):
-        self.design = DESIGNS_PATH / design
+        super().__init__(design)
 
         self.build = ROOT_PATH / "build" / design / "xray"
         self.__create_build_dirs()

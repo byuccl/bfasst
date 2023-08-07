@@ -2,9 +2,9 @@
 from argparse import ArgumentParser
 import json
 import chevron
+from bfasst.ninja_flows.flow import Flow
 from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.paths import (
-    DESIGNS_PATH,
     NINJA_IMPL_TOOLS_PATH,
     NINJA_BUILD_PATH,
     ROOT_PATH,
@@ -18,11 +18,11 @@ from bfasst.utils import compare_json
 from bfasst.yaml_parser import YamlParser
 
 
-class Vivado:
+class Vivado(Flow):
     """Flow to create Vivado synthesis and implementation ninja snippets."""
 
     def __init__(self, design, ooc=False):
-        self.design = DESIGNS_PATH / design
+        super().__init__(design)
 
         self.ooc = ooc
         if ooc:
