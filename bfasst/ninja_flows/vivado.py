@@ -84,7 +84,7 @@ class Vivado(Flow):
             "verilog": self.verilog,
             "system_verilog": self.system_verilog,
             "top": self.top,
-            "io": str(self.synth_output / "iofile.txt") if not self.ooc else False,
+            "io": str(self.synth_output / "report_io.txt") if not self.ooc else False,
             "synth_output": str(self.synth_output),
         }
         synth_json = json.dumps(synth, indent=4)
@@ -121,7 +121,7 @@ class Vivado(Flow):
 
     def __append_synth_snippets(self):
         """Create ninja snippets for vivado synthesis in build.ninja"""
-        with open(NINJA_TOOLS_PATH / "synth" / "viv_synth.ninja.mustache") as f:
+        with open(NINJA_SYNTH_TOOLS_PATH / "viv_synth.ninja.mustache") as f:
             synth_ninja = chevron.render(
                 f,
                 {
@@ -139,7 +139,7 @@ class Vivado(Flow):
 
     def __append_impl_snippets(self):
         """Create ninja snippets for vivado implementation in build.ninja"""
-        with open(NINJA_TOOLS_PATH / "impl" / "viv_impl.ninja.mustache") as f:
+        with open(NINJA_IMPL_TOOLS_PATH / "viv_impl.ninja.mustache") as f:
             impl_ninja = chevron.render(
                 f,
                 {
@@ -158,8 +158,8 @@ class Vivado(Flow):
         """Add dependencies to the master ninja file that would cause it to rebuild if modified"""
         if not deps:
             deps = []
-        deps.append(f"{NINJA_TOOLS_PATH}/synth/viv_synth.ninja.mustache ")
-        deps.append(f"{NINJA_TOOLS_PATH}/impl/viv_impl.ninja.mustache ")
+        deps.append(f"{NINJA_SYNTH_TOOLS_PATH}/viv_synth.ninja.mustache ")
+        deps.append(f"{NINJA_IMPL_TOOLS_PATH}/viv_impl.ninja.mustache ")
         deps.append(f"{NINJA_FLOWS_PATH}/vivado.py ")
         deps.append(f"{VIVADO_RULES_PATH}\n")
 
