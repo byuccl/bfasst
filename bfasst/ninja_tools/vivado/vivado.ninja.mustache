@@ -9,4 +9,5 @@ rule template
 rule vivado_ioparse
     command = python3 {{ utils }}/vivado_ioparse.py <$in >$out
     description = vivado_ioparse <$in >$out
+    
 {{/in_context}}

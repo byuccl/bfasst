@@ -2,6 +2,7 @@
 from argparse import ArgumentParser
 import json
 import chevron
+from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.paths import (
     DESIGNS_PATH,
     NINJA_IMPL_TOOLS_PATH,
@@ -177,4 +178,7 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--design", type=str, required=True, help="Design to run")
     args = parser.parse_args()
-    Vivado(args.design).create_build_snippets()
+    flow = Vivado(args.design)
+    create_build_file()
+    flow.create_rule_snippets()
+    flow.create_build_snippets()

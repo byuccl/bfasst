@@ -3,10 +3,10 @@ from argparse import ArgumentParser
 import pathlib
 import subprocess
 import chevron
-from bfasst.ninja_flows.flow_utils import get_flow
+from bfasst.ninja_flows.flow_utils import create_build_file, get_flow
 from bfasst.yaml_parser import YamlParser
 from bfasst.utils import error
-from bfasst.paths import ROOT_PATH
+from bfasst.paths import NINJA_BUILD_PATH, ROOT_PATH
 
 
 class ApplicationRunner:
@@ -55,9 +55,10 @@ class ApplicationRunner:
             self.flows = [get_flow(args.flow)(args.design)]
 
     def __create_master_ninja(self):
+        create_build_file()
         master_ninja = self.__populate_template()
 
-        with open(ROOT_PATH / "build.ninja", "w") as f:
+        with open(NINJA_BUILD_PATH, "a") as f:
             f.write(master_ninja)
 
     def __populate_template(self):
