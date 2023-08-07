@@ -20,11 +20,11 @@ class VivadoAndReversed(Flow):
 
     def __init__(self, design):
         super().__init__(design)
+        self.vivado_flow = Vivado(design)
 
         self.build = ROOT_PATH / "build" / design / "xray"
         self.__create_build_dirs()
 
-        self.vivado_flow = Vivado(self.design)
         self.top = YamlParser(self.design / "design.yaml").parse_top_module()
 
         # get these moved to paths later

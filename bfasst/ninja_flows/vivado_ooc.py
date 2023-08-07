@@ -2,7 +2,6 @@
 from argparse import ArgumentParser
 from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado import Vivado
-from bfasst.paths import NINJA_BUILD_PATH
 
 
 class VivadoOoc:
