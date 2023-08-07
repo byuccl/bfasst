@@ -86,10 +86,11 @@ class VivadoAndReversed(Flow):
         that would trigger a rebuild of that file if modified"""
         if not deps:
             deps = []
-        deps.append(self.vivado_flow.add_ninja_deps())
-        deps.append(f"{NINJA_FLOWS_PATH}/vivado_and_reversed.py")
-        deps.append(f"{REV_BIT_TOOLS_PATH}/xray.ninja_rules")
-        deps.append(f"{REV_BIT_TOOLS_PATH}/xray.ninja_build.mustache")
+        deps.extend(self.vivado_flow.add_ninja_deps())
+        deps.append(f"{NINJA_FLOWS_PATH}/vivado_and_reversed.py ")
+        deps.append(f"{REV_BIT_TOOLS_PATH}/xray.ninja_rules ")
+        deps.append(f"{REV_BIT_TOOLS_PATH}/xray.ninja_build.mustache ")
+        return deps
 
     def get_top_level_flow_path(self):
         path = str(NINJA_FLOWS_PATH / "vivado_and_reversed.py")

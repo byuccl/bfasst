@@ -1,6 +1,7 @@
 """Unit tests for the Vivado flow."""
 import json
 import unittest
+from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado import Vivado
 from bfasst.paths import (
     NINJA_BUILD_PATH,
@@ -17,8 +18,7 @@ class TestVivadoFlow(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # overwrite the build file so it is not appended to incorrectly
-        with open(NINJA_BUILD_PATH, "w") as f:
-            f.write("")
+        create_build_file()
 
         cls.flow = Vivado("byu/alu")
         cls.flow.create_rule_snippets()
@@ -42,12 +42,13 @@ class TestVivadoFlow(unittest.TestCase):
         self.assertTrue((self.flow.impl_output / "impl.json").exists())
 
     def test_tcl_json_accurate(self):
+        """Test that the json files for synth and impl templates are accurate."""
         synth_dict = {
             "part": self.flow.part,
             "verilog": self.flow.verilog,
             "system_verilog": self.flow.system_verilog,
             "top": self.flow.top,
-            "io": str(self.flow.synth_output / "iofile.txt"),
+            "io": str(self.flow.synth_output / "report_io.txt"),
             "synth_output": str(self.flow.synth_output),
         }
         expected_synth_json = json.dumps(synth_dict, indent=4)
@@ -71,6 +72,7 @@ class TestVivadoFlow(unittest.TestCase):
         self.assertEqual(build_statement_count, 5)
 
     def test_add_ninja_deps(self):
+        """Test that the flow adds the correct dependencies for the build.ninja file."""
         observed = self.flow.add_ninja_deps(["foo", "bar"])
         expected = [
             "foo",
