@@ -4,7 +4,7 @@ import unittest
 from bfasst.paths import DESIGNS_PATH, NINJA_BUILD_PATH
 from bfasst.ninja_flows.vivado import Vivado
 
-from scripts.ninja_flow_manager import NinjaFlowManager, get_design_basenames
+from bfasst.ninja_flows.ninja_flow_manager import NinjaFlowManager, get_design_basenames
 
 
 class TestNinjaFlowManager(unittest.TestCase):

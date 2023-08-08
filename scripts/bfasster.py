@@ -2,7 +2,7 @@
 from argparse import ArgumentParser
 import pathlib
 import subprocess
-from ninja_flow_manager import NinjaFlowManager
+from bfasst.ninja_flows.ninja_flow_manager import NinjaFlowManager
 from bfasst.yaml_parser import YamlParser
 from bfasst.utils import error
 from bfasst.paths import ROOT_PATH

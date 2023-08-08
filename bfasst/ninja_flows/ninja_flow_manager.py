@@ -2,8 +2,7 @@
 from argparse import ArgumentParser
 import chevron
 from bfasst.ninja_flows.flow_utils import create_build_file, get_flow
-from bfasst.paths import DESIGNS_PATH, NINJA_BUILD_PATH, ROOT_PATH
-from bfasst.utils import error
+from bfasst.paths import DESIGNS_PATH, NINJA_BUILD_PATH, NINJA_FLOWS_PATH, ROOT_PATH
 
 
 class NinjaFlowManager:
@@ -46,6 +45,7 @@ class NinjaFlowManager:
             master_ninja = chevron.render(
                 f,
                 {
+                    "ninja_flows_path": str(NINJA_FLOWS_PATH),
                     "designs": self.designs,
                     "deps": self.flows[0].add_ninja_deps(),
                     "flow": self.flow_name,
