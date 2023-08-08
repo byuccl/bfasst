@@ -52,7 +52,7 @@ class TestVivadoAndReversedFlow(unittest.TestCase):
             f"{NINJA_SYNTH_TOOLS_PATH}/viv_synth.ninja.mustache ",
             f"{NINJA_IMPL_TOOLS_PATH}/viv_impl.ninja.mustache ",
             f"{NINJA_FLOWS_PATH}/vivado.py ",
-            f"{VIVADO_RULES_PATH}\n",
+            f"{VIVADO_RULES_PATH} ",
             f"{NINJA_FLOWS_PATH}/vivado_and_reversed.py ",
             f"{REV_BIT_TOOLS_PATH}/xray.ninja_rules ",
             f"{REV_BIT_TOOLS_PATH}/xray.ninja_build.mustache ",

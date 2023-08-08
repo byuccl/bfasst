@@ -80,7 +80,7 @@ class TestVivadoFlow(unittest.TestCase):
             f"{NINJA_TOOLS_PATH}/synth/viv_synth.ninja.mustache ",
             f"{NINJA_TOOLS_PATH}/impl/viv_impl.ninja.mustache ",
             f"{NINJA_FLOWS_PATH}/vivado.py ",
-            f"{VIVADO_RULES_PATH}\n",
+            f"{VIVADO_RULES_PATH} ",
         ]
 
         self.assertEqual(observed, expected)
