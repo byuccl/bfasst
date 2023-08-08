@@ -1,8 +1,9 @@
 """Utility to manage the creation and execution of ninja flows."""
-from argparse import ArgumentParser, REMAINDER
+from argparse import ArgumentParser
 import chevron
 from bfasst.ninja_flows.flow_utils import create_build_file, get_flow
 from bfasst.paths import DESIGNS_PATH, NINJA_BUILD_PATH, ROOT_PATH
+from bfasst.utils import error
 
 
 class NinjaFlowManager:
@@ -61,11 +62,18 @@ def get_design_basenames(designs):
     return [("/").join(design.split("/")[-2:]) for design in designs]
 
 
+def check_args(args):
+    if not args.flow:
+        error("Must specify a flow to run")
+    if not args.designs:
+        error("Must specify at least one design to run the flow on")
+
+
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--flow", type=str, required=True, help="Name of the flow to run")
-    parser.add_argument("designs", nargs=REMAINDER, help="Designs to run the flow on")
-    args = parser.parse_args()
+    parser.add_argument("--designs", nargs="+", help="Designs to run the flow on")
+    parsed_args = parser.parse_args()
     flow_manager = NinjaFlowManager()
-    flow_manager.create_flows(args.flow, get_design_basenames(args.designs))
+    flow_manager.create_flows(parsed_args.flow, get_design_basenames(parsed_args.designs))
     flow_manager.run_flows()

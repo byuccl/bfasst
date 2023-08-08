@@ -110,12 +110,17 @@ NOTE: You must specify <em>either</em> a yaml file or <em>both</em> a design and
 
 Alternatively, you can execute the ninja generation step entirely separate from the run step for a single design:
 
-<pre style="padding-top:0"><code>
-    python bfasst/ninja_flows/vivado.py [--design DESIGN]
+<pre>Usage:<code>
+    python scripts/ninja_flow_manager.py [--flow FLOW] [--designs DESIGN(S)]
     ninja
+
+options:
+    --flow FLOW           The flow to use for for the run.
+    --designs DESIGN(S)   One or more designs to run the flow on, separated by spaces.
 </code></pre>
 In either use case, the design should be specified as a subdirectory of the included designs directory in this repo (e.g. 'byu/alu').
 
 Currently supported flows:
 * `vivado`
 * `vivado_ooc`
+* `vivado_and_reversed`
