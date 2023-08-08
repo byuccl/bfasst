@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 import code
 import json
 import chevron
+from bfasst import config
 from bfasst.ninja_flows.flow import Flow
 from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.paths import (
@@ -36,7 +37,7 @@ class Vivado(Flow):
         self.top = YamlParser(self.design / "design.yaml").parse_top_module()
         self.__read_hdl_files()
 
-        self.part = "xc7a200tlffg1156-2L"
+        self.part = config.PART
 
     def __create_build_dirs(self):
         self.build.mkdir(parents=True, exist_ok=True)

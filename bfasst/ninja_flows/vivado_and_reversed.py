@@ -10,6 +10,7 @@ from bfasst.paths import (
     NINJA_FLOWS_PATH,
     REV_BIT_TOOLS_PATH,
     ROOT_PATH,
+    XRAY_PATH,
     get_fasm2bels_path,
 )
 from bfasst.yaml_parser import YamlParser
@@ -38,11 +39,9 @@ class VivadoAndReversed(Flow):
             / "bin"
             / "python3"
         )
-        self.xray_path = self.fasm2bels_path / "third_party" / "prjxray"
         self.xray_db_path = self.fasm2bels_path / "third_party" / "prjxray-db"
         self.db_root = self.xray_db_path / config.PART_FAMILY
         self.to_netlist_log = self.build / "to_netlist.log"
-        self.to_fasm_log = self.build / "to_fasm.log"
         self.fasm_path = self.build / (self.top + ".fasm")
         self.reversed_netlist_path = self.build / (self.top + "_reversed.v")
         self.xdc_path = self.build / (self.top + "_reversed.xdc")
@@ -67,14 +66,14 @@ class VivadoAndReversed(Flow):
             build_rules = chevron.render(
                 f,
                 {
+                    "xray_path": str(XRAY_PATH / "build" / "tools"),
                     "bitstream_path": str(self.vivado_flow.impl_output / self.top) + ".bit",
                     "xray_output": self.build,
                     "fasm2bels_python_path": self.fasm2bels_python_path,
-                    "bit_to_fasm_path": self.xray_path / "utils" / "bit2fasm.py",
+                    "bit_to_fasm_path": XRAY_PATH / "utils" / "bit2fasm.py",
                     "db_root": self.db_root,
                     "part": config.PART,
                     "top": self.top,
-                    "fasm_file": self.fasm_path,
                     "verilog_file": self.reversed_netlist_path,
                     "xdc_file": self.xdc_path,
                     "input_xdc": self.constraints_path,

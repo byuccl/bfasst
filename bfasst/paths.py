@@ -34,3 +34,6 @@ def get_fasm2bels_path():
     if "BFASST_PATH_FASM2BELS" in os.environ:
         return pathlib.Path(os.environ["BFASST_PATH_FASM2BELS"])
     return THIRD_PARTY_PATH / "fasm2bels"
+
+
+XRAY_PATH = get_fasm2bels_path() / "third_party" / "prjxray"
