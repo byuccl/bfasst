@@ -4,4 +4,5 @@ rule bit_to_fasm
 
 rule fasm_to_netlist
     command = $fasm2bels_python_path -mfasm2bels --connection_database $part_db --db_root $db_root --part $part --fasm_file $in --verilog_file $verilog_file --xdc_file $xdc_file --input_xdc $input_xdc
-    description = convert $fasm_file to netlist
+    description = convert $in to netlist
+

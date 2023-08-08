@@ -1,7 +1,6 @@
 """Parse a yaml file to obtain a flow and a list of target designs"""
 import pathlib
 import yaml
-from bfasst.ninja_flows.flow_utils import get_flow
 from bfasst.utils import error
 from bfasst import paths
 
@@ -14,7 +13,7 @@ class YamlParser:
         self.experiment_props = None
         self.post_run = None
         self.design_paths = None
-        self.flows = None
+        self.flow = None
 
     def parse_design_flow(self):
         """Parse a yaml file into design paths
@@ -30,8 +29,7 @@ class YamlParser:
         self.__collect_design_paths()
         self.__uniquify_design_paths()
 
-        self.flows = []
-        self.__create_flows()
+        self.flow = self.experiment_props["flow"]
 
     def __read_experiment_yaml(self):
         with open(self.yaml_path) as f:
@@ -56,7 +54,7 @@ class YamlParser:
 
                 # Check if provided directory contains a design
                 if (design_path / "design.yaml").is_file():
-                    self.design_paths.append(str(design_path))
+                    self.design_paths.append(str(design))
                     continue
 
                 for design_child in design_path.rglob("*"):
@@ -64,7 +62,8 @@ class YamlParser:
                         continue
 
                     if (design_child / "design.yaml").is_file():
-                        self.design_paths.append(str(design_child))
+                        design_name = design_child.split("/")[-2:]
+                        self.design_paths.append(str(design_name))
                         continue
 
         if "design_dirs" in self.experiment_props:
@@ -76,18 +75,11 @@ class YamlParser:
                 for dir_item in design_dir_path.iterdir():
                     item_path = design_dir_path / dir_item
                     if item_path.is_dir():
-                        self.design_paths.append(pathlib.Path(design_dir) / dir_item.name)
+                        self.design_paths.append(dir_item.name)
 
     def __uniquify_design_paths(self):
         self.design_paths = list(set(self.design_paths))
         self.design_paths.sort()
-
-    def __create_flows(self):
-        for design in self.design_paths:
-            design = str(design)
-            design_basename = "/".join(design.split("/")[-2:])
-            flow = get_flow(self.experiment_props["flow"])(design_basename)
-            self.flows.append(flow)
 
     def parse_top_module(self):
         """Parse a yaml file to obtain a top module"""
