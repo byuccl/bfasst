@@ -57,10 +57,15 @@ class NinjaFlowManager:
         self.designs = [str(DESIGNS_PATH / design) for design in self.designs]
 
 
+def get_design_basenames(designs):
+    return [("/").join(design.split("/")[-2:]) for design in designs]
+
+
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--flow", type=str, required=True, help="Name of the flow to run")
     parser.add_argument("designs", nargs=REMAINDER, help="Designs to run the flow on")
     args = parser.parse_args()
-    NinjaFlowManager().create_flows(args.flow, args.designs)
-    NinjaFlowManager().run_flows()
+    flow_manager = NinjaFlowManager()
+    flow_manager.create_flows(args.flow, get_design_basenames(args.designs))
+    flow_manager.run_flows()

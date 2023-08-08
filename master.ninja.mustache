@@ -1,5 +1,5 @@
 rule configure
-    command = python3 scripts/ninja_flow_creator.py --flow=$flow $in
+    command = python3 scripts/ninja_flow_manager.py --flow=$flow $in
     generator = 1
 
 build build.ninja: configure {{#designs}}{{ . }}{{/designs}} | {{#deps}}{{ . }}{{/deps}}

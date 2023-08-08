@@ -1,9 +1,8 @@
 """Script to run a flow on one or more designs."""
 from argparse import ArgumentParser
-import code
 import pathlib
 import subprocess
-from ninja_flow_creator import NinjaFlowManager
+from ninja_flow_manager import NinjaFlowManager
 from bfasst.yaml_parser import YamlParser
 from bfasst.utils import error
 from bfasst.paths import ROOT_PATH
