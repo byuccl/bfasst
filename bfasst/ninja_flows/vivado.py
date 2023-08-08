@@ -172,13 +172,3 @@ class Vivado(Flow):
             else str(NINJA_FLOWS_PATH / "vivado_ooc.py")
         )
         return path
-
-
-if __name__ == "__main__":
-    parser = ArgumentParser()
-    parser.add_argument("--design", type=str, required=True, help="Design to run")
-    args = parser.parse_args()
-    flow = Vivado(args.design)
-    create_build_file()
-    flow.create_rule_snippets()
-    flow.create_build_snippets()

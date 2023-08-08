@@ -9,13 +9,3 @@ class VivadoOoc:
 
     def __new__(self, design):
         return Vivado(design, ooc=True)
-
-
-if __name__ == "__main__":
-    parser = ArgumentParser()
-    parser.add_argument("--design", type=str, required=True, help="Design to run")
-    args = parser.parse_args()
-    flow = VivadoOoc(args.design)
-    create_build_file()
-    flow.create_rule_snippets()
-    flow.create_build_snippets()

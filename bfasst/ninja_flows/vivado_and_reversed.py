@@ -97,13 +97,3 @@ class VivadoAndReversed(Flow):
     def get_top_level_flow_path(self):
         path = str(NINJA_FLOWS_PATH / "vivado_and_reversed.py")
         return path
-
-
-if __name__ == "__main__":
-    parser = ArgumentParser()
-    parser.add_argument("--design", type=str, required=True, help="Design to run")
-    args = parser.parse_args()
-    flow = VivadoAndReversed(args.design)
-    create_build_file()
-    flow.create_rule_snippets()
-    flow.create_build_snippets()
