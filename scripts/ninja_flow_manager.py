@@ -62,17 +62,10 @@ def get_design_basenames(designs):
     return [("/").join(design.split("/")[-2:]) for design in designs]
 
 
-def check_args(args):
-    if not args.flow:
-        error("Must specify a flow to run")
-    if not args.designs:
-        error("Must specify at least one design to run the flow on")
-
-
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--flow", type=str, required=True, help="Name of the flow to run")
-    parser.add_argument("--designs", nargs="+", help="Designs to run the flow on")
+    parser.add_argument("--designs", required=True, nargs="+", help="Designs to run the flow on")
     parsed_args = parser.parse_args()
     flow_manager = NinjaFlowManager()
     flow_manager.create_flows(parsed_args.flow, get_design_basenames(parsed_args.designs))
