@@ -4,6 +4,8 @@ from argparse import Namespace
 from pathlib import PosixPath
 import subprocess
 import unittest
+import io
+from contextlib import redirect_stdout
 from bfasst.paths import ROOT_PATH
 
 from scripts.bfasster import check_args
@@ -53,20 +55,27 @@ class TestBfassterApplicationRunner(unittest.TestCase):
         except SystemExit:
             self.fail("check_args raised SystemExit unexpectedly!")
 
+    def __produce_check_args_failure(self, args):
+        """Capture the output of utils.py error function so that it doesn't print to the console"""
+        with self.assertRaises(SystemExit) as cm:
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                check_args(args)
+
     def test_check_args_fails_on_yaml_and_design_and_flow(self):
         args = Namespace(
             yaml=PosixPath("experiments/tests/test.yaml"), design="byu/alu", flow="vivado"
         )
-        self.assertRaises(SystemExit, check_args, args)
+        self.__produce_check_args_failure(args)
 
     def test_check_args_fails_on_no_args(self):
         args = Namespace(yaml=None, design=None, flow=None)
-        self.assertRaises(SystemExit, check_args, args)
+        self.__produce_check_args_failure(args)
 
     def test_check_args_fails_on_yaml_and_design(self):
         args = Namespace(yaml=PosixPath("experiments/tests/test.yaml"), design="byu/alu", flow=None)
-        self.assertRaises(SystemExit, check_args, args)
+        self.__produce_check_args_failure(args)
 
     def test_check_args_fails_on_yaml_and_flow(self):
         args = Namespace(yaml=PosixPath("experiments/tests/test.yaml"), design=None, flow="vivado")
-        self.assertRaises(SystemExit, check_args, args)
+        self.__produce_check_args_failure(args)
