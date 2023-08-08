@@ -153,10 +153,16 @@ class StructuralCompareTool(CompareTool):
                 f"{pin.name}[{pin.index}] to",
                 f"{pin.name}[{pin.index}]",
             )
-            self.add_net_mapping(
-                pin.net,
-                self.reversed_netlist.get_pin(pin.name, pin.index).net,
-            )
+            try:
+                self.add_net_mapping(
+                    pin.net,
+                    self.reversed_netlist.get_pin(pin.name, pin.index).net,
+                )
+            except KeyError as e:
+                raise CompareException(
+                    f"KeyError during port mapping, is the I/O {pin.name} "
+                    + "signal a reserved HDL keyword?"
+                ) from e
 
         self.log_title("Starting mapping iterations")
         progress = True

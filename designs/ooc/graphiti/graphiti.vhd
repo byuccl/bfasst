@@ -17,7 +17,7 @@ entity graphiti is
 		clk : in std_logic;
 		clk15M : in std_logic;
 		reset : in std_logic;
-		output : out std_logic_vector (15 downto 0);
+		out_put : out std_logic_vector (15 downto 0);
 		in_r : in std_logic_vector (4 downto 0);
 		in_g : in std_logic_vector (4 downto 0);
 		in_b : in std_logic_vector (4 downto 0);
@@ -130,7 +130,7 @@ signal modvs : signed(28 downto 0);
 signal modys : signed(28 downto 0);
 
 
--- workaround für xilinx
+-- workaround fï¿½r xilinx
 signal input_fir1 : std_logic_vector (11 downto 0);
 signal input_fir2 : std_logic_vector (11 downto 0);
 signal input_delay : std_logic_vector (11 downto 0);
@@ -275,7 +275,7 @@ variable i_output : signed (16 downto 0);
 begin
 
 	if reset='0' then
-	   output <= (others => '0');
+	   out_put <= (others => '0');
 	elsif clk'event and clk='1' then
 		if tmr_phase='1' then
 			psin := -sin_data;
@@ -310,7 +310,7 @@ begin
 				i_output := conv_signed(14563,17) + prevideo;
 		end if;
 		
-		output <= conv_std_logic_vector (i_output (15 downto 0),16);
+		out_put <= conv_std_logic_vector (i_output (15 downto 0),16);
 		
 	end if;
 end process;
