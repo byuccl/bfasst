@@ -46,11 +46,24 @@ class YosysTechSynplifyConformal(Flow):
         impl_and_rev_sub_flow.modify_first_job_dependencies({self.job_list[-1].uuid})
         self.job_list.extend(impl_and_rev_sub_flow.job_list)
 
+        # Set paths for conformal
+        self.design.netlist_path = self.design.path / (self.design.top + ".v")
+        if self.design.cur_error_flow_name is None:
+            self.design.reversed_netlist_path = self.design.build_dir / (
+                self.design.top + "_reversed.v"
+            )
+        else:
+            self.design.reversed_netlist_path = self.design.build_dir / (
+                self.design.top + "_" + self.design.cur_error_flow_name + "_reversed.v"
+            )
+
         # Run conformal
         conformal_sub_flow = Conformal(self.design, self.flow_args)
         conformal_sub_flow.create()
         conformal_sub_flow.modify_first_job_dependencies({self.job_list[-1].uuid})
         self.job_list.extend(conformal_sub_flow.job_list)
+
+        return self.job_list
 
     def adjust_design_object(self):
         yosys_netlist_path = self.design.netlist_path

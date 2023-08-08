@@ -64,11 +64,11 @@ class YosysTechSynthTool(SynthesisTool):
         yosys_script_file = self.work_dir / YOSYS_SCRIPT_FILE
 
         # TODO: Figure out how to add VHDL library files to the yosys vhdl flow
-        file_paths = str(self.design.full_path / self.design.top_file)
-        for design_file in self.design.verilog_files:
-            file_paths += " " + str(self.design.full_path / design_file)
-        for design_file in self.design.vhdl_files:
-            file_paths += " " + str(self.design.full_path / design_file)
+        file_paths = str(self.design.rel_path / self.design.top_file_path)
+        for design_file in self.design.verilog_file_paths:
+            file_paths += " " + str(self.design.rel_path / design_file)
+        for design_file in self.design.vhdl_file_paths:
+            file_paths += " " + str(self.design.rel_path / design_file)
         # TODO: Add the same error handling as in other synth flows
         try:
             cmd = [

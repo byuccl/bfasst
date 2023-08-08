@@ -42,7 +42,7 @@ class Ic2LseOptTool(Ic2BaseOptTool):
         shutil.copyfile(template_file, project_file)
 
         with open(project_file, "a") as fp:
-            fp.write("-p " + str(self.design.full_path) + "\n")
+            fp.write("-p " + str(self.design.rel_path) + "\n")
 
             for design_file in self.yosys_netlist_path:
                 if os.path.splitext(design_file)[1].lower() == ".v":

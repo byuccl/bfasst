@@ -253,7 +253,10 @@ class StructuralCompareTool(CompareTool):
                     self.reversed_netlist.get_pin(pin.name, pin.index).net,
                 )
             except KeyError as e:
-                raise CompareException(f"KeyError during port mapping {pin.name} {pin.index}, is a top level I/O a reserved HDL keyword?") from e
+                raise CompareException(
+                    f"KeyError during port mapping, is the I/O {pin.name} "
+                    + "signal a reserved HDL keyword?"
+                ) from e
 
     def init_matching_instances(self):
         """Init possible_matches dict with all instances that match by cell type and properties"""
