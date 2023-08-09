@@ -1,0 +1,5 @@
+build {{ phys_netlist_output }}/checkpoint_to_v.tcl: template {{ phys_netlist_output }}/checkpoint_to_v.json {{ phys_netlist_library }}/checkpoint_to_v.tcl.mustache
+
+build {{ phys_netlist_output }}/viv_impl_physical.v: vivado {{ phys_netlist_output }}/checkpoint_to_v.tcl
+    journal = {{ phys_netlist_output }}/vivado.jou
+    log = {{ phys_netlist_output }}/vivado.log

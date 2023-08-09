@@ -82,8 +82,6 @@ class VivadoAndReversed(Flow):
             f.write(build_rules)
 
     def add_ninja_deps(self, deps=None):
-        """Add dependencies to build.ninja
-        that would trigger a rebuild of that file if modified"""
         if not deps:
             deps = []
         deps.extend(self.vivado_flow.add_ninja_deps())
