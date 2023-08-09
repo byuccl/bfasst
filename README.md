@@ -92,6 +92,7 @@ This branch serves as the transition point to a new version of bfasst, which mak
 * It takes advantage of the ninja build tool to automatically handle job creation, up-to-date checking of dependencies, parallel processing, and io redirection. 
 * It uses chevron, the python implementation of the mustache templating engine to template the scripts used for common operations such as synthesis and implementation of designs.
 * It keeps python as its base language, rather than switching to bash in order to minimize the learning curve and maximize portability in transitioning to the new architecture.
+* It provides unit tests for all new code, that can be run with `python -m unittest`
 
 ### Usage:
 
@@ -111,7 +112,7 @@ NOTE: You must specify <em>either</em> a yaml file or <em>both</em> a design and
 Alternatively, you can execute the ninja generation step entirely separate from the run step for a single design:
 
 <pre>Usage:<code>
-    python scripts/ninja_flow_manager.py [--flow FLOW] [--designs DESIGN(S)]
+    python bfasst/ninja_flows/ninja_flow_manager.py [--flow FLOW] [--designs DESIGN(S)]
     ninja
 
 options:
