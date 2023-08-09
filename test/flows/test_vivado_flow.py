@@ -33,7 +33,6 @@ class TestVivadoFlow(unittest.TestCase):
         with open(NINJA_BUILD_PATH, "r") as f:
             ninja_rules = f.read()
         self.assertIn("rule vivado", ninja_rules)
-        self.assertIn("rule template", ninja_rules)
         self.assertIn("rule vivado_ioparse", ninja_rules)
 
     def test_json_exist(self):

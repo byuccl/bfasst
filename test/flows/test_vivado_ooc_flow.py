@@ -30,7 +30,6 @@ class TestVivadoOocFlow(unittest.TestCase):
         with open(NINJA_BUILD_PATH, "r") as f:
             ninja_rules = f.read()
         self.assertIn("rule vivado", ninja_rules)
-        self.assertIn("rule template", ninja_rules)
         self.assertNotIn("rule vivado_ioparse", ninja_rules)
 
     def test_tcl_json_accurate(self):

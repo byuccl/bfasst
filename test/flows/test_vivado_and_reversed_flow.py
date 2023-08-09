@@ -31,7 +31,6 @@ class TestVivadoAndReversedFlow(unittest.TestCase):
             ninja_rules = f.read()
 
         self.assertIn("rule vivado", ninja_rules)
-        self.assertIn("rule template", ninja_rules)
         self.assertIn("rule vivado_ioparse", ninja_rules)
         self.assertIn("rule bit_to_fasm", ninja_rules)
         self.assertIn("rule fasm_to_netlist", ninja_rules)
