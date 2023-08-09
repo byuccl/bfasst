@@ -7,7 +7,10 @@ from bfasst.paths import NINJA_BUILD_PATH
 
 def get_flows():
     """Get all flows in the flows directory"""
-    flows = [flow.stem for flow in Path(__file__).parent.glob("*.py") if flow.stem != "__init__"]
+    special_names = ["__init__", "flow_utils", "flow", "ninja_flow_manager"]
+    flows = [
+        flow.stem for flow in Path(__file__).parent.glob("*.py") if flow.stem not in special_names
+    ]
     return flows
 
 
