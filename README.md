@@ -109,7 +109,7 @@ options:
 NOTE: You must specify <em>either</em> a yaml file or <em>both</em> a design and flow.
 </code></pre>
 
-Alternatively, you can execute the ninja generation step entirely separate from the run step for a single design:
+Alternatively, you can execute the ninja generation step entirely separate from the run step for one or more designs:
 
 <pre>Usage:<code>
     python bfasst/ninja_flows/ninja_flow_manager.py [--flow FLOW] [--designs DESIGN(S)]
