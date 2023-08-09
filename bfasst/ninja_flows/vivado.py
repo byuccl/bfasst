@@ -1,10 +1,8 @@
 """Flow to create Vivado synthesis and implementation ninja snippets."""
-from argparse import ArgumentParser
 import json
 import chevron
 from bfasst import config
 from bfasst.ninja_flows.flow import Flow
-from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.paths import (
     NINJA_IMPL_TOOLS_PATH,
     NINJA_BUILD_PATH,

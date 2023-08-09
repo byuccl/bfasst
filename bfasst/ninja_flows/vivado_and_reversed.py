@@ -1,9 +1,7 @@
 """Flow to reverse a netlist from a bitstream using xray."""
-from argparse import ArgumentParser
 import chevron
 from bfasst import config
 from bfasst.ninja_flows.flow import Flow
-from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado import Vivado
 from bfasst.paths import (
     NINJA_BUILD_PATH,
