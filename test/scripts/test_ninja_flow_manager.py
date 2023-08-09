@@ -81,7 +81,7 @@ class TestNinjaFlowManager(unittest.TestCase):
         os.utime(file_path)
 
     def __run_ninja(self):
-        """Run the build.ninja file and capture all output."""
+        """Run the build.ninja file and ensure it completes successfully."""
         proc = subprocess.Popen(
             "ninja", cwd=ROOT_PATH, stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
