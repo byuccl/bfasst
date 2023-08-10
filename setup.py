@@ -1,3 +1,7 @@
+"""
+Setup script for pip install
+"""
+
 from setuptools import setup, find_packages
 
 setup(

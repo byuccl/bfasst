@@ -41,7 +41,7 @@ class XilinxStructuralErrorInjection(Flow):
         # For each error type
         random_seed_multiplier = 1
         for error in error_type:
-            num_runs = 1
+            num_runs = 50
 
             for i in range(1, num_runs + 1):
                 error_injector = ErrorInjector(
@@ -60,12 +60,8 @@ class XilinxStructuralErrorInjection(Flow):
 
                 # Create a job to inject the correct type of error
                 error_function = error_injector.get_injection_function(error)
-                curr_job = Job(
-                    error_function, self.design.rel_path, {phys_netlist_rev_job.uuid}
-                )
+                curr_job = Job(error_function, self.design.rel_path, {phys_netlist_rev_job.uuid})
                 self.job_list.append(curr_job)
-
-                return self.job_list
 
                 # Set the paths for the compare tool's copy of design
                 phys_netlist_path = self.design.impl_edif_path.parent / (
@@ -78,25 +74,21 @@ class XilinxStructuralErrorInjection(Flow):
                     gold_netlist=phys_netlist_path,
                     rev_netlist=corrupt_netlist_path,
                     flow_args=self.flow_args[ToolType.CMP],
-                    log_prefix=log_prefix
+                    log_prefix=log_prefix,
                 )
 
+                # Compare + Clean up the corrupted netlist if the comparison passes
                 comparison_job = Job(
-                    compare_tool.compare_netlists, self.design.rel_path, {self.job_list[-1].uuid}, partial(unlink, corrupt_netlist_path)
+                    compare_tool.compare_netlists,
+                    self.design.rel_path,
+                    {self.job_list[-1].uuid},
+                    partial(unlink, corrupt_netlist_path),
                 )
 
                 # Rather than append to the job list,
                 # we create a new job that inverts its exception handling.
                 # If the comparison fails with an exception, we've caught the injected error.
                 self.job_list.append(comparison_job.invert())
-
-                # Clean up the corrupted netlist if the comparison passes
-                # curr_job = Job(
-                #     partial(unlink, corrupt_netlist_path),
-                #     self.design.rel_path,
-                #     {self.job_list[-1].uuid},
-                # )
-                # self.job_list.append(curr_job)
 
             random_seed_multiplier += 1
         return self.job_list

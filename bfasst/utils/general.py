@@ -1,9 +1,10 @@
-""" Utility functions"""
+"""General Utility functions"""
 import re
 import sys
 import shutil
 
-import bfasst
+from bfasst.config import BUILD_DIR
+from bfasst.paths import DESIGNS_PATH
 
 
 class TermColor:
@@ -41,7 +42,7 @@ def error(*msg, returncode=-1):
 
 def create_build_dir(path):
     """Create a build directory if it doesn't exist"""
-    new_dir = path / bfasst.config.BUILD_DIR
+    new_dir = path / BUILD_DIR
     new_dir.mkdir(exist_ok=True)
     return new_dir
 
@@ -55,7 +56,7 @@ def create_build_design_dir(build_dir, design_dir):
 
 def get_design_dir(design_name):
     """Return the design directory"""
-    return bfasst.paths.DESIGNS_PATH / design_name
+    return DESIGNS_PATH / design_name
 
 
 def clean_folder(folder_path):

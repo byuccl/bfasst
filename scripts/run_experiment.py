@@ -199,9 +199,9 @@ def clean_jobs(jobs, future, statuses, job_results, print_lock):
     # read the result from the future
     status = future.result()
 
-    p = finished_job.design_rel_path
-    p = f"{p.parent.name}/{p.name}"
-    job_results[p] = status
+    design = finished_job.design_rel_path
+    design = f"{design.parent.name}/{design.name}"
+    job_results[design] = status
 
     # Remove the job and return if it was successful
     if not status:

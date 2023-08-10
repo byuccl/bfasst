@@ -44,9 +44,8 @@ def run_design(design_path, flow, error_flow, flow_args):
     except BfasstException as e:
         print(e)
     except AssertionError:
-        formatted_lines = traceback.format_exc().splitlines()
         line = ""
-        for line in reversed(formatted_lines):
+        for line in reversed(traceback.format_exc().splitlines()):
             if line.strip().startswith("File"):
                 break
         print(f"AssertionErrror: {line}")

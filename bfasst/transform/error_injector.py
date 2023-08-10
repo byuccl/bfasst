@@ -2,7 +2,7 @@
 from enum import Enum
 import spydrnet as sdn
 from bfasst.transform.base import TransformTool, TransformException
-from bfasst.rw_helpers import get_sdn_direction_for_unisim, get_unisim_inputs
+from bfasst.utils.rw_helpers import get_sdn_direction_for_unisim, get_unisim_inputs
 from bfasst.utils import convert_verilog_literal_to_int
 
 
@@ -33,8 +33,8 @@ class ErrorInjector(TransformTool):
         self.new_lut_init = None
 
         self.__setup_netlist()
-        for i in range(1,251):
-            self.log_num=i
+        for i in range(1, 251):
+            self.log_num = i
             self.inject_bit_flip()
             self.inject_wire_swap()
 
@@ -79,7 +79,7 @@ class ErrorInjector(TransformTool):
                 raise TransformException("No LUTs elligble for bit flip")
             num_luts = len(self.all_rams)
             prims = self.all_rams
-            
+
         lut_number = self.random_generator.randrange(num_luts)
         lut_size = self.__get_lut_init_size(prims[lut_number])
         bit_number = self.random_generator.randrange(lut_size)
@@ -95,7 +95,7 @@ class ErrorInjector(TransformTool):
                     for lut in definition.references:
                         init_string = lut.data["VERILOG.Parameters"]["INIT"]
                         init_val = int(init_string[4:], base=16)
-                        if init_val: # Avoid hanging luts in f2b netlist
+                        if init_val:  # Avoid hanging luts in f2b netlist
                             self.all_luts.append(lut)
         self.all_luts.sort(key=lambda x: x.name)
 
@@ -127,14 +127,6 @@ class ErrorInjector(TransformTool):
         hex_str = f"{corrupted_init:0{int(init_size) // 4}X}"
         self.new_lut_init = f"{init_size}'h{hex_str}"
         lut.data["VERILOG.Parameters"]["INIT"] = self.new_lut_init
-
-    def __pad_hex_val(self, val, lut_size):
-        """
-        Takes a hex value, and pads it with zeros to
-        the size of the LUT init string passed in.
-        """
-        padding = lut_size // 4
-        return "0x" + val[2:].zfill(padding)
 
     def __compose_corrupt_netlist(self):
         """Writes the netlist to the corrupted netlist path in the design"""
@@ -201,19 +193,22 @@ class ErrorInjector(TransformTool):
         # Check for const0/const1 that may not have any driver
         if pin.wire.cable.name == r"\<const0>":
             return None
-        elif pin.wire.cable.name == r"\<const1>":
+        if pin.wire.cable.name == r"\<const1>":
             return None
-        for pin in pin.wire.pins:
+        for conn in pin.wire.pins:
             # If connected to top-level input
-            if isinstance(pin, sdn.ir.InnerPin):
-                if pin.port.direction == sdn.ir.Port.Direction.IN:
-                    return pin
-            else:
-                pin_direction = self.get_direction_for_unisim(
-                    pin.instance.reference.name, pin.inner_pin.port.name
-                )
-                if pin_direction == sdn.ir.Port.Direction.OUT:
-                    return pin
+            if (
+                isinstance(conn, sdn.ir.InnerPin)
+                and conn.port.direction == sdn.ir.Port.Direction.IN
+            ):
+                return conn
+
+            pin_direction = self.get_direction_for_unisim(
+                conn.instance.reference.name, conn.inner_pin.port.name
+            )
+            if pin_direction == sdn.ir.Port.Direction.OUT:
+                return conn
+        return None
 
     def get_direction_for_unisim(self, cell_type_name, port_name):
         """Get a pin direction for a UNISIM cell"""
@@ -239,17 +234,17 @@ class ErrorInjector(TransformTool):
         """Logs the wire swap to the log file"""
         self.log_path = self.__get_wire_swap_log()
         if isinstance(selected_input, sdn.OuterPin):
-            p1 = selected_input.inner_pin.port.name
+            pin1 = selected_input.inner_pin.port.name
         else:
-            p1 = selected_input.port.name
+            pin1 = selected_input.port.name
         if isinstance(selected_input2, sdn.OuterPin):
-            p2 = selected_input2.inner_pin.port.name
+            pin2 = selected_input2.inner_pin.port.name
         else:
-            p2 = selected_input2.port.name
+            pin2 = selected_input2.port.name
         log_msg = (
-            f"Wire swap of {two_instances[0].name} {p1} "
+            f"Wire swap of {two_instances[0].name} {pin1} "
             + f"{selected_input.wire.cable.name} "
-            + f"and {two_instances[1].name} {p2} "
+            + f"and {two_instances[1].name} {pin2} "
             + f"{selected_input2.wire.cable.name} "
             + "was successful.\n"
         )

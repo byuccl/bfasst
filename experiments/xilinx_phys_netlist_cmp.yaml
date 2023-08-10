@@ -87,6 +87,7 @@ designs:
   # - ooc/a25_mem - Fasm2bels Error: SRL miswired
   # - ooc/a25_execute - Fasm2bels Error:  missing a FDRE that propogates vcc
   # - ooc/a25_fetch - Fasm2bels Error:  swapped the init for an SRL (placed SRLs on the lut5 & lut6, lu6 is disconnected but has the init string that should be on lut5).
+  # - ooc/pwm Fails to map BUFG
   
 
 flow: xilinx_phys_netlist_cmp

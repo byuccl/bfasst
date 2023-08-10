@@ -42,6 +42,49 @@ def generate_combinded_cell_name(edif_cells):
     return f"{root_name}{'_'.join(leaves)}"
 
 
+def generate_lut62_name(lut6_edif_cell_inst, lut6_cell, lut5_cell):
+    """Create name for luts combined onto single LUT6_2"""
+    site_str = f"X{lut6_cell.getSite().getInstanceX()}Y{lut6_cell.getSite().getInstanceY()}"
+    new_cell_name = lut6_edif_cell_inst.getName() + f"_{site_str}_{lut6_cell.getBELName()}_phys"
+
+    # Check routethru
+    if lut6_cell.isRoutethru() and (lut5_cell is None or lut5_cell.isRoutethru()):
+        new_cell_name = (
+            lut6_edif_cell_inst.getName()
+            + f"_routethru_{site_str}_"
+            + str(lut6_cell.getBEL().getName())[0]
+        )
+
+    if lut5_cell:
+        new_cell_name += "_shared"
+    return new_cell_name
+
+
+def generate_const_lut_name(site_inst, pins, pin1_gnd, pin2_gnd):
+    p1_type = "GND" if pin1_gnd else "VCC"
+    p2_type = "GND" if pin2_gnd else "VCC"
+    suffix = (
+        f"{'.' + p1_type if pin1_gnd is not None else ''}"
+        + f"{'.' + p2_type if pin2_gnd is not None else ''}.gen"
+    )
+    return str(site_inst.getName()) + "." + ".".join(p for p in pins) + suffix
+
+
+def generate_const_rt_lut_name(lut5_edif_cell_inst, lut5, const_type, const_pin):
+    """Generate name for a signal rt lut combined with a const rt lut"""
+    tmp = (
+        f"_routethru_{str(lut5.getBEL().getName())[0:2]}"
+        if lut5.isRoutethru()
+        else str(lut5.getBEL().getName())
+    )
+    site_str = f"X{lut5.getSite().getInstanceX()}Y{lut5.getSite().getInstanceY()}"
+    name = (
+        f"{lut5_edif_cell_inst.getName()}_{site_str}_{tmp}_"
+        + f"{const_type}_{const_pin}_phys_shared"
+    )
+    return name
+
+
 def get_net_from_edif_port(cell, port_name, edif_cell=None):
     if edif_cell is None:
         edif_port = cell.getEDIFCellInst().getPortInst(port_name)
@@ -141,6 +184,58 @@ def remove_and_disconnect_cell(cell, log=print):
     # Remove the port instances
     cell = cell.getInst()
     cell.getParentCell().removeCellInst(cell)
+
+
+def lut_move_net_to_new_cell(
+    old_edif_cell_inst,
+    new_edif_cell_inst,
+    old_logical_pin,
+    physical_pin,
+    log=print,
+    already_connected_net=None,
+):
+    """This function connects the net from old_edif_cell_inst/old_logical_pin,
+    to the appropriate logical pin on the new_edif_cell_inst, based on the physical pin,
+    and disconnects from the old cell.  It's possible the net is already_connected to the
+    new cell, in which case only the disconnect from old cell needs to be performed."""
+
+    log(f"  Processing logical pin {old_logical_pin}, physical pin {physical_pin}")
+
+    port_inst = old_edif_cell_inst.getPortInst(old_logical_pin)
+    logical_net = port_inst.getNet()
+    assert logical_net
+
+    if already_connected_net:
+        assert logical_net == already_connected_net
+        log(f"    Skipping already connected physical pin {physical_pin}")
+
+    else:
+        if port_inst.getDirection() == RwDirection.INPUT:
+            log("    Input driven by net", logical_net)
+
+            # A5 becomes I4, A1 becomes I0, etc.
+            new_logical_pin = f"I{int(str(physical_pin[1])) - 1}"
+            log(
+                "    Connecting net",
+                logical_net,
+                "to input pin",
+                new_logical_pin,
+                "on new cell",
+            )
+
+        elif port_inst.getDirection() == RwDirection.OUTPUT:
+            log("    Drives net", logical_net)
+
+            new_logical_pin = physical_pin
+            log("    Connecting net", logical_net, "to output pin", new_logical_pin)
+
+        new_port = new_edif_cell_inst.getPort(new_logical_pin)
+        assert new_port
+        logical_net.createPortInst(new_port, new_edif_cell_inst)
+
+    # Disconnect connection to port on old cell
+    log("    Disconnecting net", logical_net, "from pin", old_logical_pin, "on old cell")
+    logical_net.removePortInst(port_inst)
 
 
 def process_lut_eqn(cell, is_lut5, log=print):
