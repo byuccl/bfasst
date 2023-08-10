@@ -31,7 +31,11 @@ class Design:
             error("Design folder", dir_path, " does not exist.")
 
         self.path = dir_path
-        self.rel_path = self.path.relative_to(paths.DESIGNS_PATH)
+        if self.path.relative_to(paths.DESIGNS_PATH) is not None:
+            self.rel_path = self.path.relative_to(paths.DESIGNS_PATH)
+        else:
+            self.rel_path = self.path.resolve()
+
         self.build_dir = experiment_dir / self.rel_path
         self.yaml_path = self.path / DESIGN_YAML_NAME
 
