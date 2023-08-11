@@ -45,6 +45,10 @@ class TestBfassterApplicationRunner(unittest.TestCase):
         """Test that the runner runs the vivado and reversed flow without errors"""
         self.__run_flow("vivado_and_reversed")
 
+    def test_run_vivado_phys_netlist_flow(self):
+        """Test that the runner runs the vivado_phys_netlist flow without errors"""
+        self.__run_flow("vivado_phys_netlist")
+
     def __try_check_args_for_success(self, args):
         try:
             check_args(args)
