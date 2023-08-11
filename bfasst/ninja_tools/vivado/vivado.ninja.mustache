@@ -1,5 +1,5 @@
 rule vivado
-    command = vivado -mode batch -journal $journal -log $log -source $in >&-
+    command = export tempjou=$$(mktemp); export templog=$$(mktemp); vivado -mode batch -journal $$tempjou -log $$templog -source $in >&- && mv $$tempjou $journal && mv $$templog $log
     description = vivado $in
 
 {{#in_context}}

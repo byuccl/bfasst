@@ -1,0 +1,4 @@
+rule phys_netlist
+    command = python bfasst/ninja_utils/rw_phys_netlist.py --build_dir $build_dir
+    description = generate physical netlist for $build_dir
+
