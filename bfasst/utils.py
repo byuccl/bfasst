@@ -1,5 +1,6 @@
 """ Utility functions"""
 import json
+import logging
 import re
 import sys
 import shutil
@@ -144,3 +145,17 @@ def sort_json(item):
     if isinstance(item, list):
         return sorted(sort_json(x) for x in item)
     return item
+
+
+def clean_directory(directory):
+    for file in directory.iterdir():
+        if file.is_file():
+            file.unlink()
+
+
+def log_with_banner(*msg):
+    message = " ".join(str(s) for s in msg)
+    banner = "=" * 120
+    logging.info(banner)
+    logging.info(message)
+    logging.info(banner)

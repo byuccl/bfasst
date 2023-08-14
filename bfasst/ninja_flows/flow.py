@@ -24,5 +24,5 @@ class Flow(abc.ABC):
         and its sub-flows as dependencies of the build.ninja file"""
 
     @abc.abstractmethod
-    def get_top_level_flow_path(self):
+    def get_top_level_flow_path(self) -> str:
         """Get the path to the top level flow file for this flow"""

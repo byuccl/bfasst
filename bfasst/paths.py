@@ -23,6 +23,7 @@ VIVADO_RULES_PATH = NINJA_TOOLS_PATH / "vivado" / "vivado.ninja.mustache"
 PHYS_NETLIST_RULES_PATH = NINJA_TOOLS_PATH / "transform" / "phys_netlist_rules.ninja"
 REV_BIT_TOOLS_PATH = NINJA_TOOLS_PATH / "rev_bit"
 NINJA_TRANSFORM_TOOLS_PATH = NINJA_TOOLS_PATH / "transform"
+NINJA_COMPARE_TOOLS_PATH = NINJA_TOOLS_PATH / "compare"
 
 NINJA_BUILD_PATH = ROOT_PATH / "build.ninja"
 
