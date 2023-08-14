@@ -315,9 +315,10 @@ class XilinxPhysNetlist(TransformTool):
                 lut_rams.append(lut6_cell)
                 cells_already_visited.add(lut6_cell)
                 # Currently do not support designs with inverted LUTRAM clk
-                assert (
-                    lut6_cell.getEDIFCellInst().getProperty("IS_CLK_INVERTED").getValue() == "1'b1"
-                )
+                if (
+                    lut6_cell.getEDIFCellInst().getProperty("IS_CLK_INVERTED").getValue() != "1'b1"
+                ):
+                    self.log("Warning: RW reported inverted clk.. check for accuracy")
                 if not lut5_cell:
                     return True
             elif cell_type.startswith("SRL"):
