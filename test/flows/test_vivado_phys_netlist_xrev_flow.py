@@ -3,7 +3,7 @@ import unittest
 
 from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado_phys_netlist_xrev import VivadoPhysNetlistXrev
-from bfasst.paths import NINJA_BUILD_PATH, NINJA_FLOWS_PATH, NINJA_UTILS_PATH, REV_BIT_TOOLS_PATH
+from bfasst.paths import NINJA_BUILD_PATH, NINJA_FLOWS_PATH, REV_BIT_TOOLS_PATH
 
 
 class TestVivadoPhysNetlistXrev(unittest.TestCase):

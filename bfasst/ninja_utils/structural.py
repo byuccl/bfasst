@@ -1,7 +1,6 @@
 """Structural Comparison and Mapping script"""
 
 from argparse import ArgumentParser
-import code
 import logging
 from pathlib import Path
 import sys
