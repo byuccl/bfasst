@@ -182,6 +182,7 @@ class Net:
             )
         ]
         self.is_connected = bool(pins_that_drive)
+        return self.is_connected
 
     def find_driver(self):
         """Determine the pin that drives this wire"""
