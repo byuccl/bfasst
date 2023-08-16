@@ -41,6 +41,7 @@ class ApplicationRunner:
             self.designs = [args.design]
 
     def __run_ninja(self):
+        # k0 flag allows ninja to work on independent targets even if some fail
         cmd = ["ninja", "-k", "0"]
         subprocess.Popen(args=cmd, cwd=ROOT_PATH)
 

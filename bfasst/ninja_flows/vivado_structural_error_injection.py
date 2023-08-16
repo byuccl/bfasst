@@ -1,54 +1,46 @@
 """Inject an error into a xrev netlist and run a structural compare to detect it."""
 import random
 
-import chevron
 from bfasst.ninja_flows.flow import Flow
-from bfasst.ninja_flows.vivado_phys_netlist_xrev import VivadoPhysNetlistXrev
+from bfasst.ninja_tools.compare.structural import Structural
+from bfasst.ninja_tools.rev_bit.xray import Xray
+from bfasst.ninja_tools.transform.error_injector import ErrorInjector
+from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
+from bfasst.ninja_tools.vivado.vivado import Vivado
 from bfasst.paths import (
-    NINJA_BUILD_PATH,
-    NINJA_COMPARE_TOOLS_PATH,
     NINJA_FLOWS_PATH,
-    NINJA_TRANSFORM_TOOLS_PATH,
-    NINJA_UTILS_PATH,
     ROOT_PATH,
 )
 
 from bfasst.ninja_utils.error_injector import ErrorType
-from bfasst.yaml_parser import YamlParser
 
 
 class VivadoStructuralErrorInjection(Flow):
     """Inject an error into a xrev netlist and run a structural compare to detect it."""
 
     def __init__(self, design):
-        super().__init__(design)
-
-        self.injector_build = ROOT_PATH / "build" / design / "error_injection"
-        self.cmp_build = ROOT_PATH / "build" / design / "struct_cmp"
-        self.__create_build_dirs()
-
-        self.phys_xrev_flow = VivadoPhysNetlistXrev(design)
-
+        super().__init__()
         random.seed(0)
-        self.top = YamlParser(self.design / "design.yaml").parse_top_module()
+        self.vivado_tool = Vivado(design)
+        self.phys_netlist_tool = PhysNetlist(design)
+        self.xrev_tool = Xray(design)
+        self.error_injector_tool = ErrorInjector(design)
+        self.compare_tool = Structural(design, True)
 
-    def __create_build_dirs(self):
-        self.injector_build.mkdir(parents=True, exist_ok=True)
-        self.cmp_build.mkdir(parents=True, exist_ok=True)
+        self.error_injector_build = ROOT_PATH / "build" / design / "error_injection"
 
     def create_rule_snippets(self):
-        self.phys_xrev_flow.create_rule_snippets()
-        with open(NINJA_TRANSFORM_TOOLS_PATH / "error_injector.ninja_rules.mustache", "r") as f:
-            rules = chevron.render(f, {"utils": NINJA_UTILS_PATH})
-
-        with open(NINJA_COMPARE_TOOLS_PATH / "structural.ninja_rules.mustache", "r") as f:
-            rules += chevron.render(f, {"utils": NINJA_UTILS_PATH, "invert": True})
-
-        with open(NINJA_BUILD_PATH, "a") as f:
-            f.write(rules)
+        """Create the rule snippets for the flow and append them to build.ninja."""
+        self.vivado_tool.create_rule_snippets()
+        self.phys_netlist_tool.create_rule_snippets()
+        self.xrev_tool.create_rule_snippets()
+        self.error_injector_tool.create_rule_snippets()
+        self.compare_tool.create_rule_snippets()
 
     def create_build_snippets(self):
-        self.phys_xrev_flow.create_build_snippets()
+        self.vivado_tool.create_build_snippets()
+        self.phys_netlist_tool.create_build_snippets()
+        self.xrev_tool.create_build_snippets()
 
         random_seed_multiplier = 1
         error_type = [ErrorType.BIT_FLIP, ErrorType.WIRE_SWAP]
@@ -56,51 +48,24 @@ class VivadoStructuralErrorInjection(Flow):
             num_runs = 100
 
             for i in range(1, num_runs + 1):
-                injection_log_path = self.injector_build / f"{error.name.lower()}_{i}.log"
-                corrupt_netlist_path = self.injector_build / f"{error.name.lower()}_{i}.v"
-                compare_log_path = self.cmp_build / f"{error.name.lower()}_{i}_cmp.log"
-                with open(
-                    NINJA_TRANSFORM_TOOLS_PATH / "error_injector.ninja_build.mustache", "r"
-                ) as f:
-                    build = chevron.render(
-                        f,
-                        {
-                            "log_path": str(injection_log_path),
-                            "corrupt_netlist_path": corrupt_netlist_path,
-                            "build_dir": str(self.injector_build.parent),
-                            "top": self.top,
-                            "seed": random_seed_multiplier * i,
-                            "error_type": error.name,
-                        },
-                    )
-
-                with open(NINJA_COMPARE_TOOLS_PATH / "structural.ninja_build.mustache", "r") as f:
-                    build += chevron.render(
-                        f,
-                        {
-                            "build": str(self.cmp_build.parent),
-                            "netlist_a": str(
-                                self.phys_xrev_flow.phys_netlist_flow.build / "viv_impl_physical.v"
-                            ),
-                            "netlist_b": str(corrupt_netlist_path),
-                            "log_path": str(compare_log_path),
-                        },
-                    )
-
-                with open(NINJA_BUILD_PATH, "a") as f:
-                    f.write(build)
+                self.error_injector_tool.create_build_snippets(error, i, random_seed_multiplier)
+                corrupt_netlist_path = self.error_injector_build / f"{error.name.lower()}_{i}.v"
+                self.compare_tool.create_build_snippets(
+                    self.phys_netlist_tool.phys_netlist_path,
+                    corrupt_netlist_path,
+                    f"{error.name.lower()}_{i}_cmp.log",
+                )
 
     def add_ninja_deps(self, deps=None):
         if not deps:
             deps = []
-        deps.extend(self.phys_xrev_flow.add_ninja_deps())
+        deps.extend(self.vivado_tool.add_ninja_deps())
+        deps.extend(self.phys_netlist_tool.add_ninja_deps())
+        deps.extend(self.xrev_tool.add_ninja_deps())
+        deps.extend(self.error_injector_tool.add_ninja_deps())
+        deps.extend(self.compare_tool.add_ninja_deps())
         deps.append(f"{NINJA_FLOWS_PATH}/vivado_structural_error_injection.py ")
-        deps.append(f"{NINJA_TRANSFORM_TOOLS_PATH}/error_injector.ninja_rules.mustache ")
-        deps.append(f"{NINJA_TRANSFORM_TOOLS_PATH}/error_injector.ninja_build.mustache ")
-        deps.append(f"{NINJA_COMPARE_TOOLS_PATH}/structural.ninja_rules.mustache ")
-        deps.append(f"{NINJA_COMPARE_TOOLS_PATH}/structural.ninja_build.mustache ")
         return deps
 
     def get_top_level_flow_path(self) -> str:
-        path = str(NINJA_FLOWS_PATH / "vivado_structural_error_injection.py")
-        return path
+        return f"{NINJA_FLOWS_PATH}/vivado_structural_error_injection.py"
