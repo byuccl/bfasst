@@ -9,7 +9,7 @@ read_verilog {{ . }}
 read_verilog -sv {{ . }}
 
 {{/system_verilog}}
-synth_design -top {{ top }}
+synth_design -top {{ top }} {{ flow_args }}
 {{#io}}
 place_ports
 

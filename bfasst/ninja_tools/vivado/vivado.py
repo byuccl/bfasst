@@ -19,8 +19,10 @@ from bfasst.yaml_parser import YamlParser
 class Vivado(Tool):
     """Tool to create Vivado synthesis and implementation ninja snippets."""
 
-    def __init__(self, design, ooc=False):
+    def __init__(self, design, flow_args=None, ooc=False):
         super().__init__(design)
+
+        self.flow_args = flow_args
 
         self.ooc = ooc
         if ooc:
@@ -84,6 +86,7 @@ class Vivado(Tool):
             "top": self.top,
             "io": str(self.synth_output / "report_io.txt") if not self.ooc else False,
             "synth_output": str(self.synth_output),
+            "flow_args": self.flow_args if self.flow_args else "",
         }
         synth_json = json.dumps(synth, indent=4)
 

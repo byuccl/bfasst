@@ -2,7 +2,6 @@
 
 
 from bfasst.ninja_flows.flow import Flow
-from bfasst.ninja_flows.vivado import Vivado
 from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
 from bfasst.paths import NINJA_FLOWS_PATH
@@ -11,9 +10,9 @@ from bfasst.paths import NINJA_FLOWS_PATH
 class VivadoPhysNetlistXrev(Flow):
     """Flow that combines vivado phys netlist and xray/f2b reversal."""
 
-    def __init__(self, design):
+    def __init__(self, design, flow_args=None):
         super().__init__()
-        self.vivado_tool = Vivado(design)
+        self.vivado_tool = self.configure_vivado_tool(design, flow_args)
         self.phys_netlist_tool = PhysNetlist(design)
         self.xrev_tool = Xray(design)
 

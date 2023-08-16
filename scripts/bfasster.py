@@ -15,6 +15,7 @@ class ApplicationRunner:
         self.designs = None
         self.flow = None
         self.deps = None
+        self.flow_args = None
 
     def run(self, args):
         """Run a flow on one or more designs."""
@@ -24,7 +25,7 @@ class ApplicationRunner:
 
         # create a flow manager to handle the build.ninja file creation and update by flows
         flow_manager = NinjaFlowManager()
-        flow_manager.create_flows(self.flow, self.designs)
+        flow_manager.create_flows(self.flow, self.designs, self.flow_args)
         flow_manager.run_flows()
 
         # run the build.ninja file
@@ -36,6 +37,7 @@ class ApplicationRunner:
             yaml_parser.parse_design_flow()
             self.designs = yaml_parser.design_paths
             self.flow = yaml_parser.flow
+            self.flow_args = yaml_parser.flow_args
         else:
             self.flow = args.flow
             self.designs = [args.design]

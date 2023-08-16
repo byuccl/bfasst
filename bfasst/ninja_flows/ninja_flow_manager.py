@@ -13,13 +13,13 @@ class NinjaFlowManager:
         self.designs = None
         self.flow_name = None
 
-    def create_flows(self, flow_name, designs):
+    def create_flows(self, flow_name, designs, flow_args=None):
         """Create the ninja flows for the given designs."""
         self.flow_name = flow_name
         self.flows = []
         self.designs = designs
         for design in designs:
-            flow = get_flow(flow_name)(design)
+            flow = get_flow(flow_name)(design, flow_args)
             self.flows.append(flow)
 
     def run_flows(self):

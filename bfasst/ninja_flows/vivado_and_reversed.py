@@ -1,6 +1,5 @@
 """Flow to reverse a netlist from a bitstream using xray."""
 from bfasst.ninja_flows.flow import Flow
-from bfasst.ninja_tools.vivado.vivado import Vivado as VivadoTool
 from bfasst.ninja_tools.rev_bit.xray import Xray as XrevTool
 from bfasst.paths import NINJA_FLOWS_PATH
 
@@ -8,9 +7,9 @@ from bfasst.paths import NINJA_FLOWS_PATH
 class VivadoAndReversed(Flow):
     """Flow to reverse a netlist from a bitstream using xray."""
 
-    def __init__(self, design):
+    def __init__(self, design, flow_args=None):
         super().__init__()
-        self.vivado_tool = VivadoTool(design)
+        self.vivado_tool = self.configure_vivado_tool(design, flow_args)
         self.xrev_tool = XrevTool(design)
 
     def create_rule_snippets(self):

@@ -1,7 +1,6 @@
 """Creates a Vivado netlist that has only physical primitives."""
 
 from bfasst.ninja_flows.flow import Flow
-from bfasst.ninja_tools.vivado.vivado import Vivado
 from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
 from bfasst.paths import NINJA_FLOWS_PATH
 
@@ -9,9 +8,9 @@ from bfasst.paths import NINJA_FLOWS_PATH
 class VivadoPhysNetlist(Flow):
     """Creates a Vivado netlist that has only physical primitives."""
 
-    def __init__(self, design):
+    def __init__(self, design, flow_args=None):
         super().__init__()
-        self.vivado_tool = Vivado(design)
+        self.vivado_tool = self.configure_vivado_tool(design, flow_args)
         self.phys_netlist_tool = PhysNetlist(design)
 
     def create_rule_snippets(self):

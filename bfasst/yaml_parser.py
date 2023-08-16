@@ -1,5 +1,4 @@
 """Parse a yaml file to obtain a flow and a list of target designs"""
-import pathlib
 import yaml
 from bfasst.utils import error
 from bfasst import paths
@@ -14,6 +13,7 @@ class YamlParser:
         self.post_run = None
         self.design_paths = None
         self.flow = None
+        self.flow_args = None
 
     def parse_design_flow(self):
         """Parse a yaml file into design paths
@@ -30,6 +30,7 @@ class YamlParser:
         self.__uniquify_design_paths()
 
         self.flow = self.experiment_props["flow"]
+        self.flow_args = dict({"synth": self.experiment_props["synth"]})
 
     def __read_experiment_yaml(self):
         with open(self.yaml_path) as f:
