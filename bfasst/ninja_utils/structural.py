@@ -7,7 +7,7 @@ import sys
 from bidict import bidict
 import spydrnet as sdn
 from bfasst import jpype_jvm
-from bfasst.utils import clean_directory, log_with_banner, properties_are_equal
+from bfasst.utils import log_with_banner, properties_are_equal
 import bfasst.rw_helpers as rw
 
 
@@ -21,7 +21,6 @@ class StructuralCompare:
     def __init__(self, build_dir, netlist_a, netlist_b, log_path):
         self.build_dir = Path(build_dir)
         self.stage_dir = self.build_dir / "struct_cmp"
-        clean_directory(self.stage_dir)
 
         self.netlist_a = netlist_a
         self.netlist_b = netlist_b

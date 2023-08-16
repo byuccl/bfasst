@@ -38,6 +38,7 @@ class VivadoPhysNetlist(Flow):
             f.write(phys_netlist_rules)
 
     def create_build_snippets(self):
+        self.vivado_flow.create_build_snippets()
         self.__write_json_file()
         self.__append_build_snippets()
 
@@ -55,7 +56,6 @@ class VivadoPhysNetlist(Flow):
                 f.write(checkpoint_to_v_json)
 
     def __append_build_snippets(self):
-        self.vivado_flow.create_build_snippets()
         with open(NINJA_TRANSFORM_TOOLS_PATH / "phys_netlist_build.ninja.mustache") as f:
             phys_netlist_ninja = chevron.render(
                 f,

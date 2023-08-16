@@ -23,16 +23,18 @@ class VivadoStructuralErrorInjection(Flow):
     def __init__(self, design):
         super().__init__(design)
 
-        self.build = ROOT_PATH / "build" / design / "error_injection"
-        self.__create_build_dir()
+        self.injector_build = ROOT_PATH / "build" / design / "error_injection"
+        self.cmp_build = ROOT_PATH / "build" / design / "struct_cmp"
+        self.__create_build_dirs()
 
         self.phys_xrev_flow = VivadoPhysNetlistXrev(design)
 
         random.seed(0)
         self.top = YamlParser(self.design / "design.yaml").parse_top_module()
 
-    def __create_build_dir(self):
-        self.build.mkdir(parents=True, exist_ok=True)
+    def __create_build_dirs(self):
+        self.injector_build.mkdir(parents=True, exist_ok=True)
+        self.cmp_build.mkdir(parents=True, exist_ok=True)
 
     def create_rule_snippets(self):
         self.phys_xrev_flow.create_rule_snippets()
@@ -40,7 +42,7 @@ class VivadoStructuralErrorInjection(Flow):
             rules = chevron.render(f, {"utils": NINJA_UTILS_PATH})
 
         with open(NINJA_COMPARE_TOOLS_PATH / "structural.ninja_rules.mustache", "r") as f:
-            rules += chevron.render(f, {"utils": NINJA_UTILS_PATH})
+            rules += chevron.render(f, {"utils": NINJA_UTILS_PATH, "invert": True})
 
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(rules)
@@ -54,11 +56,9 @@ class VivadoStructuralErrorInjection(Flow):
             num_runs = 100
 
             for i in range(1, num_runs + 1):
-                injection_log_path = self.build / f"{error.name.lower()}_{i}.log"
-                corrupt_netlist_path = self.build / f"{error.name.lower()}_{i}.v"
-                compare_log_path = (
-                    self.build.parent / "struct_cmp" / f"{error.name.lower()}_{i}_cmp.log"
-                )
+                injection_log_path = self.injector_build / f"{error.name.lower()}_{i}.log"
+                corrupt_netlist_path = self.injector_build / f"{error.name.lower()}_{i}.v"
+                compare_log_path = self.cmp_build / f"{error.name.lower()}_{i}_cmp.log"
                 with open(
                     NINJA_TRANSFORM_TOOLS_PATH / "error_injector.ninja_build.mustache", "r"
                 ) as f:
@@ -67,7 +67,7 @@ class VivadoStructuralErrorInjection(Flow):
                         {
                             "log_path": str(injection_log_path),
                             "corrupt_netlist_path": corrupt_netlist_path,
-                            "build_dir": self.build.parent,
+                            "build_dir": str(self.injector_build.parent),
                             "top": self.top,
                             "seed": random_seed_multiplier * i,
                             "error_type": error.name,
@@ -78,7 +78,7 @@ class VivadoStructuralErrorInjection(Flow):
                     build += chevron.render(
                         f,
                         {
-                            "build": str(self.build.parent),
+                            "build": str(self.cmp_build.parent),
                             "netlist_a": str(
                                 self.phys_xrev_flow.phys_netlist_flow.build / "viv_impl_physical.v"
                             ),

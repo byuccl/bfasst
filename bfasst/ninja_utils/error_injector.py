@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 from enum import Enum
 import logging
 import random
-from click import Path
+from pathlib import Path
 import spydrnet as sdn
 from bfasst.paths import DESIGNS_PATH
 from bfasst.rw_helpers import get_sdn_direction_for_unisim, get_unisim_inputs
@@ -41,16 +41,19 @@ class ErrorInjector:
         self.corrupted_netlist_path = None
         self.old_lut_init = None
         self.new_lut_init = None
-        design = str(self.build_dir).split("/")[-2:]
-        self.top = YamlParser(DESIGNS_PATH / design / "design.yaml").parse_top_module()
+        self.top = self.__set_top_module()
 
         self.clean_netlist = sdn.parse(self.stage_dir.parent / "xray" / f"{self.top}_reversed.v")
-        self.corrupted_netlist_path = self.log_path.trim(".log") + ".v"
+        self.corrupted_netlist_path = self.log_path.with_suffix(".v")
 
         self.all_instances = self.__get_all_instances()
 
         self.injector = self.__get_injection_function(ErrorType[error_type.upper()])
         self.injector()
+
+    def __set_top_module(self):
+        design = "/".join(str(self.build_dir).split("/")[-2:])
+        return YamlParser(DESIGNS_PATH / design / "design.yaml").parse_top_module()
 
     def __get_injection_function(self, error_type):
         """Injects an error into the netlist of the given type"""
@@ -140,10 +143,10 @@ class ErrorInjector:
         """Writes the netlist to the corrupted netlist path in the design"""
         sdn.compose(self.clean_netlist, self.corrupted_netlist_path)
 
-    def __log_bit_flip(self, lut_number, bit_number):
+    def __log_bit_flip(self, lut, bit_number):
         """Logs the bit flip that occurred to a log file"""
-        lut_name = self.all_luts[lut_number].name
-        lut_type = self.all_luts[lut_number].reference.name
+        lut_name = lut.name
+        lut_type = lut.reference.name
         logging.info(
             "LUT %s of type %s had bit %s flipped resulting in a change from %s to %s",
             lut_name,
