@@ -41,7 +41,8 @@ class ApplicationRunner:
             self.designs = [args.design]
 
     def __run_ninja(self):
-        subprocess.Popen("ninja", cwd=ROOT_PATH)
+        cmd = ["ninja", "-k", "0"]
+        subprocess.Popen(args=cmd, cwd=ROOT_PATH)
 
 
 def check_args(args):
