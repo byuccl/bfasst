@@ -73,7 +73,7 @@ class ErrorInjector:
             and "VDD" not in instance.reference.name.upper()
             and "IBUF" not in instance.reference.name.upper()
             and "OBUF" not in instance.reference.name.upper()
-            and not instance.reference.name.startswith("SDN_VERILOG_ASSIGNMETN")
+            and not instance.reference.name.startswith("SDN_VERILOG_ASSIGNMENT")
         ]
 
         return sorted(unsorted_instances, key=lambda x: x.name)

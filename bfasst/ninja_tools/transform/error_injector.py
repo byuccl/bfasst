@@ -39,6 +39,7 @@ class ErrorInjector(Tool):
                     "corrupt_netlist_path": str(corrupt_netlist_path),
                     "top": self.top,
                     "seed": num * multiplier,
+                    "error_injector_script_path": str(NINJA_UTILS_PATH / "error_injector.py"),
                 },
             )
 

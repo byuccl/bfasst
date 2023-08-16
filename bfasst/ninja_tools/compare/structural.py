@@ -35,6 +35,7 @@ class Structural(Tool):
                     "netlist_a": str(netlist_a),
                     "netlist_b": str(netlist_b),
                     "log_path": str(self.build / log_name),
+                    "compare_script_path": str(NINJA_UTILS_PATH / "structural.py"),
                 },
             )
 
