@@ -24,7 +24,7 @@ class VivadoStructuralErrorInjection(Flow):
         self.phys_netlist_tool = PhysNetlist(design)
         self.xrev_tool = Xray(design)
         self.error_injector_tool = ErrorInjector(design)
-        self.compare_tool = Structural(design, True)
+        self.compare_tool = Structural(design)
 
         self.error_injector_build = ROOT_PATH / "build" / design / "error_injection"
 

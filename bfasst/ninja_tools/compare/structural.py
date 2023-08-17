@@ -3,17 +3,17 @@
 import chevron
 from bfasst.ninja_tools.tool import Tool
 from bfasst.paths import NINJA_BUILD_PATH, NINJA_COMPARE_TOOLS_PATH, NINJA_UTILS_PATH, ROOT_PATH
+from bfasst.utils.general import clean_folder
 from bfasst.yaml_parser import YamlParser
 
 
 class Structural(Tool):
     """Create the rule and build snippets for structural comparison."""
 
-    def __init__(self, design, invert=False):
+    def __init__(self, design):
         super().__init__(design)
         self.build = ROOT_PATH / "build" / design / "struct_cmp"
         self.__create_build_dir()
-        self.invert = invert
         self.top = YamlParser(self.design / "design.yaml").parse_top_module()
 
     def __create_build_dir(self):
@@ -21,7 +21,7 @@ class Structural(Tool):
 
     def create_rule_snippets(self):
         with open(NINJA_COMPARE_TOOLS_PATH / "structural.ninja_rules.mustache", "r") as f:
-            rules = chevron.render(f, {"utils": str(NINJA_UTILS_PATH), "invert": self.invert})
+            rules = chevron.render(f, {"utils": str(NINJA_UTILS_PATH)})
 
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(rules)

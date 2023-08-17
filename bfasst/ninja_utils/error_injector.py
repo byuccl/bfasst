@@ -7,7 +7,7 @@ import random
 from pathlib import Path
 import spydrnet as sdn
 from bfasst.paths import DESIGNS_PATH
-from bfasst.rw_helpers import get_sdn_direction_for_unisim, get_unisim_inputs
+from bfasst.utils.rw_helpers import get_sdn_direction_for_unisim, get_unisim_inputs
 from bfasst.utils import convert_verilog_literal_to_int
 from bfasst.yaml_parser import YamlParser
 
@@ -31,7 +31,10 @@ class ErrorInjector:
         self.stage_dir = self.build_dir / "error_injection"
         self.log_path = self.stage_dir / log_path
         logging.basicConfig(
-            filename=self.log_path, level=logging.DEBUG, format="%(asctime)s %(message)s"
+            filename=self.log_path,
+            level=logging.DEBUG,
+            format="%(asctime)s %(message)s",
+            datefmt="%Y%m%d%H%M%S",
         )
 
         self.hierarchical_luts = []

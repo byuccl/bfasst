@@ -1,5 +1,6 @@
 """Utility to manage the creation and execution of ninja flows."""
 from argparse import ArgumentParser
+import json
 import chevron
 from bfasst.ninja_flows.flow_utils import create_build_file, get_flow
 from bfasst.paths import DESIGNS_PATH, NINJA_BUILD_PATH, NINJA_FLOWS_PATH, ROOT_PATH
@@ -12,12 +13,14 @@ class NinjaFlowManager:
         self.flows = None
         self.designs = None
         self.flow_name = None
+        self.flow_args = None
 
     def create_flows(self, flow_name, designs, flow_args=None):
         """Create the ninja flows for the given designs."""
         self.flow_name = flow_name
         self.flows = []
         self.designs = designs
+        self.flow_args = flow_args
         for design in designs:
             flow = get_flow(flow_name)(design, flow_args)
             self.flows.append(flow)
@@ -49,6 +52,7 @@ class NinjaFlowManager:
                     "designs": self.designs,
                     "deps": self.flows[0].add_ninja_deps(),
                     "flow": self.flow_name,
+                    "flow_args": self.flow_args
                 },
             )
 
@@ -65,8 +69,18 @@ def get_design_basenames(designs):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--flow", type=str, required=True, help="Name of the flow to run")
+    parser.add_argument("--flow_args", type=str, help="Additional cmd line arguments for the flow")
     parser.add_argument("--designs", required=True, nargs="+", help="Designs to run the flow on")
     parsed_args = parser.parse_args()
+
+    # convert the flow args from string to dict, but replace ' with "
+    # so that json can read the string
+    flow_args_dict = json.loads(parsed_args.flow_args.replace("'", '"'))
+
     flow_manager = NinjaFlowManager()
-    flow_manager.create_flows(parsed_args.flow, get_design_basenames(parsed_args.designs))
+    flow_manager.create_flows(
+        parsed_args.flow,
+        get_design_basenames(parsed_args.designs),
+        flow_args_dict
+    )
     flow_manager.run_flows()

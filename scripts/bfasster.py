@@ -31,6 +31,10 @@ class ApplicationRunner:
         # run the build.ninja file
         self.__run_ninja()
 
+        # for the error injector flow, print the list of failed comparisons
+        if self.flow == "vivado_structural_error_injection":
+            self.__print_failed_comparisons()
+
     def __parse_args(self, args):
         if args.yaml:
             yaml_parser = YamlParser(args.yaml)
@@ -43,9 +47,29 @@ class ApplicationRunner:
             self.designs = [args.design]
 
     def __run_ninja(self):
-        # k0 flag allows ninja to work on independent targets even if some fail
-        cmd = ["ninja", "-k", "0"]
-        subprocess.Popen(args=cmd, cwd=ROOT_PATH)
+        cmd = ["ninja"]
+        proc = subprocess.Popen(cmd, cwd=ROOT_PATH)
+        proc.communicate()
+        proc.wait()
+
+    def __print_failed_comparisons(self):
+        """Used to print which structural comparisons incorrectly
+        passed in the error injection flow"""
+
+        print("\nError injections not caught: ")
+        fail_list = []
+
+        for design in self.designs:
+            cmp_dir = ROOT_PATH / "build" / design / "struct_cmp"
+            for file in cmp_dir.iterdir():
+                with open(file, "r") as f:
+                    if "SUCCESS" in f.read():
+                        fail_list.append(file.name.split("_cmp.log")[0])
+
+        if fail_list:
+            print("\n".join(fail_list))
+        else:
+            print("None")
 
 
 def check_args(args):

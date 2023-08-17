@@ -1,4 +1,5 @@
 """Parse a yaml file to obtain a flow and a list of target designs"""
+import json
 import yaml
 from bfasst.utils import error
 from bfasst import paths
