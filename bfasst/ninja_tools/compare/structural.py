@@ -3,7 +3,6 @@
 import chevron
 from bfasst.ninja_tools.tool import Tool
 from bfasst.paths import NINJA_BUILD_PATH, NINJA_COMPARE_TOOLS_PATH, NINJA_UTILS_PATH, ROOT_PATH
-from bfasst.utils.general import clean_folder
 from bfasst.yaml_parser import YamlParser
 
 
