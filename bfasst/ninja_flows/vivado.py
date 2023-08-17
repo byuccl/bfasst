@@ -9,7 +9,7 @@ class Vivado(Flow):
     def __init__(self, design, flow_args=None, ooc=False):
         super().__init__()
         self.ooc = ooc
-        self.vivado_tool = self.configure_vivado_tool(design, flow_args)
+        self.vivado_tool = self.configure_vivado_tool(design, flow_args, ooc)
 
     def create_rule_snippets(self):
         self.vivado_tool.create_rule_snippets()
