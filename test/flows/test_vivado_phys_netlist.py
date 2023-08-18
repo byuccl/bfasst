@@ -6,8 +6,11 @@ from bfasst.ninja_flows.vivado_phys_netlist import VivadoPhysNetlist
 from bfasst.paths import (
     NINJA_BUILD_PATH,
     NINJA_FLOWS_PATH,
+    NINJA_IMPL_TOOLS_PATH,
+    NINJA_SYNTH_TOOLS_PATH,
     NINJA_TRANSFORM_TOOLS_PATH,
     NINJA_UTILS_PATH,
+    VIVADO_RULES_PATH,
 )
 
 
@@ -51,8 +54,11 @@ class TestVivadoPhysNetlist(unittest.TestCase):
             f"{NINJA_TRANSFORM_TOOLS_PATH}/phys_netlist_build.ninja.mustache ",
             f"{NINJA_TRANSFORM_TOOLS_PATH}/phys_netlist_rules.ninja ",
             f"{NINJA_TRANSFORM_TOOLS_PATH}/checkpoint_to_v.tcl.mustache ",
+            f"{NINJA_SYNTH_TOOLS_PATH}/viv_synth.ninja.mustache ",
+            f"{NINJA_IMPL_TOOLS_PATH}/viv_impl.ninja.mustache ",
+            f"{NINJA_FLOWS_PATH}/vivado.py ",
+            f"{VIVADO_RULES_PATH} ",
         ]
-        expected.extend(self.flow.vivado_flow.add_ninja_deps())
 
         observed.sort()
         expected.sort()
