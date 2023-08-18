@@ -128,3 +128,4 @@ Currently supported flows:
 * `vivado_phys_netlist`
 * `vivado_phys_netlist_xrev`
 * `vivado_phys_netlist_cmp`
+* `vivado_structural_error_injection`
