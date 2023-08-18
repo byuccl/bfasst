@@ -3,17 +3,14 @@ import unittest
 
 from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado_structural_error_injection import VivadoStructuralErrorInjection
+from bfasst.ninja_tools.compare.structural import Structural
+from bfasst.ninja_tools.rev_bit.xray import Xray
+from bfasst.ninja_tools.transform.error_injector import ErrorInjector
+from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
+from bfasst.ninja_tools.vivado.vivado import Vivado
 from bfasst.paths import (
     NINJA_BUILD_PATH,
-    NINJA_COMPARE_TOOLS_PATH,
     NINJA_FLOWS_PATH,
-    NINJA_IMPL_TOOLS_PATH,
-    NINJA_SYNTH_TOOLS_PATH,
-    NINJA_TRANSFORM_TOOLS_PATH,
-    NINJA_UTILS_PATH,
-    NINJA_VIVADO_TOOLS_PATH,
-    REV_BIT_TOOLS_PATH,
-    VIVADO_RULES_PATH,
 )
 
 
@@ -56,28 +53,12 @@ class TestVivadoStructuralErrorInjection(unittest.TestCase):
         expected = [
             "foo",
             "bar",
-            f"{NINJA_UTILS_PATH}/structural.py ",
-            f"{NINJA_COMPARE_TOOLS_PATH}/structural.ninja_rules.mustache ",
-            f"{NINJA_COMPARE_TOOLS_PATH}/structural.ninja_build.mustache ",
-            f"{NINJA_COMPARE_TOOLS_PATH}/structural.py ",
-            f"{REV_BIT_TOOLS_PATH}/xray.ninja_rules ",
-            f"{REV_BIT_TOOLS_PATH}/xray.ninja_build.mustache ",
-            f"{REV_BIT_TOOLS_PATH}/xray.py "
-            f"{NINJA_UTILS_PATH}/rw_phys_netlist.py ",
-            f"{NINJA_TRANSFORM_TOOLS_PATH}/phys_netlist_build.ninja.mustache ",
-            f"{NINJA_TRANSFORM_TOOLS_PATH}/phys_netlist_rules.ninja ",
-            f"{NINJA_TRANSFORM_TOOLS_PATH}/checkpoint_to_v.tcl.mustache ",
-            f"{NINJA_TRANSFORM_TOOLS_PATH}/phys_netlist.py "
-            f"{NINJA_SYNTH_TOOLS_PATH}/viv_synth.ninja.mustache ",
-            f"{NINJA_IMPL_TOOLS_PATH}/viv_impl.ninja.mustache ",
-            f"{NINJA_VIVADO_TOOLS_PATH}/vivado.py ",
-            f"{VIVADO_RULES_PATH} ",
-            f"{NINJA_FLOWS_PATH}/vivado_structural_error_injection.py ",
-            f"{NINJA_UTILS_PATH}/error_injector.py ",
-            f"{NINJA_TRANSFORM_TOOLS_PATH}/error_injector.ninja_build.mustache "
-            f"{NINJA_TRANSFORM_TOOLS_PATH}/error_injector.ninja_rules.mustache ",
-            f"{NINJA_TRANSFORM_TOOLS_PATH}/error_injector.py ",
         ]
+        expected.extend(Vivado("byu/alu").add_ninja_deps())
+        expected.extend(ErrorInjector("byu/alu").add_ninja_deps())
+        expected.extend(PhysNetlist("byu/alu").add_ninja_deps())
+        expected.extend(Xray("byu/alu").add_ninja_deps())
+        expected.extend(Structural("byu/alu").add_ninja_deps())
 
         observed.sort()
         expected.sort()

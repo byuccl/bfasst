@@ -3,12 +3,10 @@ import json
 import unittest
 from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado import Vivado
+from bfasst.ninja_tools.vivado.vivado import Vivado as VivadoTool
 from bfasst.paths import (
     NINJA_BUILD_PATH,
     NINJA_FLOWS_PATH,
-    NINJA_TOOLS_PATH,
-    NINJA_VIVADO_TOOLS_PATH,
-    VIVADO_RULES_PATH,
 )
 from bfasst.utils import compare_json
 
@@ -81,12 +79,9 @@ class TestVivadoFlow(unittest.TestCase):
         expected = [
             "foo",
             "bar",
-            f"{NINJA_TOOLS_PATH}/synth/viv_synth.ninja.mustache ",
-            f"{NINJA_TOOLS_PATH}/impl/viv_impl.ninja.mustache ",
-            f"{NINJA_VIVADO_TOOLS_PATH}/vivado.py "
-            f"{NINJA_FLOWS_PATH}/vivado.py ",
-            f"{VIVADO_RULES_PATH} ",
         ]
+        expected.extend(VivadoTool("byu/alu").add_ninja_deps())
+        expected.append(f"{NINJA_FLOWS_PATH}/vivado.py ")
 
         self.assertEqual(observed, expected)
 

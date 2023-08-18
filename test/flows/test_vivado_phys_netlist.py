@@ -3,15 +3,11 @@ import unittest
 
 from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado_phys_netlist import VivadoPhysNetlist
+from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
+from bfasst.ninja_tools.vivado.vivado import Vivado
 from bfasst.paths import (
     NINJA_BUILD_PATH,
     NINJA_FLOWS_PATH,
-    NINJA_IMPL_TOOLS_PATH,
-    NINJA_SYNTH_TOOLS_PATH,
-    NINJA_TRANSFORM_TOOLS_PATH,
-    NINJA_UTILS_PATH,
-    NINJA_VIVADO_TOOLS_PATH,
-    VIVADO_RULES_PATH,
 )
 
 
@@ -50,17 +46,9 @@ class TestVivadoPhysNetlist(unittest.TestCase):
         expected = [
             "foo",
             "bar",
-            f"{NINJA_FLOWS_PATH}/vivado_phys_netlist.py ",
-            f"{NINJA_UTILS_PATH}/rw_phys_netlist.py ",
-            f"{NINJA_TRANSFORM_TOOLS_PATH}/phys_netlist_build.ninja.mustache ",
-            f"{NINJA_TRANSFORM_TOOLS_PATH}/phys_netlist_rules.ninja ",
-            f"{NINJA_TRANSFORM_TOOLS_PATH}/checkpoint_to_v.tcl.mustache ",
-            f"{NINJA_TRANSFORM_TOOLS_PATH}/phys_netlist.py "
-            f"{NINJA_SYNTH_TOOLS_PATH}/viv_synth.ninja.mustache ",
-            f"{NINJA_IMPL_TOOLS_PATH}/viv_impl.ninja.mustache ",
-            f"{NINJA_VIVADO_TOOLS_PATH}/vivado.py ",
-            f"{VIVADO_RULES_PATH} ",
         ]
+        expected.extend(Vivado("byu/alu").add_ninja_deps())
+        expected.extend(PhysNetlist("byu/alu").add_ninja_deps())
 
         observed.sort()
         expected.sort()

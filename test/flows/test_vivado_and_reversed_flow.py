@@ -2,14 +2,11 @@
 import unittest
 from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado_and_reversed import VivadoAndReversed
+from bfasst.ninja_tools.rev_bit.xray import Xray
+from bfasst.ninja_tools.vivado.vivado import Vivado
 from bfasst.paths import (
     NINJA_BUILD_PATH,
     NINJA_FLOWS_PATH,
-    NINJA_IMPL_TOOLS_PATH,
-    NINJA_SYNTH_TOOLS_PATH,
-    NINJA_VIVADO_TOOLS_PATH,
-    REV_BIT_TOOLS_PATH,
-    VIVADO_RULES_PATH,
 )
 
 
@@ -46,18 +43,10 @@ class TestVivadoAndReversedFlow(unittest.TestCase):
     def test_add_ninja_deps(self):
         """Test that the flow adds the correct dependencies to the ninja file."""
         observed = self.flow.add_ninja_deps(["foo", "bar"])
-        expected = [
-            "foo",
-            "bar",
-            f"{NINJA_SYNTH_TOOLS_PATH}/viv_synth.ninja.mustache ",
-            f"{NINJA_IMPL_TOOLS_PATH}/viv_impl.ninja.mustache ",
-            f"{NINJA_VIVADO_TOOLS_PATH}/vivado.py ",
-            f"{VIVADO_RULES_PATH} ",
-            f"{NINJA_FLOWS_PATH}/vivado_and_reversed.py ",
-            f"{REV_BIT_TOOLS_PATH}/xray.ninja_rules ",
-            f"{REV_BIT_TOOLS_PATH}/xray.ninja_build.mustache ",
-            f"{REV_BIT_TOOLS_PATH}/xray.py ",
-        ]
+        expected = ["foo", "bar"]
+        expected.extend(Xray("byu/alu").add_ninja_deps())
+        expected.extend(Vivado("byu/alu").add_ninja_deps())
+        expected.append(f"{NINJA_FLOWS_PATH}/vivado_and_reversed.py ")
         observed.sort()
         expected.sort()
         self.assertEqual(observed, expected)
