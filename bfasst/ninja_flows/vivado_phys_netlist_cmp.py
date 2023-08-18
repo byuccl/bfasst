@@ -11,7 +11,7 @@ class VivadoPhysNetlistCmp(Flow):
     """Structural Comparison of physical netlist and reversed netlist"""
 
     def __init__(self, design, flow_args=None):
-        super().__init__(design)
+        super().__init__()
         self.vivado_tool = self.configure_vivado_tool(design, flow_args)
         self.phys_netlist_tool = PhysNetlist(design)
         self.xray_tool = Xray(design)
@@ -41,6 +41,8 @@ class VivadoPhysNetlistCmp(Flow):
         deps.extend(self.xray_tool.add_ninja_deps())
         deps.extend(self.compare_tool.add_ninja_deps())
         deps.append(f"{NINJA_FLOWS_PATH}/vivado_phys_netlist_cmp.py ")
+
+        return deps
 
     def get_top_level_flow_path(self):
         return f"{NINJA_FLOWS_PATH}/vivado_phys_netlist_cmp.py"
