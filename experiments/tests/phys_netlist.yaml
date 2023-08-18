@@ -17,4 +17,4 @@ designs:
     - byu/UpDownButtonCount
     
     
-flow: xilinx_phys_netlist
+flow: vivado_phys_netlist

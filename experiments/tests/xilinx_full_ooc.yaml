@@ -1,6 +1,6 @@
 designs:
   - ooc/
 
-flow: xilinx
+flow: vivado
 
-synth: " --flatten"
+synth: " -flatten full"

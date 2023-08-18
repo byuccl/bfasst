@@ -2,4 +2,4 @@ designs:
     - byu/
     
     
-flow: xilinx
+flow: vivado

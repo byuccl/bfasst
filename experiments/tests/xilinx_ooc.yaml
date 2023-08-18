@@ -2,4 +2,4 @@ designs:
     - byu/
     
     
-flow: xilinx_ooc
+flow: vivado_ooc
