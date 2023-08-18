@@ -43,6 +43,7 @@ class TestVivadoOocFlow(unittest.TestCase):
             "top": self.flow.vivado_tool.top,
             "io": False,
             "synth_output": str(self.flow.vivado_tool.synth_output),
+            "flow_args": "",
         }
         expected_synth_json = json.dumps(synth_dict, indent=4)
         self.assertTrue(
@@ -77,6 +78,7 @@ class TestVivadoOocFlow(unittest.TestCase):
         ]
         expected.extend(Vivado("byu/alu").add_ninja_deps())
         expected.append(f"{NINJA_FLOWS_PATH}/vivado_ooc.py ")
+        expected.append(f"{NINJA_FLOWS_PATH}/vivado.py ")
 
         self.assertEqual(observed, expected)
 
