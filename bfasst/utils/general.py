@@ -5,7 +5,7 @@ import re
 import sys
 import shutil
 
-from bfasst.paths import DESIGNS_PATH
+from bfasst.paths import DESIGNS_PATH, ROOT_PATH
 from bfasst.config import BUILD_DIR
 
 
@@ -154,3 +154,30 @@ def log_with_banner(*msg):
     logging.info(banner)
     logging.info(message)
     logging.info(banner)
+
+
+def clean_error_injections_and_comparisons(designs):
+    """Remove all error injection and comparison artifacts for errors successfully detected
+    by the compare tool"""
+    print("\nError injections not caught: ")
+    fail_list = []
+
+    for design in designs:
+        cmp_dir = ROOT_PATH / "build" / design / "struct_cmp"
+        error_dir = ROOT_PATH / "build" / design / "error_injection"
+        for file in cmp_dir.iterdir():
+            with open(file, "r") as f:
+                if "SUCCESS" in f.read():
+                    fail_list.append(file.name.split("_cmp.log")[0])
+                else:
+                    err_log_name = file.name.split("_cmp.log")[0] + ".log"
+                    err_log = error_dir / err_log_name
+                    err_netlist = err_log.with_suffix(".v")
+                    file.unlink()
+                    err_log.unlink()
+                    err_netlist.unlink()
+
+    if fail_list:
+        print("\n".join(fail_list))
+    else:
+        print("None")

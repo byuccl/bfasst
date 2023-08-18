@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 import pathlib
 import subprocess
 from bfasst.ninja_flows.ninja_flow_manager import NinjaFlowManager
+from bfasst.utils.general import clean_error_injections_and_comparisons
 from bfasst.yaml_parser import YamlParser
 from bfasst.utils import error
 from bfasst.paths import ROOT_PATH
@@ -33,7 +34,7 @@ class ApplicationRunner:
 
         # for the error injector flow, print the list of failed comparisons
         if self.flow == "vivado_structural_error_injection":
-            self.__print_failed_comparisons()
+            clean_error_injections_and_comparisons(self.designs)
 
     def __parse_args(self, args):
         if args.yaml:
@@ -51,25 +52,6 @@ class ApplicationRunner:
         proc = subprocess.Popen(cmd, cwd=ROOT_PATH)
         proc.communicate()
         proc.wait()
-
-    def __print_failed_comparisons(self):
-        """Used to print which structural comparisons incorrectly
-        passed in the error injection flow"""
-
-        print("\nError injections not caught: ")
-        fail_list = []
-
-        for design in self.designs:
-            cmp_dir = ROOT_PATH / "build" / design / "struct_cmp"
-            for file in cmp_dir.iterdir():
-                with open(file, "r") as f:
-                    if "SUCCESS" in f.read():
-                        fail_list.append(file.name.split("_cmp.log")[0])
-
-        if fail_list:
-            print("\n".join(fail_list))
-        else:
-            print("None")
 
 
 def check_args(args):
