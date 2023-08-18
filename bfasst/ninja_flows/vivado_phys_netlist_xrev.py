@@ -35,6 +35,7 @@ class VivadoPhysNetlistXrev(Flow):
         deps.extend(self.phys_netlist_tool.add_ninja_deps())
         deps.extend(self.xrev_tool.add_ninja_deps())
         deps.append(f"{NINJA_FLOWS_PATH}/vivado_phys_netlist_xrev.py ")
+        return deps
 
     def get_top_level_flow_path(self):
         return f"{NINJA_FLOWS_PATH}/vivado_phys_netlist_xrev.py"

@@ -26,6 +26,7 @@ class VivadoAndReversed(Flow):
         deps.extend(self.vivado_tool.add_ninja_deps())
         deps.extend(self.xrev_tool.add_ninja_deps())
         deps.append(f"{NINJA_FLOWS_PATH}/vivado_and_reversed.py ")
+        return deps
 
     def get_top_level_flow_path(self):
         return f"{NINJA_FLOWS_PATH}/vivado_and_reversed.py"

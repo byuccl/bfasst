@@ -27,6 +27,7 @@ class VivadoPhysNetlist(Flow):
         deps.extend(self.vivado_tool.add_ninja_deps())
         deps.extend(self.phys_netlist_tool.add_ninja_deps())
         deps.append(f"{NINJA_FLOWS_PATH}/vivado_phys_netlist.py ")
+        return deps
 
     def get_top_level_flow_path(self):
         return f"{NINJA_FLOWS_PATH}/vivado_phys_netlist.py"
