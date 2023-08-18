@@ -137,7 +137,7 @@ class TestNinjaFlowManager(unittest.TestCase):
 
     def __run_ninja(self):
         """Run the build.ninja file and ensure it completes successfully."""
-        proc = subprocess.Popen("ninja", cwd=ROOT_PATH)
+        proc = subprocess.Popen("ninja", cwd=ROOT_PATH, stdout=subprocess.PIPE)
         proc.communicate()
         status = proc.wait()
         self.assertEqual(status, 0)
