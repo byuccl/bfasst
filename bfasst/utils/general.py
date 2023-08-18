@@ -167,7 +167,7 @@ def clean_error_injections_and_comparisons(designs):
         error_dir = ROOT_PATH / "build" / design / "error_injection"
         for file in cmp_dir.iterdir():
             with open(file, "r") as f:
-                if "SUCCESS" in f.read():
+                if "FAIL" not in f.read():
                     fail_list.append(file.name.split("_cmp.log")[0])
                 else:
                     err_log_name = file.name.split("_cmp.log")[0] + ".log"
