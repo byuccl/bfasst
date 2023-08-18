@@ -37,31 +37,35 @@ class TestVivadoFlow(unittest.TestCase):
 
     def test_json_exist(self):
         # test that the json files for synth and impl templates exist
-        self.assertTrue((self.flow.synth_output / "synth.json").exists())
-        self.assertTrue((self.flow.impl_output / "impl.json").exists())
+        self.assertTrue((self.flow.vivado_tool.synth_output / "synth.json").exists())
+        self.assertTrue((self.flow.vivado_tool.impl_output / "impl.json").exists())
 
     def test_tcl_json_accurate(self):
         """Test that the json files for synth and impl templates are accurate."""
         synth_dict = {
-            "part": self.flow.part,
-            "verilog": self.flow.verilog,
-            "system_verilog": self.flow.system_verilog,
-            "top": self.flow.top,
-            "io": str(self.flow.synth_output / "report_io.txt"),
-            "synth_output": str(self.flow.synth_output),
+            "part": self.flow.vivado_tool.part,
+            "verilog": self.flow.vivado_tool.verilog,
+            "system_verilog": self.flow.vivado_tool.system_verilog,
+            "top": self.flow.vivado_tool.top,
+            "io": str(self.flow.vivado_tool.synth_output / "report_io.txt"),
+            "synth_output": str(self.flow.vivado_tool.synth_output),
         }
         expected_synth_json = json.dumps(synth_dict, indent=4)
-        self.assertTrue(compare_json(self.flow.synth_output / "synth.json", expected_synth_json))
+        self.assertTrue(
+            compare_json(self.flow.vivado_tool.synth_output / "synth.json", expected_synth_json)
+        )
 
         impl_dict = {
-            "part": self.flow.part,
-            "xdc": str(self.flow.synth_output / (self.flow.top + ".xdc")),
-            "bit": str(self.flow.impl_output / (self.flow.top + ".bit")),
-            "impl_output": str(self.flow.impl_output),
-            "synth_output": str(self.flow.synth_output),
+            "part": self.flow.vivado_tool.part,
+            "xdc": str(self.flow.vivado_tool.synth_output / (self.flow.vivado_tool.top + ".xdc")),
+            "bit": str(self.flow.vivado_tool.impl_output / (self.flow.vivado_tool.top + ".bit")),
+            "impl_output": str(self.flow.vivado_tool.impl_output),
+            "synth_output": str(self.flow.vivado_tool.synth_output),
         }
         expected_impl_json = json.dumps(impl_dict, indent=4)
-        self.assertTrue(compare_json(self.flow.impl_output / "impl.json", expected_impl_json))
+        self.assertTrue(
+            compare_json(self.flow.vivado_tool.impl_output / "impl.json", expected_impl_json)
+        )
 
     def test_build_snippets_exist(self):
         with open(NINJA_BUILD_PATH, "r") as f:
