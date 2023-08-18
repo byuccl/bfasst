@@ -80,6 +80,9 @@ class TestVivadoOocFlow(unittest.TestCase):
         expected.append(f"{NINJA_FLOWS_PATH}/vivado_ooc.py ")
         expected.append(f"{NINJA_FLOWS_PATH}/vivado.py ")
 
+        expected.sort()
+        observed.sort()
+
         self.assertEqual(observed, expected)
 
     def test_get_top_level_flow_path(self):
