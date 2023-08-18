@@ -62,6 +62,7 @@ class TestVivadoStructuralErrorInjection(unittest.TestCase):
             f"{NINJA_COMPARE_TOOLS_PATH}/structural.py ",
             f"{REV_BIT_TOOLS_PATH}/xray.ninja_rules ",
             f"{REV_BIT_TOOLS_PATH}/xray.ninja_build.mustache ",
+            f"{REV_BIT_TOOLS_PATH}/xray.py "
             f"{NINJA_UTILS_PATH}/rw_phys_netlist.py ",
             f"{NINJA_TRANSFORM_TOOLS_PATH}/phys_netlist_build.ninja.mustache ",
             f"{NINJA_TRANSFORM_TOOLS_PATH}/phys_netlist_rules.ninja ",

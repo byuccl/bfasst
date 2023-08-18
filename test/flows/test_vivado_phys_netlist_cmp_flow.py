@@ -47,7 +47,7 @@ class TestVivadoPhysNetlistCmp(unittest.TestCase):
             build_statement_count = f.read().count("\nbuild ")
 
         # There should be 11 build statements for a single design using this flow
-        self.assertEqual(build_statement_count, 10)
+        self.assertEqual(build_statement_count, 11)
 
     def test_add_ninja_deps(self):
         """Test that the flow adds the correct dependencies to the ninja file"""
