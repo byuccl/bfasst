@@ -2,7 +2,7 @@
 import json
 import unittest
 from bfasst.ninja_flows.vivado_ooc import VivadoOoc
-from bfasst.paths import NINJA_BUILD_PATH, NINJA_FLOWS_PATH
+from bfasst.paths import NINJA_BUILD_PATH, NINJA_FLOWS_PATH, NINJA_TOOLS_PATH, NINJA_VIVADO_TOOLS_PATH, VIVADO_RULES_PATH
 from bfasst.utils import compare_json
 
 
@@ -64,10 +64,23 @@ class TestVivadoOocFlow(unittest.TestCase):
         # There should be 4 build statements for a single design ooc
         self.assertEqual(build_statement_count, 4)
 
+    def test_add_ninja_deps(self):
+        """Test that the flow adds the correct dependencies for the build.ninja file."""
+        observed = self.flow.add_ninja_deps(["foo", "bar"])
+        expected = [
+            "foo",
+            "bar",
+            f"{NINJA_TOOLS_PATH}/synth/viv_synth.ninja.mustache ",
+            f"{NINJA_TOOLS_PATH}/impl/viv_impl.ninja.mustache ",
+            f"{NINJA_VIVADO_TOOLS_PATH}/vivado.py "
+            f"{NINJA_FLOWS_PATH}/vivado_ooc.py ",
+            f"{VIVADO_RULES_PATH} ",
+        ]
+
+        self.assertEqual(observed, expected)
+
     def test_get_top_level_flow_path(self):
-        self.assertEqual(
-            self.flow.vivado_tool.get_top_level_flow_path(), f"{NINJA_FLOWS_PATH}/vivado_ooc.py"
-        )
+        self.assertEqual(self.flow.get_top_level_flow_path(), f"{NINJA_FLOWS_PATH}/vivado_ooc.py")
 
 
 if __name__ == "__main__":

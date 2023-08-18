@@ -7,6 +7,7 @@ from bfasst.paths import (
     NINJA_BUILD_PATH,
     NINJA_FLOWS_PATH,
     NINJA_TOOLS_PATH,
+    NINJA_VIVADO_TOOLS_PATH,
     VIVADO_RULES_PATH,
 )
 from bfasst.utils import compare_json
@@ -82,6 +83,7 @@ class TestVivadoFlow(unittest.TestCase):
             "bar",
             f"{NINJA_TOOLS_PATH}/synth/viv_synth.ninja.mustache ",
             f"{NINJA_TOOLS_PATH}/impl/viv_impl.ninja.mustache ",
+            f"{NINJA_VIVADO_TOOLS_PATH}/vivado.py "
             f"{NINJA_FLOWS_PATH}/vivado.py ",
             f"{VIVADO_RULES_PATH} ",
         ]
