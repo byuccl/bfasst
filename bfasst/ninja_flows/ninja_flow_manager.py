@@ -52,7 +52,7 @@ class NinjaFlowManager:
                     "designs": self.designs,
                     "deps": self.flows[0].add_ninja_deps(),
                     "flow": self.flow_name,
-                    "flow_args": self.flow_args
+                    "flow_args": self.flow_args,
                 },
             )
 
@@ -75,12 +75,13 @@ if __name__ == "__main__":
 
     # convert the flow args from string to dict, but replace ' with "
     # so that json can read the string
-    flow_args_dict = json.loads(parsed_args.flow_args.replace("'", '"'))
+    if parsed_args.flow_args:
+        flow_args_dict = json.loads(parsed_args.flow_args.replace("'", '"'))
+    else:
+        flow_args_dict = None
 
     flow_manager = NinjaFlowManager()
     flow_manager.create_flows(
-        parsed_args.flow,
-        get_design_basenames(parsed_args.designs),
-        flow_args_dict
+        parsed_args.flow, get_design_basenames(parsed_args.designs), flow_args_dict
     )
     flow_manager.run_flows()
