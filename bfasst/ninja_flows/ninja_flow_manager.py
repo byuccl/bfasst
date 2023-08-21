@@ -76,12 +76,12 @@ if __name__ == "__main__":
     # convert the flow args from string to dict, but replace ' with "
     # so that json can read the string
     if parsed_args.flow_args:
-        flow_args_dict = json.loads(parsed_args.flow_args.replace("'", '"'))
+        FLOW_ARGS_DICT = json.loads(parsed_args.flow_args.replace("'", '"'))
     else:
-        flow_args_dict = None
+        FLOW_ARGS_DICT = None
 
     flow_manager = NinjaFlowManager()
     flow_manager.create_flows(
-        parsed_args.flow, get_design_basenames(parsed_args.designs), flow_args_dict
+        parsed_args.flow, get_design_basenames(parsed_args.designs), FLOW_ARGS_DICT
     )
     flow_manager.run_flows()

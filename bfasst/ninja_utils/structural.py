@@ -744,6 +744,7 @@ class StructuralCompare:
 
 
 if __name__ == "__main__":
+    # pylint disable=duplicate-code
     parser = ArgumentParser()
     parser.add_argument(
         "--build_dir",
@@ -766,3 +767,5 @@ if __name__ == "__main__":
         logging.info("SUCCESS")
     except StructuralCompareError as e:
         logging.error("FAIL: %s", e)
+
+    # pylint enable=duplicate-code
