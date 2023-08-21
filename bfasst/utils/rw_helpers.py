@@ -2,6 +2,7 @@
 
 from collections.abc import MutableMapping
 from fnmatch import fnmatch
+import logging
 from os.path import commonprefix
 import re
 
@@ -177,7 +178,7 @@ def transfer_global_pins(old_cells, new_cell, global_pins):
             net.removePortInst(old_port)
 
 
-def remove_and_disconnect_cell(cell, log=print):
+def remove_and_disconnect_cell(cell, log=logging.info):
     if isinstance(cell, Cell):
         cell = cell.getEDIFHierCellInst()
     log(f"  {cell.getFullHierarchicalInstName()} removed")
@@ -191,7 +192,7 @@ def lut_move_net_to_new_cell(
     new_edif_cell_inst,
     old_logical_pin,
     physical_pin,
-    log=print,
+    log=logging.info,
     already_connected_net=None,
 ):
     """This function connects the net from old_edif_cell_inst/old_logical_pin,
@@ -211,34 +212,28 @@ def lut_move_net_to_new_cell(
 
     else:
         if port_inst.getDirection() == RwDirection.INPUT:
-            log("    Input driven by net", logical_net)
+            log(f"    Input driven by net {logical_net}")
 
             # A5 becomes I4, A1 becomes I0, etc.
             new_logical_pin = f"I{int(str(physical_pin[1])) - 1}"
-            log(
-                "    Connecting net",
-                logical_net,
-                "to input pin",
-                new_logical_pin,
-                "on new cell",
-            )
+            log(f"    Connecting net {logical_net} to input pin {new_logical_pin} on new cell")
 
         elif port_inst.getDirection() == RwDirection.OUTPUT:
-            log("    Drives net", logical_net)
+            log(f"    Drives net {logical_net}")
 
             new_logical_pin = physical_pin
-            log("    Connecting net", logical_net, "to output pin", new_logical_pin)
+            log(f"    Connecting net {logical_net} to output pin {new_logical_pin}")
 
         new_port = new_edif_cell_inst.getPort(new_logical_pin)
         assert new_port
         logical_net.createPortInst(new_port, new_edif_cell_inst)
 
     # Disconnect connection to port on old cell
-    log("    Disconnecting net", logical_net, "from pin", old_logical_pin, "on old cell")
+    log(f"    Disconnecting net {logical_net} from pin {old_logical_pin} on old cell")
     logical_net.removePortInst(port_inst)
 
 
-def process_lut_eqn(cell, is_lut5, log=print):
+def process_lut_eqn(cell, is_lut5, log=logging.info):
     """Transform a logical lut equation into a physical lut equation"""
 
     s6_or_5 = "5" if is_lut5 else "6"
@@ -261,8 +256,8 @@ def process_lut_eqn(cell, is_lut5, log=print):
     # First get an equation from the logical INIT string
     orig_init_eqn = str(LUTTools.getLUTEquation(cell))
 
-    log(f"  LUT{s6_or_5} INIT:", cell.getProperty("INIT"))
-    log(f"  LUT{s6_or_5} equation:", orig_init_eqn)
+    log(f"  LUT{s6_or_5} INIT: {cell.getProperty('INIT')}")
+    log(f"  LUT{s6_or_5} equation: {orig_init_eqn}")
 
     eqn = orig_init_eqn
     for logical_pin, physical_pin in cell.getPinMappingsL2P().items():
@@ -282,22 +277,22 @@ def process_lut_eqn(cell, is_lut5, log=print):
     # Physical LUT inputs use A#, but LUTTools expect I#
     eqn = eqn.replace("A", "I")
 
-    log(f"  New LUT{s6_or_5} eqn:", eqn)
+    log(f"  New LUT{s6_or_5} eqn: {eqn}")
     return eqn
 
 
-def process_shared_gnd_lut_eqn(lut5, gnd_pin, new_cell_inst, is_gnd, log=print):
+def process_shared_gnd_lut_eqn(lut5, gnd_pin, new_cell_inst, is_gnd, log=logging.info):
     lut5_eqn = process_lut_eqn(lut5, True, log)
     const_str = "00000000" if is_gnd else "FFFFFFFF"
     if gnd_pin.endswith("O5"):
         init_str = "64'h" + LUTTools.getLUTInitFromEquation(lut5_eqn, 5)[4:].zfill(8) + const_str
     else:
         init_str = f"64'h{const_str}" + LUTTools.getLUTInitFromEquation(lut5_eqn, 5)[4:].zfill(8)
-    log("  New LUT INIT:", init_str)
+    log(f"  New LUT INIT: {init_str}")
     new_cell_inst.addProperty("INIT", init_str)
 
 
-def process_lut_init(lut6_cell, lut5_cell, new_cell_inst, log=print):
+def process_lut_init(lut6_cell, lut5_cell, new_cell_inst, log=logging.info):
     """Fix the LUT INIT property for the new_cell_inst"""
 
     log("Fixing INIT string")
@@ -318,7 +313,7 @@ def process_lut_init(lut6_cell, lut5_cell, new_cell_inst, log=print):
             + LUTTools.getLUTInitFromEquation(lut6_eqn_phys, 5)[4:].zfill(8)
             + LUTTools.getLUTInitFromEquation(lut5_eqn_phys, 5)[4:].zfill(8)
         )
-    log("  New LUT INIT:", init_str)
+    log(f"  New LUT INIT: {init_str}")
     new_cell_inst.addProperty("INIT", init_str)
 
 

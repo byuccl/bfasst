@@ -1,10 +1,12 @@
-"""General Utility functions"""
+"""Utility functions"""
+import json
+import logging
 import re
 import sys
 import shutil
 
+from bfasst.paths import DESIGNS_PATH, ROOT_PATH
 from bfasst.config import BUILD_DIR
-from bfasst.paths import DESIGNS_PATH
 
 
 class TermColor:
@@ -36,7 +38,6 @@ def error(*msg, returncode=-1):
     """Print an error message and exit program"""
 
     print_color(TermColor.RED, "ERROR:", " ".join(str(item) for item in msg))
-    assert False
     sys.exit(returncode)
 
 
@@ -126,3 +127,58 @@ def properties_are_equal(prop1, prop2):
     True
     """
     return convert_verilog_literal_to_int(prop1) == convert_verilog_literal_to_int(prop2)
+
+
+def compare_json(old_file, new_json):
+    """Takes an old json file a new json string and compares them to see if they are different"""
+    if not (old_file).is_file():
+        return False
+
+    with open(old_file, "r") as f:
+        old_json = json.load(f)
+        return sort_json(old_json) == sort_json(json.loads(new_json))
+
+
+def sort_json(item):
+    """Sorts a json object recursively"""
+    if isinstance(item, dict):
+        return sorted((k, sort_json(v)) for k, v in item.items())
+    if isinstance(item, list):
+        return sorted(sort_json(x) for x in item)
+    return item
+
+
+def log_with_banner(*msg):
+    message = " ".join(str(s) for s in msg)
+    banner = "=" * 120
+    logging.info(banner)
+    logging.info(message)
+    logging.info(banner)
+
+
+def clean_error_injections_and_comparisons(designs):
+    """Remove all error injection and comparison artifacts for errors successfully detected
+    by the compare tool"""
+    print("\nError injections not caught: ")
+    fail_list = []
+
+    for design in designs:
+        cmp_dir = ROOT_PATH / "build" / design / "struct_cmp"
+        error_dir = ROOT_PATH / "build" / design / "error_injection"
+        for file in cmp_dir.iterdir():
+            with open(file, "r") as f:
+                # SUCCESS means the compare tool did not detect an actual error
+                if "FAIL" not in f.read():
+                    fail_list.append(file.name.split("_cmp.log")[0])
+                else:
+                    err_log_name = file.name.split("_cmp.log")[0] + ".log"
+                    err_log = error_dir / err_log_name
+                    err_netlist = err_log.with_suffix(".v")
+                    file.unlink()
+                    err_log.unlink()
+                    err_netlist.unlink()
+
+    if fail_list:
+        print("\n".join(fail_list))
+    else:
+        print("None")

@@ -46,7 +46,8 @@ packages:
 		libboost-system-dev \
 		libboost-python-dev \
 		libboost-filesystem-dev \
-		zlib1g-dev
+		zlib1g-dev \
+		ninja-build
 	
 python_packages:
 	$(IN_ENV) python -m pip install -r requirements.txt

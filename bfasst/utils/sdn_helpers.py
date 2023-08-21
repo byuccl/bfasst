@@ -1,4 +1,5 @@
 """Wrapper classes for SDN objects"""
+import logging
 import spydrnet as sdn
 import bfasst.utils.rw_helpers as rw
 
@@ -9,9 +10,8 @@ class Netlist:
     GND_NAMES = set()
     VCC_NAMES = set()
 
-    def __init__(self, library, tool) -> None:
+    def __init__(self, library) -> None:
         self.library = library
-        self.tool = tool
 
         # Nets
         self.wire_to_net = {}
@@ -48,14 +48,14 @@ class Netlist:
         # First construct net objects for each wire, skipping alias wires
         non_alias_wires = [wire for wire in self.library.get_wires() if not Net.wire_is_alias(wire)]
         for wire in non_alias_wires:
-            net = Net(wire, self.tool)
-            # self.tool.log(f"New Net for wire {wire.cable.name}[{wire.index()}]")
+            net = Net(wire)
+            # logging.info(f"New Net for wire {wire.cable.name}[{wire.index()}]")
             self.wire_to_net[wire] = net
 
         # Now add alias wires iteratively until they are all added
         alias_wires = [wire for wire in self.library.get_wires() if Net.wire_is_alias(wire)]
 
-        self.tool.log("Processing alias wires (derived from assign statements)")
+        logging.info("Processing alias wires (derived from assign statements)")
 
         progress = True
         while alias_wires and progress:
@@ -67,7 +67,7 @@ class Netlist:
                     continue
 
                 net = self.wire_to_net[driver_wire]
-                # self.tool.log(
+                # logging.info(
                 #     f"Adding alias wire {wire.cable.name}[{wire.index()}]",
                 #     f"to net {net.name}[{net.wire.index()}]",
                 # )
@@ -82,9 +82,9 @@ class Netlist:
                 progress = True
 
         if alias_wires and not progress:
-            self.tool.log(
-                "Failed to process all alias wires:",
-                [w.cable.name for w in alias_wires],
+            logging.info(
+                "Failed to process all alias wires: %s",
+                " ".join([w.cable.name for w in alias_wires]),
             )
             raise RuntimeError("Failed to process all alias wires")
 
@@ -133,14 +133,14 @@ class Pin:
         # This didn't work unfortunately
         # if instance.cell_type == "LUT6_2":
         #     eqn = LUTTools.getLUTEquation(instance.properties["INIT"])
-        #     self.log(instance.properties["INIT"])
-        #     # self.log(eqn)
+        #     logging.info(instance.properties["INIT"])
+        #     # logging.info(eqn)
         #     return self.name not in eqn
         # return False
 
     @property
     def net(self):
-        # self.log(self.instance.name, self.name, self.pin.wire)'
+        # logging.info("%s %s %s", self.instance.name, self.name, self.pin.wire)
         return self.netlist.wire_to_net.get(self.pin.wire)
 
     @property
@@ -151,9 +151,8 @@ class Pin:
 class Net:
     """Wrapper class around spydernet Wire to add some helper properties"""
 
-    def __init__(self, wire, tool):
+    def __init__(self, wire):
         self.wire = wire
-        self.tool = tool
         self.alias_wires = []
         self.driver_pin = None
         self.is_vdd = None

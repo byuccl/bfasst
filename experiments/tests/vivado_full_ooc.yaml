@@ -1,0 +1,6 @@
+designs:
+  - ooc/
+
+flow: vivado
+
+synth: " -flatten full"

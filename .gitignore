@@ -34,3 +34,7 @@ env.sh
 
 # Xray Databases
 *_db
+
+# Ninja related files
+build.ninja
+.ninja_log
