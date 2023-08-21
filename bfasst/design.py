@@ -31,7 +31,11 @@ class Design:
             error("Design folder", dir_path, " does not exist.")
 
         self.path = dir_path
-        self.rel_path = self.path.relative_to(paths.DESIGNS_PATH)
+        if self.path.relative_to(paths.DESIGNS_PATH) is not None:
+            self.rel_path = self.path.relative_to(paths.DESIGNS_PATH)
+        else:
+            self.rel_path = self.path.resolve()
+
         self.build_dir = experiment_dir / self.rel_path
         self.yaml_path = self.path / DESIGN_YAML_NAME
 
@@ -201,7 +205,16 @@ class Design:
     #     return os.path.basename(self.reversed_netlist_path)
 
     def last_modified_time(self):
-        return max(os.path.getmtime(f) for f in (self.yaml_path, self.top_file_path))
+        times = [os.path.getmtime(f) for f in (self.yaml_path, self.top_file_path)]
+        times.extend(
+            [
+                os.path.getmtime(f)
+                for f in self.verilog_file_paths
+                + self.system_verilog_file_paths
+                + self.vhdl_file_paths
+            ]
+        )
+        return max(times)
 
     def get_golden_hdl_type(self):
         if self.golden_sources is None:

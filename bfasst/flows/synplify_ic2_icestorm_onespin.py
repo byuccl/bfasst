@@ -32,6 +32,17 @@ class SynplifyIc2IcestormOnespin(Flow):
         impl_and_rev_sub_flow.modify_first_job_dependencies({self.job_list[-1].uuid})
         self.job_list.extend(impl_and_rev_sub_flow.job_list)
 
+        # Set paths for onespin
+        self.design.netlist_path = self.design.build_dir / (self.design.top + "_impl.v")
+        if self.design.cur_error_flow_name is None:
+            self.design.reversed_netlist_path = self.design.build_dir / (
+                self.design.top + "_reversed.v"
+            )
+        else:
+            self.design.reversed_netlist_path = self.design.build_dir / (
+                self.design.top + "_" + self.design.cur_error_flow_name + "_reversed.v"
+            )
+
         # Run onespin
         curr_job = Job(self.adjust_design_object, self.design.rel_path, {self.job_list[-1].uuid})
         self.job_list.append(curr_job)
@@ -39,8 +50,8 @@ class SynplifyIc2IcestormOnespin(Flow):
         cmp_tool = OneSpinCompareTool(
             self.design.build_dir,
             self.design,
-            self.design.compare_golden_files,
-            self.design.reversed_netlist_filename(),
+            self.design.netlist_path,
+            self.design.reversed_netlist_path,
             self.flow_args[ToolType.CMP],
         )
         curr_job = Job(cmp_tool.compare_netlists, self.design.rel_path, {self.job_list[-1].uuid})

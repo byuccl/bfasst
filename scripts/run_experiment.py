@@ -12,8 +12,8 @@ import traceback
 import threading
 import time
 import concurrent.futures
-from bfasst.experiment import Experiment
 
+from bfasst.experiment import Experiment
 from bfasst.output_cntrl import enable_proxy
 from bfasst.tool import BfasstException
 from bfasst.utils import TermColor, print_color
@@ -199,7 +199,9 @@ def clean_jobs(jobs, future, statuses, job_results, print_lock):
     # read the result from the future
     status = future.result()
 
-    job_results[finished_job.design_rel_path.name] = status
+    design = finished_job.design_rel_path
+    design = f"{design.parent.name}/{design.name}"
+    job_results[design] = status
 
     # Remove the job and return if it was successful
     if not status:
@@ -220,7 +222,7 @@ def clean_jobs_recursive(jobs, curr_job, jobs_to_remove, statuses):
     """Recursive helper to resolve job dependencies and remove jobs from the job list"""
     jobs_to_remove.append(curr_job)
     for job in jobs:
-        if curr_job.uuid in job.dependencies:
+        if job.dependencies and curr_job.uuid in job.dependencies:
             statuses.append("Parent job failed")
             clean_jobs_recursive(jobs, job, jobs_to_remove, statuses)
 

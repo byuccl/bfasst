@@ -28,9 +28,10 @@ module LIFO(
     );
 
 
-   (* RAM_STYLE="DISTRIBUTED" *)
-   reg [3:0] addr;
-	reg [10:0] ram [15:0];
+   
+   (* RAM_STYLE="REGISTERS" *) reg [3:0] addr;
+   
+   (* RAM_STYLE="REGISTERS" *) reg [10:0] ram [15:0];
 
    always@(posedge clk)
 		if (rst)

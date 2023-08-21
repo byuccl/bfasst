@@ -19,8 +19,8 @@ class OnespinCmp(Flow):
         compare_tool = OneSpinCompareTool(
             self.design.build_dir,
             self.design,
-            self.design.compare_golden_files,
-            self.design.reversed_netlist_filename(),
+            self.design.netlist_path,
+            self.design.reversed_netlist_path,
             self.flow_args[ToolType.CMP],
         )
         curr_job = Job(

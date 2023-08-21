@@ -30,6 +30,17 @@ class Ic2LseConformal(Flow):
         impl_and_rev_sub_flow.modify_first_job_dependencies({self.job_list[-1].uuid})
         self.job_list.extend(impl_and_rev_sub_flow.job_list)
 
+        # Set paths for conformal
+        self.design.netlist_path = self.design.build_dir / (self.design.top + "_impl.v")
+        if self.design.cur_error_flow_name is None:
+            self.design.reversed_netlist_path = self.design.build_dir / (
+                self.design.top + "_reversed.v"
+            )
+        else:
+            self.design.reversed_netlist_path = self.design.build_dir / (
+                self.design.top + "_" + self.design.cur_error_flow_name + "_reversed.v"
+            )
+
         # Run conformal
         curr_job = Job(self.adjust_design_object, self.design.rel_path, {self.job_list[-1].uuid})
 

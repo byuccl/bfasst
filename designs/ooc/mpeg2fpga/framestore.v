@@ -344,7 +344,7 @@ module framestore(rst, clk, mem_clk,
     #(.addr_width(MEMREQ_DEPTH),
     .dta_width(9'd88),
     .prog_thresh(MEMREQ_THRESHOLD),  // threshold to make framestore_request stop writing before mem_request_fifo overflows
-    .FIFO_XILINX(1))
+    .FIFO_XILINX(0))
     mem_request_fifo (
     .rst(rst), 
     .wr_clk(clk), 
@@ -398,7 +398,7 @@ module framestore(rst, clk, mem_clk,
     #(.addr_width(MEMRESP_DEPTH),
     .dta_width(9'd64),
     .prog_thresh(MEMRESP_THRESHOLD),   // threshold to make mem_ctl stop writing before mem_response_fifo overflows
-    .FIFO_XILINX(1))
+    .FIFO_XILINX(0))
     mem_response_fifo (
     .rst(rst), 
     .wr_clk(mem_clk), 

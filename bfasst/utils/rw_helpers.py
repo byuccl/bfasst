@@ -216,9 +216,7 @@ def lut_move_net_to_new_cell(
 
             # A5 becomes I4, A1 becomes I0, etc.
             new_logical_pin = f"I{int(str(physical_pin[1])) - 1}"
-            log(
-                f"    Connecting net {logical_net} to input pin {new_logical_pin} on new cell"
-            )
+            log(f"    Connecting net {logical_net} to input pin {new_logical_pin} on new cell")
 
         elif port_inst.getDirection() == RwDirection.OUTPUT:
             log(f"    Drives net {logical_net}")

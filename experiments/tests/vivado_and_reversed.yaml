@@ -2,4 +2,4 @@ designs:
     - byu/
     
     
-flow: vivado
+flow: vivado_and_reversed
