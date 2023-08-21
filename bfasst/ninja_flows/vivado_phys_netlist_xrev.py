@@ -29,14 +29,14 @@ class VivadoPhysNetlistXrev(Flow):
         self.xrev_tool.create_build_snippets()
 
     def add_ninja_deps(self, deps=None):
-        # pylint disable=duplicate-code
+        # pylint: disable=duplicate-code
         if not deps:
             deps = []
         deps.extend(self.vivado_tool.add_ninja_deps())
         deps.extend(self.phys_netlist_tool.add_ninja_deps())
         deps.extend(self.xrev_tool.add_ninja_deps())
         deps.append(f"{NINJA_FLOWS_PATH}/vivado_phys_netlist_xrev.py ")
-        # pylint enable=duplicate-code
+        # pylint: enable=duplicate-code
         return deps
 
     def get_top_level_flow_path(self):
