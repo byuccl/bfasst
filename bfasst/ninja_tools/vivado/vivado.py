@@ -4,10 +4,10 @@ import chevron
 from bfasst import config
 from bfasst.ninja_tools.tool import Tool
 from bfasst.paths import (
+    BUILD_DIR,
     NINJA_IMPL_TOOLS_PATH,
     NINJA_BUILD_PATH,
     NINJA_VIVADO_TOOLS_PATH,
-    ROOT_PATH,
     NINJA_SYNTH_TOOLS_PATH,
     NINJA_UTILS_PATH,
     VIVADO_RULES_PATH,
@@ -26,9 +26,9 @@ class Vivado(Tool):
 
         self.ooc = ooc
         if ooc:
-            self.build = ROOT_PATH / "build" / design / "ooc"
+            self.build = BUILD_DIR / design / "ooc"
         else:
-            self.build = ROOT_PATH / "build" / design / "in_context"
+            self.build = BUILD_DIR / design / "in_context"
         self.synth_output = self.build / "synth"
         self.impl_output = self.build / "impl"
         self.__create_build_dirs()
