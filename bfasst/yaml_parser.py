@@ -63,7 +63,7 @@ class YamlParser:
                         continue
 
                     if (design_child / "design.yaml").is_file():
-                        design_name = str(design_child).split("/")[-2:]
+                        design_name = "/".join(str(design_child).split("/")[-2:])
                         self.design_paths.append(str(design_name))
                         continue
 
