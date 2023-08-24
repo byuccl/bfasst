@@ -205,7 +205,16 @@ class Design:
     #     return os.path.basename(self.reversed_netlist_path)
 
     def last_modified_time(self):
-        return max(os.path.getmtime(f) for f in (self.yaml_path, self.top_file_path))
+        times = [os.path.getmtime(f) for f in (self.yaml_path, self.top_file_path)]
+        times.extend(
+            [
+                os.path.getmtime(f)
+                for f in self.verilog_file_paths
+                + self.system_verilog_file_paths
+                + self.vhdl_file_paths
+            ]
+        )
+        return max(times)
 
     def get_golden_hdl_type(self):
         if self.golden_sources is None:

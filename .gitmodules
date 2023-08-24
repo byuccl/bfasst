@@ -1,6 +1,6 @@
 [submodule "third_party/fasm2bels"]
 	path = third_party/fasm2bels
-	url = https://github.com/chipsalliance/f4pga-xc-fasm2bels.git
+	url = git@github.com:byuccl/f4pga-xc-fasm2bels.git
 [submodule "third_party/yosys"]
 	path = third_party/yosys
 	url = https://github.com/YosysHQ/yosys.git

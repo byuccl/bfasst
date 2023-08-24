@@ -1,0 +1,6 @@
+build {{ log_path }} {{ corrupt_netlist_path }}: inject | {{ build_dir }}/xray/{{ top }}_reversed.v {{ injection_script_path }}
+    build_dir = {{ build_dir }}
+    seed = {{ seed }}
+    error_type = {{ error_type }}
+    log_path = {{ log_path }}
+

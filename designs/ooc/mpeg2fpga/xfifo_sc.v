@@ -66,10 +66,10 @@ module xfifo_sc (
    * read and write addresses 
    */
 
-  reg  [addr_width:0]wr_addr;
-  reg  [addr_width:0]rd_addr;
-  reg  [addr_width:0]next_wr_addr;
-  reg  [addr_width:0]next_rd_addr;
+  (* ram_style = "registers" *) reg  [addr_width:0]wr_addr;
+  (* ram_style = "registers" *) reg  [addr_width:0]rd_addr;
+  (* ram_style = "registers" *) reg  [addr_width:0]next_wr_addr;
+  (* ram_style = "registers" *) reg  [addr_width:0]next_rd_addr;
 
   always @*
     if (wr_en && ~full) next_wr_addr = wr_addr + 1'b1;
@@ -144,7 +144,7 @@ module xfifo_sc (
    * dual-port ram w/registered output
    */
 
-  reg    [dta_width-1:0]ram[(1 << addr_width)-1:0];
+   reg    [dta_width-1:0]ram[(1 << addr_width)-1:0];
 
   always @(posedge clk)
     if (~rst) dout <= 0;
