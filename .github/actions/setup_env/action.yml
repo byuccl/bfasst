@@ -41,7 +41,7 @@ runs:
         # Check if cache file matches current commit
         FASM2BELS_COMMIT=$(git submodule status third_party/fasm2bels/ | awk '{print $1}')
         FASM2BELS_URL=$(git config --file .gitmodules submodule.third_party/fasm2bels.url)
-        echo "fasm2bels version: $FASM2BELS_URL $FASM2BELS_COMMIT"
+        echo "Need fasm2bels version: $FASM2BELS_URL $FASM2BELS_COMMIT"
         if [ -f ${{ inputs.cache_path }}/fasm2bels_commit.txt ] && [ $FASM2BELS_COMMIT == $(cat ${{ inputs.cache_path }}/fasm2bels_commit.txt) ]; then
           # Successful cache, do nothing
           echo "Using cached version of fasm2bels"
