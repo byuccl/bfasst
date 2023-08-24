@@ -40,13 +40,16 @@ runs:
       if [[ -n "${{ inputs.cache_path }}" ]]; then
         # Check if cache file matches current commit
         FASM2BELS_COMMIT=$(git submodule status third_party/fasm2bels/ | awk '{print $1}')
+        FASM2BELS_URL=$(git config --file .gitmodules submodule.third_party/fasm2bels.url)
+        echo "Need fasm2bels version: $FASM2BELS_URL $FASM2BELS_COMMIT"
+        cat .gitmodules
         if [ -f ${{ inputs.cache_path }}/fasm2bels_commit.txt ] && [ $FASM2BELS_COMMIT == $(cat ${{ inputs.cache_path }}/fasm2bels_commit.txt) ]; then
           # Successful cache, do nothing
           echo "Using cached version of fasm2bels"
         else
           echo "Installing cached version of fasm2bels"
           rm -rf ${{ inputs.cache_path }}/fasm2bels_commit.txt
-          . .venv/bin/activate && cd $GITHUB_ACTION_PATH && FASM2BELS_COMMIT=$FASM2BELS_COMMIT make install_fasm2bels
+          . .venv/bin/activate && cd $GITHUB_ACTION_PATH && FASM2BELS_COMMIT=$FASM2BELS_COMMIT FASM2BELS_URL=$FASM2BELS_URL make install_fasm2bels
           echo $FASM2BELS_COMMIT > ${{ inputs.cache_path }}/fasm2bels_commit.txt
         fi
       else
