@@ -7,8 +7,8 @@ from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.transform.error_injector import ErrorInjector
 from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
 from bfasst.paths import (
+    BUILD_DIR,
     NINJA_FLOWS_PATH,
-    ROOT_PATH,
 )
 
 from bfasst.ninja_utils.error_injector import ErrorType
@@ -26,7 +26,7 @@ class VivadoStructuralErrorInjection(Flow):
         self.error_injector_tool = ErrorInjector(design)
         self.compare_tool = Structural(design)
 
-        self.error_injector_build = ROOT_PATH / "build" / design / "error_injection"
+        self.error_injector_build = BUILD_DIR / design / "error_injection"
 
     def create_rule_snippets(self):
         """Create the rule snippets for the flow and append them to build.ninja."""

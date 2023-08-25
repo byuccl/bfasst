@@ -3,9 +3,9 @@
 import chevron
 from bfasst import config
 from bfasst.paths import (
+    BUILD_DIR,
     NINJA_BUILD_PATH,
     REV_BIT_TOOLS_PATH,
-    ROOT_PATH,
     XRAY_PATH,
     get_fasm2bels_path,
 )
@@ -19,7 +19,7 @@ class Xray(Tool):
     def __init__(self, design):
         super().__init__(design)
 
-        self.build = ROOT_PATH / "build" / design / "xray"
+        self.build = BUILD_DIR / design / "xray"
         self.__create_build_dirs()
 
         self.top = YamlParser(self.design / "design.yaml").parse_top_module()

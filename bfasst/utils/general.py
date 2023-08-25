@@ -5,8 +5,8 @@ import re
 import sys
 import shutil
 
-from bfasst.paths import DESIGNS_PATH, ROOT_PATH
-from bfasst.config import BUILD_DIR
+from bfasst.paths import DESIGNS_PATH, BUILD_DIR
+from bfasst.config import BUILD
 
 
 class TermColor:
@@ -43,7 +43,7 @@ def error(*msg, returncode=-1):
 
 def create_build_dir(path):
     """Create a build directory if it doesn't exist"""
-    new_dir = path / BUILD_DIR
+    new_dir = path / BUILD
     new_dir.mkdir(exist_ok=True)
     return new_dir
 
@@ -163,8 +163,8 @@ def clean_error_injections_and_comparisons(designs):
     fail_list = []
 
     for design in designs:
-        cmp_dir = ROOT_PATH / "build" / design / "struct_cmp"
-        error_dir = ROOT_PATH / "build" / design / "error_injection"
+        cmp_dir = BUILD_DIR / design / "struct_cmp"
+        error_dir = BUILD_DIR / design / "error_injection"
         for file in cmp_dir.iterdir():
             with open(file, "r") as f:
                 # SUCCESS means the compare tool did not detect an actual error
