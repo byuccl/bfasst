@@ -11,26 +11,23 @@ class YamlParser:
         self.yaml_path = yaml_path
         self.experiment_props = None
         self.post_run = None
-        self.design_paths = None
+        self.design_paths = []
         self.flow = None
-        self.flow_args = None
+        self.flow_args = {}
 
     def parse_design_flow(self):
         """Parse a yaml file into design paths
         and an instance of the specified flow for each design"""
-        self.experiment_props = None
         self.__read_experiment_yaml()
         self.__check_experiment_props_for_yaml()
 
-        self.post_run = None
         self.__check_for_post_run()
 
-        self.design_paths = []
         self.__collect_design_paths()
         self.__uniquify_design_paths()
 
         self.flow = self.experiment_props["flow"]
-        self.flow_args = dict({"synth": self.experiment_props["synth"]})
+        self.__init_flow_args()
 
     def __read_experiment_yaml(self):
         with open(self.yaml_path) as f:
@@ -81,6 +78,13 @@ class YamlParser:
     def __uniquify_design_paths(self):
         self.design_paths = list(set(self.design_paths))
         self.design_paths.sort()
+
+    def __init_flow_args(self):
+        if "synth" in self.experiment_props:
+            synth_args = self.experiment_props["synth"]
+        else:
+            synth_args = None
+        self.flow_args.update({"synth": synth_args})
 
     def parse_top_module(self):
         """Parse a yaml file to obtain a top module"""
