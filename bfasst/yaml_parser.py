@@ -57,7 +57,8 @@ class YamlParser:
                     continue
 
                 # This handles the case of passing a directory containing multiple designs in yaml
-                # with the designs key rather than design_dirs key, as seen in most of the CI checks:
+                # with the designs key rather than design_dirs key,
+                # as seen in most of the CI checks:
                 # designs:
                 #   - byu/
                 #   - ooc/
