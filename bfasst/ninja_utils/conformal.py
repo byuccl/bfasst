@@ -2,6 +2,7 @@
 import re
 import socket
 from pathlib import Path
+import chevron
 
 import paramiko
 import scp
@@ -10,6 +11,7 @@ import bfasst
 from bfasst import paths
 from bfasst.types import Vendor
 from bfasst.locks import conformal_lock
+from bfasst.utils import error
 
 
 class ConformalCompareError(Exception):
@@ -25,14 +27,14 @@ class ConformalCompare:
     GUI_FILE_NAME = "run_conformal_gui.sh"
     MAPPED_POINTS_FILE_NAME = "mapped_points.txt"
 
-    def __init__(self, build_dir, netlist_a, netlist_b, vendor):
+    def __init__(self, build_dir, gold_netlist, rev_netlist, vendor):
         self.build_dir = Path(build_dir)
         self.stage_dir = self.build_dir / self.COMPARE_WORK_DIR
 
         assert isinstance(vendor, Vendor)
         self.vendor = vendor
-        self.netlist_a = netlist_a
-        self.netlist_b = netlist_b
+        self.gold_netlist = gold_netlist
+        self.rev_netlist = rev_netlist
 
         self.remote_libs_dir_path = None
         self.local_libs_paths = None
@@ -95,18 +97,62 @@ class ConformalCompare:
 
     def __create_do_file(self):
         """Create the conformal do file"""
+
+        gold_src_type = self.__get_gold_netlist_type()
+        if not gold_src_type:
+            error("Unsupported golden HDL type")
+
+        do_text = self.__template_do_file(gold_src_type)
         do_file_path = self.stage_dir / self.DO_FILE_NAME
-
         with open(do_file_path, "w") as f:
-            # TODO: template with chevron
-            f.write("")
+            f.write(do_text)
 
+        gui_text = self.__template_gui_file()
         run_gui_path = self.stage_dir / self.GUI_FILE_NAME
         with open(run_gui_path, "w") as f:
-            # TODO: template with chevron
-            f.write("")
+            f.write(gui_text)
 
         return do_file_path
+
+    def __get_gold_netlist_type(self):
+        if self.gold_netlist.suffix == ".v":
+            return "-Verilog"
+        if self.gold_netlist.suffix == ".vhd":
+            return "-Vhdl"
+        return None
+
+    def __template_do_file(self, gold_src_type):
+        with open(paths.NINJA_COMPARE_TOOLS_PATH / "conformal.do.mustache", "r") as f:
+            do_text = chevron.render(
+                f,
+                {
+                    "local_libs_paths": [
+                        str(self.remote_libs_dir_path / f.name) for f in self.local_libs_paths
+                    ],
+                    "golden_files": [
+                        str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR / self.gold_netlist.name)
+                    ],
+                    "src_type": gold_src_type,
+                    "rev_netlist": str(
+                        bfasst.config.CONFORMAL_REMOTE_WORK_DIR / self.rev_netlist.name
+                    ),
+                    "renaming_rule_vector": "add renaming rule"
+                    + r" vector_expand %s\[%d\] @1_@2 -Both -map",
+                },
+            )
+        return do_text
+
+    def __template_gui_file(self):
+        with open(paths.NINJA_COMPARE_TOOLS_PATH / "conformal.gui.mustache", "r") as f:
+            gui_text = chevron.render(
+                f,
+                {
+                    "remote_source_script": str(bfasst.config.CONFORMAL_REMOTE_SOURCE_SCRIPT),
+                    "remote_path": str(bfasst.config.CONFORMAL_REMOTE_PATH),
+                    "dofile_name": self.DO_FILE_NAME,
+                },
+            )
+        return gui_text
 
     def __copy_files_to_remote(self, client, do_file):
         scp_client = scp.SCPClient(client.get_transport())
@@ -134,10 +180,10 @@ class ConformalCompare:
         # )
 
         # TODO: Copy golden files -- which ones?
-        scp_client.put(str(self.netlist_a), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
+        scp_client.put(str(self.gold_netlist.name), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
 
         # Copy reverse netlist file
-        scp_client.put(str(self.netlist_b), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
+        scp_client.put(str(self.rev_netlist.name), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
 
         scp_client.close()
 
