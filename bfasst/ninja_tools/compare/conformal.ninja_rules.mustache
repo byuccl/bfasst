@@ -1,0 +1,4 @@
+rule conformal
+    command = python {{ utils }}/conformal.py --build_dir $build_dir --vendor $vendor --netlists $in
+    description = conformal compare $in
+

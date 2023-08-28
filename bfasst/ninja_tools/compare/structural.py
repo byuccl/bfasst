@@ -3,7 +3,6 @@
 import chevron
 from bfasst.ninja_tools.tool import Tool
 from bfasst.paths import BUILD_DIR, NINJA_BUILD_PATH, NINJA_COMPARE_TOOLS_PATH, NINJA_UTILS_PATH
-from bfasst.yaml_parser import YamlParser
 
 
 class Structural(Tool):
@@ -13,7 +12,6 @@ class Structural(Tool):
         super().__init__(design)
         self.build = BUILD_DIR / design / "struct_cmp"
         self.__create_build_dir()
-        self.top = YamlParser(self.design / "design.yaml").parse_top_module()
 
     def __create_build_dir(self):
         self.build.mkdir(parents=True, exist_ok=True)

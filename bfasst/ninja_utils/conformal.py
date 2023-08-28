@@ -1,4 +1,5 @@
 """Run conformal comparison tool"""
+from argparse import ArgumentParser
 import re
 import socket
 from pathlib import Path
@@ -21,7 +22,6 @@ class ConformalCompareError(Exception):
 class ConformalCompare:
     """Run conformal comparison tool"""
 
-    COMPARE_WORK_DIR = "conformal"
     LOG_FILE_NAME = "log.txt"
     DO_FILE_NAME = "compare.do"
     GUI_FILE_NAME = "run_conformal_gui.sh"
@@ -29,7 +29,7 @@ class ConformalCompare:
 
     def __init__(self, build_dir, gold_netlist, rev_netlist, vendor):
         self.build_dir = Path(build_dir)
-        self.stage_dir = self.build_dir / self.COMPARE_WORK_DIR
+        self.stage_dir = self.build_dir / "conformal"
 
         assert isinstance(vendor, Vendor)
         self.vendor = vendor
@@ -240,3 +240,25 @@ class ConformalCompare:
             raise ConformalCompareError("There was a parse problem with the comparison log file")
         if match.group(1) != "PASS":
             raise ConformalCompareError("The netlists are not equivalent")
+
+
+if __name__ == "__main__":
+    parser = ArgumentParser()
+    parser.add_argument("--build_dir", type=str, required=True, help="Path to the build directory")
+    parser.add_argument(
+        "--netlists", nargs=2, required=True, help="Path to the netlists; gold BEFORE rev"
+    )
+    parser.add_argument("--vendor", type=str, required=True, help="LATTICE or XILINX")
+    parsed_args = parser.parse_args()
+
+    if parsed_args.vendor == "LATTICE":
+        vend = Vendor.LATTICE
+    elif parsed_args.vendor == "XILINX":
+        vend = Vendor.XILINX
+    else:
+        error("Unsupported vendor", parsed_args.vendor, "Supported vendors are LATTICE and XILINX")
+
+    conformal_compare = ConformalCompare(
+        parsed_args.build_dir, parsed_args.netlists[0], parsed_args.netlists[1], vend
+    )
+    conformal_compare.compare_netlists()
