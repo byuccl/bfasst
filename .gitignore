@@ -38,3 +38,4 @@ env.sh
 # Ninja related files
 build.ninja
 .ninja_log
+.ninja_deps
