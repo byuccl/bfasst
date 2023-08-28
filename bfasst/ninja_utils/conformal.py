@@ -13,6 +13,7 @@ from bfasst import paths
 from bfasst.types import Vendor
 from bfasst.locks import conformal_lock
 from bfasst.utils import error
+from bfasst.utils.general import HdlType, get_hdl_src_types
 
 
 class ConformalCompareError(Exception):
@@ -27,14 +28,14 @@ class ConformalCompare:
     GUI_FILE_NAME = "run_conformal_gui.sh"
     MAPPED_POINTS_FILE_NAME = "mapped_points.txt"
 
-    def __init__(self, build_dir, gold_netlist, rev_netlist, vendor):
+    def __init__(self, build_dir, hdl_srcs, rev_netlist, vendor):
         self.build_dir = Path(build_dir)
         self.stage_dir = self.build_dir / "conformal"
 
         assert isinstance(vendor, Vendor)
         self.vendor = vendor
-        self.gold_netlist = gold_netlist
-        self.rev_netlist = rev_netlist
+        self.hdl_srcs = [Path(src) for src in hdl_srcs]
+        self.rev_netlist = Path(rev_netlist)
 
         self.remote_libs_dir_path = None
         self.local_libs_paths = None
@@ -98,11 +99,11 @@ class ConformalCompare:
     def __create_do_file(self):
         """Create the conformal do file"""
 
-        gold_src_type = self.__get_gold_netlist_type()
-        if not gold_src_type:
-            error("Unsupported golden HDL type")
+        hdl_src_types = self.__get_hdl_src_type_flag()
+        if hdl_src_types is None:
+            error("Unsupported HDL type. Conformal does not support mixed HDL or SV")
 
-        do_text = self.__template_do_file(gold_src_type)
+        do_text = self.__template_do_file(hdl_src_types)
         do_file_path = self.stage_dir / self.DO_FILE_NAME
         with open(do_file_path, "w") as f:
             f.write(do_text)
@@ -114,10 +115,11 @@ class ConformalCompare:
 
         return do_file_path
 
-    def __get_gold_netlist_type(self):
-        if self.gold_netlist.suffix == ".v":
+    def __get_hdl_src_type_flag(self):
+        hdl_type = get_hdl_src_types(self.hdl_srcs)
+        if hdl_type == HdlType.VERILOG:
             return "-Verilog"
-        if self.gold_netlist.suffix == ".vhd":
+        if hdl_type == HdlType.VHDL:
             return "-Vhdl"
         return None
 
@@ -130,7 +132,8 @@ class ConformalCompare:
                         str(self.remote_libs_dir_path / f.name) for f in self.local_libs_paths
                     ],
                     "golden_files": [
-                        str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR / self.gold_netlist.name)
+                        str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR / src.name)
+                        for src in self.hdl_srcs
                     ],
                     "src_type": gold_src_type,
                     "rev_netlist": str(
@@ -179,11 +182,11 @@ class ConformalCompare:
         #     str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR / self.MAPPED_POINTS_FILE_NAME),
         # )
 
-        # TODO: Copy golden files -- which ones?
-        scp_client.put(str(self.gold_netlist.name), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
+        for src in self.hdl_srcs:
+            scp_client.put(str(src), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
 
         # Copy reverse netlist file
-        scp_client.put(str(self.rev_netlist.name), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
+        scp_client.put(str(self.rev_netlist), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
 
         scp_client.close()
 
@@ -245,10 +248,14 @@ class ConformalCompare:
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--build_dir", type=str, required=True, help="Path to the build directory")
-    parser.add_argument(
-        "--netlists", nargs=2, required=True, help="Path to the netlists; gold BEFORE rev"
-    )
+    parser.add_argument("--rev_netlist", required=True, help="Path to reversed netlist")
     parser.add_argument("--vendor", type=str, required=True, help="LATTICE or XILINX")
+    parser.add_argument(
+        "--hdl_srcs",
+        type=str,
+        required=True,
+        help="HDL files that are part of the design",
+    )
     parsed_args = parser.parse_args()
 
     if parsed_args.vendor == "LATTICE":
@@ -259,6 +266,6 @@ if __name__ == "__main__":
         error("Unsupported vendor", parsed_args.vendor, "Supported vendors are LATTICE and XILINX")
 
     conformal_compare = ConformalCompare(
-        parsed_args.build_dir, parsed_args.netlists[0], parsed_args.netlists[1], vend
+        parsed_args.build_dir, parsed_args.hdl_srcs.split(" "), parsed_args.rev_netlist, vend
     )
     conformal_compare.compare_netlists()

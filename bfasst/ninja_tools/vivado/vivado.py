@@ -34,7 +34,7 @@ class Vivado(Tool):
         self.__create_build_dirs()
 
         self.top = YamlParser(self.design / "design.yaml").parse_top_module()
-        self.__read_hdl_files()
+        self._read_hdl_files()
 
         self.part = config.PART
 
@@ -42,19 +42,6 @@ class Vivado(Tool):
         self.build.mkdir(parents=True, exist_ok=True)
         self.synth_output.mkdir(exist_ok=True)
         self.impl_output.mkdir(exist_ok=True)
-
-    def __read_hdl_files(self):
-        """Read the hdl files in the design directory"""
-        self.verilog = []
-        self.system_verilog = []
-        for child in self.design.rglob("*"):
-            if child.is_dir():
-                continue
-
-            if child.suffix == ".v":
-                self.verilog.append(str(child))
-            elif child.suffix == ".sv":
-                self.system_verilog.append(str(child))
 
     def create_rule_snippets(self):
         with open(VIVADO_RULES_PATH, "r") as f:

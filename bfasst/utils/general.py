@@ -4,6 +4,7 @@ import logging
 import re
 import sys
 import shutil
+import enum
 
 from bfasst.paths import DESIGNS_PATH, BUILD_DIR
 from bfasst.config import BUILD
@@ -22,6 +23,15 @@ class TermColor:
     END = "\033[0m"
     BOLD = "\033[1m"
     UNDERLINE = "\033[4m"
+
+
+class HdlType(enum.Enum):
+    """class enumerating the type of HDL"""
+
+    VERILOG = 1
+    VHDL = 2
+    MIXED = 3
+    SYSTEM_VERILOG = 4
 
 
 def print_color_no_newl(color, *msg):
@@ -182,3 +192,27 @@ def clean_error_injections_and_comparisons(designs):
         print("\n".join(fail_list))
     else:
         print("None")
+
+
+def get_hdl_src_types(srcs):
+    """get hdl type of project"""
+    hdl_type = None
+    for src in srcs:
+        if src.suffix == ".v":
+            if hdl_type is None:
+                hdl_type = HdlType.VERILOG
+            elif hdl_type == HdlType.VHDL:
+                hdl_type = HdlType.MIXED
+        elif src.suffix == ".sv":
+            if hdl_type is None:
+                hdl_type = HdlType.SYSTEM_VERILOG
+            elif hdl_type == HdlType.VHDL:
+                hdl_type = HdlType.MIXED
+        elif src.suffix == ".vhd":
+            if hdl_type is None:
+                hdl_type = HdlType.VHDL
+            elif hdl_type == HdlType.VERILOG:
+                hdl_type = HdlType.MIXED
+
+    assert hdl_type is not None
+    return hdl_type

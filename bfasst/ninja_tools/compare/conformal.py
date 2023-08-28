@@ -12,6 +12,7 @@ class Conformal(Tool):
         super().__init__(design)
         self.build = BUILD_DIR / design / "conformal"
         self.__create_build_dir()
+        self._read_hdl_files()
 
     def __create_build_dir(self):
         self.build.mkdir(parents=True, exist_ok=True)
@@ -24,7 +25,7 @@ class Conformal(Tool):
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(rules)
 
-    def create_build_snippets(self, gold_netlist, rev_netlist, vendor):
+    def create_build_snippets(self, rev_netlist, vendor):
         """Create the build snippets for conformal comparison."""
         with open(NINJA_COMPARE_TOOLS_PATH / "conformal.ninja_build.mustache", "r") as f:
             build = chevron.render(
@@ -33,7 +34,7 @@ class Conformal(Tool):
                     "log_path": str(self.build / "log.txt"),
                     "do_path": str(self.build / "compare.do"),
                     "gui_path": str(self.build / "run_conformal_gui.sh"),
-                    "gold_netlist": gold_netlist,
+                    "hdl_srcs": self.__get_hdl_srcs(),
                     "rev_netlist": rev_netlist,
                     "conformal_script_path": str(NINJA_UTILS_PATH / "conformal.py"),
                     "build_dir": self.build.parent,
@@ -43,6 +44,14 @@ class Conformal(Tool):
 
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(build)
+
+    def __get_hdl_srcs(self):
+        """Determine the type(s) of hdl sources in the design."""
+        hdl_srcs = []
+        hdl_srcs.extend(self.verilog)
+        hdl_srcs.extend(self.system_verilog)
+        hdl_srcs.extend(self.vhdl)
+        return hdl_srcs
 
     def add_ninja_deps(self, deps=None):
         """Add the conformal ninja deps."""

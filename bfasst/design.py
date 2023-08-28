@@ -6,6 +6,7 @@ import yaml
 import bfasst
 from bfasst import paths
 from bfasst.utils import error
+from bfasst.utils.general import get_hdl_src_types
 
 DESIGN_YAML_NAME = "design.yaml"
 
@@ -196,7 +197,7 @@ class Design:
         return self.top_file_path is not None
 
     def get_top_hdl_type(self):
-        return get_hdl_type(self.top_file_path)
+        return get_hdl_src_types(self.top_file_path)
 
     def get_support_files(self):
         return self.verilog_file_paths + self.vhdl_file_paths + self.system_verilog_file_paths
@@ -219,7 +220,7 @@ class Design:
     def get_golden_hdl_type(self):
         if self.golden_sources is None:
             return self.get_top_hdl_type()
-        return get_hdl_type(self.get_golden_files())
+        return get_hdl_src_types(self.get_golden_files())
 
     def get_golden_files(self):
         if self.golden_sources is None:
@@ -227,30 +228,3 @@ class Design:
                 self.top_file_path,
             ] + self.get_support_files()
         return self.golden_sources
-
-
-def get_hdl_type(files):
-    """get hdl type of project"""
-    if type(files) not in [list, tuple]:
-        files = (files,)
-
-    hdl_type = None
-    for f in files:
-        if f.suffix == ".v":
-            if hdl_type is None:
-                hdl_type = HdlType.VERILOG
-            elif hdl_type == HdlType.VHDL:
-                hdl_type = HdlType.MIXED
-        elif f.suffix == ".sv":
-            if hdl_type is None:
-                hdl_type = HdlType.SYSTEM_VERILOG
-            elif hdl_type == HdlType.VHDL:
-                hdl_type = HdlType.MIXED
-        elif f.suffix == ".vhd":
-            if hdl_type is None:
-                hdl_type = HdlType.VHDL
-            elif hdl_type == HdlType.VERILOG:
-                hdl_type = HdlType.MIXED
-
-    assert hdl_type is not None
-    return hdl_type
