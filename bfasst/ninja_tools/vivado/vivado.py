@@ -102,7 +102,7 @@ class Vivado(Tool):
             "verilog": self.verilog,
             "system_verilog": self.system_verilog,
             "vhdl": self.vhdl,
-            "vhdl_libs": [(k, v) for k, v in self.vhdl_libs.items()],
+            "vhdl_libs": list(self.vhdl_libs.items()),
             "top": self.top,
             "io": str(self.synth_output / "report_io.txt") if not self.ooc else False,
             "synth_output": str(self.synth_output),
