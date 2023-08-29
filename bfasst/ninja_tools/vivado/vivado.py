@@ -48,6 +48,7 @@ class Vivado(Tool):
             vivado_ninja = chevron.render(
                 f,
                 {
+                    "vivado_path": config.VIVADO_BIN_PATH,
                     "utils": str(NINJA_UTILS_PATH),
                     "in_context": not self.ooc,
                 },
@@ -70,6 +71,7 @@ class Vivado(Tool):
             "part": self.part,
             "verilog": self.verilog,
             "system_verilog": self.system_verilog,
+            "vhdl": self.vhdl,
             "top": self.top,
             "io": str(self.synth_output / "report_io.txt") if not self.ooc else False,
             "synth_output": str(self.synth_output),
