@@ -13,6 +13,10 @@ read_verilog -sv {{ . }}
 read_vhdl {{ . }}
 
 {{/vhdl}}
+{{#vhdl_libs}}
+read_vhdl -library {{1}} {{0}}
+
+{{/vhdl_libs}}
 synth_design -top {{ top }} {{ flow_args }}
 {{#io}}
 place_ports
