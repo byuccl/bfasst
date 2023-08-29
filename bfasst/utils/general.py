@@ -1,6 +1,7 @@
 """Utility functions"""
 import json
 import logging
+from pathlib import Path
 import re
 import sys
 import shutil
@@ -196,23 +197,32 @@ def clean_error_injections_and_comparisons(designs):
 
 def get_hdl_src_types(srcs):
     """get hdl type of project"""
+    if isinstance(srcs, Path):
+        return get_hdl_src_type(srcs)
+
     hdl_type = None
     for src in srcs:
-        if src.suffix == ".v":
-            if hdl_type is None:
-                hdl_type = HdlType.VERILOG
-            elif hdl_type == HdlType.VHDL:
-                hdl_type = HdlType.MIXED
-        elif src.suffix == ".sv":
-            if hdl_type is None:
-                hdl_type = HdlType.SYSTEM_VERILOG
-            elif hdl_type == HdlType.VHDL:
-                hdl_type = HdlType.MIXED
-        elif src.suffix == ".vhd":
-            if hdl_type is None:
-                hdl_type = HdlType.VHDL
-            elif hdl_type == HdlType.VERILOG:
-                hdl_type = HdlType.MIXED
+        hdl_type = get_hdl_src_type(src, hdl_type)
+    return hdl_type
+
+
+def get_hdl_src_type(file, hdl_type=None):
+    """get hdl type of file"""
+    if file.suffix == ".v":
+        if hdl_type is None:
+            hdl_type = HdlType.VERILOG
+        elif hdl_type == HdlType.VHDL:
+            hdl_type = HdlType.MIXED
+    elif file.suffix == ".sv":
+        if hdl_type is None:
+            hdl_type = HdlType.SYSTEM_VERILOG
+        elif hdl_type == HdlType.VHDL:
+            hdl_type = HdlType.MIXED
+    elif file.suffix == ".vhd":
+        if hdl_type is None:
+            hdl_type = HdlType.VHDL
+        elif hdl_type == HdlType.VERILOG:
+            hdl_type = HdlType.MIXED
 
     assert hdl_type is not None
     return hdl_type
