@@ -1,4 +1,5 @@
 """Parse a yaml file to obtain a flow and a list of target designs"""
+# pylint: disable=duplicate-code
 from pathlib import Path
 import yaml
 from bfasst.utils import error
