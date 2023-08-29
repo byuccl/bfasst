@@ -82,9 +82,9 @@ class YamlParser:
     def __init_flow_args(self):
         if "synth" in self.experiment_props:
             synth_args = self.experiment_props["synth"]
+            self.flow_args.update({"synth": synth_args})
         else:
             synth_args = None
-        self.flow_args.update({"synth": synth_args})
 
     def parse_top_module(self):
         """Parse a yaml file to obtain a top module"""
