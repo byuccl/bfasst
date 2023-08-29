@@ -47,6 +47,7 @@ class Vivado(Tool):
         """Read the hdl files in the design directory"""
         self.verilog = []
         self.system_verilog = []
+        self.vhdl = []
         for child in self.design.rglob("*"):
             if child.is_dir():
                 continue
@@ -55,6 +56,8 @@ class Vivado(Tool):
                 self.verilog.append(str(child))
             elif child.suffix == ".sv":
                 self.system_verilog.append(str(child))
+            elif child.suffix == ".vhd":
+                self.vhdl.append(str(child))
 
     def create_rule_snippets(self):
         with open(VIVADO_RULES_PATH, "r") as f:
@@ -84,6 +87,7 @@ class Vivado(Tool):
             "part": self.part,
             "verilog": self.verilog,
             "system_verilog": self.system_verilog,
+            "vhdl": self.vhdl,
             "top": self.top,
             "io": str(self.synth_output / "report_io.txt") if not self.ooc else False,
             "synth_output": str(self.synth_output),
