@@ -3,4 +3,4 @@ designs:
 
 flow: vivado
 
-synth: " -flatten full"
+synth: -flatten_hierarchy full
