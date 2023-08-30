@@ -22,7 +22,7 @@ synth_design -top {{ top }} {{ flow_args }}
 place_ports
 
 {{/io}}
-write_edif -force {{ synth_output }}/viv_synth.edif
+write_edif -force {{ synth_output }}/viv_synth.edf
 write_checkpoint -force -file {{ synth_output }}/synth.dcp
 
 {{#io}}

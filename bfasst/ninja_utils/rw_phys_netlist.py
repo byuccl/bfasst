@@ -76,7 +76,7 @@ class RwPhysNetlist:
         phys_netlist_edif_path = self.stage_dir / "viv_impl_physical.edf"
 
         # Redirect rapidwright output to file
-        rapidwright_log_path = str(self.stage_dir / "rapidwright.log")
+        rapidwright_log_path = str(self.stage_dir / "rapidwright_stdout.log")
         System.setOut(PrintStream(File(rapidwright_log_path)))
 
         phys_netlist_checkpoint = self.stage_dir / "phys_netlist.dcp"

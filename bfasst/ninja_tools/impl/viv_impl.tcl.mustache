@@ -1,6 +1,6 @@
 if { [ catch {
-read_edif {{ synth_output }}/viv_synth.edif
-set_property top_file {{ synth_output }}/viv_synth.edif [current_fileset]
+read_edif {{ synth_output }}/viv_synth.edf
+set_property top_file {{ synth_output }}/viv_synth.edf [current_fileset]
 link_design -part {{ part }}
 {{#xdc}}
 read_xdc {{ . }}
@@ -11,7 +11,7 @@ opt_design
 place_design
 route_design
 write_checkpoint -force -file {{ impl_output }}/impl.dcp
-write_edif -force -file {{ impl_output }}/viv_impl.edif
+write_edif -force -file {{ impl_output }}/viv_impl.edf
 write_verilog -force -file {{ impl_output }}/viv_impl.v
 report_utilization -file {{ impl_output }}/utilization.txt
 {{#bit}}

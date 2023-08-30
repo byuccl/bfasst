@@ -3,4 +3,4 @@ designs:
 
 flow: vivado
 
-synth: -flatten_hierarchy full
+synth: -flatten_hierarchy full -max_dsp 0

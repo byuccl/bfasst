@@ -18,3 +18,5 @@ designs:
     
     
 flow: vivado_phys_netlist
+
+synth: -flatten_hierarchy full -max_dsp 0
