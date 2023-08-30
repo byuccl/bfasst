@@ -3,5 +3,3 @@ designs:
     
     
 flow: vivado_ooc
-
-synth: -flatten_hierarchy full -max_dsp 0

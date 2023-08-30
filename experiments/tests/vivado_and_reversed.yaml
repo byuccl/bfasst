@@ -4,4 +4,4 @@ designs:
     
 flow: vivado_and_reversed
 
-synth: -flatten_hierarchy full -max_dsp 0
+synth: -max_dsp 0

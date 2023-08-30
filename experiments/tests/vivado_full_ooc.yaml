@@ -2,5 +2,3 @@ designs:
   - ooc/
 
 flow: vivado
-
-synth: -flatten_hierarchy full -max_dsp 0
