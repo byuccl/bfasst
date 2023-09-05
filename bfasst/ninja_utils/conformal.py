@@ -51,10 +51,8 @@ class ConformalCompare:
         # Handle libraries
         if self.vendor == Vendor.XILINX:
             self.remote_libs_dir_path = bfasst.config.CONFORMAL_REMOTE_LIBS_DIR / "xilinx"
-            self.local_libs_paths = list(
-                (paths.RESOURCES_PATH / "conformal" / "libraries" / "xilinx").iterdir()
-            )
 
+            self.local_libs_paths = []
             yosys_xilinx_libs_path = (
                 paths.XRAY_PATH / "third_party" / "yosys" / "techlibs" / "xilinx"
             )
@@ -63,7 +61,7 @@ class ConformalCompare:
         elif self.vendor == Vendor.LATTICE:
             self.remote_libs_dir_path = bfasst.config.CONFORMAL_REMOTE_LIBS_DIR / "lattice"
             self.local_libs_paths = (
-                paths.RESOURCES_PATH / "conformal" / "libraries" / "lattice" / "sb_ice_syn.v"
+                paths.RESOURCES_PATH / "conformal" / "libraries" / "lattice" / "sb_ice_syn.v",
             )
 
         else:
@@ -72,7 +70,7 @@ class ConformalCompare:
         do_file_path = self.__create_do_file()
 
         # Create remote directories
-        cmd = "mkdir - bfasst_libs;" + "mkdir -p bfasst_libs/xilinx;" + "mkdir -p bfasst_work;"
+        cmd = "mkdir -p bfasst_libs;" + "mkdir -p bfasst_libs/xilinx;" + "mkdir -p bfasst_work;"
         client.exec_command(cmd, timeout=bfasst.config.CONFORMAL_TIMEOUT)
 
         self.__copy_files_to_remote(client, do_file_path)
