@@ -252,6 +252,7 @@ if __name__ == "__main__":
         "--hdl_srcs",
         type=str,
         required=True,
+        nargs="+",
         help="HDL files that are part of the design",
     )
     parsed_args = parser.parse_args()
@@ -264,6 +265,6 @@ if __name__ == "__main__":
         error("Unsupported vendor", parsed_args.vendor, "Supported vendors are LATTICE and XILINX")
 
     conformal_compare = ConformalCompare(
-        parsed_args.build_dir, parsed_args.hdl_srcs.split(" "), parsed_args.rev_netlist, vend
+        parsed_args.build_dir, parsed_args.hdl_srcs, parsed_args.rev_netlist, vend
     )
     conformal_compare.compare_netlists()
