@@ -35,7 +35,7 @@ class ApplicationRunner:
         # for the error injector flow, print the list of failed comparisons
         if self.flow == "vivado_structural_error_injection":
             clean_error_injections_and_comparisons(self.designs)
-            
+
         if ninja_return_code != 0:
             error("Ninja failed with return code", ninja_return_code)
 
