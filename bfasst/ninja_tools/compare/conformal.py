@@ -34,7 +34,7 @@ class Conformal(Tool):
                     "log_path": str(self.build / "log.txt"),
                     "do_path": str(self.build / "compare.do"),
                     "gui_path": str(self.build / "run_conformal_gui.sh"),
-                    "hdl_srcs": self.__get_hdl_srcs(),
+                    "hdl_srcs": str(self.build.parent / "in_context" / "impl" / "viv_impl.v"),
                     "rev_netlist": rev_netlist,
                     "conformal_script_path": str(NINJA_UTILS_PATH / "conformal.py"),
                     "build_dir": self.build.parent,
@@ -44,14 +44,6 @@ class Conformal(Tool):
 
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(build)
-
-    def __get_hdl_srcs(self):
-        """Determine the type(s) of hdl sources in the design."""
-        hdl_srcs = []
-        hdl_srcs.extend(self.verilog)
-        hdl_srcs.extend(self.system_verilog)
-        hdl_srcs.extend(self.vhdl)
-        return hdl_srcs
 
     def add_ninja_deps(self, deps=None):
         """Add the conformal ninja deps."""
