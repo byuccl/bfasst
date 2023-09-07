@@ -14,6 +14,8 @@ class ErrorInjector(Tool):
         self.build = BUILD_DIR / design / "error_injection"
         self.__create_build_dir()
         self.top = YamlParser(self.design / "design.yaml").parse_top_module()
+        self.injection_log = None
+        self.corrupt_netlist = None
 
     def __create_build_dir(self):
         self.build.mkdir(parents=True, exist_ok=True)
@@ -26,8 +28,8 @@ class ErrorInjector(Tool):
             f.write(rules)
 
     def create_build_snippets(self, error_type, num, multiplier):
-        injection_log_path = self.build / f"{error_type.name.lower()}_{num}.log"
-        corrupt_netlist_path = self.build / f"{error_type.name.lower()}_{num}.v"
+        self.injection_log = self.build / f"{error_type.name.lower()}_{num}.log"
+        self.corrupt_netlist = self.build / f"{error_type.name.lower()}_{num}.v"
 
         with open(NINJA_TRANSFORM_TOOLS_PATH / "error_injector.ninja_build.mustache", "r") as f:
             build = chevron.render(
@@ -35,8 +37,8 @@ class ErrorInjector(Tool):
                 {
                     "build_dir": str(self.build.parent),
                     "error_type": error_type.name,
-                    "log_path": str(injection_log_path),
-                    "corrupt_netlist_path": str(corrupt_netlist_path),
+                    "log_path": str(self.injection_log),
+                    "corrupt_netlist_path": str(self.corrupt_netlist),
                     "top": self.top,
                     "seed": num * multiplier,
                     "error_injector_script_path": str(NINJA_UTILS_PATH / "error_injector.py"),
@@ -46,11 +48,15 @@ class ErrorInjector(Tool):
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(build)
 
+    def _init_outputs(self):
+        self.outputs["injection_log"] = self.injection_log
+        self.outputs["corrupt_netlist"] = self.corrupt_netlist
+
     def add_ninja_deps(self, deps=None):
         if not deps:
             deps = []
-        deps.append(f"{NINJA_TRANSFORM_TOOLS_PATH}/error_injector.py ")
-        deps.append(f"{NINJA_TRANSFORM_TOOLS_PATH}/error_injector.ninja_rules.mustache ")
-        deps.append(f"{NINJA_TRANSFORM_TOOLS_PATH}/error_injector.ninja_build.mustache ")
-        deps.append(f"{NINJA_UTILS_PATH}/error_injector.py ")
+        deps.append(f"{NINJA_TRANSFORM_TOOLS_PATH}/error_injector.py")
+        deps.append(f"{NINJA_TRANSFORM_TOOLS_PATH}/error_injector.ninja_rules.mustache")
+        deps.append(f"{NINJA_TRANSFORM_TOOLS_PATH}/error_injector.ninja_build.mustache")
+        deps.append(f"{NINJA_UTILS_PATH}/error_injector.py")
         return deps

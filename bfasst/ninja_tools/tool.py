@@ -15,6 +15,8 @@ class Tool(abc.ABC):
         self.system_verilog = None
         self.vhdl = None
         self.vhdl_libs = None
+        self.outputs = {}
+        self._init_outputs()
 
     @abc.abstractmethod
     def create_rule_snippets(self):
@@ -28,6 +30,11 @@ class Tool(abc.ABC):
     def add_ninja_deps(self):
         """Add the template and flow paths of this flow
         and its sub-flows as dependencies of the build.ninja file"""
+
+    @abc.abstractmethod
+    def _init_outputs(self):
+        """Creates a dict of the tool's outputs where key is the output name
+        and value is the output path"""
 
     def _read_hdl_files(self):
         """Read the hdl files in the design directory"""

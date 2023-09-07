@@ -162,13 +162,34 @@ class Vivado(Tool):
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(impl_ninja)
 
+    def _init_outputs(self):
+        self.outputs["synth_tcl"] = self.synth_output / "synth.tcl"
+        self.outputs["impl_tcl"] = self.impl_output / "impl.tcl"
+        self.outputs["synth_json"] = self.synth_output / "synth.json"
+        self.outputs["impl_json"] = self.impl_output / "impl.json"
+        self.outputs["synth_edf"] = self.synth_output / "viv_synth.edf"
+        self.outputs["synth_checkpoint"] = self.synth_output / "synth.dcp"
+        self.outputs["impl_verilog"] = self.impl_output / "viv_impl.v"
+        self.outputs["impl_edf"] = self.impl_output / "viv_impl.edf"
+        self.outputs["impl_checkpoint"] = self.impl_output / "impl.dcp"
+        self.outputs["utilization"] = self.impl_output / "utilization.txt"
+        self.outputs["impl_journal"] = self.impl_output / "vivado.jou"
+        self.outputs["impl_log"] = self.impl_output / "vivado.log"
+        self.outputs["synth_journal"] = self.synth_output / "vivado.jou"
+        self.outputs["synth_log"] = self.synth_output / "vivado.log"
+
+        if not self.ooc:
+            self.outputs["io_report"] = self.synth_output / "report_io.txt"
+            self.outputs["synth_constraints"] = self.synth_output / (self.top + ".xdc")
+            self.outputs["bitstream"] = self.impl_output / (self.top + ".bit")
+
     def add_ninja_deps(self, deps=None):
         """Add dependencies to the master ninja file that would cause it to rebuild if modified"""
         if not deps:
             deps = []
-        deps.append(f"{NINJA_SYNTH_TOOLS_PATH}/viv_synth.ninja.mustache ")
-        deps.append(f"{NINJA_IMPL_TOOLS_PATH}/viv_impl.ninja.mustache ")
-        deps.append(f"{NINJA_VIVADO_TOOLS_PATH}/vivado.py ")
-        deps.append(f"{VIVADO_RULES_PATH} ")
+        deps.append(f"{NINJA_SYNTH_TOOLS_PATH}/viv_synth.ninja.mustache")
+        deps.append(f"{NINJA_IMPL_TOOLS_PATH}/viv_impl.ninja.mustache")
+        deps.append(f"{NINJA_VIVADO_TOOLS_PATH}/vivado.py")
+        deps.append(f"{VIVADO_RULES_PATH}")
 
         return deps

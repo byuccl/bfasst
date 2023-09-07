@@ -45,15 +45,20 @@ class Conformal(Tool):
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(build)
 
+    def _init_outputs(self):
+        self.outputs["conformal_log"] = self.build / "log.txt"
+        self.outputs["conformal_gui"] = self.build / "run_conformal_gui.sh"
+        self.outputs["conformal_do"] = self.build / "compare.do"
+
     def add_ninja_deps(self, deps=None):
         """Add the conformal ninja deps."""
         if not deps:
             deps = []
-        deps.append(f"{NINJA_COMPARE_TOOLS_PATH}/conformal.py ")
-        deps.append(f"{NINJA_COMPARE_TOOLS_PATH}/conformal.ninja_rules.mustache ")
-        deps.append(f"{NINJA_COMPARE_TOOLS_PATH}/conformal.ninja_build.mustache ")
-        deps.append(f"{NINJA_COMPARE_TOOLS_PATH}/conformal.do.mustache ")
-        deps.append(f"{NINJA_COMPARE_TOOLS_PATH}/conformal.gui.mustache ")
+        deps.append(f"{NINJA_COMPARE_TOOLS_PATH}/conformal.py")
+        deps.append(f"{NINJA_COMPARE_TOOLS_PATH}/conformal.ninja_rules.mustache")
+        deps.append(f"{NINJA_COMPARE_TOOLS_PATH}/conformal.ninja_build.mustache")
+        deps.append(f"{NINJA_COMPARE_TOOLS_PATH}/conformal.do.mustache")
+        deps.append(f"{NINJA_COMPARE_TOOLS_PATH}/conformal.gui.mustache")
         deps.append(f"{NINJA_UTILS_PATH}/conformal.py ")
 
         return deps

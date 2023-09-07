@@ -12,6 +12,7 @@ class Structural(Tool):
         super().__init__(design)
         self.build = BUILD_DIR / design / "struct_cmp"
         self.__create_build_dir()
+        self.log_name = None
 
     def __create_build_dir(self):
         self.build.mkdir(parents=True, exist_ok=True)
@@ -24,6 +25,7 @@ class Structural(Tool):
             f.write(rules)
 
     def create_build_snippets(self, netlist_a, netlist_b, log_name):
+        self.log_name = log_name
         with open(NINJA_COMPARE_TOOLS_PATH / "structural.ninja_build.mustache", "r") as f:
             build = chevron.render(
                 f,
@@ -31,7 +33,7 @@ class Structural(Tool):
                     "build": str(self.build.parent),
                     "netlist_a": str(netlist_a),
                     "netlist_b": str(netlist_b),
-                    "log_path": str(self.build / log_name),
+                    "log_path": str(self.build / self.log_name),
                     "compare_script_path": str(NINJA_UTILS_PATH / "structural.py"),
                 },
             )
@@ -39,11 +41,14 @@ class Structural(Tool):
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(build)
 
+    def _init_outputs(self):
+        self.outputs["structural_log"] = self.build / self.log_name
+
     def add_ninja_deps(self, deps=None):
         if not deps:
             deps = []
-        deps.append(f"{NINJA_COMPARE_TOOLS_PATH}/structural.py ")
-        deps.append(f"{NINJA_COMPARE_TOOLS_PATH}/structural.ninja_rules.mustache ")
-        deps.append(f"{NINJA_COMPARE_TOOLS_PATH}/structural.ninja_build.mustache ")
-        deps.append(f"{NINJA_UTILS_PATH}/structural.py ")
+        deps.append(f"{NINJA_COMPARE_TOOLS_PATH}/structural.py")
+        deps.append(f"{NINJA_COMPARE_TOOLS_PATH}/structural.ninja_rules.mustache")
+        deps.append(f"{NINJA_COMPARE_TOOLS_PATH}/structural.ninja_build.mustache")
+        deps.append(f"{NINJA_UTILS_PATH}/structural.py")
         return deps

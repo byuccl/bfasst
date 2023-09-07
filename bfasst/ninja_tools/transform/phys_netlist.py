@@ -65,12 +65,21 @@ class PhysNetlist(Tool):
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(phys_netlist_ninja)
 
+    def _init_outputs(self):
+        self.outputs["checkpoint_to_v_tcl"] = self.build / "checkpoint_to_v.tcl"
+        self.outputs["viv_impl_physical_edf"] = self.build / "viv_impl_physical.edf"
+        self.outputs["viv_impl_physical_v"] = self.phys_netlist_path
+        self.outputs["phys_netlist_checkpoint"] = self.build / "phys_netlist.dcp"
+        self.outputs["phys_netlist_log"] = self.build / "log.txt"
+        self.outputs["checkpoint_to_v_json"] = self.build / "checkpoint_to_v.json"
+        self.outputs["rapidwright_log"] = self.build / "rapidwright_stdout.log"
+
     def add_ninja_deps(self, deps=None):
         if not deps:
             deps = []
-        deps.append(f"{NINJA_TRANSFORM_TOOLS_PATH}/phys_netlist.py ")
-        deps.append(f"{NINJA_UTILS_PATH}/rw_phys_netlist.py ")
-        deps.append(f"{NINJA_TRANSFORM_TOOLS_PATH}/phys_netlist_build.ninja.mustache ")
-        deps.append(f"{PHYS_NETLIST_RULES_PATH} ")
-        deps.append(f"{NINJA_TRANSFORM_TOOLS_PATH}/checkpoint_to_v.tcl.mustache ")
+        deps.append(f"{NINJA_TRANSFORM_TOOLS_PATH}/phys_netlist.py")
+        deps.append(f"{NINJA_UTILS_PATH}/rw_phys_netlist.py")
+        deps.append(f"{NINJA_TRANSFORM_TOOLS_PATH}/phys_netlist_build.ninja.mustache")
+        deps.append(f"{PHYS_NETLIST_RULES_PATH}")
+        deps.append(f"{NINJA_TRANSFORM_TOOLS_PATH}/checkpoint_to_v.tcl.mustache")
         return deps
