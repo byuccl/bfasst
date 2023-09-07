@@ -1,5 +1,6 @@
 """Tool to create Vivado synthesis and implementation ninja snippets."""
 import json
+from pathlib import Path
 import chevron
 from bfasst import config
 from bfasst.ninja_tools.tool import Tool
@@ -36,7 +37,7 @@ class Vivado(Tool):
         self.top = YamlParser(self.design / "design.yaml").parse_top_module()
         self._read_hdl_files()
 
-        self.vhdl_libs = {}
+        self.vhdl_file_lib_map = {}
         self.__read_vhdl_libs()
 
         self.part = config.PART
@@ -47,15 +48,15 @@ class Vivado(Tool):
         self.impl_output.mkdir(exist_ok=True)
 
     def __read_vhdl_libs(self):
-        for child in self.design.glob("*"):
-            if child.is_dir() and child.name == "lib":
-                for lib in child.glob("*"):
-                    for file in lib.rglob("*"):
-                        if file.is_dir():
-                            continue
-                        if file.suffix == ".vhd":
-                            key = str(file)
-                            self.vhdl_libs[key] = lib.name
+        print("method called", self.vhdl_libs)
+        for lib in self.vhdl_libs:
+            path = self.design / lib
+            for file in path.rglob("*"):
+                if file.is_dir():
+                    continue
+                if file.suffix == ".vhd":
+                    key = str(file)
+                    self.vhdl_file_lib_map[key] = Path(lib).name
 
     def create_rule_snippets(self):
         with open(VIVADO_RULES_PATH, "r") as f:
@@ -86,7 +87,7 @@ class Vivado(Tool):
             "verilog": self.verilog,
             "system_verilog": self.system_verilog,
             "vhdl": self.vhdl,
-            "vhdl_libs": list(self.vhdl_libs.items()),
+            "vhdl_libs": list(self.vhdl_file_lib_map.items()),
             "top": self.top,
             "io": str(self.synth_output / "report_io.txt") if not self.ooc else False,
             "synth_output": str(self.synth_output),

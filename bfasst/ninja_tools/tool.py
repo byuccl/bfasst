@@ -3,6 +3,7 @@
 import abc
 
 from bfasst.paths import DESIGNS_PATH
+from bfasst.yaml_parser import YamlParser
 
 
 class Tool(abc.ABC):
@@ -13,6 +14,7 @@ class Tool(abc.ABC):
         self.verilog = None
         self.system_verilog = None
         self.vhdl = None
+        self.vhdl_libs = None
 
     @abc.abstractmethod
     def create_rule_snippets(self):
@@ -32,8 +34,14 @@ class Tool(abc.ABC):
         self.verilog = []
         self.system_verilog = []
         self.vhdl = []
+        self.vhdl_libs = YamlParser(self.design / "design.yaml").parse_vhdl_libs()
         for child in self.design.rglob("*"):
             if child.is_dir():
+                continue
+
+            # don't add vhdl libraries as src files
+            is_lib = self.__check_is_lib(child)
+            if is_lib:
                 continue
 
             if child.suffix == ".v":
@@ -42,3 +50,10 @@ class Tool(abc.ABC):
                 self.system_verilog.append(str(child))
             elif child.suffix == ".vhd":
                 self.vhdl.append(str(child))
+
+    def __check_is_lib(self, vhdl_file):
+        """Check if a vhdl file is a library"""
+        for lib in self.vhdl_libs:
+            if lib in str(vhdl_file):
+                return True
+        return False

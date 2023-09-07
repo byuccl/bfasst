@@ -107,3 +107,8 @@ class YamlParser:
         if "top" not in self.experiment_props:
             error(f"Experiment {self.yaml_path} does not specify a top module")
         return self.experiment_props["top"]
+
+    def parse_vhdl_libs(self):
+        self.experiment_props = None
+        self.__read_experiment_yaml()
+        return self.experiment_props["vhdl_libs"]
