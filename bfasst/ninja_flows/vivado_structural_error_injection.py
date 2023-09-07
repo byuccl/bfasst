@@ -64,7 +64,7 @@ class VivadoStructuralErrorInjection(Flow):
         deps.extend(self.xrev_tool.add_ninja_deps())
         deps.extend(self.error_injector_tool.add_ninja_deps())
         deps.extend(self.compare_tool.add_ninja_deps())
-        deps.append(f"{NINJA_FLOWS_PATH}/vivado_structural_error_injection.py ")
+        deps.append(f"{NINJA_FLOWS_PATH}/vivado_structural_error_injection.py")
         # pylint: enable=duplicate-code
         return deps
 

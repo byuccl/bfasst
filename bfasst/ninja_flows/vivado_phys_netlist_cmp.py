@@ -40,7 +40,7 @@ class VivadoPhysNetlistCmp(Flow):
         deps.extend(self.phys_netlist_tool.add_ninja_deps())
         deps.extend(self.xray_tool.add_ninja_deps())
         deps.extend(self.compare_tool.add_ninja_deps())
-        deps.append(f"{NINJA_FLOWS_PATH}/vivado_phys_netlist_cmp.py ")
+        deps.append(f"{NINJA_FLOWS_PATH}/vivado_phys_netlist_cmp.py")
 
         return deps
 

@@ -36,7 +36,7 @@ class VivadoConformal(Flow):
         deps.extend(self.vivado_tool.add_ninja_deps())
         deps.extend(self.xrev_tool.add_ninja_deps())
         deps.extend(self.conformal_tool.add_ninja_deps())
-        deps.append(f"{NINJA_FLOWS_PATH}/vivado_conformal.py ")
+        deps.append(f"{NINJA_FLOWS_PATH}/vivado_conformal.py")
         # pylint: enable=duplicate-code
         return deps
 
