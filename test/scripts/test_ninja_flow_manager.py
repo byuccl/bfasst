@@ -4,6 +4,7 @@ import os
 import subprocess
 import unittest
 from bfasst.ninja_flows.flow_utils import get_flows
+from bfasst.ninja_flows.vivado_conformal import VivadoConformal
 from bfasst.paths import (
     DESIGNS_PATH,
     NINJA_BUILD_PATH,
@@ -58,6 +59,9 @@ class TestNinjaFlowManager(unittest.TestCase):
             VivadoStructuralErrorInjection, "vivado_structural_error_injection"
         )
 
+    def test_create_vivado_conformal_flow(self):
+        self.__check_flow_creation(VivadoConformal, "vivado_conformal")
+
     def __check_flow_run(self, name, correct_num_build_statements):
         """Check that running flows correctly creates the build.ninja file"""
         self.flow_manager.create_flows(name, ["byu/alu", "byu/counter"])
@@ -95,6 +99,9 @@ class TestNinjaFlowManager(unittest.TestCase):
         # plus all the build statements for the phys_reversed_flow
         # ((200 * 2) * 2) + 21 = 821 build statements
         self.__check_flow_run("vivado_structural_error_injection", 821)
+
+    def test_run_vivado_conformal_flow(self):
+        self.__check_flow_run("vivado_conformal", 17)
 
     def test_ninja_rebuilds(self):
         """Test that the build.ninja file rebuilds itself if any flow or template changes."""

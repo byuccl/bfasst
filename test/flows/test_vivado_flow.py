@@ -45,6 +45,7 @@ class TestVivadoFlow(unittest.TestCase):
             "part": self.flow.vivado_tool.part,
             "verilog": self.flow.vivado_tool.verilog,
             "system_verilog": self.flow.vivado_tool.system_verilog,
+            "vhdl": [],
             "top": self.flow.vivado_tool.top,
             "io": str(self.flow.vivado_tool.synth_output / "report_io.txt"),
             "synth_output": str(self.flow.vivado_tool.synth_output),
