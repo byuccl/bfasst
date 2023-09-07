@@ -43,6 +43,36 @@ class Vivado(Tool):
         self.synth_output.mkdir(exist_ok=True)
         self.impl_output.mkdir(exist_ok=True)
 
+    def __read_hdl_files(self):
+        """Read the hdl files in the design directory"""
+        self.verilog = []
+        self.system_verilog = []
+        self.vhdl = []
+        for child in self.design.glob("*"):
+            if child.is_dir():
+                continue
+
+            if child.suffix == ".v":
+                self.verilog.append(str(child))
+            elif child.suffix == ".sv":
+                self.system_verilog.append(str(child))
+            elif child.suffix == ".vhd":
+                self.vhdl.append(str(child))
+
+        self.vhdl_libs = {}
+        self.__read_vhdl_libs()
+
+    def __read_vhdl_libs(self):
+        for child in self.design.glob("*"):
+            if child.is_dir() and child.name == "lib":
+                for lib in child.glob("*"):
+                    for file in lib.rglob("*"):
+                        if file.is_dir():
+                            continue
+                        if file.suffix == ".vhd":
+                            key = str(file)
+                            self.vhdl_libs[key] = lib.name
+
     def create_rule_snippets(self):
         with open(VIVADO_RULES_PATH, "r") as f:
             vivado_ninja = chevron.render(
@@ -72,6 +102,7 @@ class Vivado(Tool):
             "verilog": self.verilog,
             "system_verilog": self.system_verilog,
             "vhdl": self.vhdl,
+            "vhdl_libs": list(self.vhdl_libs.items()),
             "top": self.top,
             "io": str(self.synth_output / "report_io.txt") if not self.ooc else False,
             "synth_output": str(self.synth_output),

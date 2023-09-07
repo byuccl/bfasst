@@ -10,9 +10,19 @@ class NinjaFlowManager:
     """Utility to manage the creation and execution of ninja flows."""
 
     def __init__(self):
+        # The flow objects, each of which will create ninja snippets for a single design
+        # for the given flow.
         self.flows = None
+
+        # The design paths as strings (need str type for chevron rendering)
         self.designs = None
+
+        # The name of the flow to run, e.g. vivado_structural_error_injection
+        # This is used to get the flow objects.
         self.flow_name = None
+
+        # The flow arguments, e.g. {"synth": "-flatten_hierarchy full -max_dscp 0"}
+        # These may or may not be specified on a given run.
         self.flow_args = None
 
     def create_flows(self, flow_name, designs, flow_args=None):

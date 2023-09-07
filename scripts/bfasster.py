@@ -30,14 +30,14 @@ class ApplicationRunner:
         flow_manager.run_flows()
 
         # run the build.ninja file
-        return_code = self.__run_ninja()
+        ninja_return_code = self.__run_ninja()
 
         # for the error injector flow, print the list of failed comparisons
         if self.flow == "vivado_structural_error_injection":
             clean_error_injections_and_comparisons(self.designs)
-
-        if return_code != 0:
-            error(f"Ninja failed with return code {return_code}")
+            
+        if ninja_return_code != 0:
+            error("Ninja failed with return code", ninja_return_code)
 
     def __parse_args(self, args):
         if args.yaml:
@@ -54,7 +54,8 @@ class ApplicationRunner:
         cmd = ["ninja"]
         proc = subprocess.Popen(cmd, cwd=ROOT_PATH)
         proc.communicate()
-        return proc.wait()
+        return_code = proc.wait()
+        return return_code
 
 
 def check_args(args):

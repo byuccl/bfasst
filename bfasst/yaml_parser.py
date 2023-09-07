@@ -1,4 +1,6 @@
 """Parse a yaml file to obtain a flow and a list of target designs"""
+# pylint: disable=duplicate-code
+from pathlib import Path
 import yaml
 from bfasst.utils import error
 from bfasst import paths
@@ -55,12 +57,20 @@ class YamlParser:
                     self.design_paths.append(str(design))
                     continue
 
+                # This handles the case of passing a directory containing multiple designs in yaml
+                # with the designs key rather than design_dirs key,
+                # as seen in most of the CI checks:
+                # designs:
+                #   - byu/
+                #   - ooc/
                 for design_child in design_path.rglob("*"):
                     if not design_child.is_dir():
                         continue
 
+                    # For each child design (eg. designs/byu/alu),
+                    # we only want the last two parts (byu/alu part)
                     if (design_child / "design.yaml").is_file():
-                        design_name = "/".join(str(design_child).split("/")[-2:])
+                        design_name = Path(*design_child.parts[-2:])
                         self.design_paths.append(str(design_name))
                         continue
 
@@ -84,7 +94,8 @@ class YamlParser:
             synth_args = self.experiment_props["synth"]
             self.flow_args.update({"synth": synth_args})
         else:
-            synth_args = None
+            synth_args = ""
+        self.flow_args.update({"synth": synth_args})
 
     def parse_top_module(self):
         """Parse a yaml file to obtain a top module"""
