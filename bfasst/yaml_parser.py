@@ -111,4 +111,6 @@ class YamlParser:
     def parse_vhdl_libs(self):
         self.experiment_props = None
         self.__read_experiment_yaml()
-        return self.experiment_props["vhdl_libs"]
+        if "vhdl_libs" in self.experiment_props:
+            return self.experiment_props["vhdl_libs"]
+        return None

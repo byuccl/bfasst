@@ -53,6 +53,9 @@ class Tool(abc.ABC):
 
     def __check_is_lib(self, vhdl_file):
         """Check if a vhdl file is a library"""
+        if self.vhdl_libs is None:
+            return False
+
         for lib in self.vhdl_libs:
             if lib in str(vhdl_file):
                 return True
