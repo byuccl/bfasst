@@ -1,23 +1,13 @@
 """A class holding a design object, coordinating different parts of the flow"""
 import os
-import enum
 import yaml
 
 import bfasst
 from bfasst import paths
 from bfasst.utils import error
-from bfasst.utils.general import get_hdl_src_types
+from bfasst.utils.general import get_hdl_src_types, HdlType
 
 DESIGN_YAML_NAME = "design.yaml"
-
-
-class HdlType(enum.Enum):
-    """class enumerating the type of HDL"""
-
-    VERILOG = 1
-    VHDL = 2
-    MIXED = 3
-    SYSTEM_VERILOG = 4
 
 
 class Design:

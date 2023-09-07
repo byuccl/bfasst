@@ -36,31 +36,15 @@ class Vivado(Tool):
         self.top = YamlParser(self.design / "design.yaml").parse_top_module()
         self._read_hdl_files()
 
+        self.vhdl_libs = {}
+        self.__read_vhdl_libs()
+
         self.part = config.PART
 
     def __create_build_dirs(self):
         self.build.mkdir(parents=True, exist_ok=True)
         self.synth_output.mkdir(exist_ok=True)
         self.impl_output.mkdir(exist_ok=True)
-
-    def __read_hdl_files(self):
-        """Read the hdl files in the design directory"""
-        self.verilog = []
-        self.system_verilog = []
-        self.vhdl = []
-        for child in self.design.glob("*"):
-            if child.is_dir():
-                continue
-
-            if child.suffix == ".v":
-                self.verilog.append(str(child))
-            elif child.suffix == ".sv":
-                self.system_verilog.append(str(child))
-            elif child.suffix == ".vhd":
-                self.vhdl.append(str(child))
-
-        self.vhdl_libs = {}
-        self.__read_vhdl_libs()
 
     def __read_vhdl_libs(self):
         for child in self.design.glob("*"):
