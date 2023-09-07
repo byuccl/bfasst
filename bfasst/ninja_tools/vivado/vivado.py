@@ -48,7 +48,9 @@ class Vivado(Tool):
         self.impl_output.mkdir(exist_ok=True)
 
     def __read_vhdl_libs(self):
-        print("method called", self.vhdl_libs)
+        if not self.vhdl_libs:
+            return
+
         for lib in self.vhdl_libs:
             path = self.design / lib
             for file in path.rglob("*"):
