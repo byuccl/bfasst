@@ -1,3 +1,4 @@
+# pylint: disable=duplicate-code
 """Inject an error into a xrev netlist and run a structural compare to detect it."""
 import random
 
@@ -64,7 +65,6 @@ class VivadoStructuralErrorInjection(Flow):
                 )
 
     def add_ninja_deps(self, deps=None):
-        # pylint: disable=duplicate-code
         if not deps:
             deps = []
         deps.extend(self.vivado_tool.add_ninja_deps())
@@ -73,7 +73,6 @@ class VivadoStructuralErrorInjection(Flow):
         deps.extend(self.error_injector_tool.add_ninja_deps())
         deps.extend(self.compare_tool.add_ninja_deps())
         deps.append(f"{NINJA_FLOWS_PATH}/vivado_structural_error_injection.py")
-        # pylint: enable=duplicate-code
         return deps
 
     def get_top_level_flow_path(self) -> str:
