@@ -1,3 +1,4 @@
+# pylint: disable=duplicate-code
 """Inject an error into a xrev netlist and run a structural compare to detect it."""
 import random
 
@@ -38,8 +39,11 @@ class VivadoStructuralErrorInjection(Flow):
 
     def create_build_snippets(self):
         self.vivado_tool.create_build_snippets()
-        self.phys_netlist_tool.create_build_snippets()
-        self.xrev_tool.create_build_snippets()
+        self.phys_netlist_tool.create_build_snippets(
+            impl_dcp=self.vivado_tool.outputs["impl_checkpoint"],
+            impl_edf=self.vivado_tool.outputs["impl_edf"],
+        )
+        self.xrev_tool.create_build_snippets(self.vivado_tool.outputs["bitstream"])
 
         random_seed_multiplier = 1
         error_type = [ErrorType.BIT_FLIP, ErrorType.WIRE_SWAP]
@@ -47,7 +51,12 @@ class VivadoStructuralErrorInjection(Flow):
             num_runs = 100
 
             for i in range(1, num_runs + 1):
-                self.error_injector_tool.create_build_snippets(error, i, random_seed_multiplier)
+                self.error_injector_tool.create_build_snippets(
+                    error_type=error,
+                    num=i,
+                    multiplier=random_seed_multiplier,
+                    reversed_netlist=self.xrev_tool.outputs["xray_netlist"],
+                )
                 corrupt_netlist_path = self.error_injector_build / f"{error.name.lower()}_{i}.v"
                 self.compare_tool.create_build_snippets(
                     self.phys_netlist_tool.phys_netlist_path,
@@ -56,7 +65,6 @@ class VivadoStructuralErrorInjection(Flow):
                 )
 
     def add_ninja_deps(self, deps=None):
-        # pylint: disable=duplicate-code
         if not deps:
             deps = []
         deps.extend(self.vivado_tool.add_ninja_deps())
@@ -64,8 +72,7 @@ class VivadoStructuralErrorInjection(Flow):
         deps.extend(self.xrev_tool.add_ninja_deps())
         deps.extend(self.error_injector_tool.add_ninja_deps())
         deps.extend(self.compare_tool.add_ninja_deps())
-        deps.append(f"{NINJA_FLOWS_PATH}/vivado_structural_error_injection.py ")
-        # pylint: enable=duplicate-code
+        deps.append(f"{NINJA_FLOWS_PATH}/vivado_structural_error_injection.py")
         return deps
 
     def get_top_level_flow_path(self) -> str:

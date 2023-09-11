@@ -18,14 +18,14 @@ class VivadoAndReversed(Flow):
 
     def create_build_snippets(self):
         self.vivado_tool.create_build_snippets()
-        self.xrev_tool.create_build_snippets()
+        self.xrev_tool.create_build_snippets(str(self.vivado_tool.outputs["bitstream"]))
 
     def add_ninja_deps(self, deps=None):
         if not deps:
             deps = []
         deps.extend(self.vivado_tool.add_ninja_deps())
         deps.extend(self.xrev_tool.add_ninja_deps())
-        deps.append(f"{NINJA_FLOWS_PATH}/vivado_and_reversed.py ")
+        deps.append(f"{NINJA_FLOWS_PATH}/vivado_and_reversed.py")
         return deps
 
     def get_top_level_flow_path(self):

@@ -92,6 +92,7 @@ class YamlParser:
     def __init_flow_args(self):
         if "synth" in self.experiment_props:
             synth_args = self.experiment_props["synth"]
+            self.flow_args.update({"synth": synth_args})
         else:
             synth_args = ""
         self.flow_args.update({"synth": synth_args})
@@ -106,3 +107,10 @@ class YamlParser:
         if "top" not in self.experiment_props:
             error(f"Experiment {self.yaml_path} does not specify a top module")
         return self.experiment_props["top"]
+
+    def parse_vhdl_libs(self):
+        self.experiment_props = None
+        self.__read_experiment_yaml()
+        if "vhdl_libs" in self.experiment_props:
+            return self.experiment_props["vhdl_libs"]
+        return None

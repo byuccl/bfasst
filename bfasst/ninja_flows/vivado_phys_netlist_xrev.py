@@ -25,8 +25,11 @@ class VivadoPhysNetlistXrev(Flow):
     def create_build_snippets(self):
         """Create the build snippets for the flow and append them to build.ninja."""
         self.vivado_tool.create_build_snippets()
-        self.phys_netlist_tool.create_build_snippets()
-        self.xrev_tool.create_build_snippets()
+        self.phys_netlist_tool.create_build_snippets(
+            impl_dcp=self.vivado_tool.outputs["impl_checkpoint"],
+            impl_edf=self.vivado_tool.outputs["impl_edf"],
+        )
+        self.xrev_tool.create_build_snippets(self.vivado_tool.outputs["bitstream"])
 
     def add_ninja_deps(self, deps=None):
         # pylint: disable=duplicate-code
@@ -35,7 +38,7 @@ class VivadoPhysNetlistXrev(Flow):
         deps.extend(self.vivado_tool.add_ninja_deps())
         deps.extend(self.phys_netlist_tool.add_ninja_deps())
         deps.extend(self.xrev_tool.add_ninja_deps())
-        deps.append(f"{NINJA_FLOWS_PATH}/vivado_phys_netlist_xrev.py ")
+        deps.append(f"{NINJA_FLOWS_PATH}/vivado_phys_netlist_xrev.py")
         # pylint: enable=duplicate-code
         return deps
 

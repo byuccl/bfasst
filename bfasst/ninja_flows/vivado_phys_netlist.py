@@ -19,14 +19,17 @@ class VivadoPhysNetlist(Flow):
 
     def create_build_snippets(self):
         self.vivado_tool.create_build_snippets()
-        self.phys_netlist_tool.create_build_snippets()
+        self.phys_netlist_tool.create_build_snippets(
+            impl_dcp=self.vivado_tool.outputs["impl_checkpoint"],
+            impl_edf=self.vivado_tool.outputs["impl_edf"],
+        )
 
     def add_ninja_deps(self, deps=None):
         if not deps:
             deps = []
         deps.extend(self.vivado_tool.add_ninja_deps())
         deps.extend(self.phys_netlist_tool.add_ninja_deps())
-        deps.append(f"{NINJA_FLOWS_PATH}/vivado_phys_netlist.py ")
+        deps.append(f"{NINJA_FLOWS_PATH}/vivado_phys_netlist.py")
         return deps
 
     def get_top_level_flow_path(self):

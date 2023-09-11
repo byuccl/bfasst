@@ -42,6 +42,7 @@ class Xray(Tool):
         self.reversed_netlist_path = self.build / (self.top + "_reversed.v")
         self.xdc_path = self.build / (self.top + "_reversed.xdc")
         self.constraints_path = str(self.build.parent / "in_context" / "synth" / self.top) + ".xdc"
+        self._init_outputs()
 
     def __create_build_dirs(self):
         self.build.mkdir(parents=True, exist_ok=True)
@@ -53,15 +54,14 @@ class Xray(Tool):
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(rules)
 
-    def create_build_snippets(self):
+    def create_build_snippets(self, bitstream: str):
         """Populate xray build statements from template and copy them to build.ninja."""
         with open(REV_BIT_TOOLS_PATH / "xray.ninja_build.mustache", "r") as f:
             build_rules = chevron.render(
                 f,
                 {
                     "xray_path": str(XRAY_PATH / "build" / "tools"),
-                    "bitstream_path": str(self.build.parent / "in_context" / "impl" / self.top)
-                    + ".bit",
+                    "bitstream_path": bitstream,
                     "xray_output": self.build,
                     "fasm2bels_python_path": self.fasm2bels_python_path,
                     "bit_to_fasm_path": XRAY_PATH / "utils" / "bit2fasm.py",
@@ -77,10 +77,15 @@ class Xray(Tool):
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(build_rules)
 
+    def _init_outputs(self):
+        self.outputs["xray_fasm"] = self.fasm_path
+        self.outputs["xray_netlist"] = self.reversed_netlist_path
+        self.outputs["xray_xdc"] = self.xdc_path
+
     def add_ninja_deps(self, deps=None):
         if not deps:
             deps = []
-        deps.append(f"{REV_BIT_TOOLS_PATH}/xray.py ")
-        deps.append(f"{REV_BIT_TOOLS_PATH}/xray.ninja_rules ")
-        deps.append(f"{REV_BIT_TOOLS_PATH}/xray.ninja_build.mustache ")
+        deps.append(f"{REV_BIT_TOOLS_PATH}/xray.py")
+        deps.append(f"{REV_BIT_TOOLS_PATH}/xray.ninja_rules")
+        deps.append(f"{REV_BIT_TOOLS_PATH}/xray.ninja_build.mustache")
         return deps

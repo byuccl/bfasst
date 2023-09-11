@@ -25,12 +25,15 @@ class VivadoPhysNetlistCmp(Flow):
 
     def create_build_snippets(self):
         self.vivado_tool.create_build_snippets()
-        self.phys_netlist_tool.create_build_snippets()
-        self.xray_tool.create_build_snippets()
+        self.phys_netlist_tool.create_build_snippets(
+            impl_dcp=self.vivado_tool.outputs["impl_checkpoint"],
+            impl_edf=self.vivado_tool.outputs["impl_edf"],
+        )
+        self.xray_tool.create_build_snippets(str(self.vivado_tool.outputs["bitstream"]))
         self.compare_tool.create_build_snippets(
-            self.xray_tool.reversed_netlist_path,
-            self.phys_netlist_tool.phys_netlist_path,
-            "struct_cmp.log",
+            netlist_a=self.xray_tool.outputs["xray_netlist"],
+            netlist_b=self.phys_netlist_tool.outputs["viv_impl_physical_v"],
+            log_name="struct_cmp.log",
         )
 
     def add_ninja_deps(self, deps=None):
@@ -40,7 +43,7 @@ class VivadoPhysNetlistCmp(Flow):
         deps.extend(self.phys_netlist_tool.add_ninja_deps())
         deps.extend(self.xray_tool.add_ninja_deps())
         deps.extend(self.compare_tool.add_ninja_deps())
-        deps.append(f"{NINJA_FLOWS_PATH}/vivado_phys_netlist_cmp.py ")
+        deps.append(f"{NINJA_FLOWS_PATH}/vivado_phys_netlist_cmp.py")
 
         return deps
 

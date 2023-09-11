@@ -71,7 +71,7 @@ class RwPhysNetlist:
             ("D6LUT", "D6LUT_O6", "D5LUT", "D5LUT_O5"),
         ]
 
-    def run(self):
+    def run(self, impl_netlist_checkpoint, impl_netlist_edif_path):
         """Transform the logical netlist into a netlist with only physical primitives"""
         phys_netlist_edif_path = self.stage_dir / "viv_impl_physical.edf"
 
@@ -91,7 +91,12 @@ class RwPhysNetlist:
         # and so cannot be handled properly by multiprocessing
         # Don't raise from as this is also problematic.
         try:
-            self.__run_rapidwright(phys_netlist_checkpoint, phys_netlist_edif_path)
+            self.__run_rapidwright(
+                phys_netlist_checkpoint,
+                phys_netlist_edif_path,
+                impl_netlist_checkpoint,
+                impl_netlist_edif_path,
+            )
         except jpype.JException as exc:
             raise rw.RapidwrightException from exc  # pylint: disable=bad-exception-cause
         end_time = time.time()
@@ -139,14 +144,16 @@ class RwPhysNetlist:
             assert const_port
             const_net.createPortInst(const_port, const_edif_inst)
 
-    def __run_rapidwright(self, phys_netlist_checkpoint, phys_netlist_edif_path):
+    def __run_rapidwright(
+        self,
+        phys_netlist_checkpoint,
+        phys_netlist_edif_path,
+        impl_netlist_checkpoint,
+        impl_netlist_edif_path,
+    ):
         """Do all rapidwright related processing on the netlist"""
 
-        # Read the checkpoint into rapidwright, and get the netlist
-        xilinx_impl_checkpoint = self.build_dir / "in_context" / "impl" / "impl.dcp"
-        xilinx_impl_edif = self.build_dir / "in_context" / "impl" / "viv_impl.edf"
-
-        self.rw_design = Design.readCheckpoint(xilinx_impl_checkpoint, xilinx_impl_edif)
+        self.rw_design = Design.readCheckpoint(impl_netlist_checkpoint, impl_netlist_edif_path)
         self.rw_netlist = self.rw_design.getNetlist()
 
         self.__init_const_nets()
@@ -960,10 +967,22 @@ if __name__ == "__main__":
         required=True,
         help="The build_directory to create a vivado netlist for.",
     )
+    parser.add_argument(
+        "--impl_dcp",
+        type=Path,
+        required=True,
+        help="The implementation dcp file to use for the netlist.",
+    )
+    parser.add_argument(
+        "--impl_edf",
+        type=Path,
+        required=True,
+        help="The implementation edf file to use for the netlist.",
+    )
     args = parser.parse_args()
     netlist_generator = RwPhysNetlist(args.build_dir)
     try:
-        netlist_generator.run()
+        netlist_generator.run(args.impl_dcp, args.impl_edf)
     except jpype.JException as e:
         logging.error("ERROR: %s", e)
         sys.exit(1)

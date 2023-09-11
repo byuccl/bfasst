@@ -1,5 +1,6 @@
 """Tool to create Vivado synthesis and implementation ninja snippets."""
 import json
+from pathlib import Path
 import chevron
 from bfasst import config
 from bfasst.ninja_tools.tool import Tool
@@ -21,7 +22,6 @@ class Vivado(Tool):
 
     def __init__(self, design, flow_args=None, ooc=False):
         super().__init__(design)
-
         self.flow_args = flow_args
 
         self.ooc = ooc
@@ -34,7 +34,14 @@ class Vivado(Tool):
         self.__create_build_dirs()
 
         self.top = YamlParser(self.design / "design.yaml").parse_top_module()
-        self.__read_hdl_files()
+
+        # outputs must be initialized AFTER output paths are set
+        self._init_outputs()
+
+        self._read_hdl_files()
+
+        self.vhdl_file_lib_map = {}
+        self.__read_vhdl_libs()
 
         self.part = config.PART
 
@@ -43,35 +50,18 @@ class Vivado(Tool):
         self.synth_output.mkdir(exist_ok=True)
         self.impl_output.mkdir(exist_ok=True)
 
-    def __read_hdl_files(self):
-        """Read the hdl files in the design directory"""
-        self.verilog = []
-        self.system_verilog = []
-        self.vhdl = []
-        for child in self.design.glob("*"):
-            if child.is_dir():
-                continue
-
-            if child.suffix == ".v":
-                self.verilog.append(str(child))
-            elif child.suffix == ".sv":
-                self.system_verilog.append(str(child))
-            elif child.suffix == ".vhd":
-                self.vhdl.append(str(child))
-
-        self.vhdl_libs = {}
-        self.__read_vhdl_libs()
-
     def __read_vhdl_libs(self):
-        for child in self.design.glob("*"):
-            if child.is_dir() and child.name == "lib":
-                for lib in child.glob("*"):
-                    for file in lib.rglob("*"):
-                        if file.is_dir():
-                            continue
-                        if file.suffix == ".vhd":
-                            key = str(file)
-                            self.vhdl_libs[key] = lib.name
+        if not self.vhdl_libs:
+            return
+
+        for lib in self.vhdl_libs:
+            path = self.design / lib
+            for file in path.rglob("*"):
+                if file.is_dir():
+                    continue
+                if file.suffix == ".vhd":
+                    key = str(file)
+                    self.vhdl_file_lib_map[key] = Path(lib).name
 
     def create_rule_snippets(self):
         with open(VIVADO_RULES_PATH, "r") as f:
@@ -102,7 +92,7 @@ class Vivado(Tool):
             "verilog": self.verilog,
             "system_verilog": self.system_verilog,
             "vhdl": self.vhdl,
-            "vhdl_libs": list(self.vhdl_libs.items()),
+            "vhdl_libs": list(self.vhdl_file_lib_map.items()),
             "top": self.top,
             "io": str(self.synth_output / "report_io.txt") if not self.ooc else False,
             "synth_output": str(self.synth_output),
@@ -175,13 +165,34 @@ class Vivado(Tool):
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(impl_ninja)
 
+    def _init_outputs(self):
+        self.outputs["synth_tcl"] = self.synth_output / "synth.tcl"
+        self.outputs["impl_tcl"] = self.impl_output / "impl.tcl"
+        self.outputs["synth_json"] = self.synth_output / "synth.json"
+        self.outputs["impl_json"] = self.impl_output / "impl.json"
+        self.outputs["synth_edf"] = self.synth_output / "viv_synth.edf"
+        self.outputs["synth_checkpoint"] = self.synth_output / "synth.dcp"
+        self.outputs["impl_verilog"] = self.impl_output / "viv_impl.v"
+        self.outputs["impl_edf"] = self.impl_output / "viv_impl.edf"
+        self.outputs["impl_checkpoint"] = self.impl_output / "impl.dcp"
+        self.outputs["utilization"] = self.impl_output / "utilization.txt"
+        self.outputs["impl_journal"] = self.impl_output / "vivado.jou"
+        self.outputs["impl_log"] = self.impl_output / "vivado.log"
+        self.outputs["synth_journal"] = self.synth_output / "vivado.jou"
+        self.outputs["synth_log"] = self.synth_output / "vivado.log"
+
+        if not self.ooc:
+            self.outputs["io_report"] = self.synth_output / "report_io.txt"
+            self.outputs["synth_constraints"] = self.synth_output / (self.top + ".xdc")
+            self.outputs["bitstream"] = self.impl_output / (self.top + ".bit")
+
     def add_ninja_deps(self, deps=None):
         """Add dependencies to the master ninja file that would cause it to rebuild if modified"""
         if not deps:
             deps = []
-        deps.append(f"{NINJA_SYNTH_TOOLS_PATH}/viv_synth.ninja.mustache ")
-        deps.append(f"{NINJA_IMPL_TOOLS_PATH}/viv_impl.ninja.mustache ")
-        deps.append(f"{NINJA_VIVADO_TOOLS_PATH}/vivado.py ")
-        deps.append(f"{VIVADO_RULES_PATH} ")
+        deps.append(f"{NINJA_SYNTH_TOOLS_PATH}/viv_synth.ninja.mustache")
+        deps.append(f"{NINJA_IMPL_TOOLS_PATH}/viv_impl.ninja.mustache")
+        deps.append(f"{NINJA_VIVADO_TOOLS_PATH}/vivado.py")
+        deps.append(f"{VIVADO_RULES_PATH}")
 
         return deps

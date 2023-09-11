@@ -1,0 +1,14 @@
+read library -Both -sensitive -Verilog {{#local_libs_paths}}{{ . }} {{/local_libs_paths}} -nooptimize
+
+read design {{#golden_files}}{{ . }} {{/golden_files}} {{ src_type }} -Golden -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply
+
+read design {{ rev_netlist }} -Verilog -Revised -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply
+
+{{ renaming_rule_vector }}
+
+set system mode lec
+add compared points -all
+compare
+report verification
+exit -f
+
