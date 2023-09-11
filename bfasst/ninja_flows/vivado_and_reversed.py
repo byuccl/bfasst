@@ -18,7 +18,7 @@ class VivadoAndReversed(Flow):
 
     def create_build_snippets(self):
         self.vivado_tool.create_build_snippets()
-        self.xrev_tool.create_build_snippets()
+        self.xrev_tool.create_build_snippets(str(self.vivado_tool.outputs["bitstream"]))
 
     def add_ninja_deps(self, deps=None):
         if not deps:

@@ -22,7 +22,6 @@ class Vivado(Tool):
 
     def __init__(self, design, flow_args=None, ooc=False):
         super().__init__(design)
-
         self.flow_args = flow_args
 
         self.ooc = ooc
@@ -35,6 +34,10 @@ class Vivado(Tool):
         self.__create_build_dirs()
 
         self.top = YamlParser(self.design / "design.yaml").parse_top_module()
+
+        # outputs must be initialized AFTER output paths are set
+        self._init_outputs()
+
         self._read_hdl_files()
 
         self.vhdl_file_lib_map = {}

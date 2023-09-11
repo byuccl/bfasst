@@ -19,7 +19,10 @@ class VivadoPhysNetlist(Flow):
 
     def create_build_snippets(self):
         self.vivado_tool.create_build_snippets()
-        self.phys_netlist_tool.create_build_snippets()
+        self.phys_netlist_tool.create_build_snippets(
+            impl_dcp=self.vivado_tool.outputs["impl_checkpoint"],
+            impl_edf=self.vivado_tool.outputs["impl_edf"],
+        )
 
     def add_ninja_deps(self, deps=None):
         if not deps:

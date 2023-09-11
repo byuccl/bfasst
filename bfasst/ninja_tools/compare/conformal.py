@@ -12,6 +12,7 @@ class Conformal(Tool):
         super().__init__(design)
         self.build = BUILD_DIR / design / "conformal"
         self.__create_build_dir()
+        self._init_outputs()
         self._read_hdl_files()
 
     def __create_build_dir(self):
@@ -25,7 +26,7 @@ class Conformal(Tool):
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(rules)
 
-    def create_build_snippets(self, rev_netlist, vendor):
+    def create_build_snippets(self, impl_netlist, rev_netlist, vendor):
         """Create the build snippets for conformal comparison."""
         with open(NINJA_COMPARE_TOOLS_PATH / "conformal.ninja_build.mustache", "r") as f:
             build = chevron.render(
@@ -34,7 +35,7 @@ class Conformal(Tool):
                     "log_path": str(self.build / "log.txt"),
                     "do_path": str(self.build / "compare.do"),
                     "gui_path": str(self.build / "run_conformal_gui.sh"),
-                    "hdl_srcs": str(self.build.parent / "in_context" / "impl" / "viv_impl.v"),
+                    "hdl_srcs": impl_netlist,
                     "rev_netlist": rev_netlist,
                     "conformal_script_path": str(NINJA_UTILS_PATH / "conformal.py"),
                     "build_dir": self.build.parent,

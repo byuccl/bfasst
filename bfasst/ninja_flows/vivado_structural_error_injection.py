@@ -38,8 +38,11 @@ class VivadoStructuralErrorInjection(Flow):
 
     def create_build_snippets(self):
         self.vivado_tool.create_build_snippets()
-        self.phys_netlist_tool.create_build_snippets()
-        self.xrev_tool.create_build_snippets()
+        self.phys_netlist_tool.create_build_snippets(
+            impl_dcp=self.vivado_tool.outputs["impl_checkpoint"],
+            impl_edf=self.vivado_tool.outputs["impl_edf"],
+        )
+        self.xrev_tool.create_build_snippets(self.vivado_tool.outputs["bitstream"])
 
         random_seed_multiplier = 1
         error_type = [ErrorType.BIT_FLIP, ErrorType.WIRE_SWAP]
@@ -47,7 +50,12 @@ class VivadoStructuralErrorInjection(Flow):
             num_runs = 100
 
             for i in range(1, num_runs + 1):
-                self.error_injector_tool.create_build_snippets(error, i, random_seed_multiplier)
+                self.error_injector_tool.create_build_snippets(
+                    error_type=error,
+                    num=i,
+                    multiplier=random_seed_multiplier,
+                    reversed_netlist=self.xrev_tool.outputs["xray_netlist"],
+                )
                 corrupt_netlist_path = self.error_injector_build / f"{error.name.lower()}_{i}.v"
                 self.compare_tool.create_build_snippets(
                     self.phys_netlist_tool.phys_netlist_path,

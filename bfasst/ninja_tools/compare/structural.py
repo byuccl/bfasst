@@ -25,7 +25,7 @@ class Structural(Tool):
             f.write(rules)
 
     def create_build_snippets(self, netlist_a, netlist_b, log_name):
-        self.log_name = log_name
+        self._init_outputs(log_name)
         with open(NINJA_COMPARE_TOOLS_PATH / "structural.ninja_build.mustache", "r") as f:
             build = chevron.render(
                 f,
@@ -33,7 +33,7 @@ class Structural(Tool):
                     "build": str(self.build.parent),
                     "netlist_a": str(netlist_a),
                     "netlist_b": str(netlist_b),
-                    "log_path": str(self.build / self.log_name),
+                    "log_path": str(self.build / log_name),
                     "compare_script_path": str(NINJA_UTILS_PATH / "structural.py"),
                 },
             )
@@ -41,8 +41,10 @@ class Structural(Tool):
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(build)
 
-    def _init_outputs(self):
-        self.outputs["structural_log"] = self.build / self.log_name
+    def _init_outputs(self, log_name):
+        if "structural_log" not in self.outputs:
+            self.outputs["structural_log"] = []
+        self.outputs["structural_log"].append(self.build / log_name)
 
     def add_ninja_deps(self, deps=None):
         if not deps:

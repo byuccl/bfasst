@@ -26,7 +26,7 @@ class ErrorInjectorException(Exception):
 class ErrorInjector:
     """Inject errors into an xrev netlist"""
 
-    def __init__(self, build_dir, log_path, seed, error_type):
+    def __init__(self, build_dir, log_path, seed, error_type, reversed_netlist):
         self.build_dir = Path(build_dir)
         self.stage_dir = self.build_dir / "error_injection"
         self.log_path = self.stage_dir / log_path
@@ -46,7 +46,7 @@ class ErrorInjector:
         self.new_lut_init = None
         self.top = self.__set_top_module()
 
-        self.clean_netlist = sdn.parse(self.stage_dir.parent / "xray" / f"{self.top}_reversed.v")
+        self.clean_netlist = sdn.parse(reversed_netlist)
         self.corrupted_netlist_path = self.log_path.with_suffix(".v")
 
         self.all_instances = self.__get_all_instances()
@@ -268,6 +268,7 @@ if __name__ == "__main__":
     parser.add_argument("--log_path", help="Path to log file")
     parser.add_argument("--seed", help="Seed for random number generator")
     parser.add_argument("--error_type", type=str, help="Type of error to inject")
+    parser.add_argument("--reversed_netlist", type=str, help="Path to reversed netlist")
     args = parser.parse_args()
 
-    ErrorInjector(args.build_dir, args.log_path, args.seed, args.error_type)
+    ErrorInjector(args.build_dir, args.log_path, args.seed, args.error_type, args.reversed_netlist)

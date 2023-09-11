@@ -27,9 +27,10 @@ class ErrorInjector(Tool):
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(rules)
 
-    def create_build_snippets(self, error_type, num, multiplier):
+    def create_build_snippets(self, error_type, num, multiplier, reversed_netlist):
         self.injection_log = self.build / f"{error_type.name.lower()}_{num}.log"
         self.corrupt_netlist = self.build / f"{error_type.name.lower()}_{num}.v"
+        self._init_outputs(self.injection_log, self.corrupt_netlist)
 
         with open(NINJA_TRANSFORM_TOOLS_PATH / "error_injector.ninja_build.mustache", "r") as f:
             build = chevron.render(
@@ -42,15 +43,21 @@ class ErrorInjector(Tool):
                     "top": self.top,
                     "seed": num * multiplier,
                     "error_injector_script_path": str(NINJA_UTILS_PATH / "error_injector.py"),
+                    "reversed_netlist": reversed_netlist,
                 },
             )
 
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(build)
 
-    def _init_outputs(self):
-        self.outputs["injection_log"] = self.injection_log
-        self.outputs["corrupt_netlist"] = self.corrupt_netlist
+    def _init_outputs(self, injection_log, corrupt_netlist):
+        if "injection_log" not in self.outputs:
+            self.outputs["injection_log"] = []
+        if "corrupt_netlist" not in self.outputs:
+            self.outputs["corrupt_netlist"] = []
+
+        self.outputs["injection_log"].append(injection_log)
+        self.outputs["corrupt_netlist"].append(corrupt_netlist)
 
     def add_ninja_deps(self, deps=None):
         if not deps:

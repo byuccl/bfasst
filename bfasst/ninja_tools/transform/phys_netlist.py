@@ -24,6 +24,8 @@ class PhysNetlist(Tool):
         self.phys_netlist_path = self.build / "viv_impl_physical.v"
         self.__create_build_dir()
 
+        self._init_outputs()
+
     def __create_build_dir(self):
         self.build.mkdir(parents=True, exist_ok=True)
 
@@ -34,9 +36,9 @@ class PhysNetlist(Tool):
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(phys_netlist_rules)
 
-    def create_build_snippets(self):
+    def create_build_snippets(self, impl_dcp, impl_edf):
         self.__write_json_file()
-        self.__append_build_snippets()
+        self.__append_build_snippets(impl_dcp, impl_edf)
 
     def __write_json_file(self):
         checkpoint_to_v = {
@@ -51,7 +53,7 @@ class PhysNetlist(Tool):
             with open(self.build / "checkpoint_to_v.json", "w") as f:
                 f.write(checkpoint_to_v_json)
 
-    def __append_build_snippets(self):
+    def __append_build_snippets(self, impl_dcp, impl_edf):
         with open(NINJA_TRANSFORM_TOOLS_PATH / "phys_netlist_build.ninja.mustache") as f:
             phys_netlist_ninja = chevron.render(
                 f,
@@ -59,6 +61,8 @@ class PhysNetlist(Tool):
                     "phys_netlist_output": self.build,
                     "phys_netlist_library": NINJA_TRANSFORM_TOOLS_PATH,
                     "build_dir": self.build.parent,
+                    "impl_dcp": impl_dcp,
+                    "impl_edf": impl_edf,
                 },
             )
 

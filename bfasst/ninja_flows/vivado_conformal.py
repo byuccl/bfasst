@@ -23,10 +23,11 @@ class VivadoConformal(Flow):
 
     def create_build_snippets(self):
         self.vivado_tool.create_build_snippets()
-        self.xrev_tool.create_build_snippets()
+        self.xrev_tool.create_build_snippets(str(self.vivado_tool.outputs["bitstream"]))
         self.conformal_tool.create_build_snippets(
-            self.xrev_tool.reversed_netlist_path,
-            Vendor.XILINX,
+            impl_netlist=str(self.vivado_tool.outputs["impl_netlist"]),
+            rev_netlist=str(self.xrev_tool.outputs["xray_netlist"]),
+            vendor=Vendor.XILINX,
         )
 
     def add_ninja_deps(self, deps=None):

@@ -16,7 +16,6 @@ class Tool(abc.ABC):
         self.vhdl = None
         self.vhdl_libs = None
         self.outputs = {}
-        self._init_outputs()
 
     @abc.abstractmethod
     def create_rule_snippets(self):
