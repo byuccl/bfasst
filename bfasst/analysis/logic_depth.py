@@ -1,0 +1,2 @@
+class LogicDepthAnalysis(AnalysisTool):
+    pass
