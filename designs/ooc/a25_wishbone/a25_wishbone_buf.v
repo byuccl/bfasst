@@ -72,15 +72,14 @@ input       [127:0]         i_rdata,
 input                       i_rdata_valid
 );
 
-
 // ----------------------------------------------------
 // Signals
 // ----------------------------------------------------
-reg  [1:0]                  wbuf_used_r     = 'd0;
-reg  [127:0]                wbuf_wdata_r    [1:0]; 
-reg  [31:0]                 wbuf_addr_r     [1:0]; 
-reg  [15:0]                 wbuf_be_r       [1:0]; 
-reg  [1:0]                  wbuf_write_r    = 'd0;
+(* ram_style = "registers" *) reg  [1:0]                  wbuf_used_r     = 'd0;
+(* ram_style = "registers" *) reg  [127:0]                wbuf_wdata_r    [1:0]; 
+(* ram_style = "registers" *) reg  [31:0]                 wbuf_addr_r     [1:0]; 
+(* ram_style = "registers" *) reg  [15:0]                 wbuf_be_r       [1:0]; 
+(* ram_style = "registers" *) reg  [1:0]                  wbuf_write_r    = 'd0;
 reg                         wbuf_wp_r       = 'd0;        // write buf write pointer
 reg                         wbuf_rp_r       = 'd0;        // write buf read pointer
 reg                         busy_reading_r  = 'd0;

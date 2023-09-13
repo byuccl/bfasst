@@ -3,6 +3,8 @@
 from argparse import ArgumentParser
 from collections import defaultdict
 from pathlib import Path
+import time
+import traceback
 
 from bfasst.design import Design
 from bfasst import paths
@@ -31,16 +33,27 @@ def run_design(design_path, flow, error_flow, flow_args):
     # Create the jobs
     jobs = flow.create()
 
-    while jobs:
-        for job in jobs:
-            if not job.dependencies:
-                try:
+    t_start = time.perf_counter()
+    try:
+        while jobs:
+            for job in jobs:
+                if not job.dependencies:
                     job.function()
                     cleanup(job, jobs)
-                except BfasstException as e:
-                    print(e)
-                    return
-    print("Success!")
+        print("Success!")
+    except BfasstException as e:
+        print(e)
+    except AssertionError:
+        line = ""
+        for line in reversed(traceback.format_exc().splitlines()):
+            if line.strip().startswith("File"):
+                break
+        print(f"AssertionErrror: {line}")
+    finally:
+        t_end = time.perf_counter()
+
+        runtime = t_end - t_start
+        print(f"Execution took {round(runtime, 1)} seconds")
 
 
 def cleanup(curr_job, jobs):

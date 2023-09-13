@@ -16,6 +16,9 @@ __pycache__
 **/build
 **/icestorm
 **/source_list
+*wire_swap*
+*bit_flip*
+*result*
 
 # Vivado files
 .Xil
@@ -31,3 +34,8 @@ env.sh
 
 # Xray Databases
 *_db
+
+# Ninja related files
+build.ninja
+.ninja_log
+.ninja_deps

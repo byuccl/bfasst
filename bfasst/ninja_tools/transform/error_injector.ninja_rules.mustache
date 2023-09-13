@@ -1,0 +1,4 @@
+rule inject
+    command = python {{ utils }}/error_injector.py --build_dir $build_dir --log_path $log_path --seed $seed --error_type $error_type --reversed_netlist $reversed_netlist
+    description = inject a $error_type into xrev netlist for $build_dir
+

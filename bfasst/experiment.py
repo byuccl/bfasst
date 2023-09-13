@@ -62,7 +62,7 @@ class Experiment:
 
                 # Check if provided directory contains a design
                 if (design_path / "design.yaml").is_file():
-                    self.design_paths.append(design)
+                    self.design_paths.append(str(design_path))
                     continue
 
                 for design_child in design_path.rglob("*"):
@@ -70,7 +70,7 @@ class Experiment:
                         continue
 
                     if (design_child / "design.yaml").is_file():
-                        self.design_paths.append(design_child)
+                        self.design_paths.append(str(design_child))
                         continue
 
         if "design_dirs" in self.experiment_props:
@@ -82,7 +82,7 @@ class Experiment:
                 for dir_item in design_dir_path.iterdir():
                     item_path = design_dir_path / dir_item
                     if item_path.is_dir():
-                        self.design_paths.append(pathlib.Path(design_dir) / dir_item.name)
+                        self.design_paths.append(str(pathlib.Path(design_dir) / dir_item.name))
 
     def __check_for_post_run(self):
         if "post_run" in self.experiment_props:

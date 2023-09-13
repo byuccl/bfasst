@@ -305,29 +305,56 @@ module fifo_dc (
   output         prog_full;   /* indicates the fifo has prog_thresh free entries, or less, left. threshold for asserting prog_full is 2^addr_width - prog_thresh  */
  
   /* Writing when the fifo is full, or reading while the fifo is empty, does not destroy the contents of the fifo. */
-  
-  xilinx_fifo_dc #(
-    .dta_width(dta_width),
-    .addr_width(addr_width),
-    .prog_thresh(prog_thresh)
-    )
-  xfifo_dc (
-    .rst(~rst), 
-    .wr_clk(wr_clk), 
-    .din(din), 
-    .wr_en(wr_en), 
-    .full(full), 
-    .wr_ack(wr_ack), 
-    .overflow(overflow), 
-    .prog_full(prog_full), 
-    .rd_clk(rd_clk), 
-    .dout(dout), 
-    .rd_en(rd_en), 
-    .empty(empty), 
-    .valid(valid), 
-    .underflow(underflow), 
+  if (FIFO_XILINX == 0)
+  begin
+    xfifo_sc_2clk #(
+        .data_width(dta_width),
+        .addr_width(addr_width),
+        .prog_thresh(prog_thresh)
+        )
+    xfifo_dc (
+    .clk_wr(wr_clk), 
+    .clk_rd(rd_clk),
+    .rst(~rst),
+    .din(din),
+    .wr_en(wr_en),
+    .full(full),
+    .wr_ack(wr_ack),
+    .overflow(overflow),
+    .prog_full(prog_full),
+    .dout(dout),
+    .rd_en(rd_en),
+    .empty(empty),
+    .valid(valid),
+    .underflow(underflow),
     .prog_empty(prog_empty)
-    );
+);
+  end
+  else
+  begin
+    xilinx_fifo_dc #(
+        .dta_width(dta_width),
+        .addr_width(addr_width),
+        .prog_thresh(prog_thresh)
+        )
+    xfifo_dc (
+        .rst(~rst), 
+        .wr_clk(wr_clk), 
+        .din(din), 
+        .wr_en(wr_en), 
+        .full(full), 
+        .wr_ack(wr_ack), 
+        .overflow(overflow), 
+        .prog_full(prog_full), 
+        .rd_clk(rd_clk), 
+        .dout(dout), 
+        .rd_en(rd_en), 
+        .empty(empty), 
+        .valid(valid), 
+        .underflow(underflow), 
+        .prog_empty(prog_empty)
+        );
+  end
 
 `ifdef CHECK_FIFO_PARAMS
   initial #0

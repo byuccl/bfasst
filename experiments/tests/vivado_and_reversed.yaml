@@ -1,0 +1,7 @@
+designs:
+    - byu/
+    
+    
+flow: vivado_and_reversed
+
+synth: -max_dsp 0
