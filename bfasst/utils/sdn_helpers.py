@@ -159,6 +159,12 @@ class Net:
         self.is_gnd = None
         self.is_connected = None
 
+    def all_wires(self):
+        return [self.wire] + self.alias_wires
+
+    def all_pins(self):
+        return [p for wire in self.all_wires() for p in wire.pins]
+
     def add_alias_wire(self, wire):
         assert wire not in self.alias_wires
         self.alias_wires.append(wire)
