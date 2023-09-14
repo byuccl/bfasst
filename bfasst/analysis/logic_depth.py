@@ -1,3 +1,5 @@
+from matplotlib import pyplot as plt
+import numpy as np
 import spydrnet as sdn
 
 from bfasst.utils import sdn_helpers
@@ -6,7 +8,6 @@ from .base import AnalysisTool
 
 class LogicDepthAnalysis(AnalysisTool):
     TOOL_WORK_DIR = "analysis/logic_depth"
-    pass
 
     def run_analysis(self):
         netlist_path = self.design.reversed_netlist_path
@@ -21,16 +22,17 @@ class LogicDepthAnalysis(AnalysisTool):
         library = ir.libraries[0]
         netlist = sdn_helpers.Netlist(library)
 
-        cell_depth = {}
-        cells_to_visit = []
+        instance_depth = {}
+        instances_to_visit = []
 
         # Initialize instances connected to inputs
+        self.log_title("Initializing instances connected to inputs")
         for input_pin in [
             p
             for p in netlist.library.get_pins()
             if isinstance(p, sdn.InnerPin) and p.port.direction == sdn.IN
         ]:
-            print(input_pin)
+            self.log(input_pin.port.name)
 
             net = netlist.wire_to_net[input_pin.wire]
             assert isinstance(net, sdn_helpers.Net)
@@ -38,17 +40,23 @@ class LogicDepthAnalysis(AnalysisTool):
             for pin in net.all_pins():
                 if pin == input_pin:
                     continue
-                print("  ", pin)
-                cell_depth[pin.instance] = 0
-                print(f"{pin.instance.name} -> {cell_depth[pin.instance]}")
-                cells_to_visit.append(pin.instance)
 
-        while cells_to_visit:
-            cell = cells_to_visit.pop(0)
-            print("Visiting", cell.name, cell.reference.name)
+                # Ignore clock going to flip-flops
+                if pin.instance.reference.name.startswith("FD") and pin.inner_pin.port.name == "C":
+                    self.log(f"  Ignoring clock connected to flip-flop {pin.instance.name}")
+                    continue
+
+                instance_depth[pin.instance] = 0
+                self.log(f"{pin.instance.name} -> {instance_depth[pin.instance]}")
+                instances_to_visit.append(pin.instance)
+
+        self.log_title("Propagating depths")
+        while instances_to_visit:
+            instance = instances_to_visit.pop(0)
+            self.log("Visiting", instance.name, instance.reference.name)
 
             # Iterate through ouput pins
-            for p in cell.get_pins():
+            for p in instance.pins:
                 # We only care about outputs of instances
                 if isinstance(p, sdn.InnerPin):
                     continue
@@ -61,4 +69,37 @@ class LogicDepthAnalysis(AnalysisTool):
                 ):
                     continue
 
-                print("  ", p.inner_pin.port.name)
+                # For each output pin, find all instances that it connects to
+                net = netlist.wire_to_net[p.wire]
+                assert isinstance(net, sdn_helpers.Net)
+
+                for pin in net.all_pins():
+                    if pin == p or isinstance(pin, sdn.InnerPin):
+                        continue
+                    next_instance = pin.instance
+                    if next_instance.reference.name.startswith("SDN_VERILOG_ASSIGNMENT"):
+                        continue
+
+                    next_depth = instance_depth[instance]
+                    if instance.reference.name.startswith("FD"):
+                        next_depth += 1
+
+                    if (
+                        next_instance not in instance_depth
+                        or instance_depth[next_instance] > next_depth
+                    ):
+                        instance_depth[next_instance] = next_depth
+                        self.log(f"    {next_instance.name} -> {next_depth}")
+                        instances_to_visit.append(next_instance)
+
+        print("Instance depths:")
+        for instance, depth in instance_depth.items():
+            print(instance.name, depth)
+
+        # Create histogram of depths
+        depths = [depth for depth in instance_depth.values()]
+
+        labels, counts = np.unique(depths, return_counts=True)
+        plt.bar(labels, counts, align="center")
+        plt.gca().set_xticks(labels)
+        plt.savefig(self.work_dir / "histogram.png")

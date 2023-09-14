@@ -47,7 +47,8 @@ packages:
 		libboost-python-dev \
 		libboost-filesystem-dev \
 		zlib1g-dev \
-		ninja-build
+		ninja-build \
+		qtbase5-dev
 	
 python_packages:
 	$(IN_ENV) python -m pip install -r requirements.txt
