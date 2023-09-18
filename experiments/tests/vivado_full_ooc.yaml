@@ -1,5 +1,5 @@
 designs:
-    - ooc/fm_3d_core/
+  - ooc/fm_3d_core/
   - ooc/des3_perf/
   - ooc/dsu3/
   - ooc/tiny_encryption_algorithm/
