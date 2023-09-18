@@ -25,7 +25,7 @@ class VivadoConformal(Flow):
         self.vivado_tool.create_build_snippets()
         self.xrev_tool.create_build_snippets(str(self.vivado_tool.outputs["bitstream"]))
         self.conformal_tool.create_build_snippets(
-            impl_netlist=str(self.vivado_tool.outputs["impl_netlist"]),
+            impl_netlist=str(self.vivado_tool.outputs["impl_verilog"]),
             rev_netlist=str(self.xrev_tool.outputs["xray_netlist"]),
             vendor=Vendor.XILINX,
         )
