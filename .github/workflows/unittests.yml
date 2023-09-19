@@ -45,8 +45,8 @@ jobs:
       with:
         submodules: 'recursive'
     - uses: ./.github/actions/setup_env
-      with: 
-        cache_path: $HOME/actions-runner/cache
+      # with: 
+      #   cache_path: $HOME/actions-runner/cache
     - name: experiments
       timeout-minutes: 30
       run: |
