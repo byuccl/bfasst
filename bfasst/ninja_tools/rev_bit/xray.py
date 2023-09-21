@@ -63,6 +63,7 @@ class Xray(Tool):
                     "xray_path": str(XRAY_PATH / "build" / "tools"),
                     "bitstream_path": bitstream,
                     "xray_output": self.build,
+                    "fasm2bels_path": self.fasm2bels_path,
                     "fasm2bels_python_path": self.fasm2bels_python_path,
                     "bit_to_fasm_path": XRAY_PATH / "utils" / "bit2fasm.py",
                     "db_root": self.db_root,
