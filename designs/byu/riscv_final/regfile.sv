@@ -23,7 +23,7 @@ module regfile(
     input wire logic regWrite);
     
     // Declaring the multidimensional logic array (32 bits, 32 words)
-    logic [31:0] register[31:0];
+    (* ram_style = "registers" *) logic [31:0] register[31:0];
     
     // Initializing the 32 words
     integer i;

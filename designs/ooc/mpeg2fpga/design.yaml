@@ -44,6 +44,7 @@ verilog_files:
   - watchdog.v
   - wrappers.v
   - xfifo_sc.v
+  - xfifo_sc_2clk.v
   - xilinx_fifo144.v
   - xilinx_fifo216.v
   - xilinx_fifo_dc.v

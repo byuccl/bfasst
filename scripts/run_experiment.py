@@ -2,6 +2,7 @@
 from argparse import ArgumentParser
 from collections import Counter
 import datetime
+import json
 import multiprocessing
 import os
 import pathlib
@@ -11,8 +12,8 @@ import traceback
 import threading
 import time
 import concurrent.futures
-from bfasst.experiment import Experiment
 
+from bfasst.experiment import Experiment
 from bfasst.output_cntrl import enable_proxy
 from bfasst.tool import BfasstException
 from bfasst.utils import TermColor, print_color
@@ -20,7 +21,7 @@ from bfasst.utils import TermColor, print_color
 LOG_FILE_NAME = "log.txt"
 
 
-def main(experiment_yaml, num_threads, print_period=1):
+def main(experiment, num_threads, print_period=1):  # pylint: disable=too-many-locals
     """Setup and run experiment as multiple processes"""
 
     # Capture Ctrl+C
@@ -30,13 +31,14 @@ def main(experiment_yaml, num_threads, print_period=1):
     enable_proxy()
 
     # Build experiment object
-    experiment = Experiment(experiment_yaml)
+    experiment = Experiment(experiment)
 
     # Ensure one thread minimum
     num_threads = max(1, num_threads)
 
     # Create jobs
     jobs = create_jobs(experiment)
+    job_results = {}
 
     # Create shared memory
     statuses = multiprocessing.Manager().list()
@@ -66,6 +68,7 @@ def main(experiment_yaml, num_threads, print_period=1):
         max_workers=num_threads, mp_context=multiprocessing.get_context("spawn")
     ) as pool:
         try:
+            futures = []
             while jobs:
                 futures = []
                 for job in jobs:
@@ -80,11 +83,15 @@ def main(experiment_yaml, num_threads, print_period=1):
                             jobs,
                         )
                         futures.append(future)
+                        future.uuid = job.uuid
                 for future in concurrent.futures.as_completed(futures):
-                    clean_jobs(jobs, future, statuses)
+                    clean_jobs(jobs, future, statuses, job_results, print_lock)
 
         except KeyboardInterrupt:
+            if print_period:
+                update_process.kill()
             jobs = None
+            pool.shutdown(wait=False, cancel_futures=True)
             os.killpg(0, signal.SIGKILL)
         # except TypeError:
         #     os.killpg(0, signal.SIGKILL)
@@ -98,7 +105,10 @@ def main(experiment_yaml, num_threads, print_period=1):
     if experiment.post_run is not None:
         experiment.post_run(experiment.work_dir)
 
-    print_ending_stats(statuses, t_end - t_start)
+    with open(experiment.work_dir / "results.json", "w") as f:
+        json.dump(job_results, f, indent=4)
+
+    print_ending_stats(experiment, statuses, job_results, t_end - t_start)
 
 
 def create_jobs(experiment):
@@ -152,7 +162,11 @@ def run_job(print_lock, running_list, job, statuses, experiment, jobs):
         status = f"{type(e).__name__}: {e}\n"
     except AssertionError:
         formatted_lines = traceback.format_exc().splitlines()
-        status = f"AssertionErrror: {formatted_lines[-3]}"
+        line = ""
+        for line in reversed(formatted_lines):
+            if line.strip().startswith("File"):
+                break
+        status = f"AssertionErrror: {line}"
 
     # print the job status
     print_job_status(experiment, print_lock, statuses, job, status)
@@ -160,31 +174,41 @@ def run_job(print_lock, running_list, job, statuses, experiment, jobs):
     # check the design statuses
     check_design_statuses(jobs, job, running_list)
 
-    return (job.uuid, status)
+    return status
 
 
-def clean_jobs(jobs, future, statuses):
+def clean_jobs(jobs, future, statuses, job_results, print_lock):
     """Method to clean jobs as each job finishes"""
-
-    # read the result from the future
-    finished_job_uuid = future.result()[0]
-    status = future.result()[1]
 
     # Get the job object associated with the finished job
     for job in jobs:
-        if job.uuid == finished_job_uuid:
+        if job.uuid == future.uuid:
             finished_job = job
             break
 
     if finished_job is None:
         raise ValueError("Finished job not found in jobs list")
 
+    # Check for any unhandled exceptions
+    if future.exception() is not None:
+        with print_lock:
+            print(f"\nException while running job: {finished_job.design_rel_path.name}")
+            traceback.print_exception(future.exception())
+            raise KeyboardInterrupt
+
+    # read the result from the future
+    status = future.result()
+
+    design = finished_job.design_rel_path
+    design = f"{design.parent.name}/{design.name}"
+    job_results[design] = status
+
     # Remove the job and return if it was successful
     if not status:
         jobs.remove(finished_job)
         for job in jobs:
             if job.dependencies is not None:
-                job.dependencies.discard(finished_job_uuid)
+                job.dependencies.discard(finished_job.uuid)
         return
 
     # If the job failed, trim that branch of the job tree
@@ -208,11 +232,11 @@ def print_job_status(experiment, print_lock, statuses, job, status):
 
     ljust = experiment.get_length_of_longest_design_name() + 5
     with print_lock:
-        if status != "":
+        if status:
             sys.stdout.write("\r\033[K")
-            sys.stdout.write(str(job.design_rel_path.name).ljust(ljust))
+            sys.stdout.write(job.design_rel_path.name.ljust(ljust))
             sys.stdout.flush()
-            sys.stdout.write(str(status))
+            sys.stdout.write(f"{status}\n")
 
     statuses.append(status)
 
@@ -225,7 +249,7 @@ def check_design_statuses(jobs, curr_job, running_list):
     print_running_list(running_list)
 
 
-def print_ending_stats(statuses, runtime):
+def print_ending_stats(experiment, statuses, job_results, runtime):
     """Print statistcs upon completion of all jobs"""
     print_color(TermColor.BLUE, f"\nRan {len(statuses)} jobs")
     print("-" * 80)
@@ -245,6 +269,13 @@ def print_ending_stats(statuses, runtime):
         for status, count in status_counts.items():
             print(f"{status.strip().ljust(padding)} {count}")
 
+    print("-" * 80)
+    print("Results by Design:")
+    print("-" * 80)
+    ljust = experiment.get_length_of_longest_design_name() + 5
+    for design, status in sorted(job_results.items()):
+        status = "Success" if not status else status
+        print(f"{design.ljust(ljust)} {status}")
     print("-" * 80)
     print(f"Execution took {round(runtime, 1)} seconds")
     if exception_exists:

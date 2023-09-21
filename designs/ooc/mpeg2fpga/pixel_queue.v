@@ -64,7 +64,7 @@ module pixel_queue(
     #(.addr_width(PIXEL_DEPTH),
     .dta_width(9'd35),
     .prog_thresh(PIXEL_THRESHOLD),
-    .FIFO_XILINX(1))
+    .FIFO_XILINX(0))
     pixel_fifo (
     .rst(rst), 
     .wr_clk(clk_in), 

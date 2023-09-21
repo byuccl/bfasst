@@ -4,6 +4,7 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
         {
             "name": "fasm2bels-add32",
             "type": "python",
@@ -90,6 +91,18 @@
                 "VIVADO_PATH": "/tools/Xilinx/Vivado/2022.2/bin/vivado"
             },
             "cwd": "${workspaceFolder}",
+        },
+        {
+            "name": "design",
+            "type": "python",
+            "request": "launch",
+            "python": "/home/reilly/anaconda3/envs/eqv/bin/python",
+            "program": "scripts/run_design.py",
+            "args": [
+                "designs/byu/alu",
+                "xilinx_phys_netlist_cmp"
+            ],
+            "cwd": "${workspaceFolder}"
         }
     ]
 }

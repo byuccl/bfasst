@@ -90,3 +90,46 @@ Finally, test to confirm that everything worked correctly! Run the following:
 1. Activate the virual environment: ```. .venv/bin/activate```
 2. Run the flow:  ```python scripts/run_design.py designs/basic/add4/ xilinx_conformal_impl```
 
+## The Ninja Transition -- Bfasster 2.0
+This branch serves as the transition point to a new version of bfasst, which makes the following changes:
+* It takes advantage of the ninja build tool to automatically handle job creation, up-to-date checking of dependencies, parallel processing, and io redirection. 
+* It uses chevron, the python implementation of the mustache templating engine to template the scripts used for common operations such as synthesis and implementation of designs.
+* It keeps python as its base language, rather than switching to bash in order to minimize the learning curve and maximize portability in transitioning to the new architecture.
+* It provides unit tests for all new code, that can be run with `python -m unittest`
+
+### Usage:
+
+There are two steps to running any flow with any design(s): a ninja generation step and a run step. For convenience, a script is included to execute both steps sequentially with a single command:
+
+<pre>Usage:<code>
+    python scripts/bfasster.py [--yaml YAML] [--design DESIGN] [--flow FLOW]
+
+options:
+    --yaml YAML         The yaml experiment to run, same as with bfasst
+    --design DESIGN     The design to run
+    --flow FLOW         The flow to use for the specified design
+
+NOTE: You must specify <em>either</em> a yaml file or <em>both</em> a design and flow.
+</code></pre>
+
+Alternatively, you can execute the ninja generation step entirely separate from the run step for one or more designs:
+
+<pre>Usage:<code>
+    python bfasst/ninja_flows/ninja_flow_manager.py [--flow FLOW] [--designs DESIGN(S)]
+    ninja
+
+options:
+    --flow FLOW           The flow to use for for the run.
+    --designs DESIGN(S)   One or more designs to run the flow on, separated by spaces.
+</code></pre>
+In either use case, the design should be specified as a subdirectory of the included designs directory in this repo (e.g. 'byu/alu').
+
+Currently supported flows:
+* `vivado`
+* `vivado_ooc`
+* `vivado_and_reversed`
+* `vivado_phys_netlist`
+* `vivado_phys_netlist_xrev`
+* `vivado_phys_netlist_cmp`
+* `vivado_structural_error_injection`
+* `vivado_conformal`
