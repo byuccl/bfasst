@@ -4,7 +4,7 @@ from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado_conformal import VivadoConformal
 from bfasst.ninja_tools.vivado.vivado import Vivado
 from bfasst.ninja_tools.rev_bit.xray import Xray
-from bfasst.ninja_tools.compare.conformal import Conformal
+from bfasst.ninja_tools.compare.conformal.conformal import Conformal
 from bfasst.paths import (
     NINJA_BUILD_PATH,
     NINJA_FLOWS_PATH,
