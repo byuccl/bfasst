@@ -15,7 +15,7 @@ class Yosys(Tool):
         self.build = BUILD_DIR / design / "yosys"
         self.log = self.build / "log.txt"
         self.json = self.build / "yosys.json"
-        self.tcl = self.build / "yosys.tcl"
+        self.tcl = self.build / "compare.ys"
         self.tcl_template = NINJA_YOSYS_TOOLS_PATH / "yosys.tcl.mustache"
         self.rules_template = NINJA_YOSYS_TOOLS_PATH / "yosys.ninja_rules.mustache"
         self.build_template = NINJA_YOSYS_TOOLS_PATH / "yosys.ninja_build.mustache"

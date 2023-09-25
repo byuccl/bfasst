@@ -23,7 +23,7 @@ class VivadoYosysImpl(Flow):
         self.vivado_tool.create_build_snippets()
         self.xrev_tool.create_build_snippets(str(self.vivado_tool.outputs["bitstream"]))
         self.yosys_tool.create_build_snippets(
-            gold_netlist=self.vivado_tool.outputs["impl_edf"],
+            gold_netlist=self.vivado_tool.outputs["impl_verilog"],
             rev_netlist=self.xrev_tool.outputs["xray_netlist"],
         )
 
