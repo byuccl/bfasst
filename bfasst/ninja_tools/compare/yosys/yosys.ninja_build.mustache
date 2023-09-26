@@ -1,4 +1,4 @@
 build {{tcl_script}}: template {{ json }} {{ tcl_template }}
 
-build {{ log }}: yosys {{ tcl_script }}
+build {{ log }}: yosys {{ tcl_script }} | {{ gold_netlist }} {{ rev_netlist }}
 

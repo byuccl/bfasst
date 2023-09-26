@@ -34,7 +34,7 @@ class Yosys(Tool):
 
     def create_build_snippets(self, gold_netlist, rev_netlist):
         self.__write_json_file(gold_netlist, rev_netlist)
-        self.__append_build_snippets()
+        self.__append_build_snippets(gold_netlist, rev_netlist)
 
     def __write_json_file(self, gold_netlist, rev_netlist):
         """Specify netlists for tcl template in json file.
@@ -52,7 +52,7 @@ class Yosys(Tool):
             with open(self.json, "w") as f:
                 f.write(yosys_json)
 
-    def __append_build_snippets(self):
+    def __append_build_snippets(self, gold_netlist, rev_netlist):
         """Create ninja snippets for yosys comparison."""
         with open(self.build_template, "r") as f:
             build = chevron.render(
@@ -62,6 +62,8 @@ class Yosys(Tool):
                     "json": str(self.json),
                     "tcl_template": str(self.tcl_template),
                     "log": str(self.log),
+                    "gold_netlist": str(gold_netlist),
+                    "rev_netlist": str(rev_netlist),
                 },
             )
 
