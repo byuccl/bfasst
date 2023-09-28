@@ -1,4 +1,4 @@
-"""Unit testsw for the VivadoConformal flow."""
+"""Unit tests for the VivadoConformal flow."""
 import unittest
 from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado_conformal import VivadoConformal
@@ -12,7 +12,7 @@ from bfasst.paths import (
 
 
 class TestVivadoConformalFlow(unittest.TestCase):
-    """Unit testsw for the VivadoConformal flow."""
+    """Unit tests for the VivadoConformal flow."""
 
     @classmethod
     def setUpClass(cls) -> None:

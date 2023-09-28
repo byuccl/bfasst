@@ -4,7 +4,6 @@ import os
 import subprocess
 import unittest
 from bfasst.ninja_flows.flow_utils import get_flows
-from bfasst.ninja_flows.vivado_conformal import VivadoConformal
 from bfasst.paths import (
     DESIGNS_PATH,
     NINJA_BUILD_PATH,
@@ -16,6 +15,8 @@ from bfasst.ninja_flows.vivado_phys_netlist import VivadoPhysNetlist
 from bfasst.ninja_flows.vivado_phys_netlist_xrev import VivadoPhysNetlistXrev
 from bfasst.ninja_flows.vivado_phys_netlist_cmp import VivadoPhysNetlistCmp
 from bfasst.ninja_flows.vivado_structural_error_injection import VivadoStructuralErrorInjection
+from bfasst.ninja_flows.vivado_conformal import VivadoConformal
+from bfasst.ninja_flows.vivado_yosys_impl import VivadoYosysImpl
 
 from bfasst.ninja_flows.ninja_flow_manager import NinjaFlowManager, get_design_basenames
 
@@ -61,6 +62,9 @@ class TestNinjaFlowManager(unittest.TestCase):
 
     def test_create_vivado_conformal_flow(self):
         self.__check_flow_creation(VivadoConformal, "vivado_conformal")
+
+    def test_create_vivado_yosys_impl_flow(self):
+        self.__check_flow_creation(VivadoYosysImpl, "vivado_yosys_impl")
 
     def __check_flow_run(self, name, correct_num_build_statements):
         """Check that running flows correctly creates the build.ninja file"""
