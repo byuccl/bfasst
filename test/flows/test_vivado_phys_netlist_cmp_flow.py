@@ -56,7 +56,7 @@ class TestVivadoPhysNetlistCmp(unittest.TestCase):
         expected.extend(PhysNetlist("byu/alu").add_ninja_deps())
         expected.extend(Xray("byu/alu").add_ninja_deps())
         expected.extend(Structural("byu/alu").add_ninja_deps())
-        expected.append(f"{NINJA_FLOWS_PATH}/vivado_phys_netlist_cmp.py ")
+        expected.append(f"{NINJA_FLOWS_PATH}/vivado_phys_netlist_cmp.py")
 
         observed.sort()
         expected.sort()

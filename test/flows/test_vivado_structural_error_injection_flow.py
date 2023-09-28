@@ -59,7 +59,7 @@ class TestVivadoStructuralErrorInjection(unittest.TestCase):
         expected.extend(PhysNetlist("byu/alu").add_ninja_deps())
         expected.extend(Xray("byu/alu").add_ninja_deps())
         expected.extend(Structural("byu/alu").add_ninja_deps())
-        expected.append(f"{NINJA_FLOWS_PATH}/vivado_structural_error_injection.py ")
+        expected.append(f"{NINJA_FLOWS_PATH}/vivado_structural_error_injection.py")
 
         observed.sort()
         expected.sort()
