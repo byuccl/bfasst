@@ -65,6 +65,11 @@ runs:
         build/**/log.txt
         build/**/*.log
 
+  - name: yosys
+    shell: bash
+    run: |
+      make install_yosys
+
   - name: wafove
     shell: bash
     run: |
