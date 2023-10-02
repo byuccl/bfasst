@@ -36,6 +36,7 @@ packages:
 		libffi-dev \
 		libncurses5 \
 		libreadline-dev \
+		libstdc++-12-dev \
 		ninja-build \
 		openjdk-18-jdk \
 		pkg-config \
