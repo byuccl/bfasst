@@ -1,7 +1,7 @@
 """Structural Comparison of physical netlist and reversed netlist"""
 
 from bfasst.ninja_flows.flow import Flow
-from bfasst.ninja_tools.compare.structural import Structural
+from bfasst.ninja_tools.compare.structural.structural import Structural
 from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
 from bfasst.paths import NINJA_FLOWS_PATH
