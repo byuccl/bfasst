@@ -1,0 +1,4 @@
+rule yosys
+    command = cd third_party/yosys; ./yosys $in >$out 2>>$out
+    description = running yosys compare with $in
+

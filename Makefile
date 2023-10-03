@@ -16,38 +16,40 @@ endif
 packages:
 	apt-get update
 	apt-get install -y \
-		python3-dev \
-		python3-venv \
-		python3-pip \
-		virtualenv \
-		libncurses5 \
-		swig \
-		python3-venv \
-		default-jre-headless \
-		uuid-dev \
-		libantlr4-runtime-dev \
-		openjdk-18-jdk \
-		capnproto \
-		libcapnp-dev \
-		jq \
-		iverilog \
-		gtkwave \
-		build-essential \
-		clang \
 		bison \
+		build-essential \
+		capnproto \
+		clang \
+		default-jre-headless \
 		flex \
-		libreadline-dev \
 		gawk \
-		tcl-dev \
-		libffi-dev \
 		graphviz \
-		xdot \
-		pkg-config \
-		libboost-system-dev \
-		libboost-python-dev \
+		gtkwave \
+		iverilog \
+		jq \
+		libantlr4-runtime-dev \
 		libboost-filesystem-dev \
+		libboost-python-dev \
+		libboost-system-dev \
+		libc++-dev
+		libcapnp-dev \
+		libffi-dev \
+		libncurses5 \
+		libreadline-dev \
+		libstdc++-12-dev \
+		ninja-build \
+		openjdk-18-jdk \
+		pkg-config \
+		python3-dev \
+		python3-pip \
+		python3-venv \
+		python3-venv \
+		swig \
+		tcl-dev \
+		uuid-dev \
+		virtualenv \
+		xdot \
 		zlib1g-dev \
-		ninja-build
 	
 python_packages:
 	$(IN_ENV) python -m pip install -r requirements.txt

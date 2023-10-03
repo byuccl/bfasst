@@ -3,7 +3,7 @@ import unittest
 
 from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado_structural_error_injection import VivadoStructuralErrorInjection
-from bfasst.ninja_tools.compare.structural import Structural
+from bfasst.ninja_tools.compare.structural.structural import Structural
 from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.transform.error_injector import ErrorInjector
 from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
@@ -59,7 +59,7 @@ class TestVivadoStructuralErrorInjection(unittest.TestCase):
         expected.extend(PhysNetlist("byu/alu").add_ninja_deps())
         expected.extend(Xray("byu/alu").add_ninja_deps())
         expected.extend(Structural("byu/alu").add_ninja_deps())
-        expected.append(f"{NINJA_FLOWS_PATH}/vivado_structural_error_injection.py ")
+        expected.append(f"{NINJA_FLOWS_PATH}/vivado_structural_error_injection.py")
 
         observed.sort()
         expected.sort()

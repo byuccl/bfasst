@@ -95,7 +95,7 @@ This branch serves as the transition point to a new version of bfasst, which mak
 * It takes advantage of the ninja build tool to automatically handle job creation, up-to-date checking of dependencies, parallel processing, and io redirection. 
 * It uses chevron, the python implementation of the mustache templating engine to template the scripts used for common operations such as synthesis and implementation of designs.
 * It keeps python as its base language, rather than switching to bash in order to minimize the learning curve and maximize portability in transitioning to the new architecture.
-* It provides unit tests for all new code, that can be run with `python -m unittest`
+* It provides unit tests for all new code, that can be run with `python -m unittest`. These largely serve as a sanity check for new developers on the project, and should help to maintain minimum requirements around the implementation of new flows.
 
 ### Usage:
 
@@ -133,3 +133,4 @@ Currently supported flows:
 * `vivado_phys_netlist_cmp`
 * `vivado_structural_error_injection`
 * `vivado_conformal`
+* `vivado_yosys_impl`

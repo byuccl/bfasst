@@ -1,0 +1,4 @@
+designs:
+  - byu/alu
+
+flow: vivado_yosys_impl

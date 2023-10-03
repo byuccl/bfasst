@@ -41,6 +41,7 @@ class TestVivadoOocFlow(unittest.TestCase):
             "verilog": self.flow.vivado_tool.verilog,
             "system_verilog": self.flow.vivado_tool.system_verilog,
             "vhdl": [],
+            "vhdl_libs": [],
             "top": self.flow.vivado_tool.top,
             "io": False,
             "synth_output": str(self.flow.vivado_tool.synth_output),
@@ -78,8 +79,8 @@ class TestVivadoOocFlow(unittest.TestCase):
             "bar",
         ]
         expected.extend(Vivado("byu/alu").add_ninja_deps())
-        expected.append(f"{NINJA_FLOWS_PATH}/vivado_ooc.py ")
-        expected.append(f"{NINJA_FLOWS_PATH}/vivado.py ")
+        expected.append(f"{NINJA_FLOWS_PATH}/vivado_ooc.py")
+        expected.append(f"{NINJA_FLOWS_PATH}/vivado.py")
 
         expected.sort()
         observed.sort()
