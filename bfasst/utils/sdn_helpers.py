@@ -22,6 +22,8 @@ class Netlist:
         instances = [Instance(i, self) for i in library.get_instances()]
         self.instances = instances
 
+        self.instance_wrappers = {i.instance: i for i in self.instances}
+
         self.instances_to_map = {i for i in self.instances if i.cell_type not in ("GND", "VCC")}
 
         Netlist.GND_NAMES = {i.name for i in self.instances if i.cell_type == "GND"}
@@ -103,6 +105,48 @@ class Netlist:
     def get_connected_nets(self):
         """Return a list of nets that are connected to something"""
         return [net for net in self.nets if net.is_connected]
+
+    def instances_not_assign(self):
+        return [i for i in self.instances if not i.cell_type.startswith("SDN_VERILOG_ASSIGNMENT")]
+
+    def print_stats(self):
+        print("Netlist stats:")
+        print(f"  {len(self.nets)} nets")
+        print(f"  {len(self.instances_not_assign())} instances")
+
+        for instance in self.instances_not_assign():
+            print(f"    {instance.name} {instance.instance.reference.name}")
+
+    def trim_dead_instances(self):
+        """Remove logic that is not connected to any outputs"""
+
+        dead_instances = []
+
+        # Now remove all instances that are not connected
+        for instance in self.instances_not_assign():
+            no_connected_outputs = True
+
+            for pin in instance.instance.pins:
+                if (
+                    Net.get_direction_for_unisim(
+                        pin.instance.reference.name, pin.inner_pin.port.name
+                    )
+                    != sdn.OUT
+                ):
+                    continue
+
+                net = None
+                if pin.wire in self.wire_to_net:
+                    net = self.wire_to_net[pin.wire]
+                if net is not None and net.is_connected:
+                    no_connected_outputs = False
+                    break
+
+            if no_connected_outputs:
+                dead_instances.append(instance)
+
+        for instance in dead_instances:
+            self.instances.remove(instance)
 
 
 class Pin:
@@ -338,3 +382,9 @@ class Instance:
             return self.pins_by_name_and_index[(name, index)]
         except KeyError:
             return Instance.GND_PIN
+
+    def is_register(self):
+        return self.cell_type.startswith("FD")
+
+    def is_assign(self):
+        return self.cell_type.startswith("SDN_VERILOG_ASSIGNMENT")
