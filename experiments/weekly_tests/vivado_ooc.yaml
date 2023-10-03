@@ -1,0 +1,6 @@
+design_dirs:
+  - ooc/
+
+flow: vivado_ooc
+
+synth: "-flatten_hierarchy full"

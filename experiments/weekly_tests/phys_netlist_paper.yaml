@@ -62,6 +62,6 @@ designs:
   - vtr_benchmarks/stereovision2
   - vtr_benchmarks/stereovision3
 
-flow: xilinx_phys_netlist_cmp
+flow: vivado_phys_netlist_cmp
 
-synth: " --flatten --max_dsp 0"
+synth: "-flatten_hierarchy full -max_dsp 0"

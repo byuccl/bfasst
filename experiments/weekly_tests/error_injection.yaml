@@ -1,4 +1,4 @@
 designs:
   - byu/
 
-flow: xilinx_structural_error_injection
+flow: vivado_structural_error_injection
