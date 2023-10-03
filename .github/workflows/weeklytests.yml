@@ -37,10 +37,10 @@ jobs:
         submodules: 'recursive'
     - uses: ./.github/actions/setup_env
     - name: tests
-      timeout-minutes: 30
+      timeout-minutes: 40
       run: |
         source .venv/bin/activate
-        python scripts/run_experiment.py ${{ matrix.experiment }} -j8 --print_period 0
+        python scripts/bfasster --yaml ${{ matrix.experiment }}
     - name: 'Create fname'
       if: failure()
       id: set-fname
