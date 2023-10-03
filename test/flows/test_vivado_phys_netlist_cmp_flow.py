@@ -3,7 +3,7 @@ import unittest
 
 from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado_phys_netlist_cmp import VivadoPhysNetlistCmp
-from bfasst.ninja_tools.compare.structural import Structural
+from bfasst.ninja_tools.compare.structural.structural import Structural
 from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
 from bfasst.ninja_tools.vivado.vivado import Vivado
@@ -56,7 +56,7 @@ class TestVivadoPhysNetlistCmp(unittest.TestCase):
         expected.extend(PhysNetlist("byu/alu").add_ninja_deps())
         expected.extend(Xray("byu/alu").add_ninja_deps())
         expected.extend(Structural("byu/alu").add_ninja_deps())
-        expected.append(f"{NINJA_FLOWS_PATH}/vivado_phys_netlist_cmp.py ")
+        expected.append(f"{NINJA_FLOWS_PATH}/vivado_phys_netlist_cmp.py")
 
         observed.sort()
         expected.sort()

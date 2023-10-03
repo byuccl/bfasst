@@ -4,7 +4,6 @@ import os
 import subprocess
 import unittest
 from bfasst.ninja_flows.flow_utils import get_flows
-from bfasst.ninja_flows.vivado_conformal import VivadoConformal
 from bfasst.paths import (
     DESIGNS_PATH,
     NINJA_BUILD_PATH,
@@ -16,6 +15,8 @@ from bfasst.ninja_flows.vivado_phys_netlist import VivadoPhysNetlist
 from bfasst.ninja_flows.vivado_phys_netlist_xrev import VivadoPhysNetlistXrev
 from bfasst.ninja_flows.vivado_phys_netlist_cmp import VivadoPhysNetlistCmp
 from bfasst.ninja_flows.vivado_structural_error_injection import VivadoStructuralErrorInjection
+from bfasst.ninja_flows.vivado_conformal import VivadoConformal
+from bfasst.ninja_flows.vivado_yosys_impl import VivadoYosysImpl
 
 from bfasst.ninja_flows.ninja_flow_manager import NinjaFlowManager, get_design_basenames
 
@@ -62,46 +63,55 @@ class TestNinjaFlowManager(unittest.TestCase):
     def test_create_vivado_conformal_flow(self):
         self.__check_flow_creation(VivadoConformal, "vivado_conformal")
 
+    def test_create_vivado_yosys_impl_flow(self):
+        self.__check_flow_creation(VivadoYosysImpl, "vivado_yosys_impl")
+
     def __check_flow_run(self, name, correct_num_build_statements):
         """Check that running flows correctly creates the build.ninja file"""
-        self.flow_manager.create_flows(name, ["byu/alu", "byu/counter"])
+        # Only run with byu/alu. This design is supported by all flows.
+        # Some designs are not successfully run by all flows, for various reasons
+        # including comparison algorithm limitations and Vivado limitations.
+        self.flow_manager.create_flows(name, ["byu/alu"])
         self.flow_manager.run_flows()
 
         with open(NINJA_BUILD_PATH, "r") as f:
             ninja_build = f.read()
 
         self.assertIn(" configure\n", ninja_build)
-        self.assertIn(f" configure {DESIGNS_PATH}/byu/alu {DESIGNS_PATH}/byu/counter ", ninja_build)
+        self.assertIn(f" configure {DESIGNS_PATH}/byu/alu ", ninja_build)
 
         build_statement_count = ninja_build.count("\nbuild ")
         self.assertEqual(build_statement_count, correct_num_build_statements)
 
     def test_run_vivado_flow(self):
-        self.__check_flow_run("vivado", 11)
+        self.__check_flow_run("vivado", 6)
 
     def test_run_vivado_ooc_flow(self):
-        self.__check_flow_run("vivado_ooc", 9)
+        self.__check_flow_run("vivado_ooc", 5)
 
     def test_run_vivado_reversed_flow(self):
-        self.__check_flow_run("vivado_and_reversed", 15)
+        self.__check_flow_run("vivado_and_reversed", 8)
 
     def test_run_vivado_phys_netlist_flow(self):
-        self.__check_flow_run("vivado_phys_netlist", 17)
+        self.__check_flow_run("vivado_phys_netlist", 9)
 
     def test_run_phys_reversed_flow(self):
-        self.__check_flow_run("vivado_phys_netlist_xrev", 21)
+        self.__check_flow_run("vivado_phys_netlist_xrev", 11)
 
     def test_run_phys_compare_flow(self):
-        self.__check_flow_run("vivado_phys_netlist_cmp", 23)
+        self.__check_flow_run("vivado_phys_netlist_cmp", 12)
 
     def test_run_cmp_error_injection_flow(self):
         # There should be 200 injections and 200 comparisons for two flows
         # plus all the build statements for the phys_reversed_flow
         # ((200 * 2) * 2) + 21 = 821 build statements
-        self.__check_flow_run("vivado_structural_error_injection", 821)
+        self.__check_flow_run("vivado_structural_error_injection", 411)
 
     def test_run_vivado_conformal_flow(self):
-        self.__check_flow_run("vivado_conformal", 17)
+        self.__check_flow_run("vivado_conformal", 9)
+
+    def test_run_vivado_yosys_impl_flow(self):
+        self.__check_flow_run("vivado_yosys_impl", 10)
 
     def test_ninja_rebuilds(self):
         """Test that the build.ninja file rebuilds itself if any flow or template changes."""

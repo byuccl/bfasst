@@ -46,7 +46,7 @@ class TestVivadoAndReversedFlow(unittest.TestCase):
         expected = ["foo", "bar"]
         expected.extend(Xray("byu/alu").add_ninja_deps())
         expected.extend(Vivado("byu/alu").add_ninja_deps())
-        expected.append(f"{NINJA_FLOWS_PATH}/vivado_and_reversed.py ")
+        expected.append(f"{NINJA_FLOWS_PATH}/vivado_and_reversed.py")
         observed.sort()
         expected.sort()
         self.assertEqual(observed, expected)

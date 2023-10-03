@@ -13,3 +13,4 @@ JPype1
 bidict
 chevron
 matplotlib
+requests

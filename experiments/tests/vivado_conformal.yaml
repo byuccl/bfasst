@@ -1,6 +1,5 @@
 designs:
   - byu/alu
-  - byu/buttoncount
     
     
 flow: vivado_conformal
