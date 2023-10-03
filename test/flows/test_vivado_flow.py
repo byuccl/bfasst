@@ -46,6 +46,7 @@ class TestVivadoFlow(unittest.TestCase):
             "verilog": self.flow.vivado_tool.verilog,
             "system_verilog": self.flow.vivado_tool.system_verilog,
             "vhdl": [],
+            "vhdl_libs": [],
             "top": self.flow.vivado_tool.top,
             "io": str(self.flow.vivado_tool.synth_output / "report_io.txt"),
             "synth_output": str(self.flow.vivado_tool.synth_output),
@@ -83,7 +84,7 @@ class TestVivadoFlow(unittest.TestCase):
             "bar",
         ]
         expected.extend(VivadoTool("byu/alu").add_ninja_deps())
-        expected.append(f"{NINJA_FLOWS_PATH}/vivado.py ")
+        expected.append(f"{NINJA_FLOWS_PATH}/vivado.py")
 
         self.assertEqual(observed, expected)
 

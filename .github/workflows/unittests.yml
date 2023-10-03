@@ -48,7 +48,7 @@ jobs:
       with: 
         cache_path: $HOME/actions-runner/cache
     - name: experiments
-      timeout-minutes: 30
+      timeout-minutes: 40
       run: |
         source .venv/bin/activate
         python scripts/bfasster.py --yaml ${{ matrix.experiment }}

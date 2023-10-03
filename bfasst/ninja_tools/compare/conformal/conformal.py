@@ -2,7 +2,7 @@
 
 import chevron
 from bfasst.ninja_tools.tool import Tool
-from bfasst.paths import BUILD_DIR, NINJA_BUILD_PATH, NINJA_COMPARE_TOOLS_PATH, NINJA_UTILS_PATH
+from bfasst.paths import BUILD_DIR, NINJA_BUILD_PATH, NINJA_CONFORMAL_TOOLS_PATH, NINJA_UTILS_PATH
 
 
 class Conformal(Tool):
@@ -20,7 +20,7 @@ class Conformal(Tool):
 
     def create_rule_snippets(self):
         """Create the rule snippets for conformal comparison."""
-        with open(NINJA_COMPARE_TOOLS_PATH / "conformal.ninja_rules.mustache", "r") as f:
+        with open(NINJA_CONFORMAL_TOOLS_PATH / "conformal.ninja_rules.mustache", "r") as f:
             rules = chevron.render(f, {"utils": str(NINJA_UTILS_PATH)})
 
         with open(NINJA_BUILD_PATH, "a") as f:
@@ -28,7 +28,7 @@ class Conformal(Tool):
 
     def create_build_snippets(self, impl_netlist, rev_netlist, vendor):
         """Create the build snippets for conformal comparison."""
-        with open(NINJA_COMPARE_TOOLS_PATH / "conformal.ninja_build.mustache", "r") as f:
+        with open(NINJA_CONFORMAL_TOOLS_PATH / "conformal.ninja_build.mustache", "r") as f:
             build = chevron.render(
                 f,
                 {
@@ -55,11 +55,11 @@ class Conformal(Tool):
         """Add the conformal ninja deps."""
         if not deps:
             deps = []
-        deps.append(f"{NINJA_COMPARE_TOOLS_PATH}/conformal.py")
-        deps.append(f"{NINJA_COMPARE_TOOLS_PATH}/conformal.ninja_rules.mustache")
-        deps.append(f"{NINJA_COMPARE_TOOLS_PATH}/conformal.ninja_build.mustache")
-        deps.append(f"{NINJA_COMPARE_TOOLS_PATH}/conformal.do.mustache")
-        deps.append(f"{NINJA_COMPARE_TOOLS_PATH}/conformal.gui.mustache")
+        deps.append(f"{NINJA_CONFORMAL_TOOLS_PATH}/conformal.py")
+        deps.append(f"{NINJA_CONFORMAL_TOOLS_PATH}/conformal.ninja_rules.mustache")
+        deps.append(f"{NINJA_CONFORMAL_TOOLS_PATH}/conformal.ninja_build.mustache")
+        deps.append(f"{NINJA_CONFORMAL_TOOLS_PATH}/conformal.do.mustache")
+        deps.append(f"{NINJA_CONFORMAL_TOOLS_PATH}/conformal.gui.mustache")
         deps.append(f"{NINJA_UTILS_PATH}/conformal.py ")
 
         return deps
