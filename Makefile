@@ -31,7 +31,7 @@ packages:
 		libboost-filesystem-dev \
 		libboost-python-dev \
 		libboost-system-dev \
-		libc++-dev
+		libc++-dev \
 		libcapnp-dev \
 		libffi-dev \
 		libncurses5 \
