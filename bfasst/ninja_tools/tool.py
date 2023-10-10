@@ -9,8 +9,8 @@ from bfasst.yaml_parser import YamlParser
 class Tool(abc.ABC):
     """Manage creating rule and build snippets"""
 
-    def __init__(self, design):
-        self.design = DESIGNS_PATH / design
+    def __init__(self, design_path):
+        self.design_path = design_path
         self.verilog = None
         self.system_verilog = None
         self.vhdl = None
@@ -40,8 +40,8 @@ class Tool(abc.ABC):
         self.verilog = []
         self.system_verilog = []
         self.vhdl = []
-        self.vhdl_libs = YamlParser(self.design / "design.yaml").parse_vhdl_libs()
-        for child in self.design.rglob("*"):
+        self.vhdl_libs = YamlParser(self.design_path / "design.yaml").parse_vhdl_libs()
+        for child in self.design_path.rglob("*"):
             if child.is_dir():
                 continue
 

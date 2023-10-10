@@ -33,7 +33,7 @@ class Vivado(Tool):
         self.impl_output = self.build / "impl"
         self.__create_build_dirs()
 
-        self.top = YamlParser(self.design / "design.yaml").parse_top_module()
+        self.top = YamlParser(self.design_path / "design.yaml").parse_top_module()
 
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()
@@ -55,7 +55,7 @@ class Vivado(Tool):
             return
 
         for lib in self.vhdl_libs:
-            path = self.design / lib
+            path = self.design_path / lib
             for file in path.rglob("*"):
                 if file.is_dir():
                     continue

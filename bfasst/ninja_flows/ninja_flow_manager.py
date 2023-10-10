@@ -1,9 +1,13 @@
 """Utility to manage the creation and execution of ninja flows."""
-from argparse import ArgumentParser
+import argparse
 import json
+import pathlib
+
 import chevron
+
 from bfasst.ninja_flows.flow_utils import create_build_file, get_flow
 from bfasst.paths import DESIGNS_PATH, NINJA_BUILD_PATH, NINJA_FLOWS_PATH, ROOT_PATH
+from bfasst.utils import error
 
 
 class NinjaFlowManager:
@@ -32,6 +36,16 @@ class NinjaFlowManager:
         self.designs = designs
         self.flow_args = flow_args
         for design in designs:
+            design_path = DESIGNS_PATH / design
+            if not design_path.is_dir():
+                design_path = pathlib.Path(design).resolve()
+            if not design_path.is_dir():
+                error(f"Design path {design_path} does not exist")
+            if not design_path.is_relative_to(DESIGNS_PATH):
+                error(
+                    f"Design path {design_path} is not in the designs directory.  This is not currently handled"
+                )
+
             flow = get_flow(flow_name)(design, flow_args)
             self.flows.append(flow)
 
@@ -77,7 +91,7 @@ def get_design_basenames(designs):
 
 
 if __name__ == "__main__":
-    parser = ArgumentParser()
+    parser = argparse.ArgumentParser()
     parser.add_argument("--flow", type=str, required=True, help="Name of the flow to run")
     parser.add_argument("--flow_args", type=str, help="Additional cmd line arguments for the flow")
     parser.add_argument("--designs", required=True, nargs="+", help="Designs to run the flow on")

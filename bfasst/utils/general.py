@@ -226,3 +226,12 @@ def get_hdl_src_type(file, hdl_type=None):
 
     assert hdl_type is not None
     return hdl_type
+
+
+def ensure_tuple(x):
+    """If x is not a tuple, convert to tuple"""
+    if isinstance(x, tuple):
+        return x
+    if isinstance(x, list):
+        return tuple(x)
+    return (x,)

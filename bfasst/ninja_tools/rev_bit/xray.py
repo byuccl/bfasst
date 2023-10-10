@@ -22,7 +22,7 @@ class Xray(Tool):
         self.build = BUILD_DIR / design / "xray"
         self.__create_build_dirs()
 
-        self.top = YamlParser(self.design / "design.yaml").parse_top_module()
+        self.top = YamlParser(self.design_path / "design.yaml").parse_top_module()
 
         # get these moved to paths later
         self.fasm2bels_path = get_fasm2bels_path()
