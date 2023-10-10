@@ -5,7 +5,6 @@ import chevron
 from bfasst import config
 from bfasst.ninja_tools.tool import Tool
 from bfasst.paths import (
-    BUILD_DIR,
     NINJA_IMPL_TOOLS_PATH,
     NINJA_BUILD_PATH,
     NINJA_VIVADO_TOOLS_PATH,
@@ -26,14 +25,15 @@ class Vivado(Tool):
 
         self.ooc = ooc
         if ooc:
-            self.build = BUILD_DIR / design / "ooc"
+            self.build = self.design_build_path / "ooc"
         else:
-            self.build = BUILD_DIR / design / "in_context"
+            self.build = self.design_build_path / "in_context"
+
         self.synth_output = self.build / "synth"
         self.impl_output = self.build / "impl"
         self.__create_build_dirs()
 
-        self.top = YamlParser(self.design / "design.yaml").parse_top_module()
+        self.top = YamlParser(self.design_path / "design.yaml").parse_top_module()
 
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()
@@ -55,7 +55,7 @@ class Vivado(Tool):
             return
 
         for lib in self.vhdl_libs:
-            path = self.design / lib
+            path = self.design_path / lib
             for file in path.rglob("*"):
                 if file.is_dir():
                     continue

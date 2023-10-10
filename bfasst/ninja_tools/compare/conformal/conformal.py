@@ -2,7 +2,7 @@
 
 import chevron
 from bfasst.ninja_tools.tool import Tool
-from bfasst.paths import BUILD_DIR, NINJA_BUILD_PATH, NINJA_CONFORMAL_TOOLS_PATH, NINJA_UTILS_PATH
+from bfasst.paths import NINJA_BUILD_PATH, NINJA_CONFORMAL_TOOLS_PATH, NINJA_UTILS_PATH
 
 
 class Conformal(Tool):
@@ -10,7 +10,7 @@ class Conformal(Tool):
 
     def __init__(self, design):
         super().__init__(design)
-        self.build = BUILD_DIR / design / "conformal"
+        self.build = self.design_build_path / "conformal"
         self.__create_build_dir()
         self._init_outputs()
         self._read_hdl_files()

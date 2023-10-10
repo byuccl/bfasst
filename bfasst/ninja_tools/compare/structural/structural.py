@@ -2,7 +2,7 @@
 
 import chevron
 from bfasst.ninja_tools.tool import Tool
-from bfasst.paths import BUILD_DIR, NINJA_BUILD_PATH, NINJA_STRUCTURAL_TOOLS_PATH, NINJA_UTILS_PATH
+from bfasst.paths import NINJA_BUILD_PATH, NINJA_STRUCTURAL_TOOLS_PATH, NINJA_UTILS_PATH
 
 
 class Structural(Tool):
@@ -10,7 +10,7 @@ class Structural(Tool):
 
     def __init__(self, design):
         super().__init__(design)
-        self.build = BUILD_DIR / design / "struct_cmp"
+        self.build = self.design_build_path / "struct_cmp"
         self.__create_build_dir()
         self.log_name = None
 

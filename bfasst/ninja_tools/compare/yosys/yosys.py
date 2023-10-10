@@ -3,7 +3,7 @@
 import json
 import chevron
 from bfasst.ninja_tools.tool import Tool
-from bfasst.paths import BUILD_DIR, NINJA_BUILD_PATH, NINJA_UTILS_PATH, NINJA_YOSYS_TOOLS_PATH
+from bfasst.paths import NINJA_BUILD_PATH, NINJA_UTILS_PATH, NINJA_YOSYS_TOOLS_PATH
 from bfasst.utils.general import compare_json
 
 
@@ -12,7 +12,7 @@ class Yosys(Tool):
 
     def __init__(self, design):
         super().__init__(design)
-        self.build = BUILD_DIR / design / "yosys"
+        self.build = self.design_build_path / "yosys"
         self.log = self.build / "log.txt"
         self.json = self.build / "yosys.json"
         self.tcl = self.build / "compare.ys"

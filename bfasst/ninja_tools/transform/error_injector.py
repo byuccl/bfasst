@@ -1,8 +1,9 @@
 """Create the rule and build snippets for error injection into an xray netlist."""
 
 import chevron
+
 from bfasst.ninja_tools.tool import Tool
-from bfasst.paths import BUILD_DIR, NINJA_BUILD_PATH, NINJA_TRANSFORM_TOOLS_PATH, NINJA_UTILS_PATH
+from bfasst.paths import NINJA_BUILD_PATH, NINJA_TRANSFORM_TOOLS_PATH, NINJA_UTILS_PATH
 from bfasst.yaml_parser import YamlParser
 
 
@@ -11,9 +12,9 @@ class ErrorInjector(Tool):
 
     def __init__(self, design):
         super().__init__(design)
-        self.build = BUILD_DIR / design / "error_injection"
+        self.build = self.design_build_path / "error_injection"
         self.__create_build_dir()
-        self.top = YamlParser(self.design / "design.yaml").parse_top_module()
+        self.top = YamlParser(self.design_path / "design.yaml").parse_top_module()
         self.injection_log = None
         self.corrupt_netlist = None
 

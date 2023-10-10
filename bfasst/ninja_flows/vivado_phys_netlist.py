@@ -9,7 +9,7 @@ class VivadoPhysNetlist(Flow):
     """Creates a Vivado netlist that has only physical primitives."""
 
     def __init__(self, design, flow_args=None):
-        super().__init__()
+        super().__init__(design)
         self.vivado_tool = self.configure_vivado_tool(design, flow_args)
         self.phys_netlist_tool = PhysNetlist(design)
 
