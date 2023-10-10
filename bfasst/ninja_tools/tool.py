@@ -2,7 +2,7 @@
 
 import abc
 
-from bfasst.paths import DESIGNS_PATH
+from bfasst.paths import BUILD_DIR, DESIGNS_PATH
 from bfasst.yaml_parser import YamlParser
 
 
@@ -11,6 +11,7 @@ class Tool(abc.ABC):
 
     def __init__(self, design_path):
         self.design_path = design_path
+        self.design_build_path = BUILD_DIR / design_path.relative_to(DESIGNS_PATH)
         self.verilog = None
         self.system_verilog = None
         self.vhdl = None

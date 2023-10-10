@@ -11,7 +11,7 @@ class VivadoPhysNetlistCmp(Flow):
     """Structural Comparison of physical netlist and reversed netlist"""
 
     def __init__(self, design, flow_args=None):
-        super().__init__()
+        super().__init__(design)
         self.vivado_tool = self.configure_vivado_tool(design, flow_args)
         self.phys_netlist_tool = PhysNetlist(design)
         self.xray_tool = Xray(design)

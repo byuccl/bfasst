@@ -33,20 +33,21 @@ class NinjaFlowManager:
         """Create the ninja flows for the given designs."""
         self.flow_name = flow_name
         self.flows = []
-        self.designs = designs
+        self.designs = []
         self.flow_args = flow_args
-        for design in designs:
-            design_path = DESIGNS_PATH / design
-            if not design_path.is_dir():
-                design_path = pathlib.Path(design).resolve()
-            if not design_path.is_dir():
-                error(f"Design path {design_path} does not exist")
-            if not design_path.is_relative_to(DESIGNS_PATH):
-                error(
-                    f"Design path {design_path} is not in the designs directory.  This is not currently handled"
-                )
 
-            flow = get_flow(flow_name)(design, flow_args)
+        # Get absolute design paths.  First check if a path to the design was provided,
+        # and if not, look for it in the designs directory.
+        for design in designs:
+            design_path = pathlib.Path(design).resolve()
+            if not (design_path.is_dir() and design_path.is_relative_to(DESIGNS_PATH)):
+                design_path = DESIGNS_PATH / design
+            if not design_path.is_dir():
+                error(f"Design {design} cannot be found.  This must be a subdirectory of designs/")
+
+            self.designs.append(design_path)
+
+            flow = get_flow(flow_name)(design_path, flow_args)
             self.flows.append(flow)
 
     def run_flows(self):
@@ -67,7 +68,6 @@ class NinjaFlowManager:
             f.write(master_ninja)
 
     def __populate_template(self):
-        self.__get_absolute_design_paths()
         with open(ROOT_PATH / "master.ninja.mustache", "r") as f:
             master_ninja = chevron.render(
                 f,
@@ -81,9 +81,6 @@ class NinjaFlowManager:
             )
 
         return master_ninja
-
-    def __get_absolute_design_paths(self):
-        self.designs = [str(DESIGNS_PATH / design) for design in self.designs]
 
 
 def get_design_basenames(designs):

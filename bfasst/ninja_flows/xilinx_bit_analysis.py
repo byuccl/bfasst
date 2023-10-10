@@ -8,7 +8,7 @@ class XilinxBitAnalysis(Flow):
     """Flow to reverse a netlist from a bitstream using xray."""
 
     def __init__(self, design, flow_args=None):
-        super().__init__()
+        super().__init__(design)
         self.vivado_tool = self.configure_vivado_tool(design, flow_args)
         self.xrev_tool = XrevTool(design)
 

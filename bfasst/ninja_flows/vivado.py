@@ -7,7 +7,7 @@ class Vivado(Flow):
     """Flow to create Vivado synthesis and implementation ninja snippets."""
 
     def __init__(self, design, flow_args=None, ooc=False):
-        super().__init__()
+        super().__init__(design)
         self.ooc = ooc
         self.vivado_tool = self.configure_vivado_tool(design, flow_args, ooc)
 

@@ -9,7 +9,7 @@ class AnalysisException(BfasstException):
 
 
 class AnalysisTool(tool.Tool):
-    def __init__(self, cwd, design, flow_args = "") -> None:
+    def __init__(self, cwd, design, flow_args="") -> None:
         super().__init__(cwd, design)
         self.flow_args = flow_args
 

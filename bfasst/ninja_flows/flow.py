@@ -2,10 +2,15 @@
 import abc
 
 from bfasst.ninja_tools.vivado.vivado import Vivado
+from bfasst.paths import BUILD_DIR, DESIGNS_PATH
 
 
 class Flow(abc.ABC):
     """Base class for all ninja flows"""
+
+    def __init__(self, design_path):
+        self.design_path = design_path
+        self.design_build_path = BUILD_DIR / design_path.relative_to(DESIGNS_PATH)
 
     @abc.abstractmethod
     def create_rule_snippets(self):
