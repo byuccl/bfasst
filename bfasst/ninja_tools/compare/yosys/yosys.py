@@ -12,7 +12,7 @@ class Yosys(Tool):
 
     def __init__(self, design):
         super().__init__(design)
-        self.build = BUILD_DIR / design / "yosys"
+        self.build = self.design_build_path / "yosys"
         self.log = self.build / "log.txt"
         self.json = self.build / "yosys.json"
         self.tcl = self.build / "compare.ys"

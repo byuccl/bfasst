@@ -10,7 +10,7 @@ class Conformal(Tool):
 
     def __init__(self, design):
         super().__init__(design)
-        self.build = BUILD_DIR / design / "conformal"
+        self.build = self.design_build_path / "conformal"
         self.__create_build_dir()
         self._init_outputs()
         self._read_hdl_files()

@@ -7,10 +7,7 @@ from bfasst.ninja_tools.compare.structural.structural import Structural
 from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.transform.error_injector import ErrorInjector
 from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
-from bfasst.paths import (
-    BUILD_DIR,
-    NINJA_FLOWS_PATH,
-)
+from bfasst.paths import NINJA_FLOWS_PATH
 
 from bfasst.ninja_utils.error_injector import ErrorType
 
@@ -19,7 +16,7 @@ class VivadoStructuralErrorInjection(Flow):
     """Inject an error into a xrev netlist and run a structural compare to detect it."""
 
     def __init__(self, design, flow_args=None):
-        super().__init__()
+        super().__init__(design)
         random.seed(0)
         self.vivado_tool = self.configure_vivado_tool(design, flow_args)
         self.phys_netlist_tool = PhysNetlist(design)
@@ -27,7 +24,7 @@ class VivadoStructuralErrorInjection(Flow):
         self.error_injector_tool = ErrorInjector(design)
         self.compare_tool = Structural(design)
 
-        self.error_injector_build = BUILD_DIR / design / "error_injection"
+        self.error_injector_build = self.design_build_path / "error_injection"
 
     def create_rule_snippets(self):
         """Create the rule snippets for the flow and append them to build.ninja."""

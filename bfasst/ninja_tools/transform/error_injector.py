@@ -11,9 +11,9 @@ class ErrorInjector(Tool):
 
     def __init__(self, design):
         super().__init__(design)
-        self.build = BUILD_DIR / design / "error_injection"
+        self.build = self.design_build_path / "error_injection"
         self.__create_build_dir()
-        self.top = YamlParser(self.design / "design.yaml").parse_top_module()
+        self.top = YamlParser(self.design_path / "design.yaml").parse_top_module()
         self.injection_log = None
         self.corrupt_netlist = None
 

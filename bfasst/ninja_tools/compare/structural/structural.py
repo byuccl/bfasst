@@ -10,7 +10,7 @@ class Structural(Tool):
 
     def __init__(self, design):
         super().__init__(design)
-        self.build = BUILD_DIR / design / "struct_cmp"
+        self.build = self.design_build_path / "struct_cmp"
         self.__create_build_dir()
         self.log_name = None
 

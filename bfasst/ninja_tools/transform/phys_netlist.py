@@ -20,7 +20,7 @@ class PhysNetlist(Tool):
     def __init__(self, design):
         super().__init__(design)
 
-        self.build = BUILD_DIR / design / "vivado_phys_netlist"
+        self.build = self.design_build_path / "vivado_phys_netlist"
         self.phys_netlist_path = self.build / "viv_impl_physical.v"
         self.__create_build_dir()
 

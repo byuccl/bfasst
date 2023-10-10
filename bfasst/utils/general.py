@@ -174,8 +174,8 @@ def clean_error_injections_and_comparisons(designs):
     fail_list = []
 
     for design in designs:
-        cmp_dir = BUILD_DIR / design / "struct_cmp"
-        error_dir = BUILD_DIR / design / "error_injection"
+        cmp_dir = BUILD_DIR / design.relative_to(DESIGNS_PATH) / "struct_cmp"
+        error_dir = BUILD_DIR / design.relative_to(DESIGNS_PATH) / "error_injection"
         for file in cmp_dir.iterdir():
             with open(file, "r") as f:
                 # SUCCESS means the compare tool did not detect an actual error
@@ -226,3 +226,12 @@ def get_hdl_src_type(file, hdl_type=None):
 
     assert hdl_type is not None
     return hdl_type
+
+
+def ensure_tuple(x):
+    """If x is not a tuple, convert to tuple"""
+    if isinstance(x, tuple):
+        return x
+    if isinstance(x, list):
+        return tuple(x)
+    return (x,)
