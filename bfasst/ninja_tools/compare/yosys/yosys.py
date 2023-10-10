@@ -3,7 +3,7 @@
 import json
 import chevron
 from bfasst.ninja_tools.tool import Tool
-from bfasst.paths import BUILD_DIR, NINJA_BUILD_PATH, NINJA_UTILS_PATH, NINJA_YOSYS_TOOLS_PATH
+from bfasst.paths import NINJA_BUILD_PATH, NINJA_UTILS_PATH, NINJA_YOSYS_TOOLS_PATH
 from bfasst.utils.general import compare_json
 
 

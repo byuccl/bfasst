@@ -29,7 +29,7 @@ class ApplicationRunner:
     def run_yaml(self, yaml_path):
         """Run using a yaml configuration file"""
 
-        yaml_parser = YamlParser(args.yaml)
+        yaml_parser = YamlParser(yaml_path)
         yaml_parser.parse_design_flow()
 
         self.designs = yaml_parser.design_paths

@@ -5,7 +5,6 @@ import json
 import chevron
 from bfasst.ninja_tools.tool import Tool
 from bfasst.paths import (
-    BUILD_DIR,
     NINJA_BUILD_PATH,
     NINJA_TRANSFORM_TOOLS_PATH,
     NINJA_UTILS_PATH,

@@ -2,7 +2,7 @@
 
 import chevron
 from bfasst.ninja_tools.tool import Tool
-from bfasst.paths import BUILD_DIR, NINJA_BUILD_PATH, NINJA_STRUCTURAL_TOOLS_PATH, NINJA_UTILS_PATH
+from bfasst.paths import NINJA_BUILD_PATH, NINJA_STRUCTURAL_TOOLS_PATH, NINJA_UTILS_PATH
 
 
 class Structural(Tool):

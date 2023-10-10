@@ -2,13 +2,7 @@
 
 import chevron
 from bfasst import config
-from bfasst.paths import (
-    BUILD_DIR,
-    NINJA_BUILD_PATH,
-    REV_BIT_TOOLS_PATH,
-    XRAY_PATH,
-    get_fasm2bels_path,
-)
+from bfasst.paths import NINJA_BUILD_PATH, REV_BIT_TOOLS_PATH, XRAY_PATH, get_fasm2bels_path
 from bfasst.ninja_tools.tool import Tool
 from bfasst.yaml_parser import YamlParser
 
