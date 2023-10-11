@@ -36,7 +36,9 @@ class TestNinjaFlowManager(unittest.TestCase):
         self.flow_manager.create_flows(name, ["byu/alu", "byu/counter"])
         self.assertIsInstance(self.flow_manager.flows[0], flow_type)
         self.assertIsInstance(self.flow_manager.flows[1], flow_type)
-        self.assertEqual(self.flow_manager.designs, ["byu/alu", "byu/counter"])
+        self.assertEqual(
+            self.flow_manager.designs, [DESIGNS_PATH / "byu/alu", DESIGNS_PATH / "byu/counter"]
+        )
         self.assertEqual(self.flow_manager.flow_name, name)
 
     def test_create_vivado_flow(self):
@@ -47,7 +49,7 @@ class TestNinjaFlowManager(unittest.TestCase):
         self.assertTrue(self.flow_manager.flows[0].ooc)
 
     def test_create_vivado_reversed_flow(self):
-        self.__check_flow_creation(VivadoBitAnalysis, "vivado_and_reversed")
+        self.__check_flow_creation(VivadoBitAnalysis, "vivado_bit_analysis")
 
     def test_create_vivado_phys_netlist_flow(self):
         self.__check_flow_creation(VivadoPhysNetlist, "vivado_phys_netlist")
@@ -93,7 +95,7 @@ class TestNinjaFlowManager(unittest.TestCase):
         self.__check_flow_run("vivado_ooc", 5)
 
     def test_run_vivado_reversed_flow(self):
-        self.__check_flow_run("vivado_and_reversed", 8)
+        self.__check_flow_run("vivado_bit_analysis", 9)
 
     def test_run_vivado_phys_netlist_flow(self):
         self.__check_flow_run("vivado_phys_netlist", 9)
@@ -132,10 +134,11 @@ class TestNinjaFlowManager(unittest.TestCase):
         self.flow_manager.create_flows(flow_name, ["byu/alu"])
         self.flow_manager.run_flows()
 
-        deps = self.flow_manager.flows[0].add_ninja_deps()
+        deps = []
+        self.flow_manager.flows[0].add_ninja_deps(deps)
 
         for dep in deps:
-            self.__check_rebuild_dependency(dep.strip())
+            self.__check_rebuild_dependency(dep)
 
     def __check_rebuild_dependency(self, dependency_path):
         """Run the build.ninja file and check that it rebuilds if the given dependency changes."""

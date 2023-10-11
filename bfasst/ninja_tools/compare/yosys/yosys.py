@@ -17,8 +17,8 @@ class Yosys(Tool):
         self.json = self.build_path / "yosys.json"
         self.tcl = self.build_path / "compare.ys"
         self.tcl_template = NINJA_YOSYS_TOOLS_PATH / "yosys.tcl.mustache"
-        self.rules_template = NINJA_YOSYS_TOOLS_PATH / "yosys.ninja_rules.mustache"
-        self.build_template = NINJA_YOSYS_TOOLS_PATH / "yosys.ninja_build.mustache"
+        self.rules_template = NINJA_YOSYS_TOOLS_PATH / "yosys_rules.ninja.mustache"
+        self.build_template = NINJA_YOSYS_TOOLS_PATH / "yosys_build.ninja.mustache"
         self._create_build_dir()
         self._init_outputs()
 

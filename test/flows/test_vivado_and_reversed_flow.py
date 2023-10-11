@@ -1,10 +1,12 @@
 """Unit tests for the VivadoAndReversed flow."""
 import unittest
+
 from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado_bit_analysis import VivadoBitAnalysis
 from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.vivado.vivado import Vivado
 from bfasst.paths import (
+    DESIGNS_PATH,
     NINJA_BUILD_PATH,
     NINJA_FLOWS_PATH,
 )
@@ -18,7 +20,7 @@ class TestVivadoAndReversedFlow(unittest.TestCase):
         # overwrite the build file so it is not appended to incorrectly
         create_build_file()
 
-        cls.flow = VivadoBitAnalysis("byu/alu")
+        cls.flow = VivadoBitAnalysis(DESIGNS_PATH / "byu/alu")
         cls.flow.create_rule_snippets()
         cls.flow.create_build_snippets()
 
@@ -37,8 +39,8 @@ class TestVivadoAndReversedFlow(unittest.TestCase):
         with open(NINJA_BUILD_PATH, "r") as f:
             build_statement_count = f.read().count("\nbuild ")
 
-        # There should be 7 build statements for a single design using this flow
-        self.assertEqual(build_statement_count, 7)
+        # There should be 8 build statements for a single design using this flow
+        self.assertEqual(build_statement_count, 8)
 
     def test_add_ninja_deps(self):
         """Test that the flow adds the correct dependencies to the ninja file."""
@@ -47,13 +49,13 @@ class TestVivadoAndReversedFlow(unittest.TestCase):
         expected.extend(Xray("byu/alu").add_ninja_deps())
         expected.extend(Vivado("byu/alu").add_ninja_deps())
         expected.append(f"{NINJA_FLOWS_PATH}/vivado_and_reversed.py")
-        observed.sort()
-        expected.sort()
+        observed = sorted([str(s) for s in observed])
+        expected = sorted([str(s) for s in expected])
         self.assertEqual(observed, expected)
 
     def test_get_top_level_flow_path(self):
         self.assertEqual(
-            self.flow.get_top_level_flow_path(), f"{NINJA_FLOWS_PATH}/vivado_and_reversed.py"
+            self.flow.get_top_level_flow_path(), NINJA_FLOWS_PATH / "vivado_bit_analysis.py"
         )
 
 

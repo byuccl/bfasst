@@ -8,7 +8,7 @@ import io
 from contextlib import redirect_stdout
 from bfasst.paths import ROOT_PATH
 
-from scripts.bfasster import check_args
+from scripts.bfasster import parse_args
 
 
 class TestBfassterApplicationRunner(unittest.TestCase):
@@ -59,7 +59,7 @@ class TestBfassterApplicationRunner(unittest.TestCase):
 
     def __try_check_args_for_success(self, args):
         try:
-            check_args(args)
+            parse_args(args)
         except SystemExit:
             self.fail("check_args raised SystemExit unexpectedly!")
 

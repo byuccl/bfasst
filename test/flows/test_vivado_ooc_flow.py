@@ -4,6 +4,7 @@ import unittest
 from bfasst.ninja_flows.vivado_ooc import VivadoOoc
 from bfasst.ninja_tools.vivado.vivado import Vivado
 from bfasst.paths import (
+    DESIGNS_PATH,
     NINJA_BUILD_PATH,
     NINJA_FLOWS_PATH,
 )
@@ -19,7 +20,7 @@ class TestVivadoOocFlow(unittest.TestCase):
         with open(NINJA_BUILD_PATH, "w") as f:
             f.write("")
 
-        cls.flow = VivadoOoc("byu/alu")
+        cls.flow = VivadoOoc(DESIGNS_PATH / "byu/alu")
         cls.flow.create_rule_snippets()
         cls.flow.create_build_snippets()
 
@@ -73,17 +74,18 @@ class TestVivadoOocFlow(unittest.TestCase):
 
     def test_add_ninja_deps(self):
         """Test that the flow adds the correct dependencies for the build.ninja file."""
-        observed = self.flow.add_ninja_deps(["foo", "bar"])
+        observed = ["foo", "bar"]
+        self.flow.add_ninja_deps(observed)
         expected = [
             "foo",
             "bar",
         ]
-        expected.extend(Vivado("byu/alu").add_ninja_deps())
-        expected.append(f"{NINJA_FLOWS_PATH}/vivado_ooc.py")
-        expected.append(f"{NINJA_FLOWS_PATH}/vivado.py")
+        Vivado(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        expected.append(NINJA_FLOWS_PATH / "vivado_ooc.py")
+        expected.append(NINJA_FLOWS_PATH / "vivado.py")
 
-        expected.sort()
-        observed.sort()
+        observed = sorted([str(s) for s in observed])
+        expected = sorted([str(s) for s in expected])
 
         self.assertEqual(observed, expected)
 

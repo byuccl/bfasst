@@ -57,7 +57,8 @@ class ApplicationRunner:
             error("Ninja failed with return code", return_code)
 
 
-if __name__ == "__main__":
+def parse_args():
+    """Parse main arguments"""
     parser = argparse.ArgumentParser()
     parser.add_argument("--yaml", type=pathlib.Path, help="Yaml file with flow specs")
     parser.add_argument(
@@ -71,7 +72,13 @@ if __name__ == "__main__":
     elif not args.yaml and not (args.design and args.flow):
         parser.error("Must specify either a yaml file or a design/flow")
 
-    if args.yaml:
-        ApplicationRunner().run_yaml(args.yaml)
+    return args
+
+
+if __name__ == "__main__":
+    parsed_args = parse_args()
+
+    if parsed_args.yaml:
+        ApplicationRunner().run_yaml(parsed_args.yaml)
     else:
-        ApplicationRunner().run_designs(args.flow, args.design)
+        ApplicationRunner().run_designs(parsed_args.flow, parsed_args.design)

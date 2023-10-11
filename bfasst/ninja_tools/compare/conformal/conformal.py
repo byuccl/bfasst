@@ -17,7 +17,7 @@ class Conformal(Tool):
 
     def create_rule_snippets(self):
         """Create the rule snippets for conformal comparison."""
-        with open(NINJA_CONFORMAL_TOOLS_PATH / "conformal.ninja_rules.mustache", "r") as f:
+        with open(NINJA_CONFORMAL_TOOLS_PATH / "conformal_rules.ninja.mustache", "r") as f:
             rules = chevron.render(f, {"utils": str(NINJA_UTILS_PATH)})
 
         with open(NINJA_BUILD_PATH, "a") as f:
@@ -25,7 +25,7 @@ class Conformal(Tool):
 
     def create_build_snippets(self, impl_netlist, rev_netlist, vendor):
         """Create the build snippets for conformal comparison."""
-        with open(NINJA_CONFORMAL_TOOLS_PATH / "conformal.ninja_build.mustache", "r") as f:
+        with open(NINJA_CONFORMAL_TOOLS_PATH / "conformal_build.ninja.mustache", "r") as f:
             build = chevron.render(
                 f,
                 {

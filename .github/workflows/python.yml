@@ -69,3 +69,11 @@ jobs:
     - name: Run doctest
       run: |
         make doctest
+
+  unittest:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run unittest
+      run: |
+        make unittest
