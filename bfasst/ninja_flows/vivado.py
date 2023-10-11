@@ -20,8 +20,6 @@ class Vivado(Flow):
     def add_ninja_deps(self, deps):
         self.vivado_tool.add_ninja_deps(deps)
         deps.append(NINJA_FLOWS_PATH / "vivado.py")
-        if self.ooc:
-            deps.append(NINJA_FLOWS_PATH / "vivado_ooc.py")
 
     def get_top_level_flow_path(self):
         return NINJA_FLOWS_PATH / "vivado.py"
