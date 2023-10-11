@@ -36,4 +36,4 @@ class Structural(Tool):
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
-        deps.append(f"{NINJA_UTILS_PATH}/structural.py")
+        deps.append(NINJA_UTILS_PATH / "structural.py")
