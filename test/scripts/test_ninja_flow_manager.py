@@ -1,7 +1,11 @@
 """Unit tests for the NinjaFlowManager class."""
 
-import os
+# Disable this since we are testing a class
+# pylint: disable=too-many-public-methods
+# pylint: disable=duplicate-code
+
 import subprocess
+import time
 import unittest
 from bfasst.ninja_flows.flow_utils import get_flows
 from bfasst.paths import (
@@ -19,9 +23,6 @@ from bfasst.ninja_flows.vivado_conformal import VivadoConformal
 from bfasst.ninja_flows.vivado_yosys_impl import VivadoYosysImpl
 
 from bfasst.ninja_flows.ninja_flow_manager import NinjaFlowManager, get_design_basenames
-
-# Disable this since we are testing a class
-# pylint: disable=too-many-public-methods
 
 
 class TestNinjaFlowManager(unittest.TestCase):
@@ -138,32 +139,34 @@ class TestNinjaFlowManager(unittest.TestCase):
         self.flow_manager.flows[0].add_ninja_deps(deps)
 
         for dep in deps:
-            self.__check_rebuild_dependency(dep)
+            self.__check_rebuild_dependency(dep, flow_name)
 
-    def __check_rebuild_dependency(self, dependency_path):
+    def __check_rebuild_dependency(self, dependency_path, flow_name):
         """Run the build.ninja file and check that it rebuilds if the given dependency changes."""
         # get the mtime of the build.ninja file
         old_mtime = NINJA_BUILD_PATH.stat().st_mtime
 
         # update the dependency file's mtime
-        self.__update_file_mtime(dependency_path)
+        dependency_path.touch()
 
         # running the build.ninja file should rebuild it
         self.__run_ninja()
+
+        # For some reason you need to wait a bit after running ninja for the mtime to update
+        time.sleep(0.1)
+
         new_mtime = NINJA_BUILD_PATH.stat().st_mtime
 
-        self.assertGreater(new_mtime, old_mtime, msg=f"{dependency_path} did not trigger a rebuild")
-
-    def __update_file_mtime(self, file_path):
-        """Update the mtime of the given file."""
-        os.utime(file_path)
+        self.assertGreater(
+            new_mtime,
+            old_mtime,
+            msg=f"{dependency_path} did not trigger a rebuild for flow {flow_name}",
+        )
 
     def __run_ninja(self):
         """Run the build.ninja file and ensure it completes successfully."""
-        proc = subprocess.Popen("ninja", cwd=ROOT_PATH, stdout=subprocess.PIPE)
-        proc.communicate()
-        status = proc.wait()
-        self.assertEqual(status, 0)
+        proc = subprocess.run("ninja", cwd=ROOT_PATH, stdout=subprocess.PIPE)
+        self.assertEqual(proc.returncode, 0)
 
     def test_get_design_basenames(self):
         """Test that the design basenames are returned correctly."""

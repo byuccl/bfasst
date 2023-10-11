@@ -1,6 +1,11 @@
 """Unit tests for the Vivado flow."""
+
+# Disable this since we are testing a class
+# pylint: disable=duplicate-code
+
 import json
 import unittest
+
 from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado import Vivado
 from bfasst.ninja_tools.vivado.vivado import Vivado as VivadoTool
@@ -91,7 +96,7 @@ class TestVivadoFlow(unittest.TestCase):
         self.assertEqual(observed, expected)
 
     def test_get_top_level_flow_path(self):
-        self.assertEqual(self.flow.get_top_level_flow_path(), f"{NINJA_FLOWS_PATH}/vivado.py")
+        self.assertEqual(self.flow.get_top_level_flow_path(), NINJA_FLOWS_PATH / "vivado.py")
 
 
 if __name__ == "__main__":

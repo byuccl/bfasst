@@ -37,4 +37,4 @@ class VivadoConformal(Flow):
         deps.append(NINJA_FLOWS_PATH / "vivado_conformal.py")
 
     def get_top_level_flow_path(self) -> str:
-        return f"{NINJA_FLOWS_PATH}/vivado_conformal.py"
+        return NINJA_FLOWS_PATH / "vivado_conformal.py"

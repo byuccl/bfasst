@@ -1,4 +1,8 @@
 """Unit tests for the VivadoConformal flow."""
+
+# Disable this since we are testing a class
+# pylint: disable=duplicate-code
+
 import unittest
 from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado_conformal import VivadoConformal
@@ -48,14 +52,14 @@ class TestVivadoConformalFlow(unittest.TestCase):
         Xray(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         Vivado(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         Conformal(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
-        expected.append(f"{NINJA_FLOWS_PATH}/vivado_conformal.py")
+        expected.append(NINJA_FLOWS_PATH / "vivado_conformal.py")
         observed = sorted([str(s) for s in observed])
         expected = sorted([str(s) for s in expected])
         self.assertEqual(observed, expected)
 
     def test_get_top_level_flow_path(self):
         self.assertEqual(
-            self.flow.get_top_level_flow_path(), f"{NINJA_FLOWS_PATH}/vivado_conformal.py"
+            self.flow.get_top_level_flow_path(), NINJA_FLOWS_PATH / "vivado_conformal.py"
         )
 
 

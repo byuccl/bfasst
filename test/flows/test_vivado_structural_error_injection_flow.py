@@ -1,4 +1,8 @@
 """Unit tests for VivadoStructuralErrorInjection class"""
+
+# Disable this since we are testing a class
+# pylint: disable=duplicate-code
+
 import unittest
 
 from bfasst.ninja_flows.flow_utils import create_build_file

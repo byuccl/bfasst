@@ -20,7 +20,7 @@ class TestVivadoOocFlow(unittest.TestCase):
         with open(NINJA_BUILD_PATH, "w") as f:
             f.write("")
 
-        cls.flow = Vivado(DESIGNS_PATH / "byu/alu", ooc=True)
+        cls.flow = VivadoOoc(DESIGNS_PATH / "byu/alu")
         cls.flow.create_rule_snippets()
         cls.flow.create_build_snippets()
 
@@ -87,10 +87,12 @@ class TestVivadoOocFlow(unittest.TestCase):
         observed = sorted([str(s) for s in observed])
         expected = sorted([str(s) for s in expected])
 
-        self.assertEqual(observed, expected)
+        self.assertEqual(
+            observed, expected, msg="observed: " + str(observed) + "\nexpected: " + str(expected)
+        )
 
     def test_get_top_level_flow_path(self):
-        self.assertEqual(self.flow.get_top_level_flow_path(), f"{NINJA_FLOWS_PATH}/vivado_ooc.py")
+        self.assertEqual(self.flow.get_top_level_flow_path(), NINJA_FLOWS_PATH / "vivado_ooc.py")
 
 
 if __name__ == "__main__":

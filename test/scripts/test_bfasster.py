@@ -1,7 +1,5 @@
 """Unit tests for the bfasster ApplicationRunner class."""
 
-from argparse import Namespace
-from pathlib import PosixPath
 import subprocess
 import unittest
 import io
@@ -69,11 +67,11 @@ class TestBfassterApplicationRunner(unittest.TestCase):
 
     def test_check_args_succeeds_on_yaml_only(self):
         """Test that the check_args function accepts only a yaml or a design/flow"""
-        args = Namespace(yaml=PosixPath("experiments/tests/test.yaml"), design=None, flow=None)
+        args = ["--yaml", "experiments/tests/test.yaml"]
         self.__try_check_args_for_success(args)
 
     def test_check_args_succeeds_on_design_and_flow_only(self):
-        args = Namespace(yaml=None, design="byu/alu", flow="vivado")
+        args = ["--design", "byu/alu", "--flow", "vivado"]
         self.__try_check_args_for_success(args)
 
     def __produce_check_args_failure(self, args):
@@ -84,19 +82,17 @@ class TestBfassterApplicationRunner(unittest.TestCase):
                 parse_args(args)
 
     def test_check_args_fails_on_yaml_and_design_and_flow(self):
-        args = Namespace(
-            yaml=PosixPath("experiments/tests/test.yaml"), design="byu/alu", flow="vivado"
-        )
+        args = ["--yaml", "experiments/tests/test.yaml", "--design", "byu/alu", "--flow", "vivado"]
         self.__produce_check_args_failure(args)
 
     def test_check_args_fails_on_no_args(self):
-        args = Namespace(yaml=None, design=None, flow=None)
+        args = []
         self.__produce_check_args_failure(args)
 
     def test_check_args_fails_on_yaml_and_design(self):
-        args = Namespace(yaml=PosixPath("experiments/tests/test.yaml"), design="byu/alu", flow=None)
+        args = ["--yaml", "experiments/tests/test.yaml", "--design", "byu/alu"]
         self.__produce_check_args_failure(args)
 
     def test_check_args_fails_on_yaml_and_flow(self):
-        args = Namespace(yaml=PosixPath("experiments/tests/test.yaml"), design=None, flow="vivado")
+        args = ["--yaml", "experiments/tests/test.yaml", "--flow", "vivado"]
         self.__produce_check_args_failure(args)
