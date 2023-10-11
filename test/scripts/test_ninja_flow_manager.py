@@ -153,7 +153,7 @@ class TestNinjaFlowManager(unittest.TestCase):
         self.__run_ninja()
 
         # For some reason you need to wait a bit after running ninja for the mtime to update
-        time.sleep(0.1)
+        time.sleep(1)
 
         new_mtime = NINJA_BUILD_PATH.stat().st_mtime
 
