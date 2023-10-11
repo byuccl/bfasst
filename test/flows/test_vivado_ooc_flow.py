@@ -20,7 +20,7 @@ class TestVivadoOocFlow(unittest.TestCase):
         with open(NINJA_BUILD_PATH, "w") as f:
             f.write("")
 
-        cls.flow = VivadoOoc(DESIGNS_PATH / "byu/alu")
+        cls.flow = Vivado(DESIGNS_PATH / "byu/alu", ooc=True)
         cls.flow.create_rule_snippets()
         cls.flow.create_build_snippets()
 

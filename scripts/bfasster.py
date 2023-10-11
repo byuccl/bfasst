@@ -2,6 +2,7 @@
 import argparse
 import pathlib
 import subprocess
+import sys
 
 from bfasst.ninja_flows.ninja_flow_manager import NinjaFlowManager
 from bfasst.utils.general import clean_error_injections_and_comparisons
@@ -57,7 +58,7 @@ class ApplicationRunner:
             error("Ninja failed with return code", return_code)
 
 
-def parse_args():
+def parse_args(args):
     """Parse main arguments"""
     parser = argparse.ArgumentParser()
     parser.add_argument("--yaml", type=pathlib.Path, help="Yaml file with flow specs")
@@ -65,7 +66,7 @@ def parse_args():
         "--design", type=pathlib.Path, help="Design directory for single design flows"
     )
     parser.add_argument("--flow", type=str, help="Flow to run for single design flows")
-    args = parser.parse_args()
+    args = parser.parse_args(args)
 
     if args.yaml and (args.design or args.flow):
         parser.error("Cannot specify both a yaml file and a design/flow")
@@ -76,7 +77,7 @@ def parse_args():
 
 
 if __name__ == "__main__":
-    parsed_args = parse_args()
+    parsed_args = parse_args(sys.argv[1:])
 
     if parsed_args.yaml:
         ApplicationRunner().run_yaml(parsed_args.yaml)

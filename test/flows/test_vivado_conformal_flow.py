@@ -6,6 +6,7 @@ from bfasst.ninja_tools.vivado.vivado import Vivado
 from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.compare.conformal.conformal import Conformal
 from bfasst.paths import (
+    DESIGNS_PATH,
     NINJA_BUILD_PATH,
     NINJA_FLOWS_PATH,
 )
@@ -19,7 +20,7 @@ class TestVivadoConformalFlow(unittest.TestCase):
         # overwrite the build file so it is not appended to incorrectly
         create_build_file()
 
-        cls.flow = VivadoConformal("byu/alu")
+        cls.flow = VivadoConformal(DESIGNS_PATH / "byu/alu")
         cls.flow.create_rule_snippets()
         cls.flow.create_build_snippets()
 
@@ -41,14 +42,15 @@ class TestVivadoConformalFlow(unittest.TestCase):
         self.assertEqual(build_statement_count, 8)
 
     def test_add_ninja_deps(self):
-        observed = self.flow.add_ninja_deps(["foo", "bar"])
+        observed = ["foo", "bar"]
+        self.flow.add_ninja_deps(observed)
         expected = ["foo", "bar"]
-        expected.extend(Xray("byu/alu").add_ninja_deps())
-        expected.extend(Vivado("byu/alu").add_ninja_deps())
-        expected.extend(Conformal("byu/alu").add_ninja_deps())
+        Xray(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        Vivado(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        Conformal(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         expected.append(f"{NINJA_FLOWS_PATH}/vivado_conformal.py")
-        observed.sort()
-        expected.sort()
+        observed = sorted([str(s) for s in observed])
+        expected = sorted([str(s) for s in expected])
         self.assertEqual(observed, expected)
 
     def test_get_top_level_flow_path(self):

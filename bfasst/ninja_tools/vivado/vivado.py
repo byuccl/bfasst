@@ -7,7 +7,6 @@ from bfasst.ninja_tools.tool import Tool
 from bfasst.paths import (
     NINJA_IMPL_TOOLS_PATH,
     NINJA_BUILD_PATH,
-    NINJA_VIVADO_TOOLS_PATH,
     NINJA_SYNTH_TOOLS_PATH,
     NINJA_UTILS_PATH,
     VIVADO_RULES_PATH,

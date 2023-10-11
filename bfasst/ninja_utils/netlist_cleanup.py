@@ -1,3 +1,6 @@
+""" Clean up a netlist 
+(tested primarily on post-fasm2bels netlists)
+"""
 import argparse
 import logging
 import pathlib
@@ -24,15 +27,16 @@ class NetlistCleaner:
         )
 
         # Read netlist with spydrnet
-        ir = sdn.parse(self.netlist_in)
-        top = ir.top_instance
+        netlist_ir = sdn.parse(self.netlist_in)
+        top = netlist_ir.top_instance
 
         # Find all ASSIGN instances
         for instance in top.get_instances():
             if instance.reference.name.startswith("SDN_VERILOG_ASSIGNMENT"):
                 for pin in instance.pins:
                     if pin.inner_pin.port.name == "i":
-                        pin_in = pin
+                        pass
+                        # pin_in = pin
                         # logging.info("in: %s", pin_in.wire.cable.name)
                     else:
                         pin_out = pin
@@ -47,7 +51,7 @@ class NetlistCleaner:
                 top.reference.remove_child(instance)
 
         # Write out netlist
-        sdn.compose(ir, self.netlist_out, write_blackbox=False)
+        sdn.compose(netlist_ir, self.netlist_out, write_blackbox=False)
 
         # logging.info(f"Top module: {top.name}")
 

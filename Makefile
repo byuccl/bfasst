@@ -116,4 +116,4 @@ doctest:
 	find bfasst -iname "*.py" -exec python -m doctest {} \;
 
 unittest:
-	$(IN_ENV) python -m unittest discover test
+	$(IN_ENV) python -m unittest

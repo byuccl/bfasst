@@ -5,7 +5,7 @@ from pathlib import PosixPath
 import subprocess
 import unittest
 import io
-from contextlib import redirect_stdout
+from contextlib import redirect_stderr
 from bfasst.paths import ROOT_PATH
 
 from scripts.bfasster import parse_args
@@ -24,13 +24,17 @@ class TestBfassterApplicationRunner(unittest.TestCase):
         proc.communicate()
 
         status = proc.wait()
-        self.assertEqual(status, 0)
+        self.assertEqual(
+            status, 0, msg=f"bfasster failed with return code {status}, command: {' '.join(cmd)}"
+        )
 
         # the second time bfasster runs, ninja will have nothing to do.
         proc = subprocess.Popen(cmd, cwd=ROOT_PATH, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (output, _) = proc.communicate()
         status = proc.wait()
-        self.assertEqual(status, 0)
+        self.assertEqual(
+            status, 0, msg=f"bfasster failed with return code {status}, command: {' '.join(cmd)}"
+        )
         self.assertIn("ninja: no work to do.", str(output))
 
     def test_run_vivado_flow(self):
@@ -43,7 +47,7 @@ class TestBfassterApplicationRunner(unittest.TestCase):
 
     def test_run_vivado_and_reversed_flow(self):
         """Test that the runner runs the vivado and reversed flow without errors"""
-        self.__run_flow("vivado_and_reversed")
+        self.__run_flow("vivado_bit_analysis")
 
     def test_run_vivado_phys_netlist_flow(self):
         """Test that the runner runs the vivado_phys_netlist flow without errors"""
@@ -76,8 +80,8 @@ class TestBfassterApplicationRunner(unittest.TestCase):
         """Capture the output of utils.py error function so that it doesn't print to the console"""
         with self.assertRaises(SystemExit):
             buf = io.StringIO()
-            with redirect_stdout(buf):
-                check_args(args)
+            with redirect_stderr(buf):
+                parse_args(args)
 
     def test_check_args_fails_on_yaml_and_design_and_flow(self):
         args = Namespace(

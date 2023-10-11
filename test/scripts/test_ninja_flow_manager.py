@@ -152,7 +152,7 @@ class TestNinjaFlowManager(unittest.TestCase):
         self.__run_ninja()
         new_mtime = NINJA_BUILD_PATH.stat().st_mtime
 
-        self.assertGreater(new_mtime, old_mtime)
+        self.assertGreater(new_mtime, old_mtime, msg=f"{dependency_path} did not trigger a rebuild")
 
     def __update_file_mtime(self, file_path):
         """Update the mtime of the given file."""
