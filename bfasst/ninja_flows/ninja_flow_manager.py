@@ -69,12 +69,14 @@ class NinjaFlowManager:
 
     def __populate_template(self):
         with open(ROOT_PATH / "master.ninja.mustache", "r") as f:
+            deps = []
+            self.flows[0].add_ninja_deps(deps)
             master_ninja = chevron.render(
                 f,
                 {
                     "ninja_flows_path": str(NINJA_FLOWS_PATH),
                     "designs": self.designs,
-                    "deps": self.flows[0].add_ninja_deps(),
+                    "deps": deps,
                     "flow": self.flow_name,
                     "flow_args": self.flow_args,
                 },

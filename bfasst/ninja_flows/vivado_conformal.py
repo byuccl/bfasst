@@ -30,16 +30,11 @@ class VivadoConformal(Flow):
             vendor=Vendor.XILINX,
         )
 
-    def add_ninja_deps(self, deps=None):
-        # pylint: disable=duplicate-code
-        if not deps:
-            deps = []
-        deps.extend(self.vivado_tool.add_ninja_deps())
-        deps.extend(self.xrev_tool.add_ninja_deps())
-        deps.extend(self.conformal_tool.add_ninja_deps())
-        deps.append(f"{NINJA_FLOWS_PATH}/vivado_conformal.py")
-        # pylint: enable=duplicate-code
-        return deps
+    def add_ninja_deps(self, deps):
+        self.vivado_tool.add_ninja_deps(deps)
+        self.xrev_tool.add_ninja_deps(deps)
+        self.conformal_tool.add_ninja_deps(deps)
+        deps.append(NINJA_FLOWS_PATH / "vivado_conformal.py")
 
     def get_top_level_flow_path(self) -> str:
         return f"{NINJA_FLOWS_PATH}/vivado_conformal.py"

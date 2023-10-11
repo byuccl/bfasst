@@ -76,12 +76,7 @@ class PhysNetlist(Tool):
         self.outputs["checkpoint_to_v_json"] = self.build_path / "checkpoint_to_v.json"
         self.outputs["rapidwright_log"] = self.build_path / "rapidwright_stdout.log"
 
-    def add_ninja_deps(self, deps=None):
-        if not deps:
-            deps = []
-        deps.append(f"{NINJA_TRANSFORM_TOOLS_PATH}/phys_netlist.py")
-        deps.append(f"{NINJA_UTILS_PATH}/rw_phys_netlist.py")
-        deps.append(f"{NINJA_TRANSFORM_TOOLS_PATH}/phys_netlist_build.ninja.mustache")
-        deps.append(f"{PHYS_NETLIST_RULES_PATH}")
-        deps.append(f"{NINJA_TRANSFORM_TOOLS_PATH}/checkpoint_to_v.tcl.mustache")
-        return deps
+    def add_ninja_deps(self, deps):
+        self._add_ninja_deps_default(deps, __file__)
+        deps.append(NINJA_UTILS_PATH / "rw_phys_netlist.py")
+        deps.append(NINJA_TRANSFORM_TOOLS_PATH / "checkpoint_to_v.tcl.mustache")

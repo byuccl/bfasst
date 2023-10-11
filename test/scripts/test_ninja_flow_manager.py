@@ -10,7 +10,7 @@ from bfasst.paths import (
     ROOT_PATH,
 )
 from bfasst.ninja_flows.vivado import Vivado
-from bfasst.ninja_flows.vivado_and_reversed import VivadoAndReversed
+from bfasst.ninja_flows.vivado_bit_analysis import VivadoBitAnalysis
 from bfasst.ninja_flows.vivado_phys_netlist import VivadoPhysNetlist
 from bfasst.ninja_flows.vivado_phys_netlist_xrev import VivadoPhysNetlistXrev
 from bfasst.ninja_flows.vivado_phys_netlist_cmp import VivadoPhysNetlistCmp
@@ -19,6 +19,9 @@ from bfasst.ninja_flows.vivado_conformal import VivadoConformal
 from bfasst.ninja_flows.vivado_yosys_impl import VivadoYosysImpl
 
 from bfasst.ninja_flows.ninja_flow_manager import NinjaFlowManager, get_design_basenames
+
+# Disable this since we are testing a class
+# pylint: disable=too-many-public-methods
 
 
 class TestNinjaFlowManager(unittest.TestCase):
@@ -44,7 +47,7 @@ class TestNinjaFlowManager(unittest.TestCase):
         self.assertTrue(self.flow_manager.flows[0].ooc)
 
     def test_create_vivado_reversed_flow(self):
-        self.__check_flow_creation(VivadoAndReversed, "vivado_and_reversed")
+        self.__check_flow_creation(VivadoBitAnalysis, "vivado_and_reversed")
 
     def test_create_vivado_phys_netlist_flow(self):
         self.__check_flow_creation(VivadoPhysNetlist, "vivado_phys_netlist")

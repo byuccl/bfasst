@@ -186,13 +186,8 @@ class Vivado(Tool):
             self.outputs["synth_constraints"] = self.synth_output / (self.top + ".xdc")
             self.outputs["bitstream"] = self.impl_output / (self.top + ".bit")
 
-    def add_ninja_deps(self, deps=None):
+    def add_ninja_deps(self, deps):
         """Add dependencies to the master ninja file that would cause it to rebuild if modified"""
-        if not deps:
-            deps = []
-        deps.append(f"{NINJA_SYNTH_TOOLS_PATH}/viv_synth.ninja.mustache")
-        deps.append(f"{NINJA_IMPL_TOOLS_PATH}/viv_impl.ninja.mustache")
-        deps.append(f"{NINJA_VIVADO_TOOLS_PATH}/vivado.py")
-        deps.append(f"{VIVADO_RULES_PATH}")
-
-        return deps
+        self._add_ninja_deps_default(deps, __file__)
+        deps.append(NINJA_SYNTH_TOOLS_PATH / "viv_synth.ninja.mustache")
+        deps.append(NINJA_IMPL_TOOLS_PATH / "viv_impl.ninja.mustache")

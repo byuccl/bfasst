@@ -27,14 +27,11 @@ class VivadoYosysImpl(Flow):
             rev_netlist=self.xrev_tool.outputs["xray_netlist"],
         )
 
-    def add_ninja_deps(self, deps=None):
-        if not deps:
-            deps = []
-        deps.extend(self.vivado_tool.add_ninja_deps())
-        deps.extend(self.xrev_tool.add_ninja_deps())
-        deps.extend(self.yosys_tool.add_ninja_deps())
-        deps.append(f"{NINJA_FLOWS_PATH}/vivado_yosys_impl.py")
-        return deps
+    def add_ninja_deps(self, deps):
+        self.vivado_tool.add_ninja_deps(deps)
+        self.xrev_tool.add_ninja_deps(deps)
+        self.yosys_tool.add_ninja_deps(deps)
+        deps.append(NINJA_FLOWS_PATH / "vivado_yosys_impl.py")
 
     def get_top_level_flow_path(self):
         return f"{NINJA_FLOWS_PATH}/vivado_yosys_impl.py"

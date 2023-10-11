@@ -57,11 +57,6 @@ class ErrorInjector(Tool):
         self.outputs["injection_log"].append(injection_log)
         self.outputs["corrupt_netlist"].append(corrupt_netlist)
 
-    def add_ninja_deps(self, deps=None):
-        if not deps:
-            deps = []
-        deps.append(f"{NINJA_TRANSFORM_TOOLS_PATH}/error_injector.py")
-        deps.append(f"{NINJA_TRANSFORM_TOOLS_PATH}/error_injector.ninja_rules.mustache")
-        deps.append(f"{NINJA_TRANSFORM_TOOLS_PATH}/error_injector.ninja_build.mustache")
-        deps.append(f"{NINJA_UTILS_PATH}/error_injector.py")
-        return deps
+    def add_ninja_deps(self, deps):
+        self._add_ninja_deps_default(deps, __file__)
+        deps.append(NINJA_UTILS_PATH / "error_injector.py")

@@ -72,13 +72,7 @@ class Yosys(Tool):
         self.outputs["yosys_json"] = self.json
         self.outputs["yosys_tcl"] = self.tcl
 
-    def add_ninja_deps(self, deps=None):
+    def add_ninja_deps(self, deps):
         """Add the yosys ninja deps for the configure rule."""
-        if not deps:
-            deps = []
-        deps.append(f"{NINJA_YOSYS_TOOLS_PATH}/yosys.py")
-        deps.append(str(self.rules_template))
-        deps.append(str(self.build_template))
-        deps.append(str(self.tcl_template))
-
-        return deps
+        self._add_ninja_deps_default(deps, __file__)
+        deps.append(self.tcl_template)

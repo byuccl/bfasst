@@ -48,15 +48,9 @@ class Conformal(Tool):
         self.outputs["conformal_gui"] = self.build_path / "run_conformal_gui.sh"
         self.outputs["conformal_do"] = self.build_path / "compare.do"
 
-    def add_ninja_deps(self, deps=None):
+    def add_ninja_deps(self, deps):
         """Add the conformal ninja deps."""
-        if not deps:
-            deps = []
-        deps.append(f"{NINJA_CONFORMAL_TOOLS_PATH}/conformal.py")
-        deps.append(f"{NINJA_CONFORMAL_TOOLS_PATH}/conformal.ninja_rules.mustache")
-        deps.append(f"{NINJA_CONFORMAL_TOOLS_PATH}/conformal.ninja_build.mustache")
-        deps.append(f"{NINJA_CONFORMAL_TOOLS_PATH}/conformal.do.mustache")
-        deps.append(f"{NINJA_CONFORMAL_TOOLS_PATH}/conformal.gui.mustache")
-        deps.append(f"{NINJA_UTILS_PATH}/conformal.py ")
-
-        return deps
+        self._add_ninja_deps_default(deps, __file__)
+        deps.append(NINJA_CONFORMAL_TOOLS_PATH / "conformal.do.mustache")
+        deps.append(NINJA_CONFORMAL_TOOLS_PATH / "conformal.gui.mustache")
+        deps.append(NINJA_UTILS_PATH / "conformal.py")

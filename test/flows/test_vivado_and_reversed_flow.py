@@ -1,7 +1,7 @@
 """Unit tests for the VivadoAndReversed flow."""
 import unittest
 from bfasst.ninja_flows.flow_utils import create_build_file
-from bfasst.ninja_flows.vivado_and_reversed import VivadoAndReversed
+from bfasst.ninja_flows.vivado_bit_analysis import VivadoBitAnalysis
 from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.vivado.vivado import Vivado
 from bfasst.paths import (
@@ -18,7 +18,7 @@ class TestVivadoAndReversedFlow(unittest.TestCase):
         # overwrite the build file so it is not appended to incorrectly
         create_build_file()
 
-        cls.flow = VivadoAndReversed("byu/alu")
+        cls.flow = VivadoBitAnalysis("byu/alu")
         cls.flow.create_rule_snippets()
         cls.flow.create_build_snippets()
 

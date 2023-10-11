@@ -76,10 +76,5 @@ class Xray(Tool):
         self.outputs["xray_netlist"] = self.reversed_netlist_path
         self.outputs["xray_xdc"] = self.xdc_path
 
-    def add_ninja_deps(self, deps=None):
-        if not deps:
-            deps = []
-        deps.append(__file__)
-        deps.append(f"{REV_BIT_TOOLS_PATH}/xray.ninja_rules")
-        deps.append(f"{REV_BIT_TOOLS_PATH}/xray.ninja_build.mustache")
-        return deps
+    def add_ninja_deps(self, deps):
+        self._add_ninja_deps_default(deps, __file__)

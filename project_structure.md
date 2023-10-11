@@ -98,17 +98,14 @@ The following steps should be taken to add a new flow to the project:
 
 ## add_ninja_deps Method
 
-Each `Flow` and `Tool` object is required to implement the `add_ninja_deps` method. This method should return all src files associated with the object that, if changed, should cause `build.ninja` to *rebuild itself*. We provide a `configure` rule that will rebuild `build.ninja` when these files change. If none of these dependencies change, and the flow and designs stay the same, then `build.ninja` will not be rebuild the next time `bfasster.py` is run. The `add_ninja_deps` method should in every case return a list of paths as strings to all dependency files associated with the object. For example, the `Flow` object for the `vivado` flow is as follows:
+Each `Flow` and `Tool` object is required to implement the `add_ninja_deps` method. This method should return all src files associated with the object that, if changed, should cause `build.ninja` to *rebuild itself*. We provide a `configure` rule that will rebuild `build.ninja` when these files change. If none of these dependencies change, and the flow and designs stay the same, then `build.ninja` will not be rebuild the next time `bfasster.py` is run. The `add_ninja_deps` method should in every case extend the provided `deps` list with paths to all dependency files associated with the object. For example, the `Flow` object for the `vivado` flow is as follows:
 
 ```py
-def add_ninja_deps(self, deps=None):
-        if not deps:
-            deps = []
-        deps.extend(self.vivado_tool.add_ninja_deps())
-        deps.append(f"{NINJA_FLOWS_PATH}/vivado.py ")
+def add_ninja_deps(self, deps):
+        self.vivado_tool.add_ninja_deps(deps)
+        deps.append(NINJA_FLOWS_PATH / "vivado.py")
         if self.ooc:
-            deps.append(f"{NINJA_FLOWS_PATH}/vivado_ooc.py ")
-        return deps
+            deps.append(NINJA_FLOWS_PATH / "vivado_ooc.py")
 ```
 
 The entire goal of this restructuring of bfasst is to separate responsibilities and reduce the size of the code base. We hope that our approach will allow new flows to be added with relative ease and greatly improve the maintainability of the code base.

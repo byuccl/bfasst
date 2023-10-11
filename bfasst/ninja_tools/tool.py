@@ -108,11 +108,13 @@ class Tool(abc.ABC):
     def _add_ninja_deps_default(self, deps, py_tool_path):
         """Add default ninja filenames as dependencies"""
         py_tool_path = pathlib.Path(py_tool_path)
-        rules_path = py_tool_path.parent / (py_tool_path.stem + "_rules.ninja")
-        build_snippet_path = py_tool_path.parent / (py_tool_path.stem + "_build.ninja.mustache")
 
-        deps.append(py_tool_path)
-        deps.append(rules_path)
-        deps.append(build_snippet_path)
+        # Possible deps
+        possible_deps = []
+        possible_deps.append(py_tool_path.parent / (py_tool_path.stem + "_rules.ninja"))
+        possible_deps.append(py_tool_path.parent / (py_tool_path.stem + "_rules.ninja.mustache"))
+        possible_deps.append(py_tool_path.parent / (py_tool_path.stem + "_build.ninja.mustache"))
 
-        return deps
+        for dep in possible_deps:
+            if dep.is_file():
+                deps.append(dep)

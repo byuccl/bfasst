@@ -3,6 +3,7 @@
 """
 
 from bfasst.ninja_tools.tool import Tool
+from bfasst.paths import NINJA_UTILS_PATH
 from bfasst.yaml_parser import YamlParser
 
 
@@ -20,11 +21,9 @@ class NetlistCleanupTool(Tool):
     def _init_outputs(self):
         self.outputs["netlist_cleaned_path"] = self.netlist_out_path
 
-    def add_ninja_deps(self, deps=None):
-        if not deps:
-            deps = []
+    def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
-        return deps
+        deps.append(NINJA_UTILS_PATH / "netlist_cleanup.py")
 
     def create_rule_snippets(self):
         self._create_rule_snippets_default(__file__)

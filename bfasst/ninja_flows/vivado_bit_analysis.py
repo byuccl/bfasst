@@ -7,7 +7,7 @@ from bfasst.ninja_tools.rev_bit.xray import Xray as XrevTool
 from bfasst.ninja_tools.transform.netlist_cleanup import NetlistCleanupTool
 
 
-class XilinxBitAnalysis(Flow):
+class VivadoBitAnalysis(Flow):
     """Flow to reverse a netlist from a bitstream using x-ray."""
 
     def __init__(self, design, flow_args=None):
@@ -28,14 +28,11 @@ class XilinxBitAnalysis(Flow):
             netlist_in_path=self.xrev_tool.outputs["xray_netlist"],
         )
 
-    def add_ninja_deps(self, deps=None):
-        if not deps:
-            deps = []
-        deps.extend(self.vivado_tool.add_ninja_deps())
-        deps.extend(self.xrev_tool.add_ninja_deps())
-        deps.extend(self.netlist_cleanup_tool.add_ninja_deps())
-        deps.append(str(self.get_top_level_flow_path()))
-        return deps
+    def add_ninja_deps(self, deps):
+        self.vivado_tool.add_ninja_deps(deps)
+        self.xrev_tool.add_ninja_deps(deps)
+        self.netlist_cleanup_tool.add_ninja_deps(deps)
+        deps.append(self.get_top_level_flow_path())
 
     def get_top_level_flow_path(self):
         return pathlib.Path(__file__).resolve()

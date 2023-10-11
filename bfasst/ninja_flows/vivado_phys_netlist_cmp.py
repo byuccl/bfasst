@@ -36,16 +36,12 @@ class VivadoPhysNetlistCmp(Flow):
             log_name="struct_cmp.log",
         )
 
-    def add_ninja_deps(self, deps=None):
-        if not deps:
-            deps = []
-        deps.extend(self.vivado_tool.add_ninja_deps())
-        deps.extend(self.phys_netlist_tool.add_ninja_deps())
-        deps.extend(self.xray_tool.add_ninja_deps())
-        deps.extend(self.compare_tool.add_ninja_deps())
-        deps.append(f"{NINJA_FLOWS_PATH}/vivado_phys_netlist_cmp.py")
-
-        return deps
+    def add_ninja_deps(self, deps):
+        self.vivado_tool.add_ninja_deps(deps)
+        self.phys_netlist_tool.add_ninja_deps(deps)
+        self.xray_tool.add_ninja_deps(deps)
+        self.compare_tool.add_ninja_deps(deps)
+        deps.append(NINJA_FLOWS_PATH / "vivado_phys_netlist_cmp.py")
 
     def get_top_level_flow_path(self):
         return f"{NINJA_FLOWS_PATH}/vivado_phys_netlist_cmp.py"
