@@ -148,6 +148,7 @@ class TestNinjaFlowManager(unittest.TestCase):
 
         # update the dependency file's mtime
         dependency_path.touch()
+        time.sleep(1)
 
         # running the build.ninja file should rebuild it
         self.__run_ninja()
