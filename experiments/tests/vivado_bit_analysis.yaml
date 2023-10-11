@@ -2,6 +2,6 @@ designs:
     - byu/
     
     
-flow: xilinx_bit_analysis
+flow: vivado_bit_analysis
 
 synth: -max_dsp 0
