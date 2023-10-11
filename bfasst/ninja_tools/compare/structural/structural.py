@@ -10,12 +10,9 @@ class Structural(Tool):
 
     def __init__(self, design):
         super().__init__(design)
-        self.build = self.design_build_path / "struct_cmp"
-        self.__create_build_dir()
+        self.build_path = self.design_build_path / "struct_cmp"
+        self._create_build_dir()
         self.log_name = None
-
-    def __create_build_dir(self):
-        self.build.mkdir(parents=True, exist_ok=True)
 
     def create_rule_snippets(self):
         with open(NINJA_STRUCTURAL_TOOLS_PATH / "structural.ninja_rules.mustache", "r") as f:
@@ -30,10 +27,10 @@ class Structural(Tool):
             build = chevron.render(
                 f,
                 {
-                    "build": str(self.build.parent),
+                    "build": str(self.build_path.parent),
                     "netlist_a": str(netlist_a),
                     "netlist_b": str(netlist_b),
-                    "log_path": str(self.build / log_name),
+                    "log_path": str(self.build_path / log_name),
                     "compare_script_path": str(NINJA_UTILS_PATH / "structural.py"),
                 },
             )
@@ -44,7 +41,7 @@ class Structural(Tool):
     def _init_outputs(self, log_name):
         if "structural_log" not in self.outputs:
             self.outputs["structural_log"] = []
-        self.outputs["structural_log"].append(self.build / log_name)
+        self.outputs["structural_log"].append(self.build_path / log_name)
 
     def add_ninja_deps(self, deps=None):
         if not deps:

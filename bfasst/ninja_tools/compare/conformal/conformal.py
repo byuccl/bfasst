@@ -10,13 +10,10 @@ class Conformal(Tool):
 
     def __init__(self, design):
         super().__init__(design)
-        self.build = self.design_build_path / "conformal"
-        self.__create_build_dir()
+        self.build_path = self.design_build_path / "conformal"
+        self._create_build_dir()
         self._init_outputs()
         self._read_hdl_files()
-
-    def __create_build_dir(self):
-        self.build.mkdir(parents=True, exist_ok=True)
 
     def create_rule_snippets(self):
         """Create the rule snippets for conformal comparison."""
@@ -32,13 +29,13 @@ class Conformal(Tool):
             build = chevron.render(
                 f,
                 {
-                    "log_path": str(self.build / "log.txt"),
-                    "do_path": str(self.build / "compare.do"),
-                    "gui_path": str(self.build / "run_conformal_gui.sh"),
+                    "log_path": str(self.build_path / "log.txt"),
+                    "do_path": str(self.build_path / "compare.do"),
+                    "gui_path": str(self.build_path / "run_conformal_gui.sh"),
                     "hdl_srcs": impl_netlist,
                     "rev_netlist": rev_netlist,
                     "conformal_script_path": str(NINJA_UTILS_PATH / "conformal.py"),
-                    "build_dir": self.build.parent,
+                    "build_dir": self.build_path.parent,
                     "vendor": vendor.name,
                 },
             )
@@ -47,9 +44,9 @@ class Conformal(Tool):
             f.write(build)
 
     def _init_outputs(self):
-        self.outputs["conformal_log"] = self.build / "log.txt"
-        self.outputs["conformal_gui"] = self.build / "run_conformal_gui.sh"
-        self.outputs["conformal_do"] = self.build / "compare.do"
+        self.outputs["conformal_log"] = self.build_path / "log.txt"
+        self.outputs["conformal_gui"] = self.build_path / "run_conformal_gui.sh"
+        self.outputs["conformal_do"] = self.build_path / "compare.do"
 
     def add_ninja_deps(self, deps=None):
         """Add the conformal ninja deps."""

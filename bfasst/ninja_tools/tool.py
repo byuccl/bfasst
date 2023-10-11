@@ -1,8 +1,11 @@
 """Manage creating rule and build snippets for a given tool."""
 
 import abc
+import pathlib
 
-from bfasst.paths import BUILD_DIR, DESIGNS_PATH
+import chevron
+
+from bfasst.paths import BUILD_DIR, DESIGNS_PATH, NINJA_BUILD_PATH
 from bfasst.yaml_parser import YamlParser
 
 
@@ -12,6 +15,7 @@ class Tool(abc.ABC):
     def __init__(self, design_path):
         self.design_path = design_path
         self.design_build_path = BUILD_DIR / design_path.relative_to(DESIGNS_PATH)
+        self.build_path = None
         self.verilog = None
         self.system_verilog = None
         self.vhdl = None
@@ -67,3 +71,48 @@ class Tool(abc.ABC):
             if lib in str(vhdl_file):
                 return True
         return False
+
+    def _create_build_dir(self):
+        """Create the build directory for the tool"""
+        assert self.build_path is not None
+
+        self.build_path.mkdir(parents=True, exist_ok=True)
+
+    def _create_rule_snippets_default(self, py_tool_path):
+        """Create the rule snippets for a python tool,
+        assuming default filenames are used
+        """
+
+        py_tool_path = pathlib.Path(py_tool_path)
+        rules_path = py_tool_path.parent / (py_tool_path.stem + "_rules.ninja")
+
+        with open(rules_path, "r") as f:
+            rules = f.read()
+
+        with open(NINJA_BUILD_PATH, "a") as f:
+            f.write(rules)
+
+    def _append_build_snippets_default(self, py_tool_path, render_dict):
+        """Create the build snippets for a python tool,
+        assuming default filenames are used"""
+        py_tool_path = pathlib.Path(py_tool_path)
+
+        build_snippet_path = py_tool_path.parent / (py_tool_path.stem + "_build.ninja.mustache")
+
+        with open(build_snippet_path) as f:
+            build_snippet = chevron.render(f, render_dict)
+
+        with open(NINJA_BUILD_PATH, "a") as f:
+            f.write(build_snippet)
+
+    def _add_ninja_deps_default(self, deps, py_tool_path):
+        """Add default ninja filenames as dependencies"""
+        py_tool_path = pathlib.Path(py_tool_path)
+        rules_path = py_tool_path.parent / (py_tool_path.stem + "_rules.ninja")
+        build_snippet_path = py_tool_path.parent / (py_tool_path.stem + "_build.ninja.mustache")
+
+        deps.append(py_tool_path)
+        deps.append(rules_path)
+        deps.append(build_snippet_path)
+
+        return deps

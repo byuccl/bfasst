@@ -13,8 +13,8 @@ class Xray(Tool):
     def __init__(self, design):
         super().__init__(design)
 
-        self.build = self.design_build_path / "xray"
-        self.__create_build_dirs()
+        self.build_path = self.design_build_path / "xray"
+        self._create_build_dir()
 
         self.top = YamlParser(self.design_path / "design.yaml").parse_top_module()
 
@@ -31,15 +31,14 @@ class Xray(Tool):
         )
         self.xray_db_path = self.fasm2bels_path / "third_party" / "prjxray-db"
         self.db_root = self.xray_db_path / config.PART_FAMILY
-        self.to_netlist_log = self.build / "to_netlist.log"
-        self.fasm_path = self.build / (self.top + ".fasm")
-        self.reversed_netlist_path = self.build / (self.top + "_reversed.v")
-        self.xdc_path = self.build / (self.top + "_reversed.xdc")
-        self.constraints_path = str(self.build.parent / "in_context" / "synth" / self.top) + ".xdc"
+        self.to_netlist_log = self.build_path / "to_netlist.log"
+        self.fasm_path = self.build_path / (self.top + ".fasm")
+        self.reversed_netlist_path = self.build_path / (self.top + "_reversed.v")
+        self.xdc_path = self.build_path / (self.top + "_reversed.xdc")
+        self.constraints_path = (
+            str(self.build_path.parent / "in_context" / "synth" / self.top) + ".xdc"
+        )
         self._init_outputs()
-
-    def __create_build_dirs(self):
-        self.build.mkdir(parents=True, exist_ok=True)
 
     def create_rule_snippets(self):
         with open(REV_BIT_TOOLS_PATH / "xray.ninja_rules", "r") as f:
@@ -56,7 +55,7 @@ class Xray(Tool):
                 {
                     "xray_path": str(XRAY_PATH / "build" / "tools"),
                     "bitstream_path": bitstream,
-                    "xray_output": self.build,
+                    "xray_output": self.build_path,
                     "fasm2bels_path": self.fasm2bels_path,
                     "fasm2bels_python_path": self.fasm2bels_python_path,
                     "bit_to_fasm_path": XRAY_PATH / "utils" / "bit2fasm.py",
@@ -80,7 +79,7 @@ class Xray(Tool):
     def add_ninja_deps(self, deps=None):
         if not deps:
             deps = []
-        deps.append(f"{REV_BIT_TOOLS_PATH}/xray.py")
+        deps.append(__file__)
         deps.append(f"{REV_BIT_TOOLS_PATH}/xray.ninja_rules")
         deps.append(f"{REV_BIT_TOOLS_PATH}/xray.ninja_build.mustache")
         return deps
