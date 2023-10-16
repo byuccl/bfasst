@@ -21,7 +21,7 @@ NINJA_FLOWS_PATH = BFASST_PATH / "ninja_flows"
 
 NINJA_SYNTH_TOOLS_PATH = NINJA_TOOLS_PATH / "synth"
 NINJA_IMPL_TOOLS_PATH = NINJA_TOOLS_PATH / "impl"
-VIVADO_RULES_PATH = NINJA_TOOLS_PATH / "vivado" / "vivado.ninja.mustache"
+VIVADO_RULES_PATH = NINJA_TOOLS_PATH / "vivado" / "vivado_rules.ninja.mustache"
 NINJA_VIVADO_TOOLS_PATH = NINJA_TOOLS_PATH / "vivado"
 
 REV_BIT_TOOLS_PATH = NINJA_TOOLS_PATH / "rev_bit"

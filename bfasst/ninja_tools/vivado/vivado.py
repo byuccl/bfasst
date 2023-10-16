@@ -7,7 +7,6 @@ from bfasst.ninja_tools.tool import Tool
 from bfasst.paths import (
     NINJA_IMPL_TOOLS_PATH,
     NINJA_BUILD_PATH,
-    NINJA_VIVADO_TOOLS_PATH,
     NINJA_SYNTH_TOOLS_PATH,
     NINJA_UTILS_PATH,
     VIVADO_RULES_PATH,
@@ -25,13 +24,13 @@ class Vivado(Tool):
 
         self.ooc = ooc
         if ooc:
-            self.build = self.design_build_path / "ooc"
+            self.build_path = self.design_build_path / "ooc"
         else:
-            self.build = self.design_build_path / "in_context"
+            self.build_path = self.design_build_path / "in_context"
 
-        self.synth_output = self.build / "synth"
-        self.impl_output = self.build / "impl"
-        self.__create_build_dirs()
+        self.synth_output = self.build_path / "synth"
+        self.impl_output = self.build_path / "impl"
+        self._create_build_dir()
 
         self.top = YamlParser(self.design_path / "design.yaml").parse_top_module()
 
@@ -45,8 +44,8 @@ class Vivado(Tool):
 
         self.part = config.PART
 
-    def __create_build_dirs(self):
-        self.build.mkdir(parents=True, exist_ok=True)
+    def _create_build_dir(self):
+        super()._create_build_dir()
         self.synth_output.mkdir(exist_ok=True)
         self.impl_output.mkdir(exist_ok=True)
 
@@ -186,13 +185,8 @@ class Vivado(Tool):
             self.outputs["synth_constraints"] = self.synth_output / (self.top + ".xdc")
             self.outputs["bitstream"] = self.impl_output / (self.top + ".bit")
 
-    def add_ninja_deps(self, deps=None):
+    def add_ninja_deps(self, deps):
         """Add dependencies to the master ninja file that would cause it to rebuild if modified"""
-        if not deps:
-            deps = []
-        deps.append(f"{NINJA_SYNTH_TOOLS_PATH}/viv_synth.ninja.mustache")
-        deps.append(f"{NINJA_IMPL_TOOLS_PATH}/viv_impl.ninja.mustache")
-        deps.append(f"{NINJA_VIVADO_TOOLS_PATH}/vivado.py")
-        deps.append(f"{VIVADO_RULES_PATH}")
-
-        return deps
+        self._add_ninja_deps_default(deps, __file__)
+        deps.append(NINJA_SYNTH_TOOLS_PATH / "viv_synth.ninja.mustache")
+        deps.append(NINJA_IMPL_TOOLS_PATH / "viv_impl.ninja.mustache")

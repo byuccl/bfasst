@@ -61,16 +61,13 @@ class VivadoStructuralErrorInjection(Flow):
                     f"{error.name.lower()}_{i}_cmp.log",
                 )
 
-    def add_ninja_deps(self, deps=None):
-        if not deps:
-            deps = []
-        deps.extend(self.vivado_tool.add_ninja_deps())
-        deps.extend(self.phys_netlist_tool.add_ninja_deps())
-        deps.extend(self.xrev_tool.add_ninja_deps())
-        deps.extend(self.error_injector_tool.add_ninja_deps())
-        deps.extend(self.compare_tool.add_ninja_deps())
-        deps.append(f"{NINJA_FLOWS_PATH}/vivado_structural_error_injection.py")
-        return deps
+    def add_ninja_deps(self, deps):
+        self.vivado_tool.add_ninja_deps(deps)
+        self.phys_netlist_tool.add_ninja_deps(deps)
+        self.xrev_tool.add_ninja_deps(deps)
+        self.error_injector_tool.add_ninja_deps(deps)
+        self.compare_tool.add_ninja_deps(deps)
+        deps.append(NINJA_FLOWS_PATH / "vivado_structural_error_injection.py")
 
     def get_top_level_flow_path(self) -> str:
         return f"{NINJA_FLOWS_PATH}/vivado_structural_error_injection.py"

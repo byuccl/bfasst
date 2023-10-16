@@ -1,4 +1,8 @@
 """Unit tests for VivadoPhysNetlistCmp class."""
+
+# Disable this since we are testing a class
+# pylint: disable=duplicate-code
+
 import unittest
 
 from bfasst.ninja_flows.flow_utils import create_build_file
@@ -8,6 +12,7 @@ from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
 from bfasst.ninja_tools.vivado.vivado import Vivado
 from bfasst.paths import (
+    DESIGNS_PATH,
     NINJA_BUILD_PATH,
     NINJA_FLOWS_PATH,
 )
@@ -21,7 +26,7 @@ class TestVivadoPhysNetlistCmp(unittest.TestCase):
         # overwrite the build file so it is not appended to incorrectly
         create_build_file()
 
-        cls.flow = VivadoPhysNetlistCmp("byu/alu")
+        cls.flow = VivadoPhysNetlistCmp(DESIGNS_PATH / "byu/alu")
         cls.flow.create_rule_snippets()
         cls.flow.create_build_snippets()
 
@@ -47,19 +52,20 @@ class TestVivadoPhysNetlistCmp(unittest.TestCase):
 
     def test_add_ninja_deps(self):
         """Test that the flow adds the correct dependencies to the ninja file"""
-        observed = self.flow.add_ninja_deps(["foo", "bar"])
+        observed = ["foo", "bar"]
+        self.flow.add_ninja_deps(observed)
         expected = [
             "foo",
             "bar",
         ]
-        expected.extend(Vivado("byu/alu").add_ninja_deps())
-        expected.extend(PhysNetlist("byu/alu").add_ninja_deps())
-        expected.extend(Xray("byu/alu").add_ninja_deps())
-        expected.extend(Structural("byu/alu").add_ninja_deps())
-        expected.append(f"{NINJA_FLOWS_PATH}/vivado_phys_netlist_cmp.py")
+        Vivado(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        PhysNetlist(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        Xray(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        Structural(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        expected.append(NINJA_FLOWS_PATH / "vivado_phys_netlist_cmp.py")
 
-        observed.sort()
-        expected.sort()
+        observed = sorted([str(s) for s in observed])
+        expected = sorted([str(s) for s in expected])
         self.assertEqual(observed, expected)
 
     def test_get_top_level_flow_path(self):

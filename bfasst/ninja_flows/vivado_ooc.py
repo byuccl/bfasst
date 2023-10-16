@@ -1,11 +1,13 @@
 """Out-of-context Vivado flow"""
 from bfasst.ninja_flows.vivado import Vivado
+from bfasst.paths import NINJA_FLOWS_PATH
 
 
-class VivadoOoc:
+class VivadoOoc(Vivado):
     """Out of context Vivado flow"""
 
-    def __new__(self, design, flow_args=None):
-        if isinstance(flow_args, dict) and "synth" in flow_args:
-            return Vivado(design, flow_args["synth"], ooc=True)
-        return Vivado(design, ooc=True)
+    def __init__(self, design, flow_args=None):
+        super().__init__(design, flow_args, ooc=True)
+
+    def get_top_level_flow_path(self):
+        return NINJA_FLOWS_PATH / "vivado_ooc.py"

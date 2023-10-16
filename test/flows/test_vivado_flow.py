@@ -1,10 +1,16 @@
 """Unit tests for the Vivado flow."""
+
+# Disable this since we are testing a class
+# pylint: disable=duplicate-code
+
 import json
 import unittest
+
 from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado import Vivado
 from bfasst.ninja_tools.vivado.vivado import Vivado as VivadoTool
 from bfasst.paths import (
+    DESIGNS_PATH,
     NINJA_BUILD_PATH,
     NINJA_FLOWS_PATH,
 )
@@ -19,7 +25,7 @@ class TestVivadoFlow(unittest.TestCase):
         # overwrite the build file so it is not appended to incorrectly
         create_build_file()
 
-        cls.flow = Vivado("byu/alu")
+        cls.flow = Vivado(DESIGNS_PATH / "byu/alu")
         cls.flow.create_rule_snippets()
         cls.flow.create_build_snippets()
 
@@ -78,18 +84,19 @@ class TestVivadoFlow(unittest.TestCase):
 
     def test_add_ninja_deps(self):
         """Test that the flow adds the correct dependencies for the build.ninja file."""
-        observed = self.flow.add_ninja_deps(["foo", "bar"])
+        observed = ["foo", "bar"]
+        self.flow.add_ninja_deps(observed)
         expected = [
             "foo",
             "bar",
         ]
-        expected.extend(VivadoTool("byu/alu").add_ninja_deps())
-        expected.append(f"{NINJA_FLOWS_PATH}/vivado.py")
+        VivadoTool(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        expected.append(NINJA_FLOWS_PATH / "vivado.py")
 
         self.assertEqual(observed, expected)
 
     def test_get_top_level_flow_path(self):
-        self.assertEqual(self.flow.get_top_level_flow_path(), f"{NINJA_FLOWS_PATH}/vivado.py")
+        self.assertEqual(self.flow.get_top_level_flow_path(), NINJA_FLOWS_PATH / "vivado.py")
 
 
 if __name__ == "__main__":

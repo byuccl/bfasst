@@ -69,3 +69,4 @@ jobs:
     - name: Run doctest
       run: |
         make doctest
+

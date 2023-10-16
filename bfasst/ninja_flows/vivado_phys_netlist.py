@@ -24,13 +24,10 @@ class VivadoPhysNetlist(Flow):
             impl_edf=self.vivado_tool.outputs["impl_edf"],
         )
 
-    def add_ninja_deps(self, deps=None):
-        if not deps:
-            deps = []
-        deps.extend(self.vivado_tool.add_ninja_deps())
-        deps.extend(self.phys_netlist_tool.add_ninja_deps())
-        deps.append(f"{NINJA_FLOWS_PATH}/vivado_phys_netlist.py")
-        return deps
+    def add_ninja_deps(self, deps):
+        self.vivado_tool.add_ninja_deps(deps)
+        self.phys_netlist_tool.add_ninja_deps(deps)
+        deps.append(NINJA_FLOWS_PATH / "vivado_phys_netlist.py")
 
     def get_top_level_flow_path(self):
         return f"{NINJA_FLOWS_PATH}/vivado_phys_netlist.py"

@@ -12,18 +12,15 @@ class Yosys(Tool):
 
     def __init__(self, design):
         super().__init__(design)
-        self.build = self.design_build_path / "yosys"
-        self.log = self.build / "log.txt"
-        self.json = self.build / "yosys.json"
-        self.tcl = self.build / "compare.ys"
+        self.build_path = self.design_build_path / "yosys"
+        self.log = self.build_path / "log.txt"
+        self.json = self.build_path / "yosys.json"
+        self.tcl = self.build_path / "compare.ys"
         self.tcl_template = NINJA_YOSYS_TOOLS_PATH / "yosys.tcl.mustache"
-        self.rules_template = NINJA_YOSYS_TOOLS_PATH / "yosys.ninja_rules.mustache"
-        self.build_template = NINJA_YOSYS_TOOLS_PATH / "yosys.ninja_build.mustache"
-        self.__create_build_dir()
+        self.rules_template = NINJA_YOSYS_TOOLS_PATH / "yosys_rules.ninja.mustache"
+        self.build_template = NINJA_YOSYS_TOOLS_PATH / "yosys_build.ninja.mustache"
+        self._create_build_dir()
         self._init_outputs()
-
-    def __create_build_dir(self):
-        self.build.mkdir(parents=True, exist_ok=True)
 
     def create_rule_snippets(self):
         with open(self.rules_template, "r") as f:
@@ -75,13 +72,7 @@ class Yosys(Tool):
         self.outputs["yosys_json"] = self.json
         self.outputs["yosys_tcl"] = self.tcl
 
-    def add_ninja_deps(self, deps=None):
+    def add_ninja_deps(self, deps):
         """Add the yosys ninja deps for the configure rule."""
-        if not deps:
-            deps = []
-        deps.append(f"{NINJA_YOSYS_TOOLS_PATH}/yosys.py")
-        deps.append(str(self.rules_template))
-        deps.append(str(self.build_template))
-        deps.append(str(self.tcl_template))
-
-        return deps
+        self._add_ninja_deps_default(deps, __file__)
+        deps.append(self.tcl_template)

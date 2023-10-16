@@ -19,14 +19,11 @@ class PhysNetlist(Tool):
     def __init__(self, design):
         super().__init__(design)
 
-        self.build = self.design_build_path / "vivado_phys_netlist"
-        self.phys_netlist_path = self.build / "viv_impl_physical.v"
-        self.__create_build_dir()
+        self.build_path = self.design_build_path / "vivado_phys_netlist"
+        self.phys_netlist_path = self.build_path / "viv_impl_physical.v"
+        self._create_build_dir()
 
         self._init_outputs()
-
-    def __create_build_dir(self):
-        self.build.mkdir(parents=True, exist_ok=True)
 
     def create_rule_snippets(self):
         with open(PHYS_NETLIST_RULES_PATH, "r") as f:
@@ -42,14 +39,16 @@ class PhysNetlist(Tool):
     def __write_json_file(self):
         checkpoint_to_v = {
             "phys_netlist_verilog_path": str(self.phys_netlist_path),
-            "phys_netlist_checkpoint": str(self.build / "phys_netlist.dcp"),
+            "phys_netlist_checkpoint": str(self.build_path / "phys_netlist.dcp"),
         }
 
         checkpoint_to_v_json = json.dumps(checkpoint_to_v, indent=4)
 
-        json_equivalent = compare_json(self.build / "checkpoint_to_v.json", checkpoint_to_v_json)
+        json_equivalent = compare_json(
+            self.build_path / "checkpoint_to_v.json", checkpoint_to_v_json
+        )
         if not json_equivalent:
-            with open(self.build / "checkpoint_to_v.json", "w") as f:
+            with open(self.build_path / "checkpoint_to_v.json", "w") as f:
                 f.write(checkpoint_to_v_json)
 
     def __append_build_snippets(self, impl_dcp, impl_edf):
@@ -57,9 +56,9 @@ class PhysNetlist(Tool):
             phys_netlist_ninja = chevron.render(
                 f,
                 {
-                    "phys_netlist_output": self.build,
+                    "phys_netlist_output": self.build_path,
                     "phys_netlist_library": NINJA_TRANSFORM_TOOLS_PATH,
-                    "build_dir": self.build.parent,
+                    "build_dir": self.build_path.parent,
                     "impl_dcp": impl_dcp,
                     "impl_edf": impl_edf,
                 },
@@ -69,20 +68,15 @@ class PhysNetlist(Tool):
             f.write(phys_netlist_ninja)
 
     def _init_outputs(self):
-        self.outputs["checkpoint_to_v_tcl"] = self.build / "checkpoint_to_v.tcl"
-        self.outputs["viv_impl_physical_edf"] = self.build / "viv_impl_physical.edf"
+        self.outputs["checkpoint_to_v_tcl"] = self.build_path / "checkpoint_to_v.tcl"
+        self.outputs["viv_impl_physical_edf"] = self.build_path / "viv_impl_physical.edf"
         self.outputs["viv_impl_physical_v"] = self.phys_netlist_path
-        self.outputs["phys_netlist_checkpoint"] = self.build / "phys_netlist.dcp"
-        self.outputs["phys_netlist_log"] = self.build / "log.txt"
-        self.outputs["checkpoint_to_v_json"] = self.build / "checkpoint_to_v.json"
-        self.outputs["rapidwright_log"] = self.build / "rapidwright_stdout.log"
+        self.outputs["phys_netlist_checkpoint"] = self.build_path / "phys_netlist.dcp"
+        self.outputs["phys_netlist_log"] = self.build_path / "log.txt"
+        self.outputs["checkpoint_to_v_json"] = self.build_path / "checkpoint_to_v.json"
+        self.outputs["rapidwright_log"] = self.build_path / "rapidwright_stdout.log"
 
-    def add_ninja_deps(self, deps=None):
-        if not deps:
-            deps = []
-        deps.append(f"{NINJA_TRANSFORM_TOOLS_PATH}/phys_netlist.py")
-        deps.append(f"{NINJA_UTILS_PATH}/rw_phys_netlist.py")
-        deps.append(f"{NINJA_TRANSFORM_TOOLS_PATH}/phys_netlist_build.ninja.mustache")
-        deps.append(f"{PHYS_NETLIST_RULES_PATH}")
-        deps.append(f"{NINJA_TRANSFORM_TOOLS_PATH}/checkpoint_to_v.tcl.mustache")
-        return deps
+    def add_ninja_deps(self, deps):
+        self._add_ninja_deps_default(deps, __file__)
+        deps.append(NINJA_UTILS_PATH / "rw_phys_netlist.py")
+        deps.append(NINJA_TRANSFORM_TOOLS_PATH / "checkpoint_to_v.tcl.mustache")
