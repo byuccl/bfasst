@@ -7,6 +7,8 @@ import pathlib
 
 import spydrnet as sdn
 
+from bfasst.utils.sdn_helpers import SdnNetlistWrapper
+
 
 class NetlistCleaner:
     """Clean a netlist."""
@@ -30,7 +32,7 @@ class NetlistCleaner:
         netlist_ir = sdn.parse(self.netlist_in)
         top = netlist_ir.top_instance
 
-        # Find all ASSIGN instances
+        # Find all ASSIGN instances and remove them
         for instance in top.get_instances():
             if instance.reference.name.startswith("SDN_VERILOG_ASSIGNMENT"):
                 for pin in instance.pins:
@@ -50,13 +52,22 @@ class NetlistCleaner:
                 logging.info("Removing instance: %s", instance)
                 top.reference.remove_child(instance)
 
+        netlist_wrapper = SdnNetlistWrapper(top)
+
+        # Remove unused LUTs
+        for instance_wrapper in netlist_wrapper.instances:
+            if instance_wrapper.instance.reference.name != "LUT6_2":
+                continue
+            logging.info("Processing LUT %s", instance_wrapper.name)
+
+            pin_o5_net = netlist_wrapper.wire_to_net[instance_wrapper.get_pin("O5").pin.wire]
+            pin_o6_net = netlist_wrapper.wire_to_net[instance_wrapper.get_pin("O6").pin.wire]
+
+            if not pin_o6_net.is_connected and not pin_o5_net.is_connected:
+                top.reference.remove_child(instance_wrapper.instance)
+
         # Write out netlist
         sdn.compose(netlist_ir, self.netlist_out, write_blackbox=False)
-
-        # logging.info(f"Top module: {top.name}")
-
-        # print(top)
-        # print(top.name)
 
 
 if __name__ == "__main__":

@@ -11,7 +11,7 @@ import spydrnet as sdn
 from bfasst import jpype_jvm
 from bfasst.utils import convert_verilog_literal_to_int
 from bfasst.utils.general import log_with_banner
-from bfasst.utils.sdn_helpers import Netlist, Instance, Net, Pin
+from bfasst.utils.sdn_helpers import SdnNetlistWrapper, SdnInstanceWrapper, SdnNet, SdnPinWrapper
 
 
 class StructuralCompareError(Exception):
@@ -255,7 +255,7 @@ class StructuralCompare:
         """Map top-level ports"""
         log_with_banner("Mapping top-level ports")
         for pin in self.named_netlist.pins:
-            assert isinstance(pin, Pin)
+            assert isinstance(pin, SdnPinWrapper)
             reversed_pin = self.reversed_netlist.get_pin(pin.name, pin.index)
             logging.info(
                 "Mapping port %s[%s] to %s[%s]",
@@ -496,7 +496,7 @@ class StructuralCompare:
                 # Disconnected pin
                 continue
 
-            assert isinstance(net_a, Net)
+            assert isinstance(net_a, SdnNet)
             if net_a in self.net_mapping:
                 continue
 
@@ -510,7 +510,7 @@ class StructuralCompare:
             net_b = matched_instance.get_pin(pin.name, idx).net
             if net_b is None and net_a.is_gnd:
                 continue
-            assert isinstance(net_b, Net)
+            assert isinstance(net_b, SdnNet)
 
             if net_a in self.net_mapping:
                 assert net_b == self.net_mapping[net_a]
@@ -558,7 +558,7 @@ class StructuralCompare:
 
         bram_a_only = named_instance.properties["RAM_MODE"] == '"TDP"' and {
             None,
-            Instance.GND_PIN.net,
+            SdnInstanceWrapper.GND_PIN.net,
         } >= {
             named_instance.get_pin("DOBDO", i).net
             for i in range(32)
@@ -740,7 +740,7 @@ class StructuralCompare:
             raise StructuralCompareError(f"Unhandled properties for type {cell_type}") from err
 
     def get_netlist(self, library):
-        return Netlist(library)
+        return SdnNetlistWrapper(library)
 
 
 if __name__ == "__main__":
