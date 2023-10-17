@@ -9,7 +9,6 @@ from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado_phys_netlist_cmp import VivadoPhysNetlistCmp
 from bfasst.ninja_tools.compare.structural.structural import Structural
 from bfasst.ninja_tools.rev_bit.xray import Xray
-from bfasst.ninja_tools.transform.netlist_cleanup import NetlistCleanupTool
 from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
 from bfasst.ninja_tools.vivado.vivado import Vivado
 from bfasst.paths import (
@@ -49,7 +48,7 @@ class TestVivadoPhysNetlistCmp(unittest.TestCase):
             build_statement_count = f.read().count("\nbuild ")
 
         # There should be 11 build statements for a single design using this flow
-        self.assertEqual(build_statement_count, 12)
+        self.assertEqual(build_statement_count, 11)
 
     def test_add_ninja_deps(self):
         """Test that the flow adds the correct dependencies to the ninja file"""
@@ -62,7 +61,6 @@ class TestVivadoPhysNetlistCmp(unittest.TestCase):
         Vivado(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         PhysNetlist(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         Xray(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
-        NetlistCleanupTool(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         Structural(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         expected.append(NINJA_FLOWS_PATH / "vivado_phys_netlist_cmp.py")
 
