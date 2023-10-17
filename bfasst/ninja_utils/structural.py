@@ -247,7 +247,8 @@ class StructuralCompare:
         logging.info("Total time: %s seconds", mtime + vtime)
 
         self.end_time = time.time()
-        logging.info("Total time: ".ljust(35) + self.end_time - self.start_time)
+        total_time_msg = "Total time: ".ljust(35) + str(self.end_time - self.start_time)
+        logging.info(total_time_msg)
         with open(self.comparison_time_log, "w") as f:
             f.write(f"{self.end_time - self.start_time}\n")
 
@@ -434,7 +435,7 @@ class StructuralCompare:
                 pin_b = mapped_instance.get_pin(pin_a.name, pin_a.index)
 
                 net_a = pin_a.net
-                net_b = pin_b.net
+                net_b = None if pin_b is None else pin_b.net
                 net_a_empty = net_a is None or not net_a.is_connected
                 net_b_empty = net_b is None or not net_b.is_connected
 
@@ -507,7 +508,10 @@ class StructuralCompare:
             else:
                 idx = 0 if pin.index == 1 else 1
 
-            net_b = matched_instance.get_pin(pin.name, idx).net
+            pin_b = matched_instance.get_pin(pin.name, idx)
+            if pin_b is None:
+                continue
+            net_b = pin_b.net
             if net_b is None and net_a.is_gnd:
                 continue
             assert isinstance(net_b, SdnNet)
