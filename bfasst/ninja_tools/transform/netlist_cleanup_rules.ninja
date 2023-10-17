@@ -1,3 +1,4 @@
 rule netlist_cleanup
     command = python bfasst/ninja_utils/netlist_cleanup.py $build_path  $netlist_in  $netlist_out
     description = netlist cleanup for $in
+

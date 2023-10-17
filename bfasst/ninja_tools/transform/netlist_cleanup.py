@@ -17,6 +17,7 @@ class NetlistCleanupTool(Tool):
         self.build_path = self.design_build_path / "netlist_cleanup"
         self.netlist_out_path = self.build_path / (self.top + "_clean.v")
         self._create_build_dir()
+        self._init_outputs()
 
     def _init_outputs(self):
         self.outputs["netlist_cleaned_path"] = self.netlist_out_path
