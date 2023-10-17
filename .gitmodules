@@ -12,4 +12,4 @@
 	url = https://github.com/Xilinx/RapidWright.git
 [submodule "third_party/gmt_tools"]
 	path = third_party/gmt_tools
-	url = git@github.com:jgoeders/gmt_tools.git
+	url = git@github.com:byuccl/gmt_tools.git
