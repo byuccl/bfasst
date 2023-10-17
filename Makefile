@@ -67,13 +67,13 @@ endif
 submodules:
 	git submodule update --init --recursive
 
-rapidwright: submodules
+rapidwright:
 	cd third_party/RapidWright && ./gradlew compileJava
 	cd third_party/RapidWright/interchange/ && make
 	$(IN_ENV) cd third_party/RapidWright ; export PATH=`pwd`/bin:$$PATH ; \
 	rapidwright jython -c 'FileTools.ensureDataFilesAreStaticInstallFriendly("xc7a200t")'
 
-install_fasm2bels: submodules
+install_fasm2bels:
 	$(IN_ENV) cd third_party/fasm2bels && make env
 	$(IN_ENV) cd third_party/fasm2bels && make build
 	$(IN_ENV) cd third_party/fasm2bels && make test-py
@@ -81,7 +81,7 @@ install_fasm2bels: submodules
 # Run a simple design through fasm2bels to generate the database.
 	$(IN_ENV) python scripts/run_design.py designs/basic/and3/ xilinx_and_reversed
 
-install_wafove: submodules
+install_wafove:
 	$(IN_ENV) python -m pip install -e third_party/WaFoVe
 	$(IN_ENV) cd third_party/WaFoVe && make build
 
