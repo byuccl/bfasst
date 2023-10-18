@@ -11,7 +11,7 @@ import spydrnet as sdn
 from bfasst import jpype_jvm
 from bfasst.utils import convert_verilog_literal_to_int
 from bfasst.utils.general import log_with_banner
-from bfasst.utils.sdn_helpers import Netlist, Instance, Net, Pin
+from bfasst.utils.sdn_helpers import SdnNetlistWrapper, SdnInstanceWrapper, SdnNet, SdnPinWrapper
 
 
 class StructuralCompareError(Exception):
@@ -247,7 +247,8 @@ class StructuralCompare:
         logging.info("Total time: %s seconds", mtime + vtime)
 
         self.end_time = time.time()
-        logging.info("Total time: ".ljust(35) + self.end_time - self.start_time)
+        total_time_msg = "Total time: ".ljust(35) + str(self.end_time - self.start_time)
+        logging.info(total_time_msg)
         with open(self.comparison_time_log, "w") as f:
             f.write(f"{self.end_time - self.start_time}\n")
 
@@ -255,7 +256,7 @@ class StructuralCompare:
         """Map top-level ports"""
         log_with_banner("Mapping top-level ports")
         for pin in self.named_netlist.pins:
-            assert isinstance(pin, Pin)
+            assert isinstance(pin, SdnPinWrapper)
             reversed_pin = self.reversed_netlist.get_pin(pin.name, pin.index)
             logging.info(
                 "Mapping port %s[%s] to %s[%s]",
@@ -434,7 +435,7 @@ class StructuralCompare:
                 pin_b = mapped_instance.get_pin(pin_a.name, pin_a.index)
 
                 net_a = pin_a.net
-                net_b = pin_b.net
+                net_b = None if pin_b is None else pin_b.net
                 net_a_empty = net_a is None or not net_a.is_connected
                 net_b_empty = net_b is None or not net_b.is_connected
 
@@ -496,7 +497,7 @@ class StructuralCompare:
                 # Disconnected pin
                 continue
 
-            assert isinstance(net_a, Net)
+            assert isinstance(net_a, SdnNet)
             if net_a in self.net_mapping:
                 continue
 
@@ -507,10 +508,13 @@ class StructuralCompare:
             else:
                 idx = 0 if pin.index == 1 else 1
 
-            net_b = matched_instance.get_pin(pin.name, idx).net
+            pin_b = matched_instance.get_pin(pin.name, idx)
+            if pin_b is None:
+                continue
+            net_b = pin_b.net
             if net_b is None and net_a.is_gnd:
                 continue
-            assert isinstance(net_b, Net)
+            assert isinstance(net_b, SdnNet)
 
             if net_a in self.net_mapping:
                 assert net_b == self.net_mapping[net_a]
@@ -558,7 +562,7 @@ class StructuralCompare:
 
         bram_a_only = named_instance.properties["RAM_MODE"] == '"TDP"' and {
             None,
-            Instance.GND_PIN.net,
+            SdnInstanceWrapper.GND_PIN.net,
         } >= {
             named_instance.get_pin("DOBDO", i).net
             for i in range(32)
@@ -740,7 +744,7 @@ class StructuralCompare:
             raise StructuralCompareError(f"Unhandled properties for type {cell_type}") from err
 
     def get_netlist(self, library):
-        return Netlist(library)
+        return SdnNetlistWrapper(library)
 
 
 if __name__ == "__main__":

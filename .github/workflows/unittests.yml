@@ -43,6 +43,7 @@ jobs:
         ls -la ./
     - uses: actions/checkout@v3
       with:
+        token: ${{ secrets.GMT_TOOLS_PAT }}
         submodules: 'recursive'
     - uses: ./.github/actions/setup_env
       with: 
@@ -76,6 +77,10 @@ jobs:
         ls -la ./
 
     - uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.GMT_TOOLS_PAT }}
+        submodules: 'recursive'
+    
     - uses: ./.github/actions/setup_env
       with: 
         cache_path: $HOME/actions-runner/cache

@@ -29,13 +29,13 @@ def functionally_map_netlists(golden_netlist_arg, reversed_netlist_arg):
     ir1 = sdn.parse(golden_netlist_arg)
 
     # Get the first library in the netlist
-    library1 = ir1.libraries[0]
+    library1 = ir1.top_instance
 
     # Loads the second netlist as intermediate representation (ir2)
     ir2 = sdn.parse(reversed_netlist_arg)
 
     # Get the second library in the netlist
-    library2 = ir2.libraries[0]
+    library2 = ir2.top_instance
 
     # Get mapped carries and flipflops from the counters
     carry_chain_mapped_flipflops = []

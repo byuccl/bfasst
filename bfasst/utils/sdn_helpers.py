@@ -4,7 +4,7 @@ import spydrnet as sdn
 import bfasst.utils.rw_helpers as rw
 
 
-class Netlist:
+class SdnNetlistWrapper:
     """Wrapper class around spydernet top level library"""
 
     GND_NAMES = set()
@@ -19,20 +19,20 @@ class Netlist:
         self.build_nets()
 
         # Instances
-        instances = [Instance(i, self) for i in library.get_instances()]
+        instances = [SdnInstanceWrapper(i, self) for i in library.get_instances()]
         self.instances = instances
 
         self.instances_to_map = {i for i in self.instances if i.cell_type not in ("GND", "VCC")}
 
-        Netlist.GND_NAMES = {i.name for i in self.instances if i.cell_type == "GND"}
-        Netlist.VCC_NAMES = {i.name for i in self.instances if i.cell_type == "VCC"}
+        SdnNetlistWrapper.GND_NAMES = {i.name for i in self.instances if i.cell_type == "GND"}
+        SdnNetlistWrapper.VCC_NAMES = {i.name for i in self.instances if i.cell_type == "VCC"}
 
         # Top-level IO pins
-        self.pins = [Pin(pin, None, self) for pin in library.get_pins()]
+        self.pins = [SdnPinWrapper(pin, None, self) for pin in library.get_pins()]
 
         self.pins_by_name_and_idx = {}
         for pin in self.pins:
-            assert isinstance(pin, Pin)
+            assert isinstance(pin, SdnPinWrapper)
             key = (pin.name, pin.index)
             assert key not in self.pins_by_name_and_idx
             self.pins_by_name_and_idx[key] = pin
@@ -46,14 +46,16 @@ class Netlist:
     def build_nets(self):
         """Setup Net objects"""
         # First construct net objects for each wire, skipping alias wires
-        non_alias_wires = [wire for wire in self.library.get_wires() if not Net.wire_is_alias(wire)]
+        non_alias_wires = [
+            wire for wire in self.library.get_wires() if not SdnNet.wire_is_alias(wire)
+        ]
         for wire in non_alias_wires:
-            net = Net(wire)
+            net = SdnNet(wire)
             # logging.info(f"New Net for wire {wire.cable.name}[{wire.index()}]")
             self.wire_to_net[wire] = net
 
         # Now add alias wires iteratively until they are all added
-        alias_wires = [wire for wire in self.library.get_wires() if Net.wire_is_alias(wire)]
+        alias_wires = [wire for wire in self.library.get_wires() if SdnNet.wire_is_alias(wire)]
 
         logging.info("Processing alias wires (derived from assign statements)")
 
@@ -62,7 +64,7 @@ class Netlist:
             progress = False
             processed_alias_wires = []
             for wire in alias_wires:
-                driver_wire = Net.wire_derived_from(wire)
+                driver_wire = SdnNet.wire_derived_from(wire)
                 if driver_wire not in self.wire_to_net:
                     continue
 
@@ -105,7 +107,7 @@ class Netlist:
         return [net for net in self.nets if net.is_connected]
 
 
-class Pin:
+class SdnPinWrapper:
     """Wrapper class around spydernet InnerPin/OuterPin to add some helper properties"""
 
     def __init__(self, pin, instance, netlist):
@@ -148,7 +150,7 @@ class Pin:
         return f"{self.name}[{self.index}]"
 
 
-class Net:
+class SdnNet:
     """Wrapper class around spydernet Wire to add some helper properties"""
 
     def __init__(self, wire):
@@ -206,9 +208,15 @@ class Net:
                     return
 
         # Check for const0/const1 that may not have any driver
-        if self.wire.cable.name == r"\<const0>" or self.wire.cable.name in Netlist.GND_NAMES:
+        if (
+            self.wire.cable.name == r"\<const0>"
+            or self.wire.cable.name in SdnNetlistWrapper.GND_NAMES
+        ):
             self.is_gnd = True
-        elif self.wire.cable.name == r"\<const1>" or self.wire.cable.name in Netlist.VCC_NAMES:
+        elif (
+            self.wire.cable.name == r"\<const1>"
+            or self.wire.cable.name in SdnNetlistWrapper.VCC_NAMES
+        ):
             self.is_vdd = True
 
     def set_driver_pin(self, pin):
@@ -283,7 +291,7 @@ class Net:
         return None
 
 
-class Instance:
+class SdnInstanceWrapper:
     """Wrapper class around spydernet Instance to add some helper properties"""
 
     GND_PIN = None
@@ -298,9 +306,9 @@ class Instance:
         self.pins_by_name_and_index = {}
 
         for pin_spydernet in self.instance.pins:
-            pin = Pin(pin_spydernet, self, self.netlist)
-            if Instance.GND_PIN is None and pin.net is not None and pin.net.is_gnd:
-                Instance.GND_PIN = pin
+            pin = SdnPinWrapper(pin_spydernet, self, self.netlist)
+            if SdnInstanceWrapper.GND_PIN is None and pin.net is not None and pin.net.is_gnd:
+                SdnInstanceWrapper.GND_PIN = pin
             self.pins.append(pin)
             self.pins_by_name_and_index[
                 (
@@ -327,8 +335,8 @@ class Instance:
     def properties(self):
         return self.instance.data.get("VERILOG.Parameters")
 
-    def get_pin(self, name, index):
+    def get_pin(self, name, index=0):
         try:
             return self.pins_by_name_and_index[(name, index)]
         except KeyError:
-            return Instance.GND_PIN
+            return SdnInstanceWrapper.GND_PIN
