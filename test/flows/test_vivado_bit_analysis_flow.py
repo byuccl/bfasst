@@ -9,6 +9,7 @@ from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado_bit_analysis import VivadoBitAnalysis
 from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.transform.netlist_cleanup import NetlistCleanupTool
+from bfasst.ninja_tools.transform.netlist_phys_to_logical import NetlistPhysToLogicalTool
 from bfasst.ninja_tools.vivado.vivado import Vivado
 from bfasst.paths import (
     DESIGNS_PATH,
@@ -45,7 +46,7 @@ class TestVivadoAndReversedFlow(unittest.TestCase):
             build_statement_count = f.read().count("\nbuild ")
 
         # There should be 8 build statements for a single design using this flow
-        self.assertEqual(build_statement_count, 8)
+        self.assertEqual(build_statement_count, 9)
 
     def test_add_ninja_deps(self):
         """Test that the flow adds the correct dependencies to the ninja file."""
@@ -56,6 +57,7 @@ class TestVivadoAndReversedFlow(unittest.TestCase):
         Xray(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         Vivado(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         NetlistCleanupTool(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        NetlistPhysToLogicalTool(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
 
         expected.append(NINJA_FLOWS_PATH / "vivado_bit_analysis.py")
         observed = sorted([str(s) for s in observed])

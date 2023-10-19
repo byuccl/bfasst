@@ -98,7 +98,7 @@ class TestNinjaFlowManager(unittest.TestCase):
         self.__check_flow_run("vivado_ooc", 5)
 
     def test_run_vivado_reversed_flow(self):
-        self.__check_flow_run("vivado_bit_analysis", 9)
+        self.__check_flow_run("vivado_bit_analysis", 10)
 
     def test_run_vivado_phys_netlist_flow(self):
         self.__check_flow_run("vivado_phys_netlist", 9)
