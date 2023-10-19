@@ -31,7 +31,7 @@ class NetlistPhysToLogicalTool(Tool):
         self._append_build_snippets_default(
             __file__,
             render_dict={
-                "netlist_cleanup_output": self.build_path,
+                "netlist_phys_to_logical_output": self.build_path,
                 "netlist_in": netlist_in_path,
                 "netlist_out": self.netlist_out_path,
             },
