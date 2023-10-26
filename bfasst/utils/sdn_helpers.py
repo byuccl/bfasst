@@ -10,8 +10,8 @@ class SdnNetlistWrapper:
     GND_NAMES = set()
     VCC_NAMES = set()
 
-    def __init__(self, library) -> None:
-        self.library = library
+    def __init__(self, top_instance) -> None:
+        self.top = top_instance
 
         # Nets
         self.wire_to_net = {}
@@ -19,7 +19,7 @@ class SdnNetlistWrapper:
         self.build_nets()
 
         # Instances
-        instances = [SdnInstanceWrapper(i, self) for i in library.get_instances()]
+        instances = [SdnInstanceWrapper(i, self) for i in top_instance.get_instances()]
         self.instances = instances
 
         self.instances_to_map = {i for i in self.instances if i.cell_type not in ("GND", "VCC")}
@@ -28,7 +28,7 @@ class SdnNetlistWrapper:
         SdnNetlistWrapper.VCC_NAMES = {i.name for i in self.instances if i.cell_type == "VCC"}
 
         # Top-level IO pins
-        self.pins = [SdnPinWrapper(pin, None, self) for pin in library.get_pins()]
+        self.pins = [SdnPinWrapper(pin, None, self) for pin in top_instance.get_pins()]
 
         self.pins_by_name_and_idx = {}
         for pin in self.pins:
@@ -41,21 +41,19 @@ class SdnNetlistWrapper:
         return self.pins_by_name_and_idx[(name, index)]
 
     def num_wires(self):
-        return len(list(self.library.get_wires()))
+        return len(list(self.top.get_wires()))
 
     def build_nets(self):
         """Setup Net objects"""
         # First construct net objects for each wire, skipping alias wires
-        non_alias_wires = [
-            wire for wire in self.library.get_wires() if not SdnNet.wire_is_alias(wire)
-        ]
+        non_alias_wires = [wire for wire in self.top.get_wires() if not SdnNet.wire_is_alias(wire)]
         for wire in non_alias_wires:
             net = SdnNet(wire)
             # logging.info(f"New Net for wire {wire.cable.name}[{wire.index()}]")
             self.wire_to_net[wire] = net
 
         # Now add alias wires iteratively until they are all added
-        alias_wires = [wire for wire in self.library.get_wires() if SdnNet.wire_is_alias(wire)]
+        alias_wires = [wire for wire in self.top.get_wires() if SdnNet.wire_is_alias(wire)]
 
         logging.info("Processing alias wires (derived from assign statements)")
 
@@ -97,6 +95,21 @@ class SdnNetlistWrapper:
         # Now determine whether they are connected
         for net in self.nets:
             net.determine_is_connected()
+
+    def get_const0_wire(self):
+        const0 = [wire for wire in self.top.get_wires() if wire.cable.name == r"\<const0>"]
+        if not const0:
+            # Create const0 wire
+            const0_cable = self.top.reference.create_cable(
+                name=r"\<const0>", is_downto=True, is_scalar=True, lower_index=0, wires=1
+            )
+            print(const0_cable)
+            print(const0_cable.name)
+            print(const0_cable.wires.count())
+            const0 = const0_cable.wires.index(0)
+        else:
+            const0 = const0[0]
+        return const0
 
     @property
     def nets(self):
