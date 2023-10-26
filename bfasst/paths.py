@@ -41,6 +41,8 @@ ONESPIN_RESOURCES = RESOURCES_PATH / "onespin"
 YOSYS_INSTALL_DIR = THIRD_PARTY_PATH / "yosys"
 GMT_TOOLS_PATH = THIRD_PARTY_PATH / "gmt_tools"
 
+BFASST_UTILS_PATH = BFASST_PATH / "utils"
+
 
 def get_fasm2bels_path():
     if "BFASST_PATH_FASM2BELS" in os.environ:

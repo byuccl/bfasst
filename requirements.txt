@@ -12,5 +12,5 @@ pylint
 pyyaml
 requests
 scp
-spydrnet @ git+https://github.com/byuccl/spydrnet@fix_version
+spydrnet @ git+https://github.com/byuccl/spydrnet@next_release
 werkzeug

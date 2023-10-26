@@ -103,10 +103,7 @@ class SdnNetlistWrapper:
             const0_cable = self.top.reference.create_cable(
                 name=r"\<const0>", is_downto=True, is_scalar=True, lower_index=0, wires=1
             )
-            print(const0_cable)
-            print(const0_cable.name)
-            print(const0_cable.wires.count())
-            const0 = const0_cable.wires.index(0)
+            const0 = const0_cable.wires[0]
         else:
             const0 = const0[0]
         return const0
