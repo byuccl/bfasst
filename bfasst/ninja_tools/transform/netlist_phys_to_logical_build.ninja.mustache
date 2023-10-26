@@ -1,0 +1,4 @@
+build {{ netlist_out }} {{ netlist_phys_to_logical_output }}/log.txt: netlist_phys_to_logical {{ netlist_in }} | third_party/gmt_tools/netlist_phys_to_logical.py bfasst/utils/sdn_helpers.py
+    build_path = {{ netlist_phys_to_logical_output }}
+    netlist_in = {{ netlist_in }}
+    netlist_out = {{ netlist_out }}
