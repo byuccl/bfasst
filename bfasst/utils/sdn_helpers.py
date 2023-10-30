@@ -167,8 +167,8 @@ class SdnNet:
         self.wire = wire
         self.alias_wires = []
         self.driver_pin = None
-        self.is_vdd = None
-        self.is_gnd = None
+        self.is_vdd = False
+        self.is_gnd = False
         self.is_connected = None
 
     def add_alias_wire(self, wire):
