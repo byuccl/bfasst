@@ -43,7 +43,7 @@ jobs:
         ls -la ./
     - uses: actions/checkout@v3
       with:
-        token: ${{ secrets.GMT_TOOLS_PAT }}
+        token: ${{ secrets.GMT_TOOLS_PAT || github.token}}
         submodules: 'recursive'
     - uses: ./.github/actions/setup_env
       with: 
@@ -78,7 +78,7 @@ jobs:
 
     - uses: actions/checkout@v3
       with:
-        token: ${{ secrets.GMT_TOOLS_PAT }}
+        token: ${{ secrets.GMT_TOOLS_PAT || github.token}}
         submodules: 'recursive'
     
     - uses: ./.github/actions/setup_env
