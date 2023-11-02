@@ -6,7 +6,8 @@
 import unittest
 from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado_conformal import VivadoConformal
-from bfasst.ninja_tools.vivado.vivado import Vivado
+from bfasst.ninja_tools.vivado.synth.vivado_synth import VivadoSynth
+from bfasst.ninja_tools.vivado.impl.vivado_impl import VivadoImpl
 from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.compare.conformal.conformal import Conformal
 from bfasst.paths import (
@@ -50,7 +51,8 @@ class TestVivadoConformalFlow(unittest.TestCase):
         self.flow.add_ninja_deps(observed)
         expected = ["foo", "bar"]
         Xray(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
-        Vivado(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        VivadoSynth(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        VivadoImpl(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         Conformal(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         expected.append(NINJA_FLOWS_PATH / "vivado_conformal.py")
         observed = sorted([str(s) for s in observed])

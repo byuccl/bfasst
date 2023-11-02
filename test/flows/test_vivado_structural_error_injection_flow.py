@@ -11,7 +11,8 @@ from bfasst.ninja_tools.compare.structural.structural import Structural
 from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.transform.error_injector import ErrorInjector
 from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
-from bfasst.ninja_tools.vivado.vivado import Vivado
+from bfasst.ninja_tools.vivado.synth.vivado_synth import VivadoSynth
+from bfasst.ninja_tools.vivado.impl.vivado_impl import VivadoImpl
 from bfasst.paths import (
     DESIGNS_PATH,
     NINJA_BUILD_PATH,
@@ -61,7 +62,8 @@ class TestVivadoStructuralErrorInjection(unittest.TestCase):
             "bar",
         ]
         desing_path = DESIGNS_PATH / "byu/alu"
-        Vivado(desing_path).add_ninja_deps(expected)
+        VivadoSynth(desing_path).add_ninja_deps(expected)
+        VivadoImpl(desing_path).add_ninja_deps(expected)
         ErrorInjector(desing_path).add_ninja_deps(expected)
         PhysNetlist(desing_path).add_ninja_deps(expected)
         Xray(desing_path).add_ninja_deps(expected)

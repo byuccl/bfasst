@@ -8,7 +8,8 @@ import unittest
 from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado_phys_netlist import VivadoPhysNetlist
 from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
-from bfasst.ninja_tools.vivado.vivado import Vivado
+from bfasst.ninja_tools.vivado.synth.vivado_synth import VivadoSynth
+from bfasst.ninja_tools.vivado.impl.vivado_impl import VivadoImpl
 from bfasst.paths import (
     DESIGNS_PATH,
     NINJA_BUILD_PATH,
@@ -54,7 +55,8 @@ class TestVivadoPhysNetlist(unittest.TestCase):
             "foo",
             "bar",
         ]
-        Vivado(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        VivadoSynth(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        VivadoImpl(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         PhysNetlist(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         expected.append(NINJA_FLOWS_PATH / "vivado_phys_netlist.py")
 

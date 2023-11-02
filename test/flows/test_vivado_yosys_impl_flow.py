@@ -9,7 +9,8 @@ from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado_yosys_impl import VivadoYosysImpl
 from bfasst.ninja_tools.compare.yosys.yosys import Yosys
 from bfasst.ninja_tools.rev_bit.xray import Xray
-from bfasst.ninja_tools.vivado.vivado import Vivado
+from bfasst.ninja_tools.vivado.synth.vivado_synth import VivadoSynth
+from bfasst.ninja_tools.vivado.impl.vivado_impl import VivadoImpl
 from bfasst.paths import DESIGNS_PATH, NINJA_BUILD_PATH, NINJA_FLOWS_PATH
 
 
@@ -48,7 +49,8 @@ class TestVivadoYosysImplFlow(unittest.TestCase):
         self.flow.add_ninja_deps(observed)
         expected = ["foo", "bar"]
         Xray(self.design_shortname).add_ninja_deps(expected)
-        Vivado(self.design_shortname).add_ninja_deps(expected)
+        VivadoSynth(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        VivadoImpl(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         Yosys(self.design_shortname).add_ninja_deps(expected)
         expected.append(NINJA_FLOWS_PATH / "vivado_yosys_impl.py")
         # observed.sort()

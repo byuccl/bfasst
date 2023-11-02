@@ -2,7 +2,8 @@
 import json
 import unittest
 from bfasst.ninja_flows.vivado_ooc import VivadoOoc
-from bfasst.ninja_tools.vivado.vivado import Vivado
+from bfasst.ninja_tools.vivado.synth.vivado_synth import VivadoSynth
+from bfasst.ninja_tools.vivado.impl.vivado_impl import VivadoImpl
 from bfasst.paths import (
     DESIGNS_PATH,
     NINJA_BUILD_PATH,
@@ -38,31 +39,31 @@ class TestVivadoOocFlow(unittest.TestCase):
     def test_tcl_json_accurate(self):
         """Test that the json file used to template the tcl file is accurate"""
         synth_dict = {
-            "part": self.flow.vivado_tool.part,
-            "verilog": self.flow.vivado_tool.verilog,
-            "system_verilog": self.flow.vivado_tool.system_verilog,
+            "part": self.flow.vivado_synth_tool.part,
+            "verilog": self.flow.vivado_synth_tool.verilog,
+            "system_verilog": self.flow.vivado_synth_tool.system_verilog,
             "vhdl": [],
             "vhdl_libs": [],
-            "top": self.flow.vivado_tool.top,
+            "top": self.flow.vivado_synth_tool.top,
             "io": False,
-            "synth_output": str(self.flow.vivado_tool.synth_output),
+            "synth_output": str(self.flow.vivado_synth_tool.build_path),
             "flow_args": "",
         }
         expected_synth_json = json.dumps(synth_dict, indent=4)
         self.assertTrue(
-            compare_json(self.flow.vivado_tool.synth_output / "synth.json", expected_synth_json)
+            compare_json(self.flow.vivado_synth_tool.build_path / "synth.json", expected_synth_json)
         )
 
         impl_dict = {
-            "part": self.flow.vivado_tool.part,
+            "part": self.flow.vivado_synth_tool.part,
             "xdc": False,
             "bit": False,
-            "impl_output": str(self.flow.vivado_tool.impl_output),
-            "synth_output": str(self.flow.vivado_tool.synth_output),
+            "impl_output": str(self.flow.vivado_impl_tool.build_path),
+            "synth_output": str(self.flow.vivado_synth_tool.build_path),
         }
         expected_impl_json = json.dumps(impl_dict, indent=4)
         self.assertTrue(
-            compare_json(self.flow.vivado_tool.impl_output / "impl.json", expected_impl_json)
+            compare_json(self.flow.vivado_impl_tool.build_path / "impl.json", expected_impl_json)
         )
 
     def test_build_snippets_exist(self):
@@ -80,7 +81,8 @@ class TestVivadoOocFlow(unittest.TestCase):
             "foo",
             "bar",
         ]
-        Vivado(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        VivadoSynth(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        VivadoImpl(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         expected.append(NINJA_FLOWS_PATH / "vivado_ooc.py")
         expected.append(NINJA_FLOWS_PATH / "vivado.py")
 
