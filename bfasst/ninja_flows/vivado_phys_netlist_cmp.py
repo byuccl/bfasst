@@ -1,6 +1,7 @@
 """Structural Comparison of physical netlist and reversed netlist"""
 
 from bfasst.ninja_flows.flow import Flow
+from bfasst.ninja_tools.vivado.impl.vivado_impl import VivadoImpl
 from bfasst.ninja_tools.compare.structural.structural import Structural
 from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
@@ -12,24 +13,27 @@ class VivadoPhysNetlistCmp(Flow):
 
     def __init__(self, design, flow_args=None):
         super().__init__(design)
-        self.vivado_tool = self.configure_vivado_tool(design, flow_args)
+        self.vivado_synth_tool = self.configure_vivado_synth_tool(design, flow_args)
+        self.vivado_impl_tool = VivadoImpl(design)
         self.phys_netlist_tool = PhysNetlist(design)
         self.xray_tool = Xray(design)
         self.compare_tool = Structural(design)
 
     def create_rule_snippets(self):
-        self.vivado_tool.create_rule_snippets()
+        self.vivado_synth_tool.create_rule_snippets()
+        self.vivado_impl_tool.create_rule_snippets()
         self.phys_netlist_tool.create_rule_snippets()
         self.xray_tool.create_rule_snippets()
         self.compare_tool.create_rule_snippets()
 
     def create_build_snippets(self):
-        self.vivado_tool.create_build_snippets()
+        self.vivado_synth_tool.create_build_snippets()
+        self.vivado_impl_tool.create_build_snippets()
         self.phys_netlist_tool.create_build_snippets(
-            impl_dcp=self.vivado_tool.outputs["impl_checkpoint"],
-            impl_edf=self.vivado_tool.outputs["impl_edf"],
+            impl_dcp=self.vivado_impl_tool.outputs["impl_checkpoint"],
+            impl_edf=self.vivado_impl_tool.outputs["impl_edf"],
         )
-        self.xray_tool.create_build_snippets(str(self.vivado_tool.outputs["bitstream"]))
+        self.xray_tool.create_build_snippets(str(self.vivado_impl_tool.outputs["bitstream"]))
         self.compare_tool.create_build_snippets(
             netlist_a=self.xray_tool.outputs["xray_netlist"],
             netlist_b=self.phys_netlist_tool.outputs["viv_impl_physical_v"],
@@ -37,7 +41,8 @@ class VivadoPhysNetlistCmp(Flow):
         )
 
     def add_ninja_deps(self, deps):
-        self.vivado_tool.add_ninja_deps(deps)
+        self.vivado_synth_tool.add_ninja_deps(deps)
+        self.vivado_impl_tool.add_ninja_deps(deps)
         self.phys_netlist_tool.add_ninja_deps(deps)
         self.xray_tool.add_ninja_deps(deps)
         self.compare_tool.add_ninja_deps(deps)

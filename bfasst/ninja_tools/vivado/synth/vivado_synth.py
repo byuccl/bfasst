@@ -1,61 +1,23 @@
 """Tool to create Vivado synthesis ninja snippets."""
 import json
 import chevron
-from bfasst import config
-from bfasst.ninja_tools.tool import Tool
+from bfasst.ninja_tools.vivado.vivado import Vivado
 from bfasst.paths import NINJA_BUILD_PATH, NINJA_VIVADO_SYNTH_TOOL_PATH
-from bfasst.utils import compare_json
-from bfasst.yaml_parser import YamlParser
 
 
-class VivadoSynth(Tool):
+class VivadoSynth(Vivado):
     """Tool to create vivado synthesis ninja snippets."""
 
     def __init__(self, design, flow_args=None, ooc=False):
-        super().__init__(design)
+        super().__init__(design, ooc)
         self.flow_args = flow_args
 
-        self.ooc = ooc
-        if ooc:
-            self.build_path = self.design_build_path / "ooc" / "synth"
-        else:
-            self.build_path = self.design_build_path / "in_context" / "synth"
-
-        self._create_build_dir()
-
-        self.top = YamlParser(self.design_path / "design.yaml").parse_top_module()
+        self.build_path = self.build_path / "synth"
 
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()
 
-        self._read_hdl_files()
-        self.vhdl_file_lib_map = {}
-        self.__read_vhdl_libs()
-
-        self.part = config.PART
-
-    def __read_vhdl_libs(self):
-        if not self.vhdl_libs:
-            return
-
-        for lib in self.vhdl_libs:
-            path = self.design_path / lib
-            for file in path.rglob("*"):
-                if file.is_dir():
-                    continue
-                if file.suffix == ".vhd":
-                    key = str(file)
-                    self.vhdl_file_lib_map[key] = Path(lib).name
-
-    def create_rule_snippets(self):
-        if not self.rule_snippets_exist:
-            super().create_rule_snippets(self.ooc)
-
-    def create_build_snippets(self):
-        self.__write_json_file()
-        self.__append_build_snippets()
-
-    def __write_json_file(self):
+    def _write_json_file(self):
         """Specify synthesis arguments in a json file.
         Chevron will use this file to fill in the tcl template."""
         synth = {
@@ -71,14 +33,9 @@ class VivadoSynth(Tool):
         }
         synth_json = json.dumps(synth, indent=4)
 
-        # check if json file already exists and compare it to what we're about to write
-        json_equivalent = compare_json(self.build_path / "synth.json", synth_json)
+        self._json_write(self.build_path / "synth.json", synth_json)
 
-        if not json_equivalent:
-            with open(self.build_path / "synth.json", "w") as f:
-                f.write(synth_json)
-
-    def __append_build_snippets(self):
+    def _append_build_snippets(self):
         """Create ninja snippets for vivado synthesis in build.ninja"""
         with open(NINJA_VIVADO_SYNTH_TOOL_PATH / "viv_synth.ninja.mustache") as f:
             synth_ninja = chevron.render(

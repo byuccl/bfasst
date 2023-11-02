@@ -1,5 +1,6 @@
 """Flow to create Vivado synthesis and implementation ninja snippets."""
 from bfasst.ninja_flows.flow import Flow
+from bfasst.ninja_tools.vivado.impl.vivado_impl import VivadoImpl
 from bfasst.paths import NINJA_FLOWS_PATH
 
 
@@ -9,16 +10,20 @@ class Vivado(Flow):
     def __init__(self, design, flow_args=None, ooc=False):
         super().__init__(design)
         self.ooc = ooc
-        self.vivado_tool = self.configure_vivado_tool(design, flow_args, ooc)
+        self.vivado_synth_tool = self.configure_vivado_synth_tool(design, flow_args, ooc)
+        self.vivado_impl_tool = VivadoImpl(design, ooc)
 
     def create_rule_snippets(self):
-        self.vivado_tool.create_rule_snippets()
+        self.vivado_synth_tool.create_rule_snippets()
+        self.vivado_impl_tool.create_rule_snippets()
 
     def create_build_snippets(self):
-        self.vivado_tool.create_build_snippets()
+        self.vivado_synth_tool.create_build_snippets()
+        self.vivado_impl_tool.create_build_snippets()
 
     def add_ninja_deps(self, deps):
-        self.vivado_tool.add_ninja_deps(deps)
+        self.vivado_synth_tool.add_ninja_deps(deps)
+        self.vivado_impl_tool.add_ninja_deps(deps)
         deps.append(NINJA_FLOWS_PATH / "vivado.py")
         if self.ooc:
             deps.append(NINJA_FLOWS_PATH / "vivado_ooc.py")
