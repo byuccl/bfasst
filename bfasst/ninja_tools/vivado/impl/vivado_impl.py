@@ -13,7 +13,8 @@ class VivadoImpl(Vivado):
 
     def __init__(self, design, ooc=False):
         super().__init__(design, ooc)
-        self.build_path = self.design_build_path / "impl"
+        self.build_path = self.build_path / "impl"
+        self._create_build_dir()
 
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()

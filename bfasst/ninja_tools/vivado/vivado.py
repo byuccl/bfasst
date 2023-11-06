@@ -65,8 +65,8 @@ class Vivado(Tool, ABC):
             Vivado.rules_appended_to_build = True
 
     def create_build_snippets(self):
-        self.__write_json_file()
-        self.__append_build_snippets()
+        self._write_json_file()
+        self._append_build_snippets()
 
     def _json_write(self, old_path, new_string):
         """Write the json file for the tool, if the new string
@@ -77,10 +77,10 @@ class Vivado(Tool, ABC):
             with open(old_path, "w") as f:
                 f.write(new_string)
 
-    def __write_json_file(self):
+    def _write_json_file(self):
         pass
 
-    def __append_build_snippets(self):
+    def _append_build_snippets(self):
         pass
 
     def add_ninja_deps(self):

@@ -13,6 +13,7 @@ class VivadoSynth(Vivado):
         self.flow_args = flow_args
 
         self.build_path = self.build_path / "synth"
+        self._create_build_dir()
 
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()
