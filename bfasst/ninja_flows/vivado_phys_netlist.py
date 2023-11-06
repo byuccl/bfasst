@@ -21,12 +21,14 @@ class VivadoPhysNetlist(Flow):
         self.phys_netlist_tool.create_rule_snippets()
 
     def create_build_snippets(self):
+        # pylint: disable=duplicate-code
         self.vivado_synth_tool.create_build_snippets()
         self.vivado_impl_tool.create_build_snippets()
         self.phys_netlist_tool.create_build_snippets(
             impl_dcp=self.vivado_impl_tool.outputs["impl_checkpoint"],
             impl_edf=self.vivado_impl_tool.outputs["impl_edf"],
         )
+        # pylint: enable=duplicate-code
 
     def add_ninja_deps(self, deps):
         self.vivado_synth_tool.add_ninja_deps(deps)

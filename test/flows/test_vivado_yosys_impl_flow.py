@@ -50,6 +50,8 @@ class TestVivadoYosysImplFlow(unittest.TestCase):
         self.assertEqual(build_statement_count, 9)
 
     def test_add_ninja_deps(self):
+        """Test that the flow adds the correct dependencies to the ninja build file
+        for reconfiguration"""
         observed = ["foo", "bar"]
         self.flow.add_ninja_deps(observed)
         expected = ["foo", "bar"]

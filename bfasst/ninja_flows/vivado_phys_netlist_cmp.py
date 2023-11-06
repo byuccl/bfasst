@@ -27,6 +27,7 @@ class VivadoPhysNetlistCmp(Flow):
         self.compare_tool.create_rule_snippets()
 
     def create_build_snippets(self):
+        # pylint: disable=duplicate-code
         self.vivado_synth_tool.create_build_snippets()
         self.vivado_impl_tool.create_build_snippets()
         self.phys_netlist_tool.create_build_snippets(
@@ -39,6 +40,7 @@ class VivadoPhysNetlistCmp(Flow):
             netlist_b=self.phys_netlist_tool.outputs["viv_impl_physical_v"],
             log_name="struct_cmp.log",
         )
+        # pylint: enable=duplicate-code
 
     def add_ninja_deps(self, deps):
         self.vivado_synth_tool.add_ninja_deps(deps)
