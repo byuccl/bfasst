@@ -10,6 +10,7 @@ from bfasst.ninja_tools.vivado.synth.vivado_synth import VivadoSynth
 from bfasst.ninja_tools.vivado.impl.vivado_impl import VivadoImpl
 from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.compare.conformal.conformal import Conformal
+from bfasst.ninja_tools.vivado.vivado import Vivado
 from bfasst.paths import (
     DESIGNS_PATH,
     NINJA_BUILD_PATH,
@@ -24,6 +25,10 @@ class TestVivadoConformalFlow(unittest.TestCase):
     def setUpClass(cls) -> None:
         # overwrite the build file so it is not appended to incorrectly
         create_build_file()
+
+        # before all vivado based flows, make sure the Vivado parent class is
+        # allowed to create its rule snippets
+        Vivado.rules_appended_to_build = False
 
         cls.flow = VivadoConformal(DESIGNS_PATH / "byu/alu")
         cls.flow.create_rule_snippets()

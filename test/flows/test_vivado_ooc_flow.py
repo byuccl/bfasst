@@ -4,6 +4,7 @@ import unittest
 from bfasst.ninja_flows.vivado_ooc import VivadoOoc
 from bfasst.ninja_tools.vivado.synth.vivado_synth import VivadoSynth
 from bfasst.ninja_tools.vivado.impl.vivado_impl import VivadoImpl
+from bfasst.ninja_tools.vivado.vivado import Vivado
 from bfasst.paths import (
     DESIGNS_PATH,
     NINJA_BUILD_PATH,
@@ -20,6 +21,10 @@ class TestVivadoOocFlow(unittest.TestCase):
         # overwrite the build file so it is not appended to incorrectly
         with open(NINJA_BUILD_PATH, "w") as f:
             f.write("")
+
+        # before all vivado based flows, make sure the Vivado parent class is
+        # allowed to create its rule snippets
+        Vivado.rules_appended_to_build = False
 
         cls.flow = VivadoOoc(DESIGNS_PATH / "byu/alu")
         cls.flow.create_rule_snippets()

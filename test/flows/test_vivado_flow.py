@@ -8,6 +8,7 @@ import unittest
 
 from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado import Vivado
+from bfasst.ninja_tools.vivado.vivado import Vivado as VivadoTool
 from bfasst.ninja_tools.vivado.synth.vivado_synth import VivadoSynth
 from bfasst.ninja_tools.vivado.impl.vivado_impl import VivadoImpl
 from bfasst.paths import (
@@ -25,6 +26,10 @@ class TestVivadoFlow(unittest.TestCase):
     def setUpClass(cls):
         # overwrite the build file so it is not appended to incorrectly
         create_build_file()
+
+        # before all vivado based flows, make sure the Vivado parent class is
+        # allowed to create its rule snippets
+        VivadoTool.rules_appended_to_build = False
 
         cls.flow = Vivado(DESIGNS_PATH / "byu/alu")
         cls.flow.create_rule_snippets()
