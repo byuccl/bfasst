@@ -11,6 +11,8 @@ from bfasst.ninja_tools.compare.structural.structural import Structural
 from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.transform.error_injector import ErrorInjector
 from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
+from bfasst.ninja_tools.vivado.synth.vivado_synth import VivadoSynth
+from bfasst.ninja_tools.vivado.impl.vivado_impl import VivadoImpl
 from bfasst.ninja_tools.vivado.vivado import Vivado
 from bfasst.paths import (
     DESIGNS_PATH,
@@ -26,6 +28,10 @@ class TestVivadoStructuralErrorInjection(unittest.TestCase):
     def setUpClass(cls):
         # overwrite the build file so it is not appended to incorrectly
         create_build_file()
+
+        # before all vivado based flows, make sure the Vivado parent class is
+        # allowed to create its rule snippets
+        Vivado.rules_appended_to_build = False
 
         cls.flow = VivadoStructuralErrorInjection(DESIGNS_PATH / "byu/alu")
         cls.flow.create_rule_snippets()
@@ -61,7 +67,8 @@ class TestVivadoStructuralErrorInjection(unittest.TestCase):
             "bar",
         ]
         desing_path = DESIGNS_PATH / "byu/alu"
-        Vivado(desing_path).add_ninja_deps(expected)
+        VivadoSynth(desing_path).add_ninja_deps(expected)
+        VivadoImpl(desing_path).add_ninja_deps(expected)
         ErrorInjector(desing_path).add_ninja_deps(expected)
         PhysNetlist(desing_path).add_ninja_deps(expected)
         Xray(desing_path).add_ninja_deps(expected)
