@@ -3,6 +3,7 @@ import argparse
 import pathlib
 import subprocess
 import sys
+from bfasst.ninja_flows.flow_utils import get_flows
 
 from bfasst.ninja_flows.ninja_flow_manager import NinjaFlowManager
 from bfasst.utils.general import clean_error_injections_and_comparisons
@@ -65,7 +66,9 @@ def parse_args(args):
     parser.add_argument(
         "--design", type=pathlib.Path, help="Design directory for single design flows"
     )
-    parser.add_argument("--flow", type=str, help="Flow to run for single design flows")
+    parser.add_argument(
+        "--flow", type=str, choices=get_flows(), help="Flow to run for single design flows"
+    )
     args = parser.parse_args(args)
 
     if args.yaml and (args.design or args.flow):
