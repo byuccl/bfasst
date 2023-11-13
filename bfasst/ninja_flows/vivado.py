@@ -2,6 +2,7 @@
 from bfasst.ninja_flows.flow import Flow
 from bfasst.ninja_tools.vivado.impl.vivado_impl import VivadoImpl
 from bfasst.paths import NINJA_FLOWS_PATH
+from bfasst.ninja_flows.flow_utils import configure_vivado_synth_tool
 
 
 class Vivado(Flow):
@@ -10,7 +11,7 @@ class Vivado(Flow):
     def __init__(self, design, flow_args=None, ooc=False):
         super().__init__(design)
         self.ooc = ooc
-        self.vivado_synth_tool = self.configure_vivado_synth_tool(design, flow_args, ooc)
+        self.vivado_synth_tool = configure_vivado_synth_tool(design, flow_args, ooc)
         self.vivado_impl_tool = VivadoImpl(design, ooc)
 
     def create_rule_snippets(self):
