@@ -40,7 +40,7 @@ jobs:
       timeout-minutes: 40
       run: |
         source .venv/bin/activate
-        python scripts/bfasster --yaml ${{ matrix.experiment }}
+        python scripts/bfasster.py --yaml ${{ matrix.experiment }}
     - name: 'Create fname'
       if: failure()
       id: set-fname
