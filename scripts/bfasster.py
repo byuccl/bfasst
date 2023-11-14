@@ -3,6 +3,7 @@ import argparse
 import pathlib
 import subprocess
 import sys
+from collections import defaultdict
 from bfasst.ninja_flows.flow_utils import get_flows
 
 from bfasst.ninja_flows.ninja_flow_manager import NinjaFlowManager
@@ -10,8 +11,6 @@ from bfasst.utils.general import clean_error_injections_and_comparisons
 from bfasst.yaml_parser import YamlParser
 from bfasst.utils import error, ensure_tuple
 from bfasst.paths import ROOT_PATH
-
-from collections import defaultdict
 
 
 class ApplicationRunner:
