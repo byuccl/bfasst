@@ -3,6 +3,7 @@
 import random
 
 from bfasst.ninja_flows.flow import Flow
+from bfasst.ninja_tools.vivado.impl.vivado_impl import VivadoImpl
 from bfasst.ninja_tools.compare.structural.structural import Structural
 from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.transform.error_injector import ErrorInjector
@@ -18,7 +19,8 @@ class VivadoStructuralErrorInjection(Flow):
     def __init__(self, design, flow_args=None):
         super().__init__(design)
         random.seed(0)
-        self.vivado_tool = self.configure_vivado_tool(design, flow_args)
+        self.vivado_synth_tool = self.configure_vivado_synth_tool(design, flow_args)
+        self.vivado_impl_tool = VivadoImpl(design)
         self.phys_netlist_tool = PhysNetlist(design)
         self.xrev_tool = Xray(design)
         self.error_injector_tool = ErrorInjector(design)
@@ -28,19 +30,21 @@ class VivadoStructuralErrorInjection(Flow):
 
     def create_rule_snippets(self):
         """Create the rule snippets for the flow and append them to build.ninja."""
-        self.vivado_tool.create_rule_snippets()
+        self.vivado_synth_tool.create_rule_snippets()
+        self.vivado_impl_tool.create_rule_snippets()
         self.phys_netlist_tool.create_rule_snippets()
         self.xrev_tool.create_rule_snippets()
         self.error_injector_tool.create_rule_snippets()
         self.compare_tool.create_rule_snippets()
 
     def create_build_snippets(self):
-        self.vivado_tool.create_build_snippets()
+        self.vivado_synth_tool.create_build_snippets()
+        self.vivado_impl_tool.create_build_snippets()
         self.phys_netlist_tool.create_build_snippets(
-            impl_dcp=self.vivado_tool.outputs["impl_checkpoint"],
-            impl_edf=self.vivado_tool.outputs["impl_edf"],
+            impl_dcp=self.vivado_impl_tool.outputs["impl_checkpoint"],
+            impl_edf=self.vivado_impl_tool.outputs["impl_edf"],
         )
-        self.xrev_tool.create_build_snippets(self.vivado_tool.outputs["bitstream"])
+        self.xrev_tool.create_build_snippets(self.vivado_impl_tool.outputs["bitstream"])
 
         random_seed_multiplier = 1
         error_type = [ErrorType.BIT_FLIP, ErrorType.WIRE_SWAP]
@@ -62,7 +66,8 @@ class VivadoStructuralErrorInjection(Flow):
                 )
 
     def add_ninja_deps(self, deps):
-        self.vivado_tool.add_ninja_deps(deps)
+        self.vivado_synth_tool.add_ninja_deps(deps)
+        self.vivado_impl_tool.add_ninja_deps(deps)
         self.phys_netlist_tool.add_ninja_deps(deps)
         self.xrev_tool.add_ninja_deps(deps)
         self.error_injector_tool.add_ninja_deps(deps)
