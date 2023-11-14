@@ -9,6 +9,7 @@ from bfasst.ninja_tools.transform.netlist_cleanup import NetlistCleanupTool
 from bfasst.ninja_tools.transform.netlist_phys_to_logical import NetlistPhysToLogicalTool
 from bfasst.ninja_flows.flow_utils import configure_vivado_synth_tool
 
+
 class VivadoBitAnalysis(Flow):
     """Flow to reverse a netlist from a bitstream using x-ray."""
 

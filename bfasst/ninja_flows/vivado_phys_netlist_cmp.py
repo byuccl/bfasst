@@ -8,6 +8,7 @@ from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
 from bfasst.paths import NINJA_FLOWS_PATH
 from bfasst.ninja_flows.flow_utils import configure_vivado_synth_tool
 
+
 class VivadoPhysNetlistCmp(Flow):
     """Structural Comparison of physical netlist and reversed netlist"""
 
