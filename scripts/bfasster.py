@@ -11,6 +11,8 @@ from bfasst.yaml_parser import YamlParser
 from bfasst.utils import error, ensure_tuple
 from bfasst.paths import ROOT_PATH
 
+from collections import defaultdict
+
 
 class ApplicationRunner:
     """Runs a given flow on one or more designs using Ninja."""
@@ -25,7 +27,7 @@ class ApplicationRunner:
         """Run one ore more designs with a given flow."""
         self.designs = ensure_tuple(designs)
         self.flow = flow
-        self.flow_args = {}
+        self.flow_args = defaultdict(str)
         self.__run_ninja()
 
     def run_yaml(self, yaml_path):
