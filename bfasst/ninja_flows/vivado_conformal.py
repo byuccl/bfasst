@@ -6,7 +6,7 @@ from bfasst.ninja_tools.compare.conformal.conformal import Conformal
 from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.paths import NINJA_FLOWS_PATH
 from bfasst.types import Vendor
-from bfasst.ninja_flows.flow_utils import configure_vivado_synth_tool
+from bfasst.ninja_tools.vivado.synth.vivado_synth import VivadoSynth
 
 
 class VivadoConformal(Flow):
@@ -14,7 +14,7 @@ class VivadoConformal(Flow):
 
     def __init__(self, design, flow_args=None):
         super().__init__(design)
-        self.vivado_synth_tool = configure_vivado_synth_tool(design, flow_args)
+        self.vivado_synth_tool = VivadoSynth(design, flow_args.get("synth"))
         self.vivado_impl_tool = VivadoImpl(design)
         self.xrev_tool = Xray(design)
         self.conformal_tool = Conformal(design)
