@@ -11,7 +11,7 @@ class Vivado(Flow):
     def __init__(self, design, flow_args=None, ooc=False):
         super().__init__(design)
         self.ooc = ooc
-        self.vivado_synth_tool = VivadoSynth(design, flow_args["synth"], ooc)
+        self.vivado_synth_tool = VivadoSynth(design, flow_args.get("synth"), ooc=ooc)
         self.vivado_impl_tool = VivadoImpl(design, ooc)
 
     def create_rule_snippets(self):

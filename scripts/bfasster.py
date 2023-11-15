@@ -3,7 +3,6 @@ import argparse
 import pathlib
 import subprocess
 import sys
-from collections import defaultdict
 from bfasst.ninja_flows.flow_utils import get_flows
 
 from bfasst.ninja_flows.ninja_flow_manager import NinjaFlowManager
@@ -26,7 +25,7 @@ class ApplicationRunner:
         """Run one ore more designs with a given flow."""
         self.designs = ensure_tuple(designs)
         self.flow = flow
-        self.flow_args = defaultdict(str)
+        self.flow_args = {}
         self.__run_ninja()
 
     def run_yaml(self, yaml_path):

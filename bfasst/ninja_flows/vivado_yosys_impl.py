@@ -12,7 +12,7 @@ class VivadoYosysImpl(Flow):
 
     def __init__(self, design, flow_args=None):
         super().__init__(design)
-        self.vivado_synth_tool = VivadoSynth(design, flow_args["synth"])
+        self.vivado_synth_tool = VivadoSynth(design, flow_args.get("synth"))
         self.vivado_impl_tool = VivadoImpl(design)
         self.xrev_tool = Xray(design)
         self.yosys_tool = Yosys(design)
