@@ -6,6 +6,8 @@ from bfasst.ninja_tools.compare.structural.structural import Structural
 from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
 from bfasst.paths import NINJA_FLOWS_PATH
+from bfasst.ninja_tools.vivado.synth.vivado_synth import VivadoSynth
+from bfasst.utils.general import ensure
 
 
 class VivadoPhysNetlistCmp(Flow):
@@ -13,7 +15,7 @@ class VivadoPhysNetlistCmp(Flow):
 
     def __init__(self, design, flow_args=None):
         super().__init__(design)
-        self.vivado_synth_tool = self.configure_vivado_synth_tool(design, flow_args)
+        self.vivado_synth_tool = VivadoSynth(design, ensure(flow_args, {}).get("synth"))
         self.vivado_impl_tool = VivadoImpl(design)
         self.phys_netlist_tool = PhysNetlist(design)
         self.xray_tool = Xray(design)
