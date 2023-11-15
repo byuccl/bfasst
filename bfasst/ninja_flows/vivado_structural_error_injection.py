@@ -10,6 +10,7 @@ from bfasst.ninja_tools.transform.error_injector import ErrorInjector
 from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
 from bfasst.paths import NINJA_FLOWS_PATH
 from bfasst.ninja_tools.vivado.synth.vivado_synth import VivadoSynth
+from bfasst.utils.general import ensure
 
 from bfasst.ninja_utils.error_injector import ErrorType
 
@@ -20,7 +21,7 @@ class VivadoStructuralErrorInjection(Flow):
     def __init__(self, design, flow_args=None):
         super().__init__(design)
         random.seed(0)
-        self.vivado_synth_tool = VivadoSynth(design, flow_args.get("synth"))
+        self.vivado_synth_tool = VivadoSynth(design, ensure(flow_args, {}).get("synth"))
         self.vivado_impl_tool = VivadoImpl(design)
         self.phys_netlist_tool = PhysNetlist(design)
         self.xrev_tool = Xray(design)

@@ -7,6 +7,7 @@ from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
 from bfasst.paths import NINJA_FLOWS_PATH
 from bfasst.ninja_tools.vivado.synth.vivado_synth import VivadoSynth
+from bfasst.utils.general import ensure
 
 
 class VivadoPhysNetlistXrev(Flow):
@@ -14,7 +15,7 @@ class VivadoPhysNetlistXrev(Flow):
 
     def __init__(self, design, flow_args=None):
         super().__init__(design)
-        self.vivado_synth_tool = VivadoSynth(design, flow_args.get("synth"))
+        self.vivado_synth_tool = VivadoSynth(design, ensure(flow_args, {}).get("synth"))
         self.vivado_impl_tool = VivadoImpl(design)
         self.phys_netlist_tool = PhysNetlist(design)
         self.xrev_tool = Xray(design)

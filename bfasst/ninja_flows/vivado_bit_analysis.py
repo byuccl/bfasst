@@ -8,6 +8,7 @@ from bfasst.ninja_tools.rev_bit.xray import Xray as XrevTool
 from bfasst.ninja_tools.transform.netlist_cleanup import NetlistCleanupTool
 from bfasst.ninja_tools.transform.netlist_phys_to_logical import NetlistPhysToLogicalTool
 from bfasst.ninja_tools.vivado.synth.vivado_synth import VivadoSynth
+from bfasst.utils.general import ensure
 
 
 class VivadoBitAnalysis(Flow):
@@ -15,7 +16,7 @@ class VivadoBitAnalysis(Flow):
 
     def __init__(self, design, flow_args=None):
         super().__init__(design)
-        self.vivado_synth_tool = VivadoSynth(design, flow_args.get("synth"))
+        self.vivado_synth_tool = VivadoSynth(design, ensure(flow_args, {}).get("synth"))
         self.vivado_impl_tool = VivadoImpl(design)
         self.xrev_tool = XrevTool(design)
         self.netlist_cleanup_tool = NetlistCleanupTool(design)
