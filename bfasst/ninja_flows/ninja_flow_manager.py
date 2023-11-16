@@ -31,6 +31,8 @@ class NinjaFlowManager:
 
     def create_flows(self, flow_name, designs, flow_args=None):
         """Create the ninja flows for the given designs."""
+        if flow_args is None:
+            flow_args = {}
         self.flow_name = flow_name
         self.flows = []
         self.designs = []

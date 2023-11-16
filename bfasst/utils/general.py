@@ -235,3 +235,10 @@ def ensure_tuple(x):
     if isinstance(x, list):
         return tuple(x)
     return (x,)
+
+
+def ensure(x, y):
+    """Compensates for how python deals with default reference objects"""
+    if x is None:
+        return y
+    return x
