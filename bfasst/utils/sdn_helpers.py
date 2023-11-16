@@ -96,17 +96,20 @@ class SdnNetlistWrapper:
         for net in self.nets:
             net.determine_is_connected()
 
-    def get_const0_wire(self):
-        const0 = [wire for wire in self.top.get_wires() if wire.cable.name == r"\<const0>"]
-        if not const0:
+    def get_const_wire(self, is_gnd):
+        """Get the const0 or const1 wire"""
+        name = r"\<const1>" if not is_gnd else r"\<const0>"
+
+        const = [wire for wire in self.top.get_wires() if wire.cable.name == name]
+        if not const:
             # Create const0 wire
-            const0_cable = self.top.reference.create_cable(
-                name=r"\<const0>", is_downto=True, is_scalar=True, lower_index=0, wires=1
+            const_cable = self.top.reference.create_cable(
+                name=name, is_downto=True, is_scalar=True, lower_index=0, wires=1
             )
-            const0 = const0_cable.wires[0]
+            const = const_cable.wires[0]
         else:
-            const0 = const0[0]
-        return const0
+            const = const[0]
+        return const
 
     @property
     def nets(self):
@@ -167,8 +170,8 @@ class SdnNet:
         self.wire = wire
         self.alias_wires = []
         self.driver_pin = None
-        self.is_vdd = None
-        self.is_gnd = None
+        self.is_vdd = False
+        self.is_gnd = False
         self.is_connected = None
 
     def add_alias_wire(self, wire):
@@ -346,7 +349,4 @@ class SdnInstanceWrapper:
         return self.instance.data.get("VERILOG.Parameters")
 
     def get_pin(self, name, index=0):
-        try:
-            return self.pins_by_name_and_index[(name, index)]
-        except KeyError:
-            return SdnInstanceWrapper.GND_PIN
+        return self.pins_by_name_and_index[(name, index)]
