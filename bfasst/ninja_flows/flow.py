@@ -1,7 +1,6 @@
 """Base class for all ninja flows"""
 import abc
 
-from bfasst.ninja_tools.vivado.synth.vivado_synth import VivadoSynth
 from bfasst.paths import BUILD_DIR, DESIGNS_PATH
 
 
@@ -28,8 +27,3 @@ class Flow(abc.ABC):
     @abc.abstractmethod
     def get_top_level_flow_path(self) -> str:
         """Get the path to the top level flow file for this flow"""
-
-    def configure_vivado_synth_tool(self, design, flow_args, ooc=False):
-        if isinstance(flow_args, dict) and "synth" in flow_args:
-            return VivadoSynth(design, flow_args["synth"], ooc)
-        return VivadoSynth(design, ooc=ooc)
