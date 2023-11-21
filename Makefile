@@ -74,7 +74,7 @@ ifeq "$(CAPNPJ)" ""
 endif
 
 submodules:
-	$(foreach submodule,$(PUBLIC_SUBMODULES),git submodule init $(submodule);)
+	$(foreach submodule,$(PUBLIC_SUBMODULES),git submodule init $(submodule); git submodule update $(submodule);)
 
 rapidwright:
 	cd third_party/RapidWright && ./gradlew compileJava
