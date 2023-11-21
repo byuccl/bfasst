@@ -1,5 +1,5 @@
 rule vivado
-    command = export tempjou=$$(mktemp); export templog=$$(mktemp); source VIVADO_PATH/../settings64.sh && {{ vivado_path }} -mode batch -journal $$tempjou -log $$templog -source $in >&- && mv $$tempjou $journal && mv $$templog $log
+    command = export tempjou=$$(mktemp); export templog=$$(mktemp); . $$(/tools/Xilinx/Vivado/2022.2/settings64.sh) && {{ vivado_path }} -mode batch -journal $$tempjou -log $$templog -source $in >&- && mv $$tempjou $journal && mv $$templog $log
     description = vivado $in
 
 {{#in_context}}
