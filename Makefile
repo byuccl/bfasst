@@ -75,6 +75,7 @@ endif
 
 submodules:
 	$(foreach submodule,$(PUBLIC_SUBMODULES),git submodule init $(submodule); git submodule update $(submodule);)
+	$(foreach submodule,$(PRIVATE_SUBMODULES),git submodule init $(submodule); git submodule update $(submodule) || echo "Ignoring failed clone of private submodule ($(submodule))";)
 
 rapidwright:
 	cd third_party/RapidWright && ./gradlew compileJava
