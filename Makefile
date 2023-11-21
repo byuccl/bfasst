@@ -3,6 +3,15 @@ IN_ENV = if [ -e .venv/bin/activate ]; then . .venv/bin/activate; fi;
 CAPNPJ := $(shell which capnpc-java)
 PYTHON311 := $(shell which python3.11)
 
+PUBLIC_SUBMODULES = \
+	third_party/fasm2bels \
+	third_party/RapidWright \
+	third_party/yosys \
+	third_party/WaFoVe
+
+PRIVATE_SUBMODULES = \
+	third_party/gmt_tools
+
 install: submodules venv python_packages rapidwright env install_fasm2bels install_yosys install_wafove
 
 venv:
@@ -65,7 +74,7 @@ ifeq "$(CAPNPJ)" ""
 endif
 
 submodules:
-	git submodule update --init --recursive
+	$(foreach submodule,$(PUBLIC_SUBMODULES),git submodule init $(submodule);)
 
 rapidwright:
 	cd third_party/RapidWright && ./gradlew compileJava
