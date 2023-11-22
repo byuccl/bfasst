@@ -6,7 +6,7 @@ import io
 from contextlib import redirect_stderr
 from bfasst.paths import ROOT_PATH
 
-from scripts.bfasster import parse_args
+from scripts.run import parse_args
 
 
 class TestBfassterApplicationRunner(unittest.TestCase):
@@ -14,7 +14,7 @@ class TestBfassterApplicationRunner(unittest.TestCase):
 
     def __run_flow(self, flow):
         # run the bfasster script with the given flow
-        cmd = ["python", "scripts/bfasster.py", "--design", "byu/alu", "--flow", flow]
+        cmd = ["python", "scripts/run.py", "--design", "byu/alu", "--flow", flow]
 
         # capture the output of the runner with subprocess.PIPE so it doesn't print to the console.
         # the first time bfasster runs, ninja will get everything up to date.

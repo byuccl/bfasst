@@ -102,7 +102,7 @@ This branch serves as the transition point to a new version of bfasst, which mak
 There are two steps to running any flow with any design(s): a ninja generation step and a run step. For convenience, a script is included to execute both steps sequentially with a single command:
 
 <pre>Usage:<code>
-    python scripts/bfasster.py [--yaml YAML] [--design DESIGN] [--flow FLOW]
+    python scripts/run.py [--yaml YAML] [--design DESIGN] [--flow FLOW]
 
 options:
     --yaml YAML         The yaml experiment to run, same as with bfasst
