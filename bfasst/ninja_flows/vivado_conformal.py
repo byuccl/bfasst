@@ -20,12 +20,6 @@ class VivadoConformal(Flow):
         self.xrev_tool = Xray(self, design)
         self.conformal_tool = Conformal(self, design)
 
-    def create_rule_snippets(self):
-        self.vivado_synth_tool.create_rule_snippets()
-        self.vivado_impl_tool.create_rule_snippets()
-        self.xrev_tool.create_rule_snippets()
-        self.conformal_tool.create_rule_snippets()
-
     def create_build_snippets(self):
         self.vivado_synth_tool.create_build_snippets()
         self.vivado_impl_tool.create_build_snippets()
@@ -35,13 +29,6 @@ class VivadoConformal(Flow):
             rev_netlist=str(self.xrev_tool.outputs["xray_netlist"]),
             vendor=Vendor.XILINX,
         )
-
-    def add_ninja_deps(self, deps):
-        self.vivado_synth_tool.add_ninja_deps(deps)
-        self.vivado_impl_tool.add_ninja_deps(deps)
-        self.xrev_tool.add_ninja_deps(deps)
-        self.conformal_tool.add_ninja_deps(deps)
-        deps.append(NINJA_FLOWS_PATH / "vivado_conformal.py")
 
     def get_top_level_flow_path(self) -> str:
         return NINJA_FLOWS_PATH / "vivado_conformal.py"

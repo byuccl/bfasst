@@ -20,13 +20,6 @@ class VivadoPhysNetlistXrev(Flow):
         self.phys_netlist_tool = PhysNetlist(self, design)
         self.xrev_tool = Xray(self, design)
 
-    def create_rule_snippets(self):
-        """Create the rule snippets for the flow and append them to build.ninja."""
-        self.vivado_synth_tool.create_rule_snippets()
-        self.vivado_impl_tool.create_rule_snippets()
-        self.phys_netlist_tool.create_rule_snippets()
-        self.xrev_tool.create_rule_snippets()
-
     def create_build_snippets(self):
         """Create the build snippets for the flow and append them to build.ninja."""
         self.vivado_synth_tool.create_build_snippets()
@@ -37,12 +30,5 @@ class VivadoPhysNetlistXrev(Flow):
         )
         self.xrev_tool.create_build_snippets(self.vivado_impl_tool.outputs["bitstream"])
 
-    def add_ninja_deps(self, deps):
-        self.vivado_synth_tool.add_ninja_deps(deps)
-        self.vivado_impl_tool.add_ninja_deps(deps)
-        self.phys_netlist_tool.add_ninja_deps(deps)
-        self.xrev_tool.add_ninja_deps(deps)
-        deps.append(NINJA_FLOWS_PATH / "vivado_phys_netlist_xrev.py")
-
     def get_top_level_flow_path(self):
-        return f"{NINJA_FLOWS_PATH}/vivado_phys_netlist_xrev.py"
+        return NINJA_FLOWS_PATH / "vivado_phys_netlist_xrev.py"

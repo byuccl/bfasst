@@ -17,11 +17,6 @@ class VivadoPhysNetlist(Flow):
         self.vivado_impl_tool = VivadoImpl(self, design)
         self.phys_netlist_tool = PhysNetlist(self, design)
 
-    def create_rule_snippets(self):
-        self.vivado_synth_tool.create_rule_snippets()
-        self.vivado_impl_tool.create_rule_snippets()
-        self.phys_netlist_tool.create_rule_snippets()
-
     def create_build_snippets(self):
         # pylint: disable=duplicate-code
         self.vivado_synth_tool.create_build_snippets()
@@ -32,11 +27,5 @@ class VivadoPhysNetlist(Flow):
         )
         # pylint: enable=duplicate-code
 
-    def add_ninja_deps(self, deps):
-        self.vivado_synth_tool.add_ninja_deps(deps)
-        self.vivado_impl_tool.add_ninja_deps(deps)
-        self.phys_netlist_tool.add_ninja_deps(deps)
-        deps.append(NINJA_FLOWS_PATH / "vivado_phys_netlist.py")
-
     def get_top_level_flow_path(self):
-        return f"{NINJA_FLOWS_PATH}/vivado_phys_netlist.py"
+        return NINJA_FLOWS_PATH / "vivado_phys_netlist.py"

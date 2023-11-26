@@ -91,6 +91,7 @@ class ToolBase(abc.ABC):
         for dep in possible_deps:
             if dep.is_file():
                 deps.append(dep)
+        deps.append(py_tool_path)
 
 
 class Tool(ToolBase, abc.ABC):

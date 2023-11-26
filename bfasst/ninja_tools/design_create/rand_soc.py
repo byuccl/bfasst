@@ -4,7 +4,7 @@ import pathlib
 import chevron
 
 from bfasst.ninja_tools.tool import ToolBase
-from bfasst.paths import BUILD_PATH, NINJA_BUILD_PATH, NINJA_UTILS_PATH
+from bfasst.paths import BUILD_PATH, GMT_TOOLS_PATH, NINJA_BUILD_PATH
 
 
 class RandSoCTool(ToolBase):
@@ -27,12 +27,15 @@ class RandSoCTool(ToolBase):
             # TODO: Outputs
             # self._init_outputs(self.injection_log, self.corrupt_netlist)
 
+            rand_soc_pkg_files = list((GMT_TOOLS_PATH / "rand_soc" / "rand_soc").glob("**/*.py"))
+
             with open(self._my_dir_path / "rand_soc_build.ninja.mustache", "r") as f:
                 build = chevron.render(
                     f,
                     {
                         "design_dir_path": design_dir_path,
                         "seed": i,
+                        "rand_soc_source_files": " ".join((str(s) for s in rand_soc_pkg_files)),
                     },
                 )
 
@@ -41,4 +44,3 @@ class RandSoCTool(ToolBase):
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
-        deps.append(NINJA_UTILS_PATH / "error_injector.py")

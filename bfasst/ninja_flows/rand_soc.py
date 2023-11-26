@@ -21,7 +21,6 @@ class RandSoc(FlowNoDesign):
 
     def add_ninja_deps(self, deps):
         super().add_ninja_deps(deps)
-        self.rand_soc_tool.add_ninja_deps(deps)
 
     def get_top_level_flow_path(self):
         return pathlib.Path(__file__).resolve()
