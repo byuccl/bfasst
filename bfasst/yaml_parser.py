@@ -1,53 +1,57 @@
 """Parse a yaml file to obtain a flow and a list of target designs"""
 # pylint: disable=duplicate-code
+from abc import ABC
 from pathlib import Path
 import yaml
+
 from bfasst.utils import error
 from bfasst import paths
 
 
-class YamlParser:
+class YamlParser(ABC):
+    def __init__(self, yaml_path):
+        self.yaml_path = yaml_path
+
+        # Read the yaml file
+        with open(yaml_path) as f:
+            self.props = yaml.safe_load(f)
+
+
+class RunParser(YamlParser):
     """Parses a yaml file to obtain a flow and list of target designs"""
 
     def __init__(self, yaml_path):
-        self.yaml_path = yaml_path
-        self.experiment_props = None
+        super().__init__(yaml_path)
         self.post_run = None
         self.design_paths = []
         self.flow = None
+        self.flow_arguments = {}
         self.flow_args = {}
 
-    def parse_design_flow(self):
-        """Parse a yaml file into design paths
-        and an instance of the specified flow for each design"""
-        self.__read_experiment_yaml()
-        self.__check_experiment_props_for_yaml()
+        # Verify required fields are present
+        assert "flow" in self.props, f"Experiment {self.yaml_path} does not specify a flow"
+        self.flow = self.props["flow"]
+        self.props.pop("flow")
 
-        self.__check_for_post_run()
+        # Check for optional fields that aren't passed to the flow
+        if "post_run" in self.props:
+            self.post_run = getattr(self, self.props("post_run"))
+            self.props.pop("post_run")
 
-        self.__collect_design_paths()
-        self.__uniquify_design_paths()
+        # Collect the design paths
+        self._collect_design_paths()
+        self._uniquify_design_paths()
 
-        self.flow = self.experiment_props["flow"]
-        self.__init_flow_args()
+        self._get_flow_args()
 
-    def __read_experiment_yaml(self):
-        with open(self.yaml_path) as f:
-            self.experiment_props = yaml.safe_load(f)
+        # Anything remaining will be passed to the flow
+        self.flow_arguments = self.props
 
-    def __check_experiment_props_for_yaml(self):
-        if "flow" not in self.experiment_props:
-            error(f"Experiment {self.yaml_path} does not specify a flow")
-
-    def __check_for_post_run(self):
-        if "post_run" in self.experiment_props:
-            self.post_run = getattr(self, self.experiment_props("post_run"))
-
-    def __collect_design_paths(self):
+    def _collect_design_paths(self):
         """Get all designs from the config yaml"""
 
-        if "designs" in self.experiment_props:
-            for design in self.experiment_props.pop("designs"):
+        if "designs" in self.props:
+            for design in self.props.pop("designs"):
                 design_path = paths.DESIGNS_PATH / design
                 if not design_path.is_dir():
                     error("Provided design directory", design_path, "does not exist")
@@ -74,8 +78,8 @@ class YamlParser:
                         self.design_paths.append(str(design_name))
                         continue
 
-        if "design_dirs" in self.experiment_props:
-            for design_dir in self.experiment_props.pop("design_dirs"):
+        if "design_dirs" in self.props:
+            for design_dir in self.props.pop("design_dirs"):
                 design_dir_path = paths.DESIGNS_PATH / design_dir
                 if not design_dir_path.is_dir():
                     error(f"{design_dir_path} is not a directory")
@@ -85,32 +89,32 @@ class YamlParser:
                     if item_path.is_dir():
                         self.design_paths.append(dir_item.name)
 
-    def __uniquify_design_paths(self):
+    def _uniquify_design_paths(self):
         self.design_paths = list(set(self.design_paths))
         self.design_paths.sort()
 
-    def __init_flow_args(self):
-        if "synth" in self.experiment_props:
-            synth_args = self.experiment_props["synth"]
+    def _get_flow_args(self):
+        if "synth" in self.props:
+            synth_args = self.props["synth"]
             self.flow_args.update({"synth": synth_args})
+            self.props.pop("synth")
         else:
             synth_args = ""
         self.flow_args.update({"synth": synth_args})
 
-    def parse_top_module(self):
-        """Parse a yaml file to obtain a top module"""
-        self.experiment_props = None
-        self.__read_experiment_yaml()
-        return self.__check_for_top()
 
-    def __check_for_top(self):
-        if "top" not in self.experiment_props:
-            error(f"Experiment {self.yaml_path} does not specify a top module")
-        return self.experiment_props["top"]
+class DesignParser(YamlParser):
+    """Parses a design yaml file"""
 
-    def parse_vhdl_libs(self):
-        self.experiment_props = None
-        self.__read_experiment_yaml()
-        if "vhdl_libs" in self.experiment_props:
-            return self.experiment_props["vhdl_libs"]
-        return None
+    def __init__(self, yaml_path):
+        super().__init__(yaml_path)
+
+        # Get top module name
+        if "top" not in self.props:
+            error(f"Design {self.yaml_path} does not specify a top module")
+        self.top = self.props["top"]
+
+        # Parse VHDL libraries
+        self.vhdl_libs = None
+        if "vhdl_libs" in self.props:
+            self.vhdl_libs = self.props["vhdl_libs"]

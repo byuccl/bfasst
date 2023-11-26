@@ -1,4 +1,4 @@
-build {{ synth_output }}/synth.tcl: template {{ synth_output }}/synth.json {{ synth_library }}/viv_synth.tcl.mustache
+build {{ synth_output }}/synth.tcl: template {{ synth_output }}/synth.json {{ synth_library }}/vivado_synth.tcl.mustache
 
 {{#in_context}}
 build {{ synth_output }}/{{ top }}.xdc: vivado_ioparse {{ synth_output }}/report_io.txt

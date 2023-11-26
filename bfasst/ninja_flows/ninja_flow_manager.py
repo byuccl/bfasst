@@ -5,6 +5,7 @@ import pathlib
 
 import chevron
 
+from bfasst.ninja_flows.flow import FlowNoDesign
 from bfasst.ninja_flows.flow_utils import create_build_file, get_flow
 from bfasst.paths import DESIGNS_PATH, NINJA_BUILD_PATH, NINJA_FLOWS_PATH, ROOT_PATH
 from bfasst.utils import error
@@ -29,28 +30,48 @@ class NinjaFlowManager:
         # These may or may not be specified on a given run.
         self.flow_args = None
 
-    def create_flows(self, flow_name, designs, flow_args=None):
+    def create_flows(self, flow_name, designs, flow_args=None, flow_arguments=None):
         """Create the ninja flows for the given designs."""
         if flow_args is None:
             flow_args = {}
+        if flow_arguments is None:
+            flow_arguments = {}
         self.flow_name = flow_name
         self.flows = []
         self.designs = []
         self.flow_args = flow_args
 
-        # Get absolute design paths.  First check if a path to the design was provided,
-        # and if not, look for it in the designs directory.
-        for design in designs:
-            design_path = pathlib.Path(design).resolve()
-            if not (design_path.is_dir() and design_path.is_relative_to(DESIGNS_PATH)):
-                design_path = DESIGNS_PATH / design
-            if not design_path.is_dir():
-                error(f"Design {design} cannot be found.  This must be a subdirectory of designs/")
+        flow_class = get_flow(flow_name)
 
-            self.designs.append(design_path)
-
-            flow = get_flow(flow_name)(design_path, flow_args)
+        if issubclass(flow_class, FlowNoDesign):
+            assert not designs, (
+                f"Flow {flow_name} does not take a design as input, "
+                f"but a design was provided ({designs})"
+            )
+            flow = flow_class(flow_args, **flow_arguments)
             self.flows.append(flow)
+
+        else:
+            assert designs, f"Flow {flow_name} requires design(s), but no design was provided."
+
+            # Get absolute design paths.  First check if a path to the design was provided,
+            # and if not, look for it in the designs directory.
+            for design in designs:
+                design_path = pathlib.Path(design).resolve()
+                if not (design_path.is_dir() and design_path.is_relative_to(DESIGNS_PATH)):
+                    design_path = DESIGNS_PATH / design
+                if not design_path.is_dir():
+                    error(
+                        f"Design {design} cannot be found.  This must be a subdirectory of designs/"
+                    )
+
+                self.designs.append(design_path)
+
+                flow = get_flow(flow_name)(design_path, flow_args, **flow_arguments)
+                self.flows.append(flow)
+
+        for flow in self.flows:
+            flow.create_tool_build_dirs()
 
     def run_flows(self):
         """Run the ninja flows"""
@@ -62,6 +83,11 @@ class NinjaFlowManager:
 
         for flow in self.flows:
             flow.create_build_snippets()
+
+    def run_complete(self):
+        """Run the post-execution functions"""
+        for flow in self.flows:
+            flow.post_execute()
 
     def __create_master_ninja(self):
         master_ninja = self.__populate_template()

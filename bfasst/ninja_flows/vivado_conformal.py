@@ -1,12 +1,12 @@
 """Run vivado, phys_netlist, reverse with xray, then compare with conformal."""
 
 from bfasst.ninja_flows.flow import Flow
-from bfasst.ninja_tools.vivado.impl.vivado_impl import VivadoImpl
+from bfasst.ninja_tools.impl.vivado_impl import VivadoImpl
 from bfasst.ninja_tools.compare.conformal.conformal import Conformal
 from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.paths import NINJA_FLOWS_PATH
 from bfasst.types import Vendor
-from bfasst.ninja_tools.vivado.synth.vivado_synth import VivadoSynth
+from bfasst.ninja_tools.synth.vivado_synth import VivadoSynth
 from bfasst.utils.general import ensure
 
 
@@ -15,10 +15,10 @@ class VivadoConformal(Flow):
 
     def __init__(self, design, flow_args=None):
         super().__init__(design)
-        self.vivado_synth_tool = VivadoSynth(design, ensure(flow_args, {}).get("synth"))
-        self.vivado_impl_tool = VivadoImpl(design)
-        self.xrev_tool = Xray(design)
-        self.conformal_tool = Conformal(design)
+        self.vivado_synth_tool = VivadoSynth(self, design, ensure(flow_args, {}).get("synth"))
+        self.vivado_impl_tool = VivadoImpl(self, design)
+        self.xrev_tool = Xray(self, design)
+        self.conformal_tool = Conformal(self, design)
 
     def create_rule_snippets(self):
         self.vivado_synth_tool.create_rule_snippets()

@@ -55,7 +55,7 @@ jobs:
       timeout-minutes: 40
       run: |
         source .venv/bin/activate
-        python scripts/run.py --yaml ${{ matrix.experiment }}
+        python scripts/run.py ${{ matrix.experiment }}
     - name: 'Create fname'
       if: failure()
       id: set-fname

@@ -4,19 +4,15 @@ import chevron
 from bfasst import config
 from bfasst.paths import NINJA_BUILD_PATH, REV_BIT_TOOLS_PATH, XRAY_PATH, get_fasm2bels_path
 from bfasst.ninja_tools.tool import Tool
-from bfasst.yaml_parser import YamlParser
 
 
 class Xray(Tool):
     """Tool to create rule and build snippets that reverse a bitstream using xray."""
 
-    def __init__(self, design):
-        super().__init__(design)
+    def __init__(self, flow, design):
+        super().__init__(flow, design)
 
         self.build_path = self.design_build_path / "xray"
-        self._create_build_dir()
-
-        self.top = YamlParser(self.design_path / "design.yaml").parse_top_module()
 
         # get these moved to paths later
         self.fasm2bels_path = get_fasm2bels_path()
@@ -32,11 +28,11 @@ class Xray(Tool):
         self.xray_db_path = self.fasm2bels_path / "third_party" / "prjxray-db"
         self.db_root = self.xray_db_path / config.PART_FAMILY
         self.to_netlist_log = self.build_path / "to_netlist.log"
-        self.fasm_path = self.build_path / (self.top + ".fasm")
-        self.reversed_netlist_path = self.build_path / (self.top + "_reversed.v")
-        self.xdc_path = self.build_path / (self.top + "_reversed.xdc")
+        self.fasm_path = self.build_path / (self.design_props.top + ".fasm")
+        self.reversed_netlist_path = self.build_path / (self.design_props.top + "_reversed.v")
+        self.xdc_path = self.build_path / (self.design_props.top + "_reversed.xdc")
         self.constraints_path = (
-            str(self.build_path.parent / "in_context" / "synth" / self.top) + ".xdc"
+            str(self.design_build_path / "synth" / self.design_props.top) + ".xdc"
         )
         self._init_outputs()
 
@@ -61,7 +57,7 @@ class Xray(Tool):
                     "bit_to_fasm_path": XRAY_PATH / "utils" / "bit2fasm.py",
                     "db_root": self.db_root,
                     "part": config.PART,
-                    "top": self.top,
+                    "top": self.design_props.top,
                     "verilog_file": self.reversed_netlist_path,
                     "xdc_file": self.xdc_path,
                     "input_xdc": self.constraints_path,

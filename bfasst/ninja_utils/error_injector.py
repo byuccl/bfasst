@@ -5,11 +5,11 @@ from enum import Enum
 import logging
 import random
 from pathlib import Path
+
 import spydrnet as sdn
-from bfasst.paths import DESIGNS_PATH
+
 from bfasst.utils.rw_helpers import get_sdn_direction_for_unisim, get_unisim_inputs
 from bfasst.utils import convert_verilog_literal_to_int
-from bfasst.yaml_parser import YamlParser
 
 
 class ErrorType(Enum):
@@ -44,7 +44,6 @@ class ErrorInjector:
         self.corrupted_netlist_path = None
         self.old_lut_init = None
         self.new_lut_init = None
-        self.top = self.__set_top_module()
 
         self.clean_netlist = sdn.parse(reversed_netlist)
         self.corrupted_netlist_path = self.log_path.with_suffix(".v")
@@ -53,10 +52,6 @@ class ErrorInjector:
 
         self.injector = self.__get_injection_function(ErrorType[error_type.upper()])
         self.injector()
-
-    def __set_top_module(self):
-        design = "/".join(str(self.build_dir).split("/")[-2:])
-        return YamlParser(DESIGNS_PATH / design / "design.yaml").parse_top_module()
 
     def __get_injection_function(self, error_type):
         """Injects an error into the netlist of the given type"""

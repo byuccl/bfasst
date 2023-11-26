@@ -7,14 +7,13 @@ from bfasst.paths import NINJA_UTILS_PATH
 class Structural(Tool):
     """Create the rule and build snippets for structural comparison."""
 
-    def __init__(self, design):
-        super().__init__(design)
+    def __init__(self, flow, design):
+        super().__init__(flow, design)
         self.build_path = self.design_build_path / "struct_cmp"
-        self._create_build_dir()
         self.log_name = None
 
     def create_rule_snippets(self):
-        self._create_rule_snippets_default(__file__)
+        self._append_rule_snippets_default(__file__)
 
     def create_build_snippets(self, netlist_a, netlist_b, log_name):
         self._init_outputs(log_name)
