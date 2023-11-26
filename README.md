@@ -90,7 +90,7 @@ Finally, test to confirm that everything worked correctly! Run the following:
 1. Activate the virual environment: ```. .venv/bin/activate```
 2. Run the flow:  ```python scripts/run_design.py designs/basic/add4/ xilinx_conformal_impl```
 
-## The Ninja Transition -- Bfasster 2.0
+## The Ninja Transition
 This branch serves as the transition point to a new version of bfasst, which makes the following changes:
 * It takes advantage of the ninja build tool to automatically handle job creation, up-to-date checking of dependencies, parallel processing, and io redirection. 
 * It uses chevron, the python implementation of the mustache templating engine to template the scripts used for common operations such as synthesis and implementation of designs.
