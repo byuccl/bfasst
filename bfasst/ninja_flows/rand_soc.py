@@ -8,9 +8,10 @@ from bfasst.ninja_tools.design_create.rand_soc import RandSoCTool
 class RandSoc(FlowNoDesign):
     """Flow to create Vivado synthesis and implementation ninja snippets."""
 
-    def __init__(self, num_designs=1):
+    def __init__(self, flow_args=None, num_designs=1):
         super().__init__()
 
+        self.flow_args = flow_args
         self.rand_soc_tool = RandSoCTool(self, num_designs=num_designs)
 
     @classmethod
