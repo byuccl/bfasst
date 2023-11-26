@@ -127,3 +127,6 @@ doctest:
 
 unittest:
 	$(IN_ENV) python -m unittest
+
+unittest_failfast:
+	$(IN_ENV) python -m unittest -f
