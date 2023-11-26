@@ -10,9 +10,8 @@ from bfasst.ninja_flows.vivado_bit_analysis import VivadoBitAnalysis
 from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.transform.netlist_cleanup import NetlistCleanupTool
 from bfasst.ninja_tools.transform.netlist_phys_to_logical import NetlistPhysToLogicalTool
-from bfasst.ninja_tools.vivado.synth.vivado_synth import VivadoSynth
-from bfasst.ninja_tools.vivado.impl.vivado_impl import VivadoImpl
-from bfasst.ninja_tools.vivado.vivado import Vivado
+from bfasst.ninja_tools.synth.vivado_synth import VivadoSynth
+from bfasst.ninja_tools.impl.vivado_impl import VivadoImpl
 from bfasst.paths import (
     DESIGNS_PATH,
     NINJA_BUILD_PATH,
@@ -28,11 +27,8 @@ class TestVivadoAndReversedFlow(unittest.TestCase):
         # overwrite the build file so it is not appended to incorrectly
         create_build_file()
 
-        # before all vivado based flows, make sure the Vivado parent class is
-        # allowed to create its rule snippets
-        Vivado.rules_appended_to_build = False
-
         cls.flow = VivadoBitAnalysis(DESIGNS_PATH / "byu/alu")
+        cls.flow.create_tool_build_dirs()
         cls.flow.create_rule_snippets()
         cls.flow.create_build_snippets()
 
@@ -60,13 +56,13 @@ class TestVivadoAndReversedFlow(unittest.TestCase):
         self.flow.add_ninja_deps(observed)
 
         expected = ["foo", "bar"]
-        Xray(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
-        VivadoSynth(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
-        VivadoImpl(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
-        NetlistCleanupTool(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
-        NetlistPhysToLogicalTool(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
-
+        Xray(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        VivadoSynth(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        VivadoImpl(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        NetlistCleanupTool(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        NetlistPhysToLogicalTool(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         expected.append(NINJA_FLOWS_PATH / "vivado_bit_analysis.py")
+
         observed = sorted([str(s) for s in observed])
         expected = sorted([str(s) for s in expected])
         self.assertEqual(observed, expected)

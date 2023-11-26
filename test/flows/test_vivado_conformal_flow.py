@@ -4,13 +4,13 @@
 # pylint: disable=duplicate-code
 
 import unittest
+
 from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado_conformal import VivadoConformal
-from bfasst.ninja_tools.vivado.synth.vivado_synth import VivadoSynth
-from bfasst.ninja_tools.vivado.impl.vivado_impl import VivadoImpl
+from bfasst.ninja_tools.synth.vivado_synth import VivadoSynth
+from bfasst.ninja_tools.impl.vivado_impl import VivadoImpl
 from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.compare.conformal.conformal import Conformal
-from bfasst.ninja_tools.vivado.vivado import Vivado
 from bfasst.paths import (
     DESIGNS_PATH,
     NINJA_BUILD_PATH,
@@ -25,10 +25,6 @@ class TestVivadoConformalFlow(unittest.TestCase):
     def setUpClass(cls) -> None:
         # overwrite the build file so it is not appended to incorrectly
         create_build_file()
-
-        # before all vivado based flows, make sure the Vivado parent class is
-        # allowed to create its rule snippets
-        Vivado.rules_appended_to_build = False
 
         cls.flow = VivadoConformal(DESIGNS_PATH / "byu/alu")
         cls.flow.create_rule_snippets()
@@ -57,10 +53,10 @@ class TestVivadoConformalFlow(unittest.TestCase):
         observed = ["foo", "bar"]
         self.flow.add_ninja_deps(observed)
         expected = ["foo", "bar"]
-        Xray(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
-        VivadoSynth(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
-        VivadoImpl(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
-        Conformal(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        Xray(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        VivadoSynth(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        VivadoImpl(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        Conformal(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         expected.append(NINJA_FLOWS_PATH / "vivado_conformal.py")
         observed = sorted([str(s) for s in observed])
         expected = sorted([str(s) for s in expected])

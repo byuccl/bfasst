@@ -9,9 +9,8 @@ from bfasst.ninja_flows.flow_utils import create_build_file
 from bfasst.ninja_flows.vivado_yosys_impl import VivadoYosysImpl
 from bfasst.ninja_tools.compare.yosys.yosys import Yosys
 from bfasst.ninja_tools.rev_bit.xray import Xray
-from bfasst.ninja_tools.vivado.synth.vivado_synth import VivadoSynth
-from bfasst.ninja_tools.vivado.impl.vivado_impl import VivadoImpl
-from bfasst.ninja_tools.vivado.vivado import Vivado
+from bfasst.ninja_tools.synth.vivado_synth import VivadoSynth
+from bfasst.ninja_tools.impl.vivado_impl import VivadoImpl
 from bfasst.paths import DESIGNS_PATH, NINJA_BUILD_PATH, NINJA_FLOWS_PATH
 
 
@@ -23,12 +22,9 @@ class TestVivadoYosysImplFlow(unittest.TestCase):
         # overwrite the build file so it is not appended to incorrectly
         create_build_file()
 
-        # before all vivado based flows, make sure the Vivado parent class is
-        # allowed to create its rule snippets
-        Vivado.rules_appended_to_build = False
-
         cls.design_shortname = DESIGNS_PATH / "byu/alu"
         cls.flow = VivadoYosysImpl(cls.design_shortname)
+        cls.flow.create_tool_build_dirs()
         cls.flow.create_rule_snippets()
         cls.flow.create_build_snippets()
 
@@ -55,18 +51,19 @@ class TestVivadoYosysImplFlow(unittest.TestCase):
         observed = ["foo", "bar"]
         self.flow.add_ninja_deps(observed)
         expected = ["foo", "bar"]
-        Xray(self.design_shortname).add_ninja_deps(expected)
-        VivadoSynth(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
-        VivadoImpl(DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
-        Yosys(self.design_shortname).add_ninja_deps(expected)
+        Xray(None, self.design_shortname).add_ninja_deps(expected)
+        VivadoSynth(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        VivadoImpl(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        Yosys(None, self.design_shortname).add_ninja_deps(expected)
         expected.append(NINJA_FLOWS_PATH / "vivado_yosys_impl.py")
-        # observed.sort()
-        # expected.sort()
+
+        observed = sorted([str(s) for s in observed])
+        expected = sorted([str(s) for s in expected])
         self.assertListEqual(observed, expected)
 
     def test_get_top_level_flow_path(self):
         self.assertEqual(
-            self.flow.get_top_level_flow_path(), f"{NINJA_FLOWS_PATH}/vivado_yosys_impl.py"
+            self.flow.get_top_level_flow_path(), NINJA_FLOWS_PATH / "vivado_yosys_impl.py"
         )
 
 
