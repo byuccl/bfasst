@@ -7,7 +7,7 @@ import sys
 import shutil
 import enum
 
-from bfasst.paths import DESIGNS_PATH, BUILD_DIR
+from bfasst.paths import DESIGNS_PATH
 from bfasst.config import BUILD
 
 
@@ -167,34 +167,6 @@ def log_with_banner(*msg):
     logging.info(banner)
 
 
-def clean_error_injections_and_comparisons(designs):
-    """Remove all error injection and comparison artifacts for errors successfully detected
-    by the compare tool"""
-    print("\nError injections not caught: ")
-    fail_list = []
-
-    for design in designs:
-        cmp_dir = BUILD_DIR / design.relative_to(DESIGNS_PATH) / "struct_cmp"
-        error_dir = BUILD_DIR / design.relative_to(DESIGNS_PATH) / "error_injection"
-        for file in cmp_dir.iterdir():
-            with open(file, "r") as f:
-                # SUCCESS means the compare tool did not detect an actual error
-                if "FAIL" not in f.read():
-                    fail_list.append(file.name.split("_cmp.log")[0])
-                else:
-                    err_log_name = file.name.split("_cmp.log")[0] + ".log"
-                    err_log = error_dir / err_log_name
-                    err_netlist = err_log.with_suffix(".v")
-                    file.unlink()
-                    err_log.unlink()
-                    err_netlist.unlink()
-
-    if fail_list:
-        print("\n".join(fail_list))
-    else:
-        print("None")
-
-
 def get_hdl_src_types(srcs):
     """get hdl type of project"""
     if isinstance(srcs, Path):
@@ -242,3 +214,13 @@ def ensure(x, y):
     if x is None:
         return y
     return x
+
+
+def json_write_if_changed(path, json_str):
+    """Write the json file for the tool, if the new string
+    does not match the json already in existence."""
+    json_equivalent = compare_json(path, json_str)
+
+    if not json_equivalent:
+        with open(path, "w") as f:
+            f.write(json_str)

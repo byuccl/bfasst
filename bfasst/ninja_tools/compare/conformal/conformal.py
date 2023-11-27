@@ -8,12 +8,11 @@ from bfasst.paths import NINJA_BUILD_PATH, NINJA_CONFORMAL_TOOLS_PATH, NINJA_UTI
 class Conformal(Tool):
     """Create the rule and build snippets for conformal comparison."""
 
-    def __init__(self, design):
-        super().__init__(design)
+    def __init__(self, flow, design):
+        super().__init__(flow, design)
         self.build_path = self.design_build_path / "conformal"
-        self._create_build_dir()
         self._init_outputs()
-        self._read_hdl_files()
+        # self._read_hdl_files()
 
     def create_rule_snippets(self):
         """Create the rule snippets for conformal comparison."""

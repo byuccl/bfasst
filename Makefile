@@ -63,6 +63,9 @@ packages:
 python_packages:
 	$(IN_ENV) python -m pip install -r requirements.txt
 	$(IN_ENV) python -m pip install -e .
+	if [ -f third_party/gmt_tools/requirements.txt ]; then \
+		$(IN_ENV) cd third_party/gmt_tools && python -m pip install -r requirements.txt; \
+	fi
 
 capnproto_java:
 ifeq "$(CAPNPJ)" ""
@@ -127,3 +130,6 @@ doctest:
 
 unittest:
 	$(IN_ENV) python -m unittest
+
+unittest_failfast:
+	$(IN_ENV) python -m unittest -f

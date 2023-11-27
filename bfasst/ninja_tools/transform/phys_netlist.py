@@ -16,12 +16,11 @@ from bfasst.utils import compare_json
 class PhysNetlist(Tool):
     """Create rule and build snippets for phys netlist creation."""
 
-    def __init__(self, design):
-        super().__init__(design)
+    def __init__(self, flow, design):
+        super().__init__(flow, design)
 
         self.build_path = self.design_build_path / "vivado_phys_netlist"
         self.phys_netlist_path = self.build_path / "viv_impl_physical.v"
-        self._create_build_dir()
 
         self._init_outputs()
 

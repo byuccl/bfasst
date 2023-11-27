@@ -4,22 +4,22 @@ import abc
 import pathlib
 
 import chevron
+from bfasst.ninja_flows.flow import FlowBase
 
-from bfasst.paths import BUILD_DIR, DESIGNS_PATH, NINJA_BUILD_PATH
-from bfasst.yaml_parser import YamlParser
+from bfasst.paths import BUILD_PATH, DESIGNS_PATH, NINJA_BUILD_PATH
+from bfasst.yaml_parser import DesignParser
 
 
-class Tool(abc.ABC):
-    """Manage creating rule and build snippets"""
+class ToolBase(abc.ABC):
+    """Base Tool class"""
 
-    def __init__(self, design_path):
-        self.design_path = design_path
-        self.design_build_path = BUILD_DIR / design_path.relative_to(DESIGNS_PATH)
+    def __init__(self, flow):
+        self.flow = flow
+        if flow:
+            assert isinstance(flow, FlowBase), "Flow must be a FlowBase object"
+            self.flow.tools.append(self)
+
         self.build_path = None
-        self.verilog = None
-        self.system_verilog = None
-        self.vhdl = None
-        self.vhdl_libs = None
         self.outputs = {}
 
     @abc.abstractmethod
@@ -35,59 +35,29 @@ class Tool(abc.ABC):
         """Add the template and flow paths of this flow
         and its sub-flows as dependencies of the build.ninja file"""
 
-    @abc.abstractmethod
-    def _init_outputs(self):
-        """Creates a dict of the tool's outputs where key is the output name
-        and value is the output path"""
-
-    def _read_hdl_files(self):
-        """Read the hdl files in the design directory"""
-        self.verilog = []
-        self.system_verilog = []
-        self.vhdl = []
-        self.vhdl_libs = YamlParser(self.design_path / "design.yaml").parse_vhdl_libs()
-        for child in self.design_path.rglob("*"):
-            if child.is_dir():
-                continue
-
-            # don't add vhdl libraries as src files
-            is_lib = self.__check_is_lib(child)
-            if is_lib:
-                continue
-
-            if child.suffix == ".v":
-                self.verilog.append(str(child))
-            elif child.suffix == ".sv":
-                self.system_verilog.append(str(child))
-            elif child.suffix == ".vhd":
-                self.vhdl.append(str(child))
-
-    def __check_is_lib(self, vhdl_file):
-        """Check if a vhdl file is a library"""
-        if not self.vhdl_libs:
-            return False
-
-        for lib in self.vhdl_libs:
-            if lib in str(vhdl_file):
-                return True
-        return False
-
-    def _create_build_dir(self):
-        """Create the build directory for the tool"""
-        assert self.build_path is not None
-
-        self.build_path.mkdir(parents=True, exist_ok=True)
-
-    def _create_rule_snippets_default(self, py_tool_path):
+    def _append_rule_snippets_default(self, py_tool_path, render_dict=None, rules_path=None):
         """Create the rule snippets for a python tool,
         assuming default filenames are used
         """
 
         py_tool_path = pathlib.Path(py_tool_path)
-        rules_path = py_tool_path.parent / (py_tool_path.stem + "_rules.ninja")
+
+        if rules_path is None:
+            if render_dict:
+                rules_path = py_tool_path.parent / (py_tool_path.stem + "_rules.ninja.mustache")
+            else:
+                rules_path = py_tool_path.parent / (py_tool_path.stem + "_rules.ninja")
+
+        if rules_path in self.flow.rule_paths:
+            return
+
+        self.flow.rule_paths.append(rules_path)
 
         with open(rules_path, "r") as f:
-            rules = f.read()
+            if render_dict:
+                rules = chevron.render(f, render_dict)
+            else:
+                rules = f.read()
 
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(rules)
@@ -98,6 +68,9 @@ class Tool(abc.ABC):
         py_tool_path = pathlib.Path(py_tool_path)
 
         build_snippet_path = py_tool_path.parent / (py_tool_path.stem + "_build.ninja.mustache")
+        assert (
+            build_snippet_path.is_file()
+        ), f"Build snippet template {build_snippet_path} does not exist"
 
         with open(build_snippet_path) as f:
             build_snippet = chevron.render(f, render_dict)
@@ -118,3 +91,19 @@ class Tool(abc.ABC):
         for dep in possible_deps:
             if dep.is_file():
                 deps.append(dep)
+        deps.append(py_tool_path)
+
+
+class Tool(ToolBase, abc.ABC):
+    """Base class for tools that operate on a design"""
+
+    def __init__(self, flow, design_path) -> None:
+        super().__init__(flow)
+        self.design_path = design_path
+
+        if design_path.is_relative_to(DESIGNS_PATH):
+            self.design_build_path = BUILD_PATH / design_path.relative_to(DESIGNS_PATH)
+        else:
+            self.design_build_path = BUILD_PATH / "<external>" / design_path
+
+        self.design_props = DesignParser(design_path / "design.yaml")
