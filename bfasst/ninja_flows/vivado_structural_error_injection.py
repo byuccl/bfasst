@@ -74,12 +74,12 @@ class VivadoStructuralErrorInjection(Flow):
                 continue
             with open(file, "r") as f:
                 # SUCCESS means the compare tool did not detect an actual error
-                if "FAIL" not in f.read():
-                    print(f"Error injection failed on {file.name.split('_cmp.log')[0]}")
-                else:
+                if "SUCCESS: Structural comparison found mismatch as expected" in f.read():
                     err_log_name = file.name.split("_cmp.log")[0] + ".log"
                     err_log = error_dir / err_log_name
                     err_netlist = err_log.with_suffix(".v")
                     file.unlink()
                     err_log.unlink()
                     err_netlist.unlink()
+                else:
+                    print(f"Error injection failed on {file.name.split('_cmp.log')[0]}")
