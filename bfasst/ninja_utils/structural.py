@@ -436,6 +436,8 @@ class StructuralCompare:
             for pin_a in instance.pins:
                 if pin_a.ignore_net_equivalency:
                     continue
+                if not pin_a.net.is_connected:
+                    continue
                 pin_b = mapped_instance.get_pin(pin_a.name, pin_a.index)
 
                 net_a = pin_a.net
