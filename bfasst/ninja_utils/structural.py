@@ -36,6 +36,7 @@ class StructuralCompare:
         self.log_path = log_path
         logging.basicConfig(
             filename=self.log_path,
+            filemode="w",
             format="%(asctime)s %(message)s",
             level=logging.DEBUG,
             datefmt="%Y%m%d%H%M%S",
@@ -81,7 +82,7 @@ class StructuralCompare:
             "SRLC32E",
             "LDCE",
         )
-        no_props = ("IBUF", "OBUF", "OBUFT", "MUXF7", "MUXF8", "CARRY4", "IOBUF")
+        no_props = ("IBUF", "OBUF", "OBUFT", "MUXF7", "MUXF8", "CARRY4", "IOBUF", "GND", "VCC")
 
         _cell_props = {x: ("INIT",) for x in init_only}
         _cell_props.update({x: () for x in no_props})
@@ -496,7 +497,7 @@ class StructuralCompare:
 
             net_a = pin.net
 
-            if net_a is None:
+            if net_a is None or not net_a.is_connected:
                 # Disconnected pin
                 continue
 
@@ -515,9 +516,10 @@ class StructuralCompare:
             if pin_b is None:
                 continue
             net_b = pin_b.net
+            assert net_b, f"{pin_b.name} of {matched_instance.name} is not connected"
             if net_b is None and net_a.is_gnd:
                 continue
-            assert isinstance(net_b, SdnNet)
+            assert isinstance(net_b, SdnNet), f"{net_b} is not a net"
 
             if net_a in self.net_mapping:
                 assert net_b == self.net_mapping[net_a]
