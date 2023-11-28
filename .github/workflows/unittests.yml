@@ -28,7 +28,7 @@ jobs:
     #   run: echo "matrix-wip=$(ls experiments/wip/*.yaml | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
 
   # Build a matrix run of all experiments generated in previous job
-  run-ci:
+  run-test:
     needs: collect-experiments
     runs-on: [self-hosted, linux]
     strategy:
