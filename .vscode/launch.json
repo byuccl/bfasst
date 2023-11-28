@@ -84,7 +84,7 @@
             "python": "${workspaceFolder}/.venv/bin/python",
             "program": "scripts/run_experiment.py",
             "args": [
-                "experiments/phys_netlist.yaml",
+                "tests/phys_netlist.yaml",
                 "-j1"
             ],
             "env": {
