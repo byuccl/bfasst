@@ -5,9 +5,12 @@ from collections import defaultdict
 import logging
 from pathlib import Path
 import pickle
+import sys
 import time
 from bidict import bidict
+
 import spydrnet as sdn
+
 from bfasst import jpype_jvm
 from bfasst.utils import convert_verilog_literal_to_int
 from bfasst.utils.general import log_with_banner
@@ -748,7 +751,6 @@ class StructuralCompare:
 
 
 if __name__ == "__main__":
-    # pylint: disable=duplicate-code
     parser = ArgumentParser()
     parser.add_argument(
         "--build_dir",
@@ -771,5 +773,4 @@ if __name__ == "__main__":
         logging.info("SUCCESS")
     except StructuralCompareError as e:
         logging.error("FAIL: %s", e)
-
-    # pylint: enable=duplicate-code
+        sys.exit(1)
