@@ -18,7 +18,6 @@ from bfasst.paths import (
 from bfasst.ninja_flows.vivado import Vivado
 from bfasst.ninja_flows.vivado_bit_analysis import VivadoBitAnalysis
 from bfasst.ninja_flows.vivado_phys_netlist import VivadoPhysNetlist
-from bfasst.ninja_flows.vivado_phys_netlist_xrev import VivadoPhysNetlistXrev
 from bfasst.ninja_flows.vivado_phys_netlist_cmp import VivadoPhysNetlistCmp
 from bfasst.ninja_flows.vivado_structural_error_injection import VivadoStructuralErrorInjection
 from bfasst.ninja_flows.vivado_conformal import VivadoConformal
@@ -56,9 +55,6 @@ class TestNinjaFlowManager(unittest.TestCase):
 
     def test_create_vivado_phys_netlist_flow(self):
         self.__check_flow_creation(VivadoPhysNetlist, "vivado_phys_netlist")
-
-    def test_create_phys_reversed_flow(self):
-        self.__check_flow_creation(VivadoPhysNetlistXrev, "vivado_phys_netlist_xrev")
 
     def test_create_phys_compare_flow(self):
         self.__check_flow_creation(VivadoPhysNetlistCmp, "vivado_phys_netlist_cmp")
@@ -102,9 +98,6 @@ class TestNinjaFlowManager(unittest.TestCase):
 
     def test_run_vivado_phys_netlist_flow(self):
         self.__check_flow_run("vivado_phys_netlist", 9)
-
-    def test_run_phys_reversed_flow(self):
-        self.__check_flow_run("vivado_phys_netlist_xrev", 11)
 
     def test_run_phys_compare_flow(self):
         self.__check_flow_run("vivado_phys_netlist_cmp", 12)
