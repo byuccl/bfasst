@@ -102,7 +102,7 @@ class NinjaFlowManager:
                     "designs": self.designs,
                     "deps": deps,
                     "flow": self.flow_name,
-                    "flow_arguments": self.flow_arguments,
+                    "flow_arguments": str(self.flow_arguments),
                 },
             )
 
@@ -116,7 +116,7 @@ def get_design_basenames(designs):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("flow", type=str, help="Name of the flow to run")
-    parser.add_argument("designs", nargs="+", help="Designs to run the flow on")
+    parser.add_argument("designs", nargs="*", help="Designs to run the flow on")
     parser.add_argument(
         "--flow_arguments", type=str, help="Arguments to pass to the flow constructor"
     )
