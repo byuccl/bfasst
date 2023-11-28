@@ -10,9 +10,9 @@ from bfasst.utils.general import json_write_if_changed
 class VivadoSynth(SynthTool):
     """Tool to create vivado synthesis ninja snippets."""
 
-    def __init__(self, flow, design_path, flow_args=None, ooc=False):
+    def __init__(self, flow, design_path, ooc=False, synth_options=""):
         super().__init__(flow, design_path, ooc=ooc)
-        self.flow_args = flow_args
+        self.synth_options = synth_options
         self._my_dir_path = pathlib.Path(__file__).parent
 
         # outputs must be initialized AFTER output paths are set
@@ -43,7 +43,7 @@ class VivadoSynth(SynthTool):
             "system_verilog": self.system_verilog,
             "io": str(self.build_path / "report_io.txt") if not self.ooc else False,
             "synth_output": str(self.build_path),
-            "flow_args": self.flow_args if self.flow_args else "",
+            "synth_args": self.synth_options,
         }
         synth_json = json.dumps(synth, indent=4)
 

@@ -26,7 +26,6 @@ class RunParser(YamlParser):
         self.design_paths = []
         self.flow = None
         self.flow_arguments = {}
-        self.flow_args = {}
 
         # Verify required fields are present
         assert "flow" in self.props, f"Experiment {self.yaml_path} does not specify a flow"
@@ -41,8 +40,6 @@ class RunParser(YamlParser):
         # Collect the design paths
         self._collect_design_paths()
         self._uniquify_design_paths()
-
-        self._get_flow_args()
 
         # Anything remaining will be passed to the flow
         self.flow_arguments = self.props
@@ -92,15 +89,6 @@ class RunParser(YamlParser):
     def _uniquify_design_paths(self):
         self.design_paths = list(set(self.design_paths))
         self.design_paths.sort()
-
-    def _get_flow_args(self):
-        if "synth" in self.props:
-            synth_args = self.props["synth"]
-            self.flow_args.update({"synth": synth_args})
-            self.props.pop("synth")
-        else:
-            synth_args = ""
-        self.flow_args.update({"synth": synth_args})
 
 
 class DesignParser(YamlParser):

@@ -4,4 +4,4 @@ designs:
     
 flow: vivado_bit_analysis
 
-synth: -max_dsp 0
+synth_options: -max_dsp 0
