@@ -12,9 +12,9 @@ from bfasst.ninja_tools.synth.vivado_synth import VivadoSynth
 class VivadoPhysNetlistCmp(Flow):
     """Structural Comparison of physical netlist and reversed netlist"""
 
-    def __init__(self, design):
+    def __init__(self, design, synth_options=""):
         super().__init__(design)
-        self.vivado_synth_tool = VivadoSynth(self, design)
+        self.vivado_synth_tool = VivadoSynth(self, design, synth_options=synth_options)
         self.vivado_impl_tool = VivadoImpl(self, design)
         self.phys_netlist_tool = PhysNetlist(self, design)
         self.xray_tool = Xray(self, design)

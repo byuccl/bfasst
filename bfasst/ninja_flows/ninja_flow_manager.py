@@ -1,6 +1,6 @@
 """Utility to manage the creation and execution of ninja flows."""
 import argparse
-import json
+import ast
 import pathlib
 
 import chevron
@@ -115,19 +115,19 @@ def get_design_basenames(designs):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("flow", type=str, required=True, help="Name of the flow to run")
-    parser.add_argument("designs", required=True, nargs="+", help="Designs to run the flow on")
+    parser.add_argument("flow", type=str, help="Name of the flow to run")
+    parser.add_argument("designs", nargs="+", help="Designs to run the flow on")
+    parser.add_argument(
+        "--flow_arguments", type=str, help="Arguments to pass to the flow constructor"
+    )
     parsed_args = parser.parse_args()
 
-    # convert the flow args from string to dict, but replace ' with "
-    # so that json can read the string
-    if parsed_args.flow_args:
-        FLOW_ARGS_DICT = json.loads(parsed_args.flow_args.replace("'", '"'))
-    else:
-        FLOW_ARGS_DICT = None
+    # convert the flow args from string to dict
+    flow_arguments_dict = ast.literal_eval(parsed_args.flow_arguments)
+    assert isinstance(flow_arguments_dict, dict)
 
     flow_manager = NinjaFlowManager()
     flow_manager.create_flows(
-        parsed_args.flow, get_design_basenames(parsed_args.designs), FLOW_ARGS_DICT
+        parsed_args.flow, get_design_basenames(parsed_args.designs), flow_arguments_dict
     )
     flow_manager.run_flows()
