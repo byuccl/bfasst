@@ -7,6 +7,7 @@ from bfasst.paths import NINJA_FLOWS_PATH
 from bfasst.ninja_tools.synth.vivado_synth import VivadoSynth
 
 
+# pylint: disable=duplicate-code
 class VivadoPhysNetlist(Flow):
     """Creates a Vivado netlist that has only physical primitives."""
 
@@ -20,7 +21,6 @@ class VivadoPhysNetlist(Flow):
         self.phys_netlist_tool = PhysNetlist(self, design)
 
     def create_build_snippets(self):
-        # pylint: disable=duplicate-code
         self.vivado_synth_tool.create_build_snippets()
         self.vivado_impl_tool.create_build_snippets()
         self.phys_netlist_tool.create_build_snippets(
