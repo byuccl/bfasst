@@ -6,15 +6,14 @@ from bfasst.ninja_tools.impl.vivado_impl import VivadoImpl
 from bfasst.ninja_tools.compare.yosys.yosys import Yosys
 from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.synth.vivado_synth import VivadoSynth
-from bfasst.utils.general import ensure
 
 
 class VivadoYosysImpl(Flow):
     """Flow to compare reversed netlist to original using yosys."""
 
-    def __init__(self, design, flow_args=None):
+    def __init__(self, design):
         super().__init__(design)
-        self.vivado_synth_tool = VivadoSynth(self, design, ensure(flow_args, {}).get("synth"))
+        self.vivado_synth_tool = VivadoSynth(self, design)
         self.vivado_impl_tool = VivadoImpl(self, design)
         self.xrev_tool = Xray(self, design)
         self.yosys_tool = Yosys(self, design)

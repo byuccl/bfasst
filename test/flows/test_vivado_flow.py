@@ -58,7 +58,7 @@ class TestVivadoFlow(unittest.TestCase):
             "top": self.flow.vivado_synth_tool.design_props.top,
             "io": str(self.flow.vivado_synth_tool.build_path / "report_io.txt"),
             "synth_output": str(self.flow.vivado_synth_tool.build_path),
-            "flow_args": "",
+            "synth_args": "",
         }
         expected_synth_json = json.dumps(synth_dict, indent=4)
         self.assertTrue(
