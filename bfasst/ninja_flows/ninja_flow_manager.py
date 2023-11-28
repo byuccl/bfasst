@@ -44,7 +44,7 @@ class NinjaFlowManager:
                 f"Flow {flow_name} does not take a design as input, "
                 f"but a design was provided ({designs})"
             )
-            flow = flow_class(**flow_arguments)
+            flow = flow_class(**self.flow_arguments)
             self.flows.append(flow)
 
         else:
