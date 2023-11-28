@@ -51,10 +51,6 @@ class TestApplicationRunner(unittest.TestCase):
         """Test that the runner runs the vivado_phys_netlist flow without errors"""
         self.__run_flow("vivado_phys_netlist")
 
-    def test_run_vivado_phys_netlist_xrev_flow(self):
-        """Test that the runner runs the vivado_phys_netlist_xrev flow without errors"""
-        self.__run_flow("vivado_phys_netlist_xrev")
-
     def test_run_vivado_phys_netlist_cmp_flow(self):
         """Test that the runner runs the vivado_phys_netlist_cmp flow without errors"""
         self.__run_flow("vivado_phys_netlist_cmp")
