@@ -12,7 +12,10 @@ class VivadoPhysNetlist(Flow):
 
     def __init__(self, design, synth_options=""):
         super().__init__(design)
-        self.vivado_synth_tool = VivadoSynth(self, design, synth_options=synth_options)
+
+        self.synth_options = VivadoPhysNetlist.add_required_synth_options(synth_options)
+
+        self.vivado_synth_tool = VivadoSynth(self, design, synth_options=self.synth_options)
         self.vivado_impl_tool = VivadoImpl(self, design)
         self.phys_netlist_tool = PhysNetlist(self, design)
 

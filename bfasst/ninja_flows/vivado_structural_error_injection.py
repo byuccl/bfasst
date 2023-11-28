@@ -27,7 +27,7 @@ class VivadoStructuralErrorInjection(Flow):
 
         self.synth_options = VivadoPhysNetlist.add_required_synth_options(synth_options)
 
-        self.vivado_synth_tool = VivadoSynth(self, design, synth_options=synth_options)
+        self.vivado_synth_tool = VivadoSynth(self, design, synth_options=self.synth_options)
         self.vivado_impl_tool = VivadoImpl(self, design)
         self.phys_netlist_tool = PhysNetlist(self, design)
         self.xrev_tool = Xray(self, design)
