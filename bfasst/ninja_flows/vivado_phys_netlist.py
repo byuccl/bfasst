@@ -5,15 +5,14 @@ from bfasst.ninja_tools.impl.vivado_impl import VivadoImpl
 from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
 from bfasst.paths import NINJA_FLOWS_PATH
 from bfasst.ninja_tools.synth.vivado_synth import VivadoSynth
-from bfasst.utils.general import ensure
 
 
 class VivadoPhysNetlist(Flow):
     """Creates a Vivado netlist that has only physical primitives."""
 
-    def __init__(self, design, flow_args=None):
+    def __init__(self, design, synth_options=""):
         super().__init__(design)
-        self.vivado_synth_tool = VivadoSynth(self, design, ensure(flow_args, {}).get("synth"))
+        self.vivado_synth_tool = VivadoSynth(self, design, synth_options=synth_options)
         self.vivado_impl_tool = VivadoImpl(self, design)
         self.phys_netlist_tool = PhysNetlist(self, design)
 

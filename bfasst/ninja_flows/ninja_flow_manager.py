@@ -1,6 +1,6 @@
 """Utility to manage the creation and execution of ninja flows."""
 import argparse
-import json
+import ast
 import pathlib
 
 import chevron
@@ -26,20 +26,16 @@ class NinjaFlowManager:
         # This is used to get the flow objects.
         self.flow_name = None
 
-        # The flow arguments, e.g. {"synth": "-flatten_hierarchy full -max_dscp 0"}
-        # These may or may not be specified on a given run.
-        self.flow_args = None
+        self.flow_arguments = None
 
-    def create_flows(self, flow_name, designs, flow_args=None, flow_arguments=None):
+    def create_flows(self, flow_name, designs, flow_arguments=None):
         """Create the ninja flows for the given designs."""
-        if flow_args is None:
-            flow_args = {}
-        if flow_arguments is None:
-            flow_arguments = {}
+        self.flow_arguments = flow_arguments
+        if self.flow_arguments is None:
+            self.flow_arguments = {}
         self.flow_name = flow_name
         self.flows = []
         self.designs = []
-        self.flow_args = flow_args
 
         flow_class = get_flow(flow_name)
 
@@ -48,7 +44,7 @@ class NinjaFlowManager:
                 f"Flow {flow_name} does not take a design as input, "
                 f"but a design was provided ({designs})"
             )
-            flow = flow_class(flow_args, **flow_arguments)
+            flow = flow_class(**flow_arguments)
             self.flows.append(flow)
 
         else:
@@ -67,7 +63,7 @@ class NinjaFlowManager:
 
                 self.designs.append(design_path)
 
-                flow = get_flow(flow_name)(design_path, flow_args, **flow_arguments)
+                flow = get_flow(flow_name)(design_path, **self.flow_arguments)
                 self.flows.append(flow)
 
         for flow in self.flows:
@@ -106,7 +102,7 @@ class NinjaFlowManager:
                     "designs": self.designs,
                     "deps": deps,
                     "flow": self.flow_name,
-                    "flow_args": self.flow_args,
+                    "flow_arguments": self.flow_arguments,
                 },
             )
 
@@ -119,20 +115,19 @@ def get_design_basenames(designs):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--flow", type=str, required=True, help="Name of the flow to run")
-    parser.add_argument("--flow_args", type=str, help="Additional cmd line arguments for the flow")
-    parser.add_argument("--designs", required=True, nargs="*", help="Designs to run the flow on")
+    parser.add_argument("flow", type=str, help="Name of the flow to run")
+    parser.add_argument("designs", nargs="+", help="Designs to run the flow on")
+    parser.add_argument(
+        "--flow_arguments", type=str, help="Arguments to pass to the flow constructor"
+    )
     parsed_args = parser.parse_args()
 
-    # convert the flow args from string to dict, but replace ' with "
-    # so that json can read the string
-    if parsed_args.flow_args:
-        FLOW_ARGS_DICT = json.loads(parsed_args.flow_args.replace("'", '"'))
-    else:
-        FLOW_ARGS_DICT = None
+    # convert the flow args from string to dict
+    flow_arguments_dict = ast.literal_eval(parsed_args.flow_arguments)
+    assert isinstance(flow_arguments_dict, dict)
 
     flow_manager = NinjaFlowManager()
     flow_manager.create_flows(
-        parsed_args.flow, get_design_basenames(parsed_args.designs), FLOW_ARGS_DICT
+        parsed_args.flow, get_design_basenames(parsed_args.designs), flow_arguments_dict
     )
     flow_manager.run_flows()
