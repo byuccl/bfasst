@@ -550,7 +550,7 @@ class StructuralCompare:
                 assert net1.name not in self.gnd_mappings
                 self.vcc_mappings.add(net1.name)
             else:
-                raise AssertionError(
+                raise StructuralCompareError(
                     f"{net2.name} in net_mapping.inverse already. net1: {net1.name}"
                 )
             return
