@@ -121,7 +121,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--flow", type=str, required=True, help="Name of the flow to run")
     parser.add_argument("--flow_args", type=str, help="Additional cmd line arguments for the flow")
-    parser.add_argument("--designs", required=True, nargs="+", help="Designs to run the flow on")
+    parser.add_argument("--designs", required=True, nargs="*", help="Designs to run the flow on")
     parsed_args = parser.parse_args()
 
     # convert the flow args from string to dict, but replace ' with "

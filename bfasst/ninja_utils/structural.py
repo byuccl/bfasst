@@ -766,13 +766,21 @@ if __name__ == "__main__":
         help="The full path for the first netlist for comparison",
     )
     parser.add_argument("--log_path", type=str, help="The log file path to use as output")
+    parser.add_argument("--expect_fail", action="store_true", help="Expect the comparison to fail")
     args = parser.parse_args()
     struct_cmp = StructuralCompare(
         args.build_dir, args.netlists[0], args.netlists[1], args.log_path
     )
     try:
         struct_cmp.compare_netlists()
-        logging.info("SUCCESS")
+        if args.expect_fail:
+            logging.error("FAIL: Expected mismatch, but comparison succeeded")
+            sys.exit(1)
+        logging.info("SUCCESS: Structural comparison found equivalence")
+
     except StructuralCompareError as e:
-        logging.error("FAIL: %s", e)
-        sys.exit(1)
+        if not args.expect_fail:
+            logging.error("FAIL: %s", e)
+            sys.exit(1)
+        else:
+            logging.info("SUCCESS: Structural comparison found mismatch as expected")
