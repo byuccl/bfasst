@@ -28,3 +28,11 @@ class VivadoPhysNetlist(Flow):
 
     def get_top_level_flow_path(self):
         return NINJA_FLOWS_PATH / "vivado_phys_netlist.py"
+
+    @staticmethod
+    def add_required_synth_options(options):
+        if "-flatten_hierarchy" not in options:
+            options += " -flatten_hierarchy full"
+        if "-max_dsp" not in str:
+            options += " -max_dsp 0"
+        return options

@@ -3,6 +3,7 @@
 import random
 
 from bfasst.ninja_flows.flow import Flow
+from bfasst.ninja_flows.vivado_phys_netlist import VivadoPhysNetlist
 from bfasst.ninja_tools.impl.vivado_impl import VivadoImpl
 from bfasst.ninja_tools.compare.structural.structural import Structural
 from bfasst.ninja_tools.rev_bit.xray import Xray
@@ -23,6 +24,8 @@ class VivadoStructuralErrorInjection(Flow):
         self.seed = seed
         if self.seed is not None:
             random.seed(self.seed)
+
+        self.synth_options = VivadoPhysNetlist.add_required_synth_options(synth_options)
 
         self.vivado_synth_tool = VivadoSynth(self, design, synth_options=synth_options)
         self.vivado_impl_tool = VivadoImpl(self, design)

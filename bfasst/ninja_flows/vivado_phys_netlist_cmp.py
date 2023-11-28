@@ -1,6 +1,7 @@
 """Structural Comparison of physical netlist and reversed netlist"""
 
 from bfasst.ninja_flows.flow import Flow
+from bfasst.ninja_flows.vivado_phys_netlist import VivadoPhysNetlist
 from bfasst.ninja_tools.impl.vivado_impl import VivadoImpl
 from bfasst.ninja_tools.compare.structural.structural import Structural
 from bfasst.ninja_tools.rev_bit.xray import Xray
@@ -15,7 +16,10 @@ class VivadoPhysNetlistCmp(Flow):
 
     def __init__(self, design, synth_options=""):
         super().__init__(design)
-        self.vivado_synth_tool = VivadoSynth(self, design, synth_options=synth_options)
+
+        self.synth_options = VivadoPhysNetlist.add_required_synth_options(synth_options)
+
+        self.vivado_synth_tool = VivadoSynth(self, design, synth_options=self.synth_options)
         self.vivado_impl_tool = VivadoImpl(self, design)
         self.phys_netlist_tool = PhysNetlist(self, design)
         self.xray_tool = Xray(self, design)
