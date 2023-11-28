@@ -86,7 +86,7 @@ class TestApplicationRunner(unittest.TestCase):
                 parse_args(args)
 
     def test_check_args_fails_on_yaml_and_design_and_flow(self):
-        args = ["--yaml", "experiments/tests/test.yaml", "--design", "byu/alu", "--flow", "vivado"]
+        args = ["--yaml", "tests/ci/test.yaml", "--design", "byu/alu", "--flow", "vivado"]
         self.__produce_check_args_failure(args)
 
     def test_check_args_fails_on_no_args(self):
@@ -94,9 +94,9 @@ class TestApplicationRunner(unittest.TestCase):
         self.__produce_check_args_failure(args)
 
     def test_check_args_fails_on_yaml_and_design(self):
-        args = ["--yaml", "experiments/tests/test.yaml", "--design", "byu/alu"]
+        args = ["--yaml", "tests/ci/test.yaml", "--design", "byu/alu"]
         self.__produce_check_args_failure(args)
 
     def test_check_args_fails_on_yaml_and_flow(self):
-        args = ["--yaml", "experiments/tests/test.yaml", "--flow", "vivado"]
+        args = ["--yaml", "tests/ci/test.yaml", "--flow", "vivado"]
         self.__produce_check_args_failure(args)
