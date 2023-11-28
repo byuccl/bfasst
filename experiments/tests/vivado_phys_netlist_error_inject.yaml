@@ -17,6 +17,8 @@ designs:
     - byu/UpDownButtonCount
     
     
-flow: vivado_phys_netlist
+flow: vivado_structural_error_injection
 
 synth_options: -flatten_hierarchy full -max_dsp 0
+
+num_runs: 10

@@ -77,7 +77,7 @@ class TestVivadoStructuralErrorInjection(unittest.TestCase):
     def test_get_top_level_flow_path(self):
         self.assertEqual(
             self.flow.get_top_level_flow_path(),
-            f"{NINJA_FLOWS_PATH}/vivado_structural_error_injection.py",
+            NINJA_FLOWS_PATH / "vivado_structural_error_injection.py",
         )
 
 

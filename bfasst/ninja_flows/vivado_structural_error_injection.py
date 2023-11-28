@@ -17,21 +17,19 @@ from bfasst.ninja_utils.error_injector import ErrorType
 class VivadoStructuralErrorInjection(Flow):
     """Inject an error into a xrev netlist and run a structural compare to detect it."""
 
-    def __init__(self, design, num_runs=100, seed=None):
+    def __init__(self, design, num_runs=100, seed=None, synth_options=""):
         super().__init__(design)
         self.num_runs = num_runs
         self.seed = seed
         if self.seed is not None:
             random.seed(self.seed)
 
-        self.vivado_synth_tool = VivadoSynth(self, design)
+        self.vivado_synth_tool = VivadoSynth(self, design, synth_options=synth_options)
         self.vivado_impl_tool = VivadoImpl(self, design)
         self.phys_netlist_tool = PhysNetlist(self, design)
         self.xrev_tool = Xray(self, design)
         self.error_injector_tool = ErrorInjector(self, design)
-        self.compare_tool = Structural(self, design)
-
-        self.error_injector_build = self.design_build_path / "error_injection"
+        self.compare_tool = Structural(self, design, expect_fail=True)
 
     def create_build_snippets(self):
         self.vivado_synth_tool.create_build_snippets()
@@ -52,7 +50,9 @@ class VivadoStructuralErrorInjection(Flow):
                     multiplier=random_seed_multiplier,
                     reversed_netlist=self.xrev_tool.outputs["xray_netlist"],
                 )
-                corrupt_netlist_path = self.error_injector_build / f"{error.name.lower()}_{i}.v"
+                corrupt_netlist_path = (
+                    self.error_injector_tool.build_path / f"{error.name.lower()}_{i}.v"
+                )
                 self.compare_tool.create_build_snippets(
                     self.phys_netlist_tool.phys_netlist_path,
                     corrupt_netlist_path,
@@ -60,7 +60,7 @@ class VivadoStructuralErrorInjection(Flow):
                 )
 
     def get_top_level_flow_path(self) -> str:
-        return f"{NINJA_FLOWS_PATH}/vivado_structural_error_injection.py"
+        return NINJA_FLOWS_PATH / "vivado_structural_error_injection.py"
 
     def post_execute(self):
         """Remove all error injection and comparison artifacts for errors successfully detected
