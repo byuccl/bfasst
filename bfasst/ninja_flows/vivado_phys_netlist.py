@@ -33,6 +33,6 @@ class VivadoPhysNetlist(Flow):
     def add_required_synth_options(options):
         if "-flatten_hierarchy" not in options:
             options += " -flatten_hierarchy full"
-        if "-max_dsp" not in str:
+        if "-max_dsp" not in options:
             options += " -max_dsp 0"
         return options
