@@ -19,14 +19,12 @@ class ApplicationRunner:
         self.designs = None
         self.flow = None
         self.deps = None
-        self.flow_args = None
         self.flow_arguments = None
 
     def run_flow(self, flow, designs, flow_arguments):
         """Run one ore more designs with a given flow."""
         self.designs = ensure_tuple(designs)
         self.flow = flow
-        self.flow_args = {}
         if flow_arguments:
             self.flow_arguments = ast.literal_eval(flow_arguments)
         self.__run_ninja()
@@ -38,14 +36,13 @@ class ApplicationRunner:
 
         self.designs = run_config.design_paths
         self.flow = run_config.flow
-        self.flow_args = run_config.flow_args
         self.flow_arguments = run_config.flow_arguments
         self.__run_ninja()
 
     def __run_ninja(self):
         # create a flow manager to handle the build.ninja file creation and update by flows
         flow_manager = NinjaFlowManager()
-        flow_manager.create_flows(self.flow, self.designs, self.flow_args, self.flow_arguments)
+        flow_manager.create_flows(self.flow, self.designs, self.flow_arguments)
         flow_manager.run_flows()
 
         # run the build.ninja file
@@ -70,7 +67,6 @@ def parse_args(args):
     parser.add_argument(
         "design", type=pathlib.Path, help="Design directory (one or more)", nargs="*"
     )
-    parser.add_argument("--flow_args", type=str, help="Additional cmd line arguments for the flow")
     parser.add_argument(
         "--flow_arguments",
         type=str,

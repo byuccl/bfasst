@@ -8,15 +8,14 @@ from bfasst.ninja_tools.rev_bit.xray import Xray as XrevTool
 from bfasst.ninja_tools.transform.netlist_cleanup import NetlistCleanupTool
 from bfasst.ninja_tools.transform.netlist_phys_to_logical import NetlistPhysToLogicalTool
 from bfasst.ninja_tools.synth.vivado_synth import VivadoSynth
-from bfasst.utils.general import ensure
 
 
 class VivadoBitAnalysis(Flow):
     """Flow to reverse a netlist from a bitstream using x-ray."""
 
-    def __init__(self, design, flow_args=None):
+    def __init__(self, design, synth_options=""):
         super().__init__(design)
-        self.vivado_synth_tool = VivadoSynth(self, design, ensure(flow_args, {}).get("synth"))
+        self.vivado_synth_tool = VivadoSynth(self, design, synth_options=synth_options)
         self.vivado_impl_tool = VivadoImpl(self, design)
         self.xrev_tool = XrevTool(self, design)
         self.netlist_cleanup_tool = NetlistCleanupTool(self, design)

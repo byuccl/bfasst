@@ -17,7 +17,7 @@ read_vhdl {{ . }}
 read_vhdl -library {{1}} {{0}}
 
 {{/vhdl_libs}}
-synth_design -top {{ top }} {{ flow_args }}
+synth_design -top {{ top }} {{ synth_args }}
 {{#io}}
 place_ports
 
