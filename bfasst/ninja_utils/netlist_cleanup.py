@@ -52,30 +52,24 @@ class NetlistCleaner:
                 logging.info("Removing instance: %s", instance)
                 top.reference.remove_child(instance)
 
-        # Remove unused LUTs
+        # Remove unused instances
+        unused_instance_types = {"LUT6_2": ("O5", "O6"), "IBUF": ("O",)}
         netlist_wrapper = SdnNetlistWrapper(top)
-        for instance_wrapper in netlist_wrapper.instances:
-            if instance_wrapper.instance.reference.name != "LUT6_2":
-                continue
-            logging.info("Processing LUT %s", instance_wrapper.name)
 
-            pin_o5_net = netlist_wrapper.wire_to_net[instance_wrapper.get_pin("O5").pin.wire]
-            pin_o6_net = netlist_wrapper.wire_to_net[instance_wrapper.get_pin("O6").pin.wire]
+        for instance_type, pin_names in unused_instance_types.items():
+            for instance_wrapper in netlist_wrapper.instances:
+                if instance_wrapper.instance.reference.name != instance_type:
+                    continue
+                logging.info("Processing %s %s", instance_type, instance_wrapper.name)
 
-            if not pin_o6_net.is_connected and not pin_o5_net.is_connected:
-                top.reference.remove_child(instance_wrapper.instance)
-
-        # Remove unused IBUFs
-        netlist_wrapper = SdnNetlistWrapper(top)
-        for instance_wrapper in netlist_wrapper.instances:
-            if instance_wrapper.instance.reference.name != "IBUF":
-                continue
-            logging.info("Processing IBUF %s", instance_wrapper.name)
-
-            pin_o_net = netlist_wrapper.wire_to_net[instance_wrapper.get_pin("O").pin.wire]
-
-            if not pin_o_net.is_connected:
-                top.reference.remove_child(instance_wrapper.instance)
+                connected_pins = (
+                    netlist_wrapper.wire_to_net[
+                        instance_wrapper.get_pin(pin_name).pin.wire
+                    ].is_connected
+                    for pin_name in pin_names
+                )
+                if not any(connected_pins):
+                    top.reference.remove_child(instance_wrapper.instance)
 
         # Write out netlist
         sdn.compose(netlist_ir, self.netlist_out, write_blackbox=False)
