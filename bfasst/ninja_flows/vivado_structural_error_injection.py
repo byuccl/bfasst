@@ -17,14 +17,14 @@ from bfasst.ninja_utils.error_injector import ErrorType
 class VivadoStructuralErrorInjection(Flow):
     """Inject an error into a xrev netlist and run a structural compare to detect it."""
 
-    def __init__(self, design, num_runs=100, seed=None):
+    def __init__(self, design, num_runs=100, seed=None, synth_options=""):
         super().__init__(design)
         self.num_runs = num_runs
         self.seed = seed
         if self.seed is not None:
             random.seed(self.seed)
 
-        self.vivado_synth_tool = VivadoSynth(self, design)
+        self.vivado_synth_tool = VivadoSynth(self, design, synth_options=synth_options)
         self.vivado_impl_tool = VivadoImpl(self, design)
         self.phys_netlist_tool = PhysNetlist(self, design)
         self.xrev_tool = Xray(self, design)
