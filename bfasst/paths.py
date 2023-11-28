@@ -5,7 +5,7 @@ import os
 
 ROOT_PATH = pathlib.Path(__file__).resolve().parent.parent
 
-BUILD_DIR = pathlib.Path().cwd() / "build"
+BUILD_PATH = pathlib.Path().cwd() / "build"
 
 DESIGNS_PATH = ROOT_PATH / "designs"
 BFASST_PATH = ROOT_PATH / "bfasst"
@@ -19,10 +19,7 @@ NINJA_TOOLS_PATH = BFASST_PATH / "ninja_tools"
 NINJA_UTILS_PATH = BFASST_PATH / "ninja_utils"
 NINJA_FLOWS_PATH = BFASST_PATH / "ninja_flows"
 
-NINJA_VIVADO_TOOLS_PATH = NINJA_TOOLS_PATH / "vivado"
-NINJA_VIVADO_SYNTH_TOOL_PATH = NINJA_VIVADO_TOOLS_PATH / "synth"
-NINJA_VIVADO_IMPL_TOOL_PATH = NINJA_VIVADO_TOOLS_PATH / "impl"
-VIVADO_RULES_PATH = NINJA_TOOLS_PATH / "vivado" / "vivado_rules.ninja.mustache"
+COMMON_TOOLS_PATH = NINJA_TOOLS_PATH / "common"
 
 REV_BIT_TOOLS_PATH = NINJA_TOOLS_PATH / "rev_bit"
 NINJA_TRANSFORM_TOOLS_PATH = NINJA_TOOLS_PATH / "transform"

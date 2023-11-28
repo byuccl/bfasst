@@ -3,6 +3,15 @@ IN_ENV = if [ -e .venv/bin/activate ]; then . .venv/bin/activate; fi;
 CAPNPJ := $(shell which capnpc-java)
 PYTHON311 := $(shell which python3.11)
 
+PUBLIC_SUBMODULES = \
+	third_party/fasm2bels \
+	third_party/RapidWright \
+	third_party/yosys \
+	third_party/WaFoVe
+
+PRIVATE_SUBMODULES = \
+	third_party/gmt_tools
+
 install: submodules venv python_packages rapidwright env install_fasm2bels install_yosys install_wafove
 
 venv:
@@ -54,6 +63,9 @@ packages:
 python_packages:
 	$(IN_ENV) python -m pip install -r requirements.txt
 	$(IN_ENV) python -m pip install -e .
+	if [ -f third_party/gmt_tools/requirements.txt ]; then \
+		$(IN_ENV) cd third_party/gmt_tools && python -m pip install -r requirements.txt; \
+	fi
 
 capnproto_java:
 ifeq "$(CAPNPJ)" ""
@@ -65,7 +77,8 @@ ifeq "$(CAPNPJ)" ""
 endif
 
 submodules:
-	git submodule update --init --recursive
+	$(foreach submodule,$(PUBLIC_SUBMODULES),git submodule init $(submodule); git submodule update $(submodule);)
+	$(foreach submodule,$(PRIVATE_SUBMODULES),git submodule init $(submodule); git submodule update $(submodule) || echo "Ignoring failed clone of private submodule ($(submodule))";)
 
 rapidwright:
 	cd third_party/RapidWright && ./gradlew compileJava
@@ -117,3 +130,6 @@ doctest:
 
 unittest:
 	$(IN_ENV) python -m unittest
+
+unittest_failfast:
+	$(IN_ENV) python -m unittest -f

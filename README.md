@@ -90,7 +90,7 @@ Finally, test to confirm that everything worked correctly! Run the following:
 1. Activate the virual environment: ```. .venv/bin/activate```
 2. Run the flow:  ```python scripts/run_design.py designs/basic/add4/ xilinx_conformal_impl```
 
-## The Ninja Transition -- Bfasster 2.0
+## The Ninja Transition
 This branch serves as the transition point to a new version of bfasst, which makes the following changes:
 * It takes advantage of the ninja build tool to automatically handle job creation, up-to-date checking of dependencies, parallel processing, and io redirection. 
 * It uses chevron, the python implementation of the mustache templating engine to template the scripts used for common operations such as synthesis and implementation of designs.
@@ -102,7 +102,7 @@ This branch serves as the transition point to a new version of bfasst, which mak
 There are two steps to running any flow with any design(s): a ninja generation step and a run step. For convenience, a script is included to execute both steps sequentially with a single command:
 
 <pre>Usage:<code>
-    python scripts/bfasster.py [--yaml YAML] [--design DESIGN] [--flow FLOW]
+    python scripts/run.py [--yaml YAML] [--design DESIGN] [--flow FLOW]
 
 options:
     --yaml YAML         The yaml experiment to run, same as with bfasst
@@ -129,7 +129,6 @@ Currently supported flows:
 * `vivado_ooc`
 * `vivado_and_reversed`
 * `vivado_phys_netlist`
-* `vivado_phys_netlist_xrev`
 * `vivado_phys_netlist_cmp`
 * `vivado_structural_error_injection`
 * `vivado_conformal`
