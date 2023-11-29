@@ -5,9 +5,12 @@ from collections import defaultdict
 import logging
 from pathlib import Path
 import pickle
+import sys
 import time
 from bidict import bidict
+
 import spydrnet as sdn
+
 from bfasst import jpype_jvm
 from bfasst.utils import convert_verilog_literal_to_int
 from bfasst.utils.general import log_with_banner
@@ -33,6 +36,7 @@ class StructuralCompare:
         self.log_path = log_path
         logging.basicConfig(
             filename=self.log_path,
+            filemode="w",
             format="%(asctime)s %(message)s",
             level=logging.DEBUG,
             datefmt="%Y%m%d%H%M%S",
@@ -78,7 +82,7 @@ class StructuralCompare:
             "SRLC32E",
             "LDCE",
         )
-        no_props = ("IBUF", "OBUF", "OBUFT", "MUXF7", "MUXF8", "CARRY4", "IOBUF")
+        no_props = ("IBUF", "OBUF", "OBUFT", "MUXF7", "MUXF8", "CARRY4", "IOBUF", "GND", "VCC")
 
         _cell_props = {x: ("INIT",) for x in init_only}
         _cell_props.update({x: () for x in no_props})
@@ -430,7 +434,7 @@ class StructuralCompare:
 
             # Loop through all pins on instance and compare nets
             for pin_a in instance.pins:
-                if pin_a.ignore_net_equivalency:
+                if pin_a.ignore_net_equivalency or not pin_a.net.is_connected:
                     continue
                 pin_b = mapped_instance.get_pin(pin_a.name, pin_a.index)
 
@@ -493,7 +497,7 @@ class StructuralCompare:
 
             net_a = pin.net
 
-            if net_a is None:
+            if net_a is None or not net_a.is_connected:
                 # Disconnected pin
                 continue
 
@@ -512,9 +516,10 @@ class StructuralCompare:
             if pin_b is None:
                 continue
             net_b = pin_b.net
+            assert net_b, f"{pin_b.name} of {matched_instance.name} is not connected"
             if net_b is None and net_a.is_gnd:
                 continue
-            assert isinstance(net_b, SdnNet)
+            assert isinstance(net_b, SdnNet), f"{net_b} is not a net"
 
             if net_a in self.net_mapping:
                 assert net_b == self.net_mapping[net_a]
@@ -545,7 +550,7 @@ class StructuralCompare:
                 assert net1.name not in self.gnd_mappings
                 self.vcc_mappings.add(net1.name)
             else:
-                raise AssertionError(
+                raise StructuralCompareError(
                     f"{net2.name} in net_mapping.inverse already. net1: {net1.name}"
                 )
             return
@@ -748,7 +753,6 @@ class StructuralCompare:
 
 
 if __name__ == "__main__":
-    # pylint: disable=duplicate-code
     parser = ArgumentParser()
     parser.add_argument(
         "--build_dir",
@@ -762,14 +766,21 @@ if __name__ == "__main__":
         help="The full path for the first netlist for comparison",
     )
     parser.add_argument("--log_path", type=str, help="The log file path to use as output")
+    parser.add_argument("--expect_fail", action="store_true", help="Expect the comparison to fail")
     args = parser.parse_args()
     struct_cmp = StructuralCompare(
         args.build_dir, args.netlists[0], args.netlists[1], args.log_path
     )
     try:
         struct_cmp.compare_netlists()
-        logging.info("SUCCESS")
-    except StructuralCompareError as e:
-        logging.error("FAIL: %s", e)
+        if args.expect_fail:
+            logging.error("FAIL: Expected mismatch, but comparison succeeded")
+            sys.exit(1)
+        logging.info("SUCCESS: Structural comparison found equivalence")
 
-    # pylint: enable=duplicate-code
+    except StructuralCompareError as e:
+        if not args.expect_fail:
+            logging.error("FAIL: %s", e)
+            sys.exit(1)
+        else:
+            logging.info("SUCCESS: Structural comparison found mismatch as expected")

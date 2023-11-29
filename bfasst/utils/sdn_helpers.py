@@ -22,7 +22,12 @@ class SdnNetlistWrapper:
         instances = [SdnInstanceWrapper(i, self) for i in top_instance.get_instances()]
         self.instances = instances
 
-        self.instances_to_map = {i for i in self.instances if i.cell_type not in ("GND", "VCC")}
+        self.instances_to_map = {
+            i
+            for i in self.instances
+            if i.cell_type not in ("GND", "VCC")
+            and not i.cell_type.startswith("SDN_VERILOG_ASSIGNMENT_")
+        }
 
         SdnNetlistWrapper.GND_NAMES = {i.name for i in self.instances if i.cell_type == "GND"}
         SdnNetlistWrapper.VCC_NAMES = {i.name for i in self.instances if i.cell_type == "VCC"}
