@@ -3,6 +3,7 @@ import pathlib
 
 from bfasst.ninja_flows.flow import FlowNoDesign
 from bfasst.ninja_tools.design_create.rand_soc import RandSoCTool
+from bfasst.ninja_tools.synth.vivado_synth_tcl import VivadoSynthFromTcl
 
 
 class RandSoc(FlowNoDesign):
@@ -12,6 +13,9 @@ class RandSoc(FlowNoDesign):
         super().__init__()
 
         self.rand_soc_tool = RandSoCTool(self, num_designs=num_designs)
+
+        for design in self.rand_soc_tool.outputs["design_tcl"]:
+            VivadoSynthFromTcl(self, design)
 
     @classmethod
     def flow_build_dir_name(cls) -> str:
