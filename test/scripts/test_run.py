@@ -4,7 +4,7 @@ import subprocess
 import unittest
 import io
 from contextlib import redirect_stderr
-from bfasst.paths import EXPERIMENTS_PATH, ROOT_PATH
+from bfasst.paths import TESTS_PATH, ROOT_PATH
 
 from scripts.run import parse_args
 
@@ -63,7 +63,7 @@ class TestApplicationRunner(unittest.TestCase):
 
     def test_check_args_succeeds_on_yaml(self):
         """Test that the check_args function accepts only a yaml or a design/flow"""
-        args = [EXPERIMENTS_PATH / "tests/vivado_bit_analysis.yaml"]
+        args = [TESTS_PATH / "ci/vivado_bit_analysis.yaml"]
         self.__try_check_args_for_success(args)
 
     def test_check_args_succeeds_on_flow_and_design(self):
@@ -82,7 +82,7 @@ class TestApplicationRunner(unittest.TestCase):
                 parse_args(args)
 
     def test_check_args_fails_on_yaml_and_design_and_flow(self):
-        args = ["--yaml", "experiments/tests/test.yaml", "--design", "byu/alu", "--flow", "vivado"]
+        args = ["--yaml", "tests/ci/test.yaml", "--design", "byu/alu", "--flow", "vivado"]
         self.__produce_check_args_failure(args)
 
     def test_check_args_fails_on_no_args(self):
@@ -90,9 +90,9 @@ class TestApplicationRunner(unittest.TestCase):
         self.__produce_check_args_failure(args)
 
     def test_check_args_fails_on_yaml_and_design(self):
-        args = ["--yaml", "experiments/tests/test.yaml", "--design", "byu/alu"]
+        args = ["--yaml", "tests/ci/test.yaml", "--design", "byu/alu"]
         self.__produce_check_args_failure(args)
 
     def test_check_args_fails_on_yaml_and_flow(self):
-        args = ["--yaml", "experiments/tests/test.yaml", "--flow", "vivado"]
+        args = ["--yaml", "tests/ci/test.yaml", "--flow", "vivado"]
         self.__produce_check_args_failure(args)

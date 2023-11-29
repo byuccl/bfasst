@@ -79,7 +79,7 @@ def main():
 
     error_flows = []
     for dir_item in paths.ERROR_FLOW_PATH.iterdir():
-        if (paths.EXPERIMENTS_PATH / dir_item).is_file() and dir_item.suffix == ".yaml":
+        if (paths.TESTS_PATH / dir_item).is_file() and dir_item.suffix == ".yaml":
             error_flows.append(dir_item.stem)
     parser.add_argument(
         "--error_flow",
