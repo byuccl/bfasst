@@ -2,7 +2,7 @@
 BFASST_PATH := $(realpath $(LEVEL)/..)
 RESOURCES = $(BFASST_PATH)/resources
 SCRIPTS = $(BFASST_PATH)/scripts
-EXPERIMENTS = $(BFASST_PATH)/experiments
+TESTS = $(BFASST_PATH)/tests
 EXAMPLES = $(BFASST_PATH)/examples
 
 include $(RESOURCES)/Makefile_colors.inc

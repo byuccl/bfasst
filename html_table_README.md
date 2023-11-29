@@ -8,7 +8,7 @@ To run an experiment of flows and update the table, source the following two bas
 
 `run_flows.sh`
 
-* If you want to create a new custom flow for testing, ensure the proper code is located in `scripts/bfasst/flows.py` along with an associated `.yaml` file in the `experiments` directory.
+* If you want to create a new custom flow for testing, ensure the proper code is located in `scripts/bfasst/flows.py` along with an associated `.yaml` file in the `tests` directory.
 * Add your new flow to the `flows_list` variable within the main function of `scripts/run_experiment.py` (this will add a new column to the table).
 * Modify the script to add the commands for running the new experiment in `run_flows.sh` before sourcing.
 
