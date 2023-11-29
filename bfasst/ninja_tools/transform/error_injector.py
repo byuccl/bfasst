@@ -16,11 +16,7 @@ class ErrorInjector(Tool):
         self.corrupt_netlist = None
 
     def create_rule_snippets(self):
-        with open(NINJA_TRANSFORM_TOOLS_PATH / "error_injector_rules.ninja.mustache", "r") as f:
-            rules = chevron.render(f, {"utils": NINJA_UTILS_PATH})
-
-        with open(NINJA_BUILD_PATH, "a") as f:
-            f.write(rules)
+        self._append_rule_snippets_default(__file__)
 
     def create_build_snippets(self, error_type, num, multiplier, reversed_netlist):
         self.injection_log = self.build_path / f"{error_type.name.lower()}_{num}.log"

@@ -106,4 +106,7 @@ class Tool(ToolBase, abc.ABC):
         else:
             self.design_build_path = BUILD_PATH / "<external>" / design_path
 
-        self.design_props = DesignParser(design_path / "design.yaml")
+        design_yaml = design_path / "design.yaml"
+        self.design_props = None
+        if design_yaml.is_file():
+            self.design_props = DesignParser(design_yaml)

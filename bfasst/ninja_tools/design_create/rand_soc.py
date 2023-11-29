@@ -16,19 +16,20 @@ class RandSoCTool(ToolBase):
         self._my_dir_path = pathlib.Path(__file__).parent.resolve()
         self.num_designs = num_designs
 
+        self.outputs["design_tcl"] = []
+        for i in range(self.num_designs):
+            design_dir_path = self.build_path / f"design_{i}"
+            self.outputs["design_tcl"].append(design_dir_path / "design.tcl")
+
     def create_rule_snippets(self):
         self._append_rule_snippets_default(__file__)
 
     def create_build_snippets(self):
-        for i in range(self.num_designs):
-            design_dir_path = self.build_path / f"design_{i}"
-            # design_dir_path.mkdir(parents=True, exist_ok=True)
+        rand_soc_pkg_files = list((GMT_TOOLS_PATH / "rand_soc" / "rand_soc").glob("**/*.py"))
+        rand_soc_pkg_files.append(GMT_TOOLS_PATH / "rand_soc" / "main.py")
 
-            # TODO: Outputs
-            # self._init_outputs(self.injection_log, self.corrupt_netlist)
-
-            rand_soc_pkg_files = list((GMT_TOOLS_PATH / "rand_soc" / "rand_soc").glob("**/*.py"))
-
+        for i, design in enumerate(self.outputs["design_tcl"]):
+            design_dir_path = design.parent
             with open(self._my_dir_path / "rand_soc_build.ninja.mustache", "r") as f:
                 build = chevron.render(
                     f,

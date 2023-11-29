@@ -3,10 +3,7 @@ import json
 import pathlib
 from bfasst import config
 from bfasst.ninja_tools.impl.impl_tool import ImplTool
-from bfasst.paths import (
-    COMMON_TOOLS_PATH,
-    NINJA_UTILS_PATH,
-)
+from bfasst.paths import COMMON_TOOLS_PATH, NINJA_UTILS_PATH
 from bfasst.utils.general import json_write_if_changed
 
 
@@ -48,6 +45,7 @@ class VivadoImpl(ImplTool):
                 "synth_output": self.build_path.parent / ("synth" if not self.ooc else "synth_ooc"),
                 "impl_library": self._my_dir_path,
                 "top": self.design_props.top,
+                "cwd": self.build_path,
             },
         )
 
@@ -56,7 +54,7 @@ class VivadoImpl(ImplTool):
             __file__,
             {
                 "vivado_path": config.VIVADO_BIN_PATH,
-                "utils": str(NINJA_UTILS_PATH),
+                "utils_path": NINJA_UTILS_PATH,
             },
             COMMON_TOOLS_PATH / "vivado_rules.ninja.mustache",
         )

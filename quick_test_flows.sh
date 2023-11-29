@@ -1,6 +1,6 @@
-#!/bin/bash -f
+#!/bin/bash -x
 
-set -e
+set -e #exit on error
 
 python scripts/run.py rand_soc --flow_arguments="{'num_designs': 3}"
 python scripts/run.py vivado_bit_analysis designs/basic/and3

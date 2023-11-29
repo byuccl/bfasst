@@ -1,0 +1,5 @@
+build {{ synth_output }}/synth.edf {{ synth_output }}/synth.dcp: vivado {{ design_tcl }} | 
+    journal = {{ synth_output }}/vivado.jou
+    log = {{ synth_output }}/vivado.log
+    cwd = {{ cwd }}
+
