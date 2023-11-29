@@ -7,4 +7,6 @@ build {{ synth_output }}/{{ top }}.xdc: vivado_ioparse {{ synth_output }}/report
 build {{ synth_output }}/viv_synth.edf {{ synth_output }}/synth.dcp {{#in_context}}{{ synth_output }}/report_io.txt{{/in_context}}: vivado {{ synth_output }}/synth.tcl | {{#verilog}}{{ . }} {{/verilog}} {{#system_verilog}}{{ . }} {{/system_verilog}}
     journal = {{ synth_output }}/vivado.jou
     log = {{ synth_output }}/vivado.log
+    cwd = {{ cwd }}
+
 
