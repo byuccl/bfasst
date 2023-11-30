@@ -1,5 +1,4 @@
 """Parse a yaml file to obtain a flow and a list of target designs"""
-# pylint: disable=duplicate-code
 from abc import ABC
 from pathlib import Path
 import yaml

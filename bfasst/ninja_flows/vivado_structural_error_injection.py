@@ -1,4 +1,3 @@
-# pylint: disable=duplicate-code
 """Inject an error into a xrev netlist and run a structural compare to detect it."""
 import random
 
