@@ -2,7 +2,7 @@
 
 import json
 from bfasst.tools.tool import Tool
-from bfasst.paths import NINJA_UTILS_PATH, NINJA_YOSYS_TOOLS_PATH
+from bfasst.paths import NINJA_UTILS_PATH, YOSYS_TOOLS_PATH
 from bfasst.utils.general import json_write_if_changed
 
 
@@ -15,7 +15,7 @@ class Yosys(Tool):
         self.log = self.build_path / "log.txt"
         self.json = self.build_path / "yosys.json"
         self.tcl = self.build_path / "compare.ys"
-        self.tcl_template = NINJA_YOSYS_TOOLS_PATH / "yosys.tcl.mustache"
+        self.tcl_template = YOSYS_TOOLS_PATH / "yosys.tcl.mustache"
         self._init_outputs()
 
     def create_rule_snippets(self):
