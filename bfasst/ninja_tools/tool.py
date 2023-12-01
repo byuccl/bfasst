@@ -4,7 +4,7 @@ import abc
 import pathlib
 
 import chevron
-from bfasst.ninja_flows.flow import FlowBase
+from bfasst.flows.flow import FlowBase
 
 from bfasst.paths import BUILD_PATH, DESIGNS_PATH, NINJA_BUILD_PATH
 from bfasst.yaml_parser import DesignParser

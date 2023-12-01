@@ -2,7 +2,7 @@
 
 import pathlib
 
-from bfasst.ninja_flows.flow import Flow
+from bfasst.flows.flow import Flow
 from bfasst.ninja_tools.impl.vivado_impl import VivadoImpl
 from bfasst.ninja_tools.rev_bit.xray import Xray as XrevTool
 from bfasst.ninja_tools.transform.netlist_cleanup import NetlistCleanupTool

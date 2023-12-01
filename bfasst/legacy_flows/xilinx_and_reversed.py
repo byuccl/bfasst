@@ -2,8 +2,8 @@
 
 # pylint: disable=duplicate-code
 
-from bfasst.flows.flow import Flow
-from bfasst.flows.xilinx import Xilinx
+from bfasst.legacy_flows.flow import Flow
+from bfasst.legacy_flows.xilinx import Xilinx
 from bfasst.job import Job
 from bfasst.reverse_bit.xray import XRayReverseBitTool
 from bfasst.types import ToolType

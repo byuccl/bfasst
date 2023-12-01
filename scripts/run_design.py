@@ -8,7 +8,7 @@ import traceback
 
 from bfasst.design import Design
 from bfasst import paths
-from bfasst.flows.flow import get_flow, get_flows
+from bfasst.legacy_flows.flow import get_flow, get_flows
 from bfasst.tool import BfasstException
 from bfasst.types import ToolType
 

@@ -17,7 +17,7 @@ THIRD_PARTY_PATH = ROOT_PATH / "third_party"
 
 NINJA_TOOLS_PATH = BFASST_PATH / "ninja_tools"
 NINJA_UTILS_PATH = BFASST_PATH / "ninja_utils"
-NINJA_FLOWS_PATH = BFASST_PATH / "ninja_flows"
+FLOWS_PATH = BFASST_PATH / "flows"
 
 COMMON_TOOLS_PATH = NINJA_TOOLS_PATH / "common"
 

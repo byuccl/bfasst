@@ -1,7 +1,7 @@
 """Flow to compare reversed netlist to original using yosys."""
 import pathlib
 
-from bfasst.ninja_flows.flow import Flow
+from bfasst.flows.flow import Flow
 from bfasst.ninja_tools.impl.vivado_impl import VivadoImpl
 from bfasst.ninja_tools.compare.yosys.yosys import Yosys
 from bfasst.ninja_tools.rev_bit.xray import Xray

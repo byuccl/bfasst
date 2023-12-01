@@ -7,14 +7,14 @@ import json
 import unittest
 from bfasst import config
 
-from bfasst.ninja_flows.flow_utils import create_build_file
-from bfasst.ninja_flows.vivado import Vivado
+from bfasst.flows.flow_utils import create_build_file
+from bfasst.flows.vivado import Vivado
 from bfasst.ninja_tools.synth.vivado_synth import VivadoSynth
 from bfasst.ninja_tools.impl.vivado_impl import VivadoImpl
 from bfasst.paths import (
     DESIGNS_PATH,
     NINJA_BUILD_PATH,
-    NINJA_FLOWS_PATH,
+    FLOWS_PATH,
 )
 from bfasst.utils import compare_json
 
@@ -100,12 +100,12 @@ class TestVivadoFlow(unittest.TestCase):
         ]
         VivadoSynth(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         VivadoImpl(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
-        expected.append(NINJA_FLOWS_PATH / "vivado.py")
+        expected.append(FLOWS_PATH / "vivado.py")
 
         self.assertEqual(observed, expected)
 
     def test_get_top_level_flow_path(self):
-        self.assertEqual(self.flow.get_top_level_flow_path(), NINJA_FLOWS_PATH / "vivado.py")
+        self.assertEqual(self.flow.get_top_level_flow_path(), FLOWS_PATH / "vivado.py")
 
 
 if __name__ == "__main__":

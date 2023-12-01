@@ -1,7 +1,7 @@
 """Flow to create Vivado synthesis and implementation ninja snippets."""
 import pathlib
 
-from bfasst.ninja_flows.flow import FlowNoDesign
+from bfasst.flows.flow import FlowNoDesign
 from bfasst.ninja_tools.design_create.rand_soc import RandSoCTool
 from bfasst.ninja_tools.synth.vivado_synth_tcl import VivadoSynthFromTcl
 

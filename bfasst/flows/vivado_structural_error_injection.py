@@ -2,14 +2,14 @@
 """Inject an error into a xrev netlist and run a structural compare to detect it."""
 import random
 
-from bfasst.ninja_flows.flow import Flow
-from bfasst.ninja_flows.vivado_phys_netlist import VivadoPhysNetlist
+from bfasst.flows.flow import Flow
+from bfasst.flows.vivado_phys_netlist import VivadoPhysNetlist
 from bfasst.ninja_tools.impl.vivado_impl import VivadoImpl
 from bfasst.ninja_tools.compare.structural.structural import Structural
 from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.transform.error_injector import ErrorInjector
 from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
-from bfasst.paths import NINJA_FLOWS_PATH
+from bfasst.paths import FLOWS_PATH
 from bfasst.ninja_tools.synth.vivado_synth import VivadoSynth
 
 from bfasst.ninja_utils.error_injector import ErrorType
@@ -63,7 +63,7 @@ class VivadoStructuralErrorInjection(Flow):
                 )
 
     def get_top_level_flow_path(self) -> str:
-        return NINJA_FLOWS_PATH / "vivado_structural_error_injection.py"
+        return FLOWS_PATH / "vivado_structural_error_injection.py"
 
     def post_execute(self):
         """Remove all error injection and comparison artifacts for errors successfully detected

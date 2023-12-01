@@ -1,23 +1,25 @@
-"""YosysTechSynplifyConformal flow"""
+"""YosysTechLseConformal flow"""
 
 # pylint: disable=duplicate-code
 
-from bfasst.flows.sub_flows.conformal import Conformal
-from bfasst.flows.sub_flows.ic2_impl_and_ice_rev import Ic2ImplAndIceRev
-from bfasst.flows.flow import Flow
+from bfasst.legacy_flows.sub_flows.conformal import Conformal
+from bfasst.legacy_flows.sub_flows.ic2_impl_and_ice_rev import Ic2ImplAndIceRev
+from bfasst.legacy_flows.flow import Flow
+from bfasst.impl.ic2 import Ic2ImplementationTool
 from bfasst.job import Job
-from bfasst.opt.ic2_synplify import Ic2SynplifyOptTool
+from bfasst.opt.ic2_lse import Ic2LseOptTool
+from bfasst.reverse_bit.icestorm import IcestormReverseBitTool
 from bfasst.synth.yosys import YosysTechSynthTool
 from bfasst.types import ToolType
 
 
-class YosysTechSynplifyConformal(Flow):
-    """YosysTechSynplifyConformal flow"""
+class YosysTechLseConformal(Flow):
+    """YosysTechLseConformal flow"""
 
     def create(self):
         """
         Synthesize with yosys, optimize and implement with icecube2
-        Synplify, reverse with icestorm, and compare with conformal
+        LSE, reverse with icestorm, and compare with conformal
         """
 
         # Reset job list in case this flow is called multiple times
@@ -30,24 +32,33 @@ class YosysTechSynplifyConformal(Flow):
         curr_job = Job(yosys_synth_tool.create_netlist, self.design.rel_path)
         self.job_list.append(curr_job)
 
-        # Now run the Synplify synthesizer on the Yosys output
+        # Now run the LSE synthesizer on the Yosys output
         curr_job = Job(self.adjust_design_object, self.design.rel_path, {self.job_list[-1].uuid})
         self.job_list.append(curr_job)
 
-        synplify_opt_tool = Ic2SynplifyOptTool(self.design.build_dir, self.design, self.flow_args)
-        curr_job = Job(
-            synplify_opt_tool.create_netlist, self.design.rel_path, {self.job_list[-1].uuid}
-        )
+        lse_opt_tool = Ic2LseOptTool(self.design.build_dir, self.design, self.flow_args)
+        curr_job = Job(lse_opt_tool.create_netlist, self.design.rel_path, {self.job_list[-1].uuid})
         self.job_list.append(curr_job)
 
-        # Run icecube2 implementation and icestorm reverse bitstream
+        # Try fixing the netlist LUT inits (there's some issue with how LSE
+        # generates them)
+        curr_job = Job(lse_opt_tool.fix_lut_inits, self.design.rel_path, {self.job_list[-1].uuid})
+        self.job_list.append(curr_job)
+
+        Ic2ImplementationTool(
+            self.design.build_dir, self.design, self.flow_args[ToolType.IMPL]
+        ).implement_bitstream()
+        IcestormReverseBitTool(
+            self.design.build_dir, self.design, self.flow_args[ToolType.REVERSE]
+        ).reverse_bitstream()
+
         impl_and_rev_sub_flow = Ic2ImplAndIceRev(self.design, self.flow_args)
         impl_and_rev_sub_flow.create()
-        impl_and_rev_sub_flow.modify_first_job_dependencies({self.job_list[-1].uuid})
+        impl_and_rev_sub_flow.modify_first_job_dependencies(self.job_list[-1])
         self.job_list.extend(impl_and_rev_sub_flow.job_list)
 
         # Set paths for conformal
-        self.design.netlist_path = self.design.path / (self.design.top + ".v")
+        self.design.netlist_path = self.design.build_dir / (self.design.top + "_impl.v")
         if self.design.cur_error_flow_name is None:
             self.design.reversed_netlist_path = self.design.build_dir / (
                 self.design.top + "_reversed.v"
@@ -57,10 +68,9 @@ class YosysTechSynplifyConformal(Flow):
                 self.design.top + "_" + self.design.cur_error_flow_name + "_reversed.v"
             )
 
-        # Run conformal
         conformal_sub_flow = Conformal(self.design, self.flow_args)
         conformal_sub_flow.create()
-        conformal_sub_flow.modify_first_job_dependencies({self.job_list[-1].uuid})
+        conformal_sub_flow.modify_first_job_dependencies(self.job_list[-1])
         self.job_list.extend(conformal_sub_flow.job_list)
 
         return self.job_list

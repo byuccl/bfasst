@@ -2,9 +2,9 @@
 
 # pylint: disable=duplicate-code
 
-from bfasst.flows.flow import Flow
-from bfasst.flows.sub_flows.conformal import Conformal
-from bfasst.flows.sub_flows.ic2_impl_and_ice_rev import Ic2ImplAndIceRev
+from bfasst.legacy_flows.flow import Flow
+from bfasst.legacy_flows.sub_flows.conformal import Conformal
+from bfasst.legacy_flows.sub_flows.ic2_impl_and_ice_rev import Ic2ImplAndIceRev
 from bfasst.job import Job
 from bfasst.synth.ic2_synplify import Ic2SynplifySynthesisTool
 from bfasst.types import ToolType

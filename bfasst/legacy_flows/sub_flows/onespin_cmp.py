@@ -3,7 +3,7 @@
 # pylint: disable=duplicate-code
 
 from bfasst.compare.onespin import OneSpinCompareTool
-from bfasst.flows.flow import Flow
+from bfasst.legacy_flows.flow import Flow
 from bfasst.job import Job
 from bfasst.types import ToolType
 

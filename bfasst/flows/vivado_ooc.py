@@ -1,6 +1,6 @@
 """Out-of-context Vivado flow"""
-from bfasst.ninja_flows.vivado import Vivado
-from bfasst.paths import NINJA_FLOWS_PATH
+from bfasst.flows.vivado import Vivado
+from bfasst.paths import FLOWS_PATH
 
 
 class VivadoOoc(Vivado):
@@ -10,4 +10,4 @@ class VivadoOoc(Vivado):
         super().__init__(design, ooc=True)
 
     def get_top_level_flow_path(self):
-        return NINJA_FLOWS_PATH / "vivado_ooc.py"
+        return FLOWS_PATH / "vivado_ooc.py"

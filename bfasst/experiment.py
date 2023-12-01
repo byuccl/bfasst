@@ -7,7 +7,7 @@ import yaml
 
 from bfasst import paths
 from bfasst.design import Design
-from bfasst.flows.flow import get_flow
+from bfasst.legacy_flows.flow import get_flow
 from bfasst.types import ToolType
 from bfasst.utils import error
 

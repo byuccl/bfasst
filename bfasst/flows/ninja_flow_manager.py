@@ -5,9 +5,9 @@ import pathlib
 
 import chevron
 
-from bfasst.ninja_flows.flow import FlowNoDesign
-from bfasst.ninja_flows.flow_utils import create_build_file, get_flow
-from bfasst.paths import DESIGNS_PATH, NINJA_BUILD_PATH, NINJA_FLOWS_PATH, ROOT_PATH
+from bfasst.flows.flow import FlowNoDesign
+from bfasst.flows.flow_utils import create_build_file, get_flow
+from bfasst.paths import DESIGNS_PATH, NINJA_BUILD_PATH, FLOWS_PATH, ROOT_PATH
 from bfasst.utils import error
 
 
@@ -98,7 +98,7 @@ class NinjaFlowManager:
             master_ninja = chevron.render(
                 f,
                 {
-                    "ninja_flows_path": str(NINJA_FLOWS_PATH),
+                    "FLOWS_PATH": str(FLOWS_PATH),
                     "designs": self.designs,
                     "deps": deps,
                     "flow": self.flow_name,

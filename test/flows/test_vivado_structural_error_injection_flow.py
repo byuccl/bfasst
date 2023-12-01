@@ -5,8 +5,8 @@
 
 import unittest
 
-from bfasst.ninja_flows.flow_utils import create_build_file
-from bfasst.ninja_flows.vivado_structural_error_injection import VivadoStructuralErrorInjection
+from bfasst.flows.flow_utils import create_build_file
+from bfasst.flows.vivado_structural_error_injection import VivadoStructuralErrorInjection
 from bfasst.ninja_tools.compare.structural.structural import Structural
 from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.transform.error_injector import ErrorInjector
@@ -16,7 +16,7 @@ from bfasst.ninja_tools.impl.vivado_impl import VivadoImpl
 from bfasst.paths import (
     DESIGNS_PATH,
     NINJA_BUILD_PATH,
-    NINJA_FLOWS_PATH,
+    FLOWS_PATH,
 )
 
 
@@ -68,7 +68,7 @@ class TestVivadoStructuralErrorInjection(unittest.TestCase):
         PhysNetlist(None, desin_path).add_ninja_deps(expected)
         Xray(None, desin_path).add_ninja_deps(expected)
         Structural(None, desin_path).add_ninja_deps(expected)
-        expected.append(NINJA_FLOWS_PATH / "vivado_structural_error_injection.py")
+        expected.append(FLOWS_PATH / "vivado_structural_error_injection.py")
 
         observed = sorted([str(s) for s in observed])
         expected = sorted([str(s) for s in expected])
@@ -77,7 +77,7 @@ class TestVivadoStructuralErrorInjection(unittest.TestCase):
     def test_get_top_level_flow_path(self):
         self.assertEqual(
             self.flow.get_top_level_flow_path(),
-            NINJA_FLOWS_PATH / "vivado_structural_error_injection.py",
+            FLOWS_PATH / "vivado_structural_error_injection.py",
         )
 
 

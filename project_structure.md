@@ -92,7 +92,7 @@ The following steps should be taken to add a new flow to the project:
 
 1. Create a new python script that is associated with the new ninja rule and build snippets you have created. It will be responsible for filling in the templated rule/build snippets, creating any json files necessary to do so, and appending the rule/build snippets to the master `build.ninja` file. See `ninja_tools/vivado/vivado.py` for an example of how this is done. This new tool object should inherit from the `Tool` class in `ninja_tools/tool.py`.
 
-1. Create a new python script that invokes all tools necessary to run your flow in the `ninja_flows` directory. This new flow object should inherit from the `Flow` class in `ninja_flows/flow.py`. It should create any `Tool` objects that are necessary for the flow to run, and then call the `create_rule` and `create_build_snippet` methods of each `Tool` object. This `Flow` class is also required to have a method that returns the path to itself.
+1. Create a new python script that invokes all tools necessary to run your flow in the `flows` directory. This new flow object should inherit from the `Flow` class in `flows/flow.py`. It should create any `Tool` objects that are necessary for the flow to run, and then call the `create_rule` and `create_build_snippet` methods of each `Tool` object. This `Flow` class is also required to have a method that returns the path to itself.
 
 1. Add a unit test file for your new flow to the `test/flows` directory and add your flow to the unit tests for the `test/scripts/test_ninja_flow_manager.py` file.
 
@@ -103,9 +103,9 @@ Each `Flow` and `Tool` object is required to implement the `add_ninja_deps` meth
 ```py
 def add_ninja_deps(self, deps):
         self.vivado_tool.add_ninja_deps(deps)
-        deps.append(NINJA_FLOWS_PATH / "vivado.py")
+        deps.append(FLOWS_PATH / "vivado.py")
         if self.ooc:
-            deps.append(NINJA_FLOWS_PATH / "vivado_ooc.py")
+            deps.append(FLOWS_PATH / "vivado_ooc.py")
 ```
 
 The entire goal of this restructuring of bfasst is to separate responsibilities and reduce the size of the code base. We hope that our approach will allow new flows to be added with relative ease and greatly improve the maintainability of the code base.

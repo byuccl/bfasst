@@ -1,13 +1,13 @@
 """Structural Comparison of physical netlist and reversed netlist"""
 
-from bfasst.ninja_flows.flow import Flow
-from bfasst.ninja_flows.vivado_phys_netlist import VivadoPhysNetlist
+from bfasst.flows.flow import Flow
+from bfasst.flows.vivado_phys_netlist import VivadoPhysNetlist
 from bfasst.ninja_tools.impl.vivado_impl import VivadoImpl
 from bfasst.ninja_tools.compare.structural.structural import Structural
 from bfasst.ninja_tools.rev_bit.xray import Xray
 from bfasst.ninja_tools.transform.netlist_cleanup import NetlistCleanupTool
 from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
-from bfasst.paths import NINJA_FLOWS_PATH
+from bfasst.paths import FLOWS_PATH
 from bfasst.ninja_tools.synth.vivado_synth import VivadoSynth
 
 
@@ -46,4 +46,4 @@ class VivadoPhysNetlistCmp(Flow):
         # pylint: enable=duplicate-code
 
     def get_top_level_flow_path(self):
-        return f"{NINJA_FLOWS_PATH}/vivado_phys_netlist_cmp.py"
+        return f"{FLOWS_PATH}/vivado_phys_netlist_cmp.py"

@@ -1,23 +1,23 @@
-"""YosysTechSynplifyOnespin flow"""
+"""YosysTechSynplifyConformal flow"""
 
 # pylint: disable=duplicate-code
 
-from bfasst.flows.flow import Flow
-from bfasst.flows.sub_flows.ic2_impl_and_ice_rev import Ic2ImplAndIceRev
-from bfasst.flows.sub_flows.onespin_cmp import OnespinCmp
+from bfasst.legacy_flows.sub_flows.conformal import Conformal
+from bfasst.legacy_flows.sub_flows.ic2_impl_and_ice_rev import Ic2ImplAndIceRev
+from bfasst.legacy_flows.flow import Flow
 from bfasst.job import Job
 from bfasst.opt.ic2_synplify import Ic2SynplifyOptTool
 from bfasst.synth.yosys import YosysTechSynthTool
 from bfasst.types import ToolType
 
 
-class YosysTechSynplifyOnespin(Flow):
-    """YosysTechSynplifyOnespin flow"""
+class YosysTechSynplifyConformal(Flow):
+    """YosysTechSynplifyConformal flow"""
 
     def create(self):
         """
         Synthesize with yosys, optimize and implement with icecube2
-        Synplify, reverse with icestorm, and compare with Onespin
+        Synplify, reverse with icestorm, and compare with conformal
         """
 
         # Reset job list in case this flow is called multiple times
@@ -40,20 +40,28 @@ class YosysTechSynplifyOnespin(Flow):
         )
         self.job_list.append(curr_job)
 
+        # Run icecube2 implementation and icestorm reverse bitstream
         impl_and_rev_sub_flow = Ic2ImplAndIceRev(self.design, self.flow_args)
         impl_and_rev_sub_flow.create()
         impl_and_rev_sub_flow.modify_first_job_dependencies({self.job_list[-1].uuid})
         self.job_list.extend(impl_and_rev_sub_flow.job_list)
 
-        curr_job = Job(
-            self.change_compare_revised_file_path, self.design.rel_path, {self.job_list[-1].uuid}
-        )
-        self.job_list.append(curr_job)
+        # Set paths for conformal
+        self.design.netlist_path = self.design.path / (self.design.top + ".v")
+        if self.design.cur_error_flow_name is None:
+            self.design.reversed_netlist_path = self.design.build_dir / (
+                self.design.top + "_reversed.v"
+            )
+        else:
+            self.design.reversed_netlist_path = self.design.build_dir / (
+                self.design.top + "_" + self.design.cur_error_flow_name + "_reversed.v"
+            )
 
-        onespin_cmp_sub_flow = OnespinCmp(self.design, self.flow_args)
-        onespin_cmp_sub_flow.create()
-        onespin_cmp_sub_flow.modify_first_job_dependencies({self.job_list[-1].uuid})
-        self.job_list.extend(onespin_cmp_sub_flow.job_list)
+        # Run conformal
+        conformal_sub_flow = Conformal(self.design, self.flow_args)
+        conformal_sub_flow.create()
+        conformal_sub_flow.modify_first_job_dependencies({self.job_list[-1].uuid})
+        self.job_list.extend(conformal_sub_flow.job_list)
 
         return self.job_list
 
@@ -62,6 +70,3 @@ class YosysTechSynplifyOnespin(Flow):
         self.design.compare_golden_files.append(yosys_netlist_path.name)
         self.design.compare_golden_files_paths.append(yosys_netlist_path)
         self.design.golden_is_verilog = True
-
-    def change_compare_revised_file_path(self):
-        self.design.compare_revised_file = self.design.reversed_netlist_filename()

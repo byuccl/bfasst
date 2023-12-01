@@ -21,7 +21,7 @@ def get_flows():
 
 def get_flow(flow_name):
     """Get a flow by name"""
-    flow_module = import_module(f"bfasst.ninja_flows.{flow_name}")
+    flow_module = import_module(f"bfasst.flows.{flow_name}")
     flow_class = "".join(word.capitalize() for word in flow_name.split("_"))
     return getattr(flow_module, flow_class)
 

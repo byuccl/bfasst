@@ -1,7 +1,7 @@
 """Flow to create Vivado synthesis and implementation ninja snippets."""
-from bfasst.ninja_flows.flow import Flow
+from bfasst.flows.flow import Flow
 from bfasst.ninja_tools.impl.vivado_impl import VivadoImpl
-from bfasst.paths import NINJA_FLOWS_PATH
+from bfasst.paths import FLOWS_PATH
 from bfasst.ninja_tools.synth.vivado_synth import VivadoSynth
 
 
@@ -25,9 +25,9 @@ class Vivado(Flow):
     def add_ninja_deps(self, deps):
         self.vivado_synth_tool.add_ninja_deps(deps)
         self.vivado_impl_tool.add_ninja_deps(deps)
-        deps.append(NINJA_FLOWS_PATH / "vivado.py")
+        deps.append(FLOWS_PATH / "vivado.py")
         if self.ooc:
-            deps.append(NINJA_FLOWS_PATH / "vivado_ooc.py")
+            deps.append(FLOWS_PATH / "vivado_ooc.py")
 
     def get_top_level_flow_path(self):
-        return NINJA_FLOWS_PATH / "vivado.py"
+        return FLOWS_PATH / "vivado.py"
