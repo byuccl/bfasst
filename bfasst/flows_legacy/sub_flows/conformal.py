@@ -1,7 +1,7 @@
 """ConformalOnly flow"""
 
 from bfasst.compare.conformal import ConformalCompareTool
-from bfasst.legacy_flows.flow import Flow
+from bfasst.flows_legacy.flow import Flow
 from bfasst.job import Job
 from bfasst.types import ToolType, Vendor
 

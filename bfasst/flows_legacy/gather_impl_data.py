@@ -4,7 +4,7 @@
 
 import shutil
 
-from bfasst.legacy_flows.flow import Flow
+from bfasst.flows_legacy.flow import Flow
 from bfasst.impl.ic2 import Ic2ImplementationTool
 from bfasst.opt.ic2_lse import Ic2LseOptTool
 from bfasst.opt.ic2_synplify import Ic2SynplifyOptTool
@@ -14,7 +14,7 @@ from bfasst.synth.ic2_synplify import Ic2SynplifySynthesisTool
 from bfasst.synth.yosys import YosysTechSynthTool
 from bfasst.types import ToolType
 from bfasst.job import Job
-from bfasst.legacy_flows.sub_flows.ic2_impl_and_ice_rev import Ic2ImplAndIceRev
+from bfasst.flows_legacy.sub_flows.ic2_impl_and_ice_rev import Ic2ImplAndIceRev
 
 
 class GatherImplData(Flow):

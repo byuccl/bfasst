@@ -1,6 +1,6 @@
 """Xilinx flow"""
 
-from bfasst.legacy_flows.flow import Flow
+from bfasst.flows_legacy.flow import Flow
 from bfasst.impl.vivado import VivadoImplementationTool
 from bfasst.synth.vivado import VivadoSynthesisTool
 from bfasst.types import ToolType

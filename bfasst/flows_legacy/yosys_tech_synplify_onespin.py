@@ -2,9 +2,9 @@
 
 # pylint: disable=duplicate-code
 
-from bfasst.legacy_flows.flow import Flow
-from bfasst.legacy_flows.sub_flows.ic2_impl_and_ice_rev import Ic2ImplAndIceRev
-from bfasst.legacy_flows.sub_flows.onespin_cmp import OnespinCmp
+from bfasst.flows_legacy.flow import Flow
+from bfasst.flows_legacy.sub_flows.ic2_impl_and_ice_rev import Ic2ImplAndIceRev
+from bfasst.flows_legacy.sub_flows.onespin_cmp import OnespinCmp
 from bfasst.job import Job
 from bfasst.opt.ic2_synplify import Ic2SynplifyOptTool
 from bfasst.synth.yosys import YosysTechSynthTool
