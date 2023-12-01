@@ -122,7 +122,7 @@ class ConformalCompare:
         return None
 
     def __template_do_file(self, gold_src_type):
-        with open(paths.NINJA_CONFORMAL_TOOLS_PATH / "conformal.do.mustache", "r") as f:
+        with open(paths.CONFORMAL_TOOLS_PATH / "conformal.do.mustache", "r") as f:
             do_text = chevron.render(
                 f,
                 {
@@ -144,7 +144,7 @@ class ConformalCompare:
         return do_text
 
     def __template_gui_file(self):
-        with open(paths.NINJA_CONFORMAL_TOOLS_PATH / "conformal.gui.mustache", "r") as f:
+        with open(paths.CONFORMAL_TOOLS_PATH / "conformal.gui.mustache", "r") as f:
             gui_text = chevron.render(
                 f,
                 {

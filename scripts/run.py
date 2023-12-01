@@ -5,8 +5,8 @@ import pathlib
 import subprocess
 import sys
 
-from bfasst.ninja_flows.flow_utils import get_flows
-from bfasst.ninja_flows.ninja_flow_manager import NinjaFlowManager
+from bfasst.flows.flow_utils import get_flows
+from bfasst.flows.ninja_flow_manager import NinjaFlowManager
 from bfasst.yaml_parser import RunParser
 from bfasst.utils import error, ensure_tuple
 from bfasst.paths import ROOT_PATH
