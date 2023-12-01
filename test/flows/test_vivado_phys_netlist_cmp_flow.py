@@ -5,18 +5,18 @@
 
 import unittest
 
-from bfasst.ninja_flows.flow_utils import create_build_file
-from bfasst.ninja_flows.vivado_phys_netlist_cmp import VivadoPhysNetlistCmp
-from bfasst.ninja_tools.compare.structural.structural import Structural
-from bfasst.ninja_tools.rev_bit.xray import Xray
-from bfasst.ninja_tools.transform.netlist_cleanup import NetlistCleanupTool
-from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
-from bfasst.ninja_tools.synth.vivado_synth import VivadoSynth
-from bfasst.ninja_tools.impl.vivado_impl import VivadoImpl
+from bfasst.flows.flow_utils import create_build_file
+from bfasst.flows.vivado_phys_netlist_cmp import VivadoPhysNetlistCmp
+from bfasst.tools.compare.structural.structural import Structural
+from bfasst.tools.rev_bit.xray import Xray
+from bfasst.tools.transform.netlist_cleanup import NetlistCleanupTool
+from bfasst.tools.transform.phys_netlist import PhysNetlist
+from bfasst.tools.synth.vivado_synth import VivadoSynth
+from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.paths import (
     DESIGNS_PATH,
     NINJA_BUILD_PATH,
-    NINJA_FLOWS_PATH,
+    FLOWS_PATH,
 )
 
 
@@ -66,7 +66,7 @@ class TestVivadoPhysNetlistCmp(unittest.TestCase):
         Xray(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         NetlistCleanupTool(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         Structural(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
-        expected.append(NINJA_FLOWS_PATH / "vivado_phys_netlist_cmp.py")
+        expected.append(FLOWS_PATH / "vivado_phys_netlist_cmp.py")
 
         observed = sorted([str(s) for s in observed])
         expected = sorted([str(s) for s in expected])
@@ -74,7 +74,7 @@ class TestVivadoPhysNetlistCmp(unittest.TestCase):
 
     def test_get_top_level_flow_path(self):
         self.assertEqual(
-            self.flow.get_top_level_flow_path(), f"{NINJA_FLOWS_PATH}/vivado_phys_netlist_cmp.py"
+            self.flow.get_top_level_flow_path(), f"{FLOWS_PATH}/vivado_phys_netlist_cmp.py"
         )
 
 

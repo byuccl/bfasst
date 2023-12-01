@@ -5,13 +5,13 @@
 
 import unittest
 
-from bfasst.ninja_flows.flow_utils import create_build_file
-from bfasst.ninja_flows.vivado_yosys_impl import VivadoYosysImpl
-from bfasst.ninja_tools.compare.yosys.yosys import Yosys
-from bfasst.ninja_tools.rev_bit.xray import Xray
-from bfasst.ninja_tools.synth.vivado_synth import VivadoSynth
-from bfasst.ninja_tools.impl.vivado_impl import VivadoImpl
-from bfasst.paths import DESIGNS_PATH, NINJA_BUILD_PATH, NINJA_FLOWS_PATH
+from bfasst.flows.flow_utils import create_build_file
+from bfasst.flows.vivado_yosys_impl import VivadoYosysImpl
+from bfasst.tools.compare.yosys.yosys import Yosys
+from bfasst.tools.rev_bit.xray import Xray
+from bfasst.tools.synth.vivado_synth import VivadoSynth
+from bfasst.tools.impl.vivado_impl import VivadoImpl
+from bfasst.paths import DESIGNS_PATH, NINJA_BUILD_PATH, FLOWS_PATH
 
 
 class TestVivadoYosysImplFlow(unittest.TestCase):
@@ -55,7 +55,7 @@ class TestVivadoYosysImplFlow(unittest.TestCase):
         VivadoSynth(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         VivadoImpl(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         Yosys(None, self.design_shortname).add_ninja_deps(expected)
-        expected.append(NINJA_FLOWS_PATH / "vivado_yosys_impl.py")
+        expected.append(FLOWS_PATH / "vivado_yosys_impl.py")
 
         observed = sorted([str(s) for s in observed])
         expected = sorted([str(s) for s in expected])
@@ -63,7 +63,7 @@ class TestVivadoYosysImplFlow(unittest.TestCase):
 
     def test_get_top_level_flow_path(self):
         self.assertEqual(
-            self.flow.get_top_level_flow_path(), NINJA_FLOWS_PATH / "vivado_yosys_impl.py"
+            self.flow.get_top_level_flow_path(), FLOWS_PATH / "vivado_yosys_impl.py"
         )
 
 

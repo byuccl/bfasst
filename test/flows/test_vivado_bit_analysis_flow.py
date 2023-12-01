@@ -5,17 +5,17 @@
 
 import unittest
 
-from bfasst.ninja_flows.flow_utils import create_build_file
-from bfasst.ninja_flows.vivado_bit_analysis import VivadoBitAnalysis
-from bfasst.ninja_tools.rev_bit.xray import Xray
-from bfasst.ninja_tools.transform.netlist_cleanup import NetlistCleanupTool
-from bfasst.ninja_tools.transform.netlist_phys_to_logical import NetlistPhysToLogicalTool
-from bfasst.ninja_tools.synth.vivado_synth import VivadoSynth
-from bfasst.ninja_tools.impl.vivado_impl import VivadoImpl
+from bfasst.flows.flow_utils import create_build_file
+from bfasst.flows.vivado_bit_analysis import VivadoBitAnalysis
+from bfasst.tools.rev_bit.xray import Xray
+from bfasst.tools.transform.netlist_cleanup import NetlistCleanupTool
+from bfasst.tools.transform.netlist_phys_to_logical import NetlistPhysToLogicalTool
+from bfasst.tools.synth.vivado_synth import VivadoSynth
+from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.paths import (
     DESIGNS_PATH,
     NINJA_BUILD_PATH,
-    NINJA_FLOWS_PATH,
+    FLOWS_PATH,
 )
 
 
@@ -61,7 +61,7 @@ class TestVivadoAndReversedFlow(unittest.TestCase):
         VivadoImpl(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         NetlistCleanupTool(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         NetlistPhysToLogicalTool(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
-        expected.append(NINJA_FLOWS_PATH / "vivado_bit_analysis.py")
+        expected.append(FLOWS_PATH / "vivado_bit_analysis.py")
 
         observed = sorted([str(s) for s in observed])
         expected = sorted([str(s) for s in expected])
@@ -69,7 +69,7 @@ class TestVivadoAndReversedFlow(unittest.TestCase):
 
     def test_get_top_level_flow_path(self):
         self.assertEqual(
-            self.flow.get_top_level_flow_path(), NINJA_FLOWS_PATH / "vivado_bit_analysis.py"
+            self.flow.get_top_level_flow_path(), FLOWS_PATH / "vivado_bit_analysis.py"
         )
 
 
