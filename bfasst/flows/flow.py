@@ -1,66 +1,70 @@
-"""
-Base class for all flows.
-"""
-
+"""Base class for all ninja flows"""
 import abc
-from importlib import import_module
-from pathlib import Path
 
-from bfasst.tool import BfasstException
+from bfasst.paths import BUILD_PATH, DESIGNS_PATH
 
 
-class FlowException(BfasstException):
-    pass
+class FlowBase(abc.ABC):
+    """Base class for all ninja flows"""
 
-
-def get_flows():
-    """Get all flows in the flows directory"""
-    flows = [flow.stem for flow in Path(__file__).parent.glob("*.py") if flow.stem != "__init__"]
-    return flows
-
-
-def get_flow(flow_name):
-    """Get a flow by name"""
-    if flow_name not in get_flows():
-        raise FlowException(f"Flow {flow_name} not found")
-    flow_module = import_module(f"bfasst.flows.{flow_name}")
-    flow_class = "".join([word.capitalize() for word in flow_name.split("_")])
-    return getattr(flow_module, flow_class)
-
-
-class Flow(abc.ABC):
-    """Base class for all flows"""
-
-    def __init__(self, design, flow_args):
+    def __init__(self) -> None:
         super().__init__()
-        self.design = design
-        self.flow_args = flow_args
-        self.job_list = []
+
+        # A list of tools used by this flow
+        self.tools = []
+
+        # A list of rule files already copied into the build.ninja file
+        self.rule_paths = []
+
+    def create_rule_snippets(self):
+        """Create the rule snippets for the flow and append them to build.ninja"""
+        for tool in self.tools:
+            tool.create_rule_snippets()
+
+    def create_build_snippets(self):
+        """Create the build snippets for the flow and append them to build.ninja"""
+        for tool in self.tools:
+            tool.create_build_snippets()
+
+    def add_ninja_deps(self, deps):
+        """Add the template and flow paths of this flow
+        and its sub-flows as dependencies of the build.ninja file"""
+        for tool in self.tools:
+            tool.add_ninja_deps(deps)
+        deps.append(self.get_top_level_flow_path())
+
+    @abc.abstractmethod
+    def get_top_level_flow_path(self) -> str:
+        """Get the path to the top level flow file for this flow"""
+
+    def create_tool_build_dirs(self):
+        """Create the build directories for all tools used by this flow"""
+        for tool in self.tools:
+            tool.build_path.mkdir(parents=True, exist_ok=True)
+
+    def post_execute(self):
+        """Perform any post-execution actions"""
+
+
+class Flow(FlowBase):
+    """Base class for all ninja flows that use a design as input.
+    This is the common case.  Some flows, e.g. rand_soc, create their own designs."""
+
+    def __init__(self, design_path):
+        super().__init__()
+        self.design_path = design_path
+        self.design_build_path = BUILD_PATH / design_path.relative_to(DESIGNS_PATH)
+
+
+class FlowNoDesign(FlowBase):
+    """Base class for all ninja flows that do not use a design as input."""
+
+    def __init__(self):
+        super().__init__()
+        # self.design_build_path = BUILD_DIR / self.flow_build_dir_name()
 
     @classmethod
-    @abc.abstractclassmethod
-    def create(self):
-        """Create all the jobs necessary for the flow"""
+    @abc.abstractmethod
+    def flow_build_dir_name(cls) -> str:
+        """Get the name of the build directory for this flow"""
         raise NotImplementedError
-
-    def _get_first_job(self):
-        if len(self.job_list) > 0:
-            return self.job_list[0]
-        return None
-
-    def modify_first_job_dependencies(self, new_dependencies: list):
-        """
-        Allows the dependency list of the first job returned from a flow to be modified
-        after the job has been created
-        This is useful for adding dependencies to the first job returned from a subflow
-        when the subflow jobs occur in the middle of the master flow
-        """
-        first_job = self._get_first_job()
-        if first_job is None:
-            raise BfasstException("There were no jobs in the subflow")
-
-        if first_job.dependencies is not None:
-            for dependency in new_dependencies:
-                first_job.dependencies.append(dependency)
-        else:
-            first_job.dependencies = new_dependencies

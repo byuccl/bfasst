@@ -9,21 +9,21 @@
 # import time
 import unittest
 
-# from bfasst.ninja_flows.flow_utils import get_flows
+# from bfasst.flows.flow_utils import get_flows
 from bfasst.paths import (
     DESIGNS_PATH,
     NINJA_BUILD_PATH,
     # ROOT_PATH,
 )
-from bfasst.ninja_flows.vivado import Vivado
-from bfasst.ninja_flows.vivado_bit_analysis import VivadoBitAnalysis
-from bfasst.ninja_flows.vivado_phys_netlist import VivadoPhysNetlist
-from bfasst.ninja_flows.vivado_phys_netlist_cmp import VivadoPhysNetlistCmp
-from bfasst.ninja_flows.vivado_structural_error_injection import VivadoStructuralErrorInjection
-from bfasst.ninja_flows.vivado_conformal import VivadoConformal
-from bfasst.ninja_flows.vivado_yosys_impl import VivadoYosysImpl
+from bfasst.flows.vivado import Vivado
+from bfasst.flows.vivado_bit_analysis import VivadoBitAnalysis
+from bfasst.flows.vivado_phys_netlist import VivadoPhysNetlist
+from bfasst.flows.vivado_phys_netlist_cmp import VivadoPhysNetlistCmp
+from bfasst.flows.vivado_structural_error_injection import VivadoStructuralErrorInjection
+from bfasst.flows.vivado_conformal import VivadoConformal
+from bfasst.flows.vivado_yosys_impl import VivadoYosysImpl
 
-from bfasst.ninja_flows.ninja_flow_manager import NinjaFlowManager, get_design_basenames
+from bfasst.flows.ninja_flow_manager import NinjaFlowManager, get_design_basenames
 
 
 class TestNinjaFlowManager(unittest.TestCase):
