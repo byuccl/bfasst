@@ -3,7 +3,7 @@
 import pathlib
 import chevron
 
-from bfasst.ninja_tools.tool import ToolBase
+from bfasst.tools.tool import ToolBase
 from bfasst.paths import BUILD_PATH, GMT_TOOLS_PATH, NINJA_BUILD_PATH
 
 

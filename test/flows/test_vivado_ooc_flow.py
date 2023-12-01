@@ -3,8 +3,8 @@ import json
 import unittest
 from bfasst import config
 from bfasst.flows.vivado_ooc import VivadoOoc
-from bfasst.ninja_tools.synth.vivado_synth import VivadoSynth
-from bfasst.ninja_tools.impl.vivado_impl import VivadoImpl
+from bfasst.tools.synth.vivado_synth import VivadoSynth
+from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.paths import (
     DESIGNS_PATH,
     NINJA_BUILD_PATH,

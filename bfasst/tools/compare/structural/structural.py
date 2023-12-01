@@ -1,6 +1,6 @@
 """Create the rule and build snippets for structural comparison."""
 
-from bfasst.ninja_tools.tool import Tool
+from bfasst.tools.tool import Tool
 from bfasst.paths import NINJA_UTILS_PATH
 
 

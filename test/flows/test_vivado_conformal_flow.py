@@ -7,10 +7,10 @@ import unittest
 
 from bfasst.flows.flow_utils import create_build_file
 from bfasst.flows.vivado_conformal import VivadoConformal
-from bfasst.ninja_tools.synth.vivado_synth import VivadoSynth
-from bfasst.ninja_tools.impl.vivado_impl import VivadoImpl
-from bfasst.ninja_tools.rev_bit.xray import Xray
-from bfasst.ninja_tools.compare.conformal.conformal import Conformal
+from bfasst.tools.synth.vivado_synth import VivadoSynth
+from bfasst.tools.impl.vivado_impl import VivadoImpl
+from bfasst.tools.rev_bit.xray import Xray
+from bfasst.tools.compare.conformal.conformal import Conformal
 from bfasst.paths import (
     DESIGNS_PATH,
     NINJA_BUILD_PATH,

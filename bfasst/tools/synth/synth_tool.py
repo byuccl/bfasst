@@ -2,7 +2,7 @@
 
 import pathlib
 
-from bfasst.ninja_tools.tool import Tool
+from bfasst.tools.tool import Tool
 
 
 class SynthTool(Tool):

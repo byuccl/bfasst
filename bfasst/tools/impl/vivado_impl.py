@@ -2,7 +2,7 @@
 import json
 import pathlib
 from bfasst import config
-from bfasst.ninja_tools.impl.impl_tool import ImplTool
+from bfasst.tools.impl.impl_tool import ImplTool
 from bfasst.paths import COMMON_TOOLS_PATH, NINJA_UTILS_PATH
 from bfasst.utils.general import json_write_if_changed
 

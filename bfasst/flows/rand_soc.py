@@ -2,8 +2,8 @@
 import pathlib
 
 from bfasst.flows.flow import FlowNoDesign
-from bfasst.ninja_tools.design_create.rand_soc import RandSoCTool
-from bfasst.ninja_tools.synth.vivado_synth_tcl import VivadoSynthFromTcl
+from bfasst.tools.design_create.rand_soc import RandSoCTool
+from bfasst.tools.synth.vivado_synth_tcl import VivadoSynthFromTcl
 
 
 class RandSoc(FlowNoDesign):

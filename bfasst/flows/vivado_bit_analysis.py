@@ -3,11 +3,11 @@
 import pathlib
 
 from bfasst.flows.flow import Flow
-from bfasst.ninja_tools.impl.vivado_impl import VivadoImpl
-from bfasst.ninja_tools.rev_bit.xray import Xray as XrevTool
-from bfasst.ninja_tools.transform.netlist_cleanup import NetlistCleanupTool
-from bfasst.ninja_tools.transform.netlist_phys_to_logical import NetlistPhysToLogicalTool
-from bfasst.ninja_tools.synth.vivado_synth import VivadoSynth
+from bfasst.tools.impl.vivado_impl import VivadoImpl
+from bfasst.tools.rev_bit.xray import Xray as XrevTool
+from bfasst.tools.transform.netlist_cleanup import NetlistCleanupTool
+from bfasst.tools.transform.netlist_phys_to_logical import NetlistPhysToLogicalTool
+from bfasst.tools.synth.vivado_synth import VivadoSynth
 
 
 class VivadoBitAnalysis(Flow):

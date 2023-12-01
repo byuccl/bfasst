@@ -1,7 +1,7 @@
 """Tool to create Vivado synthesis ninja snippets."""
 import pathlib
 from bfasst import config
-from bfasst.ninja_tools.tool import Tool
+from bfasst.tools.tool import Tool
 from bfasst.paths import COMMON_TOOLS_PATH, NINJA_UTILS_PATH
 
 

@@ -2,10 +2,10 @@
 import pathlib
 
 from bfasst.flows.flow import Flow
-from bfasst.ninja_tools.impl.vivado_impl import VivadoImpl
-from bfasst.ninja_tools.compare.yosys.yosys import Yosys
-from bfasst.ninja_tools.rev_bit.xray import Xray
-from bfasst.ninja_tools.synth.vivado_synth import VivadoSynth
+from bfasst.tools.impl.vivado_impl import VivadoImpl
+from bfasst.tools.compare.yosys.yosys import Yosys
+from bfasst.tools.rev_bit.xray import Xray
+from bfasst.tools.synth.vivado_synth import VivadoSynth
 
 
 class VivadoYosysImpl(Flow):

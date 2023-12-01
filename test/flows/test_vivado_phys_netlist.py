@@ -7,9 +7,9 @@ import unittest
 
 from bfasst.flows.flow_utils import create_build_file
 from bfasst.flows.vivado_phys_netlist import VivadoPhysNetlist
-from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
-from bfasst.ninja_tools.synth.vivado_synth import VivadoSynth
-from bfasst.ninja_tools.impl.vivado_impl import VivadoImpl
+from bfasst.tools.transform.phys_netlist import PhysNetlist
+from bfasst.tools.synth.vivado_synth import VivadoSynth
+from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.paths import (
     DESIGNS_PATH,
     NINJA_BUILD_PATH,

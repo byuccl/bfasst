@@ -1,10 +1,10 @@
 """Creates a Vivado netlist that has only physical primitives."""
 
 from bfasst.flows.flow import Flow
-from bfasst.ninja_tools.impl.vivado_impl import VivadoImpl
-from bfasst.ninja_tools.transform.phys_netlist import PhysNetlist
+from bfasst.tools.impl.vivado_impl import VivadoImpl
+from bfasst.tools.transform.phys_netlist import PhysNetlist
 from bfasst.paths import FLOWS_PATH
-from bfasst.ninja_tools.synth.vivado_synth import VivadoSynth
+from bfasst.tools.synth.vivado_synth import VivadoSynth
 
 
 # pylint: disable=duplicate-code

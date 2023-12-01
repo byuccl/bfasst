@@ -1,7 +1,7 @@
 """Create the rule and build snippets for yosys comparison."""
 
 import json
-from bfasst.ninja_tools.tool import Tool
+from bfasst.tools.tool import Tool
 from bfasst.paths import NINJA_UTILS_PATH, NINJA_YOSYS_TOOLS_PATH
 from bfasst.utils.general import json_write_if_changed
 

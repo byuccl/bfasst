@@ -30,7 +30,7 @@ Also, notice that the journal and log paths are defined in the build snippet on 
 
 ## How Are Ninja Templates Used?
 
-Ninja templates reside in the ninja_tools subdirectory for the tool that is associated with them. For example, the vivado ninja rule templates are in `ninja_tools/vivado`. RULE SNIPPETS SHOULD BE PLACED IN A SEPARATE FILE FROM BUILD SNIPPETS to maintain the single responsibility principle for tool methods. For example, the build snippet template for vivado synthesis is in `ninja_tools/synth/viv_synth.ninja.mustache` and the snippet that invokes the same rule for implementation is in `ninja_tools/impl/viv_impl.ninja_build.mustache`. Neither of these files contain ninja rules.
+Ninja templates reside in the tools subdirectory for the tool that is associated with them. For example, the vivado ninja rule templates are in `tools/vivado`. RULE SNIPPETS SHOULD BE PLACED IN A SEPARATE FILE FROM BUILD SNIPPETS to maintain the single responsibility principle for tool methods. For example, the build snippet template for vivado synthesis is in `tools/synth/viv_synth.ninja.mustache` and the snippet that invokes the same rule for implementation is in `tools/impl/viv_impl.ninja_build.mustache`. Neither of these files contain ninja rules.
 
 The `Flow` objects in bfasst are all responsible for invoking any `Tool` objects that are required for the flow to run and telling them to create their rule and build snippets. The `Tool` objects are responsible for filling in any mustache syntax for its associated rule and build snippets and appending them to the master `build.ninja` file. The `Flow` objects are instantiated automatically by the `FlowManager` object when the `run.py` script is run. There is one flow object for each design that will be included in a given run. All Flow and Tool objects are garbage collected after they have added their rule and build snippets to the `build.ninja` file, and then the `run.py` script runs ninja on the `build.ninja` file.
 
@@ -78,9 +78,9 @@ my_str = chevron.render(template, variables)
 # my_str = "This is a template with a list: "
 ```
 
-Certain scenarios in flows may warrant the use of chevron lists as conditionals. For example, reading different types of HDL into vivado and determining between ooc and in-context runs is done using chevron lists as conditionals in the tcl templates of this project (see, for example, `ninja_tools/synth/synth.tcl.mustache`).
+Certain scenarios in flows may warrant the use of chevron lists as conditionals. For example, reading different types of HDL into vivado and determining between ooc and in-context runs is done using chevron lists as conditionals in the tcl templates of this project (see, for example, `tools/synth/synth.tcl.mustache`).
 
-Finally, if you need ninja to template in a mustache file for you, you can use the `template` rule that already exists in `master.ninja.mustache`. This invokes chevron as a command line utility. It takes a json file with all of your chevron variables, and the template to fill in. *When this is the case, your ninja_tools MUST create the json file that will be used to fill in the template* This approach is commonly used in templating in tcl files as part of your flow. See `ninja_tools/synth/synth.ninja.mustache` for an example of how this style of templating is done, and `ninja_tools/vivado/vivado.py` for an example of how the associated json file is created.
+Finally, if you need ninja to template in a mustache file for you, you can use the `template` rule that already exists in `master.ninja.mustache`. This invokes chevron as a command line utility. It takes a json file with all of your chevron variables, and the template to fill in. *When this is the case, your tools MUST create the json file that will be used to fill in the template* This approach is commonly used in templating in tcl files as part of your flow. See `tools/synth/synth.ninja.mustache` for an example of how this style of templating is done, and `tools/vivado/vivado.py` for an example of how the associated json file is created.
 
 ## Adding a New Flow
 
@@ -88,9 +88,9 @@ The following steps should be taken to add a new flow to the project:
 
 1. Create any stand-alone python utility scripts in the `ninja_utils` directory. This may or may not be necessary. For example, physical netlist generation is a `ninja_util` but the `vivado` flow only uses tcl scripts and therefore does not require any `ninja_utils`.
 
-1. Create a file for any new ninja rules and one for all new ninja build snippets in the correct `ninja_tools` sub-directory. Many rules already exist in the project, such as a rule for invoking vivado or filling in mustache files, so in those cases you only need to create build snippet files that will invoke those rules.
+1. Create a file for any new ninja rules and one for all new ninja build snippets in the correct `tools` sub-directory. Many rules already exist in the project, such as a rule for invoking vivado or filling in mustache files, so in those cases you only need to create build snippet files that will invoke those rules.
 
-1. Create a new python script that is associated with the new ninja rule and build snippets you have created. It will be responsible for filling in the templated rule/build snippets, creating any json files necessary to do so, and appending the rule/build snippets to the master `build.ninja` file. See `ninja_tools/vivado/vivado.py` for an example of how this is done. This new tool object should inherit from the `Tool` class in `ninja_tools/tool.py`.
+1. Create a new python script that is associated with the new ninja rule and build snippets you have created. It will be responsible for filling in the templated rule/build snippets, creating any json files necessary to do so, and appending the rule/build snippets to the master `build.ninja` file. See `tools/vivado/vivado.py` for an example of how this is done. This new tool object should inherit from the `Tool` class in `tools/tool.py`.
 
 1. Create a new python script that invokes all tools necessary to run your flow in the `flows` directory. This new flow object should inherit from the `Flow` class in `flows/flow.py`. It should create any `Tool` objects that are necessary for the flow to run, and then call the `create_rule` and `create_build_snippet` methods of each `Tool` object. This `Flow` class is also required to have a method that returns the path to itself.
 
