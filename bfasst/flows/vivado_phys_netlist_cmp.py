@@ -27,7 +27,6 @@ class VivadoPhysNetlistCmp(Flow):
         self.compare_tool = Structural(self, design)
 
     def create_build_snippets(self):
-        # pylint: disable=duplicate-code
         self.vivado_synth_tool.create_build_snippets()
         self.vivado_impl_tool.create_build_snippets()
         self.phys_netlist_tool.create_build_snippets(
@@ -43,7 +42,6 @@ class VivadoPhysNetlistCmp(Flow):
             netlist_b=self.phys_netlist_tool.outputs["viv_impl_physical_v"],
             log_name="struct_cmp.log",
         )
-        # pylint: enable=duplicate-code
 
     def get_top_level_flow_path(self):
         return f"{FLOWS_PATH}/vivado_phys_netlist_cmp.py"
