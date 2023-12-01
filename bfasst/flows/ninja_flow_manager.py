@@ -6,9 +6,10 @@ import pathlib
 import chevron
 
 from bfasst.flows.flow import FlowNoDesign
-from bfasst.flows.flow_utils import create_build_file, get_flow
+from bfasst.flows.flow_utils import create_build_file
 from bfasst.paths import DESIGNS_PATH, NINJA_BUILD_PATH, FLOWS_PATH, ROOT_PATH
 from bfasst.utils import error
+from bfasst.yaml_parser import FlowDescriptionParser
 
 
 class NinjaFlowManager:
@@ -37,7 +38,7 @@ class NinjaFlowManager:
         self.flows = []
         self.designs = []
 
-        flow_class = get_flow(flow_name)
+        flow_class: type = FlowDescriptionParser().get_flow_class(flow_name)
 
         if issubclass(flow_class, FlowNoDesign):
             assert not designs, (
@@ -63,7 +64,7 @@ class NinjaFlowManager:
 
                 self.designs.append(design_path)
 
-                flow = get_flow(flow_name)(design_path, **self.flow_arguments)
+                flow = flow_class(design_path, **self.flow_arguments)
                 self.flows.append(flow)
 
         for flow in self.flows:

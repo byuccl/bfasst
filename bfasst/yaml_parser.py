@@ -2,6 +2,8 @@
 # pylint: disable=duplicate-code
 from abc import ABC
 from pathlib import Path
+from importlib import import_module
+from types import ModuleType
 import yaml
 
 from bfasst.utils import error
@@ -106,3 +108,38 @@ class DesignParser(YamlParser):
         self.vhdl_libs = None
         if "vhdl_libs" in self.props:
             self.vhdl_libs = self.props["vhdl_libs"]
+
+
+class FlowDescriptionParser(YamlParser):
+    """Parse the flow description yaml file"""
+
+    def __init__(self, yaml_path=paths.FLOWS_PATH / "flow_descriptions.yaml"):
+        super().__init__(yaml_path)
+
+    def get_flow_names(self) -> list[str]:
+        """Get the names of all flows"""
+        return [flow["name"] for flow in self.props["flows"]]
+
+    def get_flow_description(self, flow_name) -> str:
+        """Get the description of a flow"""
+        for flow in self.props["flows"]:
+            if flow["name"] == flow_name:
+                return flow["description"]
+        raise ValueError(f"Flow {flow_name} not found in {self.yaml_path}")
+
+    def get_flow_names_and_descriptions(self) -> list[tuple[str, str]]:
+        """Get the names and descriptions of all flows"""
+        return [(flow["name"], flow["description"]) for flow in self.props["flows"]]
+
+    def get_flow_module(self, flow_name) -> ModuleType:
+        """Get the module of a flow"""
+        for flow in self.props["flows"]:
+            if flow["name"] == flow_name:
+                return import_module(f"bfasst.flows.{flow['module']}")
+        raise ValueError(f"Flow {flow_name} not found in {self.yaml_path}")
+
+    def get_flow_class(self, flow_name):
+        """Get the class of a flow"""
+        # get the module
+        module = self.get_flow_module(flow_name)
+        return getattr(module, flow_name)
