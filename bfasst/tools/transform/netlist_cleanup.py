@@ -3,7 +3,7 @@
 """
 
 from bfasst.tools.tool import Tool
-from bfasst.paths import NINJA_UTILS_PATH
+from bfasst.paths import BFASST_UTILS_PATH
 
 
 class NetlistCleanupTool(Tool):
@@ -21,7 +21,7 @@ class NetlistCleanupTool(Tool):
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
-        deps.append(NINJA_UTILS_PATH / "netlist_cleanup.py")
+        deps.append(BFASST_UTILS_PATH / "netlist_cleanup.py")
 
     def create_rule_snippets(self):
         self._append_rule_snippets_default(__file__)

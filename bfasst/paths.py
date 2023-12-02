@@ -16,7 +16,6 @@ ERROR_FLOW_PATH = ROOT_PATH / "error_flows"
 THIRD_PARTY_PATH = ROOT_PATH / "third_party"
 
 TOOLS_PATH = BFASST_PATH / "tools"
-NINJA_UTILS_PATH = BFASST_PATH / "ninja_utils"
 FLOWS_PATH = BFASST_PATH / "flows"
 
 COMMON_TOOLS_PATH = TOOLS_PATH / "common"

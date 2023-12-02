@@ -1,6 +1,6 @@
 build {{ phys_netlist_output }}/checkpoint_to_v.tcl: template {{ phys_netlist_output }}/checkpoint_to_v.json {{ phys_netlist_library }}/checkpoint_to_v.tcl.mustache
 
-build {{ phys_netlist_output }}/viv_impl_physical.edf {{ phys_netlist_output }}/phys_netlist.dcp {{ phys_netlist_output }}/log.txt {{ phys_netlist_output }}/rapidwright_stdout.log: phys_netlist | bfasst/ninja_utils/rw_phys_netlist.py {{ build_dir }}/impl/viv_impl.edf {{ build_dir }}/impl/impl.dcp
+build {{ phys_netlist_output }}/viv_impl_physical.edf {{ phys_netlist_output }}/phys_netlist.dcp {{ phys_netlist_output }}/log.txt {{ phys_netlist_output }}/rapidwright_stdout.log: phys_netlist | bfasst/utils/rw_phys_netlist.py {{ build_dir }}/impl/viv_impl.edf {{ build_dir }}/impl/impl.dcp
     build_dir = {{ build_dir }}
     impl_dcp = {{ impl_dcp }}
     impl_edf = {{ impl_edf }}

@@ -3,7 +3,7 @@
 import chevron
 
 from bfasst.tools.tool import Tool
-from bfasst.paths import NINJA_BUILD_PATH, NINJA_TRANSFORM_TOOLS_PATH, NINJA_UTILS_PATH
+from bfasst.paths import NINJA_BUILD_PATH, NINJA_TRANSFORM_TOOLS_PATH, BFASST_UTILS_PATH
 
 
 class ErrorInjector(Tool):
@@ -33,7 +33,7 @@ class ErrorInjector(Tool):
                     "corrupt_netlist_path": str(self.corrupt_netlist),
                     "top": self.design_props.top,
                     "seed": num * multiplier,
-                    "error_injector_script_path": str(NINJA_UTILS_PATH / "error_injector.py"),
+                    "error_injector_script_path": str(BFASST_UTILS_PATH / "error_injector.py"),
                     "reversed_netlist": reversed_netlist,
                 },
             )
@@ -52,4 +52,4 @@ class ErrorInjector(Tool):
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
-        deps.append(NINJA_UTILS_PATH / "error_injector.py")
+        deps.append(BFASST_UTILS_PATH / "error_injector.py")

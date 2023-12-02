@@ -2,7 +2,7 @@
 
 import json
 from bfasst.tools.tool import Tool
-from bfasst.paths import NINJA_UTILS_PATH, YOSYS_TOOLS_PATH
+from bfasst.paths import BFASST_UTILS_PATH, YOSYS_TOOLS_PATH
 from bfasst.utils.general import json_write_if_changed
 
 
@@ -19,7 +19,7 @@ class Yosys(Tool):
         self._init_outputs()
 
     def create_rule_snippets(self):
-        self._append_rule_snippets_default(__file__, {"utils": str(NINJA_UTILS_PATH)})
+        self._append_rule_snippets_default(__file__, {"utils": str(BFASST_UTILS_PATH)})
 
     def create_build_snippets(self, gold_netlist, rev_netlist):
         self.__write_json_file(gold_netlist, rev_netlist)

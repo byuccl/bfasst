@@ -2,7 +2,7 @@
 
 import chevron
 from bfasst.tools.tool import Tool
-from bfasst.paths import NINJA_BUILD_PATH, CONFORMAL_TOOLS_PATH, NINJA_UTILS_PATH
+from bfasst.paths import NINJA_BUILD_PATH, CONFORMAL_TOOLS_PATH, BFASST_UTILS_PATH
 
 
 class Conformal(Tool):
@@ -17,7 +17,7 @@ class Conformal(Tool):
     def create_rule_snippets(self):
         """Create the rule snippets for conformal comparison."""
         with open(CONFORMAL_TOOLS_PATH / "conformal_rules.ninja.mustache", "r") as f:
-            rules = chevron.render(f, {"utils": str(NINJA_UTILS_PATH)})
+            rules = chevron.render(f, {"utils": str(BFASST_UTILS_PATH)})
 
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(rules)
@@ -33,7 +33,7 @@ class Conformal(Tool):
                     "gui_path": str(self.build_path / "run_conformal_gui.sh"),
                     "hdl_srcs": impl_netlist,
                     "rev_netlist": rev_netlist,
-                    "conformal_script_path": str(NINJA_UTILS_PATH / "conformal.py"),
+                    "conformal_script_path": str(BFASST_UTILS_PATH / "conformal.py"),
                     "build_dir": self.build_path.parent,
                     "vendor": vendor.name,
                 },
@@ -52,4 +52,4 @@ class Conformal(Tool):
         self._add_ninja_deps_default(deps, __file__)
         deps.append(CONFORMAL_TOOLS_PATH / "conformal.do.mustache")
         deps.append(CONFORMAL_TOOLS_PATH / "conformal.gui.mustache")
-        deps.append(NINJA_UTILS_PATH / "conformal.py")
+        deps.append(BFASST_UTILS_PATH / "conformal.py")

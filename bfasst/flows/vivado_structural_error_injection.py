@@ -11,7 +11,7 @@ from bfasst.tools.transform.phys_netlist import PhysNetlist
 from bfasst.paths import FLOWS_PATH
 from bfasst.tools.synth.vivado_synth import VivadoSynth
 
-from bfasst.ninja_utils.error_injector import ErrorType
+from bfasst.utils.error_injector import ErrorType
 
 
 class VivadoStructuralErrorInjection(Flow):

@@ -86,7 +86,7 @@ Finally, if you need ninja to template in a mustache file for you, you can use t
 
 The following steps should be taken to add a new flow to the project:
 
-1. Create any stand-alone python utility scripts in the `ninja_utils` directory. This may or may not be necessary. For example, physical netlist generation is a `ninja_util` but the `vivado` flow only uses tcl scripts and therefore does not require any `ninja_utils`.
+1. Create any stand-alone python utility scripts in the `utils` directory. This may or may not be necessary. For example, physical netlist generation is a `util` but the `vivado` flow only uses tcl scripts and therefore does not require any `utils`.
 
 1. Create a file for any new ninja rules and one for all new ninja build snippets in the correct `tools` sub-directory. Many rules already exist in the project, such as a rule for invoking vivado or filling in mustache files, so in those cases you only need to create build snippet files that will invoke those rules.
 
