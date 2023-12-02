@@ -7,14 +7,14 @@ flows:
   - vivado
 
 - name: VivadoOoc
-  description: Run Xilinx Vivado from RTL to implementation, with out-of-context synthesis
+  description: Run Xilinx Vivado with out-of-context synth
   module: vivado_ooc
   class: VivadoOoc
   external_tools:
   - vivado
 
 - name: VivadoPhysNetlist
-  description: Run Xilinx Vivado from RTL to bitstream, transforming the post-implementation netlist into a physical netlist
+  description: Transform Vivado netlist into phys netlist
   module: vivado_phys_netlist
   class: VivadoPhysNetlist
   external_tools:
@@ -22,7 +22,7 @@ flows:
   - fasm2bels
 
 - name: VivadoPhysNetlistCmp
-  description: Run the VivadoPhysNetlist flow, then reverse the bitstream and structurally compare the two physical netlists
+  description: Reverse bitstream and compare to netlist
   module: vivado_phys_netlist_cmp
   class: VivadoPhysNetlistCmp
   external_tools:
@@ -32,7 +32,7 @@ flows:
 
 
 - name: VivadoStructuralErrorInjection
-  description: Perform fault-injection testing of the structural comparison tool
+  description: Perform fault-injection test of comp tool
   module: vivado_structural_error_injection
   class: VivadoStructuralErrorInjection
   external_tools:
@@ -42,7 +42,7 @@ flows:
 
 
 - name: VivadoYosysImpl
-  description: Run Yosys to compare Vivado post-implementation netlist to Xray (bit-reversed) netlist
+  description: Verify design implementation with Yosys
   module: vivado_yosys_impl
   class: VivadoYosysImpl
   external_tools:
@@ -51,7 +51,7 @@ flows:
   - yosys
 
 - name: VivadoConformal
-  description: Run Cadence Conformal to compare Vivado post-implementation netlist to Xray (bit-reversed) netlist
+  description: Verify design implementation with Conformal
   module: vivado_conformal
   class: VivadoConformal
   external_tools:
@@ -60,7 +60,7 @@ flows:
   - conformal
 
 - name: VivadoBitAnalysis
-  description: Reverse a Vivado generated bitstream into a logical netlist
+  description: Reverse bitstream into a logical netlist
   module: vivado_bit_analysis
   class: VivadoBitAnalysis
   external_tools:

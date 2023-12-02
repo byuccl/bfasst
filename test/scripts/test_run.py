@@ -17,11 +17,7 @@ class TestApplicationRunner(unittest.TestCase):
     def __run_flow(self, flow, flow_args=None):
         # run the run.py script with the given flow
 
-        cmd = [
-            "python",
-            "scripts/run.py",
-            flow,
-        ]
+        cmd = ["python", "scripts/run.py", flow]
 
         # some flows don't need a design to run, and will error if one is passed in
         flow_type = FlowDescriptionParser().get_flow_class(flow)

@@ -60,13 +60,14 @@ class ApplicationRunner:
 def get_flow_choices() -> list[str]:
     """Get a list of formatted flow choices"""
     return [
-        f"    {flow_name:<35}{flow_description}"
+        f"  {flow_name:<35}{flow_description}"
         for flow_name, flow_description in FlowDescriptionParser().get_flow_names_and_descriptions()
     ]
 
 
 def parse_args(args):
     """Parse main arguments"""
+    flow_choices: str = "\n".join(get_flow_choices())
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "flow_name_or_yaml_path", type=str, help="Flow name or yaml file with flow specs"
@@ -79,7 +80,16 @@ def parse_args(args):
         type=str,
         help="Arguments passed to the flow constructor, in the form of a dictionary",
     )
-    args = parser.parse_args(args)
+
+    # try to parse the arguments, and if none are provided, print the flow choices
+    try:
+        args = parser.parse_args(args)
+    except SystemExit as e:
+        if e.code == 2:
+            print(f"Valid flow names:\n{flow_choices}")
+            sys.exit(2)
+        else:
+            raise e
 
     flows_list = FlowDescriptionParser().get_flow_names()
 
@@ -92,11 +102,10 @@ def parse_args(args):
             "Specify them in the yaml file instead."
         )
     else:
-        flow_choices: str = "\n".join(get_flow_choices())
         parser.error(
             (
                 f"First argument ({args.flow_name_or_yaml_path}) must specify either a yaml file "
-                f"or a flow name. Valid flow names:\n"
+                f"or a flow name.\nValid flow names:\n"
                 f"{flow_choices}"
             )
         )
