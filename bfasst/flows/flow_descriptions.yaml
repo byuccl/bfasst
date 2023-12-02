@@ -57,6 +57,7 @@ flows:
   external_tools:
   - vivado
   - fasm2bels
+  - conformal
 
 - name: VivadoBitAnalysis
   description: Reverse a Vivado generated bitstream into a logical netlist
