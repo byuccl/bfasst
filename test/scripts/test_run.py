@@ -37,23 +37,23 @@ class TestApplicationRunner(unittest.TestCase):
 
     def test_run_vivado_flow(self):
         """Test that the runner runs the vivado flow without errors"""
-        self.__run_flow("vivado")
+        self.__run_flow("Vivado")
 
     def test_run_vivado_ooc_flow(self):
         """Test that the runner runs the vivado_ooc flow without errors"""
-        self.__run_flow("vivado_ooc")
+        self.__run_flow("VivadoOoc")
 
-    def test_run_vivado_and_reversed_flow(self):
-        """Test that the runner runs the vivado and reversed flow without errors"""
-        self.__run_flow("vivado_bit_analysis")
+    def test_run_vivado_bit_analysis_flow(self):
+        """Test that the runner runs the vivado_bit_analysis flow without errors"""
+        self.__run_flow("VivadoBitAnalysis")
 
     def test_run_vivado_phys_netlist_flow(self):
         """Test that the runner runs the vivado_phys_netlist flow without errors"""
-        self.__run_flow("vivado_phys_netlist")
+        self.__run_flow("VivadoPhysNetlist")
 
     def test_run_vivado_phys_netlist_cmp_flow(self):
         """Test that the runner runs the vivado_phys_netlist_cmp flow without errors"""
-        self.__run_flow("vivado_phys_netlist_cmp")
+        self.__run_flow("VivadoPhysNetlistCmp")
 
     def __try_check_args_for_success(self, args):
         try:
@@ -67,11 +67,11 @@ class TestApplicationRunner(unittest.TestCase):
         self.__try_check_args_for_success(args)
 
     def test_check_args_succeeds_on_flow_and_design(self):
-        args = ["vivado", "byu/alu"]
+        args = ["Vivado", "byu/alu"]
         self.__try_check_args_for_success(args)
 
     def test_check_args_succeeds_on_flow_and_designs(self):
-        args = ["vivado", "byu/alu", "byu/tx"]
+        args = ["Vivado", "byu/alu", "byu/tx"]
         self.__try_check_args_for_success(args)
 
     def __produce_check_args_failure(self, args):
