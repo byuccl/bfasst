@@ -136,19 +136,14 @@ class FlowDescriptionParser(YamlParser):
 
     def get_flow_module_and_classname(self, flow_name) -> tuple[ModuleType, Optional[str]]:
         """Get the module of a flow"""
-        # handle the cli case, which pass the flow UpperCamelCase (as class names)
         for flow in self.props["flows"]:
-            if flow["name"] == flow_name:
-                return import_module(f"bfasst.flows.{flow['module']}"), flow["class"]
-
-        # handle the ci checks, which pass the flow snake case (as module names)
-        for flow in self.props["flows"]:
-            if flow["module"] == flow_name:
+            # flow_name is module name for yaml and class name for cli
+            if flow_name in (flow["name"], flow["module"]):
                 return import_module(f"bfasst.flows.{flow['module']}"), flow["class"]
 
         raise ValueError(f"Flow {flow_name} not found in {self.yaml_path}")
 
-    def get_flow_class(self, flow_name):
+    def get_flow_class(self, flow_name) -> type:
         """Get the class of a flow"""
         # get the module
         module, flow_class = self.get_flow_module_and_classname(flow_name)
@@ -156,14 +151,9 @@ class FlowDescriptionParser(YamlParser):
 
     def get_flow_tools(self, flow_name):
         """Get a list of tools used by the specified flow"""
-        # handle the cli case, which pass the flow UpperCamelCase (as class names)
         for flow in self.props["flows"]:
-            if flow["name"] == flow_name:
-                return flow["tools"]
-
-        # handle the ci checks, which pass the flow snake case (as module names)
-        for flow in self.props["flows"]:
-            if flow["module"] == flow_name:
+            # flow_name is module name for yaml and class name for cli
+            if flow_name in (flow["name"], flow["module"]):
                 return flow["tools"]
 
         raise ValueError(f"Flow {flow_name} not found in {self.yaml_path}")
