@@ -2,7 +2,7 @@
 import pathlib
 
 from bfasst.flows.flow import FlowNoDesign
-from bfasst.tools.design_create.rand_soc import RandSoCTool
+from bfasst.tools.design_create.rand_soc import RandSoC
 from bfasst.tools.synth.vivado_synth_tcl import VivadoSynthFromTcl
 
 
@@ -12,7 +12,7 @@ class RandSoc(FlowNoDesign):
     def __init__(self, num_designs=1):
         super().__init__()
 
-        self.rand_soc_tool = RandSoCTool(self, num_designs=num_designs)
+        self.rand_soc_tool = RandSoC(self, num_designs=num_designs)
 
         for design in self.rand_soc_tool.outputs["design_tcl"]:
             VivadoSynthFromTcl(self, design)

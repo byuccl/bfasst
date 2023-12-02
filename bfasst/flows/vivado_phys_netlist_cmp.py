@@ -5,7 +5,7 @@ from bfasst.flows.vivado_phys_netlist import VivadoPhysNetlist
 from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.tools.compare.structural.structural import Structural
 from bfasst.tools.rev_bit.xray import Xray
-from bfasst.tools.transform.netlist_cleanup import NetlistCleanupTool
+from bfasst.tools.transform.netlist_cleanup import NetlistCleanup
 from bfasst.tools.transform.phys_netlist import PhysNetlist
 from bfasst.paths import FLOWS_PATH
 from bfasst.tools.synth.vivado_synth import VivadoSynth
@@ -23,7 +23,7 @@ class VivadoPhysNetlistCmp(Flow):
         self.vivado_impl_tool = VivadoImpl(self, design)
         self.phys_netlist_tool = PhysNetlist(self, design)
         self.xray_tool = Xray(self, design)
-        self.cleanup_tool = NetlistCleanupTool(self, design)
+        self.cleanup_tool = NetlistCleanup(self, design)
         self.compare_tool = Structural(self, design)
 
     def create_build_snippets(self):

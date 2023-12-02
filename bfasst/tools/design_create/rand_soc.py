@@ -7,7 +7,7 @@ from bfasst.tools.tool import ToolBase
 from bfasst.paths import BUILD_PATH, GMT_TOOLS_PATH, NINJA_BUILD_PATH
 
 
-class RandSoCTool(ToolBase):
+class RandSoC(ToolBase):
     """Tool to create a random SoC"""
 
     def __init__(self, flow, num_designs):
