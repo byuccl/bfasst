@@ -3,6 +3,7 @@
 from abc import ABC
 from pathlib import Path
 from importlib import import_module
+from typing import Optional
 from types import ModuleType
 import yaml
 
@@ -131,15 +132,21 @@ class FlowDescriptionParser(YamlParser):
         """Get the names and descriptions of all flows"""
         return [(flow["name"], flow["description"]) for flow in self.props["flows"]]
 
-    def get_flow_module(self, flow_name) -> ModuleType:
+    def get_flow_module(self, flow_name) -> tuple[ModuleType, Optional[str]]:
         """Get the module of a flow"""
         for flow in self.props["flows"]:
             if flow["name"] == flow_name:
-                return import_module(f"bfasst.flows.{flow['module']}")
+                return import_module(f"bfasst.flows.{flow['module']}"), None
+
+        for flow in self.props["flows"]:
+            if flow["module"] == flow_name:
+                return import_module(f"bfasst.flows.{flow['module']}"), flow["class"]
         raise ValueError(f"Flow {flow_name} not found in {self.yaml_path}")
 
     def get_flow_class(self, flow_name):
         """Get the class of a flow"""
         # get the module
-        module = self.get_flow_module(flow_name)
+        module, flow_class = self.get_flow_module(flow_name)
+        if flow_class:
+            return getattr(module, flow_class)
         return getattr(module, flow_name)
