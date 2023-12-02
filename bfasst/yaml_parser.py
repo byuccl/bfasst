@@ -123,30 +123,48 @@ class FlowDescriptionParser(YamlParser):
 
     def get_flow_description(self, flow_name) -> str:
         """Get the description of a flow"""
+        # This is only pertinent for cli help messages, so the ci case with snake case
+        # flow names need not be handled.
         for flow in self.props["flows"]:
             if flow["name"] == flow_name:
                 return flow["description"]
+
         raise ValueError(f"Flow {flow_name} not found in {self.yaml_path}")
 
     def get_flow_names_and_descriptions(self) -> list[tuple[str, str]]:
         """Get the names and descriptions of all flows"""
         return [(flow["name"], flow["description"]) for flow in self.props["flows"]]
 
-    def get_flow_module(self, flow_name) -> tuple[ModuleType, Optional[str]]:
+    def get_flow_module_and_classname(self, flow_name) -> tuple[ModuleType, Optional[str]]:
         """Get the module of a flow"""
+        # handle the cli case, which pass the flow UpperCamelCase (as class names)
         for flow in self.props["flows"]:
             if flow["name"] == flow_name:
-                return import_module(f"bfasst.flows.{flow['module']}"), None
+                return import_module(f"bfasst.flows.{flow['module']}"), flow["class"]
 
+        # handle the ci checks, which pass the flow snake case (as module names)
         for flow in self.props["flows"]:
             if flow["module"] == flow_name:
                 return import_module(f"bfasst.flows.{flow['module']}"), flow["class"]
+
         raise ValueError(f"Flow {flow_name} not found in {self.yaml_path}")
 
     def get_flow_class(self, flow_name):
         """Get the class of a flow"""
         # get the module
-        module, flow_class = self.get_flow_module(flow_name)
-        if flow_class:
-            return getattr(module, flow_class)
-        return getattr(module, flow_name)
+        module, flow_class = self.get_flow_module_and_classname(flow_name)
+        return getattr(module, flow_class)
+
+    def get_flow_tools(self, flow_name):
+        """Get a list of tools used by the specified flow"""
+        # handle the cli case, which pass the flow UpperCamelCase (as class names)
+        for flow in self.props["flows"]:
+            if flow["name"] == flow_name:
+                return flow["tools"]
+
+        # handle the ci checks, which pass the flow snake case (as module names)
+        for flow in self.props["flows"]:
+            if flow["module"] == flow_name:
+                return flow["tools"]
+
+        raise ValueError(f"Flow {flow_name} not found in {self.yaml_path}")
