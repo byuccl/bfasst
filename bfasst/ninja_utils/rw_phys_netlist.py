@@ -959,7 +959,6 @@ class RwPhysNetlist:
 
 
 if __name__ == "__main__":
-    # pylint: disable=duplicate-code
     parser = ArgumentParser()
     parser.add_argument(
         "--build_dir",
@@ -986,4 +985,3 @@ if __name__ == "__main__":
     except jpype.JException as e:
         logging.error("ERROR: %s", e)
         sys.exit(1)
-    # pylint: enable=duplicate-code
