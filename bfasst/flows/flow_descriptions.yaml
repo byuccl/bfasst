@@ -3,88 +3,74 @@ flows:
   description: Run Xilinx Vivado from RTL to bitstream
   module: vivado
   class: Vivado
-  tools:
-  - VivadoSynth
-  - VivadoImpl
+  external_tools:
+  - vivado
 
 - name: VivadoOoc
   description: Run Xilinx Vivado from RTL to implementation, with out-of-context synthesis
   module: vivado_ooc
   class: VivadoOoc
-  tools:
-  - VivadoSynth
-  - VivadoImpl
+  external_tools:
+  - vivado
 
 - name: VivadoPhysNetlist
   description: Run Xilinx Vivado from RTL to bitstream, transforming the post-implementation netlist into a physical netlist
   module: vivado_phys_netlist
   class: VivadoPhysNetlist
-  tools:
-  - VivadoSynth
-  - VivadoImpl
-  - PhysNetlist
+  external_tools:
+  - vivado
+  - fasm2bels
 
 - name: VivadoPhysNetlistCmp
   description: Run the VivadoPhysNetlist flow, then reverse the bitstream and structurally compare the two physical netlists
   module: vivado_phys_netlist_cmp
   class: VivadoPhysNetlistCmp
-  tools:
-  - VivadoSynth
-  - VivadoImpl
-  - PhysNetlist
-  - Xray
-  - NetlistCleanup
-  - Structural
+  external_tools:
+  - vivado
+  - fasm2bels
+  - rapidwright
 
 
 - name: VivadoStructuralErrorInjection
   description: Perform fault-injection testing of the structural comparison tool
   module: vivado_structural_error_injection
   class: VivadoStructuralErrorInjection
-  tools:
-  - VivadoSynth
-  - VivadoImpl
-  - PhysNetlist
-  - Xray
-  - ErrorInjector
-  - Structural
+  external_tools:
+  - vivado
+  - fasm2bels
+  - rapidwright
 
 
 - name: VivadoYosysImpl
   description: Run Yosys to compare Vivado post-implementation netlist to Xray (bit-reversed) netlist
   module: vivado_yosys_impl
   class: VivadoYosysImpl
-  tools:
-  - VivadoSynth
-  - VivadoImpl
-  - Xray
-  - Yosys
+  external_tools:
+  - vivado
+  - fasm2bels
+  - yosys
 
 - name: VivadoConformal
   description: Run Cadence Conformal to compare Vivado post-implementation netlist to Xray (bit-reversed) netlist
   module: vivado_conformal
   class: VivadoConformal
-  tools:
-  - VivadoSynth
-  - VivadoImpl
-  - Xray
-  - Conformal
+  external_tools:
+  - vivado
+  - fasm2bels
 
 - name: VivadoBitAnalysis
   description: Reverse a Vivado generated bitstream into a logical netlist
   module: vivado_bit_analysis
   class: VivadoBitAnalysis
-  tools:
-  - VivadoSynth
-  - VivadoImpl
-  - Xray
-  - NetlistCleanup
-  - NetlistPhysToLogical
+  external_tools:
+  - vivado
+  - fasm2bels
+  - gmt_tools
 
 - name: RandSoc
   description: Create random block design(s) in Vivado
   module: rand_soc
   class: RandSoc
-  tools:
-  - VivadoSynth
-  - VivadoSynthFromTcl
+  external_tools:
+  - vivado
+  - gmt_tools
