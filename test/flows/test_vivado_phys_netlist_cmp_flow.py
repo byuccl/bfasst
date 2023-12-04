@@ -9,7 +9,7 @@ from bfasst.flows.flow_utils import create_build_file
 from bfasst.flows.vivado_phys_netlist_cmp import VivadoPhysNetlistCmp
 from bfasst.tools.compare.structural.structural import Structural
 from bfasst.tools.rev_bit.xray import Xray
-from bfasst.tools.transform.netlist_cleanup import NetlistCleanupTool
+from bfasst.tools.transform.netlist_cleanup import NetlistCleanup
 from bfasst.tools.transform.phys_netlist import PhysNetlist
 from bfasst.tools.synth.vivado_synth import VivadoSynth
 from bfasst.tools.impl.vivado_impl import VivadoImpl
@@ -64,7 +64,7 @@ class TestVivadoPhysNetlistCmp(unittest.TestCase):
         VivadoImpl(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         PhysNetlist(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         Xray(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
-        NetlistCleanupTool(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        NetlistCleanup(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         Structural(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         expected.append(FLOWS_PATH / "vivado_phys_netlist_cmp.py")
 

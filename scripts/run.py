@@ -5,9 +5,8 @@ import pathlib
 import subprocess
 import sys
 
-from bfasst.flows.flow_utils import get_flows
 from bfasst.flows.ninja_flow_manager import NinjaFlowManager
-from bfasst.yaml_parser import RunParser
+from bfasst.yaml_parser import FlowDescriptionParser, RunParser
 from bfasst.utils import error, ensure_tuple
 from bfasst.paths import ROOT_PATH
 
@@ -58,8 +57,17 @@ class ApplicationRunner:
             error("Ninja failed with return code", return_code)
 
 
+def get_flow_choices() -> list[str]:
+    """Get a list of formatted flow choices"""
+    return [
+        f"  {flow_name:<35}{flow_description}"
+        for flow_name, flow_description in FlowDescriptionParser().get_flow_names_and_descriptions()
+    ]
+
+
 def parse_args(args):
     """Parse main arguments"""
+    flow_choices: str = "\n".join(get_flow_choices())
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "flow_name_or_yaml_path", type=str, help="Flow name or yaml file with flow specs"
@@ -72,9 +80,20 @@ def parse_args(args):
         type=str,
         help="Arguments passed to the flow constructor, in the form of a dictionary",
     )
-    args = parser.parse_args(args)
 
-    if args.flow_name_or_yaml_path in get_flows():
+    # try to parse the arguments, and if none are provided, print the flow choices
+    try:
+        args = parser.parse_args(args)
+    except SystemExit as e:
+        if e.code == 2:
+            print(f"Valid flow names:\n{flow_choices}")
+            sys.exit(2)
+        else:
+            raise e
+
+    flows_list = FlowDescriptionParser().get_flow_names()
+
+    if args.flow_name_or_yaml_path in flows_list:
         args.flow = args.flow_name_or_yaml_path
     elif pathlib.Path(args.flow_name_or_yaml_path).is_file():
         args.yaml = pathlib.Path(args.flow_name_or_yaml_path)
@@ -86,7 +105,8 @@ def parse_args(args):
         parser.error(
             (
                 f"First argument ({args.flow_name_or_yaml_path}) must specify either a yaml file "
-                f"or a flow name. Valid flow names: {get_flows()}"
+                f"or a flow name.\nValid flow names:\n"
+                f"{flow_choices}"
             )
         )
 

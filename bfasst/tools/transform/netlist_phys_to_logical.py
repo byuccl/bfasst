@@ -5,7 +5,7 @@ from bfasst.tools.tool import Tool
 from bfasst.paths import BFASST_UTILS_PATH, GMT_TOOLS_PATH
 
 
-class NetlistPhysToLogicalTool(Tool):
+class NetlistPhysToLogical(Tool):
     """Create rule and build snippets for phys netlist creation."""
 
     def __init__(self, flow, design):

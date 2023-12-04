@@ -4,9 +4,9 @@ import pathlib
 
 from bfasst.flows.flow import Flow
 from bfasst.tools.impl.vivado_impl import VivadoImpl
-from bfasst.tools.rev_bit.xray import Xray as XrevTool
-from bfasst.tools.transform.netlist_cleanup import NetlistCleanupTool
-from bfasst.tools.transform.netlist_phys_to_logical import NetlistPhysToLogicalTool
+from bfasst.tools.rev_bit.xray import Xray
+from bfasst.tools.transform.netlist_cleanup import NetlistCleanup
+from bfasst.tools.transform.netlist_phys_to_logical import NetlistPhysToLogical
 from bfasst.tools.synth.vivado_synth import VivadoSynth
 
 
@@ -17,9 +17,9 @@ class VivadoBitAnalysis(Flow):
         super().__init__(design)
         self.vivado_synth_tool = VivadoSynth(self, design, synth_options=synth_options)
         self.vivado_impl_tool = VivadoImpl(self, design)
-        self.xrev_tool = XrevTool(self, design)
-        self.netlist_cleanup_tool = NetlistCleanupTool(self, design)
-        self.netlist_phys_to_logical = NetlistPhysToLogicalTool(self, design)
+        self.xrev_tool = Xray(self, design)
+        self.netlist_cleanup_tool = NetlistCleanup(self, design)
+        self.netlist_phys_to_logical = NetlistPhysToLogical(self, design)
 
     def create_build_snippets(self):
         self.vivado_synth_tool.create_build_snippets()

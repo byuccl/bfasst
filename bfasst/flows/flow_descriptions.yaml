@@ -1,0 +1,77 @@
+flows:
+- name: Vivado
+  description: Run Xilinx Vivado from RTL to bitstream
+  module: vivado
+  class: Vivado
+  external_tools:
+  - vivado
+
+- name: VivadoOoc
+  description: Run Xilinx Vivado with out-of-context synth
+  module: vivado_ooc
+  class: VivadoOoc
+  external_tools:
+  - vivado
+
+- name: VivadoPhysNetlist
+  description: Transform Vivado netlist into phys netlist
+  module: vivado_phys_netlist
+  class: VivadoPhysNetlist
+  external_tools:
+  - vivado
+  - fasm2bels
+
+- name: VivadoPhysNetlistCmp
+  description: Reverse bitstream and compare to netlist
+  module: vivado_phys_netlist_cmp
+  class: VivadoPhysNetlistCmp
+  external_tools:
+  - vivado
+  - fasm2bels
+  - rapidwright
+
+
+- name: VivadoStructuralErrorInjection
+  description: Perform fault-injection test of comp tool
+  module: vivado_structural_error_injection
+  class: VivadoStructuralErrorInjection
+  external_tools:
+  - vivado
+  - fasm2bels
+  - rapidwright
+
+
+- name: VivadoYosysImpl
+  description: Verify design implementation with Yosys
+  module: vivado_yosys_impl
+  class: VivadoYosysImpl
+  external_tools:
+  - vivado
+  - fasm2bels
+  - yosys
+
+- name: VivadoConformal
+  description: Verify design implementation with Conformal
+  module: vivado_conformal
+  class: VivadoConformal
+  external_tools:
+  - vivado
+  - fasm2bels
+  - conformal
+
+- name: VivadoBitAnalysis
+  description: Reverse bitstream into a logical netlist
+  module: vivado_bit_analysis
+  class: VivadoBitAnalysis
+  external_tools:
+  - vivado
+  - fasm2bels
+  - gmt_tools
+
+- name: RandSoc
+  description: Create random block design(s) in Vivado
+  module: rand_soc
+  class: RandSoc
+  external_tools:
+  - vivado
+  - gmt_tools

@@ -6,7 +6,7 @@ from bfasst.tools.tool import Tool
 from bfasst.paths import NINJA_UTILS_PATH
 
 
-class NetlistCleanupTool(Tool):
+class NetlistCleanup(Tool):
     """Create rule and build snippets for phys netlist creation."""
 
     def __init__(self, flow, design):
