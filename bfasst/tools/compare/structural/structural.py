@@ -1,7 +1,7 @@
 """Create the rule and build snippets for structural comparison."""
 
 from bfasst.tools.tool import Tool
-from bfasst.paths import NINJA_UTILS_PATH
+from bfasst.paths import BFASST_UTILS_PATH
 
 
 class Structural(Tool):
@@ -24,7 +24,7 @@ class Structural(Tool):
                 "netlist_a": str(netlist_a),
                 "netlist_b": str(netlist_b),
                 "log_path": str(self.build_path / log_name),
-                "compare_script_path": str(NINJA_UTILS_PATH / "structural.py"),
+                "compare_script_path": str(BFASST_UTILS_PATH / "structural.py"),
                 "expect_fail": "--expect_fail" if self.expect_fail else "",
             },
         )
@@ -36,4 +36,4 @@ class Structural(Tool):
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
-        deps.append(NINJA_UTILS_PATH / "structural.py")
+        deps.append(BFASST_UTILS_PATH / "structural.py")

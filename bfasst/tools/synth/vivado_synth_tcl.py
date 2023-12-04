@@ -2,7 +2,7 @@
 import pathlib
 from bfasst import config
 from bfasst.tools.tool import Tool
-from bfasst.paths import COMMON_TOOLS_PATH, NINJA_UTILS_PATH
+from bfasst.paths import COMMON_TOOLS_PATH, BFASST_UTILS_PATH
 
 
 class VivadoSynthFromTcl(Tool):
@@ -17,7 +17,7 @@ class VivadoSynthFromTcl(Tool):
     def create_rule_snippets(self):
         self._append_rule_snippets_default(
             __file__,
-            {"vivado_path": config.VIVADO_BIN_PATH, "utils_path": NINJA_UTILS_PATH},
+            {"vivado_path": config.VIVADO_BIN_PATH, "utils_path": BFASST_UTILS_PATH},
             COMMON_TOOLS_PATH / "vivado_rules.ninja.mustache",
         )
 

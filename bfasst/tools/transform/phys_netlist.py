@@ -7,7 +7,7 @@ from bfasst.tools.tool import Tool
 from bfasst.paths import (
     NINJA_BUILD_PATH,
     NINJA_TRANSFORM_TOOLS_PATH,
-    NINJA_UTILS_PATH,
+    BFASST_UTILS_PATH,
     PHYS_NETLIST_RULES_PATH,
 )
 from bfasst.utils import compare_json
@@ -77,5 +77,5 @@ class PhysNetlist(Tool):
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
-        deps.append(NINJA_UTILS_PATH / "rw_phys_netlist.py")
+        deps.append(BFASST_UTILS_PATH / "rw_phys_netlist.py")
         deps.append(NINJA_TRANSFORM_TOOLS_PATH / "checkpoint_to_v.tcl.mustache")

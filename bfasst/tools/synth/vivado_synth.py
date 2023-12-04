@@ -3,7 +3,7 @@ import json
 import pathlib
 from bfasst import config
 from bfasst.tools.synth.synth_tool import SynthTool
-from bfasst.paths import COMMON_TOOLS_PATH, NINJA_UTILS_PATH
+from bfasst.paths import COMMON_TOOLS_PATH, BFASST_UTILS_PATH
 from bfasst.utils.general import json_write_if_changed
 
 
@@ -24,7 +24,7 @@ class VivadoSynth(SynthTool):
             {
                 "vivado_path": config.VIVADO_BIN_PATH,
                 "in_context": not self.ooc,
-                "utils_path": NINJA_UTILS_PATH,
+                "utils_path": BFASST_UTILS_PATH,
             },
             COMMON_TOOLS_PATH / "vivado_rules.ninja.mustache",
         )
