@@ -67,14 +67,8 @@ class TestVivadoFlow(unittest.TestCase):
 
         impl_dict = {
             "part": config.PART,
-            "xdc": str(
-                self.flow.vivado_synth_tool.build_path
-                / (self.flow.vivado_synth_tool.design_props.top + ".xdc")
-            ),
-            "bit": str(
-                self.flow.vivado_impl_tool.build_path
-                / (self.flow.vivado_synth_tool.design_props.top + ".bit")
-            ),
+            "xdc": str(self.flow.vivado_synth_tool.build_path / ("design.xdc")),
+            "bit": str(self.flow.vivado_impl_tool.build_path / ("design.bit")),
             "impl_output": str(self.flow.vivado_impl_tool.build_path),
             "synth_output": str(self.flow.vivado_synth_tool.build_path),
         }

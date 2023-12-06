@@ -72,7 +72,7 @@ class VivadoSynth(SynthTool):
 
         if not self.ooc:
             self.outputs["io_report"] = self.build_path / "report_io.txt"
-            self.outputs["synth_constraints"] = self.build_path / (self.design_props.top + ".xdc")
+            self.outputs["synth_constraints"] = self.build_path / "design.xdc"
 
     def add_ninja_deps(self, deps):
         """Add dependencies to the master ninja file that would cause it to rebuild if modified"""
