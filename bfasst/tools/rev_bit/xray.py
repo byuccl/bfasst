@@ -31,9 +31,8 @@ class Xray(Tool):
         self.fasm_path = self.build_path / (self.design_props.top + ".fasm")
         self.reversed_netlist_path = self.build_path / (self.design_props.top + "_reversed.v")
         self.xdc_path = self.build_path / (self.design_props.top + "_reversed.xdc")
-        self.constraints_path = (
-            str(self.design_build_path / "synth" / self.design_props.top) + ".xdc"
-        )
+        self.constraints_path = self.design_build_path / "synth" / "design.xdc"
+
         self._init_outputs()
 
     def create_rule_snippets(self):

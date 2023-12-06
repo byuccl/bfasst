@@ -1,7 +1,7 @@
 build {{ synth_output }}/synth.tcl: template {{ synth_output }}/synth.json {{ synth_library }}/vivado_synth.tcl.mustache
 
 {{#in_context}}
-build {{ synth_output }}/{{ top }}.xdc: vivado_ioparse {{ synth_output }}/report_io.txt
+build {{ synth_output }}/design.xdc: vivado_ioparse {{ synth_output }}/report_io.txt
 {{/in_context}}
 
 build {{ synth_output }}/viv_synth.edf {{ synth_output }}/synth.dcp {{#in_context}}{{ synth_output }}/report_io.txt{{/in_context}}: vivado {{ synth_output }}/synth.tcl | {{#verilog}}{{ . }} {{/verilog}} {{#system_verilog}}{{ . }} {{/system_verilog}}

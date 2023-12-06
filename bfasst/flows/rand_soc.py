@@ -3,6 +3,7 @@ import pathlib
 
 from bfasst.flows.flow import FlowNoDesign
 from bfasst.tools.design_create.rand_soc import RandSoC
+from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.tools.synth.vivado_synth_tcl import VivadoSynthFromTcl
 
 
@@ -16,6 +17,7 @@ class RandSoc(FlowNoDesign):
 
         for design in self.rand_soc_tool.outputs["design_tcl"]:
             VivadoSynthFromTcl(self, design)
+            VivadoImpl(self, design.parent)
 
     @classmethod
     def flow_build_dir_name(cls) -> str:

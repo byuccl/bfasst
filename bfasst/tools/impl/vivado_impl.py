@@ -23,12 +23,8 @@ class VivadoImpl(ImplTool):
 
         impl = {
             "part": config.PART,
-            "xdc": str(self.build_path.parent / "synth" / (self.design_props.top + ".xdc"))
-            if not self.ooc
-            else False,
-            "bit": str(self.build_path / (self.design_props.top + ".bit"))
-            if not self.ooc
-            else False,
+            "xdc": str(self.build_path.parent / "synth" / "design.xdc") if not self.ooc else False,
+            "bit": str(self.build_path / "design.bit") if not self.ooc else False,
             "impl_output": str(self.build_path),
             "synth_output": str(
                 self.build_path.parent / ("synth" if not self.ooc else "synth_ooc")
@@ -44,7 +40,6 @@ class VivadoImpl(ImplTool):
                 "impl_output": str(self.build_path),
                 "synth_output": self.build_path.parent / ("synth" if not self.ooc else "synth_ooc"),
                 "impl_library": self._my_dir_path,
-                "top": self.design_props.top,
                 "cwd": self.build_path,
             },
         )
@@ -68,7 +63,7 @@ class VivadoImpl(ImplTool):
         self.outputs["utilization"] = self.build_path / "utiliztion.txt"
         self.outputs["impl_journal"] = self.build_path / "vivado.jou"
         self.outputs["impl_log"] = self.build_path / "vivado.log"
-        self.outputs["bitstream"] = self.build_path / (self.design_props.top + ".bit")
+        self.outputs["bitstream"] = self.build_path / "design.bit"
 
     def add_ninja_deps(self, deps):
         """Add dependencies to the master ninja file that would cause it to rebuild if modified."""
