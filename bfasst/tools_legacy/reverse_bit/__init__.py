@@ -1,3 +1,3 @@
-import bfasst.reverse_bit.base
-import bfasst.reverse_bit.icestorm
-import bfasst.reverse_bit.xray
+import bfasst.tools_legacy.reverse_bit.base
+import bfasst.tools_legacy.reverse_bit.icestorm
+import bfasst.tools_legacy.reverse_bit.xray

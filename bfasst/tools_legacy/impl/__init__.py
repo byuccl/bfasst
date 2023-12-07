@@ -1,3 +1,3 @@
-import bfasst.impl.base
-import bfasst.impl.ic2
-import bfasst.impl.vivado
+import bfasst.tools_legacy.impl.base
+import bfasst.tools_legacy.impl.ic2
+import bfasst.tools_legacy.impl.vivado

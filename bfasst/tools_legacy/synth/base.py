@@ -1,7 +1,7 @@
 """ Base synthesis tool class"""
 import abc
 
-from bfasst import tool
+from bfasst.tools_legacy import tool
 from bfasst.tools_legacy.tool import BfasstException
 
 

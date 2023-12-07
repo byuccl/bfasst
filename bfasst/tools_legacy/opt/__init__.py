@@ -1,3 +1,3 @@
-import bfasst.opt.base
-import bfasst.opt.ic2_lse
-import bfasst.opt.ic2_synplify
+import bfasst.tools_legacy.opt.base
+import bfasst.tools_legacy.opt.ic2_lse
+import bfasst.tools_legacy.opt.ic2_synplify

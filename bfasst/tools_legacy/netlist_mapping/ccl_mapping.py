@@ -23,8 +23,12 @@ from bfasst.tools_legacy.netlist_mapping.structural.carry_chain_mapping import m
 from bfasst.tools_legacy.netlist_mapping.structural.shift_register_mapping import (
     map_shift_register_and_output_ffs,
 )
-from bfasst.tools_legacy.netlist_mapping.functional.logic_functions_mapping import map_ffs_based_on_logic_func
-from bfasst.tools_legacy.netlist_mapping.functional.netlist_flipflops_data import get_ffs_and_conf_bits
+from bfasst.tools_legacy.netlist_mapping.functional.logic_functions_mapping import (
+    map_ffs_based_on_logic_func,
+)
+from bfasst.tools_legacy.netlist_mapping.functional.netlist_flipflops_data import (
+    get_ffs_and_conf_bits,
+)
 
 
 def map_netlists(golden_netlist_arg, reversed_netlist_arg):
