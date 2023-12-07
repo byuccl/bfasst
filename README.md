@@ -72,23 +72,4 @@ The project makes extensive use of the ninja_build_tool and chevron python packa
 * It uses chevron, the python implementation of the mustache templating engine to template the scripts used for common operations such as synthesis and implementation of designs.
 * It provides unit tests that can be run with `python -m unittest`. These largely serve as a sanity check for new developers on the project, and should help to maintain minimum requirements around the implementation of new flows.
 
-### Usage:
-There are two steps to running any flow with any design(s): a ninja generation step and a run step. For convenience, `scripts/run.py` can be used to execute both steps at once. Alternatively, you can execute the ninja generation step entirely separate from the run step for one or more designs using `python bfasst/flows/ninja_flow_manager.py`:
-
-```
-Usage: 
-  python bfasst/flows/ninja_flow_manager.py [-h] [--flow_arguments FLOW_ARGUMENTS] flow [design ...]
-  ninja
-
-positional arguments:
-  flow                                Name of the desired flow.
-  design                              Design(s) to run the flow on (e.g. byu/alu byu/counter byu/uart to run all three designs through the flow)
-
-options:
-  -h, --help                          Show this help message and exit
-  --flow_arguments FLOW_ARGUMENTS     Arguments to pass to the flow, as python dict (e.g. "{'num_runs': 10}" for error_injection flow)
-```
-
-This method of running is not preferred, and is largely for debugging purposes. It cannot run post_execution steps that are used to clean up the build directory after ninja is run in cases such as error injection.
-
 For additional information about creating your own flows using ninja and chevron, see [the project structure page](project_structure.md).
