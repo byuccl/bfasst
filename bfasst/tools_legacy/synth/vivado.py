@@ -5,10 +5,10 @@ import pathlib
 
 import bfasst
 from bfasst.design import HdlType
-from bfasst.synth.base import SynthesisTool, SynthesisException
-from bfasst.synth import vivado_ioparse
+from bfasst.tools_legacy.synth.base import SynthesisTool, SynthesisException
+from bfasst.tools_legacy.synth import vivado_ioparse
 from bfasst.config import VIVADO_COMMAND
-from bfasst.tool import ToolProduct
+from bfasst.tools_legacy.tool import ToolProduct
 
 
 def xdc_line(pin):

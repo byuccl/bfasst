@@ -4,15 +4,15 @@ from the LUTs before a FF"""
 
 import math
 from enum import Enum
-from bfasst.netlist_mapping.functional.converter import (
+from bfasst.tools_legacy.netlist_mapping.functional.converter import (
     hex_to_bin,
     bin_to_hex,
     get_reversed_bin_for_each_hex,
 )
 
 # from timeit import default_timer as timer
-from bfasst.netlist_mapping.functional.qm import qm_f
-from bfasst.netlist_mapping.functional.configuration_bits_tree import (
+from bfasst.tools_legacy.netlist_mapping.functional.qm import qm_f
+from bfasst.tools_legacy.netlist_mapping.functional.configuration_bits_tree import (
     Node,
     create_tree,
     get_filtered_values,

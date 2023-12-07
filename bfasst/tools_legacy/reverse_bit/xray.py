@@ -3,9 +3,9 @@ import os
 import re
 import pathlib
 
-from bfasst.reverse_bit.base import ReverseBitTool, ReverseBitException
+from bfasst.tools_legacy.reverse_bit.base import ReverseBitTool, ReverseBitException
 from bfasst import paths, config
-from bfasst.tool import ToolProduct
+from bfasst.tools_legacy.tool import ToolProduct
 
 
 class XRayReverseBitTool(ReverseBitTool):

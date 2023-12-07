@@ -2,11 +2,11 @@
 
 # pylint: disable=duplicate-code
 
-from bfasst.compare.waveform import WaveformCompareTool
+from bfasst.tools_legacy.compare.waveform import WaveformCompareTool
 from bfasst.flows_legacy.flow import Flow
 from bfasst.flows_legacy.xilinx import Xilinx
 from bfasst.job import Job
-from bfasst.reverse_bit.xray import XRayReverseBitTool
+from bfasst.tools_legacy.reverse_bit.xray import XRayReverseBitTool
 from bfasst.types import ToolType
 
 

@@ -7,7 +7,7 @@ import os
 
 import bfasst
 from bfasst import paths
-from bfasst.impl.base import ImplementationTool, ImplementationException
+from bfasst.tools_legacy.impl.base import ImplementationTool, ImplementationException
 
 
 class Ic2ImplementationTool(ImplementationTool):

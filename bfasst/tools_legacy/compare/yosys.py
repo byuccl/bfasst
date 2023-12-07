@@ -1,8 +1,8 @@
 """Yosys equivalence checker"""
 import pathlib
 import re
-from bfasst.compare.base import CompareException, CompareTool
-from bfasst.tool import ToolProduct
+from bfasst.tools_legacy.compare.base import CompareException, CompareTool
+from bfasst.tools_legacy.tool import ToolProduct
 
 
 class YosysCompareTool(CompareTool):

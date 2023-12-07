@@ -5,7 +5,7 @@ import os
 import time
 
 import bfasst
-from bfasst.impl.base import ImplementationTool, ImplementationException
+from bfasst.tools_legacy.impl.base import ImplementationTool, ImplementationException
 from bfasst.config import VIVADO_COMMAND
 
 

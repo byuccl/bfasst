@@ -1,7 +1,7 @@
 """Base Icecube2 synth tool"""
 
 from abc import abstractmethod
-from bfasst.synth.base import SynthesisTool
+from bfasst.tools_legacy.synth.base import SynthesisTool
 
 
 class Ic2BaseSynthesisTool(SynthesisTool):

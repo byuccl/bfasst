@@ -1,8 +1,8 @@
 """ Base class for bitstream to netlist tools"""
 import abc
 
-from bfasst.tool import Tool
-from bfasst.tool import BfasstException
+from bfasst.tools_legacy.tool import Tool
+from bfasst.tools_legacy.tool import BfasstException
 
 
 class ReverseBitException(BfasstException):

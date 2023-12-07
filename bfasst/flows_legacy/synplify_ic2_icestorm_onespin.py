@@ -2,11 +2,11 @@
 
 # pylint: disable=duplicate-code
 
-from bfasst.compare.onespin import OneSpinCompareTool
+from bfasst.tools_legacy.compare.onespin import OneSpinCompareTool
 from bfasst.flows_legacy.flow import Flow
 from bfasst.flows_legacy.sub_flows.ic2_impl_and_ice_rev import Ic2ImplAndIceRev
 from bfasst.job import Job
-from bfasst.synth.ic2_synplify import Ic2SynplifySynthesisTool
+from bfasst.tools_legacy.synth.ic2_synplify import Ic2SynplifySynthesisTool
 from bfasst.types import ToolType
 
 

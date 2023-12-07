@@ -8,7 +8,7 @@ from wafove.templates import get_paths
 from wafove.tools import analyze_graph
 
 import bfasst
-from bfasst.compare.base import CompareTool, CompareException
+from bfasst.tools_legacy.compare.base import CompareTool, CompareException
 from bfasst.config import VIVADO_BIN_PATH
 
 

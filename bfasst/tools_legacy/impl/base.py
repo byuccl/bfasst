@@ -2,8 +2,8 @@
 import abc
 import pathlib
 
-from bfasst.tool import Tool, ToolProduct
-from bfasst.tool import BfasstException
+from bfasst.tools_legacy.tool import Tool, ToolProduct
+from bfasst.tools_legacy.tool import BfasstException
 
 
 class ImplementationException(BfasstException):

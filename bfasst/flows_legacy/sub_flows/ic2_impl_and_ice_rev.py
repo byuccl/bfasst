@@ -1,9 +1,9 @@
 """Subflow for running IC2 Implementation and then Icestrom Reversal"""
 
 from bfasst.flows_legacy.flow import Flow
-from bfasst.impl.ic2 import Ic2ImplementationTool
+from bfasst.tools_legacy.impl.ic2 import Ic2ImplementationTool
 from bfasst.job import Job
-from bfasst.reverse_bit.icestorm import IcestormReverseBitTool
+from bfasst.tools_legacy.reverse_bit.icestorm import IcestormReverseBitTool
 from bfasst.types import ToolType
 
 

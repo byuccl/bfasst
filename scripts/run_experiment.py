@@ -15,7 +15,7 @@ import concurrent.futures
 
 from bfasst.experiment import Experiment
 from bfasst.output_cntrl import enable_proxy
-from bfasst.tool import BfasstException
+from bfasst.tools_legacy.tool import BfasstException
 from bfasst.utils import TermColor, print_color
 
 LOG_FILE_NAME = "log.txt"

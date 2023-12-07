@@ -7,8 +7,8 @@ import shutil
 import subprocess
 
 import bfasst
-from bfasst.opt.base import OptException, OptTool
-from bfasst.tool import ToolProduct
+from bfasst.tools_legacy.opt.base import OptException, OptTool
+from bfasst.tools_legacy.tool import ToolProduct
 
 
 class Ic2BaseOptTool(OptTool):

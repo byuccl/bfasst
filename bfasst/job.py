@@ -2,7 +2,7 @@
 
 import uuid
 
-from bfasst.tool import BfasstException
+from bfasst.tools_legacy.tool import BfasstException
 
 
 class Job:

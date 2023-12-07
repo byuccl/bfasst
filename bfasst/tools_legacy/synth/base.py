@@ -2,7 +2,7 @@
 import abc
 
 from bfasst import tool
-from bfasst.tool import BfasstException
+from bfasst.tools_legacy.tool import BfasstException
 
 
 class SynthesisException(BfasstException):

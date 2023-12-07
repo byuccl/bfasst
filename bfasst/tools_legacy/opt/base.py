@@ -1,9 +1,9 @@
 """ Base class for logic optimization tools"""
 import abc
 
-from bfasst.tool import Tool
+from bfasst.tools_legacy.tool import Tool
 from bfasst.utils import print_color
-from bfasst.tool import BfasstException
+from bfasst.tools_legacy.tool import BfasstException
 
 
 class OptException(BfasstException):

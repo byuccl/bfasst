@@ -8,7 +8,7 @@ import time
 
 import bfasst
 from bfasst import paths
-from bfasst.synth.base import SynthesisException, SynthesisTool
+from bfasst.tools_legacy.synth.base import SynthesisException, SynthesisTool
 
 YOSYS_SCRIPT_TEMPLATE = "ex_yos_tech.yos"
 YOSYS_SCRIPT_FILE = "script.yos"

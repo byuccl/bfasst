@@ -1,6 +1,6 @@
 """ Run synplify synthesis """
-from bfasst.opt.ic2_synplify import Ic2SynplifyOptTool
-from bfasst.synth.ic2_base import Ic2BaseSynthesisTool
+from bfasst.tools_legacy.opt.ic2_synplify import Ic2SynplifyOptTool
+from bfasst.tools_legacy.synth.ic2_base import Ic2BaseSynthesisTool
 
 
 class Ic2SynplifySynthesisTool(Ic2BaseSynthesisTool):

@@ -5,7 +5,7 @@ import re
 import yaml
 
 from bfasst import paths
-from bfasst.compare.base import CompareTool
+from bfasst.tools_legacy.compare.base import CompareTool
 from bfasst.locks import onespin_lock
 
 ONESPIN_TCL_TEMPLATE = "run_onespin.tcl"

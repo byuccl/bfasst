@@ -2,7 +2,7 @@
 
 
 import spydrnet as sdn
-from bfasst.netlist_mapping.structural.map_ffs import get_mapped_ffs
+from bfasst.tools_legacy.netlist_mapping.structural.map_ffs import get_mapped_ffs
 
 
 def analyze_new_instance(new_instance, next_ff, last_ff, ffs_builder, ffs):

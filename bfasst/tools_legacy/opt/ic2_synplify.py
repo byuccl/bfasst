@@ -6,8 +6,8 @@ import os
 import bfasst
 from bfasst import paths
 from bfasst.design import Design
-from bfasst.opt.ic2_base import Ic2BaseOptTool
-from bfasst.opt.base import OptException
+from bfasst.tools_legacy.opt.ic2_base import Ic2BaseOptTool
+from bfasst.tools_legacy.opt.base import OptException
 
 PROJECT_TEMPLATE_FILE = "template_sp.prj"
 IC2_SYNPLIFY_PROJ_FILE = "synplify_project.prj"

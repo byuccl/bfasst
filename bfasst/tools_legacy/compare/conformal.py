@@ -14,8 +14,8 @@ import scp
 import bfasst
 from bfasst import paths
 from bfasst.design import HdlType
-from bfasst.tool import BfasstException
-from bfasst.compare.base import CompareException, CompareTool
+from bfasst.tools_legacy.tool import BfasstException
+from bfasst.tools_legacy.compare.base import CompareException, CompareTool
 from bfasst.types import Vendor
 from bfasst.utils import error
 from bfasst.locks import conformal_lock

@@ -6,7 +6,7 @@ import abc
 from importlib import import_module
 from pathlib import Path
 
-from bfasst.tool import BfasstException
+from bfasst.tools_legacy.tool import BfasstException
 
 
 class FlowException(BfasstException):

@@ -5,7 +5,7 @@ import time
 import os
 
 import bfasst
-from bfasst.reverse_bit.base import ReverseBitTool, ReverseBitException
+from bfasst.tools_legacy.reverse_bit.base import ReverseBitTool, ReverseBitException
 
 # PROJECT_TEMPLATE_FILE = 'template_lse.prj'
 # IC2_LSE_PROJ_FILE = 'lse_project.prj'

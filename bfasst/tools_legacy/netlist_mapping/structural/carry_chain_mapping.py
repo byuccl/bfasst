@@ -1,8 +1,8 @@
 """This file contains the necessary functions to map the carry chains"""
 
 
-from bfasst.netlist_mapping.structural.map_ffs import get_mapped_ffs
-from bfasst.netlist_mapping.structural.updating_reversed_netlist import (
+from bfasst.tools_legacy.netlist_mapping.structural.map_ffs import get_mapped_ffs
+from bfasst.tools_legacy.netlist_mapping.structural.updating_reversed_netlist import (
     update_wires_in_reversed_netlist,
 )
 

@@ -7,8 +7,8 @@ import in_place
 
 import bfasst
 from bfasst import paths
-from bfasst.opt.base import OptException
-from bfasst.opt.ic2_base import Ic2BaseOptTool
+from bfasst.tools_legacy.opt.base import OptException
+from bfasst.tools_legacy.opt.ic2_base import Ic2BaseOptTool
 from bfasst.utils import error
 
 PROJECT_TEMPLATE_FILE = "template_lse.prj"
