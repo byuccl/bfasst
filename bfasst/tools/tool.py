@@ -110,3 +110,12 @@ class Tool(ToolBase, abc.ABC):
         self.design_props = None
         if design_yaml.is_file():
             self.design_props = DesignParser(design_yaml)
+
+    @abc.abstractmethod
+    def _init_outputs(self):
+        """Initialize the outputs for this tool"""
+
+    def override_build_path(self, build_path):
+        """Override the build path"""
+        self.build_path = build_path
+        self._init_outputs()

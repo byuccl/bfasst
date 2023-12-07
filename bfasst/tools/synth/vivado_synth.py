@@ -10,8 +10,8 @@ from bfasst.utils.general import json_write_if_changed
 class VivadoSynth(SynthTool):
     """Tool to create vivado synthesis ninja snippets."""
 
-    def __init__(self, flow, design_path, ooc=False, synth_options=""):
-        super().__init__(flow, design_path, ooc=ooc)
+    def __init__(self, flow, design_path, ooc=False, synth_options="", top=None):
+        super().__init__(flow, design_path, top=top, ooc=ooc)
         self.synth_options = synth_options
         self._my_dir_path = pathlib.Path(__file__).parent
 
@@ -36,7 +36,7 @@ class VivadoSynth(SynthTool):
         # Chevron will use this file to fill in the tcl template.
         synth = {
             "part": config.PART,
-            "top": self.design_props.top,
+            "top": self.design_props.top if not self.top else self.top,
             "vhdl": self.vhdl,
             "vhdl_libs": list(self.vhdl_file_lib_map.items()),
             "verilog": self.verilog,

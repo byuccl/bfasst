@@ -1,0 +1,6 @@
+build {{ log_file }} {{ dcp_encrypted }}: encrypt_ip
+    dcp_unencrypted = {{ dcp_unencrypted }}
+    key = 00112233445566778899AABBCCDDEEFF
+    dcp_encrypted = {{ dcp_encrypted }}
+    lut_ciphertext = {{ lut_ciphertext }}
+    log_file = {{ log_file }}

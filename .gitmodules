@@ -13,3 +13,6 @@
 [submodule "third_party/gmt_tools"]
 	path = third_party/gmt_tools
 	url = git@github.com:byuccl/gmt_tools.git
+[submodule "third_party/encrypted_ip"]
+	path = third_party/encrypted_ip
+	url = git@github.com:byuccl/encrypted_ip.git

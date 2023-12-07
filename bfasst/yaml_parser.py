@@ -109,6 +109,10 @@ class DesignParser(YamlParser):
         if "vhdl_libs" in self.props:
             self.vhdl_libs = self.props["vhdl_libs"]
 
+        self.encrypted_ip = None
+        if "encrypted_ip" in self.props:
+            self.encrypted_ip = self.props["encrypted_ip"]
+
 
 class FlowDescriptionParser(YamlParser):
     """Parse the flow description yaml file"""
