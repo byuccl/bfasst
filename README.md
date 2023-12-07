@@ -89,4 +89,6 @@ options:
   --flow_arguments FLOW_ARGUMENTS     Arguments to pass to the flow, as python dict (e.g. "{'num_runs': 10}" for error_injection flow)
 ```
 
+This method of running is not preferred, and is largely for debugging purposes. It cannot run post_execution steps that are used to clean up the build directory after ninja is run in cases such as error injection.
+
 For additional information about creating your own flows using ninja and chevron, see [the project structure page](project_structure.md).
