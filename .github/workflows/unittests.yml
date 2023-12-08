@@ -114,4 +114,4 @@ jobs:
   #     run: |
   #       source .venv/bin/activate
   #       source env.sh
-  #       python scripts/run_experiment.py ${{ matrix.experiment }} -j8 --print_period 0
+  #       python scripts/scripts_legacy/run_experiment.py ${{ matrix.experiment }} -j8 --print_period 0

@@ -4,7 +4,7 @@
 
 from bfasst.tools_legacy.compare.onespin import OneSpinCompareTool
 from bfasst.flows_legacy.flow import Flow
-from bfasst.job import Job
+from bfasst.tools_legacy.job import Job
 from bfasst.types import ToolType
 
 

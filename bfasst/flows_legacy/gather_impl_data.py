@@ -13,7 +13,7 @@ from bfasst.tools_legacy.synth.ic2_lse import Ic2LseSynthesisTool
 from bfasst.tools_legacy.synth.ic2_synplify import Ic2SynplifySynthesisTool
 from bfasst.tools_legacy.synth.yosys import YosysTechSynthTool
 from bfasst.types import ToolType
-from bfasst.job import Job
+from bfasst.tools_legacy.job import Job
 from bfasst.flows_legacy.sub_flows.ic2_impl_and_ice_rev import Ic2ImplAndIceRev
 
 

@@ -4,7 +4,7 @@
 
 from bfasst.flows_legacy.flow import Flow
 from bfasst.flows_legacy.xilinx import Xilinx
-from bfasst.job import Job
+from bfasst.tools_legacy.job import Job
 from bfasst.tools_legacy.reverse_bit.xray import XRayReverseBitTool
 from bfasst.types import ToolType
 

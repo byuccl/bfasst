@@ -2,7 +2,7 @@
 
 from bfasst.flows_legacy.flow import Flow
 from bfasst.tools_legacy.impl.ic2 import Ic2ImplementationTool
-from bfasst.job import Job
+from bfasst.tools_legacy.job import Job
 from bfasst.tools_legacy.reverse_bit.icestorm import IcestormReverseBitTool
 from bfasst.types import ToolType
 
