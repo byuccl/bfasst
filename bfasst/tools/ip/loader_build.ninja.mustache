@@ -1,0 +1,6 @@
+build {{ cwd }}/vivado.tcl: template {{ cwd  }}/vivado.json {{ loader_tcl_template }}
+
+build abc: vivado {{ cwd }}/vivado.tcl
+    cwd = {{ cwd }}
+    journal = {{ cwd }}/vivado.jou
+    log = {{ cwd }}/vivado.log

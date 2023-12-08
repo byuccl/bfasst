@@ -23,7 +23,6 @@ class VivadoSynth(SynthTool):
             __file__,
             {
                 "vivado_path": config.VIVADO_BIN_PATH,
-                "in_context": not self.ooc,
                 "utils_path": BFASST_UTILS_PATH,
             },
             COMMON_TOOLS_PATH / "vivado_rules.ninja.mustache",

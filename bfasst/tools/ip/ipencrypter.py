@@ -1,5 +1,6 @@
 import json
-from bfasst.paths import COMMON_TOOLS_PATH
+from bfasst import config
+from bfasst.paths import BFASST_UTILS_PATH, COMMON_TOOLS_PATH
 from bfasst.tools.tool import Tool
 from bfasst.utils.general import json_write_if_changed
 
@@ -14,7 +15,12 @@ class IpEncrypter(Tool):
     def create_rule_snippets(self):
         self._append_rule_snippets_default(__file__)
         self._append_rule_snippets_default(
-            None, {}, COMMON_TOOLS_PATH / "vivado_rules.ninja.mustache"
+            None,
+            {
+                "vivado_path": config.VIVADO_BIN_PATH,
+                "utils_path": BFASST_UTILS_PATH,
+            },
+            COMMON_TOOLS_PATH / "vivado_rules.ninja.mustache",
         )
 
     def create_build_snippets(self):

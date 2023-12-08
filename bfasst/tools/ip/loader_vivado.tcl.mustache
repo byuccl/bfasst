@@ -1,0 +1,46 @@
+
+open_checkpoint {{ loader_impl_dcp }}
+
+exit
+
+#set_property dont_touch true [get_cells $env(USER_SPACE_BLOCK_NAME)]
+read_checkpoint -cell $env(USER_SPACE_BLOCK_NAME) ./checkpoints/$env(NAME_SYNTHED).dcp
+
+# Step 4: Place and route
+puts "Time starting implementing partition DTIMING"
+set a [exec date]
+puts $a
+place_design
+route_design
+puts "Time ending implementing partition DTIMING"
+set a [exec date]
+puts $a
+
+# Step 4: Write out implemented checkpoints
+write_checkpoint ./checkpoints/$env(BITSTREAM_NAME_FULL).dcp -force
+write_edif ./checkpoints/$env(BITSTREAM_NAME_FULL).edif -force
+
+puts "Time starting writing bitstream DTIMING"
+set a [exec date]
+puts $a
+
+
+# Step 5.1: Bitstream for timing purposes
+write_bitstream -bin_file -cell $env(USER_SPACE_BLOCK_NAME) partialpartialtiming.bit -force
+
+
+puts "Time starting writing bitstreams not applicable for timing DTIMING"
+set a [exec date]
+puts $a
+# Step 5.2: Write out full bitstream
+write_bitstream -bin_file ./bitstreams/unencrypted/$env(BITSTREAM_NAME_FULL).bit -force
+
+#Step 6: Write out encrypted bitstream
+set_property BITSTREAM.ENCRYPTION.ENCRYPT YES [get_designs checkpoint_$env(LOADER_DESIGN_NAME_IMPLEMENTED)]
+set_property BITSTREAM.ENCRYPTION.ENCRYPTKEYSELECT EFUSE [get_designs checkpoint_$env(LOADER_DESIGN_NAME_IMPLEMENTED)]
+set_property BITSTREAM.ENCRYPTION.KEYFILE ./key_files/design_1_wrapper.nky [get_designs checkpoint_$env(LOADER_DESIGN_NAME_IMPLEMENTED)]
+#set_property BITSTREAM.GENERAL.CRC DISABLE [get_designs checkpoint_$env(LOADER_DESIGN_NAME_IMPLEMENTED)]
+write_bitstream -bin_file ./bitstreams/encrypted/$env(BITSTREAM_NAME_FULL)_encrypted.bit -force
+puts "Time ending writing bitstream  not applicable for timing DTIMING"
+set a [exec date]
+puts $a
