@@ -22,22 +22,21 @@ puts [exec date]
 
 
 # Step 5.1: Bitstream for timing purposes
-write_bitstream -bin_file -cell "static_top_i/top_0" {{ user_partial_bit }} -force
-exit
+write_bitstream -bin_file -cell "static_top_i/top_0" {{ user_partial_bitstream }} -force
 
 
 puts "Time starting writing bitstreams not applicable for timing DTIMING"
-set a [exec date]
-puts $a
+puts [exec date]
+
 # Step 5.2: Write out full bitstream
-write_bitstream -bin_file ./bitstreams/unencrypted/$env(BITSTREAM_NAME_FULL).bit -force
+write_bitstream -bin_file {{ final }}_unencrypted.bit -force
 
 #Step 6: Write out encrypted bitstream
-set_property BITSTREAM.ENCRYPTION.ENCRYPT YES [get_designs checkpoint_$env(LOADER_DESIGN_NAME_IMPLEMENTED)]
-set_property BITSTREAM.ENCRYPTION.ENCRYPTKEYSELECT EFUSE [get_designs checkpoint_$env(LOADER_DESIGN_NAME_IMPLEMENTED)]
-set_property BITSTREAM.ENCRYPTION.KEYFILE ./key_files/design_1_wrapper.nky [get_designs checkpoint_$env(LOADER_DESIGN_NAME_IMPLEMENTED)]
+set_property BITSTREAM.ENCRYPTION.ENCRYPT YES [get_designs checkpoint_implemented_loader]
+set_property BITSTREAM.ENCRYPTION.ENCRYPTKEYSELECT EFUSE [get_designs checkpoint_implemented_loader]
+set_property BITSTREAM.ENCRYPTION.KEYFILE {{ key_files }}/design_1_wrapper.nky [get_designs checkpoint_implemented_loader]
 #set_property BITSTREAM.GENERAL.CRC DISABLE [get_designs checkpoint_$env(LOADER_DESIGN_NAME_IMPLEMENTED)]
-write_bitstream -bin_file ./bitstreams/encrypted/$env(BITSTREAM_NAME_FULL)_encrypted.bit -force
+write_bitstream -bin_file {{ final }}_encrypted.bit -force
 puts "Time ending writing bitstream  not applicable for timing DTIMING"
-set a [exec date]
-puts $a
+puts [exec date]
+exit
