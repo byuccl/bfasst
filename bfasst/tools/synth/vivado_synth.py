@@ -13,6 +13,8 @@ class VivadoSynth(SynthTool):
     def __init__(self, flow, design_path, ooc=False, synth_options=""):
         super().__init__(flow, design_path, ooc=ooc)
         self.synth_options = synth_options
+        if ooc:
+            self.synth_options += "-mode out_of_context"
         self._my_dir_path = pathlib.Path(__file__).parent
 
         # outputs must be initialized AFTER output paths are set
