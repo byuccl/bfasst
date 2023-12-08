@@ -122,7 +122,7 @@ format:
 pylint: format
 	git fetch
 	pylint --errors-only $$(git ls-files --directory scripts --directory bfasst | grep -e ".py$$")
-	pylint $$(git diff --name-only $$(git merge-base origin/main HEAD) | grep -e ".py$$")
+	pylint $$(git diff --name-only | grep -e ".py$$")
 
 
 doctest:
