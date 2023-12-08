@@ -10,6 +10,7 @@ from bfasst.tools.transform.error_injector import ErrorInjector
 from bfasst.tools.transform.phys_netlist import PhysNetlist
 from bfasst.paths import FLOWS_PATH
 from bfasst.tools.synth.vivado_synth import VivadoSynth
+from bfasst.tools.transform.netlist_cleanup import NetlistCleanup
 
 from bfasst.utils.error_injector import ErrorType
 
@@ -32,6 +33,7 @@ class VivadoStructuralErrorInjection(Flow):
         self.xrev_tool = Xray(self, design)
         self.error_injector_tool = ErrorInjector(self, design)
         self.compare_tool = Structural(self, design, expect_fail=True)
+        self.netlist_cleanup_tool = NetlistCleanup(self, design)
 
     def create_build_snippets(self):
         self.vivado_synth_tool.create_build_snippets()
@@ -40,6 +42,8 @@ class VivadoStructuralErrorInjection(Flow):
             impl_dcp=self.vivado_impl_tool.outputs["impl_checkpoint"],
             impl_edf=self.vivado_impl_tool.outputs["impl_edf"],
         )
+        self.netlist_cleanup_tool.create_build_snippets(self.phys_netlist_tool.phys_netlist_path)
+        cleaned_netlist_path = self.netlist_cleanup_tool.outputs["netlist_cleaned_path"]
         self.xrev_tool.create_build_snippets(self.vivado_impl_tool.outputs["bitstream"])
 
         random_seed_multiplier = 1
@@ -55,7 +59,7 @@ class VivadoStructuralErrorInjection(Flow):
                     self.error_injector_tool.build_path / f"{error.name.lower()}_{i}.v"
                 )
                 self.compare_tool.create_build_snippets(
-                    self.phys_netlist_tool.phys_netlist_path,
+                    cleaned_netlist_path,
                     corrupt_netlist_path,
                     f"{error.name.lower()}_{i}_cmp.log",
                 )
