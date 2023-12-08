@@ -13,6 +13,7 @@ from bfasst.tools.transform.error_injector import ErrorInjector
 from bfasst.tools.transform.phys_netlist import PhysNetlist
 from bfasst.tools.synth.vivado_synth import VivadoSynth
 from bfasst.tools.impl.vivado_impl import VivadoImpl
+from bfasst.tools.transform.netlist_cleanup import NetlistCleanup
 from bfasst.paths import (
     DESIGNS_PATH,
     NINJA_BUILD_PATH,
@@ -50,8 +51,8 @@ class TestVivadoStructuralErrorInjection(unittest.TestCase):
         with open(NINJA_BUILD_PATH, "r") as f:
             build_statement_count = f.read().count("\nbuild ")
 
-        # there should be 410 build statements for a single design using this flow
-        self.assertEqual(build_statement_count, 410)
+        # there should be 411 build statements for a single design using this flow
+        self.assertEqual(build_statement_count, 411)
 
     def test_add_ninja_deps(self):
         """Test that the flow adds the correct dependencies to the ninja file"""
@@ -66,6 +67,7 @@ class TestVivadoStructuralErrorInjection(unittest.TestCase):
         VivadoImpl(None, desin_path).add_ninja_deps(expected)
         ErrorInjector(None, desin_path).add_ninja_deps(expected)
         PhysNetlist(None, desin_path).add_ninja_deps(expected)
+        NetlistCleanup(None, desin_path).add_ninja_deps(expected)
         Xray(None, desin_path).add_ninja_deps(expected)
         Structural(None, desin_path).add_ninja_deps(expected)
         expected.append(FLOWS_PATH / "vivado_structural_error_injection.py")

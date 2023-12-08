@@ -106,7 +106,7 @@ class TestNinjaFlowManager(unittest.TestCase):
         # There should be 200 injections and 200 comparisons for two flows
         # plus all the build statements for the phys_reversed_flow
         # ((200 * 2) * 2) + 21 = 821 build statements
-        self.__check_flow_run("vivado_structural_error_injection", 411)
+        self.__check_flow_run("vivado_structural_error_injection", 412)
 
     def test_run_vivado_conformal_flow(self):
         self.__check_flow_run("vivado_conformal", 9)
