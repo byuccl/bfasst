@@ -114,6 +114,7 @@ class DesignParser(YamlParser):
         self.encrypted_ip = None
         if "encrypted_ip" in self.props:
             self.encrypted_ip = self.props["encrypted_ip"]
+            self.encrypted_ip_user_files = self.props["encrypted_ip_user_files"]
 
 
 class FlowDescriptionParser(YamlParser):

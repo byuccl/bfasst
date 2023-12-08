@@ -5,7 +5,7 @@ import os
 
 ROOT_PATH = pathlib.Path(__file__).resolve().parent.parent
 
-BUILD_PATH = pathlib.Path().cwd() / "build"
+BUILD_PATH = pathlib.Path().cwd() / "_build"
 
 DESIGNS_PATH = ROOT_PATH / "designs"
 BFASST_PATH = ROOT_PATH / "bfasst"

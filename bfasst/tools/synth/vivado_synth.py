@@ -14,6 +14,8 @@ class VivadoSynth(SynthTool):
         super().__init__(flow, design_path, top=top, ooc=ooc)
         self.synth_options = synth_options
         self._my_dir_path = pathlib.Path(__file__).parent
+        if ooc:
+            self.synth_options += " -mode out_of_context"
 
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()
@@ -38,7 +40,7 @@ class VivadoSynth(SynthTool):
             "top": self.design_props.top if not self.top else self.top,
             "vhdl": self.vhdl,
             "vhdl_libs": list(self.vhdl_file_lib_map.items()),
-            "verilog": self.verilog,
+            "verilog": [str(path) for path in self.verilog],
             "system_verilog": self.system_verilog,
             "io": str(self.build_path / "report_io.txt") if not self.ooc else False,
             "synth_output": str(self.build_path),

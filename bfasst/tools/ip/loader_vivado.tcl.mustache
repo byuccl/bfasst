@@ -4,7 +4,6 @@ open_checkpoint {{ loader_impl_dcp }}
 
 #set_property dont_touch true [get_cells $env(USER_SPACE_BLOCK_NAME)]
 read_checkpoint -cell "static_top_i/top_0" {{ user_synth_dcp }}
-exit
 
 # Step 4: Place and route
 puts "Time starting implementing partition DTIMING"
@@ -13,6 +12,7 @@ place_design
 route_design
 puts "Time ending implementing partition DTIMING"
 puts [exec date]
+exit
 
 # Step 4: Write out implemented checkpoints
 write_checkpoint ./checkpoints/$env(BITSTREAM_NAME_FULL).dcp -force

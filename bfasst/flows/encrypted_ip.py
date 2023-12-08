@@ -11,6 +11,8 @@ class EncryptedIP(Flow):
     def __init__(self, design):
         super().__init__(design)
 
+        encrypted_ip_paths = []
+
         # Synthesize and encrypt each encrypte IP
         for ip in self.design_props.encrypted_ip:
             synth_tool = VivadoSynth(
@@ -18,7 +20,7 @@ class EncryptedIP(Flow):
                 design,
                 ooc=True,
                 top=ip,
-                synth_options="-mode out_of_context -flatten_hierarchy full",
+                synth_options="-flatten_hierarchy full",
             )
             synth_tool.override_build_path(
                 synth_tool.build_path.parent / f"{synth_tool.build_path.name}_{ip}"
@@ -29,9 +31,14 @@ class EncryptedIP(Flow):
             ip_encrypter_tool.override_build_path(
                 ip_encrypter_tool.build_path.parent / f"{ip_encrypter_tool.build_path.name}_{ip}"
             )
+            encrypted_ip_paths.append(ip_encrypter_tool.outputs["encrypted_verilog"])
 
         # Synthesize the top module
         synth_tool = VivadoSynth(self, design, ooc=True, synth_options="-flatten_hierarchy rebuilt")
+        synth_tool.verilog = [
+            self.design_path / v for v in self.design_props.encrypted_ip_user_files
+        ]
+        synth_tool.verilog.extend(encrypted_ip_paths)
 
         # Encrypted IP Shell
         EncryptedIpLoader(self, design, user_synth_dcp_path=synth_tool.outputs["synth_dcp"])
