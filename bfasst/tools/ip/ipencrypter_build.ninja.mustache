@@ -1,5 +1,4 @@
-build {{ log_file }} {{ dcp_encrypted }}: encrypt_ip
-    dcp_unencrypted = {{ dcp_unencrypted }}
+build {{ log_file }} {{ dcp_encrypted }}: encrypt_ip {{ dcp_unencrypted }}
     key = 00112233445566778899AABBCCDDEEFF
     dcp_encrypted = {{ dcp_encrypted }}
     lut_ciphertext = {{ lut_ciphertext }}
@@ -8,7 +7,8 @@ build {{ log_file }} {{ dcp_encrypted }}: encrypt_ip
 build {{ cwd }}/dcp_to_v.tcl: template {{ cwd }}/dcp_to_v.json {{ gen_encrypted_verilog_template }}
     cwd = {{ cwd }}
 
-build {{ verilog_encrypted }}: vivado {{ cwd }}/dcp_to_v.tcl
+build {{ verilog_encrypted }}: vivado {{ cwd }}/dcp_to_v.tcl {{ dcp_encrypted }}
     cwd = {{ cwd }}
     journal = {{ cwd }}/vivado.jou
     log = {{ cwd }}/vivado.log
+

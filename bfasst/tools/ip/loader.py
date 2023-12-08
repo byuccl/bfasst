@@ -39,6 +39,7 @@ class EncryptedIpLoader(Tool):
             {
                 "cwd": self.build_path,
                 "loader_tcl_template": self._my_dir_path / "loader_vivado.tcl.mustache",
+                "top_dcp": str(self.user_synth_dcp_path),
             },
         )
 
