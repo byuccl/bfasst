@@ -59,6 +59,7 @@ class VivadoSynth(SynthTool):
                 "verilog": self.verilog,
                 "system_verilog": self.system_verilog,
                 "cwd": self.build_path,
+                "utils_path": BFASST_UTILS_PATH,
             },
         )
 

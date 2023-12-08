@@ -34,6 +34,7 @@ class VivadoSynthFromTcl(Tool):
                 "synth_output": self.build_path,
                 "design_tcl": self.design_tcl_path,
                 "cwd": self.build_path,
+                "utils_path": BFASST_UTILS_PATH,
             },
         )
 

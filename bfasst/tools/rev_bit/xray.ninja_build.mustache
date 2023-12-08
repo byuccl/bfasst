@@ -1,11 +1,11 @@
-build {{ xray_output }}/{{ top }}.fasm: bit_to_fasm {{ bitstream_path }}
+build {{ xray_output }}/{{ top }}.fasm: bit_to_fasm {{ bitstream_path }} | {{ bit_to_fasm_path }}
     xray_path = {{ xray_path }}
     fasm2bels_python_path = {{ fasm2bels_python_path }}
     bit_to_fasm_path = {{ bit_to_fasm_path }}
     db_root = {{ db_root }}
     part = {{ part }}
 
-build {{ xray_output }}/{{ top }}_reversed.v {{ xray_output }}/{{ top }}_reversed.xdc: fasm_to_netlist {{ xray_output }}/{{ top }}.fasm
+build {{ xray_output }}/{{ top }}_reversed.v {{ xray_output }}/{{ top }}_reversed.xdc: fasm_to_netlist {{ xray_output }}/{{ top }}.fasm | {{ fasm2bels_path }}/fasm2bels/fasm2bels.py
     fasm2bels_path = {{ fasm2bels_path }}
     fasm2bels_python_path = {{ fasm2bels_python_path }}
     part_db = {{ part }}_db
