@@ -1,6 +1,6 @@
 build {{ cwd }}/vivado.tcl: template {{ cwd  }}/vivado.json {{ loader_tcl_template }}
 
-build abc: vivado {{ cwd }}/vivado.tcl {{ top_dcp }}
+build {{ final }}.dcp {{ final }}.edif {{ user_partial_bitstream }}: vivado {{ cwd }}/vivado.tcl {{ top_dcp }}
     cwd = {{ cwd }}
     journal = {{ cwd }}/vivado.jou
     log = {{ cwd }}/vivado.log

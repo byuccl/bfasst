@@ -30,6 +30,8 @@ class EncryptedIpLoader(Tool):
                 ENCRYPTED_IP_PATH / "Project" / "loader_imp_design" / "implemented_loader.dcp"
             ),
             "user_synth_dcp": str(self.user_synth_dcp_path),
+            "user_partial_bitstream": str(self.build_path / "user_partial.bit"),
+            "final": str(self.build_path / "final"),
         }
         vivado_tcl_json = json.dumps(vivado_tcl_dict, indent=4)
         json_write_if_changed(self.build_path / "vivado.json", vivado_tcl_json)
@@ -40,6 +42,9 @@ class EncryptedIpLoader(Tool):
                 "cwd": self.build_path,
                 "loader_tcl_template": self._my_dir_path / "loader_vivado.tcl.mustache",
                 "top_dcp": str(self.user_synth_dcp_path),
+                "final": str(self.build_path / "final"),
+                "user_partial_bitstream": str(self.build_path / "user_partial.bit"),
+
             },
         )
 
