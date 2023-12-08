@@ -5,56 +5,32 @@
 
 # BFASST (BYU FPGA Assurance Tool)
 
-The BFASST tool is a Python package located at `bfasst/`.  The tool can be used to compose custom FPGA CAD flows.  Many of these flows are already defined and can be found in `flows.py`.
+The BFASST tool is a Python package located at `bfasst/`.  The tool can be used to compose custom FPGA CAD flows.  Many of these flows are already defined and can be found in `bfasst/flows/flow_descriptions.yaml`.
 
-Example designs are located in the `designs` directory.
+Example designs are located in the `designs/` directory.
 
-To run an example design, use `python scripts/run_design.py design_path flow`:
+To run bfasst, use `python scripts/run.py` as follows:
 
 ```
-usage: run_design.py [-h] [--synth SYNTH] [--impl IMPL] [--map MAP] [--cmp CMP] [--reverse REVERSE] [--err ERR] [--quiet] [--error_flow {single_bit_flip,tap_signal,cross_wires}]
-                     design_path
-                     {IC2_lse_conformal,IC2_synplify_conformal,ccl_map,conformal_only,gather_impl_data,structural_map,synplify_IC2_icestorm_onespin,xilinx,xilinx_and_reversed,xilinx_conformal,xilinx_conformal_impl,xilinx_ooc,xilinx_phys_netlist,xilinx_phys_netlist_cmp,xilinx_yosys_impl,xilinx_yosys_wafove,yosys_synplify_error_onespin,yosys_tech_lse_conformal,yosys_tech_synplify_conformal,yosys_tech_synplify_onespin}
+Usage: 
+  run_design.py [-h] [--flow_arguments FLOW_ARGUMENTS] flow_name_or_yaml_path [design ...]
 
 positional arguments:
-  design_path           Path to design in examples directory.
-  {IC2_lse_conformal,IC2_synplify_conformal,ccl_map,conformal_only,gather_impl_data,structural_map,synplify_IC2_icestorm_onespin,xilinx,xilinx_and_reversed,xilinx_conformal,xilinx_conformal_impl,xilinx_ooc,xilinx_phys_netlist,xilinx_phys_netlist_cmp,xilinx_yosys_impl,xilinx_yosys_wafove,yosys_synplify_error_onespin,yosys_tech_lse_conformal,yosys_tech_synplify_conformal,yosys_tech_synplify_onespin}
+  flow_name_or_yaml_path              Name of the desired flow or path to a yaml file with a list of designs and the flow.
+  design                              Design(s) to run the flow on (e.g. byu/alu byu/counter byu/uart to run all three designs through the flow)
 
 options:
-  -h, --help            show this help message and exit
-  --synth SYNTH         Synthesis args
-  --impl IMPL           Implementation args
-  --map MAP             Mapping args
-  --cmp CMP             Comparison args
-  --reverse REVERSE     Reverse args
-  --err ERR             Error flow args
-  --quiet
-  --error_flow {single_bit_flip,tap_signal,cross_wires}
-                        YAML file describing errors to inject for testing.Only works with flows designed for error injection
+  -h, --help                          Show this help message and exit
+  --flow_arguments FLOW_ARGUMENTS     Arguments to pass to the flow, as python dict (e.g. "{'num_runs': 10}" for error_injection flow)
 ```
 
-There are also several pre-configured *experiments*, which allow you to run a large set of designs and collect results.  These configurations are located within the `experiments` directory, and can be run using `python ./scripts/run_experiment.py`:
-
-*Note* : Conformal flows can only be run on a single thread.
-
-```
-usage: run_experiment.py [-h] [-j THREADS] [--print_period PRINT_PERIOD] experiment_yaml
-
-positional arguments:
-  experiment_yaml       Experiment yaml file.
-
-options:
-  -h, --help            show this help message and exit
-  -j THREADS, --threads THREADS
-                        Number of threads
-  --print_period PRINT_PERIOD
-```
+Note that if a yaml file is specified, neither a design nor flow should be specified. Flow arguments are optional; flows will always run with valid default arguments.
 
 ## Install
 ### Prerequisites
 * Install Vivado 2022.2
-  * Update the first line of the Makefile and make sure the path points to your Vivado installation. 
 * Clone this github repository. 
+  * Update the first line of the Makefile and make sure the path points to your Vivado installation. 
 * Install necessary packages:
   * ```sudo make packages```
 * Install Capnproto Java
@@ -90,46 +66,10 @@ Finally, test to confirm that everything worked correctly! Run the following:
 1. Activate the virual environment: ```. .venv/bin/activate```
 2. Run the flow:  ```python scripts/run_design.py designs/basic/add4/ xilinx_conformal_impl```
 
-## The Ninja Transition
-This branch serves as the transition point to a new version of bfasst, which makes the following changes:
+## Project Structure
+The project makes extensive use of the ninja_build_tool and chevron python package to accomplish the following:
 * It takes advantage of the ninja build tool to automatically handle job creation, up-to-date checking of dependencies, parallel processing, and io redirection. 
 * It uses chevron, the python implementation of the mustache templating engine to template the scripts used for common operations such as synthesis and implementation of designs.
-* It keeps python as its base language, rather than switching to bash in order to minimize the learning curve and maximize portability in transitioning to the new architecture.
-* It provides unit tests for all new code, that can be run with `python -m unittest`. These largely serve as a sanity check for new developers on the project, and should help to maintain minimum requirements around the implementation of new flows.
+* It provides unit tests that can be run with `python -m unittest`. These largely serve as a sanity check for new developers on the project, and should help to maintain minimum requirements around the implementation of new flows.
 
-### Usage:
-
-There are two steps to running any flow with any design(s): a ninja generation step and a run step. For convenience, a script is included to execute both steps sequentially with a single command:
-
-<pre>Usage:<code>
-    python scripts/run.py [--yaml YAML] [--design DESIGN] [--flow FLOW]
-
-options:
-    --yaml YAML         The yaml experiment to run, same as with bfasst
-    --design DESIGN     The design to run
-    --flow FLOW         The flow to use for the specified design
-
-NOTE: You must specify <em>either</em> a yaml file or <em>both</em> a design and flow.
-</code></pre>
-
-Alternatively, you can execute the ninja generation step entirely separate from the run step for one or more designs:
-
-<pre>Usage:<code>
-    python bfasst/flows/ninja_flow_manager.py [--flow FLOW] [--designs DESIGN(S)]
-    ninja
-
-options:
-    --flow FLOW           The flow to use for for the run.
-    --designs DESIGN(S)   One or more designs to run the flow on, separated by spaces.
-</code></pre>
-In either use case, the design should be specified as a subdirectory of the included designs directory in this repo (e.g. 'byu/alu').
-
-Currently supported flows:
-* `vivado`
-* `vivado_ooc`
-* `vivado_and_reversed`
-* `vivado_phys_netlist`
-* `vivado_phys_netlist_cmp`
-* `vivado_structural_error_injection`
-* `vivado_conformal`
-* `vivado_yosys_impl`
+For additional information about creating your own flows using ninja and chevron, see [the project structure page](project_structure.md).
