@@ -40,9 +40,8 @@ class ToolBase(abc.ABC):
         assuming default filenames are used
         """
 
-        py_tool_path = pathlib.Path(py_tool_path)
-
         if rules_path is None:
+            py_tool_path = pathlib.Path(py_tool_path)
             if render_dict:
                 rules_path = py_tool_path.parent / (py_tool_path.stem + "_rules.ninja.mustache")
             else:
