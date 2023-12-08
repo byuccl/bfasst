@@ -7,10 +7,11 @@ from bfasst.utils.general import json_write_if_changed
 
 
 class EncryptedIpLoader(Tool):
-    def __init__(self, flow, design_path) -> None:
+    def __init__(self, flow, design_path, user_synth_dcp_path) -> None:
         super().__init__(flow, design_path)
         self.build_path = self.design_build_path / "loader"
         self._my_dir_path = pathlib.Path(__file__).parent
+        self.user_synth_dcp_path = user_synth_dcp_path
         self._init_outputs()
 
     def create_rule_snippets(self):
@@ -27,7 +28,8 @@ class EncryptedIpLoader(Tool):
         vivado_tcl_dict = {
             "loader_impl_dcp": str(
                 ENCRYPTED_IP_PATH / "Project" / "loader_imp_design" / "implemented_loader.dcp"
-            )
+            ),
+            "user_synth_dcp": str(self.user_synth_dcp_path),
         }
         vivado_tcl_json = json.dumps(vivado_tcl_dict, indent=4)
         json_write_if_changed(self.build_path / "vivado.json", vivado_tcl_json)

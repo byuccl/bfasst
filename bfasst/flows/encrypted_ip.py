@@ -34,7 +34,7 @@ class EncryptedIP(Flow):
         synth_tool = VivadoSynth(self, design, ooc=True, synth_options="-flatten_hierarchy rebuilt")
 
         # Encrypted IP Shell
-        EncryptedIpLoader(self, design)
+        EncryptedIpLoader(self, design, user_synth_dcp_path=synth_tool.outputs["synth_dcp"])
 
     def get_top_level_flow_path(self):
         return pathlib.Path(__file__)
