@@ -67,7 +67,8 @@ class NetlistCleaner:
                         instance_wrapper.get_pin(pin_name).pin.wire
                     ).is_connected
                     for pin_name in pin_names
-                    if (pin_name, 0) in instance_wrapper.pins_by_name_and_index and instance_wrapper.get_pin(pin_name).pin.wire is not None
+                    if (pin_name, 0) in instance_wrapper.pins_by_name_and_index
+                    and instance_wrapper.get_pin(pin_name).pin.wire is not None
                 )
                 if not any(connected_pins):
                     top.reference.remove_child(instance_wrapper.instance)
