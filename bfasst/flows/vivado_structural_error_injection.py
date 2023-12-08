@@ -43,8 +43,7 @@ class VivadoStructuralErrorInjection(Flow):
         self.xrev_tool.create_build_snippets(self.vivado_impl_tool.outputs["bitstream"])
 
         random_seed_multiplier = 1
-        error_type = [ErrorType.BIT_FLIP, ErrorType.WIRE_SWAP]
-        for error in error_type:
+        for error in ErrorType:
             for i in range(1, self.num_runs + 1):
                 self.error_injector_tool.create_build_snippets(
                     error_type=error,
@@ -71,17 +70,22 @@ class VivadoStructuralErrorInjection(Flow):
         cmp_dir = self.compare_tool.build_path
         error_dir = self.error_injector_tool.build_path
 
-        for file in cmp_dir.iterdir():
-            if not file.name.startswith("bit_flip") and not file.name.startswith("wire_swap"):
-                continue
-            with open(file, "r") as f:
-                # SUCCESS means the compare tool did not detect an actual error
-                if "SUCCESS: Structural comparison found mismatch as expected" in f.read():
-                    err_log_name = file.name.split("_cmp.log")[0] + ".log"
-                    err_log = error_dir / err_log_name
-                    err_netlist = err_log.with_suffix(".v")
-                    file.unlink()
-                    err_log.unlink()
-                    err_netlist.unlink()
-                else:
-                    print(f"Error injection failed on {file.name.split('_cmp.log')[0]}")
+        for error in ErrorType:
+            for i in range(1, self.num_runs + 1):
+                # remove the error injection artifact, the corrupt netlist, and the compare log if
+                # the compare tool says the two netlists are different
+                basename = f"{error.name.lower()}_{i}"
+                cmp_log = cmp_dir / f"{basename}_cmp.log"
+                with open(cmp_log, "r") as f:
+                    if "SUCCESS: Structural comparison found mismatch as expected" in f.read():
+                        err_log = error_dir / f"{basename}.log"
+                        err_netlist = err_log.with_suffix(".v")
+                        cmp_log.unlink()
+                        err_log.unlink()
+                        err_netlist.unlink()
+                    else:
+                        raise CompareFalsePositiveError(f"Error injection failed on {basename}")
+
+
+class CompareFalsePositiveError(RuntimeError):
+    """Raised when a compare tool incorrectly compares two netlist as equivalent."""
