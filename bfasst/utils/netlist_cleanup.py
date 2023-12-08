@@ -63,10 +63,11 @@ class NetlistCleaner:
                 logging.info("Processing %s %s", instance_type, instance_wrapper.name)
 
                 connected_pins = (
-                    netlist_wrapper.wire_to_net[
+                    netlist_wrapper.wire_to_net.get(
                         instance_wrapper.get_pin(pin_name).pin.wire
-                    ].is_connected
+                    ).is_connected
                     for pin_name in pin_names
+                    if (pin_name, 0) in instance_wrapper.pins_by_name_and_index and instance_wrapper.get_pin(pin_name).pin.wire is not None
                 )
                 if not any(connected_pins):
                     top.reference.remove_child(instance_wrapper.instance)
