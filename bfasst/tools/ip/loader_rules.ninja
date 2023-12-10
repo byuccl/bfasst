@@ -1,0 +1,4 @@
+rule encrypted_ip_bit_patcher
+    command = python3 third_party/encrypted_ip/Project/python_scripts/getLutDataGenPatched2.py $in $out $ip_args > $log
+    description = Patching user bitstream
+
