@@ -103,7 +103,7 @@ class RwPhysNetlist:
 
         logging.info("Transformation time %s seconds", f"{end_time - start_time:0.2f}")
         with open(self.stage_dir / "transformation_time.txt", "w") as fp:
-            fp.write(f"{end_time - start_time:.2f}\n")
+            fp.write(f"{end_time - start_time}\n")
 
     def __init_const_nets(self):
         """Init VCC and GND nets"""
@@ -152,7 +152,6 @@ class RwPhysNetlist:
         impl_netlist_edif_path,
     ):
         """Do all rapidwright related processing on the netlist"""
-
         self.rw_design = Design.readCheckpoint(impl_netlist_checkpoint, impl_netlist_edif_path)
         self.rw_netlist = self.rw_design.getNetlist()
 
