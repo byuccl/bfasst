@@ -1,5 +1,7 @@
 """Flow to create Vivado synthesis and implementation ninja snippets."""
 import pathlib
+
+import yaml
 from bfasst.flows.flow import Flow
 
 from bfasst.tools.ip.ipencrypter import IpEncrypter
@@ -12,48 +14,52 @@ class EncryptedIP(Flow):
         super().__init__(design)
 
         encrypted_ip_paths = []
-        encrypted_ip_names = []
         encrypted_ip_ciphertext_paths = []
 
         assert self.design_props.encrypted_ip, "No encrypted IPs specified"
 
-        # Synthesize and encrypt each encrypte IP
-        for ip in self.design_props.encrypted_ip:
-            encrypted_ip_names.append(ip)
+        # ip_definitions = [ip["definition"] for ip in self.design_props.encrypted_ip["ip"]]
 
+        # Synthesize and encrypt each encrypte IP
+        for ip in self.design_props.encrypted_ip["ip"]:
+            ip_definition = ip["definition"]
             synth_tool = VivadoSynth(
                 self,
                 design,
                 ooc=True,
-                top=ip,
+                top=ip_definition,
                 synth_options="-flatten_hierarchy full",
             )
             synth_tool.override_build_path(
-                synth_tool.build_path.parent / f"{synth_tool.build_path.name}_{ip}"
+                synth_tool.build_path.parent / f"{synth_tool.build_path.name}_{ip_definition}"
             )
             synth_tool._init_outputs()
 
             ip_encrypter_tool = IpEncrypter(self, design, synth_tool.outputs["synth_dcp"])
             ip_encrypter_tool.override_build_path(
-                ip_encrypter_tool.build_path.parent / f"{ip_encrypter_tool.build_path.name}_{ip}"
+                ip_encrypter_tool.build_path.parent
+                / f"{ip_encrypter_tool.build_path.name}_{ip_definition}"
             )
             encrypted_ip_paths.append(ip_encrypter_tool.outputs["encrypted_verilog"])
-            encrypted_ip_ciphertext_paths.append(ip_encrypter_tool.outputs["lut_ciphertext"])
+            ip["ciphertext_path"] = str(ip_encrypter_tool.outputs["lut_ciphertext"])
 
         # Synthesize the top module
         synth_tool = VivadoSynth(self, design, ooc=True, synth_options="-flatten_hierarchy rebuilt")
         synth_tool.verilog = [
-            self.design_path / v for v in self.design_props.encrypted_ip_user_files
+            self.design_path / v for v in self.design_props.encrypted_ip["user_files"]
         ]
         synth_tool.verilog.extend(encrypted_ip_paths)
+
+        encrypted_ip_yaml_path = self.design_build_path / "encrypted_ip.yaml"
+        with open(encrypted_ip_yaml_path, "w") as f:
+            yaml.dump(self.design_props.encrypted_ip["ip"], f)
 
         # Encrypted IP Shell
         EncryptedIpLoader(
             self,
             design,
             user_synth_dcp_path=synth_tool.outputs["synth_dcp"],
-            ip_names=encrypted_ip_names,
-            ip_ciphertext_paths=encrypted_ip_ciphertext_paths,
+            encrypted_ip_yaml_path=encrypted_ip_yaml_path,
         )
 
     def get_top_level_flow_path(self):

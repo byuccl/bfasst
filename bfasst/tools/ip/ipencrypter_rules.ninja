@@ -1,4 +1,4 @@
 rule encrypt_ip
     command = python third_party/encrypted_ip/Project/python_scripts/encryptDesign.py $in $key $dcp_encrypted $lut_ciphertext > $log_file
-    description = encrypt ip $dcp_unencrypted
+    description = encrypt ip $in
 

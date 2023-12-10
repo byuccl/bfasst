@@ -1,6 +1,9 @@
 top: top
 
-encrypted_ip: 
-  - "pid_simple": ["pid_simple_0"]
+encrypted_ip:
+  ip:
+    - definition: "pid_simple"
+      instances: 
+      - "pid_simple_0"
 
-encrypted_ip_user_files: ["top.v"]
+  user_files: ["top.v"]

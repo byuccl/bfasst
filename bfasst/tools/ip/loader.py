@@ -7,15 +7,12 @@ from bfasst.utils.general import json_write_if_changed
 
 
 class EncryptedIpLoader(Tool):
-    def __init__(
-        self, flow, design_path, user_synth_dcp_path, ip_names, ip_ciphertext_paths
-    ) -> None:
+    def __init__(self, flow, design_path, user_synth_dcp_path, encrypted_ip_yaml_path) -> None:
         super().__init__(flow, design_path)
         self.build_path = self.design_build_path / "loader"
         self._my_dir_path = pathlib.Path(__file__).parent
         self.user_synth_dcp_path = user_synth_dcp_path
-        self.ip_names = ip_names
-        self.ip_ciphertext_paths = ip_ciphertext_paths
+        self.encrypted_ip_yaml_path = encrypted_ip_yaml_path
         self._init_outputs()
 
     def create_rule_snippets(self):
@@ -50,12 +47,7 @@ class EncryptedIpLoader(Tool):
                 "top_dcp": str(self.user_synth_dcp_path),
                 "final": str(self.build_path / "final"),
                 "user_partial_bitstream": str(self.build_path / "user_partial.bit"),
-                "ip_args": " ".join(
-                    [
-                        f"--ip {ip_name} {cipher_path}"
-                        for ip_name, cipher_path in zip(self.ip_names, self.ip_ciphertext_paths)
-                    ]
-                ),
+                "encrypted_ip_yaml_path": self.encrypted_ip_yaml_path,
             },
         )
 
