@@ -2,9 +2,12 @@
 
 from argparse import ArgumentParser
 from collections import defaultdict
+import concurrent.futures as cfutures
 import logging
+import multiprocessing
 from pathlib import Path
 import pickle
+import os
 import sys
 import time
 from bidict import bidict
@@ -15,6 +18,9 @@ from bfasst import jpype_jvm
 from bfasst.utils import convert_verilog_literal_to_int
 from bfasst.utils.general import log_with_banner
 from bfasst.utils.sdn_helpers import SdnNetlistWrapper, SdnInstanceWrapper, SdnNet, SdnPinWrapper
+
+MAX_PROCS = int(os.environ.get("NUM_PROCS", multiprocessing.cpu_count()))
+MAX_CHUNKS = int(os.environ.get("NUM_CHUNKS", 100))
 
 
 class StructuralCompareError(Exception):
@@ -286,43 +292,197 @@ class StructuralCompare:
             i for i in self.reversed_netlist.instances if not i.cell_type.startswith("SDN_VERILOG")
         ]
 
+        ##### Processes #########
+        global hash_props
+
+        def hash_props(prop_keys, instance_type, instance_props):
+            properties = set()
+            for prop in prop_keys[instance_type]:
+                properties.add(f"{prop}{convert_verilog_literal_to_int(instance_props[prop])}")
+            return (instance_type, hash(frozenset(properties)))
+
+        global hash_props_chunks
+
+        def hash_props_chunks(prop_keys, tuple_list):
+            res = []
+            for instance_type, instance_props in tuple_list:
+                properties = set()
+                for prop in prop_keys[instance_type]:
+                    properties.add(f"{prop}{convert_verilog_literal_to_int(instance_props[prop])}")
+                res.append((instance_type, hash(frozenset(properties))))
+            return res
+
+        chk_size = 5000 if len(all_instances) > 10000 else 500
+
+        instance_chunks = [
+            all_instances[i : i + chk_size] for i in range(0, len(all_instances), chk_size)
+        ]
+
+        exec_chunks = []
+        for i in instance_chunks:
+            params = [(j.cell_type, j.properties) for j in i]
+            exec_chunks.append((i, params))
+
+        named_chunks = [
+            list(self.named_netlist.instances_to_map)[i : i + chk_size]
+            for i in range(0, len(self.named_netlist.instances_to_map), chk_size)
+        ]
+
+        named_exec_chunks = []
+        for i in named_chunks:
+            params = [(j.cell_type, j.properties) for j in i]
+            named_exec_chunks.append((i, params))
+
         grouped_by_cell_type = defaultdict(list)
-        for instance in all_instances:
-            properties = set()
-            for prop in self.get_properties_for_type(instance.cell_type):
-                properties.add(f"{prop}{convert_verilog_literal_to_int(instance.properties[prop])}")
-                # properties[prop] = convert_verilog_literal_to_int(instance.properties[prop])
+        with cfutures.ProcessPoolExecutor(max_workers=MAX_PROCS) as executor:
+            hash_props_futures = {
+                executor.submit(hash_props_chunks, self._cell_props, i[1]): i[0]
+                for i in exec_chunks
+            }
+            named_props_futures = {
+                executor.submit(hash_props_chunks, self._cell_props, i[1]): i[0]
+                for i in named_exec_chunks
+            }
 
-            grouped_by_cell_type[(instance.cell_type, hash(frozenset(properties)))].append(instance)
+            for future in cfutures.as_completed(hash_props_futures):
+                instances = hash_props_futures[future]
+                for instance, key in zip(instances, future.result()):
+                    grouped_by_cell_type[key].append(instance)
 
-        for named_instance in self.named_netlist.instances_to_map:
-            ###############################################################
-            # First find all instances of the same type and same properties
-            ###############################################################
+            for future in cfutures.as_completed(named_props_futures):
+                named_instances = named_props_futures[future]
+                for named_instance, key in zip(named_instances, future.result()):
+                    instances_matching = grouped_by_cell_type[key]
+                    if not instances_matching:
+                        logging.info(
+                            "No property matches for cell %s of type %s. Properties:",
+                            named_instance.name,
+                            named_instance.cell_type,
+                        )
+                        for prop in self.get_properties_for_type(named_instance.cell_type):
+                            logging.info("  %s: %s", prop, named_instance.properties[prop])
+                        executor.shutdown(wait=False, cancel_futures=True)
+                        raise StructuralCompareError(
+                            f"Not equivalent. {named_instance.name} has no possible match in the netlist."
+                        )
+                    self.possible_matches[named_instance] = instances_matching.copy()
 
-            # Compute a hash of this instance's properties
-            properties = set()
-            for prop in self.get_properties_for_type(named_instance.cell_type):
-                properties.add(
-                    f"{prop}{convert_verilog_literal_to_int(named_instance.properties[prop])}"
-                )
-            my_hash = hash(frozenset(properties))
+        ######### Threads #########
+        # def hash_props(instances):
+        #     res = []
+        #     for instance in instances:
+        #         properties = set()
+        #         for prop in self.get_properties_for_type(instance.cell_type):
+        #             properties.add(
+        #                 f"{prop}{convert_verilog_literal_to_int(instance.properties[prop])}"
+        #             )
+        #         res.append((instance.cell_type, hash(frozenset(properties))))
+        #     return res
 
-            instances_matching = grouped_by_cell_type[(named_instance.cell_type, my_hash)]
+        # def hash_prop(instances):
+        #     properties = set()
+        #     for prop in self.get_properties_for_type(instance.cell_type):
+        #         properties.add(f"{prop}{convert_verilog_literal_to_int(instance.properties[prop])}")
+        #     return (instance.cell_type, hash(frozenset(properties)))
 
-            if not instances_matching:
-                logging.info(
-                    "No property matches for cell %s of type %s. Properties:",
-                    named_instance.name,
-                    named_instance.cell_type,
-                )
-                for prop in self.get_properties_for_type(named_instance.cell_type):
-                    logging.info("  %s: %s", prop, named_instance.properties[prop])
-                raise StructuralCompareError(
-                    f"Not equivalent. {named_instance.name} has no possible match in the netlist."
-                )
+        # chk_size = 5000 if len(all_instances) > 10000 else 500
 
-            self.possible_matches[named_instance] = instances_matching.copy()
+        # instance_chunks = [
+        #     all_instances[i : i + chk_size] for i in range(0, len(all_instances), chk_size)
+        # ]
+
+        # named_chunks = [
+        #     list(self.named_netlist.instances_to_map)[i : i + chk_size]
+        #     for i in range(0, len(self.named_netlist.instances_to_map), chk_size)
+        # ]
+
+        # grouped_by_cell_type = defaultdict(list)
+        # with cfutures.ThreadPoolExecutor(max_workers=MAX_PROCS) as executor:
+        #     hash_props_futures = {executor.submit(hash_props, i): i for i in instance_chunks}
+        #     named_props_futures = {executor.submit(hash_props, i): i for i in named_chunks}
+
+        #     for future in cfutures.as_completed(hash_props_futures):
+        #         instances = hash_props_futures[future]
+        #         for instance, key in zip(instances, future.result()):
+        #             grouped_by_cell_type[key].append(instance)
+
+        #     for future in cfutures.as_completed(named_props_futures):
+        #         named_instances = named_props_futures[future]
+        #         for named_instance, key in zip(named_instances, future.result()):
+        #             instances_matching = grouped_by_cell_type[key]
+        #             if not instances_matching:
+        #                 logging.info(
+        #                     "No property matches for cell %s of type %s. Properties:",
+        #                     named_instance.name,
+        #                     named_instance.cell_type,
+        #                 )
+        #                 for prop in self.get_properties_for_type(named_instance.cell_type):
+        #                     logging.info("  %s: %s", prop, named_instance.properties[prop])
+        #                 executor.shutdown(wait=False, cancel_futures=True)
+        #                 raise StructuralCompareError(
+        #                     f"Not equivalent. {named_instance.name} has no possible match in the netlist."
+        #                 )
+        #             self.possible_matches[named_instance] = instances_matching.copy()
+
+        ##### Optimized Sequential #########
+        # for instance in all_instances:
+        #     properties = set()
+        #     for prop in self.get_properties_for_type(instance.cell_type):
+        #         properties.add(f"{prop}{convert_verilog_literal_to_int(instance.properties[prop])}")
+        #         # properties[prop] = convert_verilog_literal_to_int(instance.properties[prop])
+
+        #     grouped_by_cell_type[(instance.cell_type, hash(frozenset(properties)))].append(instance)
+
+        # with cfutures.ThreadPoolExecutor(max_workers=MAX_PROCS) as executor:
+        #     hash_props_futures = {
+        #         executor.submit(hash_props, i): i for i in self.named_netlist.instances_to_map
+        #     }
+
+        #     for future in cfutures.as_completed(hash_props_futures):
+        #         instances_matching = grouped_by_cell_type[future.result()]
+        #         named_instance = hash_props_futures[future]
+        #         if not instances_matching:
+        #             logging.info(
+        #                 "No property matches for cell %s of type %s. Properties:",
+        #                 named_instance.name,
+        #                 named_instance.cell_type,
+        #             )
+        #             for prop in self.get_properties_for_type(named_instance.cell_type):
+        #                 logging.info("  %s: %s", prop, named_instance.properties[prop])
+        #             executor.shutdown(wait=False, cancel_futures=True)
+        #             raise StructuralCompareError(
+        #                 f"Not equivalent. {named_instance.name} has no possible match in the netlist."
+        #             )
+        #         self.possible_matches[named_instance] = instances_matching.copy()
+
+        # for named_instance in self.named_netlist.instances_to_map:
+        #     ###############################################################
+        #     # First find all instances of the same type and same properties
+        #     ###############################################################
+
+        #     # Compute a hash of this instance's properties
+        #     properties = set()
+        #     for prop in self.get_properties_for_type(named_instance.cell_type):
+        #         properties.add(
+        #             f"{prop}{convert_verilog_literal_to_int(named_instance.properties[prop])}"
+        #         )
+        #     my_hash = hash(frozenset(properties))
+
+        #     instances_matching = grouped_by_cell_type[(named_instance.cell_type, my_hash)]
+
+        #     if not instances_matching:
+        #         logging.info(
+        #             "No property matches for cell %s of type %s. Properties:",
+        #             named_instance.name,
+        #             named_instance.cell_type,
+        #         )
+        #         for prop in self.get_properties_for_type(named_instance.cell_type):
+        #             logging.info("  %s: %s", prop, named_instance.properties[prop])
+        #         raise StructuralCompareError(
+        #             f"Not equivalent. {named_instance.name} has no possible match in the netlist."
+        #         )
+
+        #     self.possible_matches[named_instance] = instances_matching.copy()
 
     def potential_mapping_wrapper(self, instance):
         """Wrap check_for_potential_mapping some inital checks/postprocessing"""
@@ -487,6 +647,9 @@ class StructuralCompare:
     def add_block_mapping(self, instance, matched_instance):
         """Add mapping point between two Instances"""
 
+        if instance in self.block_mapping:
+            assert matched_instance == self.block_mapping[instance]
+            return
         self.block_mapping[instance] = matched_instance
         self.named_netlist.instances_to_map.remove(instance)
 
@@ -560,19 +723,19 @@ class StructuralCompare:
     def check_for_potential_bram_mapping(self, named_instance):
         """Special mapping checker for BRAMs"""
         bram_do = False
-        bram_a_only = False
+        bram_a_only = True
         bram_do = named_instance.properties["DOA_REG"] == "0"
         if bram_do:
             assert named_instance.properties["DOB_REG"] == "0"
 
-        bram_a_only = named_instance.properties["RAM_MODE"] == '"TDP"' and {
-            None,
-            SdnInstanceWrapper.GND_PIN.net,
-        } >= {
-            named_instance.get_pin("DOBDO", i).net
-            for i in range(32)
-            if named_instance.get_pin("DOBDO", i) is not None
-        }
+        # bram_a_only = named_instance.properties["RAM_MODE"] == '"TDP"' and {
+        #     None,
+        #     SdnInstanceWrapper.GND_PIN.net,
+        # } >= {
+        #     named_instance.get_pin("DOBDO", i).net
+        #     for i in range(32)
+        #     if named_instance.get_pin("DOBDO", i) is not None
+        # }
 
         if named_instance.cell_type.startswith("RAMB36E1"):
             # A15 is only connected to a non-const net when cascade is enabled
@@ -624,7 +787,7 @@ class StructuralCompare:
             # connected to the corresponding mapped net.
             other_net = self.net_mapping[pin.net]
 
-            logging.info("  Filtering on pin %s, %s", pin.name_with_index, other_net.name)
+            # logging.info("  Filtering on pin %s, %s", pin.name_with_index, other_net.name)
 
             idx = pin.index
 
@@ -650,17 +813,17 @@ class StructuralCompare:
                     ]
             instances_matching_connections = tmp
 
-            num_instances = len(instances_matching_connections)
-            info = (
-                ": " + ",".join(i.name for i in instances_matching_connections)
-                if num_instances <= 10
-                else ""
-            )
-            logging.info("    %s remaining%s", num_instances, info)
+        #     num_instances = len(instances_matching_connections)
+        #     info = (
+        #         ": " + ",".join(i.name for i in instances_matching_connections)
+        #         if num_instances <= 10
+        #         else ""
+        #     )
+        #     logging.info("    %s remaining%s", num_instances, info)
 
-        logging.info(
-            "  %s instance(s) after filtering on connections", len(instances_matching_connections)
-        )
+        # logging.info(
+        #     "  %s instance(s) after filtering on connections", len(instances_matching_connections)
+        # )
         self.possible_matches[named_instance] = instances_matching_connections
         return instances_matching_connections
 
@@ -684,7 +847,7 @@ class StructuralCompare:
             # connected to the corresponding mapped net.
             other_net = self.net_mapping[pin.net]
 
-            logging.info("  Filtering on pin %s, %s", pin.name_with_index, other_net.name)
+            # logging.info("  Filtering on pin %s, %s", pin.name_with_index, other_net.name)
 
             # Extra step for LUTRAMS
             if named_instance.cell_type != "RAM32M" or not pin.name.startswith("D"):
@@ -726,17 +889,17 @@ class StructuralCompare:
                     ]
             instances_matching_connections = tmp
 
-            num_instances = len(instances_matching_connections)
-            info = (
-                ": " + ",".join(i.name for i in instances_matching_connections)
-                if num_instances <= 10
-                else ""
-            )
-            logging.info("    %s remaining%s", num_instances, info)
+            # num_instances = len(instances_matching_connections)
+            # info = (
+            #     ": " + ",".join(i.name for i in instances_matching_connections)
+            #     if num_instances <= 10
+            #     else ""
+            # )
+            # logging.info("    %s remaining%s", num_instances, info)
 
-        logging.info(
-            "  %s instance(s) after filtering on connections", len(instances_matching_connections)
-        )
+        # logging.info(
+        #     "  %s instance(s) after filtering on connections", len(instances_matching_connections)
+        # )
         self.possible_matches[named_instance] = instances_matching_connections
         return instances_matching_connections
 
