@@ -64,4 +64,4 @@ designs:
 
 flow: vivado_phys_netlist_cmp
 
-synth: "-flatten_hierarchy full -max_dsp 0"
+synth_options: "-flatten_hierarchy full -max_dsp 0"

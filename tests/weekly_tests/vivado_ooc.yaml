@@ -3,4 +3,4 @@ design_dirs:
 
 flow: vivado_ooc
 
-synth: "-flatten_hierarchy full"
+synth_options: "-flatten_hierarchy full"
