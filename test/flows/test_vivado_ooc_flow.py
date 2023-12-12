@@ -49,7 +49,7 @@ class TestVivadoOocFlow(unittest.TestCase):
             "top": self.flow.vivado_synth_tool.design_props.top,
             "io": False,
             "synth_output": str(self.flow.vivado_synth_tool.build_path),
-            "synth_args": "-mode out_of_context",
+            "synth_args": " -mode out_of_context",
         }
         expected_synth_json = json.dumps(synth_dict, indent=4)
         self.assertTrue(
