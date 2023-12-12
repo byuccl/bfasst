@@ -35,11 +35,13 @@ class EncryptedIP(Flow):
             )
             synth_tool._init_outputs()
 
-            ip_encrypter_tool = IpEncrypter(self, design, synth_tool.outputs["synth_dcp"])
-            ip_encrypter_tool.override_build_path(
-                ip_encrypter_tool.build_path.parent
-                / f"{ip_encrypter_tool.build_path.name}_{ip_definition}"
+            ip_encrypter_tool = IpEncrypter(
+                self, design, ip_definition, synth_tool.outputs["synth_dcp"]
             )
+            # ip_encrypter_tool.override_build_path(
+            #     ip_encrypter_tool.build_path.parent
+            #     / f"{ip_encrypter_tool.build_path.name}_{ip_definition}"
+            # )
             encrypted_ip_paths.append(ip_encrypter_tool.outputs["encrypted_verilog"])
             ip["ciphertext_path"] = str(ip_encrypter_tool.outputs["lut_ciphertext"])
 
@@ -51,6 +53,7 @@ class EncryptedIP(Flow):
         synth_tool.verilog.extend(encrypted_ip_paths)
 
         encrypted_ip_yaml_path = self.design_build_path / "encrypted_ip.yaml"
+        encrypted_ip_yaml_path.parent.mkdir(exist_ok=True, parents=True)
         with open(encrypted_ip_yaml_path, "w") as f:
             yaml.dump(self.design_props.encrypted_ip["ip"], f)
 

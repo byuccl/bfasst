@@ -1,0 +1,16 @@
+top: top
+
+encrypted_ip:
+  ip:
+    - definition: "mc_top"
+      instances: 
+      - "mem_ctrl_0"
+    - definition: "ac97_top"
+      instances:
+      - "ac97_0"
+      - "ac97_1"
+    - definition: "des3_area"
+      instances:
+      - "des3_area_0"
+
+  user_files: ["top.v"]

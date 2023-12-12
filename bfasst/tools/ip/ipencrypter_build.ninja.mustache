@@ -7,8 +7,11 @@ build {{ log_file }} {{ dcp_encrypted }}: encrypt_ip {{ dcp_unencrypted }}
 build {{ cwd }}/dcp_to_v.tcl: template {{ cwd }}/dcp_to_v.json {{ gen_encrypted_verilog_template }}
     cwd = {{ cwd }}
 
-build {{ verilog_encrypted }}: vivado {{ cwd }}/dcp_to_v.tcl {{ dcp_encrypted }}
+build {{ verilog_encrypted_touch }}: vivado {{ cwd }}/dcp_to_v.tcl {{ dcp_encrypted }}
     cwd = {{ cwd }}
     journal = {{ cwd }}/vivado.jou
     log = {{ cwd }}/vivado.log
+
+build {{ verilog_encrypted }}: apply_dont_touch {{ verilog_encrypted_touch }} 
+    module_name = {{ ip_defn_name }}
 
