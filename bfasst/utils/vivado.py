@@ -40,11 +40,10 @@ def parse_hierarchical_utilization(path):
         else:
             if spaces > prev_spaces:
                 current_path /= cols[0].strip()
-            elif spaces == prev_spaces:
-                current_path = current_path.parent / cols[0].strip()
             else:
-                levels_up = (prev_spaces - spaces) // 2
+                # Belongs to a parent module
                 current_path = current_path.parent
+                levels_up = (prev_spaces - spaces) // 2
                 for _ in range(levels_up):
                     current_path = current_path.parent
                 current_path /= cols[0].strip()
