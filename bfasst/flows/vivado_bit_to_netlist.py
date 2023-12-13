@@ -5,8 +5,6 @@ import pathlib
 from bfasst.flows.flow import Flow
 from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.tools.rev_bit.xray import Xray
-from bfasst.tools.transform.netlist_cleanup import NetlistCleanup
-from bfasst.tools.transform.netlist_phys_to_logical import NetlistPhysToLogical
 from bfasst.tools.synth.vivado_synth import VivadoSynth
 
 
@@ -19,12 +17,10 @@ class VivadoBitToNetlist(Flow):
         self.vivado_impl_tool = VivadoImpl(self, design)
         self.xrev_tool = Xray(self, design)
 
-
     def create_build_snippets(self):
         self.vivado_synth_tool.create_build_snippets()
         self.vivado_impl_tool.create_build_snippets()
         self.xrev_tool.create_build_snippets(str(self.vivado_impl_tool.outputs["bitstream"]))
-
 
     def get_top_level_flow_path(self):
         return pathlib.Path(__file__).resolve()
