@@ -58,22 +58,22 @@ module top(
     wire [3:0] cs_n;
     
     uart2spi uart2spi_0 (
-        concat[0],
-        clk,
-        concat[0],
-        concat[1],
-        concat[2],
-        concat[4:3],
-        concat[16:5],
-        frm_error,
-        par_error,
-        baud_clk_16x,
-        concat[16],
-        txd,
-        sck,
-        so,
-        concat[17],
-        cs_n
+        .line_reset_n(concat[0]),
+        .line_clk(clk),
+        .cfg_tx_enable(concat[0]),
+        .cfg_rx_enable(concat[1]),
+        .cfg_stop_bit(concat[2]),
+        .cfg_pri_mod(concat[4:3]),
+        .cfg_baud_16x(concat[16:5]),
+        .frm_error(frm_error),
+        .par_error(par_error),
+        .baud_clk_16x(baud_clk_16x),
+        .rxd(concat[16]),
+        .txd(txd),
+        .sck(sck),
+        .so(so),
+        .si(concat[17]),
+        .cs_n(cs_n)
     );
     wire red;
     assign red = top_valid_out ^ frm_error ^ par_error ^ baud_clk_16x ^ txd ^ sck ^ so  ^ (^cs_n);
