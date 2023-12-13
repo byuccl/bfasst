@@ -16,6 +16,7 @@ puts [exec date]
 # Step 4: Write out implemented checkpoints
 write_checkpoint {{ final }}.dcp -force
 write_edif {{ final }}.edif -force
+report_utilization -file {{ final }}_utilization_report.txt -hierarchical
 
 puts "Time starting writing bitstream DTIMING"
 puts [exec date]

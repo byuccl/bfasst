@@ -70,6 +70,7 @@ class VivadoSynth(SynthTool):
         self.outputs["synth_dcp"] = self.build_path / "synth.dcp"
         self.outputs["synth_journal"] = self.build_path / "vivado.jou"
         self.outputs["synth_log"] = self.build_path / "vivado.log"
+        self.outputs["utilization"] = self.build_path / "utilization.txt"
 
         if not self.ooc:
             self.outputs["io_report"] = self.build_path / "report_io.txt"

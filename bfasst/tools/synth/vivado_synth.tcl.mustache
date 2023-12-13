@@ -25,6 +25,7 @@ place_ports
 write_edif -force {{ synth_output }}/viv_synth.edf
 write_checkpoint -force -file {{ synth_output }}/synth.dcp
 write_verilog -force -file {{ synth_output }}/viv_synth.v
+report_utilization -file {{ synth_output }}/utilization.txt -hierarchical
 
 {{#io}}
 report_io -force -file {{ . }}
