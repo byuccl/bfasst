@@ -1,0 +1,4 @@
+flow: EncryptedIP
+
+design_dirs:
+  - encrypted_ip/
