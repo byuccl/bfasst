@@ -1,4 +1,4 @@
-"""Flow to create Vivado synthesis and implementation ninja snippets."""
+"""Flow to create random soc block designs in Vivado"""
 import pathlib
 
 from bfasst.flows.flow import FlowNoDesign
@@ -8,7 +8,7 @@ from bfasst.tools.synth.vivado_synth_tcl import VivadoSynthFromTcl
 
 
 class RandSoc(FlowNoDesign):
-    """Flow to create Vivado synthesis and implementation ninja snippets."""
+    """Flow to create random soc block designs in Vivado"""
 
     def __init__(self, num_designs=1):
         super().__init__()
