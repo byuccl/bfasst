@@ -75,7 +75,7 @@ flows:
   external_tools:
   - vivado
   - fasm2bels
-  - gmt_tools
+
 
 - name: RandSoc
   description: Create random block design(s) in Vivado
