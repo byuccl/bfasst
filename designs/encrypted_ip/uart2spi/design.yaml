@@ -1,0 +1,12 @@
+top: top
+
+encrypted_ip:
+  ip:
+    - definition: "gng"
+      instances: 
+      - "gng_0"
+    - definition: "uart2spi"
+      instances: 
+      - "uart2spi_0"
+
+  user_files: ["top.v"]

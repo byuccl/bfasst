@@ -1,6 +1,7 @@
 """Flow to create Vivado synthesis and implementation ninja snippets."""
 import pathlib
 import re
+import pandas as pd
 
 import yaml
 from bfasst.flows.flow import Flow
@@ -73,7 +74,8 @@ class EncryptedIP(Flow):
         return pathlib.Path(__file__)
 
     def post_execute(self):
-        out_csv_path = self.design_build_path / "area_results.txt"
+        print("Running post_execute for EncryptedIP flow")
+        out_csv_path = self.design_build_path / "area_results.csv"
 
         # Get regular synthesis results
         reg_utilization_file = self.synth_regular.outputs["utilization"]
@@ -82,13 +84,30 @@ class EncryptedIP(Flow):
         regular_data = parse_hierarchical_utilization(reg_utilization_file)
         encrypted_data = parse_hierarchical_utilization(encrypted_utilization_file)
 
-        instances = ["top_0"] + [
-            f"top_0/{definition}"
+        instances = ["top"] + [
+            f"top/{definition}"
             for ip in self.design_props.encrypted_ip["ip"]
             for definition in ip["instances"]
         ]
 
+        df = pd.DataFrame(
+            columns=["Instance", "LUTs-Regular", "FFs-Regular", "LUTs-Encrypted", "FFs-Encrypted"]
+        )
         for instance in instances:
-            if 
             assert instance in regular_data, f"Instance {instance} not found in regular data"
             assert instance in encrypted_data, f"Instance {instance} not found in encrypted data"
+
+            row = pd.Series(
+                {
+                    "Instance": instance,
+                    "LUTs-Regular": regular_data[instance]["Total LUTs"],
+                    "FFs-Regular": regular_data[instance]["FFs"],
+                    "LUTs-Encrypted": encrypted_data[instance]["Total LUTs"],
+                    "FFs-Encrypted": encrypted_data[instance]["FFs"],
+                }
+            )
+            df = pd.concat(
+                [df, row.to_frame().T],
+            )
+
+        df.to_csv(out_csv_path, index=False)

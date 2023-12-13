@@ -1,0 +1,14 @@
+top: top
+
+encrypted_ip:
+  ip:
+    - definition: "pid"
+      instances: 
+      - "pid_0"
+    - definition: "divider_dshift"
+      instances: 
+      - "divider_dshift_1"
+      - "divider_dshift_2"
+      - "divider_dshift_3"
+
+  user_files: ["top.v"]

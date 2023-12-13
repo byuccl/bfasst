@@ -86,7 +86,7 @@ class RunParser(YamlParser):
                 for dir_item in design_dir_path.iterdir():
                     item_path = design_dir_path / dir_item
                     if item_path.is_dir():
-                        self.design_paths.append(dir_item.name)
+                        self.design_paths.append(item_path)
 
     def _uniquify_design_paths(self):
         self.design_paths = list(set(self.design_paths))
