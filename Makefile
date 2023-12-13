@@ -10,7 +10,8 @@ PUBLIC_SUBMODULES = \
 	third_party/WaFoVe
 
 PRIVATE_SUBMODULES = \
-	third_party/gmt_tools
+	third_party/gmt_tools \
+	third_party/isoblaze
 
 install: submodules venv python_packages rapidwright env install_fasm2bels install_yosys install_wafove
 
