@@ -43,7 +43,11 @@ def parse_hierarchical_utilization(path):
             elif spaces == prev_spaces:
                 current_path = current_path.parent / cols[0].strip()
             else:
-                current_path = current_path.parent.parent / cols[0].strip()
+                levels_up = (prev_spaces - spaces) // 2
+                current_path = current_path.parent
+                for _ in range(levels_up):
+                    current_path = current_path.parent
+                current_path /= cols[0].strip()
         prev_spaces = spaces
 
         # Save each column of utilization data
