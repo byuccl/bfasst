@@ -68,6 +68,15 @@ flows:
   - fasm2bels
   - gmt_tools
 
+- name: VivadoBitToNetlist
+  description: Reverse bitstream into a phys netlist
+  module: vivado_bit_to_netlist
+  class: VivadoBitToNetlist
+  external_tools:
+  - vivado
+  - fasm2bels
+  - gmt_tools
+
 - name: RandSoc
   description: Create random block design(s) in Vivado
   module: rand_soc
