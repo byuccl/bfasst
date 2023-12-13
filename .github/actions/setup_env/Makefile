@@ -8,7 +8,7 @@ install_fasm2bels:
 	cd ${BFASST_PATH_FASM2BELS} && make build
 	cd ${BFASST_PATH_FASM2BELS} && make test-py
 
-	cd ../../.. && python scripts/run_design.py designs/basic/and3/ xilinx_and_reversed
+	cd ../../.. && python scripts/run.py VivadoBitToNetlist designs/basic/and3
 
 
 

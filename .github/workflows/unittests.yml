@@ -95,23 +95,4 @@ jobs:
       run: |
         make unittest
 
-  # Don't use WIP tests until Github UI is fixed (https://github.com/orgs/community/discussions/15452)
-  #
-  # run-experiments-wip:
-  #   needs: collect-experiments
-  #   runs-on: [self-hosted, linux]
-  #   strategy:
-  #     matrix:
-  #       experiment: ${{ fromJson(needs.collect-experiments.outputs.matrix-wip) }}
-  #   continue-on-error: true
-  #   steps:
-  #   - uses: actions/checkout@v3
-  #     with:
-  #       submodules: 'recursive'
-  #   - uses: ./.github/actions/setup_env
-  #   - name: experiments
-  #     timeout-minutes: 30
-  #     run: |
-  #       source .venv/bin/activate
-  #       source env.sh
-  #       python scripts/run_experiment.py ${{ matrix.experiment }} -j8 --print_period 0
+

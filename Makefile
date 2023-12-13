@@ -92,7 +92,7 @@ install_fasm2bels:
 	$(IN_ENV) cd third_party/fasm2bels && make test-py
 
 # Run a simple design through fasm2bels to generate the database.
-	$(IN_ENV) python scripts/run_design.py designs/basic/and3/ xilinx_and_reversed
+	$(IN_ENV) python scripts/run.py VivadoBitToNetlist designs/basic/and3
 
 install_wafove:
 	$(IN_ENV) python -m pip install -e third_party/WaFoVe
@@ -122,7 +122,7 @@ format:
 pylint: format
 	git fetch
 	pylint --errors-only $$(git ls-files --directory scripts --directory bfasst | grep -e ".py$$")
-	pylint $$(git diff --name-only $$(git merge-base origin/main HEAD) | grep -e ".py$$")
+	pylint $$(git diff --name-only | grep -e ".py$$")
 
 
 doctest:
