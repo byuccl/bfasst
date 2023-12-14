@@ -44,6 +44,9 @@ ISOBLAZE_DUMP_DCP_PATH = ISOBLAZE_SRC_PATH / "dump-dcp.tcl"
 ISOBLAZE_GOLDEN_PATH = ISOBLAZE_SRC_PATH / "golden.tcl"
 
 BFASST_UTILS_PATH = BFASST_PATH / "utils"
+COLLECT_IP_TCL_PATH = BFASST_UTILS_PATH / "collect_ip.tcl"
+
+DUMP_TOOL_BUILD_PATH = BUILD_PATH / "isoblaze_dump"
 
 
 def get_fasm2bels_path():

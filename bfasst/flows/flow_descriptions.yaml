@@ -84,3 +84,12 @@ flows:
   external_tools:
   - vivado
   - gmt_tools
+
+- name: RandSocDumped
+  description: Dump random block design(s) with Isoblaze
+  module: rand_soc_dumped
+  class: RandSocDumped
+  external_tools:
+  - vivado
+  - gmt_tools
+  - isoblaze

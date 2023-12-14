@@ -1,0 +1,4 @@
+rule isoblaze_dump
+    command = python bfasst/utils/isoblaze_dump.py $design_checkpoint $output_dump
+    description = use isoblaze to dump bels from designs and label them with the ip they participate inject
+
