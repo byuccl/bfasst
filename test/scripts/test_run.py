@@ -59,6 +59,10 @@ class TestApplicationRunner(unittest.TestCase):
         """Test that the runner runs the vivado_bit_analysis flow without errors"""
         self.__run_flow("VivadoBitAnalysis")
 
+    def test_run_vivado_bit_to_netlist(self):
+        """Test that the runner runs the vivado_bit_to_netlist flow without errors"""
+        self.__run_flow("VivadoBitToNetlist")
+
     def test_run_vivado_phys_netlist_flow(self):
         """Test that the runner runs the vivado_phys_netlist flow without errors"""
         self.__run_flow("VivadoPhysNetlist")
