@@ -1,4 +1,4 @@
-"""Unit tests for the VivadoAndReversed flow."""
+"""Unit tests for the VivadoBitToNetlist flow."""
 
 # Disable this since we are testing a class
 # pylint: disable=duplicate-code
