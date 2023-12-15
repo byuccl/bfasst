@@ -1,5 +1,5 @@
-set file [lindex $::tclargs 1]
-set ips [get_ips]
+set file [lindex $argv 0]
+set ips [get_cells -hierarchical -regex {[^/]*/[^/]*}]
 
 set fp [open $file "w"]
 foreach ip $ips {
