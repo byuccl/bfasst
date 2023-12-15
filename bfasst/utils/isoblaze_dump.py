@@ -1,4 +1,4 @@
-"""Dump a single file with isoblaze. This will create two files:
+"""Dump a single design with isoblaze. This will create two files:
 One that lists all the bels, properties, and connections in a design,
 and one that lists which BEL belongs to which IP in a design."""
 import subprocess
@@ -15,7 +15,7 @@ from bfasst.paths import (
 
 
 class NetlistDump:
-    """Dump a single file with isoblaze. This will create two files:
+    """Dump a single design with isoblaze. This will create two files:
     One that lists all the bels with their properties, and connections
     between them in a design, and one that lists which BEL belongs to
     which IP in the design."""
@@ -34,12 +34,18 @@ class NetlistDump:
         # rename the dump file (and move it to the correct build subdir)
         dumpfile.rename(DUMP_TOOL_BUILD_PATH / self.dump_file)
 
+        # get a path to the ipfile
+        ipfile_path = DUMP_TOOL_BUILD_PATH / f"{self.label_file}_ip_list.txt"
+
         # label the bels with the IP they belong to
         self.label_bels(
             design_checkpoint=self.design_checkpoint,
             goldfile_path=DUMP_TOOL_BUILD_PATH / self.label_file,
-            ipfile_path=DUMP_TOOL_BUILD_PATH / f"{self.label_file}_ip_list.txt",
+            ipfile_path=ipfile_path,
         )
+
+        # remove the ip files since they are unnecessary
+        pathlib.Path(ipfile_path).unlink()
 
     def dump_design(self, design_checkpoint) -> pathlib.Path:
         """Dump the design's impl.dcp to isoblaze dumpfile format,

@@ -20,7 +20,7 @@ class RandSocDumped(FlowNoDesign):
             VivadoSynthFromTcl(self, design)
             VivadoImpl(self, design.parent)
 
-        IsoblazeDump(self)
+        IsoblazeDump(self, num_designs=num_designs)
 
     def add_ninja_deps(self, deps):
         super().add_ninja_deps(deps)

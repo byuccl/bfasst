@@ -1,4 +1,5 @@
-build {{ output_dump }} {{ golden }} {{ ip_list }}: isoblaze_dump | {{ design_checkpoint }} {{ isoblaze_dump_script }}
+build {{ dumpfile }} {{ labelfile }}: isoblaze_dump | {{ design_checkpoint }} {{ isoblaze_dump_util }} {{ collect_ip_util }}
     design_checkpoint = {{ design_checkpoint }}
-    output_dump = {{ output_dump }}
+    dumpfile = {{ dumpfile }}
+    labelfile = {{ labelfile }}
 
