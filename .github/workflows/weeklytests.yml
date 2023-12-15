@@ -23,7 +23,7 @@ jobs:
         submodules: 'recursive'
     - id: set-matrix
       run: |
-        echo "matrix=$(ls tests/weekly_tests/*.yaml | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+        echo "matrix=$(ls test/weekly_tests/*.yaml | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
 
   run-tests:
     needs: collect-tests

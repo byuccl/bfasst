@@ -9,7 +9,7 @@ BUILD_PATH = pathlib.Path().cwd() / "build"
 
 DESIGNS_PATH = ROOT_PATH / "designs"
 BFASST_PATH = ROOT_PATH / "bfasst"
-TESTS_PATH = ROOT_PATH / "tests"
+TEST_PATH = ROOT_PATH / "test"
 RESOURCES_PATH = ROOT_PATH / "resources"
 SCRIPTS_PATH = ROOT_PATH / "scripts"
 ERROR_FLOW_PATH = ROOT_PATH / "error_flows"

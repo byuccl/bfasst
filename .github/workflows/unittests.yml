@@ -13,7 +13,7 @@ concurrency:
 
 
 jobs:
-  # First list all the files in tests/ci, and generate a JSON string of all the files
+  # First list all the files in test/ci, and generate a JSON string of all the files
   collect-experiments:
     runs-on: ubuntu-latest
     outputs:
@@ -23,7 +23,7 @@ jobs:
     - uses: actions/checkout@v3
     - id: set-matrix
       run: |
-        echo "matrix=$(ls tests/ci/*.yaml | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+        echo "matrix=$(ls test/ci/*.yaml | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
     # - id: set-matrix-wip
     #   run: echo "matrix-wip=$(ls tests/wip/*.yaml | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
 
