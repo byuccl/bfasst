@@ -14,7 +14,7 @@ CONFORMAL_REMOTE_WORK_DIR = Path("/fsj/jgoeders/bfasst_work")
 CONFORMAL_REMOTE_LIBS_DIR = Path("/fsj/jgoeders/bfasst_libs")
 CONFORMAL_REMOTE_PATH = Path("/ee2/Cadence/CONFRML152/bin/lec")
 
-VIVADO_BIN_PATH = os.environ["VIVADO_PATH"]
+VIVADO_BIN_PATH = Path(os.environ["VIVADO_PATH"])
 VIVADO_COMMAND = [str(VIVADO_BIN_PATH), "-nojournal", "-nolog", "-mode", "tcl"]
 
 I2C_LSE_TIMEOUT = 600.0

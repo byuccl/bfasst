@@ -12,6 +12,8 @@ PUBLIC_SUBMODULES = \
 PRIVATE_SUBMODULES = \
 	third_party/gmt_tools
 
+include external_tools.mk
+
 install: submodules venv python_packages rapidwright env install_fasm2bels install_yosys install_wafove
 
 venv:
@@ -80,39 +82,13 @@ submodules:
 	$(foreach submodule,$(PUBLIC_SUBMODULES),git submodule init $(submodule); git submodule update $(submodule);)
 	$(foreach submodule,$(PRIVATE_SUBMODULES),git submodule init $(submodule); git submodule update $(submodule) || echo "Ignoring failed clone of private submodule ($(submodule))";)
 
-rapidwright:
-	cd third_party/RapidWright && ./gradlew compileJava
-	cd third_party/RapidWright/interchange/ && make
-	$(IN_ENV) cd third_party/RapidWright ; export PATH=`pwd`/bin:$$PATH ; \
-	rapidwright jython -c 'FileTools.ensureDataFilesAreStaticInstallFriendly("xc7a200t")'
 
-install_fasm2bels:
-	$(IN_ENV) cd third_party/fasm2bels && make env
-	$(IN_ENV) cd third_party/fasm2bels && make build
-	$(IN_ENV) cd third_party/fasm2bels && make test-py
-
-# Run a simple design through fasm2bels to generate the database.
-	$(IN_ENV) python scripts/run.py VivadoBitToNetlist designs/basic/and3
-
-install_wafove:
-	$(IN_ENV) python -m pip install -e third_party/WaFoVe
-	$(IN_ENV) cd third_party/WaFoVe && make build
-
-env: venv python_packages rapidwright 
+env: venv python_packages 
 	echo >> ".venv/bin/activate"
-	echo "if [ -f \"`pwd`/third_party/rapidwright.sh\" ];then" >> ".venv/bin/activate" 	
-	echo ". `pwd`/third_party/rapidwright.sh" >> ".venv/bin/activate"
-	echo "fi" >> ".venv/bin/activate"
-	echo "export INTERCHANGE_SCHEMA_PATH=`pwd`/third_party/RapidWright/interchange/fpga-interchange-schema/interchange" >> ".venv/bin/activate"
 	echo "export VIVADO_PATH=$(VIVADO_PATH)" >> ".venv/bin/activate"
 	echo "unset VIVADO_PATH" > ".venv/bin/deactivate"
-	echo "unset INTERCHANGE_SCHEMA_PATH" >> ".venv/bin/deactivate"
 	echo "export PYTHONNOUSERSITE=1" >> ".venv/bin/activate"
 	echo "unset PYTHONNOUSERSITE" >> ".venv/bin/deactivate"
-
-install_yosys:
-	# Yosys
-	cd third_party/yosys && make -j8
 
 
 format:
