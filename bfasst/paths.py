@@ -48,7 +48,8 @@ ISOBLAZE_GOLDEN_PATH = ISOBLAZE_SRC_PATH / "golden.tcl"
 BFASST_UTILS_PATH = BFASST_PATH / "utils"
 COLLECT_IP_TCL_PATH = BFASST_UTILS_PATH / "collect_ip.tcl"
 
-DUMP_TOOL_BUILD_PATH = BUILD_PATH / "isoblaze_dump"
+RAND_SOC_BUILD_PATH = BUILD_PATH / "rand_soc"
+DUMP_TOOL_BUILD_PATH = RAND_SOC_BUILD_PATH / "isoblaze_dump"
 
 
 def get_fasm2bels_path():

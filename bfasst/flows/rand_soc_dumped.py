@@ -2,6 +2,7 @@
 import pathlib
 
 from bfasst.flows.flow import FlowNoDesign
+from bfasst.paths import DUMP_TOOL_BUILD_PATH
 from bfasst.tools.design_create.rand_soc import RandSoC
 from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.tools.synth.vivado_synth_tcl import VivadoSynthFromTcl
@@ -21,6 +22,11 @@ class RandSocDumped(FlowNoDesign):
             VivadoImpl(self, design.parent)
 
         IsoblazeDump(self, num_designs=num_designs)
+
+    @classmethod
+    def flow_build_dir_name(cls) -> str:
+        """Get the name of the build directory for this flow"""
+        return DUMP_TOOL_BUILD_PATH.name
 
     def add_ninja_deps(self, deps):
         super().add_ninja_deps(deps)

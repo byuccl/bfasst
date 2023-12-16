@@ -4,6 +4,7 @@ and one that lists which BEL belongs to which IP in a design."""
 import subprocess
 import pathlib
 import argparse
+import shutil
 
 from bfasst.paths import (
     ISOBLAZE_DUMP_DCP_PATH,
@@ -29,7 +30,8 @@ class NetlistDump:
         """Run the utility to generate the dump_file and label_file"""
 
         # Dump the design
-        dumpfile = self.dump_design(self.design_checkpoint)
+        # NOTE: Isoblaze appends the ".dcp" suffix to the checkpoint path on its own.
+        dumpfile = self.dump_design(pathlib.Path(self.design_checkpoint).with_suffix(""))
 
         # rename the dump file (and move it to the correct build subdir)
         dumpfile.rename(DUMP_TOOL_BUILD_PATH / self.dump_file)
@@ -47,6 +49,9 @@ class NetlistDump:
         # remove the ip files since they are unnecessary
         pathlib.Path(ipfile_path).unlink()
 
+        # remove the .Xil directory since it is unnecessary
+        shutil.rmtree(DUMP_TOOL_BUILD_PATH / ".Xil")
+
     def dump_design(self, design_checkpoint) -> pathlib.Path:
         """Dump the design's impl.dcp to isoblaze dumpfile format,
         and return the path to the dumpfile"""
@@ -62,7 +67,7 @@ class NetlistDump:
             f"{design_checkpoint}",
         ]
 
-        proc = subprocess.Popen(command, cwd=DUMP_TOOL_BUILD_PATH)
+        proc = subprocess.Popen(command, cwd=DUMP_TOOL_BUILD_PATH, stdout=subprocess.PIPE)
         proc.communicate()
         return_code = proc.wait()
 
@@ -91,7 +96,10 @@ class NetlistDump:
         # read the ip file, and save all the ip from the design into a list
         with open(ipfile_path, "r") as f:
             ip_list = f.readlines()
+
+        # remove whitespace and parent cell from ip name
         ip_list = [ip.strip() for ip in ip_list]
+        ip_list = [ip.split("/")[-1] for ip in ip_list]
 
         # create the goldfile
         with open(goldfile_path, "w") as f:
@@ -120,7 +128,7 @@ class NetlistDump:
             f"{ipfile_path}",
         ]
 
-        proc = subprocess.Popen(command, cwd=DUMP_TOOL_BUILD_PATH)
+        proc = subprocess.Popen(command, cwd=DUMP_TOOL_BUILD_PATH, stdout=subprocess.PIPE)
         proc.communicate()
         return_code = proc.wait()
 
@@ -142,7 +150,7 @@ class NetlistDump:
             f"{ip}",
         ]
 
-        proc = subprocess.Popen(command, cwd=DUMP_TOOL_BUILD_PATH)
+        proc = subprocess.Popen(command, cwd=DUMP_TOOL_BUILD_PATH, stdout=subprocess.PIPE)
         proc.communicate()
         return_code = proc.wait()
 
@@ -156,9 +164,13 @@ class NetlistDump:
 
     def concat_bels_from_isoblaze_goldfiles(self, isoblaze_goldfiles, goldfile_path) -> None:
         """Concatenate the bels from the isoblaze_goldfiles into the goldfile"""
+
         for ip, isoblaze_goldfile in isoblaze_goldfiles.items():
             with open(isoblaze_goldfile, "r") as f:
                 bels = f.readlines()
+
+            # bels must be unique and sorted
+            bels = sorted(list(set(bels)))
 
             with open(goldfile_path, "a") as f:
                 # write the ip name
@@ -167,6 +179,9 @@ class NetlistDump:
                 # indent the bels that belong to it, and write one per line
                 for bel in bels:
                     f.write(f"\t{bel}")
+
+                # add a newline after all the bels for each ip are enumerated
+                f.write("\n")
 
             # remove the golden.{ip} file since it is unnecessary
             pathlib.Path(isoblaze_goldfile).unlink()
