@@ -7,11 +7,11 @@ import argparse
 import shutil
 
 from bfasst.paths import (
+    BFASST_UTILS_PATH,
     ISOBLAZE_DUMP_DCP_PATH,
     ISOBLAZE_DUMP_PATH,
     ISOBLAZE_GOLDEN_PATH,
     DUMP_TOOL_BUILD_PATH,
-    COLLECT_IP_TCL_PATH,
 )
 
 
@@ -123,7 +123,7 @@ class NetlistDump:
             "-mode",
             "batch",
             "-source",
-            f"{COLLECT_IP_TCL_PATH}",
+            f"{BFASST_UTILS_PATH}/collect_ip.tcl",
             "-tclargs",
             f"{ipfile_path}",
         ]
