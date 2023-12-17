@@ -77,6 +77,6 @@ install_wafove:
 # Isoblaize
 ################################################################################
 
-install_isoblaize:
+install_isoblaze:
 	git submodule init third_party/isoblaze
 	git submodule update third_party/isoblaze
