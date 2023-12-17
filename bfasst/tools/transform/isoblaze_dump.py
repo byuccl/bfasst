@@ -1,11 +1,8 @@
 """Tool for dumping the bels of a placed and routed design with Isoblaze"""
-import chevron
 from bfasst.tools.tool import ToolBase
 from bfasst.paths import (
     BFASST_UTILS_PATH,
     DUMP_TOOL_BUILD_PATH,
-    ISOBLAZE_DUMP_BUILD_PATH,
-    NINJA_BUILD_PATH,
     RAND_SOC_BUILD_PATH,
 )
 
@@ -40,17 +37,14 @@ class IsoblazeDump(ToolBase):
         impl_checkpoint_base_path = RAND_SOC_BUILD_PATH
         for i in range(self.num_designs):
             impl_checkpoint_path = impl_checkpoint_base_path / f"design_{i}" / "impl" / "impl.dcp"
-            with open(ISOBLAZE_DUMP_BUILD_PATH, "r") as f:
-                build = chevron.render(
-                    f,
-                    {
-                        "dumpfile": self.outputs["isoblaze_dump_output"][i],
-                        "labelfile": self.outputs["labelfile_output"][i],
-                        "design_checkpoint": impl_checkpoint_path,
-                        "isoblaze_dump_util": BFASST_UTILS_PATH / "isoblaze_dump.py",
-                        "collect_ip_util": BFASST_UTILS_PATH / "collect_ip.tcl",
-                    },
-                )
 
-            with open(NINJA_BUILD_PATH, "a") as f:
-                f.write(build)
+            self._append_build_snippets_default(
+                __file__,
+                {
+                    "dumpfile": self.outputs["isoblaze_dump_output"][i],
+                    "labelfile": self.outputs["labelfile_output"][i],
+                    "design_checkpoint": impl_checkpoint_path,
+                    "isoblaze_dump_util": BFASST_UTILS_PATH / "isoblaze_dump.py",
+                    "collect_ip_util": BFASST_UTILS_PATH / "collect_ip.tcl",
+                },
+            )
