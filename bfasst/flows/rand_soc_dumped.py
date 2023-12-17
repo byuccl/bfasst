@@ -6,7 +6,7 @@ from bfasst.paths import DUMP_TOOL_BUILD_PATH
 from bfasst.tools.design_create.rand_soc import RandSoC
 from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.tools.synth.vivado_synth_tcl import VivadoSynthFromTcl
-from bfasst.tools.transform.isoblaze_dump import IsoblazeDump
+from bfasst.tools.transform.randsoc_dump import RandsocDump
 
 
 class RandSocDumped(FlowNoDesign):
@@ -21,7 +21,7 @@ class RandSocDumped(FlowNoDesign):
             VivadoSynthFromTcl(self, design)
             VivadoImpl(self, design.parent)
 
-        IsoblazeDump(self, num_designs=num_designs)
+        RandsocDump(self, num_designs=num_designs)
 
     @classmethod
     def flow_build_dir_name(cls) -> str:

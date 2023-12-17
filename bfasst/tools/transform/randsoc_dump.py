@@ -7,7 +7,7 @@ from bfasst.paths import (
 )
 
 
-class IsoblazeDump(ToolBase):
+class RandsocDump(ToolBase):
     """Tool for dumping the bels of a placed and routed design with Isoblaze"""
 
     def __init__(self, flow, num_designs):
@@ -18,7 +18,7 @@ class IsoblazeDump(ToolBase):
         self._init_outputs()
 
     def _init_outputs(self):
-        self.outputs["isoblaze_dump_output"] = [
+        self.outputs["dumpfile_output"] = [
             f"{self.build_path}/design_{i}.dump" for i in range(self.num_designs)
         ]
         self.outputs["labelfile_output"] = [
@@ -27,7 +27,7 @@ class IsoblazeDump(ToolBase):
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
-        deps.append(BFASST_UTILS_PATH / "isoblaze_dump.py")
+        deps.append(BFASST_UTILS_PATH / "randsoc_dump.py")
         deps.append(BFASST_UTILS_PATH / "collect_ip.tcl")
 
     def create_rule_snippets(self):
@@ -41,10 +41,10 @@ class IsoblazeDump(ToolBase):
             self._append_build_snippets_default(
                 __file__,
                 {
-                    "dumpfile": self.outputs["isoblaze_dump_output"][i],
+                    "dumpfile": self.outputs["dumpfile_output"][i],
                     "labelfile": self.outputs["labelfile_output"][i],
                     "design_checkpoint": impl_checkpoint_path,
-                    "isoblaze_dump_util": BFASST_UTILS_PATH / "isoblaze_dump.py",
+                    "randsoc_dump_util": BFASST_UTILS_PATH / "randsoc_dump.py",
                     "collect_ip_util": BFASST_UTILS_PATH / "collect_ip.tcl",
                 },
             )

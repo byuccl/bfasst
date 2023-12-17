@@ -1,0 +1,6 @@
+build {{ dumpfile }} {{ labelfile }}: randsoc_dump | {{ design_checkpoint }} {{ randsoc_dump_util }} {{ collect_ip_util }}
+    randsoc_dump_util = {{ randsoc_dump_util }}
+    design_checkpoint = {{ design_checkpoint }}
+    dumpfile = {{ dumpfile }}
+    labelfile = {{ labelfile }}
+
