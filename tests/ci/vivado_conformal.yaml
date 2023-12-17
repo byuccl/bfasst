@@ -2,4 +2,4 @@ designs:
   - byu/alu
     
     
-flow: vivado_conformal
+flow: VivadoConformal

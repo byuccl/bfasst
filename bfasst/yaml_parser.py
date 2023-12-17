@@ -102,7 +102,7 @@ class DesignParser(YamlParser):
 class FlowDescriptionParser(YamlParser):
     """Parse the flow description yaml file"""
 
-    def __init__(self, yaml_path=paths.FLOWS_PATH / "flow_descriptions.yaml"):
+    def __init__(self, yaml_path=paths.FLOW_DESCRIPTIONS_PATH):
         super().__init__(yaml_path)
 
     def get_flow_names(self) -> list[str]:
@@ -143,6 +143,6 @@ class FlowDescriptionParser(YamlParser):
         for flow in self.props["flows"]:
             # flow_name is module name for yaml and class name for cli
             if flow_name in (flow["name"], flow["module"]):
-                return flow["tools"]
+                return flow.get("external_tools")
 
         raise ValueError(f"Flow {flow_name} not found in {self.yaml_path}")

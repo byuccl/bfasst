@@ -4,7 +4,6 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
         {
             "name": "fasm2bels-add32",
             "type": "python",
@@ -82,7 +81,7 @@
             "type": "python",
             "request": "launch",
             "python": "${workspaceFolder}/.venv/bin/python",
-            "program": "scripts/run_experiment.py",
+            "program": "scripts/scripts_legacy/run_experiment.py",
             "args": [
                 "tests/phys_netlist.yaml",
                 "-j1"
@@ -97,7 +96,7 @@
             "type": "python",
             "request": "launch",
             "python": "/home/reilly/anaconda3/envs/eqv/bin/python",
-            "program": "scripts/run_design.py",
+            "program": "scripts/scripts_legacy/run_design.py",
             "args": [
                 "designs/byu/alu",
                 "xilinx_phys_netlist_cmp"
