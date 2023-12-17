@@ -77,17 +77,6 @@ class RunParser(YamlParser):
                         self.design_paths.append(str(design_name))
                         continue
 
-        if "design_dirs" in self.props:
-            for design_dir in self.props.pop("design_dirs"):
-                design_dir_path = paths.DESIGNS_PATH / design_dir
-                if not design_dir_path.is_dir():
-                    error(f"{design_dir_path} is not a directory")
-
-                for dir_item in design_dir_path.iterdir():
-                    item_path = design_dir_path / dir_item
-                    if item_path.is_dir():
-                        self.design_paths.append(dir_item.name)
-
     def _uniquify_design_paths(self):
         self.design_paths = list(set(self.design_paths))
         self.design_paths.sort()
