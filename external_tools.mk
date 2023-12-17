@@ -74,9 +74,9 @@ install_wafove:
 	$(IN_ENV) cd third_party/WaFoVe && make build
 
 ################################################################################
-# Isoblaize
+# Isoblaze
 ################################################################################
 
-install_isoblaize:
+install_isoblaze:
 	git submodule init third_party/isoblaze
 	git submodule update third_party/isoblaze
