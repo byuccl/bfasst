@@ -8,7 +8,6 @@ from bfasst.paths import (
     NINJA_BUILD_PATH,
     NINJA_TRANSFORM_TOOLS_PATH,
     BFASST_UTILS_PATH,
-    PHYS_NETLIST_RULES_PATH,
 )
 from bfasst.utils import compare_json
 
@@ -25,11 +24,7 @@ class PhysNetlist(Tool):
         self._init_outputs()
 
     def create_rule_snippets(self):
-        with open(PHYS_NETLIST_RULES_PATH, "r") as f:
-            phys_netlist_rules = f.read()
-
-        with open(NINJA_BUILD_PATH, "a") as f:
-            f.write(phys_netlist_rules)
+        self._append_rule_snippets_default(__file__)
 
     def create_build_snippets(self, impl_dcp, impl_edf):
         self.__write_json_file()

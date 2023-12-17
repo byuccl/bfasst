@@ -17,7 +17,7 @@ designs:
     - byu/UpDownButtonCount
     
     
-flow: vivado_structural_error_injection
+flow: VivadoStructuralErrorInjection
 
 synth_options: -flatten_hierarchy full -max_dsp 0
 

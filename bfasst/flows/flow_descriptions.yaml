@@ -19,6 +19,7 @@ flows:
   class: VivadoPhysNetlist
   external_tools:
   - vivado
+  - rapidwright
   - fasm2bels
 
 - name: VivadoPhysNetlistCmp
@@ -27,8 +28,8 @@ flows:
   class: VivadoPhysNetlistCmp
   external_tools:
   - vivado
-  - fasm2bels
   - rapidwright
+  - fasm2bels
 
 
 - name: VivadoStructuralErrorInjection
@@ -37,16 +38,17 @@ flows:
   class: VivadoStructuralErrorInjection
   external_tools:
   - vivado
-  - fasm2bels
   - rapidwright
+  - fasm2bels
 
 
-- name: VivadoYosysImpl
+- name: VivadoYosysCmp
   description: Verify design implementation with Yosys
-  module: vivado_yosys_impl
-  class: VivadoYosysImpl
+  module: vivado_yosys_cmp
+  class: VivadoYosysCmp
   external_tools:
   - vivado
+  - rapidwright
   - fasm2bels
   - yosys
 
@@ -56,6 +58,7 @@ flows:
   class: VivadoConformal
   external_tools:
   - vivado
+  - rapidwright
   - fasm2bels
   - conformal
 
@@ -65,6 +68,7 @@ flows:
   class: VivadoBitAnalysis
   external_tools:
   - vivado
+  - rapidwright
   - fasm2bels
   - gmt_tools
 

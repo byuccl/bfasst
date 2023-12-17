@@ -46,7 +46,7 @@ class ConformalCompare:
 
     def _compare_netlists(self):
         """Compare given netlists"""
-        client = self.__connect_to_remote_machine()
+        client = self.connect_to_remote_machine()
 
         # Handle libraries
         if self.vendor == Vendor.XILINX:
@@ -85,7 +85,8 @@ class ConformalCompare:
         log_path = self.stage_dir / self.LOG_FILE_NAME
         self.__check_compare_status(log_path)
 
-    def __connect_to_remote_machine(self):
+    @staticmethod
+    def connect_to_remote_machine():
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         client.connect(
