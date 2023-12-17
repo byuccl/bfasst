@@ -11,6 +11,7 @@ import yaml
 
 from bfasst.config import PART, VIVADO_BIN_PATH
 from bfasst.paths import (
+    ISOBLAZE_PATH,
     RAPIDWRIGHT_PATH,
     ROOT_PATH,
     THIRD_PARTY_PATH,
@@ -59,6 +60,10 @@ def check_rapidwright():
 
 def check_yosys():
     return (YOSYS_PATH / "yosys").is_file()
+
+
+def check_isoblaze():
+    return (ISOBLAZE_PATH / "README.md").is_file()
 
 
 ################################################################################
