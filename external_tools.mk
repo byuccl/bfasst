@@ -72,3 +72,12 @@ install_yosys:
 install_wafove:
 	$(IN_ENV) python -m pip install -e third_party/WaFoVe
 	$(IN_ENV) cd third_party/WaFoVe && make build
+
+################################################################################
+# Encrypted IP
+################################################################################
+
+install_encrypted_ip:
+	git submodule init third_party/encrypted_ip
+	git submodule update third_party/encrypted_ip
+	$(IN_ENV) pip install -r third_party/encrypted_ip

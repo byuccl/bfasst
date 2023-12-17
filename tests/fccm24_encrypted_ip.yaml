@@ -1,4 +1,4 @@
 flow: EncryptedIP
 
-design_dirs:
+designs:
   - encrypted_ip/
