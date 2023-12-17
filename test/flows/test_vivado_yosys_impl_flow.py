@@ -6,7 +6,7 @@
 import unittest
 
 from bfasst.flows.flow_utils import create_build_file
-from bfasst.flows.vivado_yosys_impl import VivadoYosysImpl
+from bfasst.flows.vivado_yosys_cmp import VivadoYosysCmp
 from bfasst.tools.compare.yosys.yosys import Yosys
 from bfasst.tools.rev_bit.xray import Xray
 from bfasst.tools.synth.vivado_synth import VivadoSynth
@@ -23,7 +23,7 @@ class TestVivadoYosysImplFlow(unittest.TestCase):
         create_build_file()
 
         cls.design_shortname = DESIGNS_PATH / "byu/alu"
-        cls.flow = VivadoYosysImpl(cls.design_shortname)
+        cls.flow = VivadoYosysCmp(cls.design_shortname)
         cls.flow.create_tool_build_dirs()
         cls.flow.create_rule_snippets()
         cls.flow.create_build_snippets()
@@ -55,16 +55,14 @@ class TestVivadoYosysImplFlow(unittest.TestCase):
         VivadoSynth(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         VivadoImpl(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
         Yosys(None, self.design_shortname).add_ninja_deps(expected)
-        expected.append(FLOWS_PATH / "vivado_yosys_impl.py")
+        expected.append(self.flow.get_top_level_flow_path())
 
         observed = sorted([str(s) for s in observed])
         expected = sorted([str(s) for s in expected])
         self.assertListEqual(observed, expected)
 
     def test_get_top_level_flow_path(self):
-        self.assertEqual(
-            self.flow.get_top_level_flow_path(), FLOWS_PATH / "vivado_yosys_impl.py"
-        )
+        self.assertEqual(self.flow.get_top_level_flow_path(), FLOWS_PATH / "vivado_yosys_cmp.py")
 
 
 if __name__ == "__main__":

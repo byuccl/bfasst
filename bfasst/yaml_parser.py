@@ -77,17 +77,6 @@ class RunParser(YamlParser):
                         self.design_paths.append(str(design_name))
                         continue
 
-        if "design_dirs" in self.props:
-            for design_dir in self.props.pop("design_dirs"):
-                design_dir_path = paths.DESIGNS_PATH / design_dir
-                if not design_dir_path.is_dir():
-                    error(f"{design_dir_path} is not a directory")
-
-                for dir_item in design_dir_path.iterdir():
-                    item_path = design_dir_path / dir_item
-                    if item_path.is_dir():
-                        self.design_paths.append(item_path)
-
     def _uniquify_design_paths(self):
         self.design_paths = list(set(self.design_paths))
         self.design_paths.sort()
@@ -119,7 +108,7 @@ class DesignParser(YamlParser):
 class FlowDescriptionParser(YamlParser):
     """Parse the flow description yaml file"""
 
-    def __init__(self, yaml_path=paths.FLOWS_PATH / "flow_descriptions.yaml"):
+    def __init__(self, yaml_path=paths.FLOW_DESCRIPTIONS_PATH):
         super().__init__(yaml_path)
 
     def get_flow_names(self) -> list[str]:
@@ -160,6 +149,6 @@ class FlowDescriptionParser(YamlParser):
         for flow in self.props["flows"]:
             # flow_name is module name for yaml and class name for cli
             if flow_name in (flow["name"], flow["module"]):
-                return flow["tools"]
+                return flow.get("external_tools")
 
         raise ValueError(f"Flow {flow_name} not found in {self.yaml_path}")
