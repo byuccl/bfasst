@@ -2,7 +2,6 @@
 import pathlib
 
 from bfasst.flows.flow import FlowNoDesign
-from bfasst.paths import DUMP_TOOL_BUILD_PATH
 from bfasst.tools.design_create.rand_soc import RandSoC
 from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.tools.synth.vivado_synth_tcl import VivadoSynthFromTcl
@@ -17,16 +16,20 @@ class RandSocDumped(FlowNoDesign):
 
         self.rand_soc_tool = RandSoC(self, num_designs=num_designs)
 
-        for design in self.rand_soc_tool.outputs["design_tcl"]:
+        for i, design in enumerate(self.rand_soc_tool.outputs["design_tcl"]):
             VivadoSynthFromTcl(self, design)
             VivadoImpl(self, design.parent)
-
-        RandsocDump(self, num_designs=num_designs)
+            RandsocDump(
+                self,
+                checkpoint=design.parent / "impl" / "impl.dcp",
+                dumpfile=f"design_{i}.dump",
+                labelfile=f"design_{i}_golden.dump",
+            )
 
     @classmethod
     def flow_build_dir_name(cls) -> str:
         """Get the name of the build directory for this flow"""
-        return DUMP_TOOL_BUILD_PATH.name
+        return "randsoc_dumped"
 
     def get_top_level_flow_path(self):
         return pathlib.Path(__file__).resolve()

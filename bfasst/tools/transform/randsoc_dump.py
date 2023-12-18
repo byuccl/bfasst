@@ -1,29 +1,23 @@
 """Tool for dumping the bels of a placed and routed design with Isoblaze"""
 from bfasst.tools.tool import ToolBase
-from bfasst.paths import (
-    BFASST_UTILS_PATH,
-    DUMP_TOOL_BUILD_PATH,
-    RAND_SOC_BUILD_PATH,
-)
+from bfasst.paths import BFASST_UTILS_PATH, BUILD_PATH
 
 
 class RandsocDump(ToolBase):
     """Tool for dumping the bels of a placed and routed design with Isoblaze"""
 
-    def __init__(self, flow, num_designs):
+    def __init__(self, flow, checkpoint, dumpfile, labelfile):
         super().__init__(flow)
 
-        self.build_path = DUMP_TOOL_BUILD_PATH
-        self.num_designs = num_designs
+        self.build_path = BUILD_PATH / "randsoc_dump"
+        self.checkpoint = checkpoint
+        self.dumpfile = dumpfile
+        self.labelfile = labelfile
         self._init_outputs()
 
     def _init_outputs(self):
-        self.outputs["dumpfile_output"] = [
-            f"{self.build_path}/design_{i}.dump" for i in range(self.num_designs)
-        ]
-        self.outputs["labelfile_output"] = [
-            f"{self.build_path}/design_{i}_golden.dump" for i in range(self.num_designs)
-        ]
+        self.outputs["dumpfile_output"] = self.build_path / self.dumpfile
+        self.outputs["labelfile_output"] = self.build_path / self.labelfile
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
@@ -34,17 +28,13 @@ class RandsocDump(ToolBase):
         self._append_rule_snippets_default(__file__)
 
     def create_build_snippets(self):
-        impl_checkpoint_base_path = RAND_SOC_BUILD_PATH
-        for i in range(self.num_designs):
-            impl_checkpoint_path = impl_checkpoint_base_path / f"design_{i}" / "impl" / "impl.dcp"
-
-            self._append_build_snippets_default(
-                __file__,
-                {
-                    "dumpfile": self.outputs["dumpfile_output"][i],
-                    "labelfile": self.outputs["labelfile_output"][i],
-                    "design_checkpoint": impl_checkpoint_path,
-                    "randsoc_dump_util": BFASST_UTILS_PATH / "randsoc_dump.py",
-                    "collect_ip_util": BFASST_UTILS_PATH / "collect_ip.tcl",
-                },
-            )
+        self._append_build_snippets_default(
+            __file__,
+            {
+                "dumpfile": self.outputs["dumpfile_output"],
+                "labelfile": self.outputs["labelfile_output"],
+                "design_checkpoint": self.checkpoint,
+                "randsoc_dump_util": BFASST_UTILS_PATH / "randsoc_dump.py",
+                "collect_ip_util": BFASST_UTILS_PATH / "collect_ip.tcl",
+            },
+        )

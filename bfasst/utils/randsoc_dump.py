@@ -6,13 +6,7 @@ import pathlib
 import argparse
 import shutil
 
-from bfasst.paths import (
-    BFASST_UTILS_PATH,
-    ISOBLAZE_DUMP_DCP_PATH,
-    ISOBLAZE_DUMP_PATH,
-    ISOBLAZE_GOLDEN_PATH,
-    DUMP_TOOL_BUILD_PATH,
-)
+from bfasst.paths import BFASST_UTILS_PATH, ISOBLAZE_PATH, BUILD_PATH
 
 
 class NetlistDump:
@@ -21,10 +15,17 @@ class NetlistDump:
     between them in a design, and one that lists which BEL belongs to
     which IP in the design."""
 
+    # paths to isoblaze scripts, stored as class variables for convenience
+    ISOBLAZE_SRC_PATH = ISOBLAZE_PATH / "src"
+    ISOBLAZE_DUMP_PATH = ISOBLAZE_SRC_PATH / "dump.tcl"
+    ISOBLAZE_DUMP_DCP_PATH = ISOBLAZE_SRC_PATH / "dump-dcp.tcl"
+    ISOBLAZE_GOLDEN_PATH = ISOBLAZE_SRC_PATH / "golden.tcl"
+
     def __init__(self, design_checkpoint, dump_file, label_file):
         self.design_checkpoint = design_checkpoint
         self.dump_file = dump_file
         self.label_file = label_file
+        self.build_path = pathlib.Path(BUILD_PATH / "randsoc_dump")
 
     def run(self) -> None:
         """Run the utility to generate the dump_file and label_file"""
@@ -34,15 +35,15 @@ class NetlistDump:
         dumpfile = self.dump_design(pathlib.Path(self.design_checkpoint).with_suffix(""))
 
         # rename the dump file (and move it to the correct build subdir)
-        dumpfile.rename(DUMP_TOOL_BUILD_PATH / self.dump_file)
+        dumpfile.rename(self.build_path / self.dump_file)
 
         # get a path to the ipfile
-        ipfile_path = DUMP_TOOL_BUILD_PATH / f"{self.label_file}_ip_list.txt"
+        ipfile_path = self.build_path / f"{self.label_file}_ip_list.txt"
 
         # label the bels with the IP they belong to
         self.label_bels(
             design_checkpoint=self.design_checkpoint,
-            goldfile_path=DUMP_TOOL_BUILD_PATH / self.label_file,
+            goldfile_path=self.build_path / self.label_file,
             ipfile_path=ipfile_path,
         )
 
@@ -50,7 +51,7 @@ class NetlistDump:
         pathlib.Path(ipfile_path).unlink()
 
         # remove the .Xil directory since it is unnecessary
-        shutil.rmtree(DUMP_TOOL_BUILD_PATH / ".Xil")
+        shutil.rmtree(self.build_path / ".Xil")
 
     def dump_design(self, design_checkpoint) -> pathlib.Path:
         """Dump the design's impl.dcp to isoblaze dumpfile format,
@@ -60,14 +61,14 @@ class NetlistDump:
             "-mode",
             "batch",
             "-source",
-            f"{ISOBLAZE_DUMP_PATH}",
+            f"{self.ISOBLAZE_DUMP_PATH}",
             "-source",
-            f"{ISOBLAZE_DUMP_DCP_PATH}",
+            f"{self.ISOBLAZE_DUMP_DCP_PATH}",
             "-tclargs",
             f"{design_checkpoint}",
         ]
 
-        proc = subprocess.Popen(command, cwd=DUMP_TOOL_BUILD_PATH, stdout=subprocess.PIPE)
+        proc = subprocess.Popen(command, cwd=self.build_path, stdout=subprocess.PIPE)
         proc.communicate()
         return_code = proc.wait()
 
@@ -75,7 +76,7 @@ class NetlistDump:
             raise RuntimeError(f"Failed to dump design {design_checkpoint}")
 
         # if we pass this point, the dump was successful and the vivado artifacts can be removed
-        self.remove_vivado_artifacts(DUMP_TOOL_BUILD_PATH)
+        self.remove_vivado_artifacts(self.build_path)
 
         # isoblaze will create a dump file with the same name
         # as the design checkpoint with a .dump extension
@@ -128,14 +129,14 @@ class NetlistDump:
             f"{ipfile_path}",
         ]
 
-        proc = subprocess.Popen(command, cwd=DUMP_TOOL_BUILD_PATH, stdout=subprocess.PIPE)
+        proc = subprocess.Popen(command, cwd=self.build_path, stdout=subprocess.PIPE)
         proc.communicate()
         return_code = proc.wait()
 
         if return_code != 0:
             raise RuntimeError(f"Failed to collect IPs from design {design_checkpoint}")
 
-        self.remove_vivado_artifacts(DUMP_TOOL_BUILD_PATH)
+        self.remove_vivado_artifacts(self.build_path)
 
     def generate_isoblaze_goldfile(self, ip, design_checkpoint) -> pathlib.Path:
         """Use Isoblaze to collect bels that belong to a given IP"""
@@ -145,22 +146,22 @@ class NetlistDump:
             "-mode",
             "batch",
             "-source",
-            f"{ISOBLAZE_GOLDEN_PATH}",
+            f"{self.ISOBLAZE_GOLDEN_PATH}",
             "-tclargs",
             f"{ip}",
         ]
 
-        proc = subprocess.Popen(command, cwd=DUMP_TOOL_BUILD_PATH, stdout=subprocess.PIPE)
+        proc = subprocess.Popen(command, cwd=self.build_path, stdout=subprocess.PIPE)
         proc.communicate()
         return_code = proc.wait()
 
         if return_code != 0:
             raise RuntimeError(f"Failed to dump design {design_checkpoint}")
 
-        self.remove_vivado_artifacts(DUMP_TOOL_BUILD_PATH)
+        self.remove_vivado_artifacts(self.build_path)
 
         # isoblaze will create a golden file called golden.{ip}
-        return pathlib.Path(f"{DUMP_TOOL_BUILD_PATH}/golden.{ip}")
+        return pathlib.Path(f"{self.build_path}/golden.{ip}")
 
     def concat_bels_from_isoblaze_goldfiles(self, isoblaze_goldfiles, goldfile_path) -> None:
         """Concatenate the bels from the isoblaze_goldfiles into the goldfile"""
