@@ -13,6 +13,3 @@
 [submodule "third_party/gmt_tools"]
 	path = third_party/gmt_tools
 	url = git@github.com:byuccl/gmt_tools.git
-[submodule "third_party/isoblaze"]
-	path = third_party/isoblaze
-	url = git@github.com:byuccl/isoblaze.git

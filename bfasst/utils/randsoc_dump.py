@@ -6,7 +6,7 @@ import pathlib
 import argparse
 import shutil
 
-from bfasst.paths import BFASST_UTILS_PATH, ISOBLAZE_PATH, BUILD_PATH
+from bfasst.paths import BFASST_UTILS_PATH, BUILD_PATH
 
 
 class NetlistDump:
@@ -16,10 +16,9 @@ class NetlistDump:
     which IP in the design."""
 
     # paths to isoblaze scripts, stored as class variables for convenience
-    ISOBLAZE_SRC_PATH = ISOBLAZE_PATH / "src"
-    ISOBLAZE_DUMP_PATH = ISOBLAZE_SRC_PATH / "dump.tcl"
-    ISOBLAZE_DUMP_DCP_PATH = ISOBLAZE_SRC_PATH / "dump-dcp.tcl"
-    ISOBLAZE_GOLDEN_PATH = ISOBLAZE_SRC_PATH / "golden.tcl"
+    ISOBLAZE_DUMP_PATH = BFASST_UTILS_PATH / "dump.tcl"
+    ISOBLAZE_DUMP_DCP_PATH = BFASST_UTILS_PATH / "dump-dcp.tcl"
+    ISOBLAZE_GOLDEN_PATH = BFASST_UTILS_PATH / "golden.tcl"
 
     def __init__(self, design_checkpoint, dump_file, label_file):
         self.design_checkpoint = design_checkpoint
