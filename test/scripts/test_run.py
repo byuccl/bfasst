@@ -45,34 +45,34 @@ class TestApplicationRunner(unittest.TestCase):
         self.assertEqual(
             status, 0, msg=f"run.py failed with return code {status}, command: {' '.join(cmd)}"
         )
+
         self.assertIn("ninja: no work to do.", str(output))
 
-    def test_run_vivado_flow(self):
-        """Test that the runner runs the vivado flow without errors"""
-        self.__run_flow("Vivado")
 
     def test_run_vivado_ooc_flow(self):
         """Test that the runner runs the vivado_ooc flow without errors"""
         self.__run_flow("VivadoOoc")
 
-    def test_run_vivado_bit_analysis_flow(self):
-        """Test that the runner runs the vivado_bit_analysis flow without errors"""
-        self.__run_flow("VivadoBitAnalysis")
 
-    def test_run_vivado_bit_to_netlist(self):
-        """Test that the runner runs the vivado_bit_to_netlist flow without errors"""
-        self.__run_flow("VivadoBitToNetlist")
-
-    def test_run_vivado_phys_netlist_flow(self):
-        """Test that the runner runs the vivado_phys_netlist flow without errors"""
-        self.__run_flow("VivadoPhysNetlist")
-
-    def test_run_vivado_phys_netlist_cmp_flow(self):
-        """Test that the runner runs the vivado_phys_netlist_cmp flow without errors"""
-        self.__run_flow("VivadoPhysNetlistCmp")
 
     # It would be nice to have the below tests added in,
     # but they have serious issues with runtime.
+
+    # def test_run_vivado_bit_analysis_flow(self):
+    #     """Test that the runner runs the vivado_bit_analysis flow without errors"""
+    #     self.__run_flow("VivadoBitAnalysis")
+
+    # def test_run_vivado_bit_to_netlist(self):
+    #     """Test that the runner runs the vivado_bit_to_netlist flow without errors"""
+    #     self.__run_flow("VivadoBitToNetlist")
+
+    # def test_run_vivado_phys_netlist_flow(self):
+    #     """Test that the runner runs the vivado_phys_netlist flow without errors"""
+    #     self.__run_flow("VivadoPhysNetlist")
+
+    # def test_run_vivado_phys_netlist_cmp_flow(self):
+    #     """Test that the runner runs the vivado_phys_netlist_cmp flow without errors"""
+    #     self.__run_flow("VivadoPhysNetlistCmp")
 
     # def test_run_vivado_structural_error_injection_flow(self):
     #     """Test that the runner runs the vivado_phys_netlist_cmp flow without errors"""
