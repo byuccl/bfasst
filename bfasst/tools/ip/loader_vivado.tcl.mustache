@@ -6,31 +6,25 @@ open_checkpoint {{ loader_impl_dcp }}
 read_checkpoint -cell "static_top_i/top_0" {{ user_synth_dcp }}
 
 # Step 4: Place and route
-puts "Time starting implementing partition DTIMING"
-puts [exec date]
+set timen [exec date]
+puts "Loader impl start time: $timen"
 place_design
 route_design
-puts "Time ending implementing partition DTIMING"
-puts [exec date]
 
 # Step 4: Write out implemented checkpoints
 write_checkpoint {{ final }}.dcp -force
 write_edif {{ final }}.edif -force
 report_utilization -file {{ final }}_utilization_report.txt -hierarchical
 
-puts "Time starting writing bitstream DTIMING"
-puts [exec date]
-
-
 # Step 5.1: Bitstream for timing purposes
 write_bitstream -bin_file -cell "static_top_i/top_0" {{ user_partial_bitstream }} -force
 
-
-puts "Time starting writing bitstreams not applicable for timing DTIMING"
-puts [exec date]
-
 # Step 5.2: Write out full bitstream
 write_bitstream -bin_file {{ final }}_unencrypted.bit -force
+
+set timen [exec date]
+puts "Loader impl end time: $timen"
+
 
 #Step 6: Write out encrypted bitstream
 set_property BITSTREAM.ENCRYPTION.ENCRYPT YES [get_designs checkpoint_implemented_loader]

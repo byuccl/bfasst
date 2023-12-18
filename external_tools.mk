@@ -80,4 +80,4 @@ install_wafove:
 install_encrypted_ip:
 	git submodule init third_party/encrypted_ip
 	git submodule update third_party/encrypted_ip
-	$(IN_ENV) pip install -r third_party/encrypted_ip
+	$(IN_ENV) pip install -r third_party/encrypted_ip/requirements.txt
