@@ -72,11 +72,3 @@ install_yosys:
 install_wafove:
 	$(IN_ENV) python -m pip install -e third_party/WaFoVe
 	$(IN_ENV) cd third_party/WaFoVe && make build
-
-################################################################################
-# Isoblaze
-################################################################################
-
-install_isoblaze:
-	git submodule init third_party/isoblaze
-	git submodule update third_party/isoblaze
