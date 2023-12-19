@@ -87,6 +87,11 @@ def install_tools(tools):
     return check_tools(tools)
 
 
+def install_tools_cli(tools):
+    if not install_tools(tools):
+        sys.exit(1)
+
+
 def install_flow_tools(flow):
     tools = FlowDescriptionParser().get_flow_tools(flow)
     return install_tools(tools)
@@ -147,7 +152,7 @@ def main():
 
     parser_install = subparsers.add_parser("install")
     parser_install.add_argument("tool", nargs="+")
-    parser_install.set_defaults(func=lambda args: install_tools(args.tool))
+    parser_install.set_defaults(func=lambda args: install_tools_cli(args.tool))
 
     parser_install = subparsers.add_parser("install_flow_tools")
     parser_install.add_argument("flow")
