@@ -96,10 +96,6 @@ class NinjaFlowManager:
         with open(ROOT_PATH / "master.ninja.mustache", "r") as f:
             deps = []
             self.flows[0].add_ninja_deps(deps)
-
-            # deps must be unique
-            deps = list(set(deps))
-
             master_ninja = chevron.render(
                 f,
                 {
