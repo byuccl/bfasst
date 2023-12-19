@@ -10,8 +10,7 @@ PUBLIC_SUBMODULES = \
 	third_party/WaFoVe
 
 PRIVATE_SUBMODULES = \
-	third_party/gmt_tools \
-	third_party/isoblaze
+	third_party/gmt_tools
 
 include external_tools.mk
 
