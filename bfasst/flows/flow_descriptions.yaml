@@ -90,10 +90,9 @@ flows:
   - gmt_tools
 
 - name: RandSocDumped
-  description: Dump random block design(s) with Isoblaze
+  description: Dump random block design(s)
   module: rand_soc_dumped
   class: RandSocDumped
   external_tools:
   - vivado
   - gmt_tools
-  - isoblaze

@@ -52,7 +52,6 @@ jobs:
       run: |
         eval `ssh-agent -s`
         ssh-add - <<< '${{ secrets.GMT_TOOLS_DEPLOY_SSH_KEY }}'
-        ssh-add - <<< '${{ secrets.ISOBLAZE_DEPLOY_SSH_KEY }}'
         make env
         . .venv/bin/activate && python bfasst/external_tools.py install_test_yaml ${{ matrix.experiment }}
 
