@@ -5,6 +5,7 @@ import subprocess
 import pathlib
 import argparse
 import shutil
+from bfasst.config import VIVADO_BIN_PATH
 
 from bfasst.paths import BFASST_UTILS_PATH, BUILD_PATH
 
@@ -57,7 +58,7 @@ class NetlistDump:
         """Dump the design's impl.dcp to isoblaze dumpfile format,
         and return the path to the dumpfile"""
         command = [
-            "vivado",
+            f"{VIVADO_BIN_PATH}",
             "-mode",
             "batch",
             "-source",
@@ -122,7 +123,7 @@ class NetlistDump:
     def write_ip_file(self, design_checkpoint, ipfile_path) -> None:
         """Generate a file that lists all ip in a given design"""
         command = [
-            "vivado",
+            f"{VIVADO_BIN_PATH}",
             f"{design_checkpoint}",
             "-mode",
             "batch",
@@ -144,7 +145,7 @@ class NetlistDump:
     def generate_isoblaze_goldfile(self, ip, design_checkpoint) -> pathlib.Path:
         """Use Isoblaze to collect bels that belong to a given IP"""
         command = [
-            "vivado",
+            f"{VIVADO_BIN_PATH}",
             f"{design_checkpoint}",
             "-mode",
             "batch",
