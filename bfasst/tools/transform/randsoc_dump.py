@@ -1,4 +1,5 @@
 """Tool for dumping the bels of a placed and routed design with Isoblaze"""
+from pathlib import Path
 from bfasst.tools.tool import ToolBase
 from bfasst.paths import BFASST_UTILS_PATH, BUILD_PATH
 
@@ -9,7 +10,7 @@ class RandsocDump(ToolBase):
     def __init__(self, flow, checkpoint, dumpfile, labelfile):
         super().__init__(flow)
 
-        self.build_path = BUILD_PATH / "randsoc_dump"
+        self.build_path = BUILD_PATH / "randsoc_dump" / Path(dumpfile).stem
         self.checkpoint = checkpoint
         self.dumpfile = dumpfile
         self.labelfile = labelfile

@@ -24,7 +24,8 @@ class NetlistDump:
         self.design_checkpoint = design_checkpoint
         self.dump_file = dump_file
         self.label_file = label_file
-        self.build_path = pathlib.Path(BUILD_PATH / "randsoc_dump")
+        self.build_path = pathlib.Path(BUILD_PATH / "randsoc_dump" / pathlib.Path(dump_file).stem)
+        self.build_path.mkdir(parents=True, exist_ok=True)
 
     def run(self) -> None:
         """Run the utility to generate the dump_file and label_file"""
