@@ -109,6 +109,9 @@ class NetlistDump:
         # iterate through the ip list and label the bels in the golden_output
         isoblaze_goldfiles = {}
         for ip in ip_list:
+            if ip.endswith("/IBUFT") or ip.endswith("/OBUFT"):
+                # these cells are not actually ip and should be ignored
+                continue
             isoblaze_goldfile = self.generate_isoblaze_goldfile(ip, design_checkpoint)
             isoblaze_goldfiles[ip] = isoblaze_goldfile
 
