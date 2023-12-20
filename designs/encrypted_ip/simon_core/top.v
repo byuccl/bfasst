@@ -21,11 +21,27 @@
 
 
 module top(
-        input wire [7:0] sw, JA, JB, JC, JD,
-        input wire btnCpuReset, clk,
-        output wire [15:0] led
+    input clk,
+    input reset,
+    input [15:0] sw,
+    input [4:0] btn, // Not used
+    output [15:0] led,
+    output [6:0] seg, // Not used
+    output dp, // Not used
+    output [7:0] an // Not used
     );
     
+    wire [7:0] sw2, JA, JB, JC, JD;
+
+    assign btnCpuReset = reset;
+    assign sw2 = sw[7:0];
+    assign JA = sw[15:8];
+    assign JB = {btn, sw[15:13]};
+    assign JC = {btn ^ sw[12:8], btn[2:0] & sw[2:0]};
+    assign JD = {sw[15:8] ^ sw[7:0]};
+
+
+
     wire q;
     wire [7:0] q3;
     
@@ -36,7 +52,7 @@ module top(
 
     wire [49:0] total_in;
 
-    assign total_in = {sw, JA, JB, JC, JD};
+    assign total_in = {sw2, JA, JB, JC, JD};
     
     random_pulse_generator random_pulse_generator_0(
         .clk(clk),
@@ -56,8 +72,8 @@ module top(
         .clk(clk),
         .reset(btnCpuReset),
         .in({total_in[13:0], total_in}),
-        .in_ready(sw[0]),
-        .is_last(sw[1]),
+        .in_ready(sw2[0]),
+        .is_last(sw2[1]),
         .byte_num(JA[2:0]),
         .buffer_full(sha3_high_buffer_full),
         .out(sha3_high_out),
@@ -68,8 +84,8 @@ module top(
     //     .clk(clk),
     //     .reset(btnCpuReset),
     //     .in(total_in[49:18]),
-    //     .in_ready(sw[0]),
-    //     .is_last(sw[1]),
+    //     .in_ready(sw2[0]),
+    //     .is_last(sw2[1]),
     //     .byte_num(JB[1:0]),
     //     .buffer_full(sha3_low_buffer_full),
     //     .out(sha3_low_out),
@@ -78,7 +94,7 @@ module top(
     
     simon_core simon_core_0(
         .clk(clk),
-        .data_in(sw[2]),
+        .data_in(sw2[2]),
         .data_rdy(JC[1:0]),
         .cipher_out(cipher_out)
     );

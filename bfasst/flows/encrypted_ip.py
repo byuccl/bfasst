@@ -102,8 +102,14 @@ class EncryptedIP(Flow):
                     "Instance": instance,
                     "LUTs-Regular": regular_data[instance]["Total LUTs"],
                     "FFs-Regular": regular_data[instance]["FFs"],
+                    "RAMB-Regular": regular_data[instance]["RAMB36"]
+                    + regular_data[instance]["RAMB18"],
+                    "DSP-Regular": regular_data[instance]["DSP Blocks"],
                     "LUTs-Encrypted": encrypted_data[instance]["Total LUTs"],
                     "FFs-Encrypted": encrypted_data[instance]["FFs"],
+                    "RAMB-Encrypted": encrypted_data[instance]["RAMB36"]
+                    + encrypted_data[instance]["RAMB18"],
+                    "DSP-Encrypted": encrypted_data[instance]["DSP Blocks"],
                 }
             )
             df = pd.concat(

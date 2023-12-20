@@ -21,11 +21,24 @@
 
 
 module top(
-        input wire [7:0] sw, JA, JB, JC, JD,
-        input wire btnCpuReset, clk,
-        output wire [15:0] led
+        input clk,
+    input reset,
+    input [15:0] sw,
+    input [4:0] btn, // Not used
+    output [15:0] led,
+    output [6:0] seg, // Not used
+    output dp, // Not used
+    output [7:0] an // Not used
     );
     
+    wire [7:0] sw2, JA, JB, JC, JD;
+    wire btnCpuReset;
+    assign btnCpuReset = reset;
+    assign sw2 = sw[7:0];
+    assign JA = sw[15:8];
+    assign JB = {btn, sw[15:13]};
+    assign JC = {btn ^ sw[12:8], btn[2:0] & sw[2:0]};
+    assign JD = {sw[15:8] ^ sw[7:0]};
     
     wire trdy, devsel, par, stop, inta, serr, perr; // c
     wire [31:0] ad, wb_address, wb_dat_o; // c
@@ -119,23 +132,23 @@ module top(
         .wb_we_out(p_wb_we_out),
         .wb_dat_out(p_dat_out),
         .wb_dat_in(wb_dat_o), // [31:0]
-        .wb_ack_in(sw[0])
+        .wb_ack_in(sw2[0])
     );
 
     
     pwm pwm_0(
         .i_wb_clk(clk),
         .i_wb_rst(btnCpuReset),
-        .i_wb_cyc(sw[0]),
-        .i_wb_stb(sw[1]),
-        .i_wb_we(sw[2]),
+        .i_wb_cyc(sw2[0]),
+        .i_wb_stb(sw2[1]),
+        .i_wb_we(sw2[2]),
         .i_wb_adr(tohost_data[15:0]), // [15:0]
         .i_wb_data(tohost_data[31:16]),     // [15:0]
         .o_wb_data(pwm_o_wb_data),
         .o_wb_ack(pwm_o_wb_ack),
         .i_extclk(clk),
         .i_DC(wb_dat_o[15:0]),        // [15:0]
-        .i_valid_DC(sw[3]),
+        .i_valid_DC(sw2[3]),
         .o_pwm(pwm_o_pwm)
     );
     
