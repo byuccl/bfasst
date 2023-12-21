@@ -4,7 +4,7 @@ import subprocess
 import unittest
 import io
 from contextlib import redirect_stderr
-from bfasst.paths import TEST_PATH, ROOT_PATH
+from bfasst.paths import TESTS_PATH, ROOT_PATH
 from bfasst.flows.flow import FlowNoDesign
 from bfasst.yaml_parser import FlowDescriptionParser
 
@@ -97,7 +97,7 @@ class TestApplicationRunner(unittest.TestCase):
 
     def test_check_args_succeeds_on_yaml(self):
         """Test that the check_args function accepts only a yaml or a design/flow"""
-        args = [TEST_PATH / "ci/vivado_bit_analysis.yaml"]
+        args = [TESTS_PATH / "ci/vivado_bit_analysis.yaml"]
         self.__try_check_args_for_success(args)
 
     def test_check_args_succeeds_on_flow_and_design(self):
