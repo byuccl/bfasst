@@ -1,6 +1,5 @@
 designs:
   - ooc/
 
-flow: vivado_ooc
+flow: VivadoOoc
 
-synth: "-flatten_hierarchy full"
