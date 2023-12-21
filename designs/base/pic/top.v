@@ -56,6 +56,7 @@ module top(
     assign led[7] = ^pwm_o_wb_data;
     assign led[8] = pwm_o_wb_ack ^ pwm_o_pwm;
     assign led[9] = ^y_out;
+    assign led[10] = INTR_O;
     
     
     pci_mini pci_mini_0(

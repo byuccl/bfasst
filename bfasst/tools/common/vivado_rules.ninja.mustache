@@ -1,10 +1,8 @@
 rule vivado
-    command = export tempjou=$$(mktemp); export templog=$$(mktemp); cd $cwd && {{ utils_path }}/retry.sh {{ vivado_path }} -mode batch -journal $$tempjou -log $$templog -source $in >&- && mv $$tempjou $journal && mv $$templog $log
+    command = cd $cwd && {{ utils_path }}/retry.sh {{ vivado_path }} -mode batch -journal $journal -log $log -source $in >&- 2>&-
     description = vivado $in
 
-{{#in_context}}
 rule vivado_ioparse
     command = python3 bfasst/utils/vivado_ioparse.py <$in >$out
     description = vivado_ioparse <$in >$out
-    
-{{/in_context}}
+

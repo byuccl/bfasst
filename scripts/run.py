@@ -134,4 +134,4 @@ if __name__ == "__main__":
             check_tools=not parsed_args.no_tool_checks,
         )
     else:
-        ApplicationRunner().run_yaml(parsed_args.yaml, check_tools=parsed_args.no_tool_checks)
+        ApplicationRunner().run_yaml(parsed_args.yaml, check_tools=not parsed_args.no_tool_checks)

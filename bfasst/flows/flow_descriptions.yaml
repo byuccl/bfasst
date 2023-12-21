@@ -88,3 +88,11 @@ flows:
   external_tools:
   - vivado
   - gmt_tools
+
+- name: EncryptedIP
+  description: Encrypt IP in Vivado
+  module: encrypted_ip
+  class: EncryptedIP
+  external_tools:
+  - vivado
+  - encrypted_ip

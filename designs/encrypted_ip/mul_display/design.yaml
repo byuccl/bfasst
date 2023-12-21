@@ -1,0 +1,12 @@
+top: top
+
+encrypted_ip:
+  ip:
+    - definition: "int_mul_8"
+      instances: 
+      - "int_mul_inst"
+    - definition: "configurable_display"
+      instances:
+      - "display_inst"
+
+  user_files: ["top.v"]

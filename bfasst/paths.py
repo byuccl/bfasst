@@ -5,7 +5,7 @@ import os
 
 ROOT_PATH = pathlib.Path(__file__).resolve().parent.parent
 
-BUILD_PATH = pathlib.Path().cwd() / "build"
+BUILD_PATH = pathlib.Path().cwd() / "_build"
 
 DESIGNS_PATH = ROOT_PATH / "designs"
 BFASST_PATH = ROOT_PATH / "bfasst"
@@ -35,6 +35,7 @@ YOSYS_RESOURCES = RESOURCES_PATH / "yosys"
 ONESPIN_RESOURCES = RESOURCES_PATH / "onespin"
 YOSYS_INSTALL_DIR = THIRD_PARTY_PATH / "yosys"
 GMT_TOOLS_PATH = THIRD_PARTY_PATH / "gmt_tools"
+ENCRYPTED_IP_PATH = THIRD_PARTY_PATH / "encrypted_ip"
 RAPIDWRIGHT_PATH = THIRD_PARTY_PATH / "RapidWright"
 YOSYS_PATH = THIRD_PARTY_PATH / "yosys"
 

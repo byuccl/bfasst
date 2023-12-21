@@ -1,4 +1,4 @@
-VIVADO_PATH := "/tools/Xilinx/Vivado/2022.2/bin/vivado"
+VIVADO_PATH := "/tools/Xilinx/Vivado/2021.1/bin/vivado"
 IN_ENV = if [ -e .venv/bin/activate ]; then . .venv/bin/activate; fi;
 CAPNPJ := $(shell which capnpc-java)
 PYTHON311 := $(shell which python3.11)
@@ -10,7 +10,8 @@ PUBLIC_SUBMODULES = \
 	third_party/WaFoVe
 
 PRIVATE_SUBMODULES = \
-	third_party/gmt_tools
+	third_party/gmt_tools \
+	third_party/encrypted_ip
 
 include external_tools.mk
 

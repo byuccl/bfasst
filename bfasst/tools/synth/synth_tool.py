@@ -8,8 +8,9 @@ from bfasst.tools.tool import Tool
 class SynthTool(Tool):
     """Base class for synthesis tools"""
 
-    def __init__(self, flow, design_path, ooc=False) -> None:
+    def __init__(self, flow, design_path, top=None, ooc=False) -> None:
         super().__init__(flow, design_path)
+        self.top = top
         if ooc:
             self.build_path = self.design_build_path / "synth_ooc"
         else:

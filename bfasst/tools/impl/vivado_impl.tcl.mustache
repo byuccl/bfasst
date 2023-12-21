@@ -13,7 +13,7 @@ route_design
 write_checkpoint -force -file {{ impl_output }}/impl.dcp
 write_edif -force -file {{ impl_output }}/viv_impl.edf
 write_verilog -force -file {{ impl_output }}/viv_impl.v
-report_utilization -file {{ impl_output }}/utilization.txt
+report_utilization -file {{ impl_output }}/utilization.txt -hierarchical
 {{#bit}}
 write_bitstream -force {{ . }}
 

@@ -40,9 +40,8 @@ class ToolBase(abc.ABC):
         assuming default filenames are used
         """
 
-        py_tool_path = pathlib.Path(py_tool_path)
-
         if rules_path is None:
+            py_tool_path = pathlib.Path(py_tool_path)
             if render_dict:
                 rules_path = py_tool_path.parent / (py_tool_path.stem + "_rules.ninja.mustache")
             else:
@@ -110,3 +109,12 @@ class Tool(ToolBase, abc.ABC):
         self.design_props = None
         if design_yaml.is_file():
             self.design_props = DesignParser(design_yaml)
+
+    @abc.abstractmethod
+    def _init_outputs(self):
+        """Initialize the outputs for this tool"""
+
+    def override_build_path(self, build_path):
+        """Override the build path"""
+        self.build_path = build_path
+        self._init_outputs()

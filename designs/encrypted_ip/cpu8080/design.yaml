@@ -1,0 +1,26 @@
+top: top
+
+include_all_vhdl_files: True
+
+include_all_verilog_files: True
+
+
+
+encrypted_ip:
+  user_files: ["top.v"]
+  ip:
+    - definition: "fixed_point_sqrt"
+      instances: 
+      - "fixed_point_sqrt_0"
+    - definition: "graphiti"
+      instances:
+      - "graphiti_0"
+    - definition: "hight"
+      instances:
+      - "hight_0"
+    - definition: "lfsr_randgen"
+      instances:
+      - "lfsr_randgen_0"
+    - definition: "cpu8080"
+      instances:
+      - "cpu8080_0"

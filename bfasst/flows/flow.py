@@ -2,6 +2,7 @@
 import abc
 
 from bfasst.paths import BUILD_PATH, DESIGNS_PATH
+from bfasst.yaml_parser import DesignParser
 
 
 class FlowBase(abc.ABC):
@@ -40,6 +41,7 @@ class FlowBase(abc.ABC):
     def create_tool_build_dirs(self):
         """Create the build directories for all tools used by this flow"""
         for tool in self.tools:
+            assert tool.build_path is not None, f"Tool build path must be set for tool {tool}"
             tool.build_path.mkdir(parents=True, exist_ok=True)
 
     def post_execute(self):
@@ -53,6 +55,7 @@ class Flow(FlowBase):
     def __init__(self, design_path):
         super().__init__()
         self.design_path = design_path
+        self.design_props = DesignParser(design_path / "design.yaml")
         self.design_build_path = BUILD_PATH / design_path.relative_to(DESIGNS_PATH)
 
 

@@ -1,0 +1,4 @@
+rule apply_dont_touch
+    command = python bfasst/utils/dont_touch.py $in $out $module_name
+    description = applying don't touch to $in
+

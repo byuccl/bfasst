@@ -88,6 +88,8 @@ class DesignParser(YamlParser):
     def __init__(self, yaml_path):
         super().__init__(yaml_path)
 
+        assert self.props, f"Design {self.yaml_path} is empty"
+
         # Get top module name
         if "top" not in self.props:
             error(f"Design {self.yaml_path} does not specify a top module")
@@ -97,6 +99,10 @@ class DesignParser(YamlParser):
         self.vhdl_libs = None
         if "vhdl_libs" in self.props:
             self.vhdl_libs = self.props["vhdl_libs"]
+
+        self.encrypted_ip = None
+        if "encrypted_ip" in self.props:
+            self.encrypted_ip = self.props["encrypted_ip"]
 
 
 class FlowDescriptionParser(YamlParser):

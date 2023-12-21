@@ -1,0 +1,25 @@
+top: top
+
+include_all_vhdl_files: True
+
+include_all_verilog_files: True
+
+encrypted_ip:
+  ip:
+    - definition: "pci_mini"
+      instances: 
+      - "pci_mini_0"
+    - definition: "pic"
+      instances:
+      - "pic_0"
+    - definition: "potato"
+      instances:
+      - "potato_0"
+    - definition: "pwm"
+      instances:
+      - "pwm_0"
+    - definition: "quadratic_func"
+      instances:
+      - "quadratic_func_0"
+
+  user_files: ["top.v"]

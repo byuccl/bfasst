@@ -10,12 +10,12 @@ from bfasst.utils.general import json_write_if_changed
 class VivadoSynth(SynthTool):
     """Tool to create vivado synthesis ninja snippets."""
 
-    def __init__(self, flow, design_path, ooc=False, synth_options=""):
-        super().__init__(flow, design_path, ooc=ooc)
+    def __init__(self, flow, design_path, ooc=False, synth_options="", top=None):
+        super().__init__(flow, design_path, top=top, ooc=ooc)
         self.synth_options = synth_options
+        self._my_dir_path = pathlib.Path(__file__).parent
         if ooc:
             self.synth_options += " -mode out_of_context"
-        self._my_dir_path = pathlib.Path(__file__).parent
 
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()
@@ -25,7 +25,6 @@ class VivadoSynth(SynthTool):
             __file__,
             {
                 "vivado_path": config.VIVADO_BIN_PATH,
-                "in_context": not self.ooc,
                 "utils_path": BFASST_UTILS_PATH,
             },
             COMMON_TOOLS_PATH / "vivado_rules.ninja.mustache",
@@ -38,10 +37,10 @@ class VivadoSynth(SynthTool):
         # Chevron will use this file to fill in the tcl template.
         synth = {
             "part": config.PART,
-            "top": self.design_props.top,
+            "top": self.design_props.top if not self.top else self.top,
             "vhdl": self.vhdl,
             "vhdl_libs": list(self.vhdl_file_lib_map.items()),
-            "verilog": self.verilog,
+            "verilog": [str(path) for path in self.verilog],
             "system_verilog": self.system_verilog,
             "io": str(self.build_path / "report_io.txt") if not self.ooc else False,
             "synth_output": str(self.build_path),
@@ -71,6 +70,7 @@ class VivadoSynth(SynthTool):
         self.outputs["synth_dcp"] = self.build_path / "synth.dcp"
         self.outputs["synth_journal"] = self.build_path / "vivado.jou"
         self.outputs["synth_log"] = self.build_path / "vivado.log"
+        self.outputs["utilization"] = self.build_path / "utilization.txt"
 
         if not self.ooc:
             self.outputs["io_report"] = self.build_path / "report_io.txt"

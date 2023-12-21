@@ -1,0 +1,13 @@
+    checkpoints/divider_dshift_synthed_encrypted.dcp
+    checkpoints/divider_dshift_synthed.dcp
+x   checkpoints/divider_dshift_synthed.edif
+x   src/pid_test/encrypted/divider_dshift_synthed_encrypted.v
+x   src/pid_test/nonencrypted/divider_dshift_synthed.v
+
+    checkpoints/pid_synthed_encrypted.dcp
+    checkpoints/pid_synthed.dcp
+x   checkpoints/pid_synthed.edif
+x   src/pid_test/encrypted/pid_synthed_encrypted.v
+x   src/pid_test/nonencrypted/pid_synthed.v
+
+    user_space_synthed.v

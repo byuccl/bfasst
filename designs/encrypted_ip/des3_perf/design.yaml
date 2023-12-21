@@ -1,0 +1,9 @@
+top: top
+
+encrypted_ip:
+  ip:
+    - definition: "des3_perf"
+      instances: 
+      - "des3_perf_0"
+
+  user_files: ["top.v"]

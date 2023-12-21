@@ -1,0 +1,19 @@
+top: top
+
+include_all_vhdl_files: True
+
+include_all_verilog_files: True
+
+encrypted_ip:
+  ip:
+    - definition: "random_pulse_generator"
+      instances: 
+      - "random_pulse_generator_0"
+    - definition: "sha3_high_throughput"
+      instances:
+      - "sha3_high_throughput_0"
+    - definition: "simon_core"
+      instances:
+      - "simon_core_0"
+
+  user_files: ["top.v"]

@@ -45,12 +45,12 @@ module top(
         .q(q)
     );
     
-    sap sap_0(
-        .clk(clk),
-        .clr(btnCpuReset),
-        .hlt(1'b0),
-        .q3(q3)
-    );
+    // sap sap_0(
+    //     .clk(clk),
+    //     .clr(btnCpuReset),
+    //     .hlt(1'b0),
+    //     .q3(q3)
+    // );
     
     sha3_high_throughput sha3_high_throughput_0(
         .clk(clk),
@@ -64,17 +64,17 @@ module top(
         .out_ready(sha3_high_out_ready)
     );
     
-    sha3_low_throughput sha3_low_throughput_0(
-        .clk(clk),
-        .reset(btnCpuReset),
-        .in(total_in[49:18]),
-        .in_ready(sw[0]),
-        .is_last(sw[1]),
-        .byte_num(JB[1:0]),
-        .buffer_full(sha3_low_buffer_full),
-        .out(sha3_low_out),
-        .out_ready(sha3_low_out_ready)
-    );
+    // sha3_low_throughput sha3_low_throughput_0(
+    //     .clk(clk),
+    //     .reset(btnCpuReset),
+    //     .in(total_in[49:18]),
+    //     .in_ready(sw[0]),
+    //     .is_last(sw[1]),
+    //     .byte_num(JB[1:0]),
+    //     .buffer_full(sha3_low_buffer_full),
+    //     .out(sha3_low_out),
+    //     .out_ready(sha3_low_out_ready)
+    // );
     
     simon_core simon_core_0(
         .clk(clk),
