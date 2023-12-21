@@ -66,6 +66,5 @@ designs:
   - ooc/wb_lcd/
   - ooc/WB_stage/
 
-flow: vivado_ooc
+flow: VivadoOoc
 
-synth: "-flatten_hierarchy full"
