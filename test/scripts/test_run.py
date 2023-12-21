@@ -49,15 +49,14 @@ class TestApplicationRunner(unittest.TestCase):
         self.assertIn("ninja: no work to do.", str(output))
 
 
-    def test_run_vivado_ooc_flow(self):
-        """Test that the runner runs the vivado_ooc flow without errors"""
-        self.__run_flow("VivadoOoc")
-
-
 
     # It would be nice to have the below tests added in,
     # but they have serious issues with runtime.
-
+    
+    # def test_run_vivado_ooc_flow(self):
+    #     """Test that the runner runs the vivado_ooc flow without errors"""
+    #     self.__run_flow("VivadoOoc")
+    
     # def test_run_vivado_bit_analysis_flow(self):
     #     """Test that the runner runs the vivado_bit_analysis flow without errors"""
     #     self.__run_flow("VivadoBitAnalysis")
