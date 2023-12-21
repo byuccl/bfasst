@@ -59,6 +59,11 @@ jobs:
       timeout-minutes: 40
       run: |
         . .venv/bin/activate && python scripts/run.py ${{ matrix.experiment }}
+        ninja_output=$(ninja -n) 
+        echo "$ninja_output"
+        if [[ "$ninja_output" != *"ninja: no work to do."* ]]; then
+          echo "Ninja reported remaining work to do." && exit 1
+        fi
 
     - name: 'Create fname'
       if: failure()
