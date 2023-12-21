@@ -8,7 +8,7 @@ from bfasst.tools.rev_bit.xray import Xray
 from bfasst.tools.synth.vivado_synth import VivadoSynth
 
 
-class VivadoYosysImpl(Flow):
+class VivadoYosysCmp(Flow):
     """Flow to compare reversed netlist to original using yosys."""
 
     def __init__(self, design):
@@ -28,4 +28,4 @@ class VivadoYosysImpl(Flow):
         )
 
     def get_top_level_flow_path(self):
-        return pathlib.Path(__file__).parent / "vivado_yosys_impl.py"
+        return pathlib.Path(__file__)

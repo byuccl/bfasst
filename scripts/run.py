@@ -5,6 +5,7 @@ import pathlib
 import subprocess
 import sys
 
+from bfasst import external_tools
 from bfasst.flows.ninja_flow_manager import NinjaFlowManager
 from bfasst.yaml_parser import FlowDescriptionParser, RunParser
 from bfasst.utils import error, ensure_tuple
@@ -20,15 +21,19 @@ class ApplicationRunner:
         self.deps = None
         self.flow_arguments = None
 
-    def run_flow(self, flow, designs, flow_arguments):
+    def run_flow(self, flow, designs, flow_arguments, check_tools):
         """Run one ore more designs with a given flow."""
         self.designs = ensure_tuple(designs)
         self.flow = flow
+        if check_tools:
+            success = external_tools.check_flow(self.flow)
+            if not success:
+                error("External tools check failed")
         if flow_arguments:
             self.flow_arguments = ast.literal_eval(flow_arguments)
         self.__run_ninja()
 
-    def run_yaml(self, yaml_path):
+    def run_yaml(self, yaml_path, check_tools):
         """Run using a yaml configuration file"""
 
         run_config = RunParser(yaml_path)
@@ -36,6 +41,10 @@ class ApplicationRunner:
         self.designs = run_config.design_paths
         self.flow = run_config.flow
         self.flow_arguments = run_config.flow_arguments
+        if check_tools:
+            success = external_tools.check_flow(self.flow)
+            if not success:
+                error("External tools check failed")
         self.__run_ninja()
 
     def __run_ninja(self):
@@ -80,6 +89,7 @@ def parse_args(args):
         type=str,
         help="Arguments passed to the flow constructor, in the form of a dictionary",
     )
+    parser.add_argument("--no_tool_checks", action="store_true", help="Skip tool checks")
 
     # try to parse the arguments, and if none are provided, print the flow choices
     try:
@@ -118,7 +128,10 @@ if __name__ == "__main__":
 
     if hasattr(parsed_args, "flow"):
         ApplicationRunner().run_flow(
-            parsed_args.flow, parsed_args.design, parsed_args.flow_arguments
+            parsed_args.flow,
+            parsed_args.design,
+            parsed_args.flow_arguments,
+            check_tools=not parsed_args.no_tool_checks,
         )
     else:
-        ApplicationRunner().run_yaml(parsed_args.yaml)
+        ApplicationRunner().run_yaml(parsed_args.yaml, check_tools=parsed_args.no_tool_checks)

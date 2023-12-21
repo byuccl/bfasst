@@ -2,4 +2,4 @@ designs:
     - byu/
     
     
-flow: vivado_ooc
+flow: VivadoOoc

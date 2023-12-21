@@ -21,7 +21,7 @@ from bfasst.flows.vivado_phys_netlist import VivadoPhysNetlist
 from bfasst.flows.vivado_phys_netlist_cmp import VivadoPhysNetlistCmp
 from bfasst.flows.vivado_structural_error_injection import VivadoStructuralErrorInjection
 from bfasst.flows.vivado_conformal import VivadoConformal
-from bfasst.flows.vivado_yosys_impl import VivadoYosysImpl
+from bfasst.flows.vivado_yosys_cmp import VivadoYosysCmp
 
 from bfasst.flows.ninja_flow_manager import NinjaFlowManager, get_design_basenames
 
@@ -68,7 +68,7 @@ class TestNinjaFlowManager(unittest.TestCase):
         self.__check_flow_creation(VivadoConformal, "vivado_conformal")
 
     def test_create_vivado_yosys_impl_flow(self):
-        self.__check_flow_creation(VivadoYosysImpl, "vivado_yosys_impl")
+        self.__check_flow_creation(VivadoYosysCmp, "vivado_yosys_cmp")
 
     def __check_flow_run(self, name, correct_num_build_statements):
         """Check that running flows correctly creates the build.ninja file"""
@@ -115,7 +115,7 @@ class TestNinjaFlowManager(unittest.TestCase):
         self.__check_flow_run("vivado_conformal", 9)
 
     def test_run_vivado_yosys_impl_flow(self):
-        self.__check_flow_run("vivado_yosys_impl", 10)
+        self.__check_flow_run("vivado_yosys_cmp", 10)
 
     # This is disabled right now because it seems to be failing due
     # to file modification time race conditions
