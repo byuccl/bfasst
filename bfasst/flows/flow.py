@@ -33,6 +33,9 @@ class FlowBase(abc.ABC):
             tool.add_ninja_deps(deps)
         deps.append(self.get_top_level_flow_path())
 
+        # deps must be unique
+        deps = list(set(deps))
+
     @abc.abstractmethod
     def get_top_level_flow_path(self) -> str:
         """Get the path to the top level flow file for this flow"""
