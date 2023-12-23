@@ -59,6 +59,10 @@ jobs:
       timeout-minutes: 40
       run: |
         . .venv/bin/activate && python scripts/run.py ${{ matrix.experiment }}
+
+    - name: Check ninja
+      if: ${{ matrix.experiment != 'tests/ci/vivado_phys_netlist_error_inject.yaml' }}
+      run: |
         ninja_output=$(ninja -n) 
         echo "$ninja_output"
         if [[ "$ninja_output" != *"ninja: no work to do."* ]]; then
