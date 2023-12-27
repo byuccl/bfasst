@@ -1,0 +1,4 @@
+rule randsoc_dump
+    command = python $randsoc_dump_util $design_checkpoint $dumpfile $labelfile
+    description = use isoblaze to dump bels from designs and label them with the ip they participate in
+
