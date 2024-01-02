@@ -2,8 +2,10 @@
 
 set -e #exit on error
 
+python scripts/run.py RandSocDumped --flow_arguments="{'num_designs': 1}"
 python scripts/run.py RandSoc --flow_arguments="{'num_designs': 1}"
 python scripts/run.py Vivado designs/basic/and3
+python scripts/run.py VivadoBitToNetlist designs/basic/and3
 python scripts/run.py VivadoBitAnalysis designs/basic/and3
 python scripts/run.py VivadoConformal designs/basic/and3
 python scripts/run.py VivadoOoc designs/basic/and3
