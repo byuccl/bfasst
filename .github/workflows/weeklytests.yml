@@ -42,11 +42,11 @@ jobs:
     - uses: actions/checkout@v3
       with:
         token: ${{ secrets.GMT_TOOLS_PAT }}
-      run: 
-        eval `ssh-agent -s`
-        ssh-add - <<< '${{ secrets.GMT_TOOLS_DEPLOY_SSH_KEY }}'
-        make env
-        . .venv/bin/activate && python bfasst/external_tools.py install rapidwright fasm2bels
+    - run: 
+      eval `ssh-agent -s`
+      ssh-add - <<< '${{ secrets.GMT_TOOLS_DEPLOY_SSH_KEY }}'
+      make env
+      . .venv/bin/activate && python bfasst/external_tools.py install rapidwright fasm2bels
     - uses: ./.github/actions/setup_env
     - name: tests
       timeout-minutes: 40
