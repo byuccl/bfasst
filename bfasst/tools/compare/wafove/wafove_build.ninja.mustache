@@ -1,0 +1,6 @@
+build {{ log_path }}: wafove {{ netlist_a }} {{ netlist_b }} | {{ wafove_tool_path }}
+    base_path = {{ base_path }}
+    top = {{ top }}
+    log_path = {{ log_path }}
+    warnings = {{ warnings }}
+
