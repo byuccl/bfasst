@@ -49,11 +49,13 @@ else
 	cd ${BFASST_PATH_FASM2BELS}
     make env
 	make build
-	make test-py
     cd -
 
     # Run a design to generate the part database
-	python scripts/run.py VivadoBitToNetlist designs/basic/and3 --no_tool_checks
+	mv build build_temp
+    python scripts/run.py VivadoBitToNetlist designs/basic/and3 --no_tool_checks
+    rm -r build
+    mv build_temp build
 
     echo $FASM2BELS_COMMIT > ${BFASST_PATH_FASM2BELS}/fasm2bels_commit.txt
 fi
