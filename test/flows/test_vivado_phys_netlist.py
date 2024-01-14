@@ -56,9 +56,10 @@ class TestVivadoPhysNetlist(unittest.TestCase):
             "foo",
             "bar",
         ]
-        VivadoSynth(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
-        VivadoImpl(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
-        PhysNetlist(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        design_path = DESIGNS_PATH / "byu/alu"
+        VivadoSynth(None, design_path).add_ninja_deps(expected)
+        VivadoImpl(None, design_path).add_ninja_deps(expected)
+        PhysNetlist(None, design_path).add_ninja_deps(expected)
         expected.append(FLOWS_PATH / "vivado_phys_netlist.py")
 
         observed = sorted([str(s) for s in observed])
