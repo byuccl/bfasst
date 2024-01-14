@@ -6,7 +6,6 @@
 import unittest
 
 from bfasst.flows.flow_utils import create_build_file
-from bfasst.flows.flow import FlowNoDesign
 from bfasst.tools.design_create.rand_soc import RandSoC
 from bfasst.tools.synth.vivado_synth_tcl import VivadoSynthFromTcl
 from bfasst.flows.rand_soc import RandSoc
@@ -15,7 +14,6 @@ from bfasst.paths import (
     NINJA_BUILD_PATH,
     BUILD_PATH,
     FLOWS_PATH,
-    DESIGNS_PATH
 )
 
 
