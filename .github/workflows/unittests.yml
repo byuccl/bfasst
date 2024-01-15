@@ -60,6 +60,15 @@ jobs:
       run: |
         . .venv/bin/activate && python scripts/run.py ${{ matrix.experiment }}
 
+    - name: Check ninja
+      if: ${{ matrix.experiment != 'tests/ci/vivado_phys_netlist_error_inject.yaml' }}
+      run: |
+        ninja_output=$(ninja -n) 
+        echo "$ninja_output"
+        if [[ "$ninja_output" != *"ninja: no work to do."* ]]; then
+          echo "Ninja reported remaining work to do." && exit 1
+        fi
+
     - name: 'Create fname'
       if: failure()
       id: set-fname
