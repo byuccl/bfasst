@@ -1,4 +1,33 @@
 designs:
-  - base/
+  - base/aes128
+  - base/amber
+  - base/atahost
+  # - base/bubblesort
+  - base/counter
+  - base/cpu8080
+  - base/des3_area
+  - base/des3_perf
+  # - base/dfadd
+  # - base/dsu3
+  - base/fm_3d_core
+  # - base/jpegencode
+  # - base/leon3s
+  # - base/mctrl
+  - base/md5_pipelined
+  - base/mips_16
+  - base/msp430_vhdl
+  - base/natalius_8bit_risc
+  - base/neo430
+  - base/pic
+  - base/pid
+  - base/pid_simple
+  - base/potato
+  - base/simon_core
+  - base/sudoku
+  - base/uart2spi
+  - base/vga
+  - base/wb_lcd
+
+
 
 flow: vivado
