@@ -54,9 +54,10 @@ class TestVivadoAndReversedFlow(unittest.TestCase):
         self.flow.add_ninja_deps(observed)
 
         expected = ["foo", "bar"]
-        Xray(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
-        VivadoSynth(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
-        VivadoImpl(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        design_path = DESIGNS_PATH / "byu/alu"
+        Xray(None, design_path).add_ninja_deps(expected)
+        VivadoSynth(None, design_path).add_ninja_deps(expected)
+        VivadoImpl(None, design_path).add_ninja_deps(expected)
         expected.append(FLOWS_PATH / "vivado_bit_to_netlist.py")
 
         observed = sorted([str(s) for s in observed])
