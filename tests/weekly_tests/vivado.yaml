@@ -24,7 +24,7 @@ designs:
   - base/potato
   - base/simon_core
   - base/sudoku
-  - base/uart2spi
+  # - base/uart2spi
   - base/vga
   - base/wb_lcd
 
