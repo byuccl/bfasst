@@ -22,7 +22,7 @@ designs:
   - base/pid
   - base/pid_simple
   - base/potato
-  - base/simon_core
+  # - base/simon_core
   - base/sudoku
   # - base/uart2spi
   - base/vga
