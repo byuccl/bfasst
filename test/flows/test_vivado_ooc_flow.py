@@ -87,8 +87,9 @@ class TestVivadoOocFlow(unittest.TestCase):
             "foo",
             "bar",
         ]
-        VivadoSynth(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
-        VivadoImpl(None, DESIGNS_PATH / "byu/alu").add_ninja_deps(expected)
+        design_path = DESIGNS_PATH / "byu/alu"
+        VivadoSynth(None, design_path).add_ninja_deps(expected)
+        VivadoImpl(None, design_path).add_ninja_deps(expected)
         expected.append(FLOWS_PATH / "vivado_ooc.py")
         expected.append(FLOWS_PATH / "vivado.py")
 

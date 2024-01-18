@@ -61,13 +61,13 @@ class TestVivadoStructuralErrorInjection(unittest.TestCase):
             "foo",
             "bar",
         ]
-        desin_path = DESIGNS_PATH / "byu/alu"
-        VivadoSynth(None, desin_path).add_ninja_deps(expected)
-        VivadoImpl(None, desin_path).add_ninja_deps(expected)
-        ErrorInjector(None, desin_path).add_ninja_deps(expected)
-        PhysNetlist(None, desin_path).add_ninja_deps(expected)
-        Xray(None, desin_path).add_ninja_deps(expected)
-        Structural(None, desin_path).add_ninja_deps(expected)
+        design_path = DESIGNS_PATH / "byu/alu"
+        VivadoSynth(None, design_path).add_ninja_deps(expected)
+        VivadoImpl(None, design_path).add_ninja_deps(expected)
+        ErrorInjector(None, design_path).add_ninja_deps(expected)
+        PhysNetlist(None, design_path).add_ninja_deps(expected)
+        Xray(None, design_path).add_ninja_deps(expected)
+        Structural(None, design_path).add_ninja_deps(expected)
         expected.append(FLOWS_PATH / "vivado_structural_error_injection.py")
 
         observed = sorted([str(s) for s in observed])
