@@ -110,13 +110,18 @@ proc pin {p out} {
 }
 
 proc net {n out} {
-	set ps [get_pins -leaf -of_objects $n]
-	if {[llength $ps] < 2 } { return }
+	set pso [get_pins -leaf -filter {DIRECTION == OUT} -of_objects $n]
+	set psi [get_pins -leaf -filter {DIRECTION == IN} -of_objects $n]
+
+	if {[llength $pso] < 1 || [llength $psi] < 1} { return }
 
 	puts -nonewline $out "("
 
-	foreach p $ps {
-		pin $p $out
+	foreach pi $psi {
+		foreach po $pso {
+			pin $po $out
+		}
+		pin $pi $out
 	}
 
 	puts $out ")"
