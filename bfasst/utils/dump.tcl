@@ -115,16 +115,16 @@ proc net {n out} {
 
 	if {[llength $pso] < 1 || [llength $psi] < 1} { return }
 
-	puts -nonewline $out "("
+	if {[llength $pso] > 1} {error "net is multiply driven"}
 
 	foreach pi $psi {
+		puts -nonewline $out "("
 		foreach po $pso {
 			pin $po $out
 		}
 		pin $pi $out
+		puts $out ")"
 	}
-
-	puts $out ")"
 }
 
 proc nets {out} {
