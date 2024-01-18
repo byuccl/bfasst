@@ -72,4 +72,4 @@ install_yosys:
 install_wafove:
 	git submodule init third_party/WaFoVe
 	git submodule update --init --recursive third_party/WaFoVe
-	$(IN_ENV) cd third_party/WaFoVe && make packages && pip install setup.py
+	$(IN_ENV) cd third_party/WaFoVe && pip install setup.py
