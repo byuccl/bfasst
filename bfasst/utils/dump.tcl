@@ -119,9 +119,7 @@ proc net {n out} {
 
 	foreach pi $psi {
 		puts -nonewline $out "("
-		foreach po $pso {
-			pin $po $out
-		}
+		pin $pso $out
 		pin $pi $out
 		puts $out ")"
 	}
