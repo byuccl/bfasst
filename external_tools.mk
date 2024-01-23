@@ -72,4 +72,4 @@ install_yosys:
 install_wafove:
 	git submodule init third_party/WaFoVe
 	git submodule update --init --recursive third_party/WaFoVe
-	$(IN_ENV) cd third_party/WaFoVe && make yosys_cells_sim
+	$(IN_ENV) cd third_party/WaFoVe && python setup.py install && make yosys_cells_sim
