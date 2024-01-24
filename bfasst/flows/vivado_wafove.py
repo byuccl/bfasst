@@ -27,7 +27,7 @@ class VivadoWafove(Flow):
             netlist_a=self.vivado_impl_tool.outputs["impl_verilog"],
             netlist_b=self.xrev_tool.outputs["xray_netlist"],
             log_name="wafove.log",
-            warning_log_name="wafove_warnings.log",
+            std_err_log="wafove_error.log",
         )
 
     def get_top_level_flow_path(self):

@@ -13,8 +13,8 @@ class Wafove(Tool):
     def create_rule_snippets(self):
         self._append_rule_snippets_default(__file__)
 
-    def create_build_snippets(self, netlist_a, netlist_b, log_name, warning_log_name):
-        self._init_outputs(log_name, warning_log_name)
+    def create_build_snippets(self, netlist_a, netlist_b, log_name, std_err_log):
+        self._init_outputs(log_name, std_err_log)
         self._append_build_snippets_default(
             __file__,
             render_dict={
@@ -22,19 +22,22 @@ class Wafove(Tool):
                 "base_path": str(self.build_path),
                 "netlist_a": str(netlist_a),
                 "netlist_b": str(netlist_b),
-                "log_path": str(self.build_path / log_name),
-                "warnings": str(self.build_path / warning_log_name),
+                "log_path": str(self.outputs["wafove_log"]),
+                "std_err_log": str(self.outputs["std_err_log"]),
+                "reversed_tb": str(self.outputs["reversed_tb"]),
+                "reversed_vcd": str(self.outputs["reversed_vcd"]),
+                "impl_tb": str(self.outputs["impl_tb"]),
+                "impl_vcd": str(self.outputs["impl_vcd"]),
             },
         )
 
-    def _init_outputs(self, log_name, warning_log_name):
-        if "wafove_log" not in self.outputs:
-            self.outputs["wafove_log"] = []
-        self.outputs["wafove_log"].append(self.build_path / log_name)
-
-        if "wafove_warnings_log" not in self.outputs:
-            self.outputs["wafove_warnings_log"] = []
-        self.outputs["wafove_warnings_log"].append(self.build_path / warning_log_name)
+    def _init_outputs(self, log_name, std_err_log):
+        self.outputs["wafove_log"] = self.build_path / log_name
+        self.outputs["std_err_log"] = self.build_path / std_err_log
+        self.outputs["reversed_tb"] = self.build_path / f"{self.design_props.top}_reversed_tb.v"
+        self.outputs["reversed_vcd"] = self.build_path / f"{self.design_props.top}_reversed.vcd"
+        self.outputs["impl_tb"] = self.build_path / "viv_impl_tb.v"
+        self.outputs["impl_vcd"] = self.build_path / "viv_impl.vcd"
 
     def add_ninja_deps(self, deps):
         super()._add_ninja_deps_default(deps, __file__)
