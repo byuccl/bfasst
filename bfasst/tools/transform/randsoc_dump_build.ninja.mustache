@@ -1,4 +1,4 @@
-build {{ dumpfile }} {{ labelfile }}: randsoc_dump | {{ design_checkpoint }} {{ randsoc_dump_util }} {{ collect_ip_util }}
+build {{ dumpfile }} {{ labelfile }}: randsoc_dump | {{ design_checkpoint }} {{ randsoc_dump_util }} {{ collect_ip_util }} {{ dump_tcl }} {{ dump_dcp_tcl }}
     randsoc_dump_util = {{ randsoc_dump_util }}
     design_checkpoint = {{ design_checkpoint }}
     dumpfile = {{ dumpfile }}

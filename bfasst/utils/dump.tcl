@@ -110,16 +110,19 @@ proc pin {p out} {
 }
 
 proc net {n out} {
-	set ps [get_pins -leaf -of_objects $n]
-	if {[llength $ps] < 2 } { return }
+	set pso [get_pins -leaf -filter {DIRECTION == OUT} -of_objects $n]
+	set psi [get_pins -leaf -filter {DIRECTION == IN} -of_objects $n]
 
-	puts -nonewline $out "("
+	if {[llength $pso] < 1 || [llength $psi] < 1} { return }
 
-	foreach p $ps {
-		pin $p $out
+	if {[llength $pso] > 1} {error "net is multiply driven"}
+
+	foreach pi $psi {
+		puts -nonewline $out "("
+		pin $pso $out
+		pin $pi $out
+		puts $out ")"
 	}
-
-	puts $out ")"
 }
 
 proc nets {out} {

@@ -37,5 +37,7 @@ class RandsocDump(ToolBase):
                 "design_checkpoint": self.checkpoint,
                 "randsoc_dump_util": BFASST_UTILS_PATH / "randsoc_dump.py",
                 "collect_ip_util": BFASST_UTILS_PATH / "collect_ip.tcl",
+                "dump_tcl": BFASST_UTILS_PATH / "dump.tcl",
+                "dump_dcp_tcl": BFASST_UTILS_PATH / "dump-dcp.tcl",
             },
         )
