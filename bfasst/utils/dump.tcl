@@ -1,3 +1,23 @@
+proc get_ips {} {
+	set ips {}
+	foreach path [get_cells -hierarchical -regex {[^/]*/[^/]*}] {
+		set ip [lindex [split $path /] 1]
+		puts $ip
+		if [regex {[IO]BUFT?} $ip] {continue}
+		lappend ips $ip
+	}
+	return $ips
+}
+
+proc ip {c out} {
+	set ip [lindex [split [get_property NAME $c] /] 1]
+	puts -nonewline $out "\""
+	if {! [regex {[IO]BUFT?} $ip]} {
+		puts -nonewline $out $ip
+	}
+	puts -nonewline "\" "
+}
+
 proc property {b p prefix out} {
 	if {[string first "CONFIG." $p] == -1} { return }
 	if {[string first ".VALUES" $p] != -1} { return }
@@ -82,7 +102,8 @@ proc cell {c out} {
 
 	set ref_name [get_property ORIG_REF_NAME $c]
 	puts -nonewline $out "\"$ref_name\" "
-
+	
+	ip $c $out
 	properties $c $out
 	puts $out ")"
 }
