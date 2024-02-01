@@ -15,7 +15,7 @@ proc ip {c out} {
 	if {! [regex {[IO]BUFT?} $ip]} {
 		puts -nonewline $out $ip
 	}
-	puts -nonewline "\" "
+	puts -nonewline $out "\" "
 }
 
 proc property {b p prefix out} {
