@@ -23,7 +23,6 @@ class RandSocDumped(FlowNoDesign):
                 self,
                 checkpoint=design.parent / "impl" / "impl.dcp",
                 dumpfile=f"design_{i}.dump",
-                labelfile=f"design_{i}_golden.dump",
             )
 
     @classmethod

@@ -18,7 +18,6 @@ class RandsocDump(ToolBase):
 
     def _init_outputs(self):
         self.outputs["dumpfile_output"] = self.build_path / self.dumpfile
-        self.outputs["labelfile_output"] = self.build_path / self.labelfile
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
@@ -33,7 +32,6 @@ class RandsocDump(ToolBase):
             __file__,
             {
                 "dumpfile": self.outputs["dumpfile_output"],
-                "labelfile": self.outputs["labelfile_output"],
                 "design_checkpoint": self.checkpoint,
                 "randsoc_dump_util": BFASST_UTILS_PATH / "randsoc_dump.py",
                 "collect_ip_util": BFASST_UTILS_PATH / "collect_ip.tcl",
