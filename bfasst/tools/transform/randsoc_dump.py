@@ -17,6 +17,7 @@ class RandsocDump(ToolBase):
 
     def _init_outputs(self):
         self.outputs["dumpfile_output"] = self.build_path / self.dumpfile
+
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
         deps.append(BFASST_UTILS_PATH / "randsoc_dump.py")
