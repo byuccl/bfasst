@@ -8,6 +8,7 @@
 # import subprocess
 # import time
 import unittest
+from bfasst.flows.vivado_wafove import VivadoWafove
 
 # from bfasst.flows.flow_utils import get_flows
 from bfasst.paths import (
@@ -70,6 +71,9 @@ class TestNinjaFlowManager(unittest.TestCase):
     def test_create_vivado_yosys_impl_flow(self):
         self.__check_flow_creation(VivadoYosysCmp, "vivado_yosys_cmp")
 
+    def test_create_vivado_wafove_flow(self):
+        self.__check_flow_creation(VivadoWafove, "vivado_wafove")
+
     def __check_flow_run(self, name, correct_num_build_statements):
         """Check that running flows correctly creates the build.ninja file"""
         # Only run with byu/alu. This design is supported by all flows.
@@ -96,6 +100,9 @@ class TestNinjaFlowManager(unittest.TestCase):
     def test_run_vivado_reversed_flow(self):
         self.__check_flow_run("vivado_bit_analysis", 10)
 
+    def test_run_vivado_bit_to_netlist(self):
+        self.__check_flow_run("vivado_bit_to_netlist", 8)
+
     def test_run_vivado_phys_netlist_flow(self):
         self.__check_flow_run("vivado_phys_netlist", 9)
 
@@ -103,9 +110,9 @@ class TestNinjaFlowManager(unittest.TestCase):
         self.__check_flow_run("vivado_phys_netlist_cmp", 13)
 
     def test_run_cmp_error_injection_flow(self):
-        # There should be 200 injections and 200 comparisons for two flows
+        # There should be 200 injections and 200 comparisons for one flow
         # plus all the build statements for the phys_reversed_flow
-        # ((200 * 2) * 2) + 21 = 821 build statements
+        # ((200 * 2)) + 11 = 411 build statements
         self.__check_flow_run("vivado_structural_error_injection", 411)
 
     def test_run_vivado_conformal_flow(self):
@@ -113,6 +120,9 @@ class TestNinjaFlowManager(unittest.TestCase):
 
     def test_run_vivado_yosys_impl_flow(self):
         self.__check_flow_run("vivado_yosys_cmp", 10)
+
+    def test_run_vivado_wafove_flow(self):
+        self.__check_flow_run("vivado_wafove", 9)
 
     # This is disabled right now because it seems to be failing due
     # to file modification time race conditions

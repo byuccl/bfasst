@@ -1,0 +1,7 @@
+designs:
+    - byu/
+    
+    
+flow: vivado_bit_to_netlist
+
+synth_options: -max_dsp 0
