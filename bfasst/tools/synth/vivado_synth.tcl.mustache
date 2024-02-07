@@ -29,5 +29,8 @@ write_checkpoint -force -file {{ synth_output }}/synth.dcp
 report_io -force -file {{ . }}
 
 {{/io}}
-} ] } { exit 1 }
+} error_msg] } { 
+    puts "\nVivado synth error: $error_msg" 
+    exit 1
+ }
 exit

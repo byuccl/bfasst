@@ -18,5 +18,8 @@ report_utilization -file {{ impl_output }}/utilization.txt
 write_bitstream -force {{ . }}
 
 {{/bit}}
-} ] } { exit 1 }
+} error_msg] } { 
+    puts "\nVivado impl error: $error_msg" 
+    exit 1
+ }
 exit
