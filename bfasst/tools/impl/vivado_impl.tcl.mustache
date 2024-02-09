@@ -64,5 +64,8 @@ report_timing -file {{ impl_output }}/timing.txt
 write_bitstream -force {{ . }}
 
 {{/bit}}
-} ] } { exit 1 }
+} error_msg] } { 
+    puts "\n$error_msg"
+    exit 1
+ }
 exit

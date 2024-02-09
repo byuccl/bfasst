@@ -14,6 +14,7 @@ from bfasst.paths import (
     RAPIDWRIGHT_PATH,
     ROOT_PATH,
     THIRD_PARTY_PATH,
+    WAFOVE_PATH,
     YOSYS_PATH,
     get_fasm2bels_path,
 )
@@ -59,6 +60,10 @@ def check_rapidwright():
 
 def check_yosys():
     return (YOSYS_PATH / "yosys").is_file()
+
+
+def check_wafove():
+    return (WAFOVE_PATH / "wafove" / "compare_waveforms.py").is_file()
 
 
 ################################################################################

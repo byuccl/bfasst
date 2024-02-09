@@ -2,3 +2,5 @@ designs:
   - byu/
 
 flow: vivado_structural_error_injection
+
+num_runs: 50

@@ -96,3 +96,11 @@ flows:
   external_tools:
   - vivado
   - gmt_tools
+
+- name: VivadoWafove
+  description: Verify netlist equivalence with Wafove
+  module: vivado_wafove
+  class: VivadoWafove
+  external_tools:
+  - vivado
+  - wafove

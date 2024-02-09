@@ -7,18 +7,16 @@ from bfasst.paths import BFASST_UTILS_PATH, BUILD_PATH
 class RandsocDump(ToolBase):
     """Tool for dumping the bels of a placed and routed design with Isoblaze"""
 
-    def __init__(self, flow, checkpoint, dumpfile, labelfile):
+    def __init__(self, flow, checkpoint, dumpfile):
         super().__init__(flow)
 
         self.build_path = BUILD_PATH / "randsoc_dump" / Path(dumpfile).stem
         self.checkpoint = checkpoint
         self.dumpfile = dumpfile
-        self.labelfile = labelfile
         self._init_outputs()
 
     def _init_outputs(self):
         self.outputs["dumpfile_output"] = self.build_path / self.dumpfile
-        self.outputs["labelfile_output"] = self.build_path / self.labelfile
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
@@ -33,9 +31,9 @@ class RandsocDump(ToolBase):
             __file__,
             {
                 "dumpfile": self.outputs["dumpfile_output"],
-                "labelfile": self.outputs["labelfile_output"],
                 "design_checkpoint": self.checkpoint,
                 "randsoc_dump_util": BFASST_UTILS_PATH / "randsoc_dump.py",
-                "collect_ip_util": BFASST_UTILS_PATH / "collect_ip.tcl",
+                "dump_tcl": BFASST_UTILS_PATH / "dump.tcl",
+                "dump_dcp_tcl": BFASST_UTILS_PATH / "dump-dcp.tcl",
             },
         )
