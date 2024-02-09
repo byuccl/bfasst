@@ -1,1 +1,6 @@
 top: UpDownButtonCount
+
+clocks:
+  - name: clk
+    period: 20.000
+    waveform: 0.000 5.000

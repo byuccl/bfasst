@@ -2,3 +2,8 @@ top: pic
 top_architecture: behavioral
 
 include_all_vhdl_files: True
+
+clocks:
+  - name: CLK_I
+    period: 20.000
+    waveform: 0.000 5.000

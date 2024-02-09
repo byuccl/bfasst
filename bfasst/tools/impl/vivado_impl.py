@@ -10,7 +10,7 @@ from bfasst.utils.general import json_write_if_changed
 class VivadoImpl(ImplTool):
     """Tool to create Vivado implementation ninja snippets."""
 
-    def __init__(self, flow, design, ooc=False):
+    def __init__(self, flow, design, ooc=False, impl_options=""):
         super().__init__(flow, design)
         self.ooc = ooc
         if self.ooc:
@@ -29,6 +29,8 @@ class VivadoImpl(ImplTool):
             "synth_output": str(
                 self.build_path.parent / ("synth" if not self.ooc else "synth_ooc")
             ),
+            "clocks": self.design_props.clocks,
+            "clock_crank": True,
         }
         impl_json = json.dumps(impl, indent=4)
         json_write_if_changed(self.build_path / "impl.json", impl_json)

@@ -2,3 +2,8 @@ top: pid
 top_file: PID.v
 
 include_all_verilog_files: True
+
+clocks:
+  - name: i_clk
+    period: 20.000
+    waveform: 0.000 5.000

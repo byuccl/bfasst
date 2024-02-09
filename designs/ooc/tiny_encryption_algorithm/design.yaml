@@ -2,3 +2,8 @@ top: tiny_encryption_algorithm
 top_architecture: behavioral
 
 include_all_vhdl_files: True
+
+clocks:
+  - name: clock
+    period: 20.000
+    waveform: 0.000 5.000

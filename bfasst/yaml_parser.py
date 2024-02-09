@@ -98,6 +98,11 @@ class DesignParser(YamlParser):
         if "vhdl_libs" in self.props:
             self.vhdl_libs = self.props["vhdl_libs"]
 
+        # [{name: "clk", period: int (ns), waveform: "0.000 5.000"}] - Waveform is optional
+        self.clocks = {}
+        if "clocks" in self.props:
+            self.clocks = self.props["clocks"]
+
 
 class FlowDescriptionParser(YamlParser):
     """Parse the flow description yaml file"""

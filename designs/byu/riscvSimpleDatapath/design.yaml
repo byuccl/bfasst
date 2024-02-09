@@ -1,3 +1,8 @@
 top: riscvSimpleDatapath
 
 include_all_verilog_files: True
+
+clocks:
+  - name: clk
+    period: 20.000
+    waveform: 0.000 5.000
