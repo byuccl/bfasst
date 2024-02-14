@@ -1,0 +1,7 @@
+write_edif -force {{ synth_output }}/viv_synth.edf
+write_checkpoint -force -file {{ synth_output }}/synth.dcp
+
+{{#io}}
+report_io -force -file {{ . }}
+
+{{/io}}

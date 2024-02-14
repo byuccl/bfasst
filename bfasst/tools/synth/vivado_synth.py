@@ -1,4 +1,5 @@
 """Tool to create Vivado synthesis ninja snippets."""
+
 import json
 import pathlib
 from bfasst import config
@@ -36,6 +37,7 @@ class VivadoSynth(SynthTool):
 
         # Specify synthesis arguments in a json file.
         # Chevron will use this file to fill in the tcl template.
+        output_paths_str = {k: str(v) for k, v in self.outputs.items()}
         synth = {
             "part": config.PART,
             "top": self.design_props.top,
@@ -46,10 +48,17 @@ class VivadoSynth(SynthTool):
             "io": str(self.build_path / "report_io.txt") if not self.ooc else False,
             "synth_output": str(self.build_path),
             "synth_args": self.synth_options,
+            "common_tools_path": str(COMMON_TOOLS_PATH),
+            "outputs": output_paths_str,
+            "tcl_sources": [
+                output_paths_str["setup_tcl"],
+                output_paths_str["synth_tcl"],
+                output_paths_str["reports_tcl"],
+            ],
         }
         synth_json = json.dumps(synth, indent=4)
 
-        json_write_if_changed(self.build_path / "synth.json", synth_json)
+        json_write_if_changed(self.outputs["json"], synth_json)
 
         self._append_build_snippets_default(
             __file__,
@@ -61,20 +70,25 @@ class VivadoSynth(SynthTool):
                 "verilog": self.verilog,
                 "system_verilog": self.system_verilog,
                 "cwd": self.build_path,
+                "outputs": output_paths_str,
+                "common_tools_path": str(COMMON_TOOLS_PATH),
             },
         )
 
     def _init_outputs(self):
+        self.outputs["run_tcl"] = self.build_path / "run.tcl"
+        self.outputs["setup_tcl"] = self.build_path / "setup.tcl"
         self.outputs["synth_tcl"] = self.build_path / "synth.tcl"
-        self.outputs["synth_json"] = self.build_path / "synth.json"
-        self.outputs["synth_edf"] = self.build_path / "viv_synth.edf"
-        self.outputs["synth_dcp"] = self.build_path / "synth.dcp"
-        self.outputs["synth_journal"] = self.build_path / "vivado.jou"
-        self.outputs["synth_log"] = self.build_path / "vivado.log"
+        self.outputs["reports_tcl"] = self.build_path / "reports.tcl"
+        self.outputs["json"] = self.build_path / "synth.json"
+        self.outputs["edf"] = self.build_path / "viv_synth.edf"
+        self.outputs["dcp"] = self.build_path / "synth.dcp"
+        self.outputs["journal"] = self.build_path / "vivado.jou"
+        self.outputs["log"] = self.build_path / "vivado.log"
 
         if not self.ooc:
             self.outputs["io_report"] = self.build_path / "report_io.txt"
-            self.outputs["synth_constraints"] = self.build_path / "design.xdc"
+            self.outputs["constraints"] = self.build_path / "design.xdc"
 
     def add_ninja_deps(self, deps):
         """Add dependencies to the master ninja file that would cause it to rebuild if modified"""
