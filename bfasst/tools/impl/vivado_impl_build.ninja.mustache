@@ -1,6 +1,9 @@
-build {{ impl_output }}/impl.tcl: template {{ impl_output }}/impl.json {{ impl_library }}/vivado_impl.tcl.mustache
+build {{outputs.setup_tcl}}: template {{outputs.json}} {{impl_library}}/vivado_impl_setup.tcl.mustache
+build {{outputs.impl_tcl}}: template {{outputs.json}} {{impl_library}}/vivado_impl_run.tcl.mustache
+build {{outputs.reports_tcl}}: template {{outputs.json}} {{impl_library}}/vivado_impl_reports.tcl.mustache
+build {{outputs.run_tcl}}: template {{outputs.json}} {{common_tools_path }}/vivado_top_tcl.mustache
 
-build {{ impl_output }}/viv_impl.v {{ impl_output }}/viv_impl.edf {{ impl_output }}/impl.dcp {{#in_context}}{{ impl_output }}/design.bit{{/in_context}} {{ impl_output }}/utilization.txt: vivado {{ impl_output}}/impl.tcl | {{ synth_output }}/viv_synth.edf {{#in_context}}{{ synth_output }}/design.xdc{{/in_context}}
-    journal = {{ impl_output }}/vivado.jou
-    log = {{ impl_output }}/vivado.log
+build {{outputs.verilog }} {{outputs.edf}} {{outputs.dcp}} {{outputs.bitstream }} {{outputs.utilization}}: vivado {{outputs.run_tcl}} | {{inputs.synth_edf}} {{inputs.xdc}}
+    journal = {{outputs.journal}}
+    log = {{outputs.log}}
 
