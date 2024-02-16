@@ -19,6 +19,7 @@ designs:
     
 flow: VivadoStructuralErrorInjection
 
-synth_options: -flatten_hierarchy full -max_dsp 0
+synth_options:
+  synth_design: "-flatten_hierarchy full -max_dsp 0"
 
 num_runs: 10

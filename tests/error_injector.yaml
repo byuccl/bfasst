@@ -72,4 +72,5 @@ designs:
   - vtr_benchmarks/stereovision3
 flow: xilinx_structural_error_injection
 
-synth: " --flatten --max_dsp 0"
+synth_options:
+  synth_design: " --flatten --max_dsp 0"

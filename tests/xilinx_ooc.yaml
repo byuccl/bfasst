@@ -3,4 +3,6 @@ designs:
 
 flow: xilinx_ooc
 
-synth: " --flatten"
+synth_options:
+  synth_design: " -flatten"
+```

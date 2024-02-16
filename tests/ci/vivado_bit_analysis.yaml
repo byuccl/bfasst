@@ -4,4 +4,5 @@ designs:
     
 flow: VivadoBitAnalysis
 
-synth_options: -max_dsp 0
+synth_options:
+  synth_design: "-max_dsp 0"

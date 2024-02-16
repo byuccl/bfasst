@@ -52,4 +52,5 @@ designs:
 
 flow: xilinx_and_reversed
 
-synth: " --flatten --max_dsp 0"
+synth_options:
+  synth_design: " -flatten -max_dsp 0"
