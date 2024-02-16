@@ -1,3 +1,4 @@
+{{#outputs.clock_crank_tcl}}build {{.}}: template {{outputs.json}} {{impl_library}}/clock_crank.tcl.mustache {{/outputs.clock_crank_tcl}}
 build {{outputs.setup_tcl}}: template {{outputs.json}} {{impl_library}}/vivado_impl_setup.tcl.mustache
 build {{outputs.impl_tcl}}: template {{outputs.json}} {{impl_library}}/vivado_impl_run.tcl.mustache
 build {{outputs.reports_tcl}}: template {{outputs.json}} {{impl_library}}/vivado_impl_reports.tcl.mustache

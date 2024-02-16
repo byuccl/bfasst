@@ -104,3 +104,10 @@ flows:
   external_tools:
   - vivado
   - wafove
+
+- name: ClockCrank
+  description: Find the fastest clock period for a design.
+  module: clock_crank
+  class: ClockCrank
+  external_tools:
+  - vivado

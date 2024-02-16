@@ -21,7 +21,7 @@ while {1} {
 }
 place_design -unplace
 route_design -unroute
-place_design
-phys_opt_design -retime
-route_design
-phys_opt_design
+opt_design {{clock_crank.opt_design}}
+place_design {{clock_crank.place_design}}
+phys_opt_design {{clock_crank.phys_opt_design}}
+route_design {{clock_crank.route_design}}
