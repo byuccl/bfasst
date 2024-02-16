@@ -13,13 +13,34 @@ class VivadoSynth(SynthTool):
 
     def __init__(self, flow, design_path, ooc=False, synth_options=""):
         super().__init__(flow, design_path, ooc=ooc)
-        self.synth_options = synth_options
-        if ooc:
-            self.synth_options += " -mode out_of_context"
         self._my_dir_path = pathlib.Path(__file__).parent
 
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()
+        self.outputs_str = {k: str(v) for k, v in self.outputs.items()}
+        self.synth_build = {
+            "part": config.PART,
+            "top": self.design_props.top,
+            "vhdl": self.vhdl,
+            "vhdl_libs": list(self.vhdl_file_lib_map.items()),
+            "verilog": self.verilog,
+            "system_verilog": self.system_verilog,
+            "io": str(self.build_path / "report_io.txt") if not self.ooc else False,
+            "synth_output": str(self.build_path),
+            "synth_design": "",
+            "common_tools_path": str(COMMON_TOOLS_PATH),
+            "outputs": self.outputs_str,
+            "tcl_sources": [
+                self.outputs_str["setup_tcl"],
+                self.outputs_str["synth_tcl"],
+                self.outputs_str["reports_tcl"],
+            ],
+        }
+        if synth_options:
+            self.synth_build.update(synth_options)
+        if ooc:
+            synth_opts = self.synth_build.get("synth_design", "") + " -mode out_of_context"
+            self.synth_build["synth_design"] = synth_opts
 
     def create_rule_snippets(self):
         self._append_rule_snippets_default(
@@ -37,26 +58,8 @@ class VivadoSynth(SynthTool):
 
         # Specify synthesis arguments in a json file.
         # Chevron will use this file to fill in the tcl template.
-        output_paths_str = {k: str(v) for k, v in self.outputs.items()}
-        synth = {
-            "part": config.PART,
-            "top": self.design_props.top,
-            "vhdl": self.vhdl,
-            "vhdl_libs": list(self.vhdl_file_lib_map.items()),
-            "verilog": self.verilog,
-            "system_verilog": self.system_verilog,
-            "io": str(self.build_path / "report_io.txt") if not self.ooc else False,
-            "synth_output": str(self.build_path),
-            "synth_args": self.synth_options,
-            "common_tools_path": str(COMMON_TOOLS_PATH),
-            "outputs": output_paths_str,
-            "tcl_sources": [
-                output_paths_str["setup_tcl"],
-                output_paths_str["synth_tcl"],
-                output_paths_str["reports_tcl"],
-            ],
-        }
-        synth_json = json.dumps(synth, indent=4)
+
+        synth_json = json.dumps(self.synth_build, indent=4)
 
         json_write_if_changed(self.outputs["json"], synth_json)
 
@@ -70,7 +73,7 @@ class VivadoSynth(SynthTool):
                 "verilog": self.verilog,
                 "system_verilog": self.system_verilog,
                 "cwd": self.build_path,
-                "outputs": output_paths_str,
+                "outputs": self.outputs_str,
                 "common_tools_path": str(COMMON_TOOLS_PATH),
             },
         )
@@ -93,4 +96,5 @@ class VivadoSynth(SynthTool):
     def add_ninja_deps(self, deps):
         """Add dependencies to the master ninja file that would cause it to rebuild if modified"""
         self._add_ninja_deps_default(deps, __file__)
-        deps.append(self._my_dir_path / "vivado_synth.tcl.mustache")
+        for dep in self._my_dir_path.glob("*.mustache"):
+            deps.append(dep)
