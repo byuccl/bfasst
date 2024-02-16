@@ -73,3 +73,15 @@ install_wafove:
 	git submodule init third_party/WaFoVe
 	git submodule update --init --recursive third_party/WaFoVe
 	$(IN_ENV) cd third_party/WaFoVe && python setup.py install && make yosys_cells_sim
+
+################################################################################
+# OpenTitan
+################################################################################
+install_opentitan:
+	git submodule init designs/opentitan
+	git submodule update --init --recursive designs/opentitan
+	cd designs/opentitan
+	sudo sed '/^#/d' ./apt-requirements.txt | xargs sudo apt install -y
+	pip install -U pip "setuptools<66.0.0"
+	pip install -r python-requirements.txt
+	./util/get-toolchain.py

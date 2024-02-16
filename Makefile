@@ -99,14 +99,6 @@ install_yosys: submodules
 	# Yosys
 	cd third_party/yosys && make -j8
 
-opentitan: submodules
-	# Download OpenTitan
-	cd designs/opentitan
-	sudo sed '/^#/d' ./apt-requirements.txt | xargs sudo apt install -y
-	pip install -U pip "setuptools<66.0.0"
-	pip install -r python-requirements.txt
-	./util/get-toolchain.py
-
 format:
 	find ./scripts ./bfasst -iname "*.py" -exec black -q -l 100 {} \;
 
