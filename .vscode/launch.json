@@ -102,6 +102,14 @@
                 "xilinx_phys_netlist_cmp"
             ],
             "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "python": "/home/reilly/anaconda3/envs/eqv/bin/python",
+            "program": "${file}",
+            "console": "integratedTerminal"
         }
     ]
 }
