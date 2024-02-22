@@ -7,7 +7,7 @@ build {{outputs.run_tcl}}: template {{outputs.json}} {{ common_tools_path }}/viv
 build {{ outputs.constraints }}: vivado_ioparse {{ outputs.io_report }}
 {{/in_context}}
 
-build {{ outputs.edf }} {{ outputs.dcp }} {{#in_context}}{{ outputs.io_report }}{{/in_context}}: vivado {{ outputs.run_tcl }} | {{#verilog}}{{ . }} {{/verilog}} {{#system_verilog}}{{ . }} {{/system_verilog}}
+build {{ outputs.edf }} {{ outputs.dcp }} {{#in_context}}{{ outputs.io_report }}{{/in_context}}: vivado {{ outputs.run_tcl }} | {{#verilog}}{{ . }} {{/verilog}} {{#system_verilog}}{{ . }} {{/system_verilog}} {{outputs.setup_tcl}} {{outputs.synth_tcl}} {{outputs.reports_tcl}}
     journal = {{ outputs.journal }}
     log = {{ outputs.log }}
     cwd = {{ cwd }}
