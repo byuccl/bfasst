@@ -11,7 +11,7 @@ from bfasst.utils.general import json_write_if_changed
 class VivadoSynth(SynthTool):
     """Tool to create vivado synthesis ninja snippets."""
 
-    def __init__(self, flow, design_path, ooc=False, synth_options=""):
+    def __init__(self, flow, design_path, synth_options="", ooc=False):
         super().__init__(flow, design_path, ooc=ooc)
         self._my_dir_path = pathlib.Path(__file__).parent
 
