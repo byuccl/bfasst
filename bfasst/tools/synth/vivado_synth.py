@@ -18,9 +18,10 @@ class VivadoSynth(SynthTool):
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()
         self.outputs_str = {k: str(v) for k, v in self.outputs.items()}
+        self.top = self.design_props.top if self.design_props is not None else None
         self.synth_build = {
             "part": config.PART,
-            "top": self.design_props.top,
+            "top": self.top,
             "vhdl": self.vhdl,
             "vhdl_libs": list(self.vhdl_file_lib_map.items()),
             "verilog": self.verilog,
@@ -69,7 +70,7 @@ class VivadoSynth(SynthTool):
                 "in_context": not self.ooc,
                 "synth_output": str(self.build_path),
                 "synth_library": self._my_dir_path,
-                "top": self.design_props.top,
+                "top": self.top,
                 "verilog": self.verilog,
                 "system_verilog": self.system_verilog,
                 "cwd": self.build_path,

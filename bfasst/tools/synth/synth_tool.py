@@ -10,21 +10,26 @@ class SynthTool(Tool):
 
     def __init__(self, flow, design_path, ooc=False) -> None:
         super().__init__(flow, design_path)
+
+        self.verilog = []
+        self.system_verilog = []
+        self.vhdl = []
+        self.vhdl_file_lib_map = {}
+
         if ooc:
             self.build_path = self.design_build_path / "synth_ooc"
         else:
             self.build_path = self.design_build_path / "synth"
         self.ooc = ooc
 
+        if self.design_props is None:
+            return
+
         self._read_hdl_files()
-        self.vhdl_file_lib_map = {}
         self._read_vhdl_libs()
 
     def _read_hdl_files(self):
         """Read the hdl files in the design directory"""
-        self.verilog = []
-        self.system_verilog = []
-        self.vhdl = []
         self.vhdl_libs = self.design_props.vhdl_libs
 
         for child in self.design_path.rglob("*"):
