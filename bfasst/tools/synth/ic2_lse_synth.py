@@ -27,7 +27,7 @@ class Ic2LseSynth(SynthTool):
         # then the build snippet can be created as normal
         self._append_build_snippets_default(
             __file__,
-            # NOTE: prj_path must be .stem because LSE must run from the build_path
+            # NOTE: prj_path, edif_file must be .name because LSE must run from the build_path
             # because it templates its report files using the top module name and drops
             # them in the current working directory
             {
@@ -35,10 +35,11 @@ class Ic2LseSynth(SynthTool):
                 "foundry": IC2_FOUNDRY,
                 "sbt_dir": IC2_SBT_DIR,
                 "synth_bin_path": IC2_SYNTH_BIN,
-                "prj_path": self.outputs["prj_file"].stem,
+                "prj_path": self.outputs["prj_file"].name,
                 "design": self.design_path,
                 "lse_post_synth_util": BFASST_UTILS_PATH / "lse_post_synth.py",
                 "build_path": self.build_path,
+                "edf_output": self.outputs["edif_file"].name,
             },
         )
 
@@ -54,10 +55,10 @@ class Ic2LseSynth(SynthTool):
             for design_file in self.vhdl:
                 fp.write("-lib work -vhd " + design_file + "\n")
             fp.write("-top " + self.design_props.top + "\n")
-            # NOTE: output_edif must be .stem because LSE must run from the build_path
+            # NOTE: output_edif must be .name because LSE must run from the build_path
             # because it templates its report files using the top module name and drops
             # them in the current working directory
-            fp.write("-output_edif " + str(self.outputs["edif_file"].stem) + "\n")
+            fp.write("-output_edif " + str(self.outputs["edif_file"].name) + "\n")
 
     def _init_outputs(self):
         self.outputs["prj_file"] = self.build_path / "lse_project.prj"
