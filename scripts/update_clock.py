@@ -3,9 +3,9 @@ Update design.yaml with the clock rate found in the timing summary report
 """
 
 import argparse
-from bfasst import yaml_parser
-from bfasst.paths import BUILD_PATH
 from pathlib import Path
+from bfasst import yaml_parser
+from bfasst.paths import BUILD_PATH, DESIGNS_PATH
 
 
 def get_clock_period(timing_summary):
@@ -18,20 +18,16 @@ def get_clock_period(timing_summary):
 
 
 def update_clocks(designs_yaml):
+    """Update design.yaml with new clock rates for each design in test yaml"""
     design_paths = yaml_parser.RunParser(designs_yaml).design_paths
     for design in design_paths:
         design = Path(design)
-        timing_summary = (
-            Path("/home/reilly/equiv/bfasst/build")
-            / design.parent.name
-            / design.name
-            / "impl/timing_summary.txt"
-        )
+        timing_summary = BUILD_PATH / design.parent.name / design.name / "impl/timing_summary.txt"
         period = get_clock_period(timing_summary)
         if period is None:
             print(f"Warning: Could not find clock period in {timing_summary}")
             continue
-        design_yaml = Path("/home/reilly/equiv/bfasst/designs") / design / "design.yaml"
+        design_yaml = DESIGNS_PATH / design / "design.yaml"
         with open(design_yaml, "r") as f:
             lines = f.readlines()
             for idx, line in enumerate(lines):
