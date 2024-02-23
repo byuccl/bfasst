@@ -3,4 +3,3 @@ top: ssc
 clocks:
   - name: clk
     period: 2.000
-    waveform: 0.000 5.000

@@ -5,4 +5,3 @@ include_all_verilog_files: yes
 clocks:
   - name: clk
     period: 1.000
-    waveform: 0.000 5.000

@@ -4,4 +4,3 @@ top_architecture: behavioral
 clocks:
   - name: clk_i
     period: 3.000
-    waveform: 0.000 5.000
