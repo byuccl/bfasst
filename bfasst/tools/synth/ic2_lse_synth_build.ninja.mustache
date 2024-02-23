@@ -1,0 +1,9 @@
+build {{ edf_output }}: ic2_lse_synth
+    ld_library_path={{ ld_library_path }}
+    foundry={{ foundry }}
+    sbt_dir={{ sbt_dir }}
+    synth_bin_path={{ synth_bin_path }}
+    prj_path={{ prj_path }}
+    design={{ design }}
+    lse_post_synth_util={{ lse_post_synth_util }}
+    build_path={{ build_path }}

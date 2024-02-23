@@ -1,0 +1,4 @@
+rule ic2_lse_synth
+    command = cd $build_path; LD_LIBRARY_PATH=$ld_library_path FOUNDRY=$foundry SBT_DIR=$sbt_dir $synth_bin_path -f $prj_path && {{ lse_post_synth_util }} $out
+    description = ic2_lse synth for $design
+
