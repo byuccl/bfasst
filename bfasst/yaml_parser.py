@@ -1,4 +1,5 @@
 """Parse a yaml file to obtain a flow and a list of target designs"""
+
 from abc import ABC
 from pathlib import Path
 from importlib import import_module
@@ -7,6 +8,7 @@ from types import ModuleType
 import yaml
 
 from bfasst.utils import error
+from bfasst import config
 from bfasst import paths
 
 
@@ -85,23 +87,25 @@ class RunParser(YamlParser):
 class DesignParser(YamlParser):
     """Parses a design yaml file"""
 
-    def __init__(self, yaml_path):
+    def __init__(self, yaml_path=None):
+        self.top = None
+        self.vhdl_libs = None
+        self.clocks = {}
+        self.part = config.PART
+
+        if yaml_path is None:
+            return
+
         super().__init__(yaml_path)
 
-        # Get top module name
-        if "top" not in self.props:
-            error(f"Design {self.yaml_path} does not specify a top module")
-        self.top = self.props["top"]
-
-        # Parse VHDL libraries
-        self.vhdl_libs = None
-        if "vhdl_libs" in self.props:
-            self.vhdl_libs = self.props["vhdl_libs"]
+        props = YamlParser(yaml_path).props
+        self.top = props["top"]
+        if "vhdl_libs" in props:
+            self.vhdl_libs = props["vhdl_libs"]
 
         # [{name: "clk", period: int (ns), waveform: "0.000 5.000"}] - Waveform is optional
-        self.clocks = {}
-        if "clocks" in self.props:
-            self.clocks = self.props["clocks"]
+        if "clocks" in props:
+            self.clocks = props["clocks"]
 
 
 class FlowDescriptionParser(YamlParser):
