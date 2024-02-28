@@ -133,7 +133,7 @@ def valid_bus_transfer(logical_pins, dest_bus, old_edif_cell_inst, new_edif_cell
 def valid_net_transfer(logical_pin, physical_pin, old_edif_cell_inst, new_edif_cell_inst):
     """
     Run assertions to check pin format and pin to port mapping then add new cell to the net and
-    remove the old cell.
+    remove the old cell from the net.
 
     Assumes that the new logical pin equals the old physical pin.  (LUTs
     are treated differently. See lut_move_net_to_new_cell).
