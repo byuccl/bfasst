@@ -1,4 +1,5 @@
 """Tool to create Vivado implementation ninja snippets."""
+
 import json
 import pathlib
 from bfasst import config
@@ -22,7 +23,7 @@ class VivadoImpl(ImplTool):
         """Create build snippets in ninja file"""
 
         impl = {
-            "part": config.PART,
+            "part": self.flow.part,
             "xdc": str(self.build_path.parent / "synth" / "design.xdc") if not self.ooc else False,
             "bit": str(self.build_path / "design.bit") if not self.ooc else False,
             "impl_output": str(self.build_path),
