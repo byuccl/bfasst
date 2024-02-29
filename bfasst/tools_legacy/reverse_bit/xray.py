@@ -1,4 +1,5 @@
 """ X-ray bitstream to netlist tool"""
+
 import os
 import re
 import pathlib
@@ -92,7 +93,7 @@ class XRayReverseBitTool(ReverseBitTool):
             "--db-root",
             self.db_root,
             "--part",
-            config.PART,
+            self.flow.part,
             bitstream_path,
         ]
 
@@ -112,11 +113,11 @@ class XRayReverseBitTool(ReverseBitTool):
             self.fasm2bels_python_path,
             "-mfasm2bels",
             "--connection_database",
-            config.PART + "_db",
+            self.flow.part + "_db",
             "--db_root",
             self.db_root,
             "--part",
-            config.PART,
+            self.flow.part,
             "--fasm_file",
             fasm_path,
             "--verilog_file",

@@ -55,7 +55,7 @@ class Xray(Tool):
                     "fasm2bels_python_path": self.fasm2bels_python_path,
                     "bit_to_fasm_path": XRAY_PATH / "utils" / "bit2fasm.py",
                     "db_root": self.db_root,
-                    "part": config.PART,
+                    "part": self.flow.part,
                     "top": self.design_props.top,
                     "verilog_file": self.reversed_netlist_path,
                     "xdc_file": self.xdc_path,
