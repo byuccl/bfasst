@@ -47,7 +47,10 @@ module top(
     wire    [55:0]    key3;
     wire        decrypt;
     
-    assign desIn = {4{sw[15:0]}};
+    wire  [15:0] btn16;
+    assign btn16 = {btn[0], btn, btn, btn};
+
+    assign desIn = {sw[15:0], sw ^ btn16, sw & btn16, sw | btn16 };
     assign key1 = desIn[63:8];
     assign key2 = desIn[60:5];
     assign key3 = desIn[55:0];
