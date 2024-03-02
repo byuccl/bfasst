@@ -96,3 +96,4 @@ flows:
   external_tools:
   - vivado
   - encrypted_ip
+  - rapidwright

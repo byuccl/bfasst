@@ -23,7 +23,7 @@ puts "Synth start time: $timen"
 synth_design -top {{ top }} {{ synth_args }}
 
 set timen [exec date]
-puts "Synth start time: $timen"
+puts "Synth end time: $timen"
 {{#io}}
 place_ports
 report_io -force -file {{ . }}

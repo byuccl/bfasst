@@ -54,7 +54,8 @@ class ApplicationRunner:
         flow_manager.run_flows()
 
         # run the build.ninja file
-        cmd = ["ninja"]
+        cmd = ["ninja", "-j1"]
+        # cmd = ["ninja"]
         proc = subprocess.Popen(cmd, cwd=ROOT_PATH)
         proc.communicate()
         return_code = proc.wait()

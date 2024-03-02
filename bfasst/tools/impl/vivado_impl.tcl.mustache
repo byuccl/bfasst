@@ -7,9 +7,13 @@ read_xdc {{ . }}
 
 {{/xdc}}
 set_property design_mode GateLvl [current_fileset]
+set timen [exec date]
+puts "Impl start time: $timen"
 opt_design
 place_design
 route_design
+set timen [exec date]
+puts "Impl end time: $timen"
 write_checkpoint -force -file {{ impl_output }}/impl.dcp
 write_edif -force -file {{ impl_output }}/viv_impl.edf
 write_verilog -force -file {{ impl_output }}/viv_impl.v

@@ -1,3 +1,10 @@
+set timen [exec date]
+puts "DCP to verilog start time: $timen"
+
 open_checkpoint {{ dcp }}
 write_verilog {{ verilog }} -force
+
+set timen [exec date]
+puts "DCP to verilog end time: $timen"
+
 close_project
