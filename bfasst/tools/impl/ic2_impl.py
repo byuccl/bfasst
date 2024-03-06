@@ -12,6 +12,7 @@ class Ic2Impl(ImplTool):
     def __init__(self, flow, design_path):
         super().__init__(flow, design_path)
         self._my_dir_path = pathlib.Path(__file__).parent
+        self.build_path = self.build_path / "ic2_impl"
 
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()
@@ -32,8 +33,11 @@ class Ic2Impl(ImplTool):
                 "sbt_dir": IC2_SBT_DIR,
                 "ic2_impl_tcl": IC2_IMPL_TCL_TEMPLATE,
                 "top": self.design_props.top,
-                "netlist_rel_path": ".."
-                / pathlib.Path(netlist_full_path).relative_to(self.build_path.parent),
+                # this type of syntax is required because the TCL script
+                # is run from the build directory as lattic drops outputs in the cwd.
+                # We have to get a relative path to the netlist in the synth build directory
+                "netlist_rel_path": "../.."
+                / pathlib.Path(netlist_full_path).relative_to(self.build_path.parent.parent),
                 "netlist_full_path": netlist_full_path,
                 "design": self.design_path,
             },

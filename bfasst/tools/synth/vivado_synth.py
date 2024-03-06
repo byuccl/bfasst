@@ -16,6 +16,7 @@ class VivadoSynth(SynthTool):
         if ooc:
             self.synth_options += " -mode out_of_context"
         self._my_dir_path = pathlib.Path(__file__).parent
+        self.build_path = self.build_path / "vivado"
 
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()

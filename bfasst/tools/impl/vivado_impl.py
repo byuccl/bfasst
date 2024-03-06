@@ -1,4 +1,5 @@
 """Tool to create Vivado implementation ninja snippets."""
+
 import json
 import pathlib
 from bfasst import config
@@ -15,6 +16,8 @@ class VivadoImpl(ImplTool):
         self.ooc = ooc
         if self.ooc:
             self.build_path = self.build_path.parent / "impl_ooc"
+        else:
+            self.build_path = self.build_path / "vivado"
         self._my_dir_path = pathlib.Path(__file__).parent
         self._init_outputs()
 

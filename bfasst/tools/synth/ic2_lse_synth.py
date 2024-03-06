@@ -14,6 +14,7 @@ class Ic2LseSynth(SynthTool):
     def __init__(self, flow, design_path):
         super().__init__(flow, design_path)
         self._my_dir_path = pathlib.Path(__file__).parent
+        self.build_path = self.build_path / "ic2_lse"
 
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()

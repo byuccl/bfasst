@@ -1,4 +1,5 @@
 """Tool to create Vivado synthesis ninja snippets."""
+
 import pathlib
 from bfasst import config
 from bfasst.tools.tool import Tool
@@ -12,7 +13,7 @@ class VivadoSynthFromTcl(Tool):
         super().__init__(flow, design_tcl_path.parent)
         self.design_tcl_path = design_tcl_path
         self._my_dir_path = pathlib.Path(__file__).parent
-        self.build_path = self.design_build_path / "synth"
+        self.build_path = self.design_build_path / "synth" / "vivado"
 
     def create_rule_snippets(self):
         self._append_rule_snippets_default(
