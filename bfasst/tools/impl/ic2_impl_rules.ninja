@@ -1,0 +1,4 @@
+rule ic2_impl
+    command = cd $build_path; SBT_DIR=$sbt_dir tclsh $ic2_impl_tcl $top . $netlist_rel_path
+    description = ic2_impl for $design
+

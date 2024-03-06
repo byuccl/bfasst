@@ -1,0 +1,8 @@
+build {{#outputs}}{{ . }} {{/outputs}}: ic2_impl | {{ netlist_full_path }}
+    build_path={{ build_path }}
+    sbt_dir={{ sbt_dir }}
+    ic2_impl_tcl={{ ic2_impl_tcl }}
+    top={{ top }}
+    netlist_rel_path={{ netlist_rel_path }}
+    design={{ design }}
+
