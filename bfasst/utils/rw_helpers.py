@@ -185,8 +185,8 @@ def combine_const_nets(port, old_inst, new_inst):
     old_inst (EDIFCellInst)
     new_inst (EDIFCellInst)
     """
-    old_net = old_inst.getPortInst(port).getNet()    
-    main_net = new_inst.getPortInst(port).getNet()   
+    old_net = old_inst.getPortInst(port).getNet()
+    main_net = new_inst.getPortInst(port).getNet()
     port_insts = list(old_net.getPortInsts())
     ground_instances = []
     for port_inst in port_insts:
@@ -196,7 +196,7 @@ def combine_const_nets(port, old_inst, new_inst):
         else:
             ground_instances.append(port_inst)
     for ground_instance in ground_instances:
-        old_net.removePortInst(port_inst)
+        old_net.removePortInst(ground_instance)
 
 
 def remove_and_disconnect_cell(cell, log=logging.info):
