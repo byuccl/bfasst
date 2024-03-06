@@ -1,6 +1,7 @@
 """Icestorm reverse bit tool (ninja snippet generation for icestorm reverse bitstream tool)"""
 
 import pathlib
+from bfasst.paths import ICEBOX_VLOG_PATH, ICEUNPACK_PATH
 from bfasst.tools.tool import Tool
 
 
@@ -27,6 +28,8 @@ class IcestormRevBit(Tool):
                 "asciifile": self.outputs["asciifile"],
                 "netlist": self.outputs["netlist"],
                 "report": self.outputs["report"],
+                "icebox_vlog_path": ICEBOX_VLOG_PATH,
+                "iceunpack_path": ICEUNPACK_PATH,
             },
         )
 

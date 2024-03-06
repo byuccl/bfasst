@@ -81,4 +81,4 @@ install_wafove:
 install_icestorm:
 	git submodule init third_party/icestorm
 	git submodule update --init --recursive third_party/icestorm
-	cd third_party/icestorm && make -j$(nproc) && make install
+	cd third_party/icestorm && make -j$(nproc) && make install PREFIX=../

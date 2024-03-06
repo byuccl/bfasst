@@ -1,7 +1,6 @@
 """ Manage installation of external tools"""
 
 import argparse
-import shutil
 import socket
 import subprocess
 import sys
@@ -12,6 +11,8 @@ import yaml
 
 from bfasst.config import IC2_INSTALL_DIR, PART, VIVADO_BIN_PATH
 from bfasst.paths import (
+    ICEBOX_VLOG_PATH,
+    ICEUNPACK_PATH,
     RAPIDWRIGHT_PATH,
     ROOT_PATH,
     THIRD_PARTY_PATH,
@@ -41,7 +42,7 @@ def check_ic2():
 
 
 def check_icestorm():
-    return (shutil.which("iceunpack") is not None) and (shutil.which("icebox_vlog") is not None)
+    return ICEBOX_VLOG_PATH.is_file() and ICEUNPACK_PATH.is_file()
 
 
 def check_fasm2bels():

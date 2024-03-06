@@ -48,6 +48,7 @@ packages:
 		libboost-system-dev \
 		libc++-dev \
 		libcapnp-dev \
+		libelf-dev:i386 \
 		libffi-dev \
 		libftdi-dev \
 		libncurses5 \
