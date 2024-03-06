@@ -1,4 +1,6 @@
-build {{#outputs}}{{ . }} {{/outputs}}: ic2_lse_synth
+build {{ prj_path }}: template {{ json_render_dict }} {{ prj_template }}
+
+build {{#outputs}}{{ . }} {{/outputs}}: ic2_lse_synth | {{ prj_path }}
     ld_library_path={{ ld_library_path }}
     foundry={{ foundry }}
     sbt_dir={{ sbt_dir }}
