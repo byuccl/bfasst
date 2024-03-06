@@ -124,8 +124,8 @@ class RwPhysNetlist:
                     unisim,
                     net_name,
                 )
-                for inst in cell_insts[1:]:
-                    rw.combine_const_nets(port, inst, cell_insts[0])               
+                for inst in cell_insts[1:]:                 
+                    rw.combine_const_nets(port, inst, cell_insts[0])
                     # self.rw_design.removeNet(inst.getPortInst(port).getNet().getName())
                 # remove old ground cells
 
