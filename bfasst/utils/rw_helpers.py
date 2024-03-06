@@ -178,6 +178,27 @@ def transfer_global_pins(old_cells, new_cell, global_pins):
             net.removePortInst(old_port)
 
 
+def combine_const_nets(port, old_inst, new_inst):
+    """
+    Parameters:
+    port (str)
+    old_inst (EDIFCellInst)
+    new_inst (EDIFCellInst)
+    """
+    old_net = old_inst.getPortInst(port).getNet()    
+    main_net = new_inst.getPortInst(port).getNet()   
+    port_insts = list(old_net.getPortInsts())
+    ground_instances = []
+    for port_inst in port_insts:
+        if not port_inst.isPrimitiveStaticSource():
+            old_net.removePortInst(port_inst)
+            main_net.addPortInst(port_inst)
+        else:
+            ground_instances.append(port_inst)
+    for ground_instance in ground_instances:
+        old_net.removePortInst(port_inst)
+
+
 def remove_and_disconnect_cell(cell, log=logging.info):
     if isinstance(cell, Cell):
         cell = cell.getEDIFHierCellInst()
