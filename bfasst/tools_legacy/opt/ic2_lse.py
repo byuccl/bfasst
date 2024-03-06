@@ -1,4 +1,5 @@
 """Module wrapping around icecube2 lse optimization pass"""
+
 import shutil
 import re
 import os
@@ -37,7 +38,7 @@ class Ic2LseOptTool(Ic2BaseOptTool):
         """create project file for icecube2 lse"""
         assert isinstance(self.design, bfasst.design.Design)
 
-        template_file = paths.I2C_RESOURCES / PROJECT_TEMPLATE_FILE
+        template_file = paths.IC2_RESOURCES / PROJECT_TEMPLATE_FILE
         project_file = self.work_dir / IC2_LSE_PROJ_FILE
         shutil.copyfile(template_file, project_file)
 
