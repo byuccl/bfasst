@@ -37,6 +37,9 @@ class Ic2LseSynth(SynthTool):
                 "lse_post_synth_util": BFASST_UTILS_PATH / "lse_post_synth.py",
                 "build_path": self.build_path,
                 "edf_output": self.outputs["edif_file"],
+                "outputs": [
+                    v for _, v in self.outputs.items() if v != self.outputs["prj_file"]
+                ],  # all outputs except prj file are built by lse synth tool with ninja
             },
         )
 
@@ -59,6 +62,7 @@ class Ic2LseSynth(SynthTool):
         self.outputs["edif_file"] = self.build_path / "synth.edf"
         self.outputs["lsedata_file"] = self.build_path / "synth.lsedata"
         self.outputs["scf_file"] = self.build_path / "synth.scf"
+        self.outputs["prim_netlist"] = self.build_path / (self.design_props.top + "_prim.v")
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)

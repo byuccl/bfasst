@@ -34,7 +34,7 @@ class Ic2LseConformal(Flow):
             constraints=str(self.ic2_impl_tool.outputs["constraints"]),
         )
         self.conformal_tool.create_build_snippets(
-            impl_netlist=str(self.ic2_impl_tool.outputs["impl_v_file"]),
+            impl_netlist=str(self.ic2_lse_synth_tool.outputs["prim_netlist"]),
             rev_netlist=str(self.icestorm_reverse_bit_tool.outputs["netlist"]),
             vendor=Vendor.LATTICE,
         )
