@@ -111,3 +111,4 @@ flows:
   class: Ic2LseConformal
   external_tools:
   - ic2
+  - icestorm

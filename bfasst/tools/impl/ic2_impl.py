@@ -52,8 +52,8 @@ class Ic2Impl(ImplTool):
         # set each of the outputs directly on the base path
         self.outputs["impl_v_file"] = self.build_path / (self.design_props.top + "_sbt.v")
         self.outputs["impl_vhd_file"] = self.build_path / (self.design_props.top + "_sbt.vhd")
-        self.outputs["impl_rpt"] = self.build_path / (self.design_props.top + "_sbt.rpt")
-        self.outputs["device_info"] = self.build_path / "device_info.txt"
+        self.outputs["impl_rpt"] = self.outputs_path / (self.design_props.top + "_sbt.rpt")
+        self.outputs["device_info"] = self.outputs_path / "device_info.txt"
 
     def _init_bitmap_outputs(self):
         bitmap = self.outputs_path / "bitmap"

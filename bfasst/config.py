@@ -9,7 +9,6 @@ IC2_FOUNDRY = IC2_INSTALL_DIR / "LSE"
 IC2_LD_LIBRARY_PATH = IC2_FOUNDRY / "bin" / "lin64"
 IC2_SYNTH_BIN = IC2_LD_LIBRARY_PATH / "synthesis"
 IC2_SBT_DIR = IC2_INSTALL_DIR / "sbt_backend"
-ICESTORM_INSTALL_DIR = Path("/home/jgoeders/icestorm")
 
 CONFORMAL_REMOTE_MACHINE = "ssh.et.byu.edu"
 CONFORMAL_REMOTE_MACHINE_USER = "jgoeders"

@@ -1,6 +1,7 @@
 """ Manage installation of external tools"""
 
 import argparse
+import shutil
 import socket
 import subprocess
 import sys
@@ -37,6 +38,10 @@ def check_vivado():
 
 def check_ic2():
     return IC2_INSTALL_DIR.is_dir()
+
+
+def check_icestorm():
+    return (shutil.which("iceunpack") is not None) and (shutil.which("icebox_vlog") is not None)
 
 
 def check_fasm2bels():

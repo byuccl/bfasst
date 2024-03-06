@@ -1,0 +1,7 @@
+build {{ asciifile }}: icestorm_bit_to_ascii {{ bitstream }}
+
+build {{ netlist }}: icestorm_ascii_to_netlist || {{ asciifile }} {{ constraints }}
+    constraints={{ constraints }}
+    asciifile={{ asciifile }}
+
+build {{ report }}: icestorm_netlist_rpt {{ netlist }}
