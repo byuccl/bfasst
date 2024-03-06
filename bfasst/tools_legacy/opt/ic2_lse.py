@@ -71,6 +71,7 @@ class Ic2LseOptTool(Ic2BaseOptTool):
         changes binary LUT inits to hex. Apparently LSE generates
         binary LUT inits under some conditions, and the IC2 backend
         doesn't like that."""
+        # pylint: disable=duplicate-code
 
         with in_place.InPlace(self.design.netlist_path) as n_f:
             found_first_init = False
