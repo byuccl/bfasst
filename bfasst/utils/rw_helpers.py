@@ -180,6 +180,8 @@ def transfer_global_pins(old_cells, new_cell, global_pins):
 
 def combine_const_nets(port, old_inst, new_inst):
     """
+    Moves the connections from multiple const nets to a single const net
+   
     Parameters:
     port (str)
     old_inst (EDIFCellInst)

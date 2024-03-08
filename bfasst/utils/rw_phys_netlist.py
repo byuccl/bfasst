@@ -126,8 +126,6 @@ class RwPhysNetlist:
                 )
                 for inst in cell_insts[1:]:
                     rw.combine_const_nets(port, inst, cell_insts[0])
-                    # self.rw_design.removeNet(inst.getPortInst(port).getNet().getName())
-                # remove old ground cells
 
             if cell_insts:
                 const_net = cell_insts[0].getPortInst(port).getNet()
