@@ -19,14 +19,14 @@ class VivadoBitAnalysis(Flow):
         self.vivado_impl_tool = VivadoImpl(
             self, design, prev_tool_outputs=self.vivado_synth_tool.outputs
         )
-        self.xrev_tool = Xray(self, design)
+        self.xrev_tool = Xray(self, design, prev_tool_outputs=self.vivado_impl_tool.outputs)
         self.netlist_cleanup_tool = NetlistCleanup(self, design)
         self.netlist_phys_to_logical = NetlistPhysToLogical(self, design)
 
     def create_build_snippets(self):
         self.vivado_synth_tool.create_build_snippets()
         self.vivado_impl_tool.create_build_snippets()
-        self.xrev_tool.create_build_snippets(str(self.vivado_impl_tool.outputs["bitstream"]))
+        self.xrev_tool.create_build_snippets()
         self.netlist_cleanup_tool.create_build_snippets(
             netlist_in_path=self.xrev_tool.outputs["xray_netlist"],
         )

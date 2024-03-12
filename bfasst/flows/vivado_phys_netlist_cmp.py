@@ -24,7 +24,7 @@ class VivadoPhysNetlistCmp(Flow):
             self, design, prev_tool_outputs=self.vivado_synth_tool.outputs
         )
         self.phys_netlist_tool = PhysNetlist(self, design)
-        self.xray_tool = Xray(self, design)
+        self.xray_tool = Xray(self, design, prev_tool_outputs=self.vivado_impl_tool.outputs)
         self.cleanup_tool = NetlistCleanup(self, design)
         self.compare_tool = Structural(self, design)
 
@@ -35,7 +35,7 @@ class VivadoPhysNetlistCmp(Flow):
             impl_dcp=self.vivado_impl_tool.outputs["impl_checkpoint"],
             impl_edf=self.vivado_impl_tool.outputs["impl_edf"],
         )
-        self.xray_tool.create_build_snippets(str(self.vivado_impl_tool.outputs["bitstream"]))
+        self.xray_tool.create_build_snippets()
         self.cleanup_tool.create_build_snippets(
             netlist_in_path=self.xray_tool.outputs["xray_netlist"],
         )

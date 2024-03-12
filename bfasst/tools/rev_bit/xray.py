@@ -9,8 +9,12 @@ from bfasst.tools.tool import Tool
 class Xray(Tool):
     """Tool to create rule and build snippets that reverse a bitstream using xray."""
 
-    def __init__(self, flow, design):
+    def __init__(self, flow, design, prev_tool_outputs):
         super().__init__(flow, design)
+
+        # A dictionary of the outputs of the previous tool
+        # In this case, the dictionary will contain a bitstream key
+        self.prev_tool_outputs = prev_tool_outputs
 
         self.build_path = self.design_build_path / "xray"
 
@@ -42,7 +46,7 @@ class Xray(Tool):
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(rules)
 
-    def create_build_snippets(self, bitstream: str):
+    def create_build_snippets(self):
         """Populate xray build statements from template and copy them to build.ninja."""
         with open(REV_BIT_TOOLS_PATH / "xray.ninja_build.mustache", "r") as f:
             build_rules = chevron.render(
@@ -52,7 +56,7 @@ class Xray(Tool):
                     "xray_fasm": str(self.outputs["xray_fasm"]),
                     "rev_netlist": str(self.outputs["rev_netlist"]),
                     "xray_xdc": str(self.outputs["xray_xdc"]),
-                    "bitstream_path": bitstream,
+                    "bitstream_path": self.prev_tool_outputs["bitstream"],
                     "fasm2bels_path": self.fasm2bels_path,
                     "fasm2bels_python_path": self.fasm2bels_python_path,
                     "bit_to_fasm_path": XRAY_PATH / "utils" / "bit2fasm.py",
