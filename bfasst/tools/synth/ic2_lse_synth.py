@@ -63,7 +63,7 @@ class Ic2LseSynth(SynthTool):
         self.outputs["edif_file"] = self.build_path / "synth.edf"
         self.outputs["lsedata_file"] = self.build_path / "synth.lsedata"
         self.outputs["scf_file"] = self.build_path / "synth.scf"
-        self.outputs["prim_netlist"] = self.build_path / (self.design_props.top + "_prim.v")
+        self.outputs["golden_netlist"] = self.build_path / (self.design_props.top + "_prim.v")
         self.outputs["synth_json"] = self.build_path / "synth.json"
 
     def add_ninja_deps(self, deps):

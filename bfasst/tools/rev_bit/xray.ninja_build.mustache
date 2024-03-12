@@ -1,17 +1,17 @@
-build {{ xray_output }}/{{ top }}.fasm: bit_to_fasm {{ bitstream_path }}
+build {{ xray_fasm }}: bit_to_fasm {{ bitstream_path }}
     xray_path = {{ xray_path }}
     fasm2bels_python_path = {{ fasm2bels_python_path }}
     bit_to_fasm_path = {{ bit_to_fasm_path }}
     db_root = {{ db_root }}
     part = {{ part }}
 
-build {{ xray_output }}/{{ top }}_reversed.v {{ xray_output }}/{{ top }}_reversed.xdc: fasm_to_netlist {{ xray_output }}/{{ top }}.fasm
+build {{ rev_netlist }} {{ xray_xdc }}: fasm_to_netlist {{ xray_fasm }}
     fasm2bels_path = {{ fasm2bels_path }}
     fasm2bels_python_path = {{ fasm2bels_python_path }}
     part_db = {{ part }}_db
     db_root = {{ db_root }}
     part = {{ part }}
-    verilog_file = {{ verilog_file }}
-    xdc_file = {{ xdc_file }}
+    verilog_file = {{ rev_netlist }}
+    xdc_file = {{ xray_xdc }}
     input_xdc = {{ input_xdc }}
 

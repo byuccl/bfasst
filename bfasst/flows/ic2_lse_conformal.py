@@ -18,30 +18,22 @@ class Ic2LseConformal(Flow):
         self.ic2_lse_synth_tool = Ic2LseSynth(self, design)
         self.ic2_impl_tool = Ic2Impl(self, design, self.ic2_lse_synth_tool.outputs)
         self.icestorm_reverse_bit_tool = IcestormRevBit(self, design, self.ic2_impl_tool.outputs)
-        self.conformal_tool = Conformal(self, design)
+        self.conformal_tool = Conformal(self, design, self.__create_conformal_inputs_dict())
 
-    def create_rule_snippets(self):
-        self.ic2_lse_synth_tool.create_rule_snippets()
-        self.ic2_impl_tool.create_rule_snippets()
-        self.icestorm_reverse_bit_tool.create_rule_snippets()
-        self.conformal_tool.create_rule_snippets()
+        self.tools = [
+            self.ic2_lse_synth_tool,
+            self.ic2_impl_tool,
+            self.icestorm_reverse_bit_tool,
+            self.conformal_tool,
+        ]
 
-    def create_build_snippets(self):
-        self.ic2_lse_synth_tool.create_build_snippets()
-        self.ic2_impl_tool.create_build_snippets()
-        self.icestorm_reverse_bit_tool.create_build_snippets()
-        self.conformal_tool.create_build_snippets(
-            impl_netlist=str(self.ic2_lse_synth_tool.outputs["prim_netlist"]),
-            rev_netlist=str(self.icestorm_reverse_bit_tool.outputs["netlist"]),
-            vendor=Vendor.LATTICE,
-        )
-
-    def add_ninja_deps(self, deps):
-        self.ic2_lse_synth_tool.add_ninja_deps(deps)
-        self.ic2_impl_tool.add_ninja_deps(deps)
-        self.icestorm_reverse_bit_tool.add_ninja_deps(deps)
-        self.conformal_tool.add_ninja_deps(deps)
-        deps.append(FLOWS_PATH / "ic2_lse_conformal.py")
+    def __create_conformal_inputs_dict(self):
+        """Create the dictionary of inputs for the conformal tool."""
+        return {
+            "golden_netlist_gen": self.ic2_lse_synth_tool.outputs,
+            "rev_netlist_gen": self.icestorm_reverse_bit_tool.outputs,
+            "vendor": Vendor.LATTICE.name,
+        }
 
     def get_top_level_flow_path(self):
         return FLOWS_PATH / "ic2_lse_conformal.py"

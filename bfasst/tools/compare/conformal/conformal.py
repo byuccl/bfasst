@@ -8,8 +8,14 @@ from bfasst.paths import NINJA_BUILD_PATH, CONFORMAL_TOOLS_PATH, BFASST_UTILS_PA
 class Conformal(Tool):
     """Create the rule and build snippets for conformal comparison."""
 
-    def __init__(self, flow, design):
+    def __init__(self, flow, design, prev_tool_outputs):
         super().__init__(flow, design)
+
+        # A dictionary of outputs from the previous tool
+        # In this case, the dictionary will contain a netlist from synth/impl
+        # and a netlist from rev_bit. Additionally, it will contain a vendor entry.
+        self.prev_tool_outputs = prev_tool_outputs
+
         self.build_path = self.design_build_path / "conformal"
         self._init_outputs()
         # self._read_hdl_files()
@@ -22,20 +28,20 @@ class Conformal(Tool):
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(rules)
 
-    def create_build_snippets(self, impl_netlist, rev_netlist, vendor):
+    def create_build_snippets(self):
         """Create the build snippets for conformal comparison."""
         with open(CONFORMAL_TOOLS_PATH / "conformal_build.ninja.mustache", "r") as f:
             build = chevron.render(
                 f,
                 {
-                    "log_path": str(self.build_path / "log.txt"),
-                    "do_path": str(self.build_path / "compare.do"),
-                    "gui_path": str(self.build_path / "run_conformal_gui.sh"),
-                    "hdl_srcs": impl_netlist,
-                    "rev_netlist": rev_netlist,
+                    "log_path": str(self.outputs["conformal_log"]),
+                    "do_path": str(self.outputs["conformal_do"]),
+                    "gui_path": str(self.outputs["conformal_gui"]),
+                    "hdl_srcs": self.prev_tool_outputs["golden_netlist_gen"]["golden_netlist"],
+                    "rev_netlist": self.prev_tool_outputs["rev_netlist_gen"]["rev_netlist"],
                     "conformal_script_path": str(BFASST_UTILS_PATH / "conformal.py"),
                     "build_dir": self.build_path.parent,
-                    "vendor": vendor.name,
+                    "vendor": self.prev_tool_outputs["vendor"],
                 },
             )
 

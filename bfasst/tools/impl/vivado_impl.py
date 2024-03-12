@@ -64,7 +64,7 @@ class VivadoImpl(ImplTool):
     def _init_outputs(self):
         self.outputs["impl_tcl"] = self.build_path / "impl.tcl"
         self.outputs["impl_json"] = self.build_path / "impl.json"
-        self.outputs["impl_verilog"] = self.build_path / "viv_impl.v"
+        self.outputs["golden_netlist"] = self.build_path / "viv_impl.v"
         self.outputs["impl_edf"] = self.build_path / "viv_impl.edf"
         self.outputs["impl_checkpoint"] = self.build_path / "impl.dcp"
         self.outputs["utilization"] = self.build_path / "utiliztion.txt"

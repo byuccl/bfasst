@@ -31,7 +31,7 @@ class IcestormRevBit(Tool):
                 "bitstream": self.prev_tool_outputs["bitstream"],
                 "constraints": self.prev_tool_outputs["constraints"],
                 "asciifile": self.outputs["asciifile"],
-                "netlist": self.outputs["netlist"],
+                "rev_netlist": self.outputs["rev_netlist"],
                 "report": self.outputs["report"],
                 "icebox_vlog_path": ICEBOX_VLOG_PATH,
                 "iceunpack_path": ICEUNPACK_PATH,
@@ -40,7 +40,7 @@ class IcestormRevBit(Tool):
 
     def _init_outputs(self):
         self.outputs["asciifile"] = self.build_path / (self.design_props.top + ".asc")
-        self.outputs["netlist"] = self.build_path / (self.design_props.top + "_rev.v")
+        self.outputs["rev_netlist"] = self.build_path / (self.design_props.top + "_rev.v")
         self.outputs["report"] = self.build_path / (self.design_props.top + "_rev.rpt")
 
     def add_ninja_deps(self, deps):

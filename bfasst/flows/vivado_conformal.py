@@ -19,17 +19,21 @@ class VivadoConformal(Flow):
             self, design, prev_tool_outputs=self.vivado_synth_tool.outputs
         )
         self.xrev_tool = Xray(self, design)
-        self.conformal_tool = Conformal(self, design)
+        self.conformal_tool = Conformal(self, design, self.__create_conformal_inputs_dict())
+
+    def __create_conformal_inputs_dict(self):
+        """Create the dictionary of inputs for the conformal tool."""
+        return {
+            "golden_netlist_gen": self.vivado_impl_tool.outputs,
+            "rev_netlist_gen": self.xrev_tool.outputs,
+            "vendor": Vendor.XILINX.name,
+        }
 
     def create_build_snippets(self):
         self.vivado_synth_tool.create_build_snippets()
         self.vivado_impl_tool.create_build_snippets()
         self.xrev_tool.create_build_snippets(str(self.vivado_impl_tool.outputs["bitstream"]))
-        self.conformal_tool.create_build_snippets(
-            impl_netlist=str(self.vivado_impl_tool.outputs["impl_verilog"]),
-            rev_netlist=str(self.xrev_tool.outputs["xray_netlist"]),
-            vendor=Vendor.XILINX,
-        )
+        self.conformal_tool.create_build_snippets()
 
     def get_top_level_flow_path(self) -> str:
         return FLOWS_PATH / "vivado_conformal.py"
