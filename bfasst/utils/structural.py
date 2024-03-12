@@ -158,8 +158,8 @@ class StructuralCompare:
 
         # golden_netlist = [i for i in golden_netlist if i.name not in ("GND")]
 
-        self.named_netlist = netlist_a
-        self.reversed_netlist = netlist_b
+        self.reversed_netlist = netlist_a
+        self.named_netlist = netlist_b
 
     def compare_netlists(self):
         """Map the golden and reversed netlists through automated block mapping"""
@@ -434,7 +434,7 @@ class StructuralCompare:
 
             # Loop through all pins on instance and compare nets
             for pin_a in instance.pins:
-                if pin_a.ignore_net_equivalency or not pin_a.net.is_connected:
+                if pin_a.ignore_net_equivalency:
                     continue
                 pin_b = mapped_instance.get_pin(pin_a.name, pin_a.index)
 
