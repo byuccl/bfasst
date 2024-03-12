@@ -1,4 +1,5 @@
 """Inject an error into a xrev netlist and run a structural compare to detect it."""
+
 import random
 
 from bfasst.flows.flow import Flow
@@ -27,7 +28,9 @@ class VivadoStructuralErrorInjection(Flow):
         self.synth_options = VivadoPhysNetlist.add_required_synth_options(synth_options)
 
         self.vivado_synth_tool = VivadoSynth(self, design, synth_options=self.synth_options)
-        self.vivado_impl_tool = VivadoImpl(self, design)
+        self.vivado_impl_tool = VivadoImpl(
+            self, design, prev_tool_outputs=self.vivado_synth_tool.outputs
+        )
         self.phys_netlist_tool = PhysNetlist(self, design)
         self.xrev_tool = Xray(self, design)
         self.error_injector_tool = ErrorInjector(self, design)

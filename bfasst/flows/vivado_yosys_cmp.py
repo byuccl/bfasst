@@ -1,4 +1,5 @@
 """Flow to compare reversed netlist to original using yosys."""
+
 import pathlib
 
 from bfasst.flows.flow import Flow
@@ -14,7 +15,9 @@ class VivadoYosysCmp(Flow):
     def __init__(self, design):
         super().__init__(design)
         self.vivado_synth_tool = VivadoSynth(self, design)
-        self.vivado_impl_tool = VivadoImpl(self, design)
+        self.vivado_impl_tool = VivadoImpl(
+            self, design, prev_tool_outputs=self.vivado_synth_tool.outputs
+        )
         self.xrev_tool = Xray(self, design)
         self.yosys_tool = Yosys(self, design)
 

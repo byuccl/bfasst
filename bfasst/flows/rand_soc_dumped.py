@@ -1,4 +1,5 @@
 """Flow to dump bels from random soc block designs with Isoblaze"""
+
 import pathlib
 
 from bfasst.flows.flow import FlowNoDesign
@@ -17,8 +18,8 @@ class RandSocDumped(FlowNoDesign):
         self.rand_soc_tool = RandSoC(self, num_designs=num_designs)
 
         for i, design in enumerate(self.rand_soc_tool.outputs["design_tcl"]):
-            VivadoSynthFromTcl(self, design)
-            VivadoImpl(self, design.parent)
+            synth_tool = VivadoSynthFromTcl(self, design)
+            VivadoImpl(self, design.parent, prev_tool_outputs=synth_tool.outputs)
             RandsocDump(
                 self,
                 checkpoint=design.parent / "impl" / "impl.dcp",

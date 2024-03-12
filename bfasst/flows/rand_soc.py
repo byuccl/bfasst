@@ -1,4 +1,5 @@
 """Flow to create random soc block designs in Vivado"""
+
 import pathlib
 
 from bfasst.flows.flow import FlowNoDesign
@@ -16,8 +17,8 @@ class RandSoc(FlowNoDesign):
         self.rand_soc_tool = RandSoC(self, num_designs=num_designs)
 
         for design in self.rand_soc_tool.outputs["design_tcl"]:
-            VivadoSynthFromTcl(self, design)
-            VivadoImpl(self, design.parent)
+            synth_tool = VivadoSynthFromTcl(self, design)
+            VivadoImpl(self, design.parent, prev_tool_outputs=synth_tool.outputs)
 
     @classmethod
     def flow_build_dir_name(cls) -> str:

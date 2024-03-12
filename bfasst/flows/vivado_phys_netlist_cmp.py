@@ -20,7 +20,9 @@ class VivadoPhysNetlistCmp(Flow):
         self.synth_options = VivadoPhysNetlist.add_required_synth_options(synth_options)
 
         self.vivado_synth_tool = VivadoSynth(self, design, synth_options=self.synth_options)
-        self.vivado_impl_tool = VivadoImpl(self, design)
+        self.vivado_impl_tool = VivadoImpl(
+            self, design, prev_tool_outputs=self.vivado_synth_tool.outputs
+        )
         self.phys_netlist_tool = PhysNetlist(self, design)
         self.xray_tool = Xray(self, design)
         self.cleanup_tool = NetlistCleanup(self, design)

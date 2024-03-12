@@ -9,10 +9,16 @@ from bfasst.tools.impl.impl_tool import ImplTool
 class Ic2Impl(ImplTool):
     """Ic2 Implementation Tool (ninja snippet generation for ic2 implementation)"""
 
-    def __init__(self, flow, design_path):
+    def __init__(self, flow, design_path, prev_tool_outputs):
         super().__init__(flow, design_path)
+
+        # A dictionary with the outputs of previous tools in a flow.
+        # For this implementation tool, it will be the outputs of the synthesis tool,
+        # which include the netlist
+        self.prev_tool_outputs = prev_tool_outputs
+
         self._my_dir_path = pathlib.Path(__file__).parent
-        self.build_path = self.build_path / "ic2_impl"
+        self.build_path = self.build_path.with_name("ic2_impl")
 
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()
@@ -20,7 +26,7 @@ class Ic2Impl(ImplTool):
     def create_rule_snippets(self):
         self._append_rule_snippets_default(__file__)
 
-    def create_build_snippets(self, netlist_full_path):
+    def create_build_snippets(self):
         # NOTE: the netlist_full_path is used by ninja to ensure the build snippet
         # only runs after the synthesis tool has completed
         # However, the relative path is used in the TCL script, since it must be run
@@ -36,9 +42,11 @@ class Ic2Impl(ImplTool):
                 # this type of syntax is required because the TCL script
                 # is run from the build directory as lattic drops outputs in the cwd.
                 # We have to get a relative path to the netlist in the synth build directory
-                "netlist_rel_path": "../.."
-                / pathlib.Path(netlist_full_path).relative_to(self.build_path.parent.parent),
-                "netlist_full_path": netlist_full_path,
+                "netlist_rel_path": ".."
+                / pathlib.Path(self.prev_tool_outputs["edif_file"]).relative_to(
+                    self.build_path.parent
+                ),
+                "netlist_full_path": self.prev_tool_outputs["edif_file"],
                 "design": self.design_path,
             },
         )

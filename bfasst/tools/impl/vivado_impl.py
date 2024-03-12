@@ -11,13 +11,19 @@ from bfasst.utils.general import json_write_if_changed
 class VivadoImpl(ImplTool):
     """Tool to create Vivado implementation ninja snippets."""
 
-    def __init__(self, flow, design, ooc=False):
+    def __init__(self, flow, design, prev_tool_outputs, ooc=False):
         super().__init__(flow, design)
         self.ooc = ooc
-        if self.ooc:
-            self.build_path = self.build_path.parent / "impl_ooc"
-        else:
-            self.build_path = self.build_path / "vivado"
+
+        # A dictionary with the outputs of previous tools in a flow.
+        # For this implementation tool, it will be the outputs of the synthesis tool.
+        self.prev_tool_outputs = prev_tool_outputs
+
+        self.build_path = (
+            self.build_path.with_name("vivado_ooc_impl")
+            if ooc
+            else self.build_path.with_name("vivado_impl")
+        )
         self._my_dir_path = pathlib.Path(__file__).parent
         self._init_outputs()
 
@@ -26,22 +32,20 @@ class VivadoImpl(ImplTool):
 
         impl = {
             "part": config.PART,
-            "xdc": str(self.build_path.parent / "synth" / "design.xdc") if not self.ooc else False,
-            "bit": str(self.build_path / "design.bit") if not self.ooc else False,
+            "xdc": str(self.prev_tool_outputs["synth_constraints"]) if not self.ooc else False,
+            "bit": str(self.outputs["bitstream"]) if not self.ooc else False,
             "impl_output": str(self.build_path),
-            "synth_output": str(
-                self.build_path.parent / ("synth" if not self.ooc else "synth_ooc")
-            ),
+            "synth_output": str(self.prev_tool_outputs["synth_constraints"].parent),
         }
         impl_json = json.dumps(impl, indent=4)
-        json_write_if_changed(self.build_path / "impl.json", impl_json)
+        json_write_if_changed(self.outputs["impl_json"], impl_json)
 
         self._append_build_snippets_default(
             __file__,
             {
                 "in_context": not self.ooc,
                 "impl_output": str(self.build_path),
-                "synth_output": self.build_path.parent / ("synth" if not self.ooc else "synth_ooc"),
+                "synth_output": self.prev_tool_outputs["synth_constraints"].parent,
                 "impl_library": self._my_dir_path,
                 "cwd": self.build_path,
             },

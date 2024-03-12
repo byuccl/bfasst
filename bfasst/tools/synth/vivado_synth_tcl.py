@@ -13,7 +13,7 @@ class VivadoSynthFromTcl(Tool):
         super().__init__(flow, design_tcl_path.parent)
         self.design_tcl_path = design_tcl_path
         self._my_dir_path = pathlib.Path(__file__).parent
-        self.build_path = self.design_build_path / "synth" / "vivado"
+        self.build_path = self.design_build_path.with_name("vivado_synth")
 
     def create_rule_snippets(self):
         self._append_rule_snippets_default(
@@ -32,11 +32,24 @@ class VivadoSynthFromTcl(Tool):
         self._append_build_snippets_default(
             __file__,
             {
-                "synth_output": self.build_path,
+                "synth_constraints": self.outputs["synth_constraints"],
+                "synth_edf": self.outputs["synth_edf"],
+                "synth_dcp": self.outputs["synth_dcp"],
+                "io_report": self.outputs["io_report"],
+                "synth_journal": self.outputs["synth_journal"],
+                "synth_log": self.outputs["synth_log"],
                 "design_tcl": self.design_tcl_path,
                 "cwd": self.build_path,
             },
         )
+
+    def _init_outputs(self):
+        self.outputs["synth_constraints"] = self.build_path / "design.xdc"
+        self.outputs["synth_edf"] = self.build_path / "viv_synth.edf"
+        self.outputs["synth_dcp"] = self.build_path / "synth.dcp"
+        self.outputs["io_report"] = self.build_path / "report_io.txt"
+        self.outputs["synth_journal"] = self.build_path / "vivado.jou"
+        self.outputs["synth_log"] = self.build_path / "vivado.log"
 
     def add_ninja_deps(self, deps):
         """Add dependencies to the master ninja file that would cause it to rebuild if modified"""

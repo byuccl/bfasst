@@ -14,7 +14,9 @@ class VivadoBitToNetlist(Flow):
     def __init__(self, design, synth_options=""):
         super().__init__(design)
         self.vivado_synth_tool = VivadoSynth(self, design, synth_options=synth_options)
-        self.vivado_impl_tool = VivadoImpl(self, design)
+        self.vivado_impl_tool = VivadoImpl(
+            self, design, prev_tool_outputs=self.vivado_synth_tool.outputs
+        )
         self.xrev_tool = Xray(self, design)
 
     def create_build_snippets(self):

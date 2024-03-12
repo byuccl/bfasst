@@ -14,7 +14,7 @@ class Ic2LseSynth(SynthTool):
     def __init__(self, flow, design_path):
         super().__init__(flow, design_path)
         self._my_dir_path = pathlib.Path(__file__).parent
-        self.build_path = self.build_path / "ic2_lse"
+        self.build_path = self.build_path.with_name("ic2_lse_synth")
 
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()
@@ -68,3 +68,4 @@ class Ic2LseSynth(SynthTool):
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
+        deps.append(LSE_PRJ_TEMPLATE)

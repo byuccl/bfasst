@@ -15,7 +15,9 @@ class VivadoConformal(Flow):
     def __init__(self, design):
         super().__init__(design)
         self.vivado_synth_tool = VivadoSynth(self, design)
-        self.vivado_impl_tool = VivadoImpl(self, design)
+        self.vivado_impl_tool = VivadoImpl(
+            self, design, prev_tool_outputs=self.vivado_synth_tool.outputs
+        )
         self.xrev_tool = Xray(self, design)
         self.conformal_tool = Conformal(self, design)
 
