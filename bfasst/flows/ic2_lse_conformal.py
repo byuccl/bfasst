@@ -17,7 +17,7 @@ class Ic2LseConformal(Flow):
         super().__init__(design)
         self.ic2_lse_synth_tool = Ic2LseSynth(self, design)
         self.ic2_impl_tool = Ic2Impl(self, design, self.ic2_lse_synth_tool.outputs)
-        self.icestorm_reverse_bit_tool = IcestormRevBit(self, design)
+        self.icestorm_reverse_bit_tool = IcestormRevBit(self, design, self.ic2_impl_tool.outputs)
         self.conformal_tool = Conformal(self, design)
 
     def create_rule_snippets(self):
@@ -29,10 +29,7 @@ class Ic2LseConformal(Flow):
     def create_build_snippets(self):
         self.ic2_lse_synth_tool.create_build_snippets()
         self.ic2_impl_tool.create_build_snippets()
-        self.icestorm_reverse_bit_tool.create_build_snippets(
-            bitstream=str(self.ic2_impl_tool.outputs["bitstream"]),
-            constraints=str(self.ic2_impl_tool.outputs["constraints"]),
-        )
+        self.icestorm_reverse_bit_tool.create_build_snippets()
         self.conformal_tool.create_build_snippets(
             impl_netlist=str(self.ic2_lse_synth_tool.outputs["prim_netlist"]),
             rev_netlist=str(self.icestorm_reverse_bit_tool.outputs["netlist"]),
