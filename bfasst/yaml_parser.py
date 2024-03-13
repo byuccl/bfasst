@@ -90,6 +90,7 @@ class DesignParser(YamlParser):
     def __init__(self, yaml_path=None):
         self.top = None
         self.vhdl_libs = None
+        self.verilog_files = None
         self.clocks = {}
         self.part = config.PART
 
@@ -106,6 +107,9 @@ class DesignParser(YamlParser):
         # [{name: "clk", period: int (ns), waveform: "0.000 5.000"}] - Waveform is optional
         if "clocks" in props:
             self.clocks = props["clocks"]
+
+        if "verilog_files" in props:
+            self.verilog_files = props["verilog_files"]
 
 
 class FlowDescriptionParser(YamlParser):
