@@ -57,7 +57,7 @@ class VivadoStructuralErrorInjection(Flow):
                     self.error_injector_tool.build_path / f"{error.name.lower()}_{i}.v"
                 )
                 self.compare_tool.create_build_snippets(
-                    self.phys_netlist_tool.phys_netlist_path,
+                    self.phys_netlist_tool.outputs["viv_impl_physical_v"],
                     corrupt_netlist_path,
                     f"{error.name.lower()}_{i}_cmp.log",
                 )
