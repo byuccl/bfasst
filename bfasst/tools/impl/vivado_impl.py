@@ -45,7 +45,7 @@ class VivadoImpl(ImplTool):
             {
                 "in_context": not self.ooc,
                 "impl_output": str(self.build_path),
-                "synth_output": self.prev_tool_outputs["synth_constraints"].parent,
+                "synth_output": self.prev_tool_outputs["synth_dcp"].parent,
                 "impl_library": self._my_dir_path,
                 "cwd": self.build_path,
             },
