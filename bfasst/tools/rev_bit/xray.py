@@ -9,12 +9,11 @@ from bfasst.tools.tool import Tool
 class Xray(Tool):
     """Tool to create rule and build snippets that reverse a bitstream using xray."""
 
-    def __init__(self, flow, design, prev_tool_outputs):
+    def __init__(self, flow, design, xdc_input, bitstream):
         super().__init__(flow, design)
 
-        # A dictionary of the outputs of the previous tool
-        # In this case, the dictionary will contain a bitstream key
-        self.prev_tool_outputs = prev_tool_outputs
+        self.xdc_input = xdc_input
+        self.bitstream = bitstream
 
         self.build_path = self.design_build_path / "xray"
 
@@ -35,7 +34,6 @@ class Xray(Tool):
         self.fasm_path = self.build_path / (self.design_props.top + ".fasm")
         self.reversed_netlist_path = self.build_path / (self.design_props.top + "_reversed.v")
         self.xdc_path = self.build_path / (self.design_props.top + "_reversed.xdc")
-        self.constraints_path = self.design_build_path / "synth" / "design.xdc"
 
         self._init_outputs()
 
@@ -56,13 +54,13 @@ class Xray(Tool):
                     "xray_fasm": str(self.outputs["xray_fasm"]),
                     "rev_netlist": str(self.outputs["rev_netlist"]),
                     "xray_xdc": str(self.outputs["xray_xdc"]),
-                    "bitstream_path": self.prev_tool_outputs["bitstream"],
+                    "bitstream_path": self.bitstream,
                     "fasm2bels_path": self.fasm2bels_path,
                     "fasm2bels_python_path": self.fasm2bels_python_path,
                     "bit_to_fasm_path": XRAY_PATH / "utils" / "bit2fasm.py",
                     "db_root": self.db_root,
                     "part": config.PART,
-                    "input_xdc": self.constraints_path,
+                    "input_xdc": self.xdc_input,
                 },
             )
 

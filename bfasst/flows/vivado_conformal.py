@@ -18,15 +18,13 @@ class VivadoConformal(Flow):
         self.vivado_impl_tool = VivadoImpl(
             self, design, prev_tool_outputs=self.vivado_synth_tool.outputs
         )
-        self.xrev_tool = Xray(self, design, prev_tool_outputs=self.vivado_impl_tool.outputs)
+        self.xrev_tool = Xray(
+            self,
+            design,
+            xdc_input=self.vivado_synth_tool.outputs["synth_constraints"],
+            bitstream=self.vivado_impl_tool.outputs["bitstream"],
+        )
         self.conformal_tool = Conformal(self, design, self.__create_conformal_inputs_dict())
-
-        self.tools = [
-            self.vivado_synth_tool,
-            self.vivado_impl_tool,
-            self.xrev_tool,
-            self.conformal_tool,
-        ]
 
     def __create_conformal_inputs_dict(self):
         """Create the dictionary of inputs for the conformal tool."""

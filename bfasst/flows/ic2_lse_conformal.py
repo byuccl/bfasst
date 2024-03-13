@@ -20,13 +20,6 @@ class Ic2LseConformal(Flow):
         self.icestorm_reverse_bit_tool = IcestormRevBit(self, design, self.ic2_impl_tool.outputs)
         self.conformal_tool = Conformal(self, design, self.__create_conformal_inputs_dict())
 
-        self.tools = [
-            self.ic2_lse_synth_tool,
-            self.ic2_impl_tool,
-            self.icestorm_reverse_bit_tool,
-            self.conformal_tool,
-        ]
-
     def __create_conformal_inputs_dict(self):
         """Create the dictionary of inputs for the conformal tool."""
         return {

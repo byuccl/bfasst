@@ -1,4 +1,5 @@
 """Base class for all ninja flows"""
+
 import abc
 
 from bfasst.paths import BUILD_PATH, DESIGNS_PATH

@@ -23,12 +23,6 @@ class VivadoPhysNetlist(Flow):
             self, design, prev_tool_outputs=self.vivado_impl_tool.outputs
         )
 
-        self.tools = [
-            self.vivado_synth_tool,
-            self.vivado_impl_tool,
-            self.phys_netlist_tool,
-        ]
-
     def get_top_level_flow_path(self):
         return FLOWS_PATH / "vivado_phys_netlist.py"
 

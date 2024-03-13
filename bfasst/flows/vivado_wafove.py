@@ -18,15 +18,13 @@ class VivadoWafove(Flow):
         self.vivado_impl_tool = VivadoImpl(
             self, design, prev_tool_outputs=self.vivado_synth_tool.outputs
         )
-        self.xrev_tool = Xray(self, design, prev_tool_outputs=self.vivado_impl_tool.outputs)
+        self.xrev_tool = Xray(
+            self,
+            design,
+            xdc_input=self.vivado_synth_tool.outputs["synth_constraints"],
+            bitstream=self.vivado_impl_tool.outputs["bitstream"],
+        )
         self.wafove_tool = Wafove(self, design, self.__create_wafove_inputs_dict())
-
-        self.tools = [
-            self.vivado_synth_tool,
-            self.vivado_impl_tool,
-            self.xrev_tool,
-            self.wafove_tool,
-        ]
 
     def __create_wafove_inputs_dict(self):
         return {

@@ -34,7 +34,12 @@ class VivadoStructuralErrorInjection(Flow):
         self.phys_netlist_tool = PhysNetlist(
             self, design, prev_tool_outputs=self.vivado_impl_tool.outputs
         )
-        self.xrev_tool = Xray(self, design, prev_tool_outputs=self.vivado_impl_tool.outputs)
+        self.xrev_tool = Xray(
+            self,
+            design,
+            xdc_input=self.vivado_synth_tool.outputs["synth_constraints"],
+            bitstream=self.vivado_impl_tool.outputs["bitstream"],
+        )
         self.error_injector_tool = ErrorInjector(self, design)
         self.compare_tool = Structural(self, design, expect_fail=True)
 
