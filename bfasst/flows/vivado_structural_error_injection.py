@@ -31,7 +31,9 @@ class VivadoStructuralErrorInjection(Flow):
         self.vivado_impl_tool = VivadoImpl(
             self, design, prev_tool_outputs=self.vivado_synth_tool.outputs
         )
-        self.phys_netlist_tool = PhysNetlist(self, design)
+        self.phys_netlist_tool = PhysNetlist(
+            self, design, prev_tool_outputs=self.vivado_impl_tool.outputs
+        )
         self.xrev_tool = Xray(self, design, prev_tool_outputs=self.vivado_impl_tool.outputs)
         self.error_injector_tool = ErrorInjector(self, design)
         self.compare_tool = Structural(self, design, expect_fail=True)
@@ -39,10 +41,7 @@ class VivadoStructuralErrorInjection(Flow):
     def create_build_snippets(self):
         self.vivado_synth_tool.create_build_snippets()
         self.vivado_impl_tool.create_build_snippets()
-        self.phys_netlist_tool.create_build_snippets(
-            impl_dcp=self.vivado_impl_tool.outputs["impl_checkpoint"],
-            impl_edf=self.vivado_impl_tool.outputs["impl_edf"],
-        )
+        self.phys_netlist_tool.create_build_snippets()
         self.xrev_tool.create_build_snippets()
 
         random_seed_multiplier = 1

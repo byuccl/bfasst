@@ -19,15 +19,14 @@ class VivadoPhysNetlist(Flow):
         self.vivado_impl_tool = VivadoImpl(
             self, design, prev_tool_outputs=self.vivado_synth_tool.outputs
         )
-        self.phys_netlist_tool = PhysNetlist(self, design)
+        self.phys_netlist_tool = PhysNetlist(
+            self, design, prev_tool_outputs=self.vivado_impl_tool.outputs
+        )
 
     def create_build_snippets(self):
         self.vivado_synth_tool.create_build_snippets()
         self.vivado_impl_tool.create_build_snippets()
-        self.phys_netlist_tool.create_build_snippets(
-            impl_dcp=self.vivado_impl_tool.outputs["impl_checkpoint"],
-            impl_edf=self.vivado_impl_tool.outputs["impl_edf"],
-        )
+        self.phys_netlist_tool.create_build_snippets()
 
     def get_top_level_flow_path(self):
         return FLOWS_PATH / "vivado_phys_netlist.py"

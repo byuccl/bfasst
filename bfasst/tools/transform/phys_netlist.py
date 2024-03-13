@@ -15,8 +15,12 @@ from bfasst.utils import compare_json
 class PhysNetlist(Tool):
     """Create rule and build snippets for phys netlist creation."""
 
-    def __init__(self, flow, design):
+    def __init__(self, flow, design, prev_tool_outputs):
         super().__init__(flow, design)
+
+        # A dictionary of the previous tool outputs
+        # In this case, the dictionary will contain keys for the impl_checkpoint and impl_edf
+        self.prev_tool_outputs = prev_tool_outputs
 
         self.build_path = self.design_build_path / "vivado_phys_netlist"
         self.phys_netlist_path = self.build_path / "viv_impl_physical.v"
@@ -26,9 +30,9 @@ class PhysNetlist(Tool):
     def create_rule_snippets(self):
         self._append_rule_snippets_default(__file__)
 
-    def create_build_snippets(self, impl_dcp, impl_edf):
+    def create_build_snippets(self):
         self.__write_json_file()
-        self.__append_build_snippets(impl_dcp, impl_edf)
+        self.__append_build_snippets()
 
     def __write_json_file(self):
         checkpoint_to_v = {
@@ -45,7 +49,7 @@ class PhysNetlist(Tool):
             with open(self.build_path / "checkpoint_to_v.json", "w") as f:
                 f.write(checkpoint_to_v_json)
 
-    def __append_build_snippets(self, impl_dcp, impl_edf):
+    def __append_build_snippets(self):
         with open(NINJA_TRANSFORM_TOOLS_PATH / "phys_netlist_build.ninja.mustache") as f:
             phys_netlist_ninja = chevron.render(
                 f,
@@ -53,8 +57,8 @@ class PhysNetlist(Tool):
                     "phys_netlist_output": self.build_path,
                     "phys_netlist_library": NINJA_TRANSFORM_TOOLS_PATH,
                     "build_dir": self.build_path.parent,
-                    "impl_dcp": impl_dcp,
-                    "impl_edf": impl_edf,
+                    "impl_dcp": self.prev_tool_outputs["impl_checkpoint"],
+                    "impl_edf": self.prev_tool_outputs["impl_edf"],
                 },
             )
 
