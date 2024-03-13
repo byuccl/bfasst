@@ -78,10 +78,10 @@ install_wafove:
 # OpenTitan
 ################################################################################
 install_opentitan:
-	git submodule init designs/opentitan
 	git submodule update --init --recursive designs/opentitan
 	cd designs/opentitan
 	sudo sed '/^#/d' ./apt-requirements.txt | xargs sudo apt install -y
 	pip install -U pip "setuptools<66.0.0"
 	pip install -r python-requirements.txt
 	./util/get-toolchain.py
+	fusesoc --cores-root . run --flag=fileset_top --target=synth --no-export --setup lowrisc:systems:chip_earlgrey_cw340
