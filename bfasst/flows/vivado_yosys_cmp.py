@@ -19,16 +19,20 @@ class VivadoYosysCmp(Flow):
             self, design, prev_tool_outputs=self.vivado_synth_tool.outputs
         )
         self.xrev_tool = Xray(self, design, prev_tool_outputs=self.vivado_impl_tool.outputs)
-        self.yosys_tool = Yosys(self, design)
+        self.yosys_tool = Yosys(self, design, self.__create_yosys_inputs_dict())
 
-    def create_build_snippets(self):
-        self.vivado_synth_tool.create_build_snippets()
-        self.vivado_impl_tool.create_build_snippets()
-        self.xrev_tool.create_build_snippets()
-        self.yosys_tool.create_build_snippets(
-            gold_netlist=self.vivado_impl_tool.outputs["impl_verilog"],
-            rev_netlist=self.xrev_tool.outputs["xray_netlist"],
-        )
+        self.tools = [
+            self.vivado_synth_tool,
+            self.vivado_impl_tool,
+            self.xrev_tool,
+            self.yosys_tool,
+        ]
+
+    def __create_yosys_inputs_dict(self):
+        return {
+            "impl_tool": self.vivado_impl_tool.outputs,
+            "rev_bit_tool": self.xrev_tool.outputs,
+        }
 
     def get_top_level_flow_path(self):
         return pathlib.Path(__file__)
