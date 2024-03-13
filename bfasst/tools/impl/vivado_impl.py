@@ -35,7 +35,7 @@ class VivadoImpl(ImplTool):
             "xdc": str(self.prev_tool_outputs["synth_constraints"]) if not self.ooc else False,
             "bit": str(self.outputs["bitstream"]) if not self.ooc else False,
             "impl_output": str(self.build_path),
-            "synth_output": str(self.prev_tool_outputs["synth_constraints"].parent),
+            "synth_output": str(self.prev_tool_outputs["synth_dcp"].parent),
         }
         impl_json = json.dumps(impl, indent=4)
         json_write_if_changed(self.outputs["impl_json"], impl_json)

@@ -14,6 +14,7 @@ class VivadoSynthFromTcl(Tool):
         self.design_tcl_path = design_tcl_path
         self._my_dir_path = pathlib.Path(__file__).parent
         self.build_path = self.design_build_path.with_name("vivado_synth")
+        self._init_outputs()
 
     def create_rule_snippets(self):
         self._append_rule_snippets_default(
