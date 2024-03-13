@@ -16,21 +16,7 @@ class Vivado(Flow):
         self.vivado_impl_tool = VivadoImpl(
             self, design, prev_tool_outputs=self.vivado_synth_tool.outputs, ooc=ooc
         )
-
-    def create_rule_snippets(self):
-        self.vivado_synth_tool.create_rule_snippets()
-        self.vivado_impl_tool.create_rule_snippets()
-
-    def create_build_snippets(self):
-        self.vivado_synth_tool.create_build_snippets()
-        self.vivado_impl_tool.create_build_snippets()
-
-    def add_ninja_deps(self, deps):
-        self.vivado_synth_tool.add_ninja_deps(deps)
-        self.vivado_impl_tool.add_ninja_deps(deps)
-        deps.append(FLOWS_PATH / "vivado.py")
-        if self.ooc:
-            deps.append(FLOWS_PATH / "vivado_ooc.py")
+        self.tools = [self.vivado_synth_tool, self.vivado_impl_tool]
 
     def get_top_level_flow_path(self):
-        return FLOWS_PATH / "vivado.py"
+        return FLOWS_PATH / "vivado.py" if not self.ooc else FLOWS_PATH / "vivado_ooc.py"

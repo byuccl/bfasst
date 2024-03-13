@@ -19,10 +19,11 @@ class VivadoBitToNetlist(Flow):
         )
         self.xrev_tool = Xray(self, design, prev_tool_outputs=self.vivado_impl_tool.outputs)
 
-    def create_build_snippets(self):
-        self.vivado_synth_tool.create_build_snippets()
-        self.vivado_impl_tool.create_build_snippets()
-        self.xrev_tool.create_build_snippets()
+        self.tools = [
+            self.vivado_synth_tool,
+            self.vivado_impl_tool,
+            self.xrev_tool,
+        ]
 
     def get_top_level_flow_path(self):
         return pathlib.Path(__file__).resolve()
