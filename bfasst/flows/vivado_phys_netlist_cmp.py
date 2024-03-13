@@ -30,8 +30,8 @@ class VivadoPhysNetlistCmp(Flow):
         self.vivado_synth_tool.create_build_snippets()
         self.vivado_impl_tool.create_build_snippets()
         self.phys_netlist_tool.create_build_snippets(
-            impl_dcp=self.vivado_impl_tool.outputs["impl_checkpoint"],
-            impl_edf=self.vivado_impl_tool.outputs["impl_edf"],
+            impl_dcp=self.vivado_impl_tool.outputs["dcp"],
+            impl_edf=self.vivado_impl_tool.outputs["edf"],
         )
         self.xray_tool.create_build_snippets(str(self.vivado_impl_tool.outputs["bitstream"]))
         self.cleanup_tool.create_build_snippets(

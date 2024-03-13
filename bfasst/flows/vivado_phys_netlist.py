@@ -32,10 +32,12 @@ class VivadoPhysNetlist(Flow):
 
     @staticmethod
     def add_required_synth_options(options):
+        if not options:
+            options = {}
         synth_opts = options.get("synth_design", "")
         if "-flatten_hierarchy" not in synth_opts:
             synth_opts += " -flatten_hierarchy full"
-        if "-max_dsp" not in synth_opts:
-            options += " -max_dsp 0"
+        # if "-max_dsp" not in synth_opts:
+        #     options += " -max_dsp 0"
         options["synth_design"] = synth_opts
         return options
