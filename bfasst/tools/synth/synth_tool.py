@@ -32,6 +32,12 @@ class SynthTool(Tool):
         """Read the hdl files in the design directory"""
         self.vhdl_libs = self.design_props.vhdl_libs
 
+        if self.design_props.verilog_files is not None:
+            self.verilog = [
+                str(self.design_path / file) for file in self.design_props.verilog_files
+            ]
+            return
+
         for child in self.design_path.rglob("*"):
             if child.is_dir():
                 continue

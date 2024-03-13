@@ -1,4 +1,5 @@
 """ Creates a xilinx netlist that has only physical primitives"""
+
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-public-methods
 
@@ -220,6 +221,7 @@ class RwPhysNetlist:
                 "RAMB36E1",
                 "RAMB18E1",
                 "LDCE",
+                "DSP48E1",
             ):
                 continue
 
