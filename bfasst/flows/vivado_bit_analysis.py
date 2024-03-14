@@ -17,7 +17,10 @@ class VivadoBitAnalysis(Flow):
         super().__init__(design)
         self.vivado_synth_tool = VivadoSynth(self, design, synth_options=synth_options)
         self.vivado_impl_tool = VivadoImpl(
-            self, design, prev_tool_outputs=self.vivado_synth_tool.outputs
+            self,
+            design,
+            synth_output_dir=self.vivado_synth_tool.outputs["synth_dcp"].parent,
+            constraints_file=self.vivado_synth_tool.outputs["synth_constraints"],
         )
         self.xrev_tool = Xray(
             self,
@@ -26,10 +29,10 @@ class VivadoBitAnalysis(Flow):
             bitstream=self.vivado_impl_tool.outputs["bitstream"],
         )
         self.netlist_cleanup_tool = NetlistCleanup(
-            self, design, prev_tool_outputs=self.xrev_tool.outputs
+            self, design, rev_netlist=self.xrev_tool.outputs["rev_netlist"]
         )
         self.netlist_phys_to_logical = NetlistPhysToLogical(
-            self, design, prev_tool_outputs=self.netlist_cleanup_tool.outputs
+            self, design, cleaned_netlist=self.netlist_cleanup_tool.outputs["netlist_cleaned_path"]
         )
 
     def get_top_level_flow_path(self):

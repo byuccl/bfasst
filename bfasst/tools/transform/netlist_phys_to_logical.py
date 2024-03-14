@@ -8,12 +8,10 @@ from bfasst.paths import BFASST_UTILS_PATH, GMT_TOOLS_PATH
 class NetlistPhysToLogical(Tool):
     """Create rule and build snippets for phys netlist creation."""
 
-    def __init__(self, flow, design, prev_tool_outputs):
+    def __init__(self, flow, design, cleaned_netlist):
         super().__init__(flow, design)
 
-        # A dictionary of the previous tool outputs
-        # In this case, the dictionary will contain a netlist_cleaned_path key
-        self.prev_tool_outputs = prev_tool_outputs
+        self.cleaned_netlist = cleaned_netlist
 
         self.build_path = self.design_build_path / "netlist_phys_to_logical"
         self._init_outputs()
@@ -36,7 +34,7 @@ class NetlistPhysToLogical(Tool):
             __file__,
             render_dict={
                 "netlist_phys_to_logical_output": self.build_path,
-                "netlist_in": self.prev_tool_outputs["netlist_cleaned_path"],
+                "netlist_in": self.cleaned_netlist,
                 "netlist_out": self.outputs["netlist_phys_to_logical_path"],
             },
         )

@@ -15,7 +15,10 @@ class VivadoBitToNetlist(Flow):
         super().__init__(design)
         self.vivado_synth_tool = VivadoSynth(self, design, synth_options=synth_options)
         self.vivado_impl_tool = VivadoImpl(
-            self, design, prev_tool_outputs=self.vivado_synth_tool.outputs
+            self,
+            design,
+            synth_output_dir=self.vivado_synth_tool.outputs["synth_dcp"].parent,
+            constraints_file=self.vivado_synth_tool.outputs["synth_constraints"],
         )
         self.xrev_tool = Xray(
             self,

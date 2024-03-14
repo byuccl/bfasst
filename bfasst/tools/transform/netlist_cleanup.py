@@ -9,12 +9,10 @@ from bfasst.paths import BFASST_UTILS_PATH
 class NetlistCleanup(Tool):
     """Create rule and build snippets for phys netlist creation."""
 
-    def __init__(self, flow, design, prev_tool_outputs):
+    def __init__(self, flow, design, rev_netlist):
         super().__init__(flow, design)
 
-        # A dictionary of the previous tool outputs
-        # In this case, the dictionary will contain a rev_netlist key
-        self.prev_tool_outputs = prev_tool_outputs
+        self.rev_netlist = rev_netlist
 
         self.build_path = self.design_build_path / "netlist_cleanup"
         self._init_outputs()
@@ -36,7 +34,7 @@ class NetlistCleanup(Tool):
             __file__,
             render_dict={
                 "netlist_cleanup_output": self.build_path,
-                "netlist_in": self.prev_tool_outputs["rev_netlist"],
+                "netlist_in": self.rev_netlist,
                 "netlist_out": self.outputs["netlist_cleaned_path"],
             },
         )
