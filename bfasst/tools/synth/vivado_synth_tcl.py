@@ -38,6 +38,7 @@ class VivadoSynthFromTcl(Tool):
                 "synth_dcp": self.outputs["synth_dcp"],
                 "io_report": self.outputs["io_report"],
                 "synth_log": self.outputs["synth_log"],
+                "synth_journal": self.outputs["synth_journal"],
                 "design_tcl": self.design_tcl_path,
                 "cwd": self.build_path,
             },
