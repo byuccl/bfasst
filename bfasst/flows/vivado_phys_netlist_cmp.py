@@ -15,6 +15,7 @@ class VivadoPhysNetlistCmp(Flow):
     """Structural Comparison of physical netlist and reversed netlist"""
 
     def __init__(self, design, synth_options=""):
+        # pylint: disable=duplicate-code
         super().__init__(design)
 
         self.synth_options = VivadoPhysNetlist.add_required_synth_options(synth_options)
@@ -42,6 +43,7 @@ class VivadoPhysNetlistCmp(Flow):
             self, design, rev_netlist=self.xray_tool.outputs["rev_netlist"]
         )
         self.compare_tool = Structural(self, design)
+        # pylint: enable=duplicate-code
 
     def create_build_snippets(self):
         self.vivado_synth_tool.create_build_snippets()

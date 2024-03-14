@@ -13,6 +13,7 @@ class VivadoWafove(Flow):
     """Flow to compare netlists using wafove."""
 
     def __init__(self, design):
+        # pylint: disable=duplicate-code
         super().__init__(design)
         self.vivado_synth_tool = VivadoSynth(self, design)
         self.vivado_impl_tool = VivadoImpl(
@@ -35,6 +36,7 @@ class VivadoWafove(Flow):
             std_out_log_name="wafove.log",
             std_err_log_name="wafove_err.log",
         )
+        # pylint: enable=duplicate-code
 
     def get_top_level_flow_path(self):
         return pathlib.Path(__file__)

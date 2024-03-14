@@ -12,6 +12,7 @@ class RandSoc(FlowNoDesign):
     """Flow to create random soc block designs in Vivado"""
 
     def __init__(self, num_designs=1):
+        # pylint: disable=duplicate-code
         super().__init__()
 
         self.rand_soc_tool = RandSoC(self, num_designs=num_designs)
@@ -24,6 +25,7 @@ class RandSoc(FlowNoDesign):
                 synth_output_dir=synth_tool.outputs["synth_dcp"].parent,
                 constraints_file=synth_tool.outputs["synth_constraints"],
             )
+        # pylint: enable=duplicate-code
 
     @classmethod
     def flow_build_dir_name(cls) -> str:

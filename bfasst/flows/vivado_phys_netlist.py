@@ -11,6 +11,7 @@ class VivadoPhysNetlist(Flow):
     """Creates a Vivado netlist that has only physical primitives."""
 
     def __init__(self, design, synth_options=""):
+        # pylint: disable=duplicate-code
         super().__init__(design)
 
         self.synth_options = VivadoPhysNetlist.add_required_synth_options(synth_options)
@@ -28,6 +29,7 @@ class VivadoPhysNetlist(Flow):
             impl_checkpoint=self.vivado_impl_tool.outputs["impl_checkpoint"],
             impl_edf=self.vivado_impl_tool.outputs["impl_edf"],
         )
+        # pylint: enable=duplicate-code
 
     def get_top_level_flow_path(self):
         return FLOWS_PATH / "vivado_phys_netlist.py"

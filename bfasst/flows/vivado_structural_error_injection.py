@@ -19,6 +19,7 @@ class VivadoStructuralErrorInjection(Flow):
     """Inject an error into a xrev netlist and run a structural compare to detect it."""
 
     def __init__(self, design, num_runs=100, seed=None, synth_options=""):
+        # pylint: disable=duplicate-code
         super().__init__(design)
         self.num_runs = num_runs
         self.seed = seed
@@ -48,6 +49,7 @@ class VivadoStructuralErrorInjection(Flow):
         )
         self.error_injector_tool = ErrorInjector(self, design)
         self.compare_tool = Structural(self, design, expect_fail=True)
+        # pylint: enable=duplicate-code
 
     def create_build_snippets(self):
         self.vivado_synth_tool.create_build_snippets()

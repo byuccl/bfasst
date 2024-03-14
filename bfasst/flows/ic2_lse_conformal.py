@@ -14,6 +14,7 @@ class Ic2LseConformal(Flow):
     """Ic2LseConformal flow"""
 
     def __init__(self, design):
+        # pylint: disable=duplicate-code
         super().__init__(design)
         self.ic2_lse_synth_tool = Ic2LseSynth(self, design)
         self.ic2_impl_tool = Ic2Impl(
@@ -32,6 +33,7 @@ class Ic2LseConformal(Flow):
             rev_netlist=self.icestorm_reverse_bit_tool.outputs["rev_netlist"],
             vendor=Vendor.LATTICE.name,
         )
+        # pylint: enable=duplicate-code
 
     def get_top_level_flow_path(self):
         return FLOWS_PATH / "ic2_lse_conformal.py"

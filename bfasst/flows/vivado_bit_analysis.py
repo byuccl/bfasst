@@ -14,6 +14,7 @@ class VivadoBitAnalysis(Flow):
     """Flow to reverse a netlist from a bitstream using x-ray."""
 
     def __init__(self, design, synth_options=""):
+        # pylint: disable=duplicate-code
         super().__init__(design)
         self.vivado_synth_tool = VivadoSynth(self, design, synth_options=synth_options)
         self.vivado_impl_tool = VivadoImpl(
@@ -34,6 +35,7 @@ class VivadoBitAnalysis(Flow):
         self.netlist_phys_to_logical = NetlistPhysToLogical(
             self, design, cleaned_netlist=self.netlist_cleanup_tool.outputs["netlist_cleaned_path"]
         )
+        # pylint: enable=duplicate-code
 
     def get_top_level_flow_path(self):
         return pathlib.Path(__file__).resolve()
