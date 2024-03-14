@@ -20,7 +20,7 @@ class RandSocDumped(FlowNoDesign):
 
         for i, design in enumerate(self.rand_soc_tool.outputs["design_tcl"]):
             synth_tool = VivadoSynthFromTcl(self, design)
-            VivadoImpl(
+            impl_tool = VivadoImpl(
                 self,
                 design.parent,
                 synth_edf=synth_tool.outputs["synth_edf"],
@@ -28,7 +28,7 @@ class RandSocDumped(FlowNoDesign):
             )
             RandsocDump(
                 self,
-                checkpoint=design.parent / "impl" / "impl.dcp",
+                checkpoint=impl_tool.outputs["impl_checkpoint"],
                 dumpfile=f"design_{i}.dump",
             )
             # pylint: enable=duplicate-code
