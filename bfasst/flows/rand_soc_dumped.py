@@ -23,7 +23,7 @@ class RandSocDumped(FlowNoDesign):
             VivadoImpl(
                 self,
                 design.parent,
-                synth_output_dir=synth_tool.outputs["synth_dcp"].parent,
+                synth_edf=synth_tool.outputs["synth_edf"],
                 constraints_file=synth_tool.outputs["synth_constraints"],
             )
             RandsocDump(

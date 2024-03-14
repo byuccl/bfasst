@@ -11,12 +11,12 @@ from bfasst.utils.general import json_write_if_changed
 class VivadoImpl(ImplTool):
     """Tool to create Vivado implementation ninja snippets."""
 
-    def __init__(self, flow, design, synth_output_dir, constraints_file=None, ooc=False):
+    def __init__(self, flow, design, synth_edf, constraints_file=None, ooc=False):
         super().__init__(flow, design)
         self.ooc = ooc
 
         self.constraints_file = constraints_file
-        self.synth_output_dir = synth_output_dir
+        self.synth_edf = synth_edf
 
         self.build_path = (
             self.build_path.with_name("vivado_ooc_impl")
@@ -34,7 +34,7 @@ class VivadoImpl(ImplTool):
             "xdc": str(self.constraints_file) if not self.ooc else False,
             "bit": str(self.outputs["bitstream"]) if not self.ooc else False,
             "impl_output": str(self.build_path),
-            "synth_output": str(self.synth_output_dir),
+            "synth_edf": str(self.synth_edf),
         }
         impl_json = json.dumps(impl, indent=4)
         json_write_if_changed(self.outputs["impl_json"], impl_json)
@@ -44,7 +44,8 @@ class VivadoImpl(ImplTool):
             {
                 "in_context": not self.ooc,
                 "impl_output": str(self.build_path),
-                "synth_output": self.synth_output_dir,
+                "synth_constraints": str(self.constraints_file),
+                "synth_edf": str(self.synth_edf),
                 "impl_library": self._my_dir_path,
                 "cwd": self.build_path,
             },

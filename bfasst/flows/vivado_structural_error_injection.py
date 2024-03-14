@@ -32,7 +32,7 @@ class VivadoStructuralErrorInjection(Flow):
         self.vivado_impl_tool = VivadoImpl(
             self,
             design,
-            synth_output_dir=self.vivado_synth_tool.outputs["synth_dcp"].parent,
+            synth_edf=self.vivado_synth_tool.outputs["synth_edf"],
             constraints_file=self.vivado_synth_tool.outputs["synth_constraints"],
         )
         self.phys_netlist_tool = PhysNetlist(

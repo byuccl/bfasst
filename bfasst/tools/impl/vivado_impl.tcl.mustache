@@ -1,6 +1,6 @@
 if { [ catch {
-read_edif {{ synth_output }}/viv_synth.edf
-set_property top_file {{ synth_output }}/viv_synth.edf [current_fileset]
+read_edif {{ synth_edf }}
+set_property top_file {{ synth_edf }} [current_fileset]
 link_design -part {{ part }}
 {{#xdc}}
 read_xdc {{ . }}
