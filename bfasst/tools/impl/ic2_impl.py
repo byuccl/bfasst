@@ -9,13 +9,10 @@ from bfasst.tools.impl.impl_tool import ImplTool
 class Ic2Impl(ImplTool):
     """Ic2 Implementation Tool (ninja snippet generation for ic2 implementation)"""
 
-    def __init__(self, flow, design_path, prev_tool_outputs):
+    def __init__(self, flow, design_path, synth_edf_file):
         super().__init__(flow, design_path)
 
-        # A dictionary with the outputs of previous tools in a flow.
-        # For this implementation tool, it will be the outputs of the synthesis tool,
-        # which include the netlist
-        self.prev_tool_outputs = prev_tool_outputs
+        self.synth_edf_file = synth_edf_file
 
         self._my_dir_path = pathlib.Path(__file__).parent
         self.build_path = self.build_path.with_name("ic2_impl")
@@ -42,11 +39,8 @@ class Ic2Impl(ImplTool):
                 # this type of syntax is required because the TCL script
                 # is run from the build directory as lattic drops outputs in the cwd.
                 # We have to get a relative path to the netlist in the synth build directory
-                "netlist_rel_path": ".."
-                / pathlib.Path(self.prev_tool_outputs["edif_file"]).relative_to(
-                    self.build_path.parent
-                ),
-                "netlist_full_path": self.prev_tool_outputs["edif_file"],
+                "netlist_rel_path": ".." / self.synth_edf_file.relative_to(self.build_path.parent),
+                "netlist_full_path": self.synth_edf_file,
                 "design": self.design_path,
             },
         )

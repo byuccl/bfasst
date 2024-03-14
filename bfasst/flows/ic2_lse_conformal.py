@@ -16,17 +16,22 @@ class Ic2LseConformal(Flow):
     def __init__(self, design):
         super().__init__(design)
         self.ic2_lse_synth_tool = Ic2LseSynth(self, design)
-        self.ic2_impl_tool = Ic2Impl(self, design, self.ic2_lse_synth_tool.outputs)
-        self.icestorm_reverse_bit_tool = IcestormRevBit(self, design, self.ic2_impl_tool.outputs)
-        self.conformal_tool = Conformal(self, design, self.__create_conformal_inputs_dict())
-
-    def __create_conformal_inputs_dict(self):
-        """Create the dictionary of inputs for the conformal tool."""
-        return {
-            "golden_netlist_gen": self.ic2_lse_synth_tool.outputs,
-            "rev_netlist_gen": self.icestorm_reverse_bit_tool.outputs,
-            "vendor": Vendor.LATTICE.name,
-        }
+        self.ic2_impl_tool = Ic2Impl(
+            self, design, synth_edf_file=self.ic2_lse_synth_tool.outputs["edif_file"]
+        )
+        self.icestorm_reverse_bit_tool = IcestormRevBit(
+            self,
+            design,
+            constraints_file=self.ic2_impl_tool.outputs["constraints"],
+            bitstream=self.ic2_impl_tool.outputs["bitstream"],
+        )
+        self.conformal_tool = Conformal(
+            self,
+            design,
+            golden_netlist=self.ic2_lse_synth_tool.outputs["golden_netlist"],
+            rev_netlist=self.icestorm_reverse_bit_tool.outputs["rev_netlist"],
+            vendor=Vendor.LATTICE.name,
+        )
 
     def get_top_level_flow_path(self):
         return FLOWS_PATH / "ic2_lse_conformal.py"

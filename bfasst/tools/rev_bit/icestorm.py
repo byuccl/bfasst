@@ -8,12 +8,11 @@ from bfasst.tools.tool import Tool
 class IcestormRevBit(Tool):
     """Icestorm reverse bit tool (ninja snippet generation for icestorm reverse bitstream tool)"""
 
-    def __init__(self, flow, design_path, prev_tool_outputs):
+    def __init__(self, flow, design_path, constraints_file, bitstream):
         super().__init__(flow, design_path)
 
-        # A dictionary of outputs from the previous tool
-        # In this case, the previous tool is the IceCube2 Implementation tool
-        self.prev_tool_outputs = prev_tool_outputs
+        self.constraints_file = constraints_file
+        self.bitstream = bitstream
 
         self._my_dir_path = pathlib.Path(__file__).parent
         self.build_path = self.design_build_path / "icestorm"
@@ -28,8 +27,8 @@ class IcestormRevBit(Tool):
         self._append_build_snippets_default(
             __file__,
             {
-                "bitstream": self.prev_tool_outputs["bitstream"],
-                "constraints": self.prev_tool_outputs["constraints"],
+                "bitstream": self.bitstream,
+                "constraints": self.constraints_file,
                 "asciifile": self.outputs["asciifile"],
                 "rev_netlist": self.outputs["rev_netlist"],
                 "report": self.outputs["report"],
