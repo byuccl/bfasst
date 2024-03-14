@@ -64,7 +64,7 @@ class VivadoStructuralErrorInjection(Flow):
                     error_type=error,
                     num=i,
                     multiplier=random_seed_multiplier,
-                    reversed_netlist=self.xrev_tool.outputs["xray_netlist"],
+                    reversed_netlist=self.xrev_tool.outputs["rev_netlist"],
                 )
                 corrupt_netlist_path = (
                     self.error_injector_tool.build_path / f"{error.name.lower()}_{i}.v"
