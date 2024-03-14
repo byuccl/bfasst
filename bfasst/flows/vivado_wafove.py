@@ -16,7 +16,10 @@ class VivadoWafove(Flow):
         super().__init__(design)
         self.vivado_synth_tool = VivadoSynth(self, design)
         self.vivado_impl_tool = VivadoImpl(
-            self, design, prev_tool_outputs=self.vivado_synth_tool.outputs
+            self,
+            design,
+            synth_output_dir=self.vivado_synth_tool.outputs["synth_dcp"].parent,
+            constraints_file=self.vivado_synth_tool.outputs["synth_constraints"],
         )
         self.xrev_tool = Xray(
             self,
@@ -24,15 +27,14 @@ class VivadoWafove(Flow):
             xdc_input=self.vivado_synth_tool.outputs["synth_constraints"],
             bitstream=self.vivado_impl_tool.outputs["bitstream"],
         )
-        self.wafove_tool = Wafove(self, design, self.__create_wafove_inputs_dict())
-
-    def __create_wafove_inputs_dict(self):
-        return {
-            "impl_tool": self.vivado_impl_tool.outputs,
-            "rev_bit_tool": self.xrev_tool.outputs,
-            "log_name": "wafove.log",
-            "std_err_log": "wafove_stderr.log",
-        }
+        self.wafove_tool = Wafove(
+            self,
+            design,
+            golden_netlist=self.vivado_impl_tool.outputs["golden_netlist"],
+            rev_netlist=self.xrev_tool.outputs["rev_netlist"],
+            std_out_log_name="wafove.log",
+            std_err_log_name="wafove_err.log",
+        )
 
     def get_top_level_flow_path(self):
         return pathlib.Path(__file__)

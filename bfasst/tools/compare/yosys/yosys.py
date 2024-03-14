@@ -9,14 +9,11 @@ from bfasst.utils.general import json_write_if_changed
 class Yosys(Tool):
     """Create the rule and build snippets for yosys comparison."""
 
-    def __init__(self, flow, design, prev_tool_outputs):
+    def __init__(self, flow, design, golden_netlist, rev_netlist):
         super().__init__(flow, design)
 
-        # A dictionary of the previous tool outputs
-        # In this case, the dictionary will contain keys for
-        # 1. An implementation_tool golden_netlist
-        # 2. A rev_bit_tool rev_netlist
-        self.prev_tool_outputs = prev_tool_outputs
+        self.golden_netlist = golden_netlist
+        self.rev_netlist = rev_netlist
 
         self.build_path = self.design_build_path / "yosys"
         self.tcl_template = YOSYS_TOOLS_PATH / "yosys.tcl.mustache"
@@ -33,8 +30,8 @@ class Yosys(Tool):
         """Specify netlists for tcl template in json file.
         Chevron will use the file to create a yosys tcl script."""
         yosys_tcl_args = {
-            "gold_netlist": str(self.prev_tool_outputs["impl_tool"]["golden_netlist"]),
-            "rev_netlist": str(self.prev_tool_outputs["rev_bit_tool"]["rev_netlist"]),
+            "gold_netlist": str(self.golden_netlist),
+            "rev_netlist": str(self.rev_netlist),
         }
         yosys_json = json.dumps(yosys_tcl_args, indent=4)
 
@@ -49,8 +46,8 @@ class Yosys(Tool):
                 "json": str(self.outputs["yosys_json"]),
                 "tcl_template": str(self.tcl_template),
                 "log": str(self.outputs["yosys_log"]),
-                "gold_netlist": str(self.prev_tool_outputs["impl_tool"]["golden_netlist"]),
-                "rev_netlist": str(self.prev_tool_outputs["rev_bit_tool"]["rev_netlist"]),
+                "gold_netlist": str(self.golden_netlist),
+                "rev_netlist": str(self.rev_netlist),
             },
         )
 

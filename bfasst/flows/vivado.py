@@ -14,7 +14,11 @@ class Vivado(Flow):
         self.ooc = ooc
         self.vivado_synth_tool = VivadoSynth(self, design, ooc)
         self.vivado_impl_tool = VivadoImpl(
-            self, design, prev_tool_outputs=self.vivado_synth_tool.outputs, ooc=ooc
+            self,
+            design,
+            synth_output_dir=self.vivado_synth_tool.outputs["synth_dcp"].parent,
+            constraints_file=self.vivado_synth_tool.outputs["synth_constraints"],
+            ooc=ooc,
         )
         self.tools = [self.vivado_synth_tool, self.vivado_impl_tool]
 
