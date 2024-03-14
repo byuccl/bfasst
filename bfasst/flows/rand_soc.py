@@ -18,7 +18,12 @@ class RandSoc(FlowNoDesign):
 
         for design in self.rand_soc_tool.outputs["design_tcl"]:
             synth_tool = VivadoSynthFromTcl(self, design)
-            VivadoImpl(self, design.parent, prev_tool_outputs=synth_tool.outputs)
+            VivadoImpl(
+                self,
+                design.parent,
+                synth_output_dir=synth_tool.outputs["synth_dcp"].parent,
+                constraints_file=synth_tool.outputs["synth_constraints"],
+            )
 
     @classmethod
     def flow_build_dir_name(cls) -> str:
