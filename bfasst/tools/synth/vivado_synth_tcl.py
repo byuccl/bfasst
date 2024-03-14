@@ -13,7 +13,7 @@ class VivadoSynthFromTcl(Tool):
         super().__init__(flow, design_tcl_path.parent)
         self.design_tcl_path = design_tcl_path
         self._my_dir_path = pathlib.Path(__file__).parent
-        self.build_path = self.design_build_path.with_name("vivado_synth")
+        self.build_path = self.design_build_path / "vivado_synth"
         self._init_outputs()
 
     def create_rule_snippets(self):
