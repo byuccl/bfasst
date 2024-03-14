@@ -42,20 +42,14 @@ class VivadoPhysNetlistCmp(Flow):
         self.cleanup_tool = NetlistCleanup(
             self, design, rev_netlist=self.xray_tool.outputs["rev_netlist"]
         )
-        self.compare_tool = Structural(self, design)
-        # pylint: enable=duplicate-code
-
-    def create_build_snippets(self):
-        self.vivado_synth_tool.create_build_snippets()
-        self.vivado_impl_tool.create_build_snippets()
-        self.phys_netlist_tool.create_build_snippets()
-        self.xray_tool.create_build_snippets()
-        self.cleanup_tool.create_build_snippets()
-        self.compare_tool.create_build_snippets(
-            netlist_a=self.cleanup_tool.outputs["netlist_cleaned_path"],
-            netlist_b=self.phys_netlist_tool.outputs["viv_impl_physical_v"],
-            log_name="struct_cmp.log",
+        self.compare_tool = Structural(
+            self,
+            design,
+            "struct_cmp.log",
+            golden_netlist=self.phys_netlist_tool.outputs["viv_impl_physical_v"],
+            rev_netlist=self.cleanup_tool.outputs["netlist_cleaned_path"],
         )
+        # pylint: enable=duplicate-code
 
     def get_top_level_flow_path(self):
         return f"{FLOWS_PATH}/vivado_phys_netlist_cmp.py"

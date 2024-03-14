@@ -21,6 +21,7 @@ class VivadoStructuralErrorInjection(Flow):
     def __init__(self, design, num_runs=100, seed=None, synth_options=""):
         # pylint: disable=duplicate-code
         super().__init__(design)
+        self.design = design
         self.num_runs = num_runs
         self.seed = seed
         if self.seed is not None:
@@ -47,8 +48,6 @@ class VivadoStructuralErrorInjection(Flow):
             xdc_input=self.vivado_synth_tool.outputs["synth_constraints"],
             bitstream=self.vivado_impl_tool.outputs["bitstream"],
         )
-        self.error_injector_tool = ErrorInjector(self, design)
-        self.compare_tool = Structural(self, design, expect_fail=True)
         # pylint: enable=duplicate-code
 
     def create_build_snippets(self):
@@ -60,20 +59,25 @@ class VivadoStructuralErrorInjection(Flow):
         random_seed_multiplier = 1
         for error in ErrorType:
             for i in range(1, self.num_runs + 1):
-                self.error_injector_tool.create_build_snippets(
+                error_injector_tool = ErrorInjector(
+                    self,
+                    self.design,
                     error_type=error,
                     num=i,
                     multiplier=random_seed_multiplier,
                     reversed_netlist=self.xrev_tool.outputs["rev_netlist"],
                 )
-                corrupt_netlist_path = (
-                    self.error_injector_tool.build_path / f"{error.name.lower()}_{i}.v"
-                )
-                self.compare_tool.create_build_snippets(
-                    self.phys_netlist_tool.outputs["viv_impl_physical_v"],
-                    corrupt_netlist_path,
-                    f"{error.name.lower()}_{i}_cmp.log",
-                )
+
+                error_injector_tool.create_build_snippets()
+
+                Structural(
+                    self,
+                    self.design,
+                    log_name=f"{error.name.lower()}_{i}_cmp.log",
+                    golden_netlist=error_injector_tool.outputs["corrupt_netlist"],
+                    rev_netlist=self.xrev_tool.outputs["rev_netlist"],
+                    expect_fail=True,
+                ).create_build_snippets()
 
     def get_top_level_flow_path(self) -> str:
         return FLOWS_PATH / "vivado_structural_error_injection.py"
@@ -82,8 +86,8 @@ class VivadoStructuralErrorInjection(Flow):
         """Remove all error injection and comparison artifacts for errors successfully detected
         by the compare tool"""
 
-        cmp_dir = self.compare_tool.build_path
-        error_dir = self.error_injector_tool.build_path
+        cmp_dir = Structural.get_build_path(self.design)
+        error_dir = ErrorInjector.get_build_path(self.design)
 
         for error in ErrorType:
             for i in range(1, self.num_runs + 1):

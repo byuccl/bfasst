@@ -3,7 +3,6 @@
 from argparse import ArgumentParser
 from collections import defaultdict
 import logging
-from pathlib import Path
 import pickle
 import sys
 import time
@@ -24,9 +23,7 @@ class StructuralCompareError(Exception):
 class StructuralCompare:
     """Structural compare and map"""
 
-    def __init__(self, build_dir, netlist_a_path, netlist_b_path, log_path) -> None:
-        self.build_dir = Path(build_dir)
-        self.stage_dir = self.build_dir / "struct_cmp"
+    def __init__(self, netlist_a_path, netlist_b_path, log_path) -> None:
 
         self.netlist_a_path = netlist_a_path
         self.netlist_b_path = netlist_b_path
@@ -755,11 +752,6 @@ class StructuralCompare:
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument(
-        "--build_dir",
-        type=str,
-        help="The design build directory (e.g. build/byu/alu)",
-    )
-    parser.add_argument(
         "--netlists",
         type=str,
         nargs=2,
@@ -768,9 +760,7 @@ if __name__ == "__main__":
     parser.add_argument("--log_path", type=str, help="The log file path to use as output")
     parser.add_argument("--expect_fail", action="store_true", help="Expect the comparison to fail")
     args = parser.parse_args()
-    struct_cmp = StructuralCompare(
-        args.build_dir, args.netlists[0], args.netlists[1], args.log_path
-    )
+    struct_cmp = StructuralCompare(args.netlists[0], args.netlists[1], args.log_path)
     try:
         struct_cmp.compare_netlists()
         if args.expect_fail:
