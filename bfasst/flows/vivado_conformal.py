@@ -16,7 +16,10 @@ class VivadoConformal(Flow):
         super().__init__(design)
         self.vivado_synth_tool = VivadoSynth(self, design)
         self.vivado_impl_tool = VivadoImpl(
-            self, design, prev_tool_outputs=self.vivado_synth_tool.outputs
+            self,
+            design,
+            synth_output_dir=self.vivado_synth_tool.outputs["synth_dcp"].parent,
+            constraints_file=self.vivado_synth_tool.outputs["synth_constraints"],
         )
         self.xrev_tool = Xray(
             self,
@@ -24,15 +27,13 @@ class VivadoConformal(Flow):
             xdc_input=self.vivado_synth_tool.outputs["synth_constraints"],
             bitstream=self.vivado_impl_tool.outputs["bitstream"],
         )
-        self.conformal_tool = Conformal(self, design, self.__create_conformal_inputs_dict())
-
-    def __create_conformal_inputs_dict(self):
-        """Create the dictionary of inputs for the conformal tool."""
-        return {
-            "golden_netlist_gen": self.vivado_impl_tool.outputs,
-            "rev_netlist_gen": self.xrev_tool.outputs,
-            "vendor": Vendor.XILINX.name,
-        }
+        self.conformal_tool = Conformal(
+            self,
+            design,
+            golden_netlist=self.vivado_impl_tool.outputs["golden_netlist"],
+            rev_netlist=self.xrev_tool.outputs["rev_netlist"],
+            vendor=Vendor.XILINX.name,
+        )
 
     def get_top_level_flow_path(self) -> str:
         return FLOWS_PATH / "vivado_conformal.py"

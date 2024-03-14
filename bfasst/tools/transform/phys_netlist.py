@@ -15,12 +15,11 @@ from bfasst.utils import compare_json
 class PhysNetlist(Tool):
     """Create rule and build snippets for phys netlist creation."""
 
-    def __init__(self, flow, design, prev_tool_outputs):
+    def __init__(self, flow, design, impl_checkpoint, impl_edf):
         super().__init__(flow, design)
 
-        # A dictionary of the previous tool outputs
-        # In this case, the dictionary will contain keys for the impl_checkpoint and impl_edf
-        self.prev_tool_outputs = prev_tool_outputs
+        self.impl_checkpoint = impl_checkpoint
+        self.impl_edf = impl_edf
 
         self.build_path = self.design_build_path / "vivado_phys_netlist"
 
@@ -56,8 +55,8 @@ class PhysNetlist(Tool):
                     "phys_netlist_output": self.build_path,
                     "phys_netlist_library": NINJA_TRANSFORM_TOOLS_PATH,
                     "build_dir": self.build_path.parent,
-                    "impl_dcp": self.prev_tool_outputs["impl_checkpoint"],
-                    "impl_edf": self.prev_tool_outputs["impl_edf"],
+                    "impl_dcp": self.impl_checkpoint,
+                    "impl_edf": self.impl_edf,
                 },
             )
 

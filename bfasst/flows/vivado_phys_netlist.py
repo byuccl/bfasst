@@ -17,10 +17,16 @@ class VivadoPhysNetlist(Flow):
 
         self.vivado_synth_tool = VivadoSynth(self, design, synth_options=self.synth_options)
         self.vivado_impl_tool = VivadoImpl(
-            self, design, prev_tool_outputs=self.vivado_synth_tool.outputs
+            self,
+            design,
+            synth_output_dir=self.vivado_synth_tool.outputs["synth_dcp"].parent,
+            constraints_file=self.vivado_synth_tool.outputs["synth_constraints"],
         )
         self.phys_netlist_tool = PhysNetlist(
-            self, design, prev_tool_outputs=self.vivado_impl_tool.outputs
+            self,
+            design,
+            impl_checkpoint=self.vivado_impl_tool.outputs["impl_checkpoint"],
+            impl_edf=self.vivado_impl_tool.outputs["impl_edf"],
         )
 
     def get_top_level_flow_path(self):
