@@ -24,7 +24,6 @@ class StructuralCompare:
     """Structural compare and map"""
 
     def __init__(self, netlist_a_path, netlist_b_path, log_path) -> None:
-
         self.netlist_a_path = netlist_a_path
         self.netlist_b_path = netlist_b_path
         self.named_netlist = None
