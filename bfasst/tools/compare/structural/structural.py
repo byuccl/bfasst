@@ -7,7 +7,9 @@ from bfasst.paths import BFASST_UTILS_PATH
 class Structural(Tool):
     """Create the rule and build snippets for structural comparison."""
 
-    def __init__(self, flow, design, log_name, golden_netlist, rev_netlist, expect_fail=False):
+    def __init__(
+        self, flow, design, log_name=None, golden_netlist=None, rev_netlist=None, expect_fail=False
+    ):
         super().__init__(flow, design)
         self.build_path = self.design_build_path / "struct_cmp"
         self.log_name = log_name
@@ -32,12 +34,8 @@ class Structural(Tool):
         )
 
     def _init_outputs(self):
-        self.outputs["structural_log"] = self.build_path / self.log_name
+        self.outputs["structural_log"] = self.build_path / self.log_name if self.log_name else None
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
         deps.append(BFASST_UTILS_PATH / "structural.py")
-
-    @staticmethod
-    def get_build_path(design):
-        return design.design_build_path / "struct_cmp"

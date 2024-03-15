@@ -9,24 +9,27 @@ from bfasst.paths import NINJA_BUILD_PATH, NINJA_TRANSFORM_TOOLS_PATH, BFASST_UT
 class ErrorInjector(Tool):
     """Create the rule and build snippets for error injection into an xray netlist."""
 
-    def __init__(self, flow, design, error_type, num, multiplier, reversed_netlist):
+    def __init__(
+        self, flow, design, error_type=None, num=None, multiplier=None, reversed_netlist=None
+    ):
         super().__init__(flow, design)
         self.error_type = error_type
         self.num = num
         self.multiplier = multiplier
         self.reversed_netlist = reversed_netlist
         self.build_path = self.design_build_path / "error_injection"
-        self.injection_log = None
-        self.corrupt_netlist = None
+        if error_type is not None and num is not None:
+            self.injection_log = self.build_path / f"{self.error_type.name.lower()}_{self.num}.log"
+            self.corrupt_netlist = self.build_path / f"{self.error_type.name.lower()}_{self.num}.v"
+        else:
+            self.injection_log = None
+            self.corrupt_netlist = None
+        self._init_outputs(self.injection_log, self.corrupt_netlist)
 
     def create_rule_snippets(self):
         self._append_rule_snippets_default(__file__)
 
     def create_build_snippets(self):
-        self.injection_log = self.build_path / f"{self.error_type.name.lower()}_{self.num}.log"
-        self.corrupt_netlist = self.build_path / f"{self.error_type.name.lower()}_{self.num}.v"
-        self._init_outputs(self.injection_log, self.corrupt_netlist)
-
         with open(NINJA_TRANSFORM_TOOLS_PATH / "error_injector_build.ninja.mustache", "r") as f:
             build = chevron.render(
                 f,
@@ -52,7 +55,3 @@ class ErrorInjector(Tool):
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
         deps.append(BFASST_UTILS_PATH / "error_injector.py")
-
-    @staticmethod
-    def get_build_path(design):
-        return design.design_build_path / "error_injection"

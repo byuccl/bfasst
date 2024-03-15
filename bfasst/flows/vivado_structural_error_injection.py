@@ -48,6 +48,8 @@ class VivadoStructuralErrorInjection(Flow):
             xdc_input=self.vivado_synth_tool.outputs["synth_constraints"],
             bitstream=self.vivado_impl_tool.outputs["bitstream"],
         )
+        self.default_comparison_tool = Structural(self, design)
+        self.default_injection_tool = ErrorInjector(self, design)
         # pylint: enable=duplicate-code
 
     def create_build_snippets(self):
@@ -86,8 +88,8 @@ class VivadoStructuralErrorInjection(Flow):
         """Remove all error injection and comparison artifacts for errors successfully detected
         by the compare tool"""
 
-        cmp_dir = Structural.get_build_path(self.design)
-        error_dir = ErrorInjector.get_build_path(self.design)
+        cmp_dir = self.default_comparison_tool.build_path
+        error_dir = self.default_injection_tool.build_path
 
         for error in ErrorType:
             for i in range(1, self.num_runs + 1):
