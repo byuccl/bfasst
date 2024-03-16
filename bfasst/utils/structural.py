@@ -602,6 +602,8 @@ class StructuralCompare:
                 "RSTREGB",
                 "REGCEAREGCE",
                 "REGCEB",
+                "CASCADEINA",
+                "CASCADEINB"
             }:
                 pin.ignore_net_equivalency = True
                 continue  # These pins are ignored when DO_REG is 0
