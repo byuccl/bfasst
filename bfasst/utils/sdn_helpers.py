@@ -354,4 +354,4 @@ class SdnInstanceWrapper:
         return self.instance.data.get("VERILOG.Parameters")
 
     def get_pin(self, name, index=0):
-        return self.pins_by_name_and_index[(name, index)]
+        return self.pins_by_name_and_index.get((name, index), None)
