@@ -1,4 +1,5 @@
 """Flow to create Vivado synthesis and implementation ninja snippets."""
+
 from bfasst.flows.flow import Flow
 from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.paths import FLOWS_PATH
@@ -8,10 +9,10 @@ from bfasst.tools.synth.vivado_synth import VivadoSynth
 class Vivado(Flow):
     """Flow to create Vivado synthesis and implementation ninja snippets."""
 
-    def __init__(self, design, ooc=False):
+    def __init__(self, design, synth_options=None, ooc=False):
         super().__init__(design)
         self.ooc = ooc
-        self.vivado_synth_tool = VivadoSynth(self, design, ooc)
+        self.vivado_synth_tool = VivadoSynth(self, design, synth_options=synth_options, ooc=ooc)
         self.vivado_impl_tool = VivadoImpl(self, design, ooc)
 
     def create_rule_snippets(self):
