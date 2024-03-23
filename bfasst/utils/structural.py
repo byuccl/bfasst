@@ -451,6 +451,7 @@ class StructuralCompare:
                             f" but no connection on mapped instance {instance.name}."
                         )
                     )
+                    continue
 
                 if net_b_empty and not net_a_empty:
                     warnings.append(
@@ -460,6 +461,7 @@ class StructuralCompare:
                             f" but no connection on mapped instance {mapped_instance.name}."
                         )
                     )
+                    continue
 
                 if not net_a_empty:
                     if (net_a.name in self.vcc_mappings and net_b.is_vdd) or (
@@ -631,11 +633,20 @@ class StructuralCompare:
             tmp = [
                 instance
                 for instance in instances_matching_connections
+                if instance.get_pin(pin.name, pin.index) is not None
                 if instance.get_pin(pin.name, idx).net == other_net
             ]
 
             if not tmp:
-                if other_net.is_gnd:
+                if pin.name in ["CASCADEINA", "CASCADEINB"]:
+                    cascadeout_pin = "CASCADEOUTA" if pin.name == "CASCADEINA" else "CASCADEOUTB"
+                    tmp = [
+                        instance
+                        for instance in instances_matching_connections
+                        if instance.get_pin(cascadeout_pin, 0) is None
+                    ]
+                    pin.ignore_net_equivalency = True
+                elif other_net.is_gnd:
                     tmp = [
                         instance
                         for instance in instances_matching_connections

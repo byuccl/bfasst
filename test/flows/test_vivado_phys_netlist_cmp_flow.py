@@ -50,7 +50,7 @@ class TestVivadoPhysNetlistCmp(unittest.TestCase):
             build_statement_count = f.read().count("\nbuild ")
 
         # There should be 11 build statements for a single design using this flow
-        self.assertEqual(build_statement_count, 12)
+        self.assertEqual(build_statement_count, 11)
 
     def test_add_ninja_deps(self):
         """Test that the flow adds the correct dependencies to the ninja file"""
@@ -65,7 +65,6 @@ class TestVivadoPhysNetlistCmp(unittest.TestCase):
         VivadoImpl(None, design_path).add_ninja_deps(expected)
         PhysNetlist(None, design_path).add_ninja_deps(expected)
         Xray(None, design_path).add_ninja_deps(expected)
-        NetlistCleanup(None, design_path).add_ninja_deps(expected)
         Structural(None, design_path).add_ninja_deps(expected)
         expected.append(FLOWS_PATH / "vivado_phys_netlist_cmp.py")
 
