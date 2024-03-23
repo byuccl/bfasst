@@ -638,13 +638,14 @@ class StructuralCompare:
             ]
 
             if not tmp:
-                if pin.name in {"CASCADEINA", "CASCADEINB"}:
+                if pin.name in ["CASCADEINA", "CASCADEINB"]:
+                    cascadeout_pin = "CASCADEOUTA" if pin.name == "CASCADEINA" else "CASCADEOUTB"
                     tmp = [
                         instance
                         for instance in instances_matching_connections
-                        if instance.get_pin("CASCADEOUTA", 0) is None
-                        and instance.get_pin("CASCADEOUTB", 0) is None
+                        if instance.get_pin(cascadeout_pin, 0) is None
                     ]
+                    pin.ignore_net_equivalency = True
                 elif other_net.is_gnd:
                     tmp = [
                         instance
