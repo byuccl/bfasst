@@ -1,4 +1,5 @@
 """ Run Synplify logic optimization"""
+
 import shutil
 import re
 import os
@@ -42,7 +43,7 @@ class Ic2SynplifyOptTool(Ic2BaseOptTool):
         """Create icecube2 project file"""
         assert isinstance(self.design, Design)
 
-        template_file = paths.I2C_RESOURCES / PROJECT_TEMPLATE_FILE
+        template_file = paths.IC2_RESOURCES / PROJECT_TEMPLATE_FILE
         project_file = self.work_dir / IC2_SYNPLIFY_PROJ_FILE
         shutil.copyfile(template_file, project_file)
 

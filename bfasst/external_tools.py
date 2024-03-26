@@ -9,8 +9,10 @@ import paramiko
 
 import yaml
 
-from bfasst.config import PART, VIVADO_BIN_PATH
+from bfasst.config import IC2_INSTALL_DIR, PART, VIVADO_BIN_PATH
 from bfasst.paths import (
+    ICEBOX_VLOG_PATH,
+    ICEUNPACK_PATH,
     RAPIDWRIGHT_PATH,
     ROOT_PATH,
     THIRD_PARTY_PATH,
@@ -33,6 +35,14 @@ def check_gmt_tools():
 
 def check_vivado():
     return VIVADO_BIN_PATH.is_file()
+
+
+def check_ic2():
+    return IC2_INSTALL_DIR.is_dir()
+
+
+def check_icestorm():
+    return ICEBOX_VLOG_PATH.is_file() and ICEUNPACK_PATH.is_file()
 
 
 def check_fasm2bels():

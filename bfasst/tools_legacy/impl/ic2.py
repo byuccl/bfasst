@@ -76,7 +76,7 @@ class Ic2ImplementationTool(ImplementationTool):
 
     def create_run_tcl(self):
         tcl_path = self.work_dir / "run_impl.tcl"
-        shutil.copyfile(paths.I2C_RESOURCES / "template.tcl", tcl_path)
+        shutil.copyfile(paths.IC2_RESOURCES / "template.tcl", tcl_path)
         return tcl_path
 
     def check_impl_status(self, log_path):

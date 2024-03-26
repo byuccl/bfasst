@@ -15,11 +15,7 @@ class RandSoC(ToolBase):
         self.build_path = BUILD_PATH / "rand_soc"
         self._my_dir_path = pathlib.Path(__file__).parent.resolve()
         self.num_designs = num_designs
-
-        self.outputs["design_tcl"] = []
-        for i in range(self.num_designs):
-            design_dir_path = self.build_path / f"design_{i}"
-            self.outputs["design_tcl"].append(design_dir_path / "design.tcl")
+        self._init_outputs()
 
     def create_rule_snippets(self):
         self._append_rule_snippets_default(__file__)
@@ -42,6 +38,12 @@ class RandSoC(ToolBase):
 
             with open(NINJA_BUILD_PATH, "a") as f:
                 f.write(build)
+
+    def _init_outputs(self):
+        self.outputs["design_tcl"] = []
+        for i in range(self.num_designs):
+            design_dir_path = self.build_path / f"design_{i}"
+            self.outputs["design_tcl"].append(design_dir_path / "design.tcl")
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
