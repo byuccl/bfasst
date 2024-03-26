@@ -1,4 +1,5 @@
 """Yosys equivalence checker"""
+
 import pathlib
 import re
 from bfasst.tools_legacy.compare.base import CompareException, CompareTool

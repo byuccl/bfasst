@@ -1,4 +1,5 @@
 """Wrapper classes for SDN objects"""
+
 import logging
 import spydrnet as sdn
 import bfasst.utils.rw_helpers as rw

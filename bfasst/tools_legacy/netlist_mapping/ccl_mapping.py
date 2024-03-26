@@ -1,6 +1,5 @@
 """Mapping algorithm based on block chains and the functional trees of the LUTs before a FF."""
 
-
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # WARNING: Both netlists must have the exact same inputs and outputs!                             #
 # WARNING: The LUT reduction algorithm only works for LUTs with 2 inputs or more,                 #

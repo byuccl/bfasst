@@ -1,4 +1,5 @@
 """ X-ray bitstream to netlist tool"""
+
 import os
 import re
 import pathlib

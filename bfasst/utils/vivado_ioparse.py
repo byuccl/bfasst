@@ -1,5 +1,6 @@
 """ This module provides support for parsing the report_io output of
 vivado into pin-port mappings"""
+
 import re
 import sys
 
@@ -13,8 +14,7 @@ def parse_pin(line):
 
 
 def lines_of(stream):
-    for line in stream:
-        yield line
+    yield from stream
 
 
 # Note that filter with None works like (x for x in gen if x)

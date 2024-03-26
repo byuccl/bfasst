@@ -1,6 +1,7 @@
 """Dump a single design with isoblaze. This will create two files:
 One that lists all the bels, properties, and connections in a design,
 and one that lists which BEL belongs to which IP in a design."""
+
 import subprocess
 import pathlib
 import argparse

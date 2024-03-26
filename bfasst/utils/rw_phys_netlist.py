@@ -1,4 +1,5 @@
 """ Creates a xilinx netlist that has only physical primitives"""
+
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-public-methods
 

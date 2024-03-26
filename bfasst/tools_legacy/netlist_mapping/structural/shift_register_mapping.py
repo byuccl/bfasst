@@ -1,6 +1,5 @@
 """Maps the flipflops used for the shift register, and its output."""
 
-
 import spydrnet as sdn
 from bfasst.tools_legacy.netlist_mapping.structural.map_ffs import get_mapped_ffs
 

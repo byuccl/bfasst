@@ -1,4 +1,5 @@
 """Utility to manage the creation and execution of ninja flows."""
+
 import argparse
 import ast
 import pathlib

@@ -1,6 +1,5 @@
 """Base IceCub2 optimization class"""
 
-
 from abc import abstractmethod
 import pathlib
 import shutil

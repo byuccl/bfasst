@@ -1,6 +1,7 @@
 """ Clean up a netlist 
 (tested primarily on post-fasm2bels netlists)
 """
+
 import argparse
 import logging
 import pathlib

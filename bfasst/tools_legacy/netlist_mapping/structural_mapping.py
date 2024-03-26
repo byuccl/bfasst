@@ -1,6 +1,5 @@
 """Mapping includes: Automated Block Mapping, Structural Mapping through Block Chains."""
 
-
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # WARNING: Both netlists must have the exact same inputs and outputs!                             #
 # WARNING: The Carry mapping is only for CARRY4 instances!                                        #

@@ -1,7 +1,6 @@
 """This file contains the functions used to retrieve the logic functions
 from the LUTs before a FF"""
 
-
 import math
 from enum import Enum
 from bfasst.tools_legacy.netlist_mapping.functional.converter import (

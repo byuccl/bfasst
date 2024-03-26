@@ -1,4 +1,5 @@
 """ Base synthesis tool class"""
+
 import abc
 
 from bfasst.tools_legacy import tool

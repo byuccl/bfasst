@@ -1,4 +1,5 @@
 """Script to run a flow on one or more designs."""
+
 import argparse
 import ast
 import pathlib
