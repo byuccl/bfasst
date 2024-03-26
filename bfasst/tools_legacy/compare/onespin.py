@@ -1,4 +1,5 @@
 """Run OneSpin to compare netlists."""
+
 import shutil
 import pathlib
 import re

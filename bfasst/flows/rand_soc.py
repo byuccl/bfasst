@@ -1,4 +1,5 @@
 """Flow to create random soc block designs in Vivado"""
+
 import pathlib
 
 from bfasst.flows.flow import FlowNoDesign

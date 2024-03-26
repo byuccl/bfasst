@@ -1,4 +1,5 @@
 """Flow to compare reversed netlist to original using yosys."""
+
 import pathlib
 
 from bfasst.flows.flow import Flow

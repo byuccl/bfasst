@@ -1,4 +1,5 @@
 """Flow to dump bels from random soc block designs with Isoblaze"""
+
 import pathlib
 
 from bfasst.flows.flow import FlowNoDesign

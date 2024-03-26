@@ -1,4 +1,5 @@
 """Module wrapping around icecube2 lse optimization pass"""
+
 import shutil
 import re
 import os

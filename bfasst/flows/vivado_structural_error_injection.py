@@ -1,4 +1,5 @@
 """Inject an error into a xrev netlist and run a structural compare to detect it."""
+
 import random
 
 from bfasst.flows.flow import Flow

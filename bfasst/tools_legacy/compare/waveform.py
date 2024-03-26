@@ -1,4 +1,5 @@
 """Waveform equivalence checker. Uses WaFoVe for verification."""
+
 # pylint: skip-file
 
 import re

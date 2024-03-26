@@ -1,4 +1,5 @@
 """Run conformal comparison tool"""
+
 from argparse import ArgumentParser
 import re
 import socket

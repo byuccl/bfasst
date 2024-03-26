@@ -1,4 +1,5 @@
 """Flow to create Vivado synthesis and implementation ninja snippets."""
+
 from bfasst.flows.flow import Flow
 from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.paths import FLOWS_PATH
