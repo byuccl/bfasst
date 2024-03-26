@@ -23,9 +23,9 @@ class StructuralCompareError(Exception):
 class StructuralCompare:
     """Structural compare and map"""
 
-    def __init__(self, netlist_a_path, netlist_b_path, log_path) -> None:
-        self.netlist_a_path = netlist_a_path
-        self.netlist_b_path = netlist_b_path
+    def __init__(self, named_netlist_path, reversed_netlist_path, log_path) -> None:
+        self.reversed_netlist_path = reversed_netlist_path
+        self.named_netlist_path = named_netlist_path
         self.named_netlist = None
         self.reversed_netlist = None
 
@@ -136,18 +136,18 @@ class StructuralCompare:
 
     def init_netlists(self):
         """Load both netlists from spydrnet and build wrapper objects"""
-        log_with_banner("Building netlist A %s", self.netlist_a_path)
+        log_with_banner("Building netlist A %s", self.reversed_netlist_path)
 
         # Loads the first netlist as intermediate representation (ir1)
-        ir_a = sdn.parse(str(self.netlist_a_path))
+        ir_a = sdn.parse(str(self.reversed_netlist_path))
         library_a = ir_a.libraries[0]
         netlist_a = self.get_netlist(library_a)
         logging.info("Netlist A size:  %s", len(netlist_a.instances))
 
-        log_with_banner("Building netlist B %s", self.netlist_b_path)
+        log_with_banner("Building netlist B %s", self.named_netlist_path)
 
         # Loads the second netlist as intermediate representation (ir2)
-        ir_b = sdn.parse(str(self.netlist_b_path))
+        ir_b = sdn.parse(str(self.named_netlist_path))
         library_b = ir_b.libraries[0]
         netlist_b = self.get_netlist(library_b)
         logging.info("Netlist B size: %s", len(netlist_b.instances))
@@ -759,7 +759,7 @@ if __name__ == "__main__":
     parser.add_argument("--log_path", type=str, help="The log file path to use as output")
     parser.add_argument("--expect_fail", action="store_true", help="Expect the comparison to fail")
     args = parser.parse_args()
-    struct_cmp = StructuralCompare(args.netlists[0], args.netlists[1], args.log_path)
+    struct_cmp = StructuralCompare(named_netlist_path=args.netlists[0], reversed_netlist_path=args.netlists[1], log_path=args.log_path)
     try:
         struct_cmp.compare_netlists()
         if args.expect_fail:
