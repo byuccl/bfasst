@@ -759,7 +759,11 @@ if __name__ == "__main__":
     parser.add_argument("--log_path", type=str, help="The log file path to use as output")
     parser.add_argument("--expect_fail", action="store_true", help="Expect the comparison to fail")
     args = parser.parse_args()
-    struct_cmp = StructuralCompare(named_netlist_path=args.netlists[0], reversed_netlist_path=args.netlists[1], log_path=args.log_path)
+    struct_cmp = StructuralCompare(
+        named_netlist_path=args.netlists[0],
+        reversed_netlist_path=args.netlists[1],
+        log_path=args.log_path,
+    )
     try:
         struct_cmp.compare_netlists()
         if args.expect_fail:
