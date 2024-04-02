@@ -13,21 +13,29 @@ class VivadoConformal(Flow):
     """Run vivado, phys_netlist, reverse with xray, then compare with conformal."""
 
     def __init__(self, design):
+        # pylint: disable=duplicate-code
         super().__init__(design)
         self.vivado_synth_tool = VivadoSynth(self, design)
-        self.vivado_impl_tool = VivadoImpl(self, design)
-        self.xrev_tool = Xray(self, design)
-        self.conformal_tool = Conformal(self, design)
-
-    def create_build_snippets(self):
-        self.vivado_synth_tool.create_build_snippets()
-        self.vivado_impl_tool.create_build_snippets()
-        self.xrev_tool.create_build_snippets(str(self.vivado_impl_tool.outputs["bitstream"]))
-        self.conformal_tool.create_build_snippets(
-            impl_netlist=str(self.vivado_impl_tool.outputs["impl_verilog"]),
-            rev_netlist=str(self.xrev_tool.outputs["xray_netlist"]),
-            vendor=Vendor.XILINX,
+        self.vivado_impl_tool = VivadoImpl(
+            self,
+            design,
+            synth_edf=self.vivado_synth_tool.outputs["synth_edf"],
+            constraints_file=self.vivado_synth_tool.outputs["synth_constraints"],
         )
+        self.xrev_tool = Xray(
+            self,
+            design,
+            xdc_input=self.vivado_synth_tool.outputs["synth_constraints"],
+            bitstream=self.vivado_impl_tool.outputs["bitstream"],
+        )
+        self.conformal_tool = Conformal(
+            self,
+            design,
+            golden_netlist=self.vivado_impl_tool.outputs["golden_netlist"],
+            rev_netlist=self.xrev_tool.outputs["rev_netlist"],
+            vendor=Vendor.XILINX.name,
+        )
+        # pylint: enable=duplicate-code
 
     def get_top_level_flow_path(self) -> str:
         return FLOWS_PATH / "vivado_conformal.py"

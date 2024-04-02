@@ -8,14 +8,18 @@ from bfasst.paths import BFASST_UTILS_PATH, GMT_TOOLS_PATH
 class NetlistPhysToLogical(Tool):
     """Create rule and build snippets for phys netlist creation."""
 
-    def __init__(self, flow, design):
+    def __init__(self, flow, design, cleaned_netlist):
         super().__init__(flow, design)
 
+        self.cleaned_netlist = cleaned_netlist
+
         self.build_path = self.design_build_path / "netlist_phys_to_logical"
-        self.netlist_out_path = self.build_path / (self.design_props.top + "_logical.v")
+        self._init_outputs()
 
     def _init_outputs(self):
-        self.outputs["netlist_phys_to_logical_path"] = self.netlist_out_path
+        self.outputs["netlist_phys_to_logical_path"] = self.build_path / (
+            self.design_props.top + "_logical.v"
+        )
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
@@ -25,12 +29,12 @@ class NetlistPhysToLogical(Tool):
     def create_rule_snippets(self):
         self._append_rule_snippets_default(__file__)
 
-    def create_build_snippets(self, netlist_in_path):
+    def create_build_snippets(self):
         self._append_build_snippets_default(
             __file__,
             render_dict={
                 "netlist_phys_to_logical_output": self.build_path,
-                "netlist_in": netlist_in_path,
-                "netlist_out": self.netlist_out_path,
+                "netlist_in": self.cleaned_netlist,
+                "netlist_out": self.outputs["netlist_phys_to_logical_path"],
             },
         )

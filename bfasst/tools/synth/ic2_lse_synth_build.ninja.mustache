@@ -1,0 +1,13 @@
+build {{ prj_path }}: template {{ json_render_dict }} {{ prj_template }}
+
+build {{#outputs}}{{ . }} {{/outputs}}: ic2_lse_synth | {{ prj_path }}
+    ld_library_path={{ ld_library_path }}
+    foundry={{ foundry }}
+    sbt_dir={{ sbt_dir }}
+    synth_bin_path={{ synth_bin_path }}
+    prj_path={{ prj_path }}
+    design={{ design }}
+    lse_post_synth_util={{ lse_post_synth_util }}
+    build_path={{ build_path }}
+    edf_output={{ edf_output }}
+

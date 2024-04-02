@@ -1,7 +1,7 @@
-build {{ synth_output }}/design.xdc: vivado_ioparse {{ synth_output }}/report_io.txt
+build {{ synth_constraints }}: vivado_ioparse {{ io_report }}
 
-build {{ synth_output }}/viv_synth.edf {{ synth_output }}/synth.dcp {{ synth_output }}/report_io.txt: vivado {{ design_tcl }} | 
-    journal = {{ synth_output }}/vivado.jou
-    log = {{ synth_output }}/vivado.log
+build {{ synth_edf }} {{ synth_dcp }} {{ io_report }}: vivado {{ design_tcl }} | 
+    journal = {{ synth_journal }}
+    log = {{ synth_log }}
     cwd = {{ cwd }}
 

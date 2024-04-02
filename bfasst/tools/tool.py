@@ -35,6 +35,11 @@ class ToolBase(abc.ABC):
         """Add the template and flow paths of this flow
         and its sub-flows as dependencies of the build.ninja file"""
 
+    @abc.abstractmethod
+    def _init_outputs(self):
+        """Fill the self.outputs dictionary that lists
+        all files the tool is responsible for creating"""
+
     def _append_rule_snippets_default(self, py_tool_path, render_dict=None, rules_path=None):
         """Create the rule snippets for a python tool,
         assuming default filenames are used

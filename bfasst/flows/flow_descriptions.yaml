@@ -104,3 +104,11 @@ flows:
   external_tools:
   - vivado
   - wafove
+
+- name: Ic2LseConformal
+  description: Verify Lattice RTL-2-Bit with Conformal
+  module: ic2_lse_conformal
+  class: Ic2LseConformal
+  external_tools:
+  - ic2
+  - icestorm

@@ -9,15 +9,18 @@ from bfasst.paths import BFASST_UTILS_PATH
 class NetlistCleanup(Tool):
     """Create rule and build snippets for phys netlist creation."""
 
-    def __init__(self, flow, design):
+    def __init__(self, flow, design, rev_netlist):
         super().__init__(flow, design)
 
+        self.rev_netlist = rev_netlist
+
         self.build_path = self.design_build_path / "netlist_cleanup"
-        self.netlist_out_path = self.build_path / (self.design_props.top + "_clean.v")
         self._init_outputs()
 
     def _init_outputs(self):
-        self.outputs["netlist_cleaned_path"] = self.netlist_out_path
+        self.outputs["netlist_cleaned_path"] = self.build_path / (
+            self.design_props.top + "_clean.v"
+        )
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
@@ -26,12 +29,12 @@ class NetlistCleanup(Tool):
     def create_rule_snippets(self):
         self._append_rule_snippets_default(__file__)
 
-    def create_build_snippets(self, netlist_in_path):
+    def create_build_snippets(self):
         self._append_build_snippets_default(
             __file__,
             render_dict={
                 "netlist_cleanup_output": self.build_path,
-                "netlist_in": netlist_in_path,
-                "netlist_out": self.netlist_out_path,
+                "netlist_in": self.rev_netlist,
+                "netlist_out": self.outputs["netlist_cleaned_path"],
             },
         )

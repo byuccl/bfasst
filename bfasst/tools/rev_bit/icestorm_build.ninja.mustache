@@ -1,0 +1,9 @@
+build {{ asciifile }}: icestorm_bit_to_ascii {{ bitstream }}
+    iceunpack_path={{ iceunpack_path }}
+
+build {{ rev_netlist }}: icestorm_ascii_to_netlist || {{ asciifile }} {{ constraints }}
+    constraints={{ constraints }}
+    asciifile={{ asciifile }}
+    icebox_vlog_path={{ icebox_vlog_path }}
+
+build {{ report }}: icestorm_netlist_rpt {{ rev_netlist }}
