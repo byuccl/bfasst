@@ -53,7 +53,8 @@ else
     cd -
 
     # Run a design to generate the part database
-	python scripts/run.py VivadoBitToNetlist designs/basic/and3 --no_tool_checks
+	touch ${BFASST_PATH_FASM2BELS}/"db_marker"
+    python scripts/run.py VivadoBitToNetlist designs/basic/and3 --no_tool_checks
 
     echo $FASM2BELS_COMMIT > ${BFASST_PATH_FASM2BELS}/fasm2bels_commit.txt
 fi
