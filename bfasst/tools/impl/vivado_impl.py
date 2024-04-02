@@ -11,11 +11,18 @@ from bfasst.utils.general import json_write_if_changed
 class VivadoImpl(ImplTool):
     """Tool to create Vivado implementation ninja snippets."""
 
-    def __init__(self, flow, design, ooc=False):
+    def __init__(self, flow, design, synth_edf, constraints_file=None, ooc=False):
         super().__init__(flow, design)
         self.ooc = ooc
-        if self.ooc:
-            self.build_path = self.build_path.parent / "impl_ooc"
+
+        self.constraints_file = constraints_file
+        self.synth_edf = synth_edf
+
+        self.build_path = (
+            self.build_path.with_name("vivado_ooc_impl")
+            if ooc
+            else self.build_path.with_name("vivado_impl")
+        )
         self._my_dir_path = pathlib.Path(__file__).parent
         self._init_outputs()
 
@@ -24,22 +31,21 @@ class VivadoImpl(ImplTool):
 
         impl = {
             "part": config.PART,
-            "xdc": str(self.build_path.parent / "synth" / "design.xdc") if not self.ooc else False,
-            "bit": str(self.build_path / "design.bit") if not self.ooc else False,
+            "xdc": str(self.constraints_file) if not self.ooc else False,
+            "bit": str(self.outputs["bitstream"]) if not self.ooc else False,
             "impl_output": str(self.build_path),
-            "synth_output": str(
-                self.build_path.parent / ("synth" if not self.ooc else "synth_ooc")
-            ),
+            "synth_edf": str(self.synth_edf),
         }
         impl_json = json.dumps(impl, indent=4)
-        json_write_if_changed(self.build_path / "impl.json", impl_json)
+        json_write_if_changed(self.outputs["impl_json"], impl_json)
 
         self._append_build_snippets_default(
             __file__,
             {
                 "in_context": not self.ooc,
                 "impl_output": str(self.build_path),
-                "synth_output": self.build_path.parent / ("synth" if not self.ooc else "synth_ooc"),
+                "synth_constraints": str(self.constraints_file),
+                "synth_edf": str(self.synth_edf),
                 "impl_library": self._my_dir_path,
                 "cwd": self.build_path,
             },
@@ -58,7 +64,7 @@ class VivadoImpl(ImplTool):
     def _init_outputs(self):
         self.outputs["impl_tcl"] = self.build_path / "impl.tcl"
         self.outputs["impl_json"] = self.build_path / "impl.json"
-        self.outputs["impl_verilog"] = self.build_path / "viv_impl.v"
+        self.outputs["golden_netlist"] = self.build_path / "viv_impl.v"
         self.outputs["impl_edf"] = self.build_path / "viv_impl.edf"
         self.outputs["impl_checkpoint"] = self.build_path / "impl.dcp"
         self.outputs["utilization"] = self.build_path / "utiliztion.txt"

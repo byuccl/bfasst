@@ -5,7 +5,7 @@ import re
 import time
 import os
 
-import bfasst
+from bfasst.paths import ICEBOX_VLOG_PATH, ICEUNPACK_PATH
 from bfasst.tools_legacy.reverse_bit.base import ReverseBitTool, ReverseBitException
 
 # PROJECT_TEMPLATE_FILE = 'template_lse.prj'
@@ -54,7 +54,7 @@ class IcestormReverseBitTool(ReverseBitTool):
         self.cleanup()
 
     def convert_bit_to_asc(self, bitstream_path, asc_path):
-        cmd = [bfasst.config.ICESTORM_INSTALL_DIR / "icepack" / "iceunpack", bitstream_path]
+        cmd = [ICEUNPACK_PATH, bitstream_path]
 
         with open(asc_path, "w") as fp:
             process = subprocess.run(cmd, stdout=fp, stderr=subprocess.STDOUT, cwd=self.work_dir)
@@ -65,7 +65,7 @@ class IcestormReverseBitTool(ReverseBitTool):
     def convert_asc_to_netlist(self, asc_path, constraints_path, netlist_path):
         """Converts an ASC file to a netlist using IceStorm tools."""
         cmd = [
-            bfasst.config.ICESTORM_INSTALL_DIR / "icebox" / "icebox_vlog.py",
+            ICEBOX_VLOG_PATH,
             "-P",
             constraints_path,
             "-s",

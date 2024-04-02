@@ -1,0 +1,12 @@
+rule icestorm_bit_to_ascii
+    command = $iceunpack_path $in $out
+    description = convert $in to icestorm ascii format
+
+rule icestorm_ascii_to_netlist
+    command = $icebox_vlog_path -P $constraints -s $asciifile >> $out
+    description = convert icestorm $asciifile to verilog equivalent circuit
+
+rule icestorm_netlist_rpt
+    command = python bfasst/utils/icestorm_rpt.py --netlist $in --report $out
+    description = count luts, carries, ffs, etc for $in and write to $out
+

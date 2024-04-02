@@ -25,3 +25,12 @@
 -resolve_mixed_drivers 0
 -RWCheckOnRam 0
 -fix_gated_clocks 1
+-p {{ design_path }}
+{{#verilog}}
+-lib work -ver {{ . }} 
+{{/verilog}}
+{{#vhdl}}
+-lib work -vhd {{ . }}
+{{/vhdl}}
+-top {{ top }}
+-output_edif {{ edf_output }}

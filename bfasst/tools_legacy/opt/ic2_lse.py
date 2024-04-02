@@ -38,7 +38,7 @@ class Ic2LseOptTool(Ic2BaseOptTool):
         """create project file for icecube2 lse"""
         assert isinstance(self.design, bfasst.design.Design)
 
-        template_file = paths.I2C_RESOURCES / PROJECT_TEMPLATE_FILE
+        template_file = paths.IC2_RESOURCES / PROJECT_TEMPLATE_FILE
         project_file = self.work_dir / IC2_LSE_PROJ_FILE
         shutil.copyfile(template_file, project_file)
 
@@ -71,6 +71,7 @@ class Ic2LseOptTool(Ic2BaseOptTool):
         changes binary LUT inits to hex. Apparently LSE generates
         binary LUT inits under some conditions, and the IC2 backend
         doesn't like that."""
+        # pylint: disable=duplicate-code
 
         with in_place.InPlace(self.design.netlist_path) as n_f:
             found_first_init = False

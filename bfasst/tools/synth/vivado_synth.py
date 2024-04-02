@@ -17,6 +17,11 @@ class VivadoSynth(SynthTool):
         if ooc:
             self.synth_options += " -mode out_of_context"
         self._my_dir_path = pathlib.Path(__file__).parent
+        self.build_path = (
+            self.build_path.with_name("vivado_ooc_synth")
+            if ooc
+            else self.build_path.with_name("vivado_synth")
+        )
 
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()
@@ -44,13 +49,13 @@ class VivadoSynth(SynthTool):
             "vhdl_libs": list(self.vhdl_file_lib_map.items()),
             "verilog": self.verilog,
             "system_verilog": self.system_verilog,
-            "io": str(self.build_path / "report_io.txt") if not self.ooc else False,
+            "io": str(self.outputs["io_report"]) if not self.ooc else False,
             "synth_output": str(self.build_path),
             "synth_args": self.synth_options,
         }
         synth_json = json.dumps(synth, indent=4)
 
-        json_write_if_changed(self.build_path / "synth.json", synth_json)
+        json_write_if_changed(self.outputs["synth_json"], synth_json)
 
         self._append_build_snippets_default(
             __file__,
@@ -76,6 +81,9 @@ class VivadoSynth(SynthTool):
         if not self.ooc:
             self.outputs["io_report"] = self.build_path / "report_io.txt"
             self.outputs["synth_constraints"] = self.build_path / "design.xdc"
+        else:
+            self.outputs["io_report"] = None
+            self.outputs["synth_constraints"] = None
 
     def add_ninja_deps(self, deps):
         """Add dependencies to the master ninja file that would cause it to rebuild if modified"""

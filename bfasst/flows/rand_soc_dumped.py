@@ -13,18 +13,25 @@ class RandSocDumped(FlowNoDesign):
     """Flow to dump bels from random soc block designs with Isoblaze"""
 
     def __init__(self, num_designs=1):
+        # pylint: disable=duplicate-code
         super().__init__()
 
         self.rand_soc_tool = RandSoC(self, num_designs=num_designs)
 
         for i, design in enumerate(self.rand_soc_tool.outputs["design_tcl"]):
-            VivadoSynthFromTcl(self, design)
-            VivadoImpl(self, design.parent)
+            synth_tool = VivadoSynthFromTcl(self, design)
+            impl_tool = VivadoImpl(
+                self,
+                design.parent,
+                synth_edf=synth_tool.outputs["synth_edf"],
+                constraints_file=synth_tool.outputs["synth_constraints"],
+            )
             RandsocDump(
                 self,
-                checkpoint=design.parent / "impl" / "impl.dcp",
+                checkpoint=impl_tool.outputs["impl_checkpoint"],
                 dumpfile=f"design_{i}.dump",
             )
+            # pylint: enable=duplicate-code
 
     @classmethod
     def flow_build_dir_name(cls) -> str:
