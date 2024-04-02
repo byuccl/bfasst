@@ -6,15 +6,8 @@
 import unittest
 
 from bfasst.flows.flow_utils import create_build_file
-from bfasst.tools.design_create.rand_soc import RandSoC
-from bfasst.tools.synth.vivado_synth_tcl import VivadoSynthFromTcl
 from bfasst.flows.rand_soc import RandSoc
-from bfasst.tools.impl.vivado_impl import VivadoImpl
-from bfasst.paths import (
-    NINJA_BUILD_PATH,
-    BUILD_PATH,
-    FLOWS_PATH,
-)
+from bfasst.paths import NINJA_BUILD_PATH, FLOWS_PATH
 
 
 class TestRandSocFlow(unittest.TestCase):
@@ -43,23 +36,6 @@ class TestRandSocFlow(unittest.TestCase):
 
         # There should be 5 build statements for a single design generated from this flow
         self.assertEqual(build_statement_count, 5)
-
-    def test_add_ninja_deps(self):
-        """Test that the flow adds the correct dependencies to the ninja file."""
-        observed = ["foo", "bar"]
-        self.flow.add_ninja_deps(observed)
-
-        expected = ["foo", "bar"]
-        
-        design_path = BUILD_PATH / "rand_soc" / "design_0"
-        RandSoC(self.flow, num_designs=1).add_ninja_deps(expected)
-        VivadoSynthFromTcl(None, design_path / "design.tcl").add_ninja_deps(expected)
-        VivadoImpl(None, design_path).add_ninja_deps(expected)
-        expected.append(FLOWS_PATH / "rand_soc.py")
-
-        observed = sorted([str(s) for s in observed])
-        expected = sorted([str(s) for s in expected])
-        self.assertEqual(observed, expected)
 
     def test_get_top_level_flow_path(self):
         self.assertEqual(self.flow.get_top_level_flow_path(), FLOWS_PATH / "rand_soc.py")

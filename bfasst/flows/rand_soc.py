@@ -1,4 +1,5 @@
 """Flow to create random soc block designs in Vivado"""
+
 import pathlib
 
 from bfasst.flows.flow import FlowNoDesign
@@ -11,13 +12,20 @@ class RandSoc(FlowNoDesign):
     """Flow to create random soc block designs in Vivado"""
 
     def __init__(self, num_designs=1):
+        # pylint: disable=duplicate-code
         super().__init__()
 
         self.rand_soc_tool = RandSoC(self, num_designs=num_designs)
 
         for design in self.rand_soc_tool.outputs["design_tcl"]:
-            VivadoSynthFromTcl(self, design)
-            VivadoImpl(self, design.parent)
+            synth_tool = VivadoSynthFromTcl(self, design)
+            VivadoImpl(
+                self,
+                design.parent,
+                synth_edf=synth_tool.outputs["synth_edf"],
+                constraints_file=synth_tool.outputs["synth_constraints"],
+            )
+        # pylint: enable=duplicate-code
 
     @classmethod
     def flow_build_dir_name(cls) -> str:

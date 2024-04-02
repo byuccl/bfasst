@@ -13,22 +13,30 @@ class VivadoWafove(Flow):
     """Flow to compare netlists using wafove."""
 
     def __init__(self, design):
+        # pylint: disable=duplicate-code
         super().__init__(design)
         self.vivado_synth_tool = VivadoSynth(self, design)
-        self.vivado_impl_tool = VivadoImpl(self, design)
-        self.xrev_tool = Xray(self, design)
-        self.wafove_tool = Wafove(self, design)
-
-    def create_build_snippets(self):
-        self.vivado_synth_tool.create_build_snippets()
-        self.vivado_impl_tool.create_build_snippets()
-        self.xrev_tool.create_build_snippets(str(self.vivado_impl_tool.outputs["bitstream"]))
-        self.wafove_tool.create_build_snippets(
-            netlist_a=self.vivado_impl_tool.outputs["impl_verilog"],
-            netlist_b=self.xrev_tool.outputs["xray_netlist"],
-            log_name="wafove.log",
-            std_err_log="wafove_error.log",
+        self.vivado_impl_tool = VivadoImpl(
+            self,
+            design,
+            synth_edf=self.vivado_synth_tool.outputs["synth_edf"],
+            constraints_file=self.vivado_synth_tool.outputs["synth_constraints"],
         )
+        self.xrev_tool = Xray(
+            self,
+            design,
+            xdc_input=self.vivado_synth_tool.outputs["synth_constraints"],
+            bitstream=self.vivado_impl_tool.outputs["bitstream"],
+        )
+        self.wafove_tool = Wafove(
+            self,
+            design,
+            golden_netlist=self.vivado_impl_tool.outputs["golden_netlist"],
+            rev_netlist=self.xrev_tool.outputs["rev_netlist"],
+            std_out_log_name="wafove.log",
+            std_err_log_name="wafove_err.log",
+        )
+        # pylint: enable=duplicate-code
 
     def get_top_level_flow_path(self):
         return pathlib.Path(__file__)

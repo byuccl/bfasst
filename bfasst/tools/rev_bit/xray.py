@@ -9,8 +9,11 @@ from bfasst.tools.tool import Tool
 class Xray(Tool):
     """Tool to create rule and build snippets that reverse a bitstream using xray."""
 
-    def __init__(self, flow, design):
+    def __init__(self, flow, design, xdc_input, bitstream):
         super().__init__(flow, design)
+
+        self.xdc_input = xdc_input
+        self.bitstream = bitstream
 
         self.build_path = self.design_build_path / "xray"
 
@@ -31,7 +34,6 @@ class Xray(Tool):
         self.fasm_path = self.build_path / (self.design_props.top + ".fasm")
         self.reversed_netlist_path = self.build_path / (self.design_props.top + "_reversed.v")
         self.xdc_path = self.build_path / (self.design_props.top + "_reversed.xdc")
-        self.constraints_path = self.design_build_path / "synth" / "design.xdc"
 
         self._init_outputs()
 
@@ -42,24 +44,23 @@ class Xray(Tool):
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(rules)
 
-    def create_build_snippets(self, bitstream: str):
+    def create_build_snippets(self):
         """Populate xray build statements from template and copy them to build.ninja."""
         with open(REV_BIT_TOOLS_PATH / "xray.ninja_build.mustache", "r") as f:
             build_rules = chevron.render(
                 f,
                 {
                     "xray_path": str(XRAY_PATH / "build" / "tools"),
-                    "bitstream_path": bitstream,
-                    "xray_output": self.build_path,
+                    "xray_fasm": str(self.outputs["xray_fasm"]),
+                    "rev_netlist": str(self.outputs["rev_netlist"]),
+                    "xray_xdc": str(self.outputs["xray_xdc"]),
+                    "bitstream_path": self.bitstream,
                     "fasm2bels_path": self.fasm2bels_path,
                     "fasm2bels_python_path": self.fasm2bels_python_path,
                     "bit_to_fasm_path": XRAY_PATH / "utils" / "bit2fasm.py",
                     "db_root": self.db_root,
                     "part": config.PART,
-                    "top": self.design_props.top,
-                    "verilog_file": self.reversed_netlist_path,
-                    "xdc_file": self.xdc_path,
-                    "input_xdc": self.constraints_path,
+                    "input_xdc": self.xdc_input,
                 },
             )
 
@@ -68,7 +69,7 @@ class Xray(Tool):
 
     def _init_outputs(self):
         self.outputs["xray_fasm"] = self.fasm_path
-        self.outputs["xray_netlist"] = self.reversed_netlist_path
+        self.outputs["rev_netlist"] = self.reversed_netlist_path
         self.outputs["xray_xdc"] = self.xdc_path
 
     def add_ninja_deps(self, deps):

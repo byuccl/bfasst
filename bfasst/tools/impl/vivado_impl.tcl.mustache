@@ -1,6 +1,6 @@
 if { [ catch {
-read_edif {{ synth_output }}/viv_synth.edf
-set_property top_file {{ synth_output }}/viv_synth.edf [current_fileset]
+read_edif {{ synth_edf }}
+set_property top_file {{ synth_edf }} [current_fileset]
 link_design -part {{ part }}
 {{#xdc}}
 read_xdc {{ . }}
@@ -18,5 +18,8 @@ report_utilization -file {{ impl_output }}/utilization.txt
 write_bitstream -force {{ . }}
 
 {{/bit}}
-} ] } { exit 1 }
+} error_msg] } { 
+    puts "\n$error_msg"
+    exit 1
+ }
 exit

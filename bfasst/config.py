@@ -4,8 +4,11 @@ import os
 from pathlib import Path
 
 # Tool path locations
-IC2_INSTALL_DIR = Path("/opt/lscc/iCEcube2.2017.08/")
-ICESTORM_INSTALL_DIR = Path("/home/jgoeders/icestorm")
+IC2_INSTALL_DIR = Path("/tools/lscc/iCEcube2.2020.12")
+IC2_FOUNDRY = IC2_INSTALL_DIR / "LSE"
+IC2_LD_LIBRARY_PATH = IC2_FOUNDRY / "bin" / "lin64"
+IC2_SYNTH_BIN = IC2_LD_LIBRARY_PATH / "synthesis"
+IC2_SBT_DIR = IC2_INSTALL_DIR / "sbt_backend"
 
 CONFORMAL_REMOTE_MACHINE = "ssh.et.byu.edu"
 CONFORMAL_REMOTE_MACHINE_USER = "jgoeders"

@@ -1,4 +1,5 @@
 """Run conformal comparison tool"""
+
 from argparse import ArgumentParser
 import re
 import socket
@@ -70,7 +71,12 @@ class ConformalCompare:
         do_file_path = self.__create_do_file()
 
         # Create remote directories
-        cmd = "mkdir -p bfasst_libs;" + "mkdir -p bfasst_libs/xilinx;" + "mkdir -p bfasst_work;"
+        cmd = (
+            "mkdir -p bfasst_libs;"
+            + "mkdir -p bfasst_libs/xilinx;"
+            + "mkdir -p bfasst_work;"
+            + "mkdir -p bfasst_libs/lattice;"
+        )
         client.exec_command(cmd, timeout=bfasst.config.CONFORMAL_TIMEOUT)
 
         self.__copy_files_to_remote(client, do_file_path)
@@ -161,6 +167,7 @@ class ConformalCompare:
 
         # Copy library files
         for f in self.local_libs_paths:
+            print("Copying", f, "to", self.remote_libs_dir_path / f.name)
             scp_client.put(str(f), str(self.remote_libs_dir_path / f.name))
 
         # Copy do script

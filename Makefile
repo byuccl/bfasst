@@ -8,14 +8,15 @@ PUBLIC_SUBMODULES = \
 	third_party/fasm2bels \
 	third_party/RapidWright \
 	third_party/yosys \
-	third_party/WaFoVe
+	third_party/WaFoVe \
+	third_party/icestorm
 
 PRIVATE_SUBMODULES = \
 	third_party/gmt_tools
 
 include external_tools.mk
 
-install: submodules venv python_packages rapidwright env install_fasm2bels install_yosys install_wafove
+install: submodules venv python_packages rapidwright env install_fasm2bels install_yosys install_wafove install_icestorm
 
 venv:
 ifneq "$(PYTHON312)" ""
@@ -47,7 +48,9 @@ packages:
 		libboost-system-dev \
 		libc++-dev \
 		libcapnp-dev \
+		libelf-dev:i386 \
 		libffi-dev \
+		libftdi-dev \
 		libncurses5 \
 		libreadline-dev \
 		libstdc++-12-dev \

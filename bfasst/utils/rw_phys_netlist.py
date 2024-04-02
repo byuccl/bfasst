@@ -124,6 +124,8 @@ class RwPhysNetlist:
                     unisim,
                     net_name,
                 )
+                for inst in cell_insts[1:]:
+                    rw.combine_const_nets(port, inst, cell_insts[0])
 
             if cell_insts:
                 const_net = cell_insts[0].getPortInst(port).getNet()

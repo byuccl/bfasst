@@ -73,3 +73,12 @@ install_wafove:
 	git submodule init third_party/WaFoVe
 	git submodule update --init --recursive third_party/WaFoVe
 	$(IN_ENV) cd third_party/WaFoVe && python setup.py install && make yosys_cells_sim
+
+################################################################################
+# IceStorm
+################################################################################
+
+install_icestorm:
+	git submodule init third_party/icestorm
+	git submodule update --init --recursive third_party/icestorm
+	cd third_party/icestorm && make -j$(nproc) && make install PREFIX=../
