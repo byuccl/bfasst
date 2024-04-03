@@ -22,6 +22,7 @@ fi
 
 # Check if cache file matches current commit.  Will return "-" if submodule
 # has not been initialized, so need to remove it.
+touch ${BFASST_PATH_FASM2BELS}/"db_marker"
 FASM2BELS_COMMIT=$(git submodule status third_party/fasm2bels/ | awk '{print $1}')
 if [ ${FASM2BELS_COMMIT::1} = "-" ]
 then
@@ -53,7 +54,6 @@ else
     cd -
 
     # Run a design to generate the part database
-	touch ${BFASST_PATH_FASM2BELS}/"db_marker"
     python scripts/run.py VivadoBitToNetlist designs/basic/and3 --no_tool_checks
 
     echo $FASM2BELS_COMMIT > ${BFASST_PATH_FASM2BELS}/fasm2bels_commit.txt
