@@ -45,7 +45,6 @@ else
         rm -rf ${BFASST_PATH_FASM2BELS}
 	    git clone ${FASM2BELS_URL} ${BFASST_PATH_FASM2BELS}
 	    cd ${BFASST_PATH_FASM2BELS} && git reset --hard ${FASM2BELS_COMMIT} && cd -
-    touch ${BFASST_PATH_FASM2BELS}/"db_marker"
     fi
 
 	cd ${BFASST_PATH_FASM2BELS}
@@ -55,6 +54,7 @@ else
     cd -
 
     # Run a design to generate the part database
+    touch ${BFASST_PATH_FASM2BELS}/"db_marker"
     python scripts/run.py VivadoBitToNetlist designs/basic/and3 --no_tool_checks
 
     echo $FASM2BELS_COMMIT > ${BFASST_PATH_FASM2BELS}/fasm2bels_commit.txt
