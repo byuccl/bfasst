@@ -1,4 +1,5 @@
 """Utility methods for getting flows"""
+
 from bfasst.paths import NINJA_BUILD_PATH
 
 

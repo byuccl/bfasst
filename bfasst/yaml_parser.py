@@ -1,4 +1,5 @@
 """Parse a yaml file to obtain a flow and a list of target designs"""
+
 from abc import ABC
 from pathlib import Path
 from importlib import import_module

@@ -1,4 +1,5 @@
 """ Base class for bitstream to netlist tools"""
+
 import abc
 
 from bfasst.tools_legacy.tool import Tool
