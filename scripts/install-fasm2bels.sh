@@ -22,7 +22,6 @@ fi
 
 # Check if cache file matches current commit.  Will return "-" if submodule
 # has not been initialized, so need to remove it.
-touch ${BFASST_PATH_FASM2BELS}/"db_marker"
 FASM2BELS_COMMIT=$(git submodule status third_party/fasm2bels/ | awk '{print $1}')
 if [ ${FASM2BELS_COMMIT::1} = "-" ]
 then
@@ -34,6 +33,7 @@ echo "Need fasm2bels version: ${FASM2BELS_URL} ${FASM2BELS_COMMIT}"
     
 if [ -f ${BFASST_PATH_FASM2BELS}/fasm2bels_commit.txt ] && [ $FASM2BELS_COMMIT == $(cat ${BFASST_PATH_FASM2BELS}/fasm2bels_commit.txt) ] ; then
     # Successful cache, do nothing
+    touch ${BFASST_PATH_FASM2BELS}/"db_marker"
     echo "Found cached version of fasm2bels. No install required."
 else
     echo Installing new version of fasm2bels at ${BFASST_PATH_FASM2BELS}. This will be cached for future use.
@@ -45,6 +45,7 @@ else
         rm -rf ${BFASST_PATH_FASM2BELS}
 	    git clone ${FASM2BELS_URL} ${BFASST_PATH_FASM2BELS}
 	    cd ${BFASST_PATH_FASM2BELS} && git reset --hard ${FASM2BELS_COMMIT} && cd -
+    touch ${BFASST_PATH_FASM2BELS}/"db_marker"
     fi
 
 	cd ${BFASST_PATH_FASM2BELS}
