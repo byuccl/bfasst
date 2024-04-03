@@ -1,4 +1,5 @@
 """ Base class for comparison tools"""
+
 import abc
 import pathlib
 
