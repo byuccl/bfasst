@@ -1,6 +1,5 @@
 """Builds new netlist structured used with automated block mapping"""
 
-
 from bfasst.tools_legacy.netlist_mapping.structural.instance import Instance
 
 
