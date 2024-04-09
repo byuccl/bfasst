@@ -88,13 +88,13 @@ The following steps should be taken to add a new flow to the project:
 
 1. Create any stand-alone python utility scripts in the `utils` directory. This may or may not be necessary. For example, physical netlist generation is a `util` but the `vivado` flow only uses tcl scripts and therefore does not require any `utils`.
 
-2. Create a file for any new ninja rules and one for all new ninja build snippets in the correct `tools` sub-directory. Many rules already exist in the project, such as a rule for invoking vivado or filling in mustache files, so in those cases you only need to create build snippet files that will invoke those rules.
+1. Create a file for any new ninja rules and one for all new ninja build snippets in the correct `tools` sub-directory. Many rules already exist in the project, such as a rule for invoking vivado or filling in mustache files, so in those cases you only need to create build snippet files that will invoke those rules.
 
-3. Create a new python script that is associated with the new ninja rule and build snippets you have created. It will be responsible for filling in the templated rule/build snippets, creating any json files necessary to do so, and appending the rule/build snippets to the master `build.ninja` file. See `tools/vivado/vivado.py` for an example of how this is done. This new tool object should inherit from the `Tool` class in `tools/tool.py`.
+1. Create a new python script that is associated with the new ninja rule and build snippets you have created. It will be responsible for filling in the templated rule/build snippets, creating any json files necessary to do so, and appending the rule/build snippets to the master `build.ninja` file. See `tools/vivado/vivado.py` for an example of how this is done. This new tool object should inherit from the `Tool` class in `tools/tool.py`.
 
-4. Create a new python script that invokes all tools necessary to run your flow in the `flows` directory. This new flow object should inherit from the `Flow` class in `flows/flow.py`. It should create any `Tool` objects that are necessary for the flow to run, and then call the `create_rule` and `create_build_snippet` methods of each `Tool` object. This `Flow` class is also required to have a method that returns the path to itself.
+1. Create a new python script that invokes all tools necessary to run your flow in the `flows` directory. This new flow object should inherit from the `Flow` class in `flows/flow.py`. It should create any `Tool` objects that are necessary for the flow to run, and then call the `create_rule` and `create_build_snippet` methods of each `Tool` object. This `Flow` class is also required to have a method that returns the path to itself.
 
-5. Add a unit test file for your new flow to the `test/flows` directory and add your flow to the unit tests for the `test/scripts/test_ninja_flow_manager.py` file.
+1. Add a unit test file for your new flow to the `test/flows` directory and add your flow to the unit tests for the `test/scripts/test_ninja_flow_manager.py` file.
 
 ## add_ninja_deps Method
 
