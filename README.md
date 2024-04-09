@@ -22,9 +22,10 @@ positional arguments:
 options:
   -h, --help                          Show this help message and exit
   --flow_arguments FLOW_ARGUMENTS     Arguments to pass to the flow, as python dict (e.g. "{'num_runs': 10}" for error_injection flow)
+  --ninja_mode [serial, parallel]     Specifies the ninja execution mode. Default: parallel (e.g. "python scripts/run.py basic/and3 --ninja_mode serial") 
 ```
 
-Note that if a yaml file is specified, neither a design nor flow should be specified. Flow arguments are optional; flows will always run with valid default arguments.
+Note that if a yaml file is specified, neither a design nor flow should be specified. Flow arguments and the ninja_mode are optional; flows will always run with valid default arguments.
 
 ## Install
 ### Prerequisites
