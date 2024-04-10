@@ -2,7 +2,7 @@
 
 import json
 import pathlib
-from bfasst.config import IC2_FOUNDRY, IC2_LSE_LD_LIBRARY_PATH, IC2_SBT_DIR, IC2_LSE_SYNTH_BIN
+from bfasst.config import IC2_FOUNDRY, IC2_LSE_LD_LIBRARY_PATH, IC2_SBT_DIR, IC2_LSE_SYNTH_BIN, TOOLS_PATH
 from bfasst.paths import BFASST_UTILS_PATH, LSE_PRJ_TEMPLATE
 from bfasst.tools.synth.synth_tool import SynthTool
 from bfasst.utils.general import json_write_if_changed
