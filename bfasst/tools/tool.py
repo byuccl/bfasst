@@ -24,7 +24,7 @@ class ToolBase(abc.ABC):
 
     def create_rule_snippets(self):
         """Create the rule snippets for the flow and append them to build.ninja"""
-        rules_path = self.rule_snippet_path
+        rules_path = self.rule_snippet_path if hasattr(self, "rule_snippet_path") else None
         render_dict = self.render_dict if hasattr(self, "render_dict") else None
         if rules_path in self.flow.rule_paths:
             return
