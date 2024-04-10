@@ -25,7 +25,7 @@ options:
   -j --jobs INT                       Specifies the number of jobs ninja can run in parallel (e.g. "python scripts/run.py basic/and3 -j 4")
 ```
 
-Note that if a yaml file is specified, neither a design nor flow should be specified. Flow arguments and the ninja_mode are optional; flows will always run with valid default arguments.
+Note that if a yaml file is specified, neither a design nor flow should be specified. Flow arguments and the jobs argument are optional; flows will always run with valid default arguments.
 
 ## Install
 ### Prerequisites
