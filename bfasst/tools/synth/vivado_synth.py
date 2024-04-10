@@ -27,10 +27,10 @@ class VivadoSynth(SynthTool):
         self._init_outputs()
         self.rule_snippet_path = COMMON_TOOLS_PATH / "vivado_rules.ninja.mustache"
         self.render_dict = {
-                "vivado_path": config.VIVADO_BIN_PATH,
-                "in_context": not self.ooc,
-                "utils_path": BFASST_UTILS_PATH,
-            }
+            "vivado_path": config.VIVADO_BIN_PATH,
+            "in_context": not self.ooc,
+            "utils_path": BFASST_UTILS_PATH,
+        }
 
     def create_build_snippets(self):
         """Create build snippets in ninja file"""

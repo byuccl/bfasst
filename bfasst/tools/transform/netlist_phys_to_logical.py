@@ -2,7 +2,7 @@
 """
 
 from bfasst.tools.tool import Tool
-from bfasst.paths import BFASST_UTILS_PATH, GMT_TOOLS_PATH, NINJA_TRANSFORM_TOOLS_PATH 
+from bfasst.paths import BFASST_UTILS_PATH, GMT_TOOLS_PATH, NINJA_TRANSFORM_TOOLS_PATH
 
 
 class NetlistPhysToLogical(Tool):
@@ -15,7 +15,7 @@ class NetlistPhysToLogical(Tool):
 
         self.build_path = self.design_build_path / "netlist_phys_to_logical"
         self._init_outputs()
-        self.rule_snippet_path = NINJA_TRANSFORM_TOOLS_PATH  / "netlist_phys_to_logical_rules.ninja"
+        self.rule_snippet_path = NINJA_TRANSFORM_TOOLS_PATH / "netlist_phys_to_logical_rules.ninja"
 
     def _init_outputs(self):
         self.outputs["netlist_phys_to_logical_path"] = self.build_path / (

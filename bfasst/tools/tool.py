@@ -39,8 +39,6 @@ class ToolBase(abc.ABC):
 
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(rules)
-        
-        
 
     @abc.abstractmethod
     def create_build_snippets(self):
