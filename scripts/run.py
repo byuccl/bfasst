@@ -100,7 +100,7 @@ def parse_args(args):
         "-j",
         "--jobs",
         type=int,
-        help = "Number of jobs to run in parallel",
+        help="Number of jobs to run in parallel",
     )
 
     # try to parse the arguments, and if none are provided, print the flow choices
@@ -144,11 +144,9 @@ if __name__ == "__main__":
             parsed_args.design,
             parsed_args.flow_arguments,
             check_tools=not parsed_args.no_tool_checks,
-            num_threads = parsed_args.jobs
+            num_threads=parsed_args.jobs,
         )
     else:
         ApplicationRunner().run_yaml(
-            parsed_args.yaml,
-            check_tools=parsed_args.no_tool_checks,
-            num_threads = parsed_args.jobs
+            parsed_args.yaml, check_tools=parsed_args.no_tool_checks, num_threads=parsed_args.jobs
         )
