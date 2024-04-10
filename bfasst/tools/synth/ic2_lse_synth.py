@@ -18,9 +18,7 @@ class Ic2LseSynth(SynthTool):
 
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()
-
-    def create_rule_snippets(self):
-        self._append_rule_snippets_default(__file__)
+        self.rule_snippet_path = TOOLS_PATH / "synth" / "ic2_lse_synth_rules.ninja"
 
     def create_build_snippets(self):
         # first, the project file must be created with ninja and chevron.
