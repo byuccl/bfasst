@@ -1,6 +1,7 @@
 """Create rule and build snippets for wafove comparison."""
 
 from bfasst.tools.tool import Tool
+from bfasst.paths import TOOLS_PATH
 
 
 class Wafove(Tool):
@@ -18,9 +19,7 @@ class Wafove(Tool):
 
         self.build_path = self.design_build_path / "wafove"
         self._init_outputs(self.std_out_log_name, self.std_err_log_name)
-
-    def create_rule_snippets(self):
-        self._append_rule_snippets_default(__file__)
+        self.rule_snippet_path = TOOLS_PATH / "compare" / "wafove" / "wafove_rules.ninja"
 
     def create_build_snippets(self):
         self._append_build_snippets_default(
