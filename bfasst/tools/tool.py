@@ -22,36 +22,10 @@ class ToolBase(abc.ABC):
         self.build_path = None
         self.outputs = {}
 
-    @abc.abstractmethod
     def create_rule_snippets(self):
         """Create the rule snippets for the flow and append them to build.ninja"""
-
-    @abc.abstractmethod
-    def create_build_snippets(self):
-        """Create the build snippets for the flow and append them to build.ninja"""
-
-    @abc.abstractmethod
-    def add_ninja_deps(self):
-        """Add the template and flow paths of this flow
-        and its sub-flows as dependencies of the build.ninja file"""
-
-    @abc.abstractmethod
-    def _init_outputs(self):
-        """Fill the self.outputs dictionary that lists
-        all files the tool is responsible for creating"""
-
-    def _append_rule_snippets_default(self, py_tool_path, render_dict=None, rules_path=None):
-        """Create the rule snippets for a python tool,
-        assuming default filenames are used
-        """
-
-        py_tool_path = pathlib.Path(py_tool_path)
-
-        if rules_path is None:
-            if render_dict:
-                rules_path = py_tool_path.parent / (py_tool_path.stem + "_rules.ninja.mustache")
-            else:
-                rules_path = py_tool_path.parent / (py_tool_path.stem + "_rules.ninja")
+        rules_path = self.rule_snippet_path
+        render_dict = self.render_dict
 
         if rules_path in self.flow.rule_paths:
             return
@@ -66,6 +40,22 @@ class ToolBase(abc.ABC):
 
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(rules)
+        
+        
+
+    @abc.abstractmethod
+    def create_build_snippets(self):
+        """Create the build snippets for the flow and append them to build.ninja"""
+
+    @abc.abstractmethod
+    def add_ninja_deps(self):
+        """Add the template and flow paths of this flow
+        and its sub-flows as dependencies of the build.ninja file"""
+
+    @abc.abstractmethod
+    def _init_outputs(self):
+        """Fill the self.outputs dictionary that lists
+        all files the tool is responsible for creating"""
 
     def _append_build_snippets_default(self, py_tool_path, render_dict):
         """Create the build snippets for a python tool,
