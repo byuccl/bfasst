@@ -8,7 +8,7 @@ from bfasst.config import (
     IC2_SBT_DIR,
     IC2_SYNPLIFY_BIN,
 )
-from bfasst.paths import SYNPLIFY_PRJ_TEMPLATE, TOOLS_PATh
+from bfasst.paths import SYNPLIFY_PRJ_TEMPLATE, TOOLS_PATH
 from bfasst.tools.synth.synth_tool import SynthTool
 from bfasst.utils.general import json_write_if_changed
 
