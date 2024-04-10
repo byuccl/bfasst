@@ -1,0 +1,4 @@
+rule ic2_synplify_synth
+    command = cd $build_path; LD_LIBRARY_PATH=$ld_library_path SYNPLIFY_PATH=$synplify_path SBT_DIR=$sbt_dir $synth_bin_path -prj $prj_path
+    description = ic2_synplify synth for $design
+

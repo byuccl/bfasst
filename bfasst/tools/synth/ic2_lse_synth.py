@@ -2,7 +2,7 @@
 
 import json
 import pathlib
-from bfasst.config import IC2_FOUNDRY, IC2_LD_LIBRARY_PATH, IC2_SBT_DIR, IC2_SYNTH_BIN
+from bfasst.config import IC2_FOUNDRY, IC2_LSE_LD_LIBRARY_PATH, IC2_SBT_DIR, IC2_LSE_SYNTH_BIN
 from bfasst.paths import BFASST_UTILS_PATH, LSE_PRJ_TEMPLATE
 from bfasst.tools.synth.synth_tool import SynthTool
 from bfasst.utils.general import json_write_if_changed
@@ -39,10 +39,10 @@ class Ic2LseSynth(SynthTool):
         self._append_build_snippets_default(
             __file__,
             {
-                "ld_library_path": IC2_LD_LIBRARY_PATH,
+                "ld_library_path": IC2_LSE_LD_LIBRARY_PATH,
                 "foundry": IC2_FOUNDRY,
                 "sbt_dir": IC2_SBT_DIR,
-                "synth_bin_path": IC2_SYNTH_BIN,
+                "synth_bin_path": IC2_LSE_SYNTH_BIN,
                 "prj_path": self.outputs["prj_file"],
                 "json_render_dict": self.outputs["synth_json"],
                 "prj_template": LSE_PRJ_TEMPLATE,

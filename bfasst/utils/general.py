@@ -181,7 +181,7 @@ def get_hdl_src_types(srcs):
 
 def get_hdl_src_type(file, hdl_type=None):
     """get hdl type of file"""
-    if file.suffix == ".v":
+    if file.suffix in (".v", ".vm"):
         if hdl_type is None:
             hdl_type = HdlType.VERILOG
         elif hdl_type == HdlType.VHDL:

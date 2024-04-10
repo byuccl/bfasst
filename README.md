@@ -22,9 +22,10 @@ positional arguments:
 options:
   -h, --help                          Show this help message and exit
   --flow_arguments FLOW_ARGUMENTS     Arguments to pass to the flow, as python dict (e.g. "{'num_runs': 10}" for error_injection flow)
+  -j --jobs INT                       Specifies the number of jobs ninja can run in parallel (e.g. "python scripts/run.py basic/and3 -j 4")
 ```
 
-Note that if a yaml file is specified, neither a design nor flow should be specified. Flow arguments are optional; flows will always run with valid default arguments.
+Note that if a yaml file is specified, neither a design nor flow should be specified. Flow arguments and the jobs argument are optional; flows will always run with valid default arguments.
 
 ## Install
 ### Prerequisites
@@ -61,7 +62,7 @@ An open source synthesis tool. <https://github.com/YosysHQ/yosys/blob/master/REA
 ### Conformal
 The conformal plugin is currently designed to run conformal on a remote machine (CAEDM machine at BYU).
   * Set up your SSH with caedm. You'll know if you set it up correctly when you can use ```ssh caedm``` and log in without having to enter your password. Follow the guide at <https://byu-cpe.github.io/ComputingBootCamp/tutorials/linux/> .
-  * Open _bfasst/config.py_. Change _fsj/squallz_ to your caedm login info. For instance, if you connect to caedm and enter ```pwd``` and your info is _/hij/username_, change _fsj/squallz_ to _hij/username_.
+  * Open _bfasst/config.py_. Change the `CONFORMAL_REMOTE_MACHINE_USER`, `CONFORMAL_REMOTE_WORK_DIR`, and `CONFORMAL_REMOTE_LIBS_DIR` to your caedm login info. For instance, if you connect to caedm and enter ```pwd``` and your info is _/hij/username_, change _fsj/goeders_ to _hij/username_ and the machine user to _username_.
 Finally, test to confirm that everything worked correctly! Run the following:
 1. Activate the virual environment: ```. .venv/bin/activate```
 2. Run the flow:  ```python scripts/run_design.py designs/basic/add4/ xilinx_conformal_impl```

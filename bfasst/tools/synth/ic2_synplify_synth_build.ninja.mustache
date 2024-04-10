@@ -1,0 +1,11 @@
+build {{ prj_path }}: template {{ json_render_dict }} {{ prj_template }}
+
+build {{#outputs}}{{ . }} {{/outputs}}: ic2_synplify_synth | {{ prj_path }}
+    ld_library_path={{ ld_library_path }}
+    sbt_dir={{ sbt_dir }}
+    synplify_path={{ synplify_path }}
+    synth_bin_path={{ synth_bin_path }}
+    prj_path={{ prj_path }}
+    design={{ design }}
+    build_path={{ build_path }}
+
