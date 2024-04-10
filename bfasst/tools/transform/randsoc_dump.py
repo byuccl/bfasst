@@ -2,7 +2,7 @@
 
 from pathlib import Path
 from bfasst.tools.tool import ToolBase
-from bfasst.paths import BFASST_UTILS_PATH, BUILD_PATH, TOOLS_PATH
+from bfasst.paths import BFASST_UTILS_PATH, BUILD_PATH, NINJA_TRANSFORM_TOOLS_PATH
 
 
 class RandsocDump(ToolBase):
@@ -15,7 +15,7 @@ class RandsocDump(ToolBase):
         self.checkpoint = checkpoint
         self.dumpfile = dumpfile
         self._init_outputs()
-        self.rule_snippet_path = TOOLS_PATH / "transform" / "randsoc_dump_rules.ninja"
+        self.rule_snippet_path = NINJA_TRANSFORM_TOOLS_PATH / "randsoc_dump_rules.ninja"
 
     def _init_outputs(self):
         self.outputs["dumpfile_output"] = self.build_path / self.dumpfile

@@ -3,7 +3,7 @@
 """
 
 from bfasst.tools.tool import Tool
-from bfasst.paths import BFASST_UTILS_PATH, TOOLS_PATH
+from bfasst.paths import BFASST_UTILS_PATH, NINJA_TRANSFORM_TOOLS_PATH
 
 
 class NetlistCleanup(Tool):
@@ -16,7 +16,7 @@ class NetlistCleanup(Tool):
 
         self.build_path = self.design_build_path / "netlist_cleanup"
         self._init_outputs()
-        self.rule_snippet_path = TOOLS_PATH / "transform" / "netlist_cleanup_rules.ninja"
+        self.rule_snippet_path = NINJA_TRANSFORM_TOOLS_PATH / "netlist_cleanup_rules.ninja"
 
     def _init_outputs(self):
         self.outputs["netlist_cleaned_path"] = self.build_path / (

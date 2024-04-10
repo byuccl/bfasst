@@ -8,7 +8,6 @@ from bfasst.paths import (
     NINJA_BUILD_PATH,
     NINJA_TRANSFORM_TOOLS_PATH,
     BFASST_UTILS_PATH,
-    TOOLS_PATH
 )
 from bfasst.utils import compare_json
 
@@ -25,7 +24,7 @@ class PhysNetlist(Tool):
         self.build_path = self.design_build_path / "vivado_phys_netlist"
 
         self._init_outputs()
-        self.rule_snippet_path = TOOLS_PATH / "transform" / "phys_netlist_rules.ninja"
+        self.rule_snippet_path = NINJA_TRANSFORM_TOOLS_PATH / "phys_netlist_rules.ninja"
 
     def create_build_snippets(self):
         self.__write_json_file()

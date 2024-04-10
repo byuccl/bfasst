@@ -18,9 +18,8 @@ class Yosys(Tool):
         self.build_path = self.design_build_path / "yosys"
         self.tcl_template = YOSYS_TOOLS_PATH / "yosys.tcl.mustache"
         self._init_outputs()
-
-    def create_rule_snippets(self):
-        self._append_rule_snippets_default(__file__, {"utils": str(BFASST_UTILS_PATH)})
+        self.rule_snippet_path = YOSYS_TOOLS_PATH / "yosys_rules.ninja.mustache"
+        self.render_dict = {"utils": str(BFASST_UTILS_PATH)}
 
     def create_build_snippets(self):
         self.__write_json_file()
