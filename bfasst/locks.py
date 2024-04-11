@@ -4,4 +4,3 @@ import multiprocessing
 
 
 conformal_lock = multiprocessing.Manager().Lock()
-onespin_lock = multiprocessing.Manager().Lock()
