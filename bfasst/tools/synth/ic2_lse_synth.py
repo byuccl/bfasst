@@ -56,12 +56,14 @@ class Ic2LseSynth(SynthTool):
                 "lse_post_synth_util": BFASST_UTILS_PATH / "lse_post_synth.py",
                 "build_path": self.build_path,
                 "edf_output": self.outputs["edif_file"],
+                "input_verilog_file": (
+                    self.verilog[0] if not self.use_hdl_sources else None
+                ),  # input passed from yosys if not using hdl sources
                 "outputs": [
                     v
                     for _, v in self.outputs.items()
                     if (v not in [self.outputs["prj_file"], self.outputs["synth_json"]])
                 ],  # all outputs not related to prj file are built by lse synth tool with ninja
-                "input_verilog_file": self.verilog[0] if not self.use_hdl_sources else None,
             },
         )
 
