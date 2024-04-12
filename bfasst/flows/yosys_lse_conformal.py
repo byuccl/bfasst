@@ -17,7 +17,9 @@ class YosysLseConformal(Flow):
         # pylint: disable=duplicate-code
         super().__init__(design)
         self.yosys_synth_tool = YosysSynth(self, design)
-        self.ic2_lse_tool = Ic2LseSynth(self, design)
+        self.ic2_lse_tool = Ic2LseSynth(
+            self, design, input_verilog_file=self.yosys_synth_tool.outputs["netlist"]
+        )
         self.ic2_impl_tool = Ic2Impl(
             self, design, synth_edf_file=self.ic2_lse_tool.outputs["edif_file"]
         )
