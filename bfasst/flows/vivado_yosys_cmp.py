@@ -4,7 +4,7 @@ import pathlib
 
 from bfasst.flows.flow import Flow
 from bfasst.tools.impl.vivado_impl import VivadoImpl
-from bfasst.tools.compare.yosys.yosys import Yosys
+from bfasst.tools.compare.yosys.yosys import YosysCompare
 from bfasst.tools.rev_bit.xray import Xray
 from bfasst.tools.synth.vivado_synth import VivadoSynth
 
@@ -28,7 +28,7 @@ class VivadoYosysCmp(Flow):
             xdc_input=self.vivado_synth_tool.outputs["synth_constraints"],
             bitstream=self.vivado_impl_tool.outputs["bitstream"],
         )
-        self.yosys_tool = Yosys(
+        self.yosys_tool = YosysCompare(
             self,
             design,
             golden_netlist=self.vivado_impl_tool.outputs["golden_netlist"],

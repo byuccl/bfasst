@@ -1,0 +1,4 @@
+rule yosys_synth
+    command = cd $yosys_exe_path -m vhdl -s $in -l $log
+    description = Synthesize $design with Yosys
+
