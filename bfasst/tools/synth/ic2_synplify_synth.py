@@ -1,5 +1,7 @@
 """Ic2 LSE Synthesis Tool (ninja snippet generation for ic2 lse synthesis)"""
 
+# pylint: disable=duplicate-code
+
 import json
 import pathlib
 from bfasst.config import (
