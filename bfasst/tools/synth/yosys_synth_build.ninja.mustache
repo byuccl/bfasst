@@ -1,0 +1,7 @@
+build {{ yosys_script_file }}: template {{ json_render_dict }} {{ script_template }}
+
+build {{#yosys_synth_outputs}}{{ . }} {{/yosys_synth_outputs}}: yosys_synth {{ yosys_script_file }}
+    yosys_exe_path = {{ yosys_exe_path }}
+    log = {{ log }}
+    design = {{ design }}
+

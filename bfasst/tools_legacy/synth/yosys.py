@@ -37,7 +37,7 @@ class YosysTechSynthTool(SynthesisTool):
         # Run Yosys on the design
         # This assumes that the VHDL module *is* installed!
         cmd = [
-            os.path.join(paths.YOSYS_INSTALL_DIR, "yosys"),
+            os.path.join(paths.YOSYS_PATH, "yosys"),
             "-m",
             "vhdl",
             "-s",

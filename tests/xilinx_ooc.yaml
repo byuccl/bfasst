@@ -1,6 +1,0 @@
-designs:
-  - ooc/
-
-flow: xilinx_ooc
-
-synth: " --flatten"
