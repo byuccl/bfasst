@@ -1,8 +1,0 @@
-design_dirs:
-  - ooc/
-
-flow: yosys_synplify_error_onespin
-
-post_run: export_to_onespin
-
-error_flow: single_bit_flip

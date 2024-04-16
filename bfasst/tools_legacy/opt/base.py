@@ -1,4 +1,5 @@
 """ Base class for logic optimization tools"""
+
 import abc
 
 from bfasst.tools_legacy.tool import Tool

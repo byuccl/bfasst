@@ -1,0 +1,4 @@
+rule yosys_synth
+    command = $yosys_exe_path -s $in -l $log
+    description = Synthesize $design with Yosys
+
