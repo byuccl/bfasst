@@ -1,4 +1,0 @@
-design_dirs:
-    - basic/
-
-flow: xilinx_yosys_impl

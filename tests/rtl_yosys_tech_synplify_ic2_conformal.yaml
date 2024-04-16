@@ -1,4 +1,0 @@
-design_dirs:
-    - ooc/
-
-flow: yosys_tech_synplify_conformal

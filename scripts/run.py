@@ -1,4 +1,5 @@
 """Script to run a flow on one or more designs."""
+
 import argparse
 import ast
 import pathlib
@@ -20,11 +21,13 @@ class ApplicationRunner:
         self.flow = None
         self.deps = None
         self.flow_arguments = None
+        self.num_threads = None
 
-    def run_flow(self, flow, designs, flow_arguments, check_tools):
+    def run_flow(self, flow, designs, flow_arguments, check_tools, num_threads):
         """Run one ore more designs with a given flow."""
         self.designs = ensure_tuple(designs)
         self.flow = flow
+        self.num_threads = num_threads
         if check_tools:
             success = external_tools.check_flow(self.flow)
             if not success:
@@ -33,7 +36,7 @@ class ApplicationRunner:
             self.flow_arguments = ast.literal_eval(flow_arguments)
         self.__run_ninja()
 
-    def run_yaml(self, yaml_path, check_tools):
+    def run_yaml(self, yaml_path, check_tools, num_threads):
         """Run using a yaml configuration file"""
 
         run_config = RunParser(yaml_path)
@@ -41,6 +44,7 @@ class ApplicationRunner:
         self.designs = run_config.design_paths
         self.flow = run_config.flow
         self.flow_arguments = run_config.flow_arguments
+        self.num_threads = num_threads
         if check_tools:
             success = external_tools.check_flow(self.flow)
             if not success:
@@ -55,6 +59,8 @@ class ApplicationRunner:
 
         # run the build.ninja file
         cmd = ["ninja"]
+        if self.num_threads:
+            cmd += ["-j", str(self.num_threads)]
         proc = subprocess.Popen(cmd, cwd=ROOT_PATH)
         proc.communicate()
         return_code = proc.wait()
@@ -90,6 +96,12 @@ def parse_args(args):
         help="Arguments passed to the flow constructor, in the form of a dictionary",
     )
     parser.add_argument("--no_tool_checks", action="store_true", help="Skip tool checks")
+    parser.add_argument(
+        "-j",
+        "--jobs",
+        type=int,
+        help="Number of jobs to run in parallel",
+    )
 
     # try to parse the arguments, and if none are provided, print the flow choices
     try:
@@ -132,6 +144,9 @@ if __name__ == "__main__":
             parsed_args.design,
             parsed_args.flow_arguments,
             check_tools=not parsed_args.no_tool_checks,
+            num_threads=parsed_args.jobs,
         )
     else:
-        ApplicationRunner().run_yaml(parsed_args.yaml, check_tools=parsed_args.no_tool_checks)
+        ApplicationRunner().run_yaml(
+            parsed_args.yaml, check_tools=parsed_args.no_tool_checks, num_threads=parsed_args.jobs
+        )

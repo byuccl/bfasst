@@ -16,7 +16,7 @@ PRIVATE_SUBMODULES = \
 
 include external_tools.mk
 
-install: submodules venv python_packages rapidwright env install_fasm2bels install_yosys install_wafove install_icestorm
+install: submodules venv python_packages install_rapidwright env install_fasm2bels install_yosys install_wafove
 
 venv:
 ifneq "$(PYTHON312)" ""

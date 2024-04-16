@@ -1,4 +1,5 @@
 """Out-of-context Vivado flow"""
+
 from bfasst.flows.vivado import Vivado
 from bfasst.paths import FLOWS_PATH
 
