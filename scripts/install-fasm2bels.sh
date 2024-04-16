@@ -33,6 +33,7 @@ echo "Need fasm2bels version: ${FASM2BELS_URL} ${FASM2BELS_COMMIT}"
     
 if [ -f ${BFASST_PATH_FASM2BELS}/fasm2bels_commit.txt ] && [ $FASM2BELS_COMMIT == $(cat ${BFASST_PATH_FASM2BELS}/fasm2bels_commit.txt) ] ; then
     # Successful cache, do nothing
+    touch ${BFASST_PATH_FASM2BELS}/"db_marker"
     echo "Found cached version of fasm2bels. No install required."
 else
     echo Installing new version of fasm2bels at ${BFASST_PATH_FASM2BELS}. This will be cached for future use.
@@ -53,7 +54,8 @@ else
     cd -
 
     # Run a design to generate the part database
-	python scripts/run.py VivadoBitToNetlist designs/basic/and3 --no_tool_checks
+    touch ${BFASST_PATH_FASM2BELS}/"db_marker"
+    python scripts/run.py VivadoBitToNetlist designs/basic/and3 --no_tool_checks
 
     echo $FASM2BELS_COMMIT > ${BFASST_PATH_FASM2BELS}/fasm2bels_commit.txt
 fi
