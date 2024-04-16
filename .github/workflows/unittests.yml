@@ -46,6 +46,7 @@ jobs:
 
     - name: Environment variables
       run: |
+        mkdir -p ${{ runner.temp }}/../../cache/fasm2bels
         echo "BFASST_PATH_FASM2BELS=$(realpath -se ${{ runner.temp }}/../../cache/fasm2bels)" >> $GITHUB_ENV
     
     - name: Install external tools
