@@ -55,6 +55,7 @@ class Xray(Tool):
                     "db_root": self.db_root,
                     "part": config.PART,
                     "input_xdc": self.xdc_input,
+                    "db_marker": self.fasm2bels_path / "db_marker",
                 },
             )
 

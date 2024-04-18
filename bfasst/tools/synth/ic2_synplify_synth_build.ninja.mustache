@@ -1,6 +1,6 @@
 build {{ prj_path }}: template {{ json_render_dict }} {{ prj_template }}
 
-build {{#outputs}}{{ . }} {{/outputs}}: ic2_synplify_synth | {{ prj_path }}
+build {{#outputs}}{{ . }} {{/outputs}}: ic2_synplify_synth | {{ prj_path }} {{ input_verilog_file }}
     ld_library_path={{ ld_library_path }}
     sbt_dir={{ sbt_dir }}
     synplify_path={{ synplify_path }}

@@ -122,3 +122,23 @@ flows:
   - ic2
   - icestorm
   - conformal
+
+- name: YosysLseConformal
+  description: Verify Yosys RTL-2-Bit with Conformal (LSE Synth)
+  module: yosys_lse_conformal
+  class: YosysLseConformal
+  external_tools:
+  - yosys
+  - ic2
+  - icestorm
+  - conformal
+
+- name: YosysSynplifyConformal
+  description: Verify Yosys RTL-2-Bit with Conformal (Synp Synth)
+  module: yosys_synplify_conformal
+  class: YosysSynplifyConformal
+  external_tools:
+  - yosys
+  - ic2
+  - icestorm
+  - conformal

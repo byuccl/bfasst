@@ -6,7 +6,7 @@ from bfasst.paths import BFASST_UTILS_PATH, YOSYS_TOOLS_PATH
 from bfasst.utils.general import json_write_if_changed
 
 
-class Yosys(Tool):
+class YosysCompare(Tool):
     """Create the rule and build snippets for yosys comparison."""
 
     def __init__(self, flow, design, golden_netlist, rev_netlist):

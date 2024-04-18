@@ -2,11 +2,16 @@
 # Used to generate yosys scripts to build specific projects
 # This script is used in the RTL --> Yosys --> ABC flow
 
-# Read verilog input files
-# read_verilog file.v
+# Read hdl input files
+{{#vhdl}}
+read_vhdl {{ . }}
+{{/vhdl}}
+{{#verilog}}
+read_verilog {{ . }}
+{{/verilog}}
 
 # Run ice40 synthesis passes
 synth_ice40
 
 # Now write the verilog output
-# write_verilog yosys_out.v
+write_verilog {{ netlist }}

@@ -1,5 +1,7 @@
 """Ic2 LSE Synthesis Tool (ninja snippet generation for ic2 lse synthesis)"""
 
+# pylint: disable=duplicate-code
+
 import json
 import pathlib
 from bfasst.config import (
@@ -16,10 +18,16 @@ from bfasst.utils.general import json_write_if_changed
 class Ic2LseSynth(SynthTool):
     """Ic2 LSE Synthesis Tool (ninja snippet generation for ic2 lse synthesis)"""
 
-    def __init__(self, flow, design_path):
+    def __init__(self, flow, design_path, input_verilog_file=None):
         super().__init__(flow, design_path)
         self._my_dir_path = pathlib.Path(__file__).parent
         self.build_path = self.build_path.with_name("ic2_lse_synth")
+        self.use_hdl_sources = True
+        if input_verilog_file:
+            # use the input verilog file as input for the tool, instead of the hdl source files
+            self.use_hdl_sources = False
+            self.verilog = [str(input_verilog_file)]
+            self.vhdl = []
 
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()
@@ -53,6 +61,9 @@ class Ic2LseSynth(SynthTool):
                 "lse_post_synth_util": BFASST_UTILS_PATH / "lse_post_synth.py",
                 "build_path": self.build_path,
                 "edf_output": self.outputs["edif_file"],
+                "input_verilog_file": (
+                    self.verilog[0] if not self.use_hdl_sources else None
+                ),  # input passed from yosys if not using hdl sources
                 "outputs": [
                     v
                     for _, v in self.outputs.items()
