@@ -3,7 +3,7 @@
 import json
 import pathlib
 
-from bfasst.paths import YOSYS_EXE_PATH, YOSYS_SYNTH_SCRIPT_TEMPLATE
+from bfasst.paths import YOSYS_EXE_PATH, YOSYS_SYNTH_SCRIPT_TEMPLATE, TOOLS_PATH
 from bfasst.tools.synth.synth_tool import SynthTool
 from bfasst.utils.general import json_write_if_changed
 
@@ -18,9 +18,7 @@ class YosysSynth(SynthTool):
 
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()
-
-    def create_rule_snippets(self):
-        self._append_rule_snippets_default(__file__)
+        self.rule_snippet_path = TOOLS_PATH / "synth" / "yosys_synth_rules.ninja"
 
     def create_build_snippets(self):
         # first, the yosys script must be created with ninja and chevron.

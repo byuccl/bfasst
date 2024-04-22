@@ -15,17 +15,12 @@ class VivadoSynthFromTcl(Tool):
         self._my_dir_path = pathlib.Path(__file__).parent
         self.build_path = self.design_build_path / "vivado_synth"
         self._init_outputs()
-
-    def create_rule_snippets(self):
-        self._append_rule_snippets_default(
-            __file__,
-            {
-                "vivado_path": config.VIVADO_BIN_PATH,
-                "utils_path": BFASST_UTILS_PATH,
-                "in_context": True,
-            },
-            COMMON_TOOLS_PATH / "vivado_rules.ninja.mustache",
-        )
+        self.rule_snippet_path = COMMON_TOOLS_PATH / "vivado_rules.ninja.mustache"
+        self.render_dict = {
+            "vivado_path": config.VIVADO_BIN_PATH,
+            "utils_path": BFASST_UTILS_PATH,
+            "in_context": True,
+        }
 
     def create_build_snippets(self):
         """Create build snippets in ninja file"""

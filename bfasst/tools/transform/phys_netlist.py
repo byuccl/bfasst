@@ -24,9 +24,7 @@ class PhysNetlist(Tool):
         self.build_path = self.design_build_path / "vivado_phys_netlist"
 
         self._init_outputs()
-
-    def create_rule_snippets(self):
-        self._append_rule_snippets_default(__file__)
+        self.rule_snippet_path = NINJA_TRANSFORM_TOOLS_PATH / "phys_netlist_rules.ninja"
 
     def create_build_snippets(self):
         self.__write_json_file()

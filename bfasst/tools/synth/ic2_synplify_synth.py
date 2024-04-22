@@ -10,7 +10,7 @@ from bfasst.config import (
     IC2_SBT_DIR,
     IC2_SYNPLIFY_BIN,
 )
-from bfasst.paths import SYNPLIFY_PRJ_TEMPLATE
+from bfasst.paths import SYNPLIFY_PRJ_TEMPLATE, TOOLS_PATH
 from bfasst.tools.synth.synth_tool import SynthTool
 from bfasst.utils.general import json_write_if_changed
 
@@ -31,9 +31,7 @@ class Ic2SynplifySynth(SynthTool):
 
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()
-
-    def create_rule_snippets(self):
-        self._append_rule_snippets_default(__file__)
+        self.rule_snippet_path = TOOLS_PATH / "synth" / "ic2_synplify_synth.ninja"
 
     def create_build_snippets(self):
         # first, the project file must be created with ninja and chevron.

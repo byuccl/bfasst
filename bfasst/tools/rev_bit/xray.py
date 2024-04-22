@@ -34,15 +34,9 @@ class Xray(Tool):
         self.fasm_path = self.build_path / (self.design_props.top + ".fasm")
         self.reversed_netlist_path = self.build_path / (self.design_props.top + "_reversed.v")
         self.xdc_path = self.build_path / (self.design_props.top + "_reversed.xdc")
+        self.rule_snippet_path = REV_BIT_TOOLS_PATH / "xray.ninja_rules"
 
         self._init_outputs()
-
-    def create_rule_snippets(self):
-        with open(REV_BIT_TOOLS_PATH / "xray.ninja_rules", "r") as f:
-            rules = f.read()
-
-        with open(NINJA_BUILD_PATH, "a") as f:
-            f.write(rules)
 
     def create_build_snippets(self):
         """Populate xray build statements from template and copy them to build.ninja."""

@@ -25,6 +25,11 @@ class VivadoImpl(ImplTool):
         )
         self._my_dir_path = pathlib.Path(__file__).parent
         self._init_outputs()
+        self.rule_snippet_path = COMMON_TOOLS_PATH / "vivado_rules.ninja.mustache"
+        self.render_dict = {
+            "vivado_path": config.VIVADO_BIN_PATH,
+            "utils_path": BFASST_UTILS_PATH,
+        }
 
     def create_build_snippets(self):
         """Create build snippets in ninja file"""
@@ -49,16 +54,6 @@ class VivadoImpl(ImplTool):
                 "impl_library": self._my_dir_path,
                 "cwd": self.build_path,
             },
-        )
-
-    def create_rule_snippets(self):
-        self._append_rule_snippets_default(
-            __file__,
-            {
-                "vivado_path": config.VIVADO_BIN_PATH,
-                "utils_path": BFASST_UTILS_PATH,
-            },
-            COMMON_TOOLS_PATH / "vivado_rules.ninja.mustache",
         )
 
     def _init_outputs(self):

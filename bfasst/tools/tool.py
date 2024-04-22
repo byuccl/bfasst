@@ -22,9 +22,23 @@ class ToolBase(abc.ABC):
         self.build_path = None
         self.outputs = {}
 
-    @abc.abstractmethod
     def create_rule_snippets(self):
         """Create the rule snippets for the flow and append them to build.ninja"""
+        rules_path = self.rule_snippet_path if hasattr(self, "rule_snippet_path") else None
+        render_dict = self.render_dict if hasattr(self, "render_dict") else None
+        if rules_path in self.flow.rule_paths:
+            return
+
+        self.flow.rule_paths.append(rules_path)
+
+        with open(rules_path, "r") as f:
+            if render_dict:
+                rules = chevron.render(f, render_dict)
+            else:
+                rules = f.read()
+
+        with open(NINJA_BUILD_PATH, "a") as f:
+            f.write(rules)
 
     @abc.abstractmethod
     def create_build_snippets(self):
@@ -39,33 +53,6 @@ class ToolBase(abc.ABC):
     def _init_outputs(self):
         """Fill the self.outputs dictionary that lists
         all files the tool is responsible for creating"""
-
-    def _append_rule_snippets_default(self, py_tool_path, render_dict=None, rules_path=None):
-        """Create the rule snippets for a python tool,
-        assuming default filenames are used
-        """
-
-        py_tool_path = pathlib.Path(py_tool_path)
-
-        if rules_path is None:
-            if render_dict:
-                rules_path = py_tool_path.parent / (py_tool_path.stem + "_rules.ninja.mustache")
-            else:
-                rules_path = py_tool_path.parent / (py_tool_path.stem + "_rules.ninja")
-
-        if rules_path in self.flow.rule_paths:
-            return
-
-        self.flow.rule_paths.append(rules_path)
-
-        with open(rules_path, "r") as f:
-            if render_dict:
-                rules = chevron.render(f, render_dict)
-            else:
-                rules = f.read()
-
-        with open(NINJA_BUILD_PATH, "a") as f:
-            f.write(rules)
 
     def _append_build_snippets_default(self, py_tool_path, render_dict):
         """Create the build snippets for a python tool,
