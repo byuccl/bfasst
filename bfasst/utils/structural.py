@@ -390,7 +390,9 @@ class StructuralCompare:
                         for j in i:
                             remaining.add(j.name)
                     if len(remaining) == len(reversed_remaining[0]):
-                        for named, rev in zip(set(self.named_netlist.instances_to_map), reversed_remaining[0]): # Make a copy of instances_to_map since python won't let you change the size of a set during iteration
+                        for named, rev in zip(
+                            set(self.named_netlist.instances_to_map), reversed_remaining[0]
+                        ):  # Make a copy of instances_to_map since python won't let you change the size of a set during iteration
                             self.add_block_mapping(named, rev)
                         break
 
