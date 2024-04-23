@@ -26,7 +26,7 @@ class VivadoSynth(SynthTool):
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()
         self.rule_snippet_path = COMMON_TOOLS_PATH / "vivado_rules.ninja.mustache"
-        self.render_dict = {
+        self.rules_render_dict = {
             "vivado_path": config.VIVADO_BIN_PATH,
             "in_context": not self.ooc,
             "utils_path": BFASST_UTILS_PATH,

@@ -16,7 +16,7 @@ class VivadoSynthFromTcl(Tool):
         self.build_path = self.design_build_path / "vivado_synth"
         self._init_outputs()
         self.rule_snippet_path = COMMON_TOOLS_PATH / "vivado_rules.ninja.mustache"
-        self.render_dict = {
+        self.rules_render_dict = {
             "vivado_path": config.VIVADO_BIN_PATH,
             "utils_path": BFASST_UTILS_PATH,
             "in_context": True,
