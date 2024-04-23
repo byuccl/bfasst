@@ -58,4 +58,9 @@ def get_fasm2bels_path():
     return THIRD_PARTY_PATH / "fasm2bels"
 
 
-XRAY_PATH = get_fasm2bels_path() / "third_party" / "prjxray"
+FASM2BELS_PATH = get_fasm2bels_path()
+FASM2BELS_PYTHON_PATH = (
+    FASM2BELS_PATH / "env" / "conda" / "envs" / "f4pga_xc_fasm2bels" / "bin" / "python3"
+)
+XRAY_PATH = FASM2BELS_PATH / "third_party" / "prjxray"
+XRAY_DB_PATH = FASM2BELS_PATH / "third_party" / "prjxray-db"
