@@ -32,8 +32,8 @@ class ToolBase(abc.ABC):
         self.flow.rule_paths.append(rules_path)
 
         with open(rules_path, "r") as f:
-            if render_dict:
-                rules = chevron.render(f, render_dict)
+            if rules_render_dict:
+                rules = chevron.render(f, rules_render_dict)
             else:
                 rules = f.read()
 
