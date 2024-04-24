@@ -35,7 +35,7 @@ class VivadoImpl(ImplTool):
         """Create build snippets in ninja file"""
 
         impl = {
-            "part": config.PART,
+            "part": self.flow.part,
             "xdc": str(self.constraints_file) if not self.ooc else False,
             "bit": str(self.outputs["bitstream"]) if not self.ooc else False,
             "impl_output": str(self.build_path),

@@ -2,6 +2,7 @@
 
 import abc
 
+from bfasst import config
 from bfasst.paths import BUILD_PATH, DESIGNS_PATH
 
 
@@ -16,6 +17,9 @@ class FlowBase(abc.ABC):
 
         # A list of rule files already copied into the build.ninja file
         self.rule_paths = []
+
+        # Part used for this flow - default to value in config.py
+        self.part = config.PART
 
     def create_rule_snippets(self):
         """Create the rule snippets for the flow and append them to build.ninja"""

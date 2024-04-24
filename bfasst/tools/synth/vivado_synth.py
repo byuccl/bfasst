@@ -38,7 +38,7 @@ class VivadoSynth(SynthTool):
         # Specify synthesis arguments in a json file.
         # Chevron will use this file to fill in the tcl template.
         synth = {
-            "part": config.PART,
+            "part": self.flow.part,
             "top": self.design_props.top,
             "vhdl": self.vhdl,
             "vhdl_libs": list(self.vhdl_file_lib_map.items()),

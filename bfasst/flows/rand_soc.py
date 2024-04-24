@@ -2,6 +2,7 @@
 
 import pathlib
 
+from bfasst import config
 from bfasst.flows.flow import FlowNoDesign
 from bfasst.tools.design_create.rand_soc import RandSoC
 from bfasst.tools.impl.vivado_impl import VivadoImpl
@@ -11,9 +12,13 @@ from bfasst.tools.synth.vivado_synth_tcl import VivadoSynthFromTcl
 class RandSoc(FlowNoDesign):
     """Flow to create random soc block designs in Vivado"""
 
-    def __init__(self, num_designs=1):
+    def __init__(self, num_designs=1, part=None):
         # pylint: disable=duplicate-code
         super().__init__()
+
+        # Override default part
+        if part is not None:
+            self.part = config.PART
 
         self.rand_soc_tool = RandSoC(self, num_designs=num_designs)
 

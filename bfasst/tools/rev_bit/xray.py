@@ -46,7 +46,7 @@ class Xray(Tool):
                     "fasm2bels_python_path": FASM2BELS_PYTHON_PATH,
                     "bit_to_fasm_path": XRAY_PATH / "utils" / "bit2fasm.py",
                     "db_root": XRAY_DB_PATH / config.PART_FAMILY,
-                    "part": config.PART,
+                    "part": self.flow.part,
                     "input_xdc": self.xdc_input,
                     "db_marker": FASM2BELS_PATH / "db_marker",
                 },

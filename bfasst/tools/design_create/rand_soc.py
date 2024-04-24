@@ -31,6 +31,7 @@ class RandSoC(ToolBase):
                         "design_dir_path": design_dir_path,
                         "seed": i,
                         "rand_soc_source_files": " ".join((str(s) for s in rand_soc_pkg_files)),
+                        "part": self.flow.part,
                     },
                 )
 
