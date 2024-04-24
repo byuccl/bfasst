@@ -212,9 +212,7 @@ def ensure_tuple(x):
 
 def ensure(x, y):
     """Compensates for how python deals with default reference objects"""
-    if x is None:
-        return y
-    return x
+    return x if x is not None else y
 
 
 def json_write_if_changed(path, json_str):

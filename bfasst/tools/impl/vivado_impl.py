@@ -26,7 +26,7 @@ class VivadoImpl(ImplTool):
         self._my_dir_path = pathlib.Path(__file__).parent
         self._init_outputs()
         self.rule_snippet_path = COMMON_TOOLS_PATH / "vivado_rules.ninja.mustache"
-        self.render_dict = {
+        self.rules_render_dict = {
             "vivado_path": config.VIVADO_BIN_PATH,
             "utils_path": BFASST_UTILS_PATH,
         }

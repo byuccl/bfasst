@@ -25,15 +25,15 @@ class ToolBase(abc.ABC):
     def create_rule_snippets(self):
         """Create the rule snippets for the flow and append them to build.ninja"""
         rules_path = self.rule_snippet_path if hasattr(self, "rule_snippet_path") else None
-        render_dict = self.render_dict if hasattr(self, "render_dict") else None
+        rules_render_dict = self.rules_render_dict if hasattr(self, "rules_render_dict") else None
         if rules_path in self.flow.rule_paths:
             return
 
         self.flow.rule_paths.append(rules_path)
 
         with open(rules_path, "r") as f:
-            if render_dict:
-                rules = chevron.render(f, render_dict)
+            if rules_render_dict:
+                rules = chevron.render(f, rules_render_dict)
             else:
                 rules = f.read()
 

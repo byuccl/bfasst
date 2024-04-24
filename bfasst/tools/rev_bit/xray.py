@@ -2,7 +2,14 @@
 
 import chevron
 from bfasst import config
-from bfasst.paths import NINJA_BUILD_PATH, REV_BIT_TOOLS_PATH, XRAY_PATH, get_fasm2bels_path
+from bfasst.paths import (
+    NINJA_BUILD_PATH,
+    REV_BIT_TOOLS_PATH,
+    XRAY_PATH,
+    FASM2BELS_PATH,
+    FASM2BELS_PYTHON_PATH,
+    XRAY_DB_PATH,
+)
 from bfasst.tools.tool import Tool
 
 
@@ -14,28 +21,14 @@ class Xray(Tool):
 
         self.xdc_input = xdc_input
         self.bitstream = bitstream
-
         self.build_path = self.design_build_path / "xray"
-
-        # get these moved to paths later
-        self.fasm2bels_path = get_fasm2bels_path()
-        self.fasm2bels_python_path = (
-            self.fasm2bels_path
-            / "env"
-            / "conda"
-            / "envs"
-            / "f4pga_xc_fasm2bels"
-            / "bin"
-            / "python3"
-        )
-        self.xray_db_path = self.fasm2bels_path / "third_party" / "prjxray-db"
-        self.db_root = self.xray_db_path / config.PART_FAMILY
         self.to_netlist_log = self.build_path / "to_netlist.log"
+
         self.fasm_path = self.build_path / (self.design_props.top + ".fasm")
         self.reversed_netlist_path = self.build_path / (self.design_props.top + "_reversed.v")
         self.xdc_path = self.build_path / (self.design_props.top + "_reversed.xdc")
-        self.rule_snippet_path = REV_BIT_TOOLS_PATH / "xray.ninja_rules"
 
+        self.rule_snippet_path = REV_BIT_TOOLS_PATH / "xray.ninja_rules"
         self._init_outputs()
 
     def create_build_snippets(self):
@@ -49,13 +42,13 @@ class Xray(Tool):
                     "rev_netlist": str(self.outputs["rev_netlist"]),
                     "xray_xdc": str(self.outputs["xray_xdc"]),
                     "bitstream_path": self.bitstream,
-                    "fasm2bels_path": self.fasm2bels_path,
-                    "fasm2bels_python_path": self.fasm2bels_python_path,
+                    "fasm2bels_path": FASM2BELS_PATH,
+                    "fasm2bels_python_path": FASM2BELS_PYTHON_PATH,
                     "bit_to_fasm_path": XRAY_PATH / "utils" / "bit2fasm.py",
-                    "db_root": self.db_root,
+                    "db_root": XRAY_DB_PATH / config.PART_FAMILY,
                     "part": config.PART,
                     "input_xdc": self.xdc_input,
-                    "db_marker": self.fasm2bels_path / "db_marker",
+                    "db_marker": FASM2BELS_PATH / "db_marker",
                 },
             )
 

@@ -19,7 +19,7 @@ class Conformal(Tool):
         self._init_outputs()
         # self._read_hdl_files()
         self.rule_snippet_path = CONFORMAL_TOOLS_PATH / "conformal_rules.ninja.mustache"
-        self.render_dict = {"utils": str(BFASST_UTILS_PATH)}
+        self.rules_render_dict = {"utils": str(BFASST_UTILS_PATH)}
 
     def create_build_snippets(self):
         """Create the build snippets for conformal comparison."""

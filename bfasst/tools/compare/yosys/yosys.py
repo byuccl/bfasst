@@ -19,7 +19,7 @@ class YosysCompare(Tool):
         self.tcl_template = YOSYS_TOOLS_PATH / "yosys.tcl.mustache"
         self._init_outputs()
         self.rule_snippet_path = YOSYS_TOOLS_PATH / "yosys_rules.ninja.mustache"
-        self.render_dict = {"utils": str(BFASST_UTILS_PATH)}
+        self.rules_render_dict = {"utils": str(BFASST_UTILS_PATH)}
 
     def create_build_snippets(self):
         self.__write_json_file()

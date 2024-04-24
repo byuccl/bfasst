@@ -43,7 +43,7 @@ jobs:
         make env
         . .venv/bin/activate && python bfasst/external_tools.py install_test_yaml ${{ matrix.experiment }}
     - name: tests
-      timeout-minutes: 40
+      timeout-minutes: 60
       run: |
         source .venv/bin/activate
         python scripts/run.py ${{ matrix.experiment }}

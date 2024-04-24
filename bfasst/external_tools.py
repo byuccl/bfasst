@@ -18,7 +18,7 @@ from bfasst.paths import (
     THIRD_PARTY_PATH,
     WAFOVE_PATH,
     YOSYS_PATH,
-    get_fasm2bels_path,
+    FASM2BELS_PATH,
 )
 from bfasst.utils.conformal import ConformalCompare
 from bfasst.utils.general import error
@@ -46,8 +46,7 @@ def check_icestorm():
 
 
 def check_fasm2bels():
-    fasm2bels_path = get_fasm2bels_path()
-    return (fasm2bels_path / "env").is_dir() and (fasm2bels_path / f"{PART}_db").is_file()
+    return (FASM2BELS_PATH / "env").is_dir() and (FASM2BELS_PATH / f"{PART}_db").is_file()
 
 
 def check_conformal():
