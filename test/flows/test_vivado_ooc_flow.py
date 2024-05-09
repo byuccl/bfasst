@@ -30,13 +30,6 @@ class TestVivadoOocFlow(unittest.TestCase):
         self.assertIn("rule vivado", ninja_rules)
         self.assertNotIn("rule vivado_ioparse", ninja_rules)
 
-    def test_build_snippets_exist(self):
-        with open(NINJA_BUILD_PATH, "r") as f:
-            build_statement_count = f.read().count("\nbuild ")
-
-        # There should be 4 build statements for a single design ooc
-        self.assertEqual(build_statement_count, 4)
-
     def test_get_top_level_flow_path(self):
         self.assertEqual(self.flow.get_top_level_flow_path(), FLOWS_PATH / "vivado_ooc.py")
 

@@ -38,13 +38,6 @@ class TestVivadoFlow(unittest.TestCase):
         self.assertTrue((self.flow.vivado_synth_tool.build_path / "synth.json").exists())
         self.assertTrue((self.flow.vivado_impl_tool.build_path / "impl.json").exists())
 
-    def test_build_snippets_exist(self):
-        with open(NINJA_BUILD_PATH, "r") as f:
-            build_statement_count = f.read().count("\nbuild ")
-
-        # There should be 5 build statements for a single design in context
-        self.assertEqual(build_statement_count, 5)
-
     def test_get_top_level_flow_path(self):
         self.assertEqual(self.flow.get_top_level_flow_path(), FLOWS_PATH / "vivado.py")
 

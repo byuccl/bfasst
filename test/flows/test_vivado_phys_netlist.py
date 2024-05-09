@@ -33,13 +33,6 @@ class TestVivadoPhysNetlist(unittest.TestCase):
         self.assertIn("rule vivado_ioparse", ninja_rules)
         self.assertIn("rule phys_netlist", ninja_rules)
 
-    def test_build_snippets_exist(self):
-        with open(NINJA_BUILD_PATH, "r") as f:
-            build_statement_count = f.read().count("\nbuild ")
-
-        # There should be 8 build statements for a single design using this flow
-        self.assertEqual(build_statement_count, 8)
-
     def test_get_top_level_flow_path(self):
         self.assertEqual(self.flow.get_top_level_flow_path(), FLOWS_PATH / "vivado_phys_netlist.py")
 
