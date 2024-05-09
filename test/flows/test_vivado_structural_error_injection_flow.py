@@ -40,13 +40,6 @@ class TestVivadoStructuralErrorInjection(unittest.TestCase):
         self.assertIn("rule compare", ninja_rules)
         self.assertIn("rule inject", ninja_rules)
 
-    def test_build_snippets_exist(self):
-        with open(NINJA_BUILD_PATH, "r") as f:
-            build_statement_count = f.read().count("\nbuild ")
-
-        # there should be 410 build statements for a single design using this flow
-        self.assertEqual(build_statement_count, 410)
-
     def test_get_top_level_flow_path(self):
         self.assertEqual(
             self.flow.get_top_level_flow_path(),

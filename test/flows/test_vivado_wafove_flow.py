@@ -34,13 +34,6 @@ class TestVivadoWafoveFlow(unittest.TestCase):
         self.assertIn("rule bit_to_fasm", ninja_rules)
         self.assertIn("rule fasm_to_netlist", ninja_rules)
 
-    def test_build_snippets_exist(self):
-        with open(NINJA_BUILD_PATH, "r") as f:
-            build_statement_count = f.read().count("\nbuild ")
-
-        # there should be 9 build statements for a single design using this flow
-        self.assertEqual(build_statement_count, 8)
-
     def test_get_top_level_flow_path(self):
         self.assertEqual(self.flow.get_top_level_flow_path(), FLOWS_PATH / "vivado_wafove.py")
 

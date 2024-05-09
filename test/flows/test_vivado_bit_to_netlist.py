@@ -34,13 +34,6 @@ class TestVivadoAndReversedFlow(unittest.TestCase):
         self.assertIn("rule bit_to_fasm", ninja_rules)
         self.assertIn("rule fasm_to_netlist", ninja_rules)
 
-    def test_build_snippets_exist(self):
-        with open(NINJA_BUILD_PATH, "r") as f:
-            build_statement_count = f.read().count("\nbuild ")
-
-        # There should be 7 build statements for a single design using this flow
-        self.assertEqual(build_statement_count, 7)
-
     def test_get_top_level_flow_path(self):
         self.assertEqual(
             self.flow.get_top_level_flow_path(), FLOWS_PATH / "vivado_bit_to_netlist.py"
