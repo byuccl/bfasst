@@ -283,7 +283,7 @@ class RwPhysNetlist:
 
             if len(lut_rams) > 1:
                 self.__process_lutrams(lut_rams)
-        cells_already_visited.remove(None)
+        cells_already_visited.discard(None)
 
     def __check_lutram_srl(self, lut6_cell, lut5_cell, lut_rams, cells_already_visited):
         """Check for lutrams or srl luts"""
