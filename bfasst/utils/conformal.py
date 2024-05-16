@@ -251,7 +251,7 @@ class ConformalCompare:
             raise ConformalCompareError("The netlists are not equivalent")
 
 
-if __name__ == "__main__":
+def main():
     parser = ArgumentParser()
     parser.add_argument("--build_dir", type=str, required=True, help="Path to the build directory")
     parser.add_argument("--rev_netlist", required=True, help="Path to reversed netlist")
@@ -270,10 +270,13 @@ if __name__ == "__main__":
     elif parsed_args.vendor == "XILINX":
         vend = Vendor.XILINX
     else:
-        vend = None
         error("Unsupported vendor", parsed_args.vendor, "Supported vendors are LATTICE and XILINX")
 
     conformal_compare = ConformalCompare(
         parsed_args.build_dir, parsed_args.hdl_srcs, parsed_args.rev_netlist, vend
     )
     conformal_compare.compare_netlists()
+
+
+if __name__ == "__main__":
+    main()
