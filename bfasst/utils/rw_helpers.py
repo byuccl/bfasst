@@ -320,17 +320,23 @@ def process_lut_init(lut6_cell, lut5_cell, new_cell_inst, log=logging.info):
 
     log("Fixing INIT string")
 
+    lut6_eqn_phys = None
     if lut6_cell:
         lut6_eqn_phys = process_lut_eqn(lut6_cell, False, log)
 
+    lut5_eqn_phys = None
     if lut5_cell:
         lut5_eqn_phys = process_lut_eqn(lut5_cell, True, log)
 
     if not lut5_cell:
+        assert lut6_eqn_phys is not None
         init_str = "64'h" + LUTTools.getLUTInitFromEquation(lut6_eqn_phys, 6)[4:].zfill(16)
     elif not lut6_cell:
+        assert lut5_eqn_phys is not None
         init_str = "64'h00000000" + LUTTools.getLUTInitFromEquation(lut5_eqn_phys, 5)[4:].zfill(8)
     else:
+        assert lut6_eqn_phys is not None
+        assert lut5_eqn_phys is not None
         init_str = (
             "64'h"
             + LUTTools.getLUTInitFromEquation(lut6_eqn_phys, 5)[4:].zfill(8)

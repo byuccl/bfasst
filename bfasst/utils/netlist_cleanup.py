@@ -36,15 +36,15 @@ class NetlistCleaner:
         # Find all ASSIGN instances and remove them
         for instance in top.get_instances():
             if instance.reference.name.startswith("SDN_VERILOG_ASSIGNMENT"):
+                pin_out = None
+
                 for pin in instance.pins:
                     if pin.inner_pin.port.name == "i":
                         pass
-                        # pin_in = pin
-                        # logging.info("in: %s", pin_in.wire.cable.name)
                     else:
                         pin_out = pin
-                        # logging.info("out: %s", pin_out.wire.cable.name)
 
+                assert pin_out is not None
                 for pin in pin_out.wire.pins:
                     if pin == pin_out:
                         continue

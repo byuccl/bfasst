@@ -270,6 +270,7 @@ if __name__ == "__main__":
     elif parsed_args.vendor == "XILINX":
         vend = Vendor.XILINX
     else:
+        vend = None
         error("Unsupported vendor", parsed_args.vendor, "Supported vendors are LATTICE and XILINX")
 
     conformal_compare = ConformalCompare(
