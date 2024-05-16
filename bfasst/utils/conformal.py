@@ -265,6 +265,7 @@ def main():
     )
     parsed_args = parser.parse_args()
 
+    vend = None
     if parsed_args.vendor == "LATTICE":
         vend = Vendor.LATTICE
     elif parsed_args.vendor == "XILINX":
