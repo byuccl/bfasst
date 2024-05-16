@@ -1,5 +1,8 @@
 """ Run confomal comparison tool"""
 
+# Supress pylint similarity in legacy tools
+# pylint: disable=duplicate-code
+
 import re
 import socket
 
