@@ -199,18 +199,10 @@ class ConformalCompare:
     def __run_conformal(self, client):
         """Run the conformal tool on the remote server"""
         cmd = (
-            "source "
-            + str(bfasst.config.CONFORMAL_REMOTE_SOURCE_SCRIPT)
-            + ";"
-            + "cd "
-            + str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR)
-            + ";"
-            + str(bfasst.config.CONFORMAL_REMOTE_PATH)
-            + " -Dofile "
-            + self.DO_FILE_NAME
-            + " -Logfile "
-            + self.LOG_FILE_NAME
-            + " -NOGui"
+            f"source {bfasst.config.CONFORMAL_REMOTE_SOURCE_SCRIPT};"
+            f"cd {bfasst.config.CONFORMAL_REMOTE_WORK_DIR};"
+            f"{bfasst.config.CONFORMAL_REMOTE_PATH} -Dofile {self.DO_FILE_NAME} "
+            f" -Logfile {self.LOG_FILE_NAME} -NOGui"
         )
 
         (stdin, stdout, stderr) = client.exec_command(cmd, timeout=bfasst.config.CONFORMAL_TIMEOUT)
@@ -252,6 +244,7 @@ class ConformalCompare:
 
 
 def main():
+    """Main argument parser"""
     parser = ArgumentParser()
     parser.add_argument("--build_dir", type=str, required=True, help="Path to the build directory")
     parser.add_argument("--rev_netlist", required=True, help="Path to reversed netlist")
