@@ -1,5 +1,8 @@
 """ Run confomal comparison tool"""
 
+# Supress pylint similarity in legacy tools
+# pylint: disable=duplicate-code
+
 import re
 import socket
 
@@ -157,6 +160,7 @@ class ConformalCompareTool(CompareTool):
             elif self.design.get_golden_hdl_type() == HdlType.VHDL:
                 src_type = "-Vhdl"
             else:
+                src_type = ""
                 error("Unsupported golden HDL type: ", self.design.get_golden_hdl_type())
 
             fp.write(

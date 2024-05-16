@@ -7,7 +7,6 @@ import pickle
 import sys
 import time
 from bidict import bidict
-
 import spydrnet as sdn
 
 from bfasst import jpype_jvm
@@ -448,6 +447,7 @@ class StructuralCompare:
                             f" but no connection on mapped instance {instance.name}."
                         )
                     )
+                    continue
 
                 if net_b_empty and not net_a_empty:
                     warnings.append(
@@ -457,6 +457,7 @@ class StructuralCompare:
                             f" but no connection on mapped instance {mapped_instance.name}."
                         )
                     )
+                    continue
 
                 if not net_a_empty:
                     if (net_a.name in self.vcc_mappings and net_b.is_vdd) or (
@@ -565,11 +566,7 @@ class StructuralCompare:
         bram_a_only = named_instance.properties["RAM_MODE"] == '"TDP"' and {
             None,
             SdnInstanceWrapper.GND_PIN.net,
-        } >= {
-            named_instance.get_pin("DOBDO", i).net
-            for i in range(32)
-            if named_instance.get_pin("DOBDO", i) is not None
-        }
+        } >= {named_instance.get_pin("DOBDO", i).net for i in range(32)}
 
         if named_instance.cell_type.startswith("RAMB36E1"):
             # A15 is only connected to a non-const net when cascade is enabled
@@ -579,7 +576,12 @@ class StructuralCompare:
                 and named_instance.properties["RAM_EXTENSION_B"] == '"NONE"'
                 and named_instance.get_pin("ADDRARDADDR", 15).net.is_vdd
                 and named_instance.get_pin("ADDRBWRADDR", 15).net.is_vdd
+                and named_instance.get_pin("CASCADEINA", 0).net.is_vdd
+                and named_instance.get_pin("CASCADEINB", 0).net.is_vdd
+                and named_instance.get_pin("CASCADEOUTA", 0).net.is_gnd
+                and named_instance.get_pin("CASCADEOUTB", 0).net.is_gnd
             )
+
             if not expected_properties:
                 raise StructuralCompareError("Unexpected BRAM CASCADE Configuration")
 
@@ -588,10 +590,6 @@ class StructuralCompare:
         ]
 
         for pin in named_instance.pins:
-            # Skip pin that is not yet mapped
-            if pin.net not in self.net_mapping:
-                continue
-
             # For RAMB18E1, "REGCEAREGCE" and "REGCEB" only depend on DOA_REG and DOB_REG
             # This should be revisited where the DO* assertion fails
             if bram_do and pin.name in {
@@ -608,13 +606,18 @@ class StructuralCompare:
                 continue
             # These pins can be vdd or gnd when cascade is off
             if bram_a_only and pin.name in {
+                "CASCADEINA",
                 "CASCADEINB",
+                "CASCADEOUTA",
                 "CASCADEOUTB",
                 "CLKBWRCLK",
                 "ENBWREN",
-                "RSTRAMB",
             }:
                 pin.ignore_net_equivalency = True
+                continue
+
+            if pin.net not in self.net_mapping:
+                # Skip pin that is not yet mapped
                 continue
 
             # Otherwise pin connected to a mapped net, and filter based on instances that are
@@ -690,7 +693,6 @@ class StructuralCompare:
                 idx = pin.index
             else:
                 idx = 0 if pin.index == 1 else 1
-
             tmp = [
                 instance
                 for instance in instances_matching_connections
