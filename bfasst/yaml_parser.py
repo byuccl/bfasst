@@ -8,6 +8,7 @@ from types import ModuleType
 import yaml
 
 from bfasst.utils import error
+from bfasst import config
 from bfasst import paths
 
 
@@ -86,18 +87,29 @@ class RunParser(YamlParser):
 class DesignParser(YamlParser):
     """Parses a design yaml file"""
 
-    def __init__(self, yaml_path):
+    def __init__(self, yaml_path=None):
+        self.top = None
+        self.vhdl_libs = None
+        self.verilog_files = None
+        self.clocks = {}
+        self.part = config.PART
+
+        if yaml_path is None:
+            return
+
         super().__init__(yaml_path)
 
-        # Get top module name
-        if "top" not in self.props:
-            error(f"Design {self.yaml_path} does not specify a top module")
-        self.top = self.props["top"]
+        props = YamlParser(yaml_path).props
+        self.top = props["top"]
+        if "vhdl_libs" in props:
+            self.vhdl_libs = props["vhdl_libs"]
 
-        # Parse VHDL libraries
-        self.vhdl_libs = None
-        if "vhdl_libs" in self.props:
-            self.vhdl_libs = self.props["vhdl_libs"]
+        # [{name: "clk", period: int (ns), waveform: "0.000 5.000"}] - Waveform is optional
+        if "clocks" in props:
+            self.clocks = props["clocks"]
+
+        if "verilog_files" in props:
+            self.verilog_files = props["verilog_files"]
 
 
 class FlowDescriptionParser(YamlParser):

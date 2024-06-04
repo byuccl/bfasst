@@ -1,3 +1,7 @@
 top: data_path
 
 include_all_verilog_files: True
+
+clocks:
+  - name: clk
+    period: 7.000

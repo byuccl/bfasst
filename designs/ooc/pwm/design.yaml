@@ -1,3 +1,7 @@
 top: pwm
 
 include_all_verilog_files: True
+
+clocks:
+  - name: i_wb_clk
+    period: 9.000

@@ -1,3 +1,7 @@
 top: uart2spi
 
 include_all_verilog_files: True
+
+clocks:
+  - name: line_clk
+    period: 4.000

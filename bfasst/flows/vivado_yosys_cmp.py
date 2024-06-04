@@ -31,7 +31,7 @@ class VivadoYosysCmp(Flow):
         self.yosys_tool = YosysCompare(
             self,
             design,
-            golden_netlist=self.vivado_impl_tool.outputs["golden_netlist"],
+            golden_netlist=self.vivado_impl_tool.outputs["impl_verilog"],
             rev_netlist=self.xrev_tool.outputs["rev_netlist"],
         )
         # pylint: enable=duplicate-code

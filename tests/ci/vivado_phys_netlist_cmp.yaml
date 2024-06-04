@@ -19,4 +19,5 @@ designs:
     
 flow: VivadoPhysNetlistCmp
 
-synth_options: -flatten_hierarchy full -max_dsp 0
+synth_options:
+  synth_design: "-flatten_hierarchy full -max_dsp 0"

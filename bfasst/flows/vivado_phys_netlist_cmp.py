@@ -30,7 +30,7 @@ class VivadoPhysNetlistCmp(Flow):
             self,
             design,
             impl_edf=self.vivado_impl_tool.outputs["impl_edf"],
-            impl_checkpoint=self.vivado_impl_tool.outputs["impl_checkpoint"],
+            impl_checkpoint=self.vivado_impl_tool.outputs["impl_dcp"],
         )
         self.xray_tool = Xray(
             self,

@@ -19,3 +19,4 @@ verilog_files:
   - y_huff.v
   - sync_fifo_32.v
   - sync_fifo_ff.v
+  - jpegencode.v

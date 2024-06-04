@@ -26,7 +26,7 @@ class VivadoPhysNetlist(Flow):
         self.phys_netlist_tool = PhysNetlist(
             self,
             design,
-            impl_checkpoint=self.vivado_impl_tool.outputs["impl_checkpoint"],
+            impl_checkpoint=self.vivado_impl_tool.outputs["impl_dcp"],
             impl_edf=self.vivado_impl_tool.outputs["impl_edf"],
         )
         # pylint: enable=duplicate-code
@@ -36,8 +36,12 @@ class VivadoPhysNetlist(Flow):
 
     @staticmethod
     def add_required_synth_options(options):
-        if "-flatten_hierarchy" not in options:
-            options += " -flatten_hierarchy full"
-        if "-max_dsp" not in options:
-            options += " -max_dsp 0"
+        if not options:
+            options = {}
+        synth_opts = options.get("synth_design", "")
+        if "-flatten_hierarchy" not in synth_opts:
+            synth_opts += " -flatten_hierarchy full"
+        # if "-max_dsp" not in synth_opts:
+        #     options += " -max_dsp 0"
+        options["synth_design"] = synth_opts
         return options

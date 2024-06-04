@@ -31,7 +31,7 @@ class VivadoWafove(Flow):
         self.wafove_tool = Wafove(
             self,
             design,
-            golden_netlist=self.vivado_impl_tool.outputs["golden_netlist"],
+            golden_netlist=self.vivado_impl_tool.outputs["impl_verilog"],
             rev_netlist=self.xrev_tool.outputs["rev_netlist"],
             std_out_log_name="wafove.log",
             std_err_log_name="wafove_err.log",

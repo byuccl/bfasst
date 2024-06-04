@@ -2,3 +2,7 @@ top: quadratic_func
 top_architecture: rtl
 
 include_all_vhdl_files: True
+
+clocks:
+  - name: clk
+    period: 6.000

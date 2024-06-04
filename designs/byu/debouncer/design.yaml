@@ -1,3 +1,7 @@
 top: debounce
 
+clocks:
+  - name: clk
+    period: 3.000
+
 include_all_system_verilog_files: True

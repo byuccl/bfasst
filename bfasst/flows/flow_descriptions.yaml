@@ -142,3 +142,18 @@ flows:
   - ic2
   - icestorm
   - conformal
+
+- name: ClockCrank
+  description: Find the fastest clock period for a design.
+  module: clock_crank
+  class: ClockCrank
+  external_tools:
+  - vivado
+
+- name: OpenTitan
+  description: Run OpenTitan through Vivado. For a more fine grain run, use the opentitan build instead.
+  module: opentitan
+  class: OpenTitan
+  external_tools:
+  - vivado
+  - opentitan

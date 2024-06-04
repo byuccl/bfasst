@@ -1,3 +1,7 @@
 top: buttoncount
 
 include_all_verilog_files: True
+
+clocks:
+  - name: clk
+    period: 2.000

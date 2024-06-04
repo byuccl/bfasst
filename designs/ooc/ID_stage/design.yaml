@@ -1,3 +1,7 @@
 top: ID_stage
 
 include_all_verilog_files: yes
+
+clocks:
+  - name: clk
+    period: 2.000

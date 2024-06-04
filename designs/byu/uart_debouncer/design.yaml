@@ -1,1 +1,5 @@
 top: debouncer
+
+clocks:
+  - name: clk
+    period: 4.000

@@ -6,7 +6,7 @@ from bfasst import config
 from bfasst.flows.flow import FlowNoDesign
 from bfasst.tools.design_create.rand_soc import RandSoC
 from bfasst.tools.impl.vivado_impl import VivadoImpl
-from bfasst.tools.synth.vivado_synth_tcl import VivadoSynthFromTcl
+from bfasst.tools.synth.vivado_synth import VivadoSynth
 
 
 class RandSoc(FlowNoDesign):
@@ -23,14 +23,14 @@ class RandSoc(FlowNoDesign):
         self.rand_soc_tool = RandSoC(self, num_designs=num_designs)
 
         for design in self.rand_soc_tool.outputs["design_tcl"]:
-            synth_tool = VivadoSynthFromTcl(self, design)
+            synth_tool = VivadoSynth(self, design.parent)
+            synth_tool.synth_build["tcl_sources"] = [str(design)]
             VivadoImpl(
                 self,
                 design.parent,
                 synth_edf=synth_tool.outputs["synth_edf"],
                 constraints_file=synth_tool.outputs["synth_constraints"],
             )
-        # pylint: enable=duplicate-code
 
     @classmethod
     def flow_build_dir_name(cls) -> str:

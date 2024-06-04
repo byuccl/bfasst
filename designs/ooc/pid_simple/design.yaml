@@ -2,3 +2,7 @@ top: pid_simple
 top_file: PID.v
 
 include_all_verilog_files: True
+
+clocks:
+  - name: i_clk
+    period: 7.000

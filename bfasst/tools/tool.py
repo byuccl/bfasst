@@ -102,3 +102,5 @@ class Tool(ToolBase, abc.ABC):
         self.design_props = None
         if design_yaml.is_file():
             self.design_props = DesignParser(design_yaml)
+        else:
+            self.design_props = DesignParser()

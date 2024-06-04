@@ -1,3 +1,7 @@
 top: simon_core
 
 include_all_verilog_files: True
+
+clocks:
+  - name: clk
+    period: 4.000
