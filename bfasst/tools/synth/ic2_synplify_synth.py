@@ -31,7 +31,7 @@ class Ic2SynplifySynth(SynthTool):
 
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()
-        self.rule_snippet_path = TOOLS_PATH / "synth" / "ic2_synplify_synth.ninja"
+        self.rule_snippet_path = TOOLS_PATH / "synth" / "ic2_synplify_synth_rules.ninja"
 
     def create_build_snippets(self):
         # first, the project file must be created with ninja and chevron.
