@@ -18,7 +18,7 @@ class RandSoc(FlowNoDesign):
 
         # Override default part
         if part is not None:
-            self.part = config.PART
+            self.part = part
 
         self.rand_soc_tool = RandSoC(self, num_designs=num_designs)
 
