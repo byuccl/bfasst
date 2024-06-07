@@ -29,7 +29,7 @@ class VivadoImpl(ImplTool):
         self.inputs_str = {"xdc": str(self.constraints_file), "synth_edf": str(self.synth_edf)}
         self.outputs_str = {k: str(v) for k, v in self.outputs.items()}
         self.impl_build = {
-            "part": config.PART,
+            "part": self.flow.part,
             "impl_output": str(self.build_path),
             "synth_output": str(
                 self.build_path.parent / ("synth" if not self.ooc else "synth_ooc")

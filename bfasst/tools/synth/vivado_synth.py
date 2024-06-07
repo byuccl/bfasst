@@ -27,7 +27,7 @@ class VivadoSynth(SynthTool):
         self.outputs_str = {k: str(v) for k, v in self.outputs.items()}
         self.top = self.design_props.top if self.design_props is not None else None
         self.synth_build = {
-            "part": config.PART,
+            "part": self.flow.part,
             "top": self.top,
             "vhdl": self.vhdl,
             "vhdl_libs": list(self.vhdl_file_lib_map.items()),
