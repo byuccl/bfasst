@@ -29,19 +29,6 @@ proc property {b p prefix out} {
 	
 proc common_properties {b out} {
 
-	# LUT6_2 returns two bels for the single cell C
-	if {[llength $b] > 1} {
-		foreach b $b {
-			set bel_name [lindex [split $b "/"] 1]
-			set bel_name [string map [list "A" "" "B" "" "C" "" "D" ""] $bel_name]
-
-			foreach P [list_property $b] {
-				property $b $P "$bel_name." $out
-			}
-		}
-		return
-	}
-
 	foreach p [list_property $b] {
 		property $b $p "" $out
 	}
@@ -70,42 +57,45 @@ proc special_properties {c b out} {
 	return 0
 }
 
-proc properties {c out} {
-	set b [get_bels -of_objects $c]
+proc properties {c b out} {
 	if { $b == ""} { return }
 
 	if {[special_properties $c $b $out]} { return }
 	common_properties $b $out
 }
 
-proc locate {c out} {
+proc locate {c b out} {
 	set ref_name [get_property ORIG_REF_NAME $c]
-	set location [get_property LOC $c]
-	set bel [get_property BEL $c]
 
 	if {($ref_name == "GND") || ($ref_name=="VCC")} {
 		puts -nonewline $out "\"$ref_name\" "
 		return
 	}
 
-	puts -nonewline $out "\"$location.$bel\" " 
+	puts -nonewline $out "\"$b\" " 
 }
 
-proc cell {c out} {
+proc bel {c b out} {
 	puts -nonewline $out "("
 	if $::tree {
 		set parent [get_property PARENT $c]
-		puts -nonewline $out "\"/$parent\" "
+		puts -nonewline $out "\"/$parent/$c\" "
 	}
 
-	locate $c $out
-
-	set ref_name [get_property ORIG_REF_NAME $c]
-	puts -nonewline $out "\"$ref_name\" "
-	
+	locate $c $b $out
+	set name [lindex [split $b "/"] 1]
+	puts -nonewline $out "\"$name\" "
 	ip $c $out
-	properties $c $out
+
+	properties $c $b $out
 	puts $out ")"
+}
+
+proc cell {c out} {
+	set b [get_bels -of_objects $c]
+	foreach b [get_bels -of_objects $c] {
+		bel $c $b $out
+	}
 }
 
 proc cells {out} {
@@ -127,7 +117,9 @@ proc cells {out} {
 
 proc pin {p out} {
 	set c [get_cells -of_objects $p]
-	locate $c $out
+	set bp [get_bel_pins -of_objects $p]
+	set b [get_bels [string range $bp 0 [expr [string last "/" $bp] - 1]]]
+	locate $c $b $out
 }
 
 proc net {n out} {
