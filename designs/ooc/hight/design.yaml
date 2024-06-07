@@ -1,3 +1,7 @@
 top: hight
 
 include_all_verilog_files: True
+
+clocks:
+  - name: clk
+    period: 8.000

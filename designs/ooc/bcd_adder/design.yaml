@@ -1,2 +1,6 @@
 top: bcd_adder
 top_architecture: behavioral
+
+clocks:
+  - name: clk_i
+    period: 3.000

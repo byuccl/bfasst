@@ -1,1 +1,5 @@
 top: cpu8080
+
+clocks:
+  - name: clock
+    period: 6.000

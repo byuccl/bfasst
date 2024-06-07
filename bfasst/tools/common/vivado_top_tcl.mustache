@@ -1,0 +1,11 @@
+if { [ catch {
+
+{{#tcl_sources}}
+source {{.}}
+{{/tcl_sources}}
+
+} error_msg] } { 
+    puts "\n$error_msg"
+    exit 1
+ }
+exit

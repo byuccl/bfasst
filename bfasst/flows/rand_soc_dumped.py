@@ -5,7 +5,7 @@ import pathlib
 from bfasst.flows.flow import FlowNoDesign
 from bfasst.tools.design_create.rand_soc import RandSoC
 from bfasst.tools.impl.vivado_impl import VivadoImpl
-from bfasst.tools.synth.vivado_synth_tcl import VivadoSynthFromTcl
+from bfasst.tools.synth.vivado_synth import VivadoSynth
 from bfasst.tools.transform.randsoc_dump import RandsocDump
 
 
@@ -23,7 +23,8 @@ class RandSocDumped(FlowNoDesign):
         self.rand_soc_tool = RandSoC(self, num_designs=num_designs)
 
         for i, design in enumerate(self.rand_soc_tool.outputs["design_tcl"]):
-            synth_tool = VivadoSynthFromTcl(self, design)
+            synth_tool = VivadoSynth(self, design.parent)
+            synth_tool.synth_build["tcl_sources"] = [str(design)]
             impl_tool = VivadoImpl(
                 self,
                 design.parent,
@@ -32,7 +33,7 @@ class RandSocDumped(FlowNoDesign):
             )
             RandsocDump(
                 self,
-                checkpoint=impl_tool.outputs["impl_checkpoint"],
+                checkpoint=impl_tool.outputs["impl_dcp"],
                 dumpfile=f"design_{i}.dump",
             )
             # pylint: enable=duplicate-code

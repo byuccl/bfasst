@@ -2,3 +2,7 @@ top: basicrsa
 top_architecture: behavioral
 
 include_all_vhdl_files: True
+
+clocks:
+  - name: clk
+    period: 7.000

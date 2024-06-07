@@ -1,3 +1,7 @@
 top: bubblesort_random
 
 include_all_verilog_files: True
+
+clocks:
+  - name: clk
+    period: 1.000

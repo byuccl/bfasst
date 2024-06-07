@@ -1,6 +1,10 @@
-build {{ impl_output }}/impl.tcl: template {{ impl_output }}/impl.json {{ impl_library }}/vivado_impl.tcl.mustache
+{{#outputs.clock_crank_tcl}}build {{.}}: template {{outputs.impl_json}} {{impl_library}}/clock_crank.tcl.mustache {{/outputs.clock_crank_tcl}}
+build {{outputs.setup_tcl}}: template {{outputs.impl_json}} {{impl_library}}/vivado_impl_setup.tcl.mustache
+build {{outputs.impl_tcl}}: template {{outputs.impl_json}} {{impl_library}}/vivado_impl_run.tcl.mustache
+build {{outputs.reports_tcl}}: template {{outputs.impl_json}} {{impl_library}}/vivado_impl_reports.tcl.mustache
+build {{outputs.run_tcl}}: template {{outputs.impl_json}} {{common_tools_path }}/vivado_top_tcl.mustache
 
-build {{ impl_output }}/viv_impl.v {{ impl_output }}/viv_impl.edf {{ impl_output }}/impl.dcp {{#in_context}}{{ impl_output }}/design.bit{{/in_context}} {{ impl_output }}/utilization.txt: vivado {{ impl_output}}/impl.tcl | {{ synth_edf }} {{#in_context}}{{ synth_constraints }}{{/in_context}}
-    journal = {{ impl_output }}/vivado.jou
-    log = {{ impl_output }}/vivado.log
+build {{outputs.impl_verilog }} {{outputs.impl_edf}} {{outputs.impl_dcp}} {{outputs.bitstream }} {{outputs.utilization}}: vivado {{outputs.run_tcl}} | {{inputs.synth_edf}} {{inputs.xdc}} {{#outputs.clock_crank_tcl}} {{.}} {{/outputs.clock_crank_tcl}} {{outputs.setup_tcl}} {{outputs.impl_tcl}} {{outputs.reports_tcl}}
+    journal = {{outputs.journal}}
+    log = {{outputs.log}}
 

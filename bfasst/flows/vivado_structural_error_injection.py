@@ -39,7 +39,7 @@ class VivadoStructuralErrorInjection(Flow):
         self.phys_netlist_tool = PhysNetlist(
             self,
             design,
-            impl_checkpoint=self.vivado_impl_tool.outputs["impl_checkpoint"],
+            impl_checkpoint=self.vivado_impl_tool.outputs["impl_dcp"],
             impl_edf=self.vivado_impl_tool.outputs["impl_edf"],
         )
         self.xrev_tool = Xray(

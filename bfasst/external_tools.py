@@ -19,6 +19,7 @@ from bfasst.paths import (
     WAFOVE_PATH,
     YOSYS_PATH,
     FASM2BELS_PATH,
+    DESIGNS_PATH,
 )
 from bfasst.utils.conformal import ConformalCompare
 from bfasst.utils.general import error
@@ -73,6 +74,10 @@ def check_yosys():
 
 def check_wafove():
     return (WAFOVE_PATH / "wafove" / "compare_waveforms.py").is_file()
+
+
+def check_opentitan():
+    return (DESIGNS_PATH / "opentitan").is_dir()
 
 
 ################################################################################

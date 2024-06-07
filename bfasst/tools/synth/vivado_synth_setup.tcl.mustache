@@ -1,0 +1,18 @@
+set_part {{ part }}
+
+{{#verilog}}
+read_verilog {{ . }}
+
+{{/verilog}}
+{{#system_verilog}}
+read_verilog -sv {{ . }}
+
+{{/system_verilog}}
+{{#vhdl}}
+read_vhdl {{ . }}
+
+{{/vhdl}}
+{{#vhdl_libs}}
+read_vhdl -library {{1}} {{0}}
+
+{{/vhdl_libs}}

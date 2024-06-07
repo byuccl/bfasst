@@ -11,11 +11,11 @@ from bfasst.utils.general import json_write_if_changed
 class VivadoImpl(ImplTool):
     """Tool to create Vivado implementation ninja snippets."""
 
-    def __init__(self, flow, design, synth_edf, constraints_file=None, ooc=False):
+    def __init__(self, flow, design, synth_edf, constraints_file="", ooc=False, impl_options=""):
         super().__init__(flow, design)
         self.ooc = ooc
 
-        self.constraints_file = constraints_file
+        self.constraints_file = constraints_file if not self.ooc else ""
         self.synth_edf = synth_edf
 
         self.build_path = (
@@ -24,6 +24,28 @@ class VivadoImpl(ImplTool):
             else self.build_path.with_name("vivado_impl")
         )
         self._my_dir_path = pathlib.Path(__file__).parent
+
+        self._init_outputs()
+        self.inputs_str = {"xdc": str(self.constraints_file), "synth_edf": str(self.synth_edf)}
+        self.outputs_str = {k: str(v) for k, v in self.outputs.items()}
+        self.impl_build = {
+            "part": self.flow.part,
+            "impl_output": str(self.build_path),
+            "synth_output": str(
+                self.build_path.parent / ("synth" if not self.ooc else "synth_ooc")
+            ),
+            "clocks": self.design_props.clocks if self.design_props is not None else "",
+            "outputs": self.outputs_str,
+            "tcl_sources": [
+                self.outputs_str["setup_tcl"],
+                self.outputs_str["impl_tcl"],
+                self.outputs_str["reports_tcl"],
+            ],
+            "inputs": self.inputs_str,
+        }
+        if impl_options:
+            self.impl_build.update(impl_options)
+
         self._init_outputs()
         self.rule_snippet_path = COMMON_TOOLS_PATH / "vivado_rules.ninja.mustache"
         self.rules_render_dict = {
@@ -33,16 +55,8 @@ class VivadoImpl(ImplTool):
 
     def create_build_snippets(self):
         """Create build snippets in ninja file"""
-
-        impl = {
-            "part": self.flow.part,
-            "xdc": str(self.constraints_file) if not self.ooc else False,
-            "bit": str(self.outputs["bitstream"]) if not self.ooc else False,
-            "impl_output": str(self.build_path),
-            "synth_edf": str(self.synth_edf),
-        }
-        impl_json = json.dumps(impl, indent=4)
-        json_write_if_changed(self.outputs["impl_json"], impl_json)
+        impl_json = json.dumps(self.impl_build, indent=4)
+        json_write_if_changed(self.build_path / "impl.json", impl_json)
 
         self._append_build_snippets_default(
             __file__,
@@ -53,21 +67,32 @@ class VivadoImpl(ImplTool):
                 "synth_edf": str(self.synth_edf),
                 "impl_library": self._my_dir_path,
                 "cwd": self.build_path,
+                "outputs": self.outputs_str,
+                "common_tools_path": str(COMMON_TOOLS_PATH),
+                "inputs": self.inputs_str,
             },
         )
 
     def _init_outputs(self):
+        self.outputs["run_tcl"] = self.build_path / "run.tcl"
+        self.outputs["setup_tcl"] = self.build_path / "setup.tcl"
+        self.outputs["reports_tcl"] = self.build_path / "reports.tcl"
         self.outputs["impl_tcl"] = self.build_path / "impl.tcl"
         self.outputs["impl_json"] = self.build_path / "impl.json"
-        self.outputs["golden_netlist"] = self.build_path / "viv_impl.v"
+        self.outputs["impl_verilog"] = self.build_path / "viv_impl.v"
         self.outputs["impl_edf"] = self.build_path / "viv_impl.edf"
-        self.outputs["impl_checkpoint"] = self.build_path / "impl.dcp"
+        self.outputs["impl_dcp"] = self.build_path / "impl.dcp"
         self.outputs["utilization"] = self.build_path / "utiliztion.txt"
-        self.outputs["impl_journal"] = self.build_path / "vivado.jou"
-        self.outputs["impl_log"] = self.build_path / "vivado.log"
-        self.outputs["bitstream"] = self.build_path / "design.bit"
+        self.outputs["timing"] = self.build_path / "timing_summary.txt"
+        self.outputs["journal"] = self.build_path / "vivado.jou"
+        self.outputs["log"] = self.build_path / "vivado.log"
+        self.outputs["bitstream"] = self.build_path / "design.bit" if not self.ooc else ""
 
     def add_ninja_deps(self, deps):
         """Add dependencies to the master ninja file that would cause it to rebuild if modified."""
         self._add_ninja_deps_default(deps, __file__)
-        deps.append(self._my_dir_path / "vivado_impl.tcl.mustache")
+        for dep in self._my_dir_path.glob("*.mustache"):
+            if "vivado" in dep.name:
+                deps.append(dep)
+        for tcl in self.impl_build["tcl_sources"]:
+            deps.append(tcl)

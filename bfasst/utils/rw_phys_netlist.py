@@ -223,6 +223,7 @@ class RwPhysNetlist:
                 "RAMB36E1",
                 "RAMB18E1",
                 "LDCE",
+                "DSP48E1",
             ):
                 continue
 
@@ -250,6 +251,14 @@ class RwPhysNetlist:
             if site_inst.getSiteTypeEnum() not in (SiteTypeEnum.SLICEL, SiteTypeEnum.SLICEM):
                 continue
 
+            # if (
+            #     "X6Y107" in site_inst.getName()
+            #     and site_inst.getSiteTypeEnum() == SiteTypeEnum.SLICEM
+            # ):
+            #     import code
+
+            #     code.interact(local=dict(globals(), **locals()))
+
             gnd_nets = site_inst.getSiteWiresFromNet(self.rw_design.getGndNet())
             vcc_nets = site_inst.getSiteWiresFromNet(self.rw_design.getVccNet())
 
@@ -275,7 +284,13 @@ class RwPhysNetlist:
                 if lut6_cell or lut5_cell:
                     if lut6_cell is not None:
                         self.__process_lut(lut6_cell, lut5_cell)
-                    elif lut5_cell.isRoutethru():
+                    else:
+                        if (
+                            not lut5_cell.isRoutethru() and "LUT" not in lut5_cell.getType()
+                        ):  # Possible RW bug -> sometimes lut6 cell is none and lut5 is FDRE
+                            raise PhysNetlistTransformError(
+                                "LUT6 cell is None and LUT5 is not routethru or LUT"
+                            )
                         self.__process_lut(lut5_cell, None, True)
 
                 cells_already_visited.add(lut6_cell)
@@ -733,19 +748,14 @@ class RwPhysNetlist:
             if logical_port.startswith("I"):
                 self.vcc.createPortInst(new_cell_inst.getPort(logical_port), new_cell_inst)
 
-    def __process_lut(self, lut6_cell, lut5_cell, lut5_rt=False):
+    def __process_lut(self, lut6_cell, lut5_cell, lut5_only=False):
         """
         This function takes a LUT* from the netlist and replaces with with a LUT6_2
         with logical mapping equal to the physical mapping.
 
-        lut5_rt: The lut6_cell was none and is replaced with the lut5_cell. If
-            True, lut5_cell is None
+        lut5_only: The lut6_cell was none and is replaced with the lut5_cell.
+            If True, lut5_cell is None. Sometimes the lut5 is a lone lut or a rt.
         """
-        if (
-            lut6_cell is None and not lut5_cell.isRoutethru()
-        ):  # Possible RW bug -> sometimes lut6 cell is none and lut5 is FDRE
-            raise PhysNetlistTransformError("LUT6 cell is None and LUT5 is not routethru")
-
         logging.info("")
         logging.info(
             "Processing and replacing LUT(s): %s",
@@ -819,12 +829,12 @@ class RwPhysNetlist:
         # a new net is needed to connect LUT output to FF
 
         if lut6_cell.isRoutethru():
-            self.__create_lut_routethru_net(lut6_cell, lut5_rt, new_cell_inst)
+            self.__create_lut_routethru_net(lut6_cell, lut5_only, new_cell_inst)
         if lut5_cell and lut5_cell.isRoutethru():
             self.__create_lut_routethru_net(lut5_cell, True, new_cell_inst)
 
         # Fix the new LUT INIT property based on the new pin mappings
-        if not lut5_rt:
+        if not lut5_only:
             rw.process_lut_init(lut6_cell, lut5_cell, new_cell_inst)
         else:
             rw.process_lut_init(None, lut6_cell, new_cell_inst)

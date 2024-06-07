@@ -1,3 +1,7 @@
 top: a25_wishbone_random
 
 include_all_verilog_files: yes
+
+clocks:
+  - name: clk
+    period: 4.000

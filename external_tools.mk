@@ -82,3 +82,21 @@ install_icestorm:
 	git submodule init third_party/icestorm
 	git submodule update --init --recursive third_party/icestorm
 	cd third_party/icestorm && make -j$(nproc) && make install PREFIX=../
+
+
+################################################################################
+# OpenTitan
+# PRE-REQUISITES:
+# - If fusesoc fails, I just used the latest version: pip install fusesoc
+# - I needed a rust compiler: https://rustup.rs/
+################################################################################
+install_opentitan:
+	git submodule update --init --recursive designs/opentitan
+	cd designs/opentitan
+	sudo sed '/^#/d' ./apt-requirements.txt | xargs sudo apt install -y
+	pip install -U pip "setuptools<66.0.0"
+	pip install -r designs/opentitan/python-requirements.txt
+	./designs/opentitan/util/get-toolchain.py --update
+	fusesoc --cores-root . run --build-root build/opentitan --flag=fileset_top --target=synth --no-export --setup lowrisc:systems:chip_earlgrey_cw310
+	mv build/opentitan/synth-vivado build/opentitan/vivado_synth
+	echo "launch_runs impl_1" >> build/opentitan/vivado_synth/lowrisc_systems_chip_earlgrey_cw310_0.1.tcl

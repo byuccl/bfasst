@@ -1,3 +1,7 @@
 top: riscv_final
 
 include_all_system_verilog_files: True
+
+clocks:
+  - name: clk
+    period: 11.000

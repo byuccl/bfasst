@@ -16,3 +16,4 @@ scp
 spydrnet @ git+https://github.com/byuccl/spydrnet@next_release
 werkzeug
 boolean.py
+xlsxwriter

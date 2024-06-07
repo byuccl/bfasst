@@ -31,7 +31,7 @@ class VivadoConformal(Flow):
         self.conformal_tool = Conformal(
             self,
             design,
-            golden_netlist=self.vivado_impl_tool.outputs["golden_netlist"],
+            golden_netlist=self.vivado_impl_tool.outputs["impl_verilog"],
             rev_netlist=self.xrev_tool.outputs["rev_netlist"],
             vendor=Vendor.XILINX.name,
         )

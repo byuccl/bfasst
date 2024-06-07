@@ -1,3 +1,7 @@
 top: wb_lcd
 
 include_all_verilog_files: True
+
+clocks:
+  - name: wb_clk_i
+    period: 3.000
