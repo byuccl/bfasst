@@ -12,9 +12,13 @@ from bfasst.tools.transform.randsoc_dump import RandsocDump
 class RandSocDumped(FlowNoDesign):
     """Flow to dump bels from random soc block designs with Isoblaze"""
 
-    def __init__(self, num_designs=1):
+    def __init__(self, num_designs=1, part=None):
         # pylint: disable=duplicate-code
         super().__init__()
+
+        # Override default part
+        if part is not None:
+            self.part = part
 
         self.rand_soc_tool = RandSoC(self, num_designs=num_designs)
 

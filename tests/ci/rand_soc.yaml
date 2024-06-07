@@ -1,3 +1,5 @@
 flow: RandSoc
 
 num_designs: 3
+
+part: xc7a200tlffv1156-2L
