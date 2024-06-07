@@ -2,7 +2,6 @@
 
 import pathlib
 
-from bfasst import config
 from bfasst.flows.flow import FlowNoDesign
 from bfasst.tools.design_create.rand_soc import RandSoC
 from bfasst.tools.impl.vivado_impl import VivadoImpl
