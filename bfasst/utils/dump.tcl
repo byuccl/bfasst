@@ -64,14 +64,7 @@ proc properties {c b out} {
 	common_properties $b $out
 }
 
-proc locate {c b out} {
-	set ref_name [get_property ORIG_REF_NAME $c]
-
-	if {($ref_name == "GND") || ($ref_name=="VCC")} {
-		puts -nonewline $out "\"$ref_name\" "
-		return
-	}
-
+proc locate {b out} {
 	puts -nonewline $out "\"$b\" " 
 }
 
@@ -82,7 +75,7 @@ proc bel {c b out} {
 		puts -nonewline $out "\"/$parent/$c\" "
 	}
 
-	locate $c $b $out
+	locate $b $out
 	set name [lindex [split $b "/"] 1]
 	puts -nonewline $out "\"$name\" "
 	ip $c $out
@@ -92,7 +85,11 @@ proc bel {c b out} {
 }
 
 proc cell {c out} {
-	set b [get_bels -of_objects $c]
+ 	set ref_name [get_property ORIG_REF_NAME $c]
+ 	if {($ref_name == "GND") || ($ref_name=="VCC")} {
+		puts $out "(\"$ref_name\" \"$ref_name\")"
+		return
+	}
 	foreach b [get_bels -of_objects $c] {
 		bel $c $b $out
 	}
@@ -117,9 +114,15 @@ proc cells {out} {
 
 proc pin {p out} {
 	set c [get_cells -of_objects $p]
+  	set ref_name [get_property ORIG_REF_NAME $c]
+ 	if {($ref_name == "GND") || ($ref_name=="VCC")} {
+		puts -nonewline $out "\"$ref_name\" "
+		return
+	}
+ 
 	set bp [get_bel_pins -of_objects $p]
 	set b [get_bels [string range $bp 0 [expr [string last "/" $bp] - 1]]]
-	locate $c $b $out
+	locate $b $out
 }
 
 proc net {n out} {
