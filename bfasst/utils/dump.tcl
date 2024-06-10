@@ -10,6 +10,10 @@ proc get_ips {} {
 }
 
 proc ip {c out} {
+	if { $c == "" } {
+		puts -nonewline $out "\"\" "
+		return
+	}
 	set ip [lindex [split [get_property NAME $c] /] 1]
 	puts -nonewline $out "\""
 	if {! [regex {[IO]BUFT?} $ip]} {
@@ -59,8 +63,12 @@ proc special_properties {c b out} {
 
 proc properties {c b out} {
 	if { $b == ""} { return }
+	if { $c == "" } {
+		common_properties $b $out
+		return
+	}
 
-	if {[special_properties $c $b $out]} { return }
+	# if {[special_properties $c $b $out]} { return }
 	common_properties $b $out
 }
 
@@ -95,41 +103,38 @@ proc cell {c out} {
 	}
 }
 
-proc cells {out} {
-	set cs [get_cells -hierarchical -filter {IS_PRIMITIVE && PRIMITIVE_LEVEL != "MACRO"}]
-
-	# nonsensically changes the properties...
-	foreach c $cs {
-		catch {list_property -quiet $c }
-	}
-
+proc bels {out} {
+	set bs [get_bels -filter {IS_USED}]
 	puts -nonewline $out "("
-
-	foreach c $cs {
-		cell $c $out
+	foreach b $bs {
+		set c [get_cell -of_object $b]
+		bel $c $b $out
 	}
-
 	puts $out ")"
 }
 
 proc pin {p out} {
-	set c [get_cells -of_objects $p]
+        set belname [string range $p 0 [expr [string last "/" $p] - 1]]
+	set b [get_bels $belname]
+	set c [get_cells -of_objects $b]
+	if {$c == ""} {
+		locate $b $out
+		return
+	}
   	set ref_name [get_property ORIG_REF_NAME $c]
  	if {($ref_name == "GND") || ($ref_name=="VCC")} {
 		puts -nonewline $out "\"$ref_name\" "
 		return
 	}
- 
-	set bp [get_bel_pins -of_objects $p]
-	set b [get_bels [string range $bp 0 [expr [string last "/" $bp] - 1]]]
 	locate $b $out
+ 
 }
 
 proc net {n out} {
-	set pso [get_pins -leaf -filter {DIRECTION == OUT} -of_objects $n]
-	set psi [get_pins -leaf -filter {DIRECTION == IN} -of_objects $n]
+	set pso [get_bel_pins -filter {DIRECTION == OUT} -of_objects $n]
+	set psi [get_bel_pins -filter {DIRECTION == IN} -of_objects $n]
 
-	if {[llength $pso] < 1 || [llength $psi] < 1} { return }
+	if {$pso == "" || $psi == ""} { return }
 
 	if {[llength $pso] > 1} {error "net is multiply driven"}
 
@@ -152,13 +157,6 @@ proc nets {out} {
 }
 
 proc dump {out} {
-	set ::tree 0
-	cells $out
-	nets $out
-}
-
-proc treedump {out} {
-	set ::tree 1
-	cells $out
+	bels $out
 	nets $out
 }
