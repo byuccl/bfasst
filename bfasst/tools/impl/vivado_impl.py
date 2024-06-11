@@ -70,6 +70,7 @@ class VivadoImpl(ImplTool):
                 "outputs": self.outputs_str,
                 "common_tools_path": str(COMMON_TOOLS_PATH),
                 "inputs": self.inputs_str,
+                "tcl_sources": [str(i) for i in self.impl_build["tcl_sources"]],
             },
         )
 
