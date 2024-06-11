@@ -1,11 +1,3 @@
-rule configure
-    command = python {{ FLOWS_PATH }}/ninja_flow_manager.py $flow $in --flow_arguments "$flow_arguments"
-    generator = 1
-
-build build.ninja: configure {{#designs}}{{ . }} {{/designs}} | {{#deps}}{{ . }} {{/deps}}
-    flow = {{ flow }}
-    flow_arguments = {{ flow_arguments }}
-
 rule template
     command = chevron -d $in >$out
 
