@@ -79,6 +79,7 @@ class VivadoSynth(SynthTool):
                 "cwd": self.build_path,
                 "outputs": self.outputs_str,
                 "common_tools_path": str(COMMON_TOOLS_PATH),
+                "tcl_sources": [str(i) for i in self.synth_build["tcl_sources"]],
             },
         )
 
