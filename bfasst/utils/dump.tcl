@@ -78,10 +78,6 @@ proc locate {b out} {
 
 proc bel {c b out} {
 	puts -nonewline $out "("
-	if $::tree {
-		set parent [get_property PARENT $c]
-		puts -nonewline $out "\"/$parent/$c\" "
-	}
 
 	locate $b $out
 	set name [lindex [split $b "/"] 1]
