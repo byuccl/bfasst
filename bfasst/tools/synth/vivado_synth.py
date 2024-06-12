@@ -57,6 +57,14 @@ class VivadoSynth(SynthTool):
             "utils_path": BFASST_UTILS_PATH,
         }
 
+    def update_tcl_srcs(self, tcl_srcs):
+        tcl_srcs = [str(i) for i in tcl_srcs]
+        removed = set(self.synth_build["tcl_sources"]) - set(tcl_srcs)
+        if removed:
+            self.outputs_str = {k: v for k, v in self.outputs_str.items() if v not in removed}
+            self.synth_build["outputs"] = self.outputs_str
+        self.synth_build["tcl_sources"] = tcl_srcs
+
     def create_build_snippets(self):
         """Create build snippets in ninja file"""
 
@@ -79,7 +87,7 @@ class VivadoSynth(SynthTool):
                 "cwd": self.build_path,
                 "outputs": self.outputs_str,
                 "common_tools_path": str(COMMON_TOOLS_PATH),
-                "tcl_sources": [str(i) for i in self.synth_build["tcl_sources"]],
+                "tcl_sources": self.synth_build["tcl_sources"],
             },
         )
 

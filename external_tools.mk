@@ -98,5 +98,11 @@ install_opentitan:
 	pip install -r designs/opentitan/python-requirements.txt
 	./designs/opentitan/util/get-toolchain.py --update
 	fusesoc --cores-root . run --build-root build/opentitan --flag=fileset_top --target=synth --no-export --setup lowrisc:systems:chip_earlgrey_cw310
-	mv build/opentitan/synth-vivado build/opentitan/vivado_synth
-	echo "launch_runs impl_1" >> build/opentitan/vivado_synth/lowrisc_systems_chip_earlgrey_cw310_0.1.tcl
+	mv build/opentitan/synth-vivado build/opentitan/vivado_ooc_synth
+	echo "launch_runs impl_1" >> build/opentitan/vivado_ooc_synth/lowrisc_systems_chip_earlgrey_cw310_0.1.tcl
+
+regenerate_opentitan:
+	rm -rf build/opentitan
+	fusesoc --cores-root . run --build-root build/opentitan --flag=fileset_top --target=synth --no-export --setup lowrisc:systems:chip_earlgrey_cw310
+	mv build/opentitan/synth-vivado build/opentitan/vivado_ooc_synth
+	echo "launch_runs impl_1" >> build/opentitan/vivado_ooc_synth/lowrisc_systems_chip_earlgrey_cw310_0.1.tcl

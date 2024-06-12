@@ -53,6 +53,14 @@ class VivadoImpl(ImplTool):
             "utils_path": BFASST_UTILS_PATH,
         }
 
+    def update_tcl_srcs(self, tcl_srcs):
+        tcl_srcs = [str(i) for i in tcl_srcs]
+        removed = set(self.impl_build["tcl_sources"]) - set(tcl_srcs)
+        if removed:
+            self.outputs_str = {k: v for k, v in self.outputs_str.items() if v not in removed}
+            self.impl_build["outputs"] = self.outputs_str
+        self.impl_build["tcl_sources"] = tcl_srcs
+
     def create_build_snippets(self):
         """Create build snippets in ninja file"""
         impl_json = json.dumps(self.impl_build, indent=4)
@@ -70,7 +78,7 @@ class VivadoImpl(ImplTool):
                 "outputs": self.outputs_str,
                 "common_tools_path": str(COMMON_TOOLS_PATH),
                 "inputs": self.inputs_str,
-                "tcl_sources": [str(i) for i in self.impl_build["tcl_sources"]],
+                "tcl_sources": self.impl_build["tcl_sources"],
             },
         )
 
