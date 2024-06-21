@@ -23,11 +23,14 @@ class StructuralCompareError(Exception):
 class StructuralCompare:
     """Structural compare and map"""
 
-    def __init__(self, named_netlist_path, reversed_netlist_path, log_path) -> None:
+    def __init__(
+        self, named_netlist_path, reversed_netlist_path, log_path, use_cache=False
+    ) -> None:
         self.reversed_netlist_path = reversed_netlist_path
         self.named_netlist_path = named_netlist_path
         self.named_netlist = None
         self.reversed_netlist = None
+        self.use_cache = use_cache
 
         self.log_path = log_path
         logging.basicConfig(
@@ -279,14 +282,15 @@ class StructuralCompare:
     def init_matching_instances(self):
         """Init possible_matches dict with all instances that match by cell type and properties"""
         log_with_banner("Initializing possible matches based on cell type and properties")
-        possible_matches_cache_path = os.path.join(
-            os.path.dirname(self.log_path), "possible_matches.pkl"
-        )
-        if os.path.exists(possible_matches_cache_path):
-            logging.info("Loading possible matches from cache")
-            with open(possible_matches_cache_path, "rb") as f:
-                pickle_dump = pickle.load(f)
-                self.import_possible_matches(pickle_dump)
+        if self.use_cache:
+            possible_matches_cache_path = os.path.join(
+                os.path.dirname(self.log_path), "possible_matches.pkl"
+            )
+            if os.path.exists(possible_matches_cache_path):
+                logging.info("Loading possible matches from cache")
+                with open(possible_matches_cache_path, "rb") as f:
+                    pickle_dump = pickle.load(f)
+                    self.import_possible_matches(pickle_dump)
 
         else:
             all_instances = [
@@ -345,8 +349,9 @@ class StructuralCompare:
                     i.name for i in self.possible_matches[named_instance]
                 ]
             # pylint: enable=consider-using-dict-items
-            with open(possible_matches_cache_path, "wb") as f:
-                pickle.dump(possible_matches, f)
+            if self.use_cache:
+                with open(possible_matches_cache_path, "wb") as f:
+                    pickle.dump(possible_matches, f)
 
     def import_possible_matches(self, pickle_dump):
         all_instances = {
