@@ -6,6 +6,7 @@ import logging
 import pickle
 import sys
 import time
+import os
 from bidict import bidict
 import spydrnet as sdn
 
@@ -277,47 +278,86 @@ class StructuralCompare:
 
     def init_matching_instances(self):
         """Init possible_matches dict with all instances that match by cell type and properties"""
-        all_instances = [
-            i for i in self.reversed_netlist.instances if not i.cell_type.startswith("SDN_VERILOG")
-        ]
+        log_with_banner("Initializing possible matches based on cell type and properties")
+        possible_matches_cache_path = os.path.join(
+            os.path.dirname(self.log_path), "possible_matches.pkl"
+        )
+        if os.path.exists(possible_matches_cache_path):
+            logging.info("Loading possible matches from cache")
+            with open(possible_matches_cache_path, "rb") as f:
+                pickle_dump = pickle.load(f)
+                self.import_possible_matches(pickle_dump)
 
-        grouped_by_cell_type = defaultdict(list)
-        for instance in all_instances:
-            properties = set()
-            for prop in self.get_properties_for_type(instance.cell_type):
-                properties.add(f"{prop}{convert_verilog_literal_to_int(instance.properties[prop])}")
-                # properties[prop] = convert_verilog_literal_to_int(instance.properties[prop])
+        else:
+            all_instances = [
+                i
+                for i in self.reversed_netlist.instances
+                if not i.cell_type.startswith("SDN_VERILOG")
+            ]
 
-            grouped_by_cell_type[(instance.cell_type, hash(frozenset(properties)))].append(instance)
+            grouped_by_cell_type = defaultdict(list)
+            for instance in all_instances:
+                properties = set()
+                for prop in self.get_properties_for_type(instance.cell_type):
+                    properties.add(
+                        f"{prop}{convert_verilog_literal_to_int(instance.properties[prop])}"
+                    )
+                    # properties[prop] = convert_verilog_literal_to_int(instance.properties[prop])
 
-        for named_instance in self.named_netlist.instances_to_map:
-            ###############################################################
-            # First find all instances of the same type and same properties
-            ###############################################################
-
-            # Compute a hash of this instance's properties
-            properties = set()
-            for prop in self.get_properties_for_type(named_instance.cell_type):
-                properties.add(
-                    f"{prop}{convert_verilog_literal_to_int(named_instance.properties[prop])}"
+                grouped_by_cell_type[(instance.cell_type, hash(frozenset(properties)))].append(
+                    instance
                 )
-            my_hash = hash(frozenset(properties))
 
-            instances_matching = grouped_by_cell_type[(named_instance.cell_type, my_hash)]
+            for named_instance in self.named_netlist.instances_to_map:
+                ###############################################################
+                # First find all instances of the same type and same properties
+                ###############################################################
 
-            if not instances_matching:
-                logging.info(
-                    "No property matches for cell %s of type %s. Properties:",
-                    named_instance.name,
-                    named_instance.cell_type,
-                )
+                # Compute a hash of this instance's properties
+                properties = set()
                 for prop in self.get_properties_for_type(named_instance.cell_type):
-                    logging.info("  %s: %s", prop, named_instance.properties[prop])
-                raise StructuralCompareError(
-                    f"Not equivalent. {named_instance.name} has no possible match in the netlist."
-                )
+                    properties.add(
+                        f"{prop}{convert_verilog_literal_to_int(named_instance.properties[prop])}"
+                    )
+                my_hash = hash(frozenset(properties))
 
-            self.possible_matches[named_instance] = instances_matching.copy()
+                instances_matching = grouped_by_cell_type[(named_instance.cell_type, my_hash)]
+
+                if not instances_matching:
+                    logging.info(
+                        "No property matches for cell %s of type %s. Properties:",
+                        named_instance.name,
+                        named_instance.cell_type,
+                    )
+                    for prop in self.get_properties_for_type(named_instance.cell_type):
+                        logging.info("  %s: %s", prop, named_instance.properties[prop])
+                    raise StructuralCompareError(
+                        f"Not equivalent. {named_instance.name} has no \
+                        possible match in the netlist."
+                    )
+
+                self.possible_matches[named_instance] = instances_matching.copy()
+
+            possible_matches = {}
+            # pylint: disable=consider-using-dict-items
+            for named_instance in self.possible_matches:
+                possible_matches[named_instance.name] = [
+                    i.name for i in self.possible_matches[named_instance]
+                ]
+            # pylint: enable=consider-using-dict-items
+            with open(possible_matches_cache_path, "wb") as f:
+                pickle.dump(possible_matches, f)
+
+    def import_possible_matches(self, pickle_dump):
+        all_instances = {
+            i.name: i
+            for i in self.reversed_netlist.instances
+            if not i.cell_type.startswith("SDN_VERILOG")
+        }
+        for named_instance in self.named_netlist.instances_to_map:
+            matches = pickle_dump[named_instance.name]
+            tmp = [all_instances[i] for i in matches]
+            self.possible_matches[named_instance] = tmp
 
     def potential_mapping_wrapper(self, instance):
         """Wrap check_for_potential_mapping some inital checks/postprocessing"""
