@@ -1,5 +1,8 @@
 top: mpeg2fpga_random
 
+system_verilog_files:
+  - mpeg2fpga_random.sv
+
 verilog_files:
   # - fifo_size.v
   - framestore_request.v
