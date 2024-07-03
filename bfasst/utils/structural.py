@@ -7,8 +7,11 @@ import pickle
 import sys
 import time
 import os
+import difflib
 from bidict import bidict
 import spydrnet as sdn
+
+from com.xilinx.rapidwright.design import Design
 
 from bfasst import jpype_jvm
 from bfasst.utils import convert_verilog_literal_to_int
@@ -41,6 +44,14 @@ class StructuralCompare:
             datefmt="%Y%m%d%H%M%S",
         )
         assert str(log_path).endswith("_cmp.log")
+
+        build_folder = os.path.dirname(os.path.dirname(self.log_path))
+        dcp_path = os.path.join(build_folder, "vivado_impl/impl.dcp")
+        edf_path = os.path.join(build_folder, "vivado_impl/viv_impl.edf")
+        self.design = Design.readCheckpoint(
+            dcp_path,
+            edf_path,
+        )
 
         self.block_mapping_pkl = (
             str(log_path).split("_cmp.log", maxsplit=1)[0] + "_block_mapping.pkl"
@@ -78,6 +89,7 @@ class StructuralCompare:
             "RAM32X1D_1",
             "RAM256X1S",
             "SRL16E",
+            "SRLC16E",
             "SRLC32E",
             "LDCE",
         )
@@ -105,6 +117,33 @@ class StructuralCompare:
             "IS_S1_INVERTED",
             "PRESELECT_I0",
             "PRESELECT_I1",
+        )
+        _cell_props["DSP48E1"] = (
+            "ACASCREG",
+            "ADREG",
+            "A_INPUT",
+            "ALUMODEREG",
+            "AREG",
+            "AUTORESET_PATDET",
+            "BCASCREG",
+            "B_INPUT",
+            "BREG",
+            "CARRYINREG",
+            "CARRYINSELREG",
+            "CREG",
+            "DREG",
+            "INMODEREG",
+            "MASK",
+            "MREG",
+            "OPMODEREG",
+            "PATTERN",
+            "PREG",
+            "SEL_MASK",
+            "SEL_PATTERN",
+            "USE_DPORT",
+            "USE_MULT",
+            "USE_PATTERN_DETECT",
+            "USE_SIMD",
         )
 
         self._cell_props = _cell_props
@@ -281,16 +320,17 @@ class StructuralCompare:
 
     def init_matching_instances(self):
         """Init possible_matches dict with all instances that match by cell type and properties"""
+
         log_with_banner("Initializing possible matches based on cell type and properties")
-        if self.use_cache:
-            possible_matches_cache_path = os.path.join(
-                os.path.dirname(self.log_path), "possible_matches.pkl"
-            )
-            if os.path.exists(possible_matches_cache_path):
-                logging.info("Loading possible matches from cache")
-                with open(possible_matches_cache_path, "rb") as f:
-                    pickle_dump = pickle.load(f)
-                    self.import_possible_matches(pickle_dump)
+
+        possible_matches_cache_path = os.path.join(
+            os.path.dirname(self.log_path), "possible_matches.pkl"
+        )
+        if self.use_cache and os.path.exists(possible_matches_cache_path):
+            logging.info("Loading possible matches from cache")
+            with open(possible_matches_cache_path, "rb") as f:
+                pickle_dump = pickle.load(f)
+                self.import_possible_matches(pickle_dump)
 
         else:
             all_instances = [
@@ -298,7 +338,6 @@ class StructuralCompare:
                 for i in self.reversed_netlist.instances
                 if not i.cell_type.startswith("SDN_VERILOG")
             ]
-
             grouped_by_cell_type = defaultdict(list)
             for instance in all_instances:
                 properties = set()
@@ -336,8 +375,7 @@ class StructuralCompare:
                     for prop in self.get_properties_for_type(named_instance.cell_type):
                         logging.info("  %s: %s", prop, named_instance.properties[prop])
                     raise StructuralCompareError(
-                        f"Not equivalent. {named_instance.name} has no \
-                        possible match in the netlist."
+                        f"Not equivalent. {named_instance.name} has no possible match in the netlist."
                     )
 
                 self.possible_matches[named_instance] = instances_matching.copy()
@@ -349,9 +387,8 @@ class StructuralCompare:
                     i.name for i in self.possible_matches[named_instance]
                 ]
             # pylint: enable=consider-using-dict-items
-            if self.use_cache:
-                with open(possible_matches_cache_path, "wb") as f:
-                    pickle.dump(possible_matches, f)
+            with open(possible_matches_cache_path, "wb") as f:
+                pickle.dump(possible_matches, f)
 
     def import_possible_matches(self, pickle_dump):
         all_instances = {
@@ -382,6 +419,26 @@ class StructuralCompare:
         # self.log(f"  {instances_matching} matches")
 
         if not instances_matching:
+            cell = self.design.getCell(instance.name)
+            if cell:
+                site = cell.getSite()
+                tile = cell.getTile()
+                logging.info("%s should map to a cell on %s_%s", instance.name, tile, site)
+            else:
+                # if the design doesn't have a cell with the exact name as the one in the netlist,
+                # we gather up all the cells in the design and find the closest match namewise using difflib
+                cells = list(self.design.getCells())
+                actual_cell_name = str(
+                    difflib.get_close_matches(
+                        instance.name, [cell.getName() for cell in cells], n=1
+                    )[0]
+                )
+                # now that we have the cell's actual name, we can use that to access the cell object
+                cell = [cell for cell in cells if cell.getName() == actual_cell_name][0]
+                site = cell.getSite()
+                tile = cell.getTile()
+                logging.info("%s should map to a cell on %s_%s", instance.name, tile, site)
+
             raise StructuralCompareError(
                 f"Not equivalent. {instance.name} has no possible match in the netlist."
             )
