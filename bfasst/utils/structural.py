@@ -27,13 +27,13 @@ class StructuralCompare:
     """Structural compare and map"""
 
     def __init__(
-        self, named_netlist_path, reversed_netlist_path, log_path, use_cache=False
+        self, named_netlist_path, reversed_netlist_path, log_path, debug=False
     ) -> None:
         self.reversed_netlist_path = reversed_netlist_path
         self.named_netlist_path = named_netlist_path
         self.named_netlist = None
         self.reversed_netlist = None
-        self.use_cache = use_cache
+        self.debug = debug
 
         self.log_path = log_path
         logging.basicConfig(
@@ -45,13 +45,14 @@ class StructuralCompare:
         )
         assert str(log_path).endswith("_cmp.log")
 
-        build_folder = os.path.dirname(os.path.dirname(self.log_path))
-        dcp_path = os.path.join(build_folder, "vivado_impl/impl.dcp")
-        edf_path = os.path.join(build_folder, "vivado_impl/viv_impl.edf")
-        self.design = Design.readCheckpoint(
-            dcp_path,
-            edf_path,
-        )
+        if self.debug:
+            build_folder = os.path.dirname(os.path.dirname(self.log_path))
+            dcp_path = os.path.join(build_folder, "vivado_impl/impl.dcp")
+            edf_path = os.path.join(build_folder, "vivado_impl/viv_impl.edf")
+            self.design = Design.readCheckpoint(
+                dcp_path,
+                edf_path,
+            )
 
         self.block_mapping_pkl = (
             str(log_path).split("_cmp.log", maxsplit=1)[0] + "_block_mapping.pkl"
@@ -326,7 +327,7 @@ class StructuralCompare:
         possible_matches_cache_path = os.path.join(
             os.path.dirname(self.log_path), "possible_matches.pkl"
         )
-        if self.use_cache and os.path.exists(possible_matches_cache_path):
+        if self.debug and os.path.exists(possible_matches_cache_path):
             logging.info("Loading possible matches from cache")
             with open(possible_matches_cache_path, "rb") as f:
                 pickle_dump = pickle.load(f)
@@ -420,24 +421,25 @@ class StructuralCompare:
         # self.log(f"  {instances_matching} matches")
 
         if not instances_matching:
-            cell = self.design.getCell(instance.name)
-            if not cell:
-                # often, the cell name in vivado is a little bit different than in the netlist,
-                # so if it's not an exact match, I used difflib to get the closest match
-                # this has worked for me so far, but it might not always
-                cells = list(self.design.getCells())
-                actual_cell_name = str(
-                    difflib.get_close_matches(
-                        instance.name, [cell.getName() for cell in cells], n=1
-                    )[0]
-                )
-                # now that we have the cell's actual name, we can use that to access the cell object
-                cell = [cell for cell in cells if cell.getName() == actual_cell_name][0]
+            if self.debug:
+                cell = self.design.getCell(instance.name)
+                if not cell:
+                    # often, the cell name in vivado is a little bit different than in the netlist,
+                    # so if it's not an exact match, I used difflib to get the closest match
+                    # this has worked for me so far, but it might not always
+                    cells = list(self.design.getCells())
+                    actual_cell_name = str(
+                        difflib.get_close_matches(
+                            instance.name, [cell.getName() for cell in cells], n=1
+                        )[0]
+                    )
+                    # now that we have the cell's actual name, we can use that to access the cell object
+                    cell = [cell for cell in cells if cell.getName() == actual_cell_name][0]
 
-            site = cell.getSite()
-            tile = cell.getTile()
-            cell_type = cell.getType()
-            logging.info("%s should map to %s_%s_%s", instance.name, tile, site, cell_type)
+                site = cell.getSite()
+                tile = cell.getTile()
+                cell_type = cell.getType()
+                logging.info("%s should map to %s_%s_%s", instance.name, tile, site, cell_type)
 
             raise StructuralCompareError(
                 f"Not equivalent. {instance.name} has no possible match in the netlist."
