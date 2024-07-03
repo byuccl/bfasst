@@ -11,12 +11,12 @@ import difflib
 from bidict import bidict
 import spydrnet as sdn
 
-from com.xilinx.rapidwright.design import Design
 
 from bfasst import jpype_jvm
 from bfasst.utils import convert_verilog_literal_to_int
 from bfasst.utils.general import log_with_banner
 from bfasst.utils.sdn_helpers import SdnNetlistWrapper, SdnInstanceWrapper, SdnNet, SdnPinWrapper
+from com.xilinx.rapidwright.design import Design
 
 
 class StructuralCompareError(Exception):
@@ -375,7 +375,8 @@ class StructuralCompare:
                     for prop in self.get_properties_for_type(named_instance.cell_type):
                         logging.info("  %s: %s", prop, named_instance.properties[prop])
                     raise StructuralCompareError(
-                        f"Not equivalent. {named_instance.name} has no possible match in the netlist."
+                        f"Not equivalent. {named_instance.name} \
+                        has no possible match in the netlist."
                     )
 
                 self.possible_matches[named_instance] = instances_matching.copy()
@@ -420,13 +421,10 @@ class StructuralCompare:
 
         if not instances_matching:
             cell = self.design.getCell(instance.name)
-            if cell:
-                site = cell.getSite()
-                tile = cell.getTile()
-                logging.info("%s should map to a cell on %s_%s", instance.name, tile, site)
-            else:
-                # if the design doesn't have a cell with the exact name as the one in the netlist,
-                # we gather up all the cells in the design and find the closest match namewise using difflib
+            if not cell:
+                # often, the cell name in vivado is a little bit different than in the netlist,
+                # so if it's not an exact match, I used difflib to get the closest match
+                # this has worked for me so far, but it might not always
                 cells = list(self.design.getCells())
                 actual_cell_name = str(
                     difflib.get_close_matches(
@@ -435,9 +433,11 @@ class StructuralCompare:
                 )
                 # now that we have the cell's actual name, we can use that to access the cell object
                 cell = [cell for cell in cells if cell.getName() == actual_cell_name][0]
-                site = cell.getSite()
-                tile = cell.getTile()
-                logging.info("%s should map to a cell on %s_%s", instance.name, tile, site)
+
+            site = cell.getSite()
+            tile = cell.getTile()
+            cell_type = cell.getType()
+            logging.info("%s should map to %s_%s_%s", instance.name, tile, site, cell_type)
 
             raise StructuralCompareError(
                 f"Not equivalent. {instance.name} has no possible match in the netlist."
@@ -777,6 +777,8 @@ class StructuralCompare:
             i for i in self.possible_matches[named_instance] if i not in self.block_mapping.inverse
         ]
 
+        pin_causing_failure = None
+
         for pin in named_instance.pins:
             # Skip pin that is not yet mapped
             if pin.net not in self.net_mapping:
@@ -834,6 +836,8 @@ class StructuralCompare:
                 else ""
             )
             logging.info("    %s remaining%s", num_instances, info)
+            if not num_instances and not pin_causing_failure:
+                pin_causing_failure = pin
 
         logging.info(
             "  %s instance(s) after filtering on connections", len(instances_matching_connections)
