@@ -777,8 +777,6 @@ class StructuralCompare:
             i for i in self.possible_matches[named_instance] if i not in self.block_mapping.inverse
         ]
 
-        pin_causing_failure = None
-
         for pin in named_instance.pins:
             # Skip pin that is not yet mapped
             if pin.net not in self.net_mapping:
@@ -836,8 +834,6 @@ class StructuralCompare:
                 else ""
             )
             logging.info("    %s remaining%s", num_instances, info)
-            if not num_instances and not pin_causing_failure:
-                pin_causing_failure = pin
 
         logging.info(
             "  %s instance(s) after filtering on connections", len(instances_matching_connections)
