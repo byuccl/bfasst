@@ -48,7 +48,6 @@ class Xray(Tool):
                     "db_root": XRAY_DB_PATH / config.PART_FAMILY,
                     "part": self.flow.part,
                     "input_xdc": self.xdc_input,
-                    "db_marker": FASM2BELS_PATH / "db_marker",
                 },
             )
 
