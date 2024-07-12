@@ -731,12 +731,13 @@ class StructuralCompare:
             }:
                 for instance in instances_matching_connections:
                     # [3:]   : gets rid of the "{# of bits}'b" at the beginning of the prop
-                    # [::-1] : reverses the string since the pins index the opposite as python strings
+                    # [::-1] : reverses the string since the pins index the opposite as strings
                     reversed_prop = instance.properties[f"IS_{name}_INVERTED"][3:][::-1]
-                    if int(reversed_prop[idx]) == 1:
-                        net = instance.get_pin(name, idx).net
-                        if (other_net.is_gnd and net.is_vdd) or (other_net.is_vdd and net.is_gnd):
-                            pin.ignore_net_equivalency = True
+                    if int(reversed_prop[idx]) == 1 and (
+                        (other_net.is_gnd and instance.get_pin(name, idx).net.is_vdd)
+                        or (other_net.is_vdd and instance.get_pin(name, idx).net.is_gnd)
+                    ):
+                        pin.ignore_net_equivalency = True
 
                 if pin.ignore_net_equivalency:
                     continue
