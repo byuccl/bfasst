@@ -383,14 +383,9 @@ class StructuralCompare:
                     )
 
                 self.possible_matches[named_instance] = instances_matching.copy()
-
             possible_matches = {}
-            # pylint: disable=consider-using-dict-items
-            for named_instance in self.possible_matches:
-                possible_matches[named_instance.name] = [
-                    i.name for i in self.possible_matches[named_instance]
-                ]
-            # pylint: enable=consider-using-dict-items
+            for named_instance, possibilities in self.possible_matches.items():
+                possible_matches[named_instance.name] = [i.name for i in possibilities]
             with open(possible_matches_cache_path, "wb") as f:
                 pickle.dump(possible_matches, f)
 
