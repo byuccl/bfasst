@@ -357,7 +357,7 @@ class StructuralCompare:
         logging.info("Considering %s (%s)", instance.name, instance.cell_type)
 
         # Get the implemented potential instance to map
-        if not instance.cell_type.startswith("RAMB"):       
+        if not instance.cell_type.startswith("RAMB"):
             instances_matching = self.check_for_potential_mapping(instance)
         else:
             instances_matching = self.check_for_potential_bram_mapping(instance)
@@ -690,7 +690,6 @@ class StructuralCompare:
         self.possible_matches[named_instance] = instances_matching_connections
         return instances_matching_connections
 
-
     def check_for_potential_mapping(self, named_instance):
         """Returns cells that could map to the named_instance"""
 
@@ -723,7 +722,13 @@ class StructuralCompare:
 
             name = pin.name
 
-            if named_instance.cell_type == "DSP48E1" and name in {"ALUMODE", "OPMODE", "INMODE", "CLK", "CARRYIN"}:
+            if named_instance.cell_type == "DSP48E1" and name in {
+                "ALUMODE",
+                "OPMODE",
+                "INMODE",
+                "CLK",
+                "CARRYIN",
+            }:
                 for instance in instances_matching_connections:
                     # [3:]   : gets rid of the "{# of bits}'b" at the beginning of the prop
                     # [::-1] : reverses the string since the pins index the opposite as python strings
@@ -735,7 +740,6 @@ class StructuralCompare:
 
                 if pin.ignore_net_equivalency:
                     continue
-            
 
             tmp = [
                 instance
