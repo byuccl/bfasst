@@ -91,6 +91,7 @@ class DesignParser(YamlParser):
         self.top = None
         self.vhdl_libs = None
         self.verilog_files = None
+        self.system_verilog_files = None
         self.clocks = {}
         self.part = config.PART
 
@@ -110,6 +111,9 @@ class DesignParser(YamlParser):
 
         if "verilog_files" in props:
             self.verilog_files = props["verilog_files"]
+
+        if "system_verilog_files" in props:
+            self.system_verilog_files = props["system_verilog_files"]
 
 
 class FlowDescriptionParser(YamlParser):

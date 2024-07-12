@@ -110,6 +110,9 @@ class Design:
             "verilog_files": lambda value: self.verilog_file_paths.extend(
                 self.path / source for source in value
             ),
+            "system_verilog_files": lambda value: self.system_verilog_file_paths.extend(
+                self.path / source for source in value
+            ),
             "vhdl_libs": lambda value: setattr(self, "vhdl_libs", self.enum_vhdl_libs(value)),
         }
 

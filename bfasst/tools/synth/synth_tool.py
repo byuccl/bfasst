@@ -36,6 +36,13 @@ class SynthTool(Tool):
             self.verilog = [
                 str(self.design_path / file) for file in self.design_props.verilog_files
             ]
+
+        if self.design_props.system_verilog_files is not None:
+            self.system_verilog = [
+                str(self.design_path / file) for file in self.design_props.system_verilog_files
+            ]
+
+        if self.verilog or self.system_verilog:
             return
 
         for child in self.design_path.rglob("*"):
