@@ -16,7 +16,11 @@ from bfasst import jpype_jvm
 from bfasst.utils import convert_verilog_literal_to_int
 from bfasst.utils.general import log_with_banner
 from bfasst.utils.sdn_helpers import SdnNetlistWrapper, SdnInstanceWrapper, SdnNet, SdnPinWrapper
+
+# pylint: disable=wrong-import-order
 from com.xilinx.rapidwright.design import Design
+
+# pylint: enable=wrong-import-order
 
 
 class StructuralCompareError(Exception):
@@ -26,9 +30,7 @@ class StructuralCompareError(Exception):
 class StructuralCompare:
     """Structural compare and map"""
 
-    def __init__(
-        self, named_netlist_path, reversed_netlist_path, log_path, debug=False
-    ) -> None:
+    def __init__(self, named_netlist_path, reversed_netlist_path, log_path, debug=False) -> None:
         self.reversed_netlist_path = reversed_netlist_path
         self.named_netlist_path = named_netlist_path
         self.named_netlist = None
@@ -433,7 +435,8 @@ class StructuralCompare:
                             instance.name, [cell.getName() for cell in cells], n=1
                         )[0]
                     )
-                    # now that we have the cell's actual name, we can use that to access the cell object
+                    # now that we have the cell's actual name,
+                    # we can use that to access the cell object
                     cell = [cell for cell in cells if cell.getName() == actual_cell_name][0]
 
                 site = cell.getSite()
