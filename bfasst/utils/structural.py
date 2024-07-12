@@ -357,12 +357,10 @@ class StructuralCompare:
         logging.info("Considering %s (%s)", instance.name, instance.cell_type)
 
         # Get the implemented potential instance to map
-        if instance.cell_type.startswith("RAMB"):
-            instances_matching = self.check_for_potential_bram_mapping(instance)
-        elif instance.cell_type.startswith("DSP48E1"):
-            instances_matching = self.check_for_potential_dsp_mapping(instance)
-        else:
+        if not instance.cell_type.startswith("RAMB"):       
             instances_matching = self.check_for_potential_mapping(instance)
+        else:
+            instances_matching = self.check_for_potential_bram_mapping(instance)
 
         if not instances_matching:
             raise StructuralCompareError(
@@ -692,75 +690,6 @@ class StructuralCompare:
         self.possible_matches[named_instance] = instances_matching_connections
         return instances_matching_connections
 
-    def check_for_potential_dsp_mapping(self, named_instance):
-        """Special check for dsp's
-        some of the pins have an INVERSION property
-        so if the pin is inverted, I invert it back to
-        it's original state
-        """
-
-        instances_matching_connections = [
-            i for i in self.possible_matches[named_instance] if i not in self.block_mapping.inverse
-        ]
-
-        for pin in named_instance.pins:
-            if pin.net not in self.net_mapping:
-                continue
-
-            if name in {"ALUMODE", "OPMODE", "INMODE", "CLK", "CARRYIN"}:
-                for instance in instances_matching_connections:
-                    if int(instance.properties[f"IS_{name}_INVERTED"][-1 - idx]) == 1:
-                        net = instance.get_pin(name, idx).net
-                        assert net.is_vdd or net.is_gnd
-                        if net.is_vdd:
-                            net.is_gnd = True
-                            net.is_vdd = False
-                        elif net.is_gnd:
-                            net.is_gnd = False
-                            net.is_vdd = True
-
-            other_net = self.net_mapping[pin.net]
-
-            logging.info("  Filtering on pin %s, %s", pin.name_with_index, other_net.name)
-
-            name = pin.name
-            idx = pin.index
-
-            tmp = [
-                instance
-                for instance in instances_matching_connections
-                if instance.get_pin(name, idx).net == other_net
-            ]
-
-            if not tmp:
-                if other_net.is_gnd:
-                    tmp = [
-                        instance
-                        for instance in instances_matching_connections
-                        if instance.get_pin(name, idx).net.is_gnd
-                    ]
-                elif other_net.is_vdd:
-                    tmp = [
-                        instance
-                        for instance in instances_matching_connections
-                        if instance.get_pin(name, idx).net.is_vdd
-                    ]
-
-            instances_matching_connections = tmp
-
-            num_instances = len(instances_matching_connections)
-            info = (
-                ": " + ",".join(i.name for i in instances_matching_connections)
-                if num_instances <= 10
-                else ""
-            )
-            logging.info("    %s remaining%s", num_instances, info)
-
-        logging.info(
-            "  %s instance(s) after filtering on connections", len(instances_matching_connections)
-        )
-        self.possible_matches[named_instance] = instances_matching_connections
-        return instances_matching_connections
 
     def check_for_potential_mapping(self, named_instance):
         """Returns cells that could map to the named_instance"""
@@ -791,19 +720,36 @@ class StructuralCompare:
                 idx = pin.index
             else:
                 idx = 0 if pin.index == 1 else 1
+
+            name = pin.name
+
+            if named_instance.cell_type == "DSP48E1" and name in {"ALUMODE", "OPMODE", "INMODE", "CLK", "CARRYIN"}:
+                for instance in instances_matching_connections:
+                    # [3:]   : gets rid of the "{# of bits}'b" at the beginning of the prop
+                    # [::-1] : reverses the string since the pins index the opposite as python strings
+                    reversed_prop = instance.properties[f"IS_{name}_INVERTED"][3:][::-1]
+                    if int(reversed_prop[idx]) == 1:
+                        net = instance.get_pin(name, idx).net
+                        if (other_net.is_gnd and net.is_vdd) or (other_net.is_vdd and net.is_gnd):
+                            pin.ignore_net_equivalency = True
+
+                if pin.ignore_net_equivalency:
+                    continue
+            
+
             tmp = [
                 instance
                 for instance in instances_matching_connections
-                if instance.get_pin(pin.name, idx).net == other_net
+                if instance.get_pin(name, idx).net == other_net
             ]
 
             if named_instance.cell_type == "BUFGCTRL" and pin.name[0] == "I" and not tmp:
                 # sometimes f2b routes the clk net to both inputs
-                other_pin = f"I{'1' if pin.name[1] == '0' else '0'}"
+                other_pin = f"I{'1' if name[1] == '0' else '0'}"
                 tmp = [
                     inst
                     for inst in instances_matching_connections
-                    if inst.get_pin(pin.name, idx).net == inst.get_pin(other_pin, idx).net
+                    if inst.get_pin(name, idx).net == inst.get_pin(other_pin, idx).net
                 ]
                 pin.ignore_net_equivalency = True
 
@@ -812,14 +758,14 @@ class StructuralCompare:
                     tmp = [
                         instance
                         for instance in instances_matching_connections
-                        if instance.get_pin(pin.name, idx).net is None
-                        or instance.get_pin(pin.name, idx).net.is_gnd
+                        if instance.get_pin(name, idx).net is None
+                        or instance.get_pin(name, idx).net.is_gnd
                     ]
                 elif other_net.is_vdd:
                     tmp = [
                         instance
                         for instance in instances_matching_connections
-                        if instance.get_pin(pin.name, idx).net.is_vdd
+                        if instance.get_pin(name, idx).net.is_vdd
                     ]
             instances_matching_connections = tmp
 
