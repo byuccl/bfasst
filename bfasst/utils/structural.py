@@ -74,6 +74,7 @@ class StructuralCompare:
             "RAM32X1D_1",
             "RAM256X1S",
             "SRL16E",
+            "SRLC16E",
             "SRLC32E",
             "LDCE",
         )
@@ -101,6 +102,33 @@ class StructuralCompare:
             "IS_S1_INVERTED",
             "PRESELECT_I0",
             "PRESELECT_I1",
+        )
+        _cell_props["DSP48E1"] = (
+            "ACASCREG",
+            "ADREG",
+            "A_INPUT",
+            "ALUMODEREG",
+            "AREG",
+            "AUTORESET_PATDET",
+            "BCASCREG",
+            "B_INPUT",
+            "BREG",
+            "CARRYINREG",
+            "CARRYINSELREG",
+            "CREG",
+            "DREG",
+            "INMODEREG",
+            "MASK",
+            "MREG",
+            "OPMODEREG",
+            "PATTERN",
+            "PREG",
+            "SEL_MASK",
+            "SEL_PATTERN",
+            "USE_DPORT",
+            "USE_MULT",
+            "USE_PATTERN_DETECT",
+            "USE_SIMD",
         )
 
         self._cell_props = _cell_props
@@ -329,12 +357,12 @@ class StructuralCompare:
         logging.info("Considering %s (%s)", instance.name, instance.cell_type)
 
         # Get the implemented potential instance to map
-        if not instance.cell_type.startswith("RAMB"):
-            instances_matching = self.check_for_potential_mapping(instance)
-        else:
+        if instance.cell_type.startswith("RAMB"):
             instances_matching = self.check_for_potential_bram_mapping(instance)
-
-        # self.log(f"  {instances_matching} matches")
+        elif instance.cell_type.startswith("DSP48E1"):
+            instances_matching = self.check_for_potential_dsp_mapping(instance)
+        else:
+            instances_matching = self.check_for_potential_mapping(instance)
 
         if not instances_matching:
             raise StructuralCompareError(
@@ -648,6 +676,76 @@ class StructuralCompare:
                         for instance in instances_matching_connections
                         if instance.get_pin(pin.name, idx).net.is_vdd
                     ]
+            instances_matching_connections = tmp
+
+            num_instances = len(instances_matching_connections)
+            info = (
+                ": " + ",".join(i.name for i in instances_matching_connections)
+                if num_instances <= 10
+                else ""
+            )
+            logging.info("    %s remaining%s", num_instances, info)
+
+        logging.info(
+            "  %s instance(s) after filtering on connections", len(instances_matching_connections)
+        )
+        self.possible_matches[named_instance] = instances_matching_connections
+        return instances_matching_connections
+
+    def check_for_potential_dsp_mapping(self, named_instance):
+        """Special check for dsp's
+        some of the pins have an INVERSION property
+        so if the pin is inverted, I invert it back to
+        it's original state
+        """
+
+        instances_matching_connections = [
+            i for i in self.possible_matches[named_instance] if i not in self.block_mapping.inverse
+        ]
+
+        for pin in named_instance.pins:
+            if pin.net not in self.net_mapping:
+                continue
+
+            if name in {"ALUMODE", "OPMODE", "INMODE", "CLK", "CARRYIN"}:
+                for instance in instances_matching_connections:
+                    if int(instance.properties[f"IS_{name}_INVERTED"][-1 - idx]) == 1:
+                        net = instance.get_pin(name, idx).net
+                        assert net.is_vdd or net.is_gnd
+                        if net.is_vdd:
+                            net.is_gnd = True
+                            net.is_vdd = False
+                        elif net.is_gnd:
+                            net.is_gnd = False
+                            net.is_vdd = True
+
+            other_net = self.net_mapping[pin.net]
+
+            logging.info("  Filtering on pin %s, %s", pin.name_with_index, other_net.name)
+
+            name = pin.name
+            idx = pin.index
+
+            tmp = [
+                instance
+                for instance in instances_matching_connections
+                if instance.get_pin(name, idx).net == other_net
+            ]
+
+            if not tmp:
+                if other_net.is_gnd:
+                    tmp = [
+                        instance
+                        for instance in instances_matching_connections
+                        if instance.get_pin(name, idx).net.is_gnd
+                    ]
+                elif other_net.is_vdd:
+                    tmp = [
+                        instance
+                        for instance in instances_matching_connections
+                        if instance.get_pin(name, idx).net.is_vdd
+                    ]
+
             instances_matching_connections = tmp
 
             num_instances = len(instances_matching_connections)
