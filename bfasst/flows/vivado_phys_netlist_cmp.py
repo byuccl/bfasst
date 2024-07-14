@@ -13,11 +13,12 @@ from bfasst.tools.synth.vivado_synth import VivadoSynth
 class VivadoPhysNetlistCmp(Flow):
     """Structural Comparison of physical netlist and reversed netlist"""
 
-    def __init__(self, design, synth_options=""):
+    def __init__(self, design, synth_options="", debug=False):
         # pylint: disable=duplicate-code
         super().__init__(design)
 
         self.synth_options = VivadoPhysNetlist.add_required_synth_options(synth_options)
+        self.debug = debug
 
         self.vivado_synth_tool = VivadoSynth(self, design, synth_options=self.synth_options)
         self.vivado_impl_tool = VivadoImpl(
@@ -44,6 +45,7 @@ class VivadoPhysNetlistCmp(Flow):
             "struct_cmp.log",
             golden_netlist=self.phys_netlist_tool.outputs["viv_impl_physical_v"],
             rev_netlist=self.xray_tool.outputs["rev_netlist"],
+            debug=self.debug,
         )
         # pylint: enable=duplicate-code
 

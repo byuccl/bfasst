@@ -30,7 +30,7 @@ class StructuralCompareError(Exception):
 class StructuralCompare:
     """Structural compare and map"""
 
-    def __init__(self, named_netlist_path, reversed_netlist_path, log_path, debug=False) -> None:
+    def __init__(self, named_netlist_path, reversed_netlist_path, log_path, debug) -> None:
         self.reversed_netlist_path = reversed_netlist_path
         self.named_netlist_path = named_netlist_path
         self.named_netlist = None
@@ -863,11 +863,13 @@ if __name__ == "__main__":
     )
     parser.add_argument("--log_path", type=str, help="The log file path to use as output")
     parser.add_argument("--expect_fail", action="store_true", help="Expect the comparison to fail")
+    parser.add_argument("--debug", help="Utilize debugging functionality")
     args = parser.parse_args()
     struct_cmp = StructuralCompare(
         named_netlist_path=args.netlists[0],
         reversed_netlist_path=args.netlists[1],
         log_path=args.log_path,
+        debug=args.debug,
     )
     try:
         struct_cmp.compare_netlists()
