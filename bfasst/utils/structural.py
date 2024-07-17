@@ -415,8 +415,6 @@ class StructuralCompare:
         else:
             instances_matching = self.check_for_potential_bram_mapping(instance)
 
-        # self.log(f"  {instances_matching} matches")
-
         if not instances_matching:
             if self.debug:
                 cell = self.design.getCell(instance.name)
@@ -795,19 +793,42 @@ class StructuralCompare:
                 idx = pin.index
             else:
                 idx = 0 if pin.index == 1 else 1
+
+            name = pin.name
+
+            if named_instance.cell_type == "DSP48E1" and name in {
+                "ALUMODE",
+                "OPMODE",
+                "INMODE",
+                "CLK",
+                "CARRYIN",
+            }:
+                for instance in instances_matching_connections:
+                    # [3:]   : gets rid of the "{# of bits}'b" at the beginning of the prop
+                    # [::-1] : reverses the string since the pins index the opposite as strings
+                    reversed_prop = instance.properties[f"IS_{name}_INVERTED"][3:][::-1]
+                    if int(reversed_prop[idx]) == 1 and (
+                        (other_net.is_gnd and instance.get_pin(name, idx).net.is_vdd)
+                        or (other_net.is_vdd and instance.get_pin(name, idx).net.is_gnd)
+                    ):
+                        pin.ignore_net_equivalency = True
+
+                if pin.ignore_net_equivalency:
+                    continue
+
             tmp = [
                 instance
                 for instance in instances_matching_connections
-                if instance.get_pin(pin.name, idx).net == other_net
+                if instance.get_pin(name, idx).net == other_net
             ]
 
             if named_instance.cell_type == "BUFGCTRL" and pin.name[0] == "I" and not tmp:
                 # sometimes f2b routes the clk net to both inputs
-                other_pin = f"I{'1' if pin.name[1] == '0' else '0'}"
+                other_pin = f"I{'1' if name[1] == '0' else '0'}"
                 tmp = [
                     inst
                     for inst in instances_matching_connections
-                    if inst.get_pin(pin.name, idx).net == inst.get_pin(other_pin, idx).net
+                    if inst.get_pin(name, idx).net == inst.get_pin(other_pin, idx).net
                 ]
                 pin.ignore_net_equivalency = True
 
@@ -816,14 +837,14 @@ class StructuralCompare:
                     tmp = [
                         instance
                         for instance in instances_matching_connections
-                        if instance.get_pin(pin.name, idx).net is None
-                        or instance.get_pin(pin.name, idx).net.is_gnd
+                        if instance.get_pin(name, idx).net is None
+                        or instance.get_pin(name, idx).net.is_gnd
                     ]
                 elif other_net.is_vdd:
                     tmp = [
                         instance
                         for instance in instances_matching_connections
-                        if instance.get_pin(pin.name, idx).net.is_vdd
+                        if instance.get_pin(name, idx).net.is_vdd
                     ]
             instances_matching_connections = tmp
 
