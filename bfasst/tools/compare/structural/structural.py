@@ -8,7 +8,14 @@ class Structural(Tool):
     """Create the rule and build snippets for structural comparison."""
 
     def __init__(
-        self, flow, design, log_name=None, golden_netlist=None, rev_netlist=None, expect_fail=False
+        self,
+        flow,
+        design,
+        log_name=None,
+        golden_netlist=None,
+        rev_netlist=None,
+        expect_fail=False,
+        debug=False,
     ):
         super().__init__(flow, design)
         self.build_path = self.design_build_path / "struct_cmp"
@@ -16,6 +23,7 @@ class Structural(Tool):
         self.golden_netlist = golden_netlist
         self.rev_netlist = rev_netlist
         self.expect_fail = expect_fail
+        self.debug = debug
         self._init_outputs()
         self.rule_snippet_path = COMPARE_TOOLS_PATH / "structural" / "structural_rules.ninja"
 
@@ -28,6 +36,7 @@ class Structural(Tool):
                 "log_path": str(self.outputs["structural_log"]),
                 "compare_script_path": str(BFASST_UTILS_PATH / "structural.py"),
                 "expect_fail": "--expect_fail" if self.expect_fail else "",
+                "debug": "--debug True" if self.debug else "",
             },
         )
 

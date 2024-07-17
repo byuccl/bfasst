@@ -6,13 +6,21 @@ import logging
 import pickle
 import sys
 import time
+import os
+import difflib
 from bidict import bidict
 import spydrnet as sdn
+
 
 from bfasst import jpype_jvm
 from bfasst.utils import convert_verilog_literal_to_int
 from bfasst.utils.general import log_with_banner
 from bfasst.utils.sdn_helpers import SdnNetlistWrapper, SdnInstanceWrapper, SdnNet, SdnPinWrapper
+
+# pylint: disable=wrong-import-order
+from com.xilinx.rapidwright.design import Design
+
+# pylint: enable=wrong-import-order
 
 
 class StructuralCompareError(Exception):
@@ -22,11 +30,12 @@ class StructuralCompareError(Exception):
 class StructuralCompare:
     """Structural compare and map"""
 
-    def __init__(self, named_netlist_path, reversed_netlist_path, log_path) -> None:
+    def __init__(self, named_netlist_path, reversed_netlist_path, log_path, debug) -> None:
         self.reversed_netlist_path = reversed_netlist_path
         self.named_netlist_path = named_netlist_path
         self.named_netlist = None
         self.reversed_netlist = None
+        self.debug = debug
 
         self.log_path = log_path
         logging.basicConfig(
@@ -37,6 +46,15 @@ class StructuralCompare:
             datefmt="%Y%m%d%H%M%S",
         )
         assert str(log_path).endswith("_cmp.log")
+
+        if self.debug:
+            build_folder = os.path.dirname(os.path.dirname(self.log_path))
+            dcp_path = os.path.join(build_folder, "vivado_impl/impl.dcp")
+            edf_path = os.path.join(build_folder, "vivado_impl/viv_impl.edf")
+            self.design = Design.readCheckpoint(
+                dcp_path,
+                edf_path,
+            )
 
         self.block_mapping_pkl = (
             str(log_path).split("_cmp.log", maxsplit=1)[0] + "_block_mapping.pkl"
@@ -74,6 +92,7 @@ class StructuralCompare:
             "RAM32X1D_1",
             "RAM256X1S",
             "SRL16E",
+            "SRLC16E",
             "SRLC32E",
             "LDCE",
         )
@@ -101,6 +120,33 @@ class StructuralCompare:
             "IS_S1_INVERTED",
             "PRESELECT_I0",
             "PRESELECT_I1",
+        )
+        _cell_props["DSP48E1"] = (
+            "ACASCREG",
+            "ADREG",
+            "A_INPUT",
+            "ALUMODEREG",
+            "AREG",
+            "AUTORESET_PATDET",
+            "BCASCREG",
+            "B_INPUT",
+            "BREG",
+            "CARRYINREG",
+            "CARRYINSELREG",
+            "CREG",
+            "DREG",
+            "INMODEREG",
+            "MASK",
+            "MREG",
+            "OPMODEREG",
+            "PATTERN",
+            "PREG",
+            "SEL_MASK",
+            "SEL_PATTERN",
+            "USE_DPORT",
+            "USE_MULT",
+            "USE_PATTERN_DETECT",
+            "USE_SIMD",
         )
 
         self._cell_props = _cell_props
@@ -277,47 +323,82 @@ class StructuralCompare:
 
     def init_matching_instances(self):
         """Init possible_matches dict with all instances that match by cell type and properties"""
-        all_instances = [
-            i for i in self.reversed_netlist.instances if not i.cell_type.startswith("SDN_VERILOG")
-        ]
 
-        grouped_by_cell_type = defaultdict(list)
-        for instance in all_instances:
-            properties = set()
-            for prop in self.get_properties_for_type(instance.cell_type):
-                properties.add(f"{prop}{convert_verilog_literal_to_int(instance.properties[prop])}")
-                # properties[prop] = convert_verilog_literal_to_int(instance.properties[prop])
+        log_with_banner("Initializing possible matches based on cell type and properties")
 
-            grouped_by_cell_type[(instance.cell_type, hash(frozenset(properties)))].append(instance)
+        possible_matches_cache_path = os.path.join(
+            os.path.dirname(self.log_path), "possible_matches.pkl"
+        )
+        if self.debug and os.path.exists(possible_matches_cache_path):
+            logging.info("Loading possible matches from cache")
+            with open(possible_matches_cache_path, "rb") as f:
+                pickle_dump = pickle.load(f)
+                self.import_possible_matches(pickle_dump)
 
-        for named_instance in self.named_netlist.instances_to_map:
-            ###############################################################
-            # First find all instances of the same type and same properties
-            ###############################################################
+        else:
+            all_instances = [
+                i
+                for i in self.reversed_netlist.instances
+                if not i.cell_type.startswith("SDN_VERILOG")
+            ]
+            grouped_by_cell_type = defaultdict(list)
+            for instance in all_instances:
+                properties = set()
+                for prop in self.get_properties_for_type(instance.cell_type):
+                    properties.add(
+                        f"{prop}{convert_verilog_literal_to_int(instance.properties[prop])}"
+                    )
+                    # properties[prop] = convert_verilog_literal_to_int(instance.properties[prop])
 
-            # Compute a hash of this instance's properties
-            properties = set()
-            for prop in self.get_properties_for_type(named_instance.cell_type):
-                properties.add(
-                    f"{prop}{convert_verilog_literal_to_int(named_instance.properties[prop])}"
+                grouped_by_cell_type[(instance.cell_type, hash(frozenset(properties)))].append(
+                    instance
                 )
-            my_hash = hash(frozenset(properties))
 
-            instances_matching = grouped_by_cell_type[(named_instance.cell_type, my_hash)]
+            for named_instance in self.named_netlist.instances_to_map:
+                ###############################################################
+                # First find all instances of the same type and same properties
+                ###############################################################
 
-            if not instances_matching:
-                logging.info(
-                    "No property matches for cell %s of type %s. Properties:",
-                    named_instance.name,
-                    named_instance.cell_type,
-                )
+                # Compute a hash of this instance's properties
+                properties = set()
                 for prop in self.get_properties_for_type(named_instance.cell_type):
-                    logging.info("  %s: %s", prop, named_instance.properties[prop])
-                raise StructuralCompareError(
-                    f"Not equivalent. {named_instance.name} has no possible match in the netlist."
-                )
+                    properties.add(
+                        f"{prop}{convert_verilog_literal_to_int(named_instance.properties[prop])}"
+                    )
+                my_hash = hash(frozenset(properties))
 
-            self.possible_matches[named_instance] = instances_matching.copy()
+                instances_matching = grouped_by_cell_type[(named_instance.cell_type, my_hash)]
+
+                if not instances_matching:
+                    logging.info(
+                        "No property matches for cell %s of type %s. Properties:",
+                        named_instance.name,
+                        named_instance.cell_type,
+                    )
+                    for prop in self.get_properties_for_type(named_instance.cell_type):
+                        logging.info("  %s: %s", prop, named_instance.properties[prop])
+                    raise StructuralCompareError(
+                        f"Not equivalent. {named_instance.name} \
+                        has no possible match in the netlist."
+                    )
+
+                self.possible_matches[named_instance] = instances_matching.copy()
+            possible_matches = {}
+            for named_instance, possibilities in self.possible_matches.items():
+                possible_matches[named_instance.name] = [i.name for i in possibilities]
+            with open(possible_matches_cache_path, "wb") as f:
+                pickle.dump(possible_matches, f)
+
+    def import_possible_matches(self, pickle_dump):
+        all_instances = {
+            i.name: i
+            for i in self.reversed_netlist.instances
+            if not i.cell_type.startswith("SDN_VERILOG")
+        }
+        for named_instance in self.named_netlist.instances_to_map:
+            matches = pickle_dump[named_instance.name]
+            tmp = [all_instances[i] for i in matches]
+            self.possible_matches[named_instance] = tmp
 
     def potential_mapping_wrapper(self, instance):
         """Wrap check_for_potential_mapping some inital checks/postprocessing"""
@@ -337,6 +418,27 @@ class StructuralCompare:
         # self.log(f"  {instances_matching} matches")
 
         if not instances_matching:
+            if self.debug:
+                cell = self.design.getCell(instance.name)
+                if not cell:
+                    # often, the cell name in vivado is a little bit different than in the netlist,
+                    # so if it's not an exact match, I used difflib to get the closest match
+                    # this has worked for me so far, but it might not always
+                    cells = list(self.design.getCells())
+                    actual_cell_name = str(
+                        difflib.get_close_matches(
+                            instance.name, [cell.getName() for cell in cells], n=1
+                        )[0]
+                    )
+                    # now that we have the cell's actual name,
+                    # we can use that to access the cell object
+                    cell = [cell for cell in cells if cell.getName() == actual_cell_name][0]
+
+                site = cell.getSite()
+                tile = cell.getTile()
+                cell_type = cell.getType()
+                logging.info("%s should map to %s_%s_%s", instance.name, tile, site, cell_type)
+
             raise StructuralCompareError(
                 f"Not equivalent. {instance.name} has no possible match in the netlist."
             )
@@ -761,11 +863,13 @@ if __name__ == "__main__":
     )
     parser.add_argument("--log_path", type=str, help="The log file path to use as output")
     parser.add_argument("--expect_fail", action="store_true", help="Expect the comparison to fail")
+    parser.add_argument("--debug", help="Utilize debugging functionality")
     args = parser.parse_args()
     struct_cmp = StructuralCompare(
         named_netlist_path=args.netlists[0],
         reversed_netlist_path=args.netlists[1],
         log_path=args.log_path,
+        debug=args.debug,
     )
     try:
         struct_cmp.compare_netlists()

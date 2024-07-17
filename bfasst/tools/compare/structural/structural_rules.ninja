@@ -1,4 +1,4 @@
 rule compare
-    command = python bfasst/utils/structural.py --netlists $in --log_path $out $expect_fail
+    command = python bfasst/utils/structural.py --netlists $in --log_path $out $expect_fail $debug
     description = structurally compare $in
 
