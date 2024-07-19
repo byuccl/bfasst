@@ -437,9 +437,12 @@ class StructuralCompare:
                 cell_type = cell.getType()
                 logging.info("%s should map to %s_%s_%s", instance.name, tile, site, cell_type)
 
-            raise StructuralCompareError(
-                f"Not equivalent. {instance.name} has no possible match in the netlist."
-            )
+            if not self.debug:
+                raise StructuralCompareError(
+                    f"Not equivalent. {instance.name} has no possible match in the netlist."
+                )
+            logging.info("%s has no possible match in the netlist.", instance.name)
+            return False
 
         if len(instances_matching) > 1:
             logging.info("  %s matches, skipping for now:", len(instances_matching))
@@ -682,8 +685,9 @@ class StructuralCompare:
                 and named_instance.get_pin("CASCADEOUTB", 0).net.is_gnd
             )
 
-            if not expected_properties:
+            if not expected_properties and not self.debug:
                 raise StructuralCompareError("Unexpected BRAM CASCADE Configuration")
+            logging.info("Unexpected BRAM CASCADE Configuration for %s", named_instance.name)
 
         instances_matching_connections = [
             i for i in self.possible_matches[named_instance] if i not in self.block_mapping.inverse
