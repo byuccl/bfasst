@@ -438,7 +438,13 @@ class StructuralCompare:
             site = cell.getSite()
             tile = cell.getTile()
             cell_type = cell.getType()
-            logging.info("%s should map to %s_%s_%s, but has no possible match in the netlist", instance.name, tile, site, cell_type)
+            logging.info(
+                "%s should map to %s_%s_%s, but has no possible match in the netlist",
+                instance.name,
+                tile,
+                site,
+                cell_type,
+            )
             return False
 
         if len(instances_matching) > 1:
