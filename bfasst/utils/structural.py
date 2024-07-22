@@ -416,30 +416,36 @@ class StructuralCompare:
             instances_matching = self.check_for_potential_bram_mapping(instance)
 
         if not instances_matching:
-            if self.debug:
-                cell = self.design.getCell(instance.name)
-                if not cell:
-                    # often, the cell name in vivado is a little bit different than in the netlist,
-                    # so if it's not an exact match, I used difflib to get the closest match
-                    # this has worked for me so far, but it might not always
-                    cells = list(self.design.getCells())
-                    actual_cell_name = str(
-                        difflib.get_close_matches(
-                            instance.name, [cell.getName() for cell in cells], n=1
-                        )[0]
-                    )
-                    # now that we have the cell's actual name,
-                    # we can use that to access the cell object
-                    cell = [cell for cell in cells if cell.getName() == actual_cell_name][0]
+            if not self.debug:
+                raise StructuralCompareError(
+                    f"Not equivalent. {instance.name} has no possible match in the netlist."
+                )
+            cell = self.design.getCell(instance.name)
+            if not cell:
+                # often, the cell name in vivado is a little bit different than in the netlist,
+                # so if it's not an exact match, I used difflib to get the closest match
+                # this has worked for me so far, but it might not always
+                cells = list(self.design.getCells())
+                actual_cell_name = str(
+                    difflib.get_close_matches(
+                        instance.name, [cell.getName() for cell in cells], n=1
+                    )[0]
+                )
+                # now that we have the cell's actual name,
+                # we can use that to access the cell object
+                cell = [cell for cell in cells if cell.getName() == actual_cell_name][0]
 
-                site = cell.getSite()
-                tile = cell.getTile()
-                cell_type = cell.getType()
-                logging.info("%s should map to %s_%s_%s", instance.name, tile, site, cell_type)
-
-            raise StructuralCompareError(
-                f"Not equivalent. {instance.name} has no possible match in the netlist."
+            site = cell.getSite()
+            tile = cell.getTile()
+            cell_type = cell.getType()
+            logging.info(
+                "%s should map to %s_%s_%s, but has no possible match in the netlist",
+                instance.name,
+                tile,
+                site,
+                cell_type,
             )
+            return False
 
         if len(instances_matching) > 1:
             logging.info("  %s matches, skipping for now:", len(instances_matching))
@@ -683,7 +689,9 @@ class StructuralCompare:
             )
 
             if not expected_properties:
-                raise StructuralCompareError("Unexpected BRAM CASCADE Configuration")
+                if not self.debug:
+                    raise StructuralCompareError("Unexpected BRAM CASCADE Configuration")
+                logging.info("Unexpected BRAM CASCADE Configuration for %s", named_instance.name)
 
         instances_matching_connections = [
             i for i in self.possible_matches[named_instance] if i not in self.block_mapping.inverse
