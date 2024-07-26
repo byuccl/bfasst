@@ -509,7 +509,13 @@ class StructuralCompare:
             logging.info("===== Mapping Iteration %s =====", iteration)
 
             # Loop through reversed netlist blocks
-            instance_iter = iter(set(self.named_netlist.instances_to_map))
+            # Sort the instances based on the length of their possible matches list
+            sorted_instances = sorted(
+                set(self.named_netlist.instances_to_map),
+                key=lambda instance: len(self.possible_matches[instance])
+            )
+            # Create an iterator from the sorted instances
+            instance_iter = iter(sorted_instances)
             try:
                 while not overall_progress:
                     overall_progress = self.potential_mapping_wrapper(next(instance_iter))
