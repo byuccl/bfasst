@@ -699,8 +699,9 @@ class StructuralCompare:
                     raise StructuralCompareError("Unexpected BRAM CASCADE Configuration")
                 logging.info("Unexpected BRAM CASCADE Configuration for %s", named_instance.name)
 
-        instances_matching_connections = self.possible_matches[named_instance] - set(self.block_mapping.inverse)
-        
+        instances_matching_connections = self.possible_matches[named_instance] - set(
+            self.block_mapping.inverse
+        )
 
         for pin in named_instance.pins:
             # For RAMB18E1, "REGCEAREGCE" and "REGCEB" only depend on DOA_REG and DOB_REG
@@ -752,8 +753,7 @@ class StructuralCompare:
                     tmp = {
                         instance
                         for instance in instances_matching_connections
-                        if instance.get_pin(pin.name, idx).net is None
-                        or instance.get_pin(pin.name, idx).net.is_gnd
+                        if instance.get_pin(pin.name, idx).net.is_gnd
                     }
                 elif other_net.is_vdd:
                     tmp = {
@@ -784,7 +784,9 @@ class StructuralCompare:
         # Now look at connections
         ###############################################################
 
-        instances_matching_connections = self.possible_matches[named_instance] - set(self.block_mapping.inverse)
+        instances_matching_connections = self.possible_matches[named_instance] - set(
+            self.block_mapping.inverse
+        )
 
         for pin in named_instance.pins:
             # Skip pin that is not yet mapped
@@ -848,8 +850,7 @@ class StructuralCompare:
                     tmp = {
                         instance
                         for instance in instances_matching_connections
-                        if instance.get_pin(name, idx).net is None
-                        or instance.get_pin(name, idx).net.is_gnd
+                        if instance.get_pin(name, idx).net.is_gnd
                     }
                 elif other_net.is_vdd:
                     tmp = {
