@@ -382,10 +382,10 @@ class StructuralCompare:
                         has no possible match in the netlist."
                     )
 
-                self.possible_matches[named_instance] = instances_matching.copy()
+                self.possible_matches[named_instance] = set(instances_matching)
             possible_matches = {}
             for named_instance, possibilities in self.possible_matches.items():
-                possible_matches[named_instance.name] = [i.name for i in possibilities]
+                possible_matches[named_instance.name] = {i.name for i in possibilities}
             with open(possible_matches_cache_path, "wb") as f:
                 pickle.dump(possible_matches, f)
 
@@ -397,7 +397,7 @@ class StructuralCompare:
         }
         for named_instance in self.named_netlist.instances_to_map:
             matches = pickle_dump[named_instance.name]
-            tmp = [all_instances[i] for i in matches]
+            tmp = {all_instances[i] for i in matches}
             self.possible_matches[named_instance] = tmp
 
     def potential_mapping_wrapper(self, instance):
@@ -455,7 +455,7 @@ class StructuralCompare:
             return False
 
         assert len(instances_matching) == 1
-        matched_instance = instances_matching[0]
+        matched_instance = list(instances_matching)[0]
 
         logging.info("  Mapped to %s", matched_instance.name)
 
@@ -699,9 +699,8 @@ class StructuralCompare:
                     raise StructuralCompareError("Unexpected BRAM CASCADE Configuration")
                 logging.info("Unexpected BRAM CASCADE Configuration for %s", named_instance.name)
 
-        instances_matching_connections = [
-            i for i in self.possible_matches[named_instance] if i not in self.block_mapping.inverse
-        ]
+        instances_matching_connections = self.possible_matches[named_instance] - set(self.block_mapping.inverse)
+        
 
         for pin in named_instance.pins:
             # For RAMB18E1, "REGCEAREGCE" and "REGCEB" only depend on DOA_REG and DOB_REG
@@ -742,26 +741,26 @@ class StructuralCompare:
 
             idx = pin.index
 
-            tmp = [
+            tmp = {
                 instance
                 for instance in instances_matching_connections
                 if instance.get_pin(pin.name, idx).net == other_net
-            ]
+            }
 
             if not tmp:
                 if other_net.is_gnd:
-                    tmp = [
+                    tmp = {
                         instance
                         for instance in instances_matching_connections
                         if instance.get_pin(pin.name, idx).net is None
                         or instance.get_pin(pin.name, idx).net.is_gnd
-                    ]
+                    }
                 elif other_net.is_vdd:
-                    tmp = [
+                    tmp = {
                         instance
                         for instance in instances_matching_connections
                         if instance.get_pin(pin.name, idx).net.is_vdd
-                    ]
+                    }
             instances_matching_connections = tmp
 
             num_instances = len(instances_matching_connections)
@@ -785,9 +784,7 @@ class StructuralCompare:
         # Now look at connections
         ###############################################################
 
-        instances_matching_connections = [
-            i for i in self.possible_matches[named_instance] if i not in self.block_mapping.inverse
-        ]
+        instances_matching_connections = self.possible_matches[named_instance] - set(self.block_mapping.inverse)
 
         for pin in named_instance.pins:
             # Skip pin that is not yet mapped
@@ -830,36 +827,36 @@ class StructuralCompare:
                 if pin.ignore_net_equivalency:
                     continue
 
-            tmp = [
+            tmp = {
                 instance
                 for instance in instances_matching_connections
                 if instance.get_pin(name, idx).net == other_net
-            ]
+            }
 
             if named_instance.cell_type == "BUFGCTRL" and pin.name[0] == "I" and not tmp:
                 # sometimes f2b routes the clk net to both inputs
                 other_pin = f"I{'1' if name[1] == '0' else '0'}"
-                tmp = [
+                tmp = {
                     inst
                     for inst in instances_matching_connections
                     if inst.get_pin(name, idx).net == inst.get_pin(other_pin, idx).net
-                ]
+                }
                 pin.ignore_net_equivalency = True
 
             if not tmp:
                 if other_net.is_gnd:
-                    tmp = [
+                    tmp = {
                         instance
                         for instance in instances_matching_connections
                         if instance.get_pin(name, idx).net is None
                         or instance.get_pin(name, idx).net.is_gnd
-                    ]
+                    }
                 elif other_net.is_vdd:
-                    tmp = [
+                    tmp = {
                         instance
                         for instance in instances_matching_connections
                         if instance.get_pin(name, idx).net.is_vdd
-                    ]
+                    }
             instances_matching_connections = tmp
 
             num_instances = len(instances_matching_connections)
