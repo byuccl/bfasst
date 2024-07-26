@@ -512,7 +512,7 @@ class StructuralCompare:
             # Sort the instances based on the length of their possible matches list
             sorted_instances = sorted(
                 set(self.named_netlist.instances_to_map),
-                key=lambda instance: len(self.possible_matches[instance])
+                key=lambda instance: len(self.possible_matches[instance]),
             )
             # Create an iterator from the sorted instances
             instance_iter = iter(sorted_instances)
