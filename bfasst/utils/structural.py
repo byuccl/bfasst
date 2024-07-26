@@ -343,6 +343,10 @@ class StructuralCompare:
             ]
             grouped_by_cell_type = defaultdict(list)
             for instance in all_instances:
+                num_const = 0
+                for pin in instance.pins:
+                    if pin.net is not None and (pin.net.is_gnd or pin.net.is_vdd):
+                        num_const += 1
                 properties = set()
                 for prop in self.get_properties_for_type(instance.cell_type):
                     properties.add(
@@ -350,9 +354,9 @@ class StructuralCompare:
                     )
                     # properties[prop] = convert_verilog_literal_to_int(instance.properties[prop])
 
-                grouped_by_cell_type[(instance.cell_type, hash(frozenset(properties)))].append(
-                    instance
-                )
+                grouped_by_cell_type[
+                    (instance.cell_type, hash(frozenset(properties)), num_const)
+                ].append(instance)
 
             for named_instance in self.named_netlist.instances_to_map:
                 ###############################################################
@@ -360,6 +364,10 @@ class StructuralCompare:
                 ###############################################################
 
                 # Compute a hash of this instance's properties
+                num_const = 0
+                for pin in named_instance.pins:
+                    if pin.net is not None and (pin.net.is_gnd or pin.net.is_vdd):
+                        num_const += 1
                 properties = set()
                 for prop in self.get_properties_for_type(named_instance.cell_type):
                     properties.add(
@@ -367,7 +375,9 @@ class StructuralCompare:
                     )
                 my_hash = hash(frozenset(properties))
 
-                instances_matching = grouped_by_cell_type[(named_instance.cell_type, my_hash)]
+                instances_matching = grouped_by_cell_type[
+                    (named_instance.cell_type, my_hash, num_const)
+                ]
 
                 if not instances_matching:
                     logging.info(
