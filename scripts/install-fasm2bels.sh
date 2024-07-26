@@ -57,8 +57,9 @@ else
     make test-py
     cd -
 
-    # Generate the part db to cache
-    "${FASM2BELS_PYTHON_PATH}" "${BFASST_PATH_FASM2BELS}/fasm2bels/database/create_channels.py" --db-root "${BFASST_PATH_FASM2BELS}/third_party/prjxray-db/artix7" --part "xc7a200tsbg484-1" --connection-database-output "${BFASST_PATH_FASM2BELS}/xc7a200tsbg484-1_db"
+    # Generate the part database to cache for future use
+    # If you need the database for another part, run the script below with the family and part as arguments
+    ./scripts/database.sh artix7 xc7a200tsbg484-1
 
     echo "${FASM2BELS_COMMIT}" > "${BFASST_PATH_FASM2BELS}/fasm2bels_commit.txt"
 fi
