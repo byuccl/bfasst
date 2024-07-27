@@ -342,6 +342,7 @@ class StructuralCompare:
                 if not i.cell_type.startswith("SDN_VERILOG")
             ]
             grouped_by_cell_type = defaultdict(list)
+            grouped_by_cell_type_and_const = defaultdict(list)
             for instance in all_instances:
                 num_const = 0
                 for pin in instance.pins:
@@ -354,8 +355,12 @@ class StructuralCompare:
                     )
                     # properties[prop] = convert_verilog_literal_to_int(instance.properties[prop])
 
-                grouped_by_cell_type[
+                grouped_by_cell_type_and_const[
                     (instance.cell_type, hash(frozenset(properties)), num_const)
+                ].append(instance)
+
+                grouped_by_cell_type[
+                    (instance.cell_type, hash(frozenset(properties)))
                 ].append(instance)
 
             for named_instance in self.named_netlist.instances_to_map:
@@ -375,22 +380,24 @@ class StructuralCompare:
                     )
                 my_hash = hash(frozenset(properties))
 
-                instances_matching = grouped_by_cell_type[
+                instances_matching = grouped_by_cell_type_and_const[
                     (named_instance.cell_type, my_hash, num_const)
                 ]
 
                 if not instances_matching:
-                    logging.info(
-                        "No property matches for cell %s of type %s. Properties:",
-                        named_instance.name,
-                        named_instance.cell_type,
-                    )
-                    for prop in self.get_properties_for_type(named_instance.cell_type):
-                        logging.info("  %s: %s", prop, named_instance.properties[prop])
-                    raise StructuralCompareError(
-                        f"Not equivalent. {named_instance.name} \
-                        has no possible match in the netlist."
-                    )
+                    instances_matching = grouped_by_cell_type[(named_instance.cell_type, my_hash)]    
+                    if not instances_matching: 
+                        logging.info(
+                            "No property matches for cell %s of type %s. Properties:",
+                            named_instance.name,
+                            named_instance.cell_type,
+                        )
+                        for prop in self.get_properties_for_type(named_instance.cell_type):
+                            logging.info("  %s: %s", prop, named_instance.properties[prop])
+                        raise StructuralCompareError(
+                            f"Not equivalent. {named_instance.name} \
+                            has no possible match in the netlist."
+                        )
 
                 self.possible_matches[named_instance] = set(instances_matching)
             possible_matches = {}
