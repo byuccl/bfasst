@@ -711,8 +711,11 @@ class StructuralCompare:
         instances_matching_connections = self.possible_matches[named_instance] - set(
             self.block_mapping.inverse
         )
-
-        for pin in named_instance.pins:
+        sorted_pins = sorted(
+            (pin for pin in named_instance.pins if pin.net in self.net_mapping),
+            key=lambda pin: (pin.net.is_gnd or pin.net.is_vdd),
+        )
+        for pin in sorted_pins:
             # For RAMB18E1, "REGCEAREGCE" and "REGCEB" only depend on DOA_REG and DOB_REG
             # This should be revisited where the DO* assertion fails
             if bram_do and pin.name in {
@@ -737,10 +740,6 @@ class StructuralCompare:
                 "ENBWREN",
             }:
                 pin.ignore_net_equivalency = True
-                continue
-
-            if pin.net not in self.net_mapping:
-                # Skip pin that is not yet mapped
                 continue
 
             # Otherwise pin connected to a mapped net, and filter based on instances that are
