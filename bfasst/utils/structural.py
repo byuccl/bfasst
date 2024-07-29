@@ -359,9 +359,9 @@ class StructuralCompare:
                     (instance.cell_type, hash(frozenset(properties)), num_const)
                 ].append(instance)
 
-                grouped_by_cell_type[
-                    (instance.cell_type, hash(frozenset(properties)))
-                ].append(instance)
+                grouped_by_cell_type[(instance.cell_type, hash(frozenset(properties)))].append(
+                    instance
+                )
 
             for named_instance in self.named_netlist.instances_to_map:
                 ###############################################################
@@ -385,8 +385,8 @@ class StructuralCompare:
                 ]
 
                 if not instances_matching:
-                    instances_matching = grouped_by_cell_type[(named_instance.cell_type, my_hash)]    
-                    if not instances_matching: 
+                    instances_matching = grouped_by_cell_type[(named_instance.cell_type, my_hash)]
+                    if not instances_matching:
                         logging.info(
                             "No property matches for cell %s of type %s. Properties:",
                             named_instance.name,
@@ -805,11 +805,11 @@ class StructuralCompare:
             self.block_mapping.inverse
         )
 
-        for pin in named_instance.pins:
-            # Skip pin that is not yet mapped
-            if pin.net not in self.net_mapping:
-                continue
-
+        sorted_pins = sorted(
+            (pin for pin in named_instance.pins if pin.net in self.net_mapping),
+            key=lambda pin: (pin.net.is_gnd or pin.net.is_vdd),
+        )
+        for pin in sorted_pins:
             # Otherwise pin connected to a mapped net, and filter based on instances that are
             # connected to the corresponding mapped net.
             other_net = self.net_mapping[pin.net]
