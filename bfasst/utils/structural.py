@@ -47,6 +47,10 @@ class StructuralCompare:
         )
         assert str(log_path).endswith("_cmp.log")
 
+        self.possible_matches_cache_path = os.path.join(
+            os.path.dirname(self.log_path), "possible_matches.pkl"
+        )
+
         if self.debug:
             build_folder = os.path.dirname(os.path.dirname(self.log_path))
             dcp_path = os.path.join(build_folder, "vivado_impl/impl.dcp")
@@ -326,34 +330,25 @@ class StructuralCompare:
 
         log_with_banner("Initializing possible matches based on cell type and properties")
 
-        possible_matches_cache_path = os.path.join(
-            os.path.dirname(self.log_path), "possible_matches.pkl"
-        )
-        if self.debug and os.path.exists(possible_matches_cache_path):
+        if self.debug and os.path.exists(self.possible_matches_cache_path):
             logging.info("Loading possible matches from cache")
-            with open(possible_matches_cache_path, "rb") as f:
-                pickle_dump = pickle.load(f)
-                self.import_possible_matches(pickle_dump)
+            with open(self.possible_matches_cache_path, "rb") as f:
+                self.import_possible_matches(pickle.load(f))
 
         else:
             all_instances = [
-                i
-                for i in self.reversed_netlist.instances
-                if not i.cell_type.startswith("SDN_VERILOG")
+                i for i in self.reversed_netlist.instances if not i.cell_type.startswith("SD")
             ]
+
             grouped_by_cell_type = defaultdict(list)
             grouped_by_cell_type_and_const = defaultdict(list)
             for instance in all_instances:
-                num_const = 0
-                for pin in instance.pins:
-                    if pin.net is not None and (pin.net.is_gnd or pin.net.is_vdd):
-                        num_const += 1
+                num_const = self.check_num_const(instance.pins)
                 properties = set()
                 for prop in self.get_properties_for_type(instance.cell_type):
                     properties.add(
                         f"{prop}{convert_verilog_literal_to_int(instance.properties[prop])}"
                     )
-                    # properties[prop] = convert_verilog_literal_to_int(instance.properties[prop])
 
                 grouped_by_cell_type_and_const[
                     (instance.cell_type, hash(frozenset(properties)), num_const)
@@ -369,10 +364,7 @@ class StructuralCompare:
                 ###############################################################
 
                 # Compute a hash of this instance's properties
-                num_const = 0
-                for pin in named_instance.pins:
-                    if pin.net is not None and (pin.net.is_gnd or pin.net.is_vdd):
-                        num_const += 1
+                num_const = self.check_num_const(named_instance.pins)
                 properties = set()
                 for prop in self.get_properties_for_type(named_instance.cell_type):
                     properties.add(
@@ -403,27 +395,27 @@ class StructuralCompare:
             possible_matches = {}
             for named_instance, possibilities in self.possible_matches.items():
                 possible_matches[named_instance.name] = {i.name for i in possibilities}
-            with open(possible_matches_cache_path, "wb") as f:
+            with open(self.possible_matches_cache_path, "wb") as f:
                 pickle.dump(possible_matches, f)
 
     def import_possible_matches(self, pickle_dump):
         all_instances = {
-            i.name: i
-            for i in self.reversed_netlist.instances
-            if not i.cell_type.startswith("SDN_VERILOG")
+            i.name: i for i in self.reversed_netlist.instances if not i.cell_type.startswith("SD")
         }
         for named_instance in self.named_netlist.instances_to_map:
             matches = pickle_dump[named_instance.name]
             tmp = {all_instances[i] for i in matches}
             self.possible_matches[named_instance] = tmp
 
+    def check_num_const(self, pins):
+        num_const = 0
+        for pin in pins:
+            if pin.net is not None and (pin.net.is_gnd or pin.net.is_vdd):
+                num_const += 1
+        return num_const
+
     def potential_mapping_wrapper(self, instance):
         """Wrap check_for_potential_mapping some inital checks/postprocessing"""
-
-        # Skip assign statements (named netlist shouldn't have them)
-        # Update: just let the code break if this happens
-        # assert not instance.cell_type.startswith("SDN_VERILOG_ASSIGNMENT")
-
         logging.info("Considering %s (%s)", instance.name, instance.cell_type)
 
         # Get the implemented potential instance to map
