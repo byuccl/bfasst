@@ -34,8 +34,8 @@ class StructuralCompare:
         self.reversed_netlist_path = reversed_netlist_path
         self.named_netlist_path = named_netlist_path
         self.named_netlist = None
-        self.reversed_name_instance = None
-        self.name_instance = None
+        self.reversed_instance_map = None
+        self.named_instance_map = None
         self.reversed_netlist = None
         self.debug = debug
 
@@ -207,8 +207,10 @@ class StructuralCompare:
 
         self.reversed_netlist = netlist_a
         self.named_netlist = netlist_b
-        self.name_instance = {instance.name: instance for instance in self.named_netlist.instances}
-        self.reversed_name_instance = {
+        self.named_instance_map = {
+            instance.name: instance for instance in self.named_netlist.instances
+        }
+        self.reversed_instance_map = {
             instance.name: instance for instance in self.reversed_netlist.instances
         }
 
@@ -370,7 +372,7 @@ class StructuralCompare:
                 ###############################################################
 
                 # Compute a hash of this instance's properties
-                instance = self.name_instance[instance_name]
+                instance = self.named_instance_map[instance_name]
                 num_const = self.count_num_const(instance.pins)
                 properties = set()
                 for prop in self.get_properties_for_type(instance.cell_type):
@@ -407,7 +409,7 @@ class StructuralCompare:
 
     def potential_mapping_wrapper(self, instance_name: str):
         """Wrap check_for_potential_mapping some inital checks/postprocessing"""
-        instance = self.name_instance[instance_name]
+        instance = self.named_instance_map[instance_name]
         logging.info("Considering %s (%s)", instance_name, instance.cell_type)
 
         # Get the implemented potential instance to map
@@ -487,7 +489,8 @@ class StructuralCompare:
                 )
                 num_total_nets = len(self.named_netlist.get_connected_nets())
                 cell_type = {
-                    self.name_instance[i].cell_type for i in self.named_netlist.instances_to_map
+                    self.named_instance_map[i].cell_type
+                    for i in self.named_netlist.instances_to_map
                 }
                 if len(cell_type) == 1 and num_mapped_nets == num_total_nets:
                     reversed_remaining = [
@@ -537,14 +540,14 @@ class StructuralCompare:
         log_with_banner("Verifying equivalence")
         warnings = []
         for instance in self.named_netlist.instances_to_map:
-            mapped_instance = self.reversed_name_instance[self.block_mapping.get(instance)]
+            mapped_instance = self.reversed_instance_map[self.block_mapping.get(instance)]
             if mapped_instance is None:
                 raise StructuralCompareError(
                     f"Not equivalent. Instance {instance.name} is not mapped to anything."
                 )
 
             # Loop through all pins on instance and compare nets
-            for pin_a in self.name_instance[instance].pins:
+            for pin_a in self.named_instance_map[instance].pins:
                 if pin_a.ignore_net_equivalency:
                     continue
                 pin_b = mapped_instance.get_pin(pin_a.name, pin_a.index)
@@ -599,8 +602,8 @@ class StructuralCompare:
     def add_block_mapping(self, instance_name: str, matched_instance_name: str):
         """Add mapping point between two Instances"""
 
-        instance = self.name_instance[instance_name]
-        matched_instance = self.reversed_name_instance[matched_instance_name]
+        instance = self.named_instance_map[instance_name]
+        matched_instance = self.reversed_instance_map[matched_instance_name]
         self.block_mapping[instance_name] = matched_instance_name
         self.named_netlist.instances_to_map.remove(instance_name)
 
@@ -673,7 +676,7 @@ class StructuralCompare:
 
     def check_for_potential_bram_mapping(self, instance_name: str):
         """Special mapping checker for BRAMs"""
-        named_instance = self.name_instance[instance_name]
+        named_instance = self.named_instance_map[instance_name]
         bram_do = False
         bram_a_only = False
         bram_do = named_instance.properties["DOA_REG"] == "0"
@@ -749,7 +752,7 @@ class StructuralCompare:
             tmp = {
                 instance
                 for instance in instances_matching_connections
-                if self.reversed_name_instance[instance].get_pin(pin.name, idx).net == other_net
+                if self.reversed_instance_map[instance].get_pin(pin.name, idx).net == other_net
             }
 
             if not tmp:
@@ -757,13 +760,13 @@ class StructuralCompare:
                     tmp = {
                         instance
                         for instance in instances_matching_connections
-                        if self.reversed_name_instance[instance].get_pin(pin.name, idx).net.is_gnd
+                        if self.reversed_instance_map[instance].get_pin(pin.name, idx).net.is_gnd
                     }
                 elif other_net.is_vdd:
                     tmp = {
                         instance
                         for instance in instances_matching_connections
-                        if self.reversed_name_instance[instance].get_pin(pin.name, idx).net.is_vdd
+                        if self.reversed_instance_map[instance].get_pin(pin.name, idx).net.is_vdd
                     }
             instances_matching_connections = tmp
 
@@ -788,7 +791,7 @@ class StructuralCompare:
         # Now look at connections
         ###############################################################
 
-        instance = self.name_instance[instance_name]
+        instance = self.named_instance_map[instance_name]
 
         instances_matching_connections = self.possible_matches[instance_name] - set(
             self.block_mapping.inverse
@@ -823,7 +826,7 @@ class StructuralCompare:
                 "CARRYIN",
             }:
                 for inst in instances_matching_connections:
-                    instance = self.reversed_name_instance[inst]
+                    instance = self.reversed_instance_map[inst]
                     # [3:]   : gets rid of the "{# of bits}'b" at the beginning of the prop
                     # [::-1] : reverses the string since the pins index the opposite as strings
                     reversed_prop = instance.properties[f"IS_{name}_INVERTED"][3:][::-1]
@@ -839,7 +842,7 @@ class StructuralCompare:
             tmp = {
                 instance
                 for instance in instances_matching_connections
-                if self.reversed_name_instance[instance].get_pin(name, idx).net == other_net
+                if self.reversed_instance_map[instance].get_pin(name, idx).net == other_net
             }
 
             if instance.cell_type == "BUFGCTRL" and pin.name[0] == "I" and not tmp:
@@ -848,7 +851,7 @@ class StructuralCompare:
                 tmp = {
                     instance
                     for instance in instances_matching_connections
-                    if self.reversed_name_instance[instance].get_pin(name, idx).net
+                    if self.reversed_instance_map[instance].get_pin(name, idx).net
                     == instance.get_pin(other_pin, idx).net
                 }
                 pin.ignore_net_equivalency = True
@@ -858,13 +861,13 @@ class StructuralCompare:
                     tmp = {
                         instance
                         for instance in instances_matching_connections
-                        if self.reversed_name_instance[instance].get_pin(name, idx).net.is_gnd
+                        if self.reversed_instance_map[instance].get_pin(name, idx).net.is_gnd
                     }
                 elif other_net.is_vdd:
                     tmp = {
                         instance
                         for instance in instances_matching_connections
-                        if self.reversed_name_instance[instance].get_pin(name, idx).net.is_vdd
+                        if self.reversed_instance_map[instance].get_pin(name, idx).net.is_vdd
                     }
             instances_matching_connections = tmp
 
