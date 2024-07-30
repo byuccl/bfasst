@@ -24,7 +24,7 @@ class SdnNetlistWrapper:
         self.instances = instances
 
         self.instances_to_map = {
-            i
+            i.name
             for i in self.instances
             if i.cell_type not in ("GND", "VCC")
             and not i.cell_type.startswith("SDN_VERILOG_ASSIGNMENT_")
