@@ -34,6 +34,8 @@ class StructuralCompare:
         self.reversed_netlist_path = reversed_netlist_path
         self.named_netlist_path = named_netlist_path
         self.named_netlist = None
+        self.reversed_instance_map = None
+        self.named_instance_map = None
         self.reversed_netlist = None
         self.debug = debug
 
@@ -46,6 +48,10 @@ class StructuralCompare:
             datefmt="%Y%m%d%H%M%S",
         )
         assert str(log_path).endswith("_cmp.log")
+
+        self.possible_matches_cache_path = os.path.join(
+            os.path.dirname(self.log_path), "possible_matches.pkl"
+        )
 
         if self.debug:
             build_folder = os.path.dirname(os.path.dirname(self.log_path))
@@ -181,7 +187,7 @@ class StructuralCompare:
 
     def init_netlists(self):
         """Load both netlists from spydrnet and build wrapper objects"""
-        log_with_banner("Building netlist A %s", self.reversed_netlist_path)
+        log_with_banner(f"Building reversed netlist {self.reversed_netlist_path}")
 
         # Loads the first netlist as intermediate representation (ir1)
         ir_a = sdn.parse(str(self.reversed_netlist_path))
@@ -189,7 +195,7 @@ class StructuralCompare:
         netlist_a = self.get_netlist(library_a)
         logging.info("Netlist A size:  %s", len(netlist_a.instances))
 
-        log_with_banner("Building netlist B %s", self.named_netlist_path)
+        log_with_banner(f"Building named netlist B {self.named_netlist_path}")
 
         # Loads the second netlist as intermediate representation (ir2)
         ir_b = sdn.parse(str(self.named_netlist_path))
@@ -201,6 +207,12 @@ class StructuralCompare:
 
         self.reversed_netlist = netlist_a
         self.named_netlist = netlist_b
+        self.named_instance_map = {
+            instance.name: instance for instance in self.named_netlist.instances
+        }
+        self.reversed_instance_map = {
+            instance.name: instance for instance in self.reversed_netlist.instances
+        }
 
     def compare_netlists(self):
         """Map the golden and reversed netlists through automated block mapping"""
@@ -217,9 +229,9 @@ class StructuralCompare:
         t_end = time.perf_counter()
 
         log_with_banner("Mapping (Instances)")
-        block_map = {k.name: v.name for k, v in self.block_mapping.items()}
+        block_map = dict(self.block_mapping.items())
         for key, val in self.block_mapping.items():
-            logging.info("%s -> %s", key.name, val.name)
+            logging.info("%s -> %s", key, val)
         logging.info("")
         # log_with_banner("Mapping (Nets)")
         net_map = {k.name: v.name for k, v in self.net_mapping.items()}
@@ -228,7 +240,7 @@ class StructuralCompare:
 
         log_with_banner("Finalizing")
         self.named_netlist.instances_to_map = {
-            i for i in self.named_netlist.instances if i.cell_type not in ("GND", "VCC")
+            i.name for i in self.named_netlist.instances if i.cell_type not in ("GND", "VCC")
         }
         logging.info(
             "Number of mapped blocks: %s of %s",
@@ -241,7 +253,7 @@ class StructuralCompare:
             for block in self.named_netlist.instances_to_map
             if block not in self.block_mapping
         ]:
-            logging.info("    %s", block.name)
+            logging.info("    %s", block)
 
         num_mapped_nets = (
             len([net for net in self.net_mapping if net.is_connected])
@@ -324,96 +336,87 @@ class StructuralCompare:
     def init_matching_instances(self):
         """Init possible_matches dict with all instances that match by cell type and properties"""
 
-        log_with_banner("Initializing possible matches based on cell type and properties")
-
-        possible_matches_cache_path = os.path.join(
-            os.path.dirname(self.log_path), "possible_matches.pkl"
-        )
-        if self.debug and os.path.exists(possible_matches_cache_path):
-            logging.info("Loading possible matches from cache")
-            with open(possible_matches_cache_path, "rb") as f:
-                pickle_dump = pickle.load(f)
-                self.import_possible_matches(pickle_dump)
+        if self.debug and os.path.exists(self.possible_matches_cache_path):
+            log_with_banner("Loading possible matches from cache")
+            with open(self.possible_matches_cache_path, "rb") as f:
+                self.possible_matches = pickle.load(f)
 
         else:
+            log_with_banner("Initializing possible matches based on cell type and properties")
+
             all_instances = [
-                i
-                for i in self.reversed_netlist.instances
-                if not i.cell_type.startswith("SDN_VERILOG")
+                i for i in self.reversed_netlist.instances if not i.cell_type.startswith("SD")
             ]
+
             grouped_by_cell_type = defaultdict(list)
+            grouped_by_cell_type_and_const = defaultdict(list)
             for instance in all_instances:
+                num_const = self.count_num_const(instance.pins)
                 properties = set()
                 for prop in self.get_properties_for_type(instance.cell_type):
                     properties.add(
                         f"{prop}{convert_verilog_literal_to_int(instance.properties[prop])}"
                     )
-                    # properties[prop] = convert_verilog_literal_to_int(instance.properties[prop])
+
+                grouped_by_cell_type_and_const[
+                    (instance.cell_type, hash(frozenset(properties)), num_const)
+                ].append(instance.name)
 
                 grouped_by_cell_type[(instance.cell_type, hash(frozenset(properties)))].append(
-                    instance
+                    instance.name
                 )
 
-            for named_instance in self.named_netlist.instances_to_map:
+            for instance_name in self.named_netlist.instances_to_map:
                 ###############################################################
                 # First find all instances of the same type and same properties
                 ###############################################################
 
                 # Compute a hash of this instance's properties
+                instance = self.named_instance_map[instance_name]
+                num_const = self.count_num_const(instance.pins)
                 properties = set()
-                for prop in self.get_properties_for_type(named_instance.cell_type):
+                for prop in self.get_properties_for_type(instance.cell_type):
                     properties.add(
-                        f"{prop}{convert_verilog_literal_to_int(named_instance.properties[prop])}"
+                        f"{prop}{convert_verilog_literal_to_int(instance.properties[prop])}"
                     )
                 my_hash = hash(frozenset(properties))
 
-                instances_matching = grouped_by_cell_type[(named_instance.cell_type, my_hash)]
+                instances_matching = grouped_by_cell_type_and_const[
+                    (instance.cell_type, my_hash, num_const)
+                ]
 
                 if not instances_matching:
-                    logging.info(
-                        "No property matches for cell %s of type %s. Properties:",
-                        named_instance.name,
-                        named_instance.cell_type,
-                    )
-                    for prop in self.get_properties_for_type(named_instance.cell_type):
-                        logging.info("  %s: %s", prop, named_instance.properties[prop])
-                    raise StructuralCompareError(
-                        f"Not equivalent. {named_instance.name} \
-                        has no possible match in the netlist."
-                    )
+                    instances_matching = grouped_by_cell_type[(instance.cell_type, my_hash)]
+                    if not instances_matching:
+                        logging.info(
+                            "No property matches for cell %s of type %s. Properties:",
+                            instance_name,
+                            instance.cell_type,
+                        )
+                        for prop in self.get_properties_for_type(instance.cell_type):
+                            logging.info("  %s: %s", prop, instance.properties[prop])
+                        raise StructuralCompareError(
+                            f"Not equivalent. {instance_name} \
+                            has no possible match in the netlist."
+                        )
 
-                self.possible_matches[named_instance] = instances_matching.copy()
-            possible_matches = {}
-            for named_instance, possibilities in self.possible_matches.items():
-                possible_matches[named_instance.name] = [i.name for i in possibilities]
-            with open(possible_matches_cache_path, "wb") as f:
-                pickle.dump(possible_matches, f)
+                self.possible_matches[instance_name] = set(instances_matching)
+            with open(self.possible_matches_cache_path, "wb") as f:
+                pickle.dump(self.possible_matches, f)
 
-    def import_possible_matches(self, pickle_dump):
-        all_instances = {
-            i.name: i
-            for i in self.reversed_netlist.instances
-            if not i.cell_type.startswith("SDN_VERILOG")
-        }
-        for named_instance in self.named_netlist.instances_to_map:
-            matches = pickle_dump[named_instance.name]
-            tmp = [all_instances[i] for i in matches]
-            self.possible_matches[named_instance] = tmp
+    def count_num_const(self, pins):
+        return sum(1 for pin in pins if pin.net and (pin.net.is_gnd or pin.net.is_vdd))
 
-    def potential_mapping_wrapper(self, instance):
+    def potential_mapping_wrapper(self, instance_name: str):
         """Wrap check_for_potential_mapping some inital checks/postprocessing"""
-
-        # Skip assign statements (named netlist shouldn't have them)
-        # Update: just let the code break if this happens
-        # assert not instance.cell_type.startswith("SDN_VERILOG_ASSIGNMENT")
-
-        logging.info("Considering %s (%s)", instance.name, instance.cell_type)
+        instance = self.named_instance_map[instance_name]
+        logging.info("Considering %s (%s)", instance_name, instance.cell_type)
 
         # Get the implemented potential instance to map
         if not instance.cell_type.startswith("RAMB"):
-            instances_matching = self.check_for_potential_mapping(instance)
+            instances_matching = self.check_for_potential_mapping(instance_name)
         else:
-            instances_matching = self.check_for_potential_bram_mapping(instance)
+            instances_matching = self.check_for_potential_bram_mapping(instance_name)
 
         if not instances_matching:
             if not self.debug:
@@ -451,15 +454,15 @@ class StructuralCompare:
             logging.info("  %s matches, skipping for now:", len(instances_matching))
             if len(instances_matching) < 10:
                 for matched_instance in instances_matching:
-                    logging.info("    %s", matched_instance.name)
+                    logging.info("    %s", matched_instance)
             return False
 
         assert len(instances_matching) == 1
-        matched_instance = instances_matching[0]
+        matched_instance = list(instances_matching)[0]
 
-        logging.info("  Mapped to %s", matched_instance.name)
+        logging.info("  Mapped to %s", matched_instance)
 
-        self.add_block_mapping(instance, matched_instance)
+        self.add_block_mapping(instance_name, matched_instance)
         return True
 
     def perform_mapping(self):
@@ -485,7 +488,10 @@ class StructuralCompare:
                     + len(self.gnd_mappings)
                 )
                 num_total_nets = len(self.named_netlist.get_connected_nets())
-                cell_type = {i.cell_type for i in self.named_netlist.instances_to_map}
+                cell_type = {
+                    self.named_instance_map[i].cell_type
+                    for i in self.named_netlist.instances_to_map
+                }
                 if len(cell_type) == 1 and num_mapped_nets == num_total_nets:
                     reversed_remaining = [
                         self.possible_matches[i] for i in self.named_netlist.instances_to_map
@@ -509,7 +515,13 @@ class StructuralCompare:
             logging.info("===== Mapping Iteration %s =====", iteration)
 
             # Loop through reversed netlist blocks
-            instance_iter = iter(set(self.named_netlist.instances_to_map))
+            # Sort the instances based on the length of their possible matches list
+            sorted_instances = sorted(
+                set(self.named_netlist.instances_to_map),
+                key=lambda instance: len(self.possible_matches[instance]),
+            )
+            # Create an iterator from the sorted instances
+            instance_iter = iter(sorted_instances)
             try:
                 while not overall_progress:
                     overall_progress = self.potential_mapping_wrapper(next(instance_iter))
@@ -528,14 +540,14 @@ class StructuralCompare:
         log_with_banner("Verifying equivalence")
         warnings = []
         for instance in self.named_netlist.instances_to_map:
-            mapped_instance = self.block_mapping.get(instance)
+            mapped_instance = self.reversed_instance_map[self.block_mapping.get(instance)]
             if mapped_instance is None:
                 raise StructuralCompareError(
                     f"Not equivalent. Instance {instance.name} is not mapped to anything."
                 )
 
             # Loop through all pins on instance and compare nets
-            for pin_a in instance.pins:
+            for pin_a in self.named_instance_map[instance].pins:
                 if pin_a.ignore_net_equivalency:
                     continue
                 pin_b = mapped_instance.get_pin(pin_a.name, pin_a.index)
@@ -585,14 +597,15 @@ class StructuralCompare:
         if not warnings:
             logging.info("Equivalence verified")
         else:
-            logging.info("Equivalence questionable")
             raise StructuralCompareError("Warnings during equivalence verification")
 
-    def add_block_mapping(self, instance, matched_instance):
+    def add_block_mapping(self, instance_name: str, matched_instance_name: str):
         """Add mapping point between two Instances"""
 
-        self.block_mapping[instance] = matched_instance
-        self.named_netlist.instances_to_map.remove(instance)
+        instance = self.named_instance_map[instance_name]
+        matched_instance = self.reversed_instance_map[matched_instance_name]
+        self.block_mapping[instance_name] = matched_instance_name
+        self.named_netlist.instances_to_map.remove(instance_name)
 
         for pin in instance.pins:
             # Some pins should not be used to establish net mapping
@@ -661,8 +674,34 @@ class StructuralCompare:
 
         self.net_mapping[net1] = net2
 
-    def check_for_potential_bram_mapping(self, named_instance):
+    def eliminate_redundant_matches(self, instance_name: str):
+        return self.possible_matches[instance_name] - set(self.block_mapping.inverse)
+
+    def make_tmp(self, instances_matching_connections, other_net, name, idx):
+        """Helper function for creating matches based off of net equivalence"""
+        tmp = {
+            instance
+            for instance in instances_matching_connections
+            if self.reversed_instance_map[instance].get_pin(name, idx).net == other_net
+        }
+        if not tmp:
+            if other_net.is_gnd:
+                tmp = {
+                    instance
+                    for instance in instances_matching_connections
+                    if self.reversed_instance_map[instance].get_pin(name, idx).net.is_gnd
+                }
+            elif other_net.is_vdd:
+                tmp = {
+                    instance
+                    for instance in instances_matching_connections
+                    if self.reversed_instance_map[instance].get_pin(name, idx).net.is_vdd
+                }
+        return tmp
+
+    def check_for_potential_bram_mapping(self, instance_name: str):
         """Special mapping checker for BRAMs"""
+        named_instance = self.named_instance_map[instance_name]
         bram_do = False
         bram_a_only = False
         bram_do = named_instance.properties["DOA_REG"] == "0"
@@ -693,11 +732,13 @@ class StructuralCompare:
                     raise StructuralCompareError("Unexpected BRAM CASCADE Configuration")
                 logging.info("Unexpected BRAM CASCADE Configuration for %s", named_instance.name)
 
-        instances_matching_connections = [
-            i for i in self.possible_matches[named_instance] if i not in self.block_mapping.inverse
-        ]
+        instances_matching_connections = self.eliminate_redundant_matches(instance_name)
 
-        for pin in named_instance.pins:
+        sorted_pins = sorted(
+            (pin for pin in named_instance.pins if pin.net in self.net_mapping),
+            key=lambda pin: (pin.net.is_gnd or pin.net.is_vdd),
+        )
+        for pin in sorted_pins:
             # For RAMB18E1, "REGCEAREGCE" and "REGCEB" only depend on DOA_REG and DOB_REG
             # This should be revisited where the DO* assertion fails
             if bram_do and pin.name in {
@@ -724,43 +765,19 @@ class StructuralCompare:
                 pin.ignore_net_equivalency = True
                 continue
 
-            if pin.net not in self.net_mapping:
-                # Skip pin that is not yet mapped
-                continue
-
             # Otherwise pin connected to a mapped net, and filter based on instances that are
             # connected to the corresponding mapped net.
             other_net = self.net_mapping[pin.net]
 
             logging.info("  Filtering on pin %s, %s", pin.name_with_index, other_net.name)
 
-            idx = pin.index
+            tmp = self.make_tmp(instances_matching_connections, other_net, pin.name, pin.index)
 
-            tmp = [
-                instance
-                for instance in instances_matching_connections
-                if instance.get_pin(pin.name, idx).net == other_net
-            ]
-
-            if not tmp:
-                if other_net.is_gnd:
-                    tmp = [
-                        instance
-                        for instance in instances_matching_connections
-                        if instance.get_pin(pin.name, idx).net is None
-                        or instance.get_pin(pin.name, idx).net.is_gnd
-                    ]
-                elif other_net.is_vdd:
-                    tmp = [
-                        instance
-                        for instance in instances_matching_connections
-                        if instance.get_pin(pin.name, idx).net.is_vdd
-                    ]
             instances_matching_connections = tmp
 
             num_instances = len(instances_matching_connections)
             info = (
-                ": " + ",".join(i.name for i in instances_matching_connections)
+                ": " + ",".join(i for i in instances_matching_connections)
                 if num_instances <= 10
                 else ""
             )
@@ -772,46 +789,47 @@ class StructuralCompare:
         self.possible_matches[named_instance] = instances_matching_connections
         return instances_matching_connections
 
-    def check_for_potential_mapping(self, named_instance):
+    def check_for_potential_mapping(self, instance_name: str):
         """Returns cells that could map to the named_instance"""
 
         ###############################################################
         # Now look at connections
         ###############################################################
 
-        instances_matching_connections = [
-            i for i in self.possible_matches[named_instance] if i not in self.block_mapping.inverse
-        ]
+        instance = self.named_instance_map[instance_name]
 
-        for pin in named_instance.pins:
-            # Skip pin that is not yet mapped
-            if pin.net not in self.net_mapping:
-                continue
+        instances_matching_connections = self.eliminate_redundant_matches(instance_name)
 
+        sorted_pins = sorted(
+            (pin for pin in instance.pins if pin.net in self.net_mapping),
+            key=lambda pin: (pin.net.is_gnd or pin.net.is_vdd),
+        )
+        for pin in sorted_pins:
             # Otherwise pin connected to a mapped net, and filter based on instances that are
             # connected to the corresponding mapped net.
             other_net = self.net_mapping[pin.net]
 
             logging.info("  Filtering on pin %s, %s", pin.name_with_index, other_net.name)
 
+            name = pin.name
+
             # Extra step for LUTRAMS
-            if named_instance.cell_type != "RAM32M" or not pin.name.startswith("D"):
+            if instance.cell_type != "RAM32M" or not name.startswith("D"):
                 # for some reason RW sets DI* to the wrong bit, and SDN reads
                 # DO* from the wrong bit for f2b netlist
                 idx = pin.index
             else:
                 idx = 0 if pin.index == 1 else 1
 
-            name = pin.name
-
-            if named_instance.cell_type == "DSP48E1" and name in {
+            if instance.cell_type == "DSP48E1" and name in {
                 "ALUMODE",
                 "OPMODE",
                 "INMODE",
                 "CLK",
                 "CARRYIN",
             }:
-                for instance in instances_matching_connections:
+                for inst in instances_matching_connections:
+                    instance = self.reversed_instance_map[inst]
                     # [3:]   : gets rid of the "{# of bits}'b" at the beginning of the prop
                     # [::-1] : reverses the string since the pins index the opposite as strings
                     reversed_prop = instance.properties[f"IS_{name}_INVERTED"][3:][::-1]
@@ -824,41 +842,24 @@ class StructuralCompare:
                 if pin.ignore_net_equivalency:
                     continue
 
-            tmp = [
-                instance
-                for instance in instances_matching_connections
-                if instance.get_pin(name, idx).net == other_net
-            ]
+            tmp = self.make_tmp(instances_matching_connections, other_net, name, idx)
 
-            if named_instance.cell_type == "BUFGCTRL" and pin.name[0] == "I" and not tmp:
+            if instance.cell_type == "BUFGCTRL" and name[0] == "I" and not tmp:
                 # sometimes f2b routes the clk net to both inputs
                 other_pin = f"I{'1' if name[1] == '0' else '0'}"
-                tmp = [
-                    inst
-                    for inst in instances_matching_connections
-                    if inst.get_pin(name, idx).net == inst.get_pin(other_pin, idx).net
-                ]
+                tmp = {
+                    instance
+                    for instance in instances_matching_connections
+                    if self.reversed_instance_map[instance].get_pin(name, idx).net
+                    == instance.get_pin(other_pin, idx).net
+                }
                 pin.ignore_net_equivalency = True
 
-            if not tmp:
-                if other_net.is_gnd:
-                    tmp = [
-                        instance
-                        for instance in instances_matching_connections
-                        if instance.get_pin(name, idx).net is None
-                        or instance.get_pin(name, idx).net.is_gnd
-                    ]
-                elif other_net.is_vdd:
-                    tmp = [
-                        instance
-                        for instance in instances_matching_connections
-                        if instance.get_pin(name, idx).net.is_vdd
-                    ]
             instances_matching_connections = tmp
 
             num_instances = len(instances_matching_connections)
             info = (
-                ": " + ",".join(i.name for i in instances_matching_connections)
+                ": " + ",".join(i for i in instances_matching_connections)
                 if num_instances <= 10
                 else ""
             )
@@ -867,7 +868,7 @@ class StructuralCompare:
         logging.info(
             "  %s instance(s) after filtering on connections", len(instances_matching_connections)
         )
-        self.possible_matches[named_instance] = instances_matching_connections
+        self.possible_matches[instance_name] = instances_matching_connections
         return instances_matching_connections
 
     def get_properties_for_type(self, cell_type):
