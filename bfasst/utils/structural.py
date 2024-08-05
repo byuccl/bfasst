@@ -674,6 +674,31 @@ class StructuralCompare:
 
         self.net_mapping[net1] = net2
 
+    def eliminate_redundant_matches(self, instance_name: str):
+        return self.possible_matches[instance_name] - set(self.block_mapping.inverse)
+
+    def make_tmp(self, instances_matching_connections, other_net, name, idx):
+        """Helper function for creating matches based off of net equivalence"""
+        tmp = {
+            instance
+            for instance in instances_matching_connections
+            if self.reversed_instance_map[instance].get_pin(name, idx).net == other_net
+        }
+        if not tmp:
+            if other_net.is_gnd:
+                tmp = {
+                    instance
+                    for instance in instances_matching_connections
+                    if self.reversed_instance_map[instance].get_pin(name, idx).net.is_gnd
+                }
+            elif other_net.is_vdd:
+                tmp = {
+                    instance
+                    for instance in instances_matching_connections
+                    if self.reversed_instance_map[instance].get_pin(name, idx).net.is_vdd
+                }
+        return tmp
+
     def check_for_potential_bram_mapping(self, instance_name: str):
         """Special mapping checker for BRAMs"""
         named_instance = self.named_instance_map[instance_name]
@@ -707,9 +732,8 @@ class StructuralCompare:
                     raise StructuralCompareError("Unexpected BRAM CASCADE Configuration")
                 logging.info("Unexpected BRAM CASCADE Configuration for %s", named_instance.name)
 
-        instances_matching_connections = self.possible_matches[instance_name] - set(
-            self.block_mapping.inverse
-        )
+        instances_matching_connections = self.eliminate_redundant_matches(instance_name)
+
         sorted_pins = sorted(
             (pin for pin in named_instance.pins if pin.net in self.net_mapping),
             key=lambda pin: (pin.net.is_gnd or pin.net.is_vdd),
@@ -747,27 +771,8 @@ class StructuralCompare:
 
             logging.info("  Filtering on pin %s, %s", pin.name_with_index, other_net.name)
 
-            idx = pin.index
+            tmp = self.make_tmp(instances_matching_connections, other_net, pin.name, pin.index)
 
-            tmp = {
-                instance
-                for instance in instances_matching_connections
-                if self.reversed_instance_map[instance].get_pin(pin.name, idx).net == other_net
-            }
-
-            if not tmp:
-                if other_net.is_gnd:
-                    tmp = {
-                        instance
-                        for instance in instances_matching_connections
-                        if self.reversed_instance_map[instance].get_pin(pin.name, idx).net.is_gnd
-                    }
-                elif other_net.is_vdd:
-                    tmp = {
-                        instance
-                        for instance in instances_matching_connections
-                        if self.reversed_instance_map[instance].get_pin(pin.name, idx).net.is_vdd
-                    }
             instances_matching_connections = tmp
 
             num_instances = len(instances_matching_connections)
@@ -793,9 +798,7 @@ class StructuralCompare:
 
         instance = self.named_instance_map[instance_name]
 
-        instances_matching_connections = self.possible_matches[instance_name] - set(
-            self.block_mapping.inverse
-        )
+        instances_matching_connections = self.eliminate_redundant_matches(instance_name)
 
         sorted_pins = sorted(
             (pin for pin in instance.pins if pin.net in self.net_mapping),
@@ -808,15 +811,15 @@ class StructuralCompare:
 
             logging.info("  Filtering on pin %s, %s", pin.name_with_index, other_net.name)
 
+            name = pin.name
+
             # Extra step for LUTRAMS
-            if instance.cell_type != "RAM32M" or not pin.name.startswith("D"):
+            if instance.cell_type != "RAM32M" or not name.startswith("D"):
                 # for some reason RW sets DI* to the wrong bit, and SDN reads
                 # DO* from the wrong bit for f2b netlist
                 idx = pin.index
             else:
                 idx = 0 if pin.index == 1 else 1
-
-            name = pin.name
 
             if instance.cell_type == "DSP48E1" and name in {
                 "ALUMODE",
@@ -839,13 +842,9 @@ class StructuralCompare:
                 if pin.ignore_net_equivalency:
                     continue
 
-            tmp = {
-                instance
-                for instance in instances_matching_connections
-                if self.reversed_instance_map[instance].get_pin(name, idx).net == other_net
-            }
+            tmp = self.make_tmp(instances_matching_connections, other_net, name, idx)
 
-            if instance.cell_type == "BUFGCTRL" and pin.name[0] == "I" and not tmp:
+            if instance.cell_type == "BUFGCTRL" and name[0] == "I" and not tmp:
                 # sometimes f2b routes the clk net to both inputs
                 other_pin = f"I{'1' if name[1] == '0' else '0'}"
                 tmp = {
@@ -856,19 +855,6 @@ class StructuralCompare:
                 }
                 pin.ignore_net_equivalency = True
 
-            if not tmp:
-                if other_net.is_gnd:
-                    tmp = {
-                        instance
-                        for instance in instances_matching_connections
-                        if self.reversed_instance_map[instance].get_pin(name, idx).net.is_gnd
-                    }
-                elif other_net.is_vdd:
-                    tmp = {
-                        instance
-                        for instance in instances_matching_connections
-                        if self.reversed_instance_map[instance].get_pin(name, idx).net.is_vdd
-                    }
             instances_matching_connections = tmp
 
             num_instances = len(instances_matching_connections)
