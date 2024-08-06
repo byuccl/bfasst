@@ -821,7 +821,24 @@ class StructuralCompare:
             else:
                 idx = 0 if pin.index == 1 else 1
 
-            if instance.cell_type == "DSP48E1" and name in {
+
+                if pin.ignore_net_equivalency:
+                    continue
+
+            tmp = self.make_tmp(instances_matching_connections, other_net, name, idx)
+
+            if not tmp and instance.cell_type == "BUFGCTRL" and name[0] == "I":
+                # sometimes f2b routes the clk net to both inputs
+                other_pin = f"I{'1' if name[1] == '0' else '0'}"
+                tmp = {
+                    instance
+                    for instance in instances_matching_connections
+                    if self.reversed_instance_map[instance].get_pin(name, idx).net
+                    == instance.get_pin(other_pin, idx).net
+                }
+                pin.ignore_net_equivalency = True
+            
+            if not tmp and instance.cell_type == "DSP48E1" and name in {
                 "ALUMODE",
                 "OPMODE",
                 "INMODE",
@@ -838,22 +855,10 @@ class StructuralCompare:
                         or (other_net.is_vdd and instance.get_pin(name, idx).net.is_gnd)
                     ):
                         pin.ignore_net_equivalency = True
-
-                if pin.ignore_net_equivalency:
+                        break
+                
+                if pin.ignore_net_equivalency == True:
                     continue
-
-            tmp = self.make_tmp(instances_matching_connections, other_net, name, idx)
-
-            if instance.cell_type == "BUFGCTRL" and name[0] == "I" and not tmp:
-                # sometimes f2b routes the clk net to both inputs
-                other_pin = f"I{'1' if name[1] == '0' else '0'}"
-                tmp = {
-                    instance
-                    for instance in instances_matching_connections
-                    if self.reversed_instance_map[instance].get_pin(name, idx).net
-                    == instance.get_pin(other_pin, idx).net
-                }
-                pin.ignore_net_equivalency = True
 
             instances_matching_connections = tmp
 
