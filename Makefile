@@ -1,4 +1,4 @@
-VIVADO_PATH := "/tools/Xilinx/Vivado/2022.2/bin/vivado"
+VIVADO_PATH := "/tools/Xilinx/Vivado/2024.1/bin/vivado"
 IN_ENV = if [ -e .venv/bin/activate ]; then . .venv/bin/activate; fi;
 CAPNPJ := $(shell which capnpc-java)
 PYTHON311 := $(shell which python3.11)
@@ -57,16 +57,26 @@ packages:
 		ninja-build \
 		openjdk-18-jdk \
 		pkg-config \
-		python3-dev \
-		python3-pip \
-		python3-venv \
-		python3-venv \
 		swig \
 		tcl-dev \
 		uuid-dev \
 		virtualenv \
 		xdot \
-		zlib1g-dev \
+		zlib1g-dev 
+ifneq "$(PYTHON312)" ""
+	apt-get install -y \
+		python3.12-dev \
+		python3.12-venv
+else ifneq "$(PYTHON311)" ""
+	apt-get install -y \
+		python3.11-dev \
+		python3.11-venv
+else
+	apt-get install -y \
+		python3-dev \
+		python3-pip \
+		python3-venv
+endif
 	
 python_packages:
 	$(IN_ENV) python -m pip install -r requirements.txt
