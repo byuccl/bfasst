@@ -822,7 +822,6 @@ class StructuralCompare:
             else:
                 idx = 0 if pin.index == 1 else 1
 
-
                 if pin.ignore_net_equivalency:
                     continue
 
@@ -838,14 +837,19 @@ class StructuralCompare:
                     == instance.get_pin(other_pin, idx).net
                 }
                 pin.ignore_net_equivalency = True
-            
-            if not tmp and instance.cell_type == "DSP48E1" and name in {
-                "ALUMODE",
-                "OPMODE",
-                "INMODE",
-                "CLK",
-                "CARRYIN",
-            }:
+
+            if (
+                not tmp
+                and instance.cell_type == "DSP48E1"
+                and name
+                in {
+                    "ALUMODE",
+                    "OPMODE",
+                    "INMODE",
+                    "CLK",
+                    "CARRYIN",
+                }
+            ):
                 for inst in instances_matching_connections:
                     instance = self.reversed_instance_map[inst]
                     # [3:]   : gets rid of the "{# of bits}'b" at the beginning of the prop
@@ -857,8 +861,8 @@ class StructuralCompare:
                     ):
                         pin.ignore_net_equivalency = True
                         break
-                
-                if pin.ignore_net_equivalency == True:
+
+                if pin.ignore_net_equivalency:
                     continue
 
             instances_matching_connections = tmp
