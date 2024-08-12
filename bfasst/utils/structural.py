@@ -448,6 +448,7 @@ class StructuralCompare:
                 site,
                 cell_type,
             )
+            self.named_netlist.instances_to_map.remove(instance_name)
             return False
 
         if len(instances_matching) > 1:
