@@ -85,7 +85,7 @@ class StructuralCompare:
 
         jpype_jvm.start()
 
-    def __set_cell_props(self):
+    def __set_cell_props(self) -> None:
         init_only = (
             "LUT6_2",
             "FDSE",
@@ -157,11 +157,11 @@ class StructuralCompare:
 
         self._cell_props = _cell_props
 
-    def reset_mappings(self):
+    def reset_mappings(self) -> None:
         self.block_mapping = bidict()
         self.net_mapping = bidict()
 
-    def load_mappings(self):
+    def load_mappings(self) -> None:
         """Init mapping data structures from pkl files"""
         with open(self.block_mapping_pkl, "rb") as f:
             block_map = pickle.load(f)
@@ -185,7 +185,7 @@ class StructuralCompare:
             rh_net = [n for n in self.reversed_netlist.nets if n.name == rh][0]
             self.net_mapping[lh_net] = rh_net
 
-    def init_netlists(self):
+    def init_netlists(self) -> None:
         """Load both netlists from spydrnet and build wrapper objects"""
         log_with_banner(f"Building reversed netlist {self.reversed_netlist_path}")
 
@@ -214,7 +214,7 @@ class StructuralCompare:
             instance.name: instance for instance in self.reversed_netlist.instances
         }
 
-    def compare_netlists(self):
+    def compare_netlists(self) -> None:
         """Map the golden and reversed netlists through automated block mapping"""
         self.start_time = time.time()
 
@@ -309,7 +309,7 @@ class StructuralCompare:
         with open(self.comparison_time_log, "w") as f:
             f.write(f"{self.end_time - self.start_time}\n")
 
-    def map_ports(self):
+    def map_ports(self) -> None:
         """Map top-level ports"""
         log_with_banner("Mapping top-level ports")
         for pin in self.named_netlist.pins:
@@ -333,7 +333,7 @@ class StructuralCompare:
                     + "signal a reserved HDL keyword?"
                 ) from err
 
-    def init_matching_instances(self):
+    def init_matching_instances(self) -> None:
         """Init possible_matches dict with all instances that match by cell type and properties"""
 
         if self.debug and os.path.exists(self.possible_matches_cache_path):
@@ -404,10 +404,10 @@ class StructuralCompare:
             with open(self.possible_matches_cache_path, "wb") as f:
                 pickle.dump(self.possible_matches, f)
 
-    def count_num_const(self, pins):
+    def count_num_const(self, pins) -> int:
         return sum(1 for pin in pins if pin.net and (pin.net.is_gnd or pin.net.is_vdd))
 
-    def potential_mapping_wrapper(self, instance_name: str):
+    def potential_mapping_wrapper(self, instance_name: str) -> bool:
         """Wrap check_for_potential_mapping some inital checks/postprocessing"""
         instance = self.named_instance_map[instance_name]
         logging.info("Considering %s (%s)", instance_name, instance.cell_type)
@@ -427,26 +427,21 @@ class StructuralCompare:
             if not cell:
                 # often, the cell name in vivado is a little bit different than in the netlist,
                 # so if it's not an exact match, I used difflib to get the closest match
-                # this has worked for me so far, but it might not always
+                # this has worked for me for the most part, but it might not always
                 cells = list(self.design.getCells())
                 actual_cell_name = str(
                     difflib.get_close_matches(
                         instance.name, [cell.getName() for cell in cells], n=1
                     )[0]
                 )
-                # now that we have the cell's actual name,
-                # we can use that to access the cell object
                 cell = [cell for cell in cells if cell.getName() == actual_cell_name][0]
 
-            site = cell.getSite()
-            tile = cell.getTile()
-            cell_type = cell.getType()
             logging.info(
                 "%s should map to %s_%s_%s, but has no possible match in the netlist",
                 instance.name,
-                tile,
-                site,
-                cell_type,
+                cell.getTile(),
+                cell.getSite(),
+                cell.getType(),
             )
             self.named_netlist.instances_to_map.remove(instance_name)
             return False
@@ -466,7 +461,7 @@ class StructuralCompare:
         self.add_block_mapping(instance_name, matched_instance)
         return True
 
-    def perform_mapping(self):
+    def perform_mapping(self) -> None:
         """Maps netlists based on their cells and nets"""
 
         # First map top-level nets
@@ -532,7 +527,7 @@ class StructuralCompare:
                 pass
             iteration += 1
 
-    def verify_equivalence(self):
+    def verify_equivalence(self) -> None:
         """Verify equivalence by looping through all mapped instances and
         checking that for each pin, the connected nets are also mapped
         to each other."""
@@ -600,7 +595,7 @@ class StructuralCompare:
         else:
             raise StructuralCompareError("Warnings during equivalence verification")
 
-    def add_block_mapping(self, instance_name: str, matched_instance_name: str):
+    def add_block_mapping(self, instance_name: str, matched_instance_name: str) -> None:
         """Add mapping point between two Instances"""
 
         instance = self.named_instance_map[instance_name]
@@ -657,7 +652,7 @@ class StructuralCompare:
             )
             self.add_net_mapping(net_a, net_b)
 
-    def add_net_mapping(self, net1, net2):
+    def add_net_mapping(self, net1, net2) -> None:
         """Add mapping point between two Nets"""
         assert net1 not in self.net_mapping
         if net2 in self.net_mapping.inverse:
@@ -675,10 +670,10 @@ class StructuralCompare:
 
         self.net_mapping[net1] = net2
 
-    def eliminate_redundant_matches(self, instance_name: str):
+    def eliminate_redundant_matches(self, instance_name: str) -> set[str]:
         return self.possible_matches[instance_name] - set(self.block_mapping.inverse)
 
-    def make_tmp(self, instances_matching_connections, other_net, name, idx):
+    def make_tmp(self, instances_matching_connections, other_net, name, idx) -> set[str]:
         """Helper function for creating matches based off of net equivalence"""
         tmp = {
             instance
@@ -700,7 +695,7 @@ class StructuralCompare:
                 }
         return tmp
 
-    def check_for_potential_bram_mapping(self, instance_name: str):
+    def check_for_potential_bram_mapping(self, instance_name: str) -> set[str]:
         """Special mapping checker for BRAMs"""
         named_instance = self.named_instance_map[instance_name]
         bram_do = False
@@ -790,7 +785,7 @@ class StructuralCompare:
         self.possible_matches[named_instance] = instances_matching_connections
         return instances_matching_connections
 
-    def check_for_potential_mapping(self, instance_name: str):
+    def check_for_potential_mapping(self, instance_name: str) -> set[str]:
         """Returns cells that could map to the named_instance"""
 
         ###############################################################
@@ -881,7 +876,7 @@ class StructuralCompare:
         self.possible_matches[instance_name] = instances_matching_connections
         return instances_matching_connections
 
-    def get_properties_for_type(self, cell_type):
+    def get_properties_for_type(self, cell_type) -> tuple[str]:
         """Return the list of properties that must match for a given cell type
         for the cell to be considered equivalent."""
         try:
@@ -889,7 +884,7 @@ class StructuralCompare:
         except KeyError as err:
             raise StructuralCompareError(f"Unhandled properties for type {cell_type}") from err
 
-    def get_netlist(self, library):
+    def get_netlist(self, library) -> SdnNetlistWrapper:
         return SdnNetlistWrapper(library)
 
 
