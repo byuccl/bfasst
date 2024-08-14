@@ -553,22 +553,15 @@ class StructuralCompare:
                 net_a_empty = net_a is None or not net_a.is_connected
                 net_b_empty = net_b is None or not net_b.is_connected
 
-                if net_a_empty and not net_b_empty:
+                if net_a_empty != net_b_empty:
                     warnings.append(
                         (
-                            f"Not equivalent. Pin {pin_b.name_with_index} of "
-                            f"{mapped_instance.name} is connected to net {net_b.name},"
-                            f" but no connection on mapped instance {instance.name}."
-                        )
-                    )
-                    continue
-
-                if net_b_empty and not net_a_empty:
-                    warnings.append(
-                        (
-                            f"Not equivalent. Pin {pin_a.name_with_index} of {instance.name}"
-                            f" is connected to net {net_a.name},"
-                            f" but no connection on mapped instance {mapped_instance.name}."
+                            f"Not equivalent. Pin "
+                            f"{pin_a.name_with_index if not net_a_empty else pin_b.name_with_index}"
+                            f" of {instance.name if not net_a_empty else mapped_instance.name}"
+                            f" is connected to net {net_a.name if not net_a_empty else net_b.name},"
+                            f" but no connection on mapped instance "
+                            f"{mapped_instance.name if net_a_empty else instance.name}."
                         )
                     )
                     continue
@@ -593,6 +586,8 @@ class StructuralCompare:
         if not warnings:
             logging.info("Equivalence verified")
         else:
+            for warning in warnings:
+                logging.info("  %s", warning)
             raise StructuralCompareError("Warnings during equivalence verification")
 
     def add_block_mapping(self, instance_name: str, matched_instance_name: str) -> None:
