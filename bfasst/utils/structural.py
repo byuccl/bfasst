@@ -436,7 +436,7 @@ class StructuralCompare:
                 )
                 cell = [cell for cell in cells if cell.getName() == actual_cell_name][0]
 
-            logging.info(
+            logging.error(
                 "%s should map to %s_%s_%s, but has no possible match in the netlist",
                 instance.name,
                 cell.getTile(),
@@ -454,7 +454,7 @@ class StructuralCompare:
             return False
 
         assert len(instances_matching) == 1
-        matched_instance = list(instances_matching)[0]
+        matched_instance = instances_matching.pop()
 
         logging.info("  Mapped to %s", matched_instance)
 
@@ -587,7 +587,7 @@ class StructuralCompare:
             logging.info("Equivalence verified")
         else:
             for warning in warnings:
-                logging.info("  %s", warning)
+                logging.warning("  %s", warning)
             raise StructuralCompareError("Warnings during equivalence verification")
 
     def add_block_mapping(self, instance_name: str, matched_instance_name: str) -> None:
