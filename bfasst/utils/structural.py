@@ -670,25 +670,11 @@ class StructuralCompare:
 
     def make_tmp(self, instances_matching_connections, other_net, name, idx) -> set[str]:
         """Helper function for creating matches based off of net equivalence"""
-        tmp = {
+        return {
             instance
             for instance in instances_matching_connections
             if self.reversed_instance_map[instance].get_pin(name, idx).net == other_net
         }
-        if not tmp:
-            if other_net.is_gnd:
-                tmp = {
-                    instance
-                    for instance in instances_matching_connections
-                    if self.reversed_instance_map[instance].get_pin(name, idx).net.is_gnd
-                }
-            elif other_net.is_vdd:
-                tmp = {
-                    instance
-                    for instance in instances_matching_connections
-                    if self.reversed_instance_map[instance].get_pin(name, idx).net.is_vdd
-                }
-        return tmp
 
     def check_for_potential_bram_mapping(self, instance_name: str) -> set[str]:
         """Special mapping checker for BRAMs"""

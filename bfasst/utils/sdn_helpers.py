@@ -180,6 +180,17 @@ class SdnNet:
         self.is_gnd = False
         self.is_connected = None
 
+    def __eq__(self, other):
+        return (
+            self.name == other.name
+            or (self.is_gnd and other.is_gnd)
+            or (self.is_vdd and other.is_vdd)
+        )
+
+    def __hash__(self):
+        # Calculate a hash value based on attributes used in __eq__
+        return hash((self.name, self.is_gnd, self.is_vdd))
+
     def add_alias_wire(self, wire):
         assert wire not in self.alias_wires
         self.alias_wires.append(wire)
@@ -355,7 +366,4 @@ class SdnInstanceWrapper:
         return self.instance.data.get("VERILOG.Parameters")
 
     def get_pin(self, name, index=0):
-        try:
-            return self.pins_by_name_and_index[(name, index)]
-        except KeyError:
-            return SdnInstanceWrapper.GND_PIN
+        return self.pins_by_name_and_index.get((name, index), SdnInstanceWrapper.GND_PIN)
