@@ -821,9 +821,9 @@ class StructuralCompare:
                 # sometimes f2b routes the clk net to both inputs
                 other_pin = f"I{'1' if name[1] == '0' else '0'}"
                 tmp = {
-                    instance
-                    for instance in instances_matching_connections
-                    if self.reversed_instance_map[instance].get_pin(name, idx).net
+                    inst
+                    for inst in instances_matching_connections
+                    if self.reversed_instance_map[inst].get_pin(name, idx).net
                     == instance.get_pin(other_pin, idx).net
                 }
                 pin.ignore_net_equivalency = True
