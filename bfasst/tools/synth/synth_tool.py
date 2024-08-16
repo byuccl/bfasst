@@ -30,36 +30,44 @@ class SynthTool(Tool):
 
     def _read_hdl_files(self):
         """Read the hdl files in the design directory"""
-        self.vhdl_libs = self.design_props.vhdl_libs
 
-        if self.design_props.verilog_files is not None:
-            self.verilog = [
-                str(self.design_path / file) for file in self.design_props.verilog_files
-            ]
+        if self.flow.__class__.__name__ in {"RandSocDumped", "RandSoc"}:
+            self.verilog = []
+            self.system_verilog = []
+            self.vhdl = []
+            self.vhdl_libs = {}
 
-        if self.design_props.system_verilog_files is not None:
-            self.system_verilog = [
-                str(self.design_path / file) for file in self.design_props.system_verilog_files
-            ]
+        else:
+            self.vhdl_libs = self.design_props.vhdl_libs
 
-        if self.verilog or self.system_verilog:
-            return
+            if self.design_props.verilog_files is not None:
+                self.verilog = [
+                    str(self.design_path / file) for file in self.design_props.verilog_files
+                ]
 
-        for child in self.design_path.rglob("*"):
-            if child.is_dir():
-                continue
+            if self.design_props.system_verilog_files is not None:
+                self.system_verilog = [
+                    str(self.design_path / file) for file in self.design_props.system_verilog_files
+                ]
 
-            # don't add vhdl libraries as src files
-            is_lib = self.__check_is_lib(child)
-            if is_lib:
-                continue
+            if self.verilog or self.system_verilog:
+                return
 
-            if child.suffix == ".v":
-                self.verilog.append(str(child))
-            elif child.suffix == ".sv":
-                self.system_verilog.append(str(child))
-            elif child.suffix == ".vhd":
-                self.vhdl.append(str(child))
+            for child in self.design_path.rglob("*"):
+                if child.is_dir():
+                    continue
+
+                # don't add vhdl libraries as src files
+                is_lib = self.__check_is_lib(child)
+                if is_lib:
+                    continue
+
+                if child.suffix == ".v":
+                    self.verilog.append(str(child))
+                elif child.suffix == ".sv":
+                    self.system_verilog.append(str(child))
+                elif child.suffix == ".vhd":
+                    self.vhdl.append(str(child))
 
     def __check_is_lib(self, vhdl_file):
         """Check if a vhdl file is a library"""
