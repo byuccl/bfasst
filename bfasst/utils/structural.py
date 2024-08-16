@@ -495,7 +495,7 @@ class StructuralCompare:
                     remaining = set()
                     for i in reversed_remaining:
                         for j in i:
-                            remaining.add(j.name)
+                            remaining.add(j)
                     if len(remaining) == len(reversed_remaining[0]):
                         for named, rev in zip(
                             set(self.named_netlist.instances_to_map), reversed_remaining[0]
