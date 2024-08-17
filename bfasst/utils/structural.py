@@ -668,7 +668,7 @@ class StructuralCompare:
     def eliminate_redundant_matches(self, instance_name: str) -> set[str]:
         return self.possible_matches[instance_name] - set(self.block_mapping.inverse)
 
-    def make_tmp(self, instances_matching_connections, other_net, name, idx) -> set[str]:
+    def make_matches_by_nets(self, instances_matching_connections, other_net, name, idx) -> set[str]:
         """Helper function for creating matches based off of net equivalence"""
         return {
             instance
@@ -748,23 +748,22 @@ class StructuralCompare:
 
             logging.info("  Filtering on pin %s, %s", pin.name_with_index, other_net.name)
 
-            tmp = self.make_tmp(instances_matching_connections, other_net, pin.name, pin.index)
+            temp_matches = self.make_matches_by_nets(instances_matching_connections, other_net, pin.name, pin.index)
 
-            instances_matching_connections = tmp
 
-            num_instances = len(instances_matching_connections)
+            num_instances = len(temp_matches)
             info = (
-                ": " + ",".join(i for i in instances_matching_connections)
+                ": " + ",".join(i for i in temp_matches)
                 if num_instances <= 10
                 else ""
             )
             logging.info("    %s remaining%s", num_instances, info)
 
         logging.info(
-            "  %s instance(s) after filtering on connections", len(instances_matching_connections)
+            "  %s instance(s) after filtering on connections", len(temp_matches)
         )
-        self.possible_matches[named_instance] = instances_matching_connections
-        return instances_matching_connections
+        self.possible_matches[named_instance] = temp_matches
+        return temp_matches
 
     def check_for_potential_mapping(self, instance_name: str) -> set[str]:
         """Returns cells that could map to the named_instance"""
@@ -801,12 +800,12 @@ class StructuralCompare:
                 if pin.ignore_net_equivalency:
                     continue
 
-            tmp = self.make_tmp(instances_matching_connections, other_net, name, idx)
+            temp_matches = self.make_matches_by_nets(instances_matching_connections, other_net, name, idx)
 
-            if not tmp and instance.cell_type == "BUFGCTRL" and name[0] == "I":
+            if not temp_matches and instance.cell_type == "BUFGCTRL" and name[0] == "I":
                 # sometimes f2b routes the clk net to both inputs
                 other_pin = f"I{'1' if name[1] == '0' else '0'}"
-                tmp = {
+                temp_matches = {
                     inst
                     for inst in instances_matching_connections
                     if self.reversed_instance_map[inst].get_pin(name, idx).net
@@ -815,7 +814,7 @@ class StructuralCompare:
                 pin.ignore_net_equivalency = True
 
             if (
-                not tmp
+                not temp_matches
                 and instance.cell_type == "DSP48E1"
                 and name
                 in {
@@ -841,21 +840,20 @@ class StructuralCompare:
                 if pin.ignore_net_equivalency:
                     continue
 
-            instances_matching_connections = tmp
 
-            num_instances = len(instances_matching_connections)
+            num_instances = len(temp_matches)
             info = (
-                ": " + ",".join(i for i in instances_matching_connections)
+                ": " + ",".join(i for i in temp_matches)
                 if num_instances <= 10
                 else ""
             )
             logging.info("    %s remaining%s", num_instances, info)
 
         logging.info(
-            "  %s instance(s) after filtering on connections", len(instances_matching_connections)
+            "  %s instance(s) after filtering on connections", len(temp_matches)
         )
-        self.possible_matches[instance_name] = instances_matching_connections
-        return instances_matching_connections
+        self.possible_matches[instance_name] = temp_matches
+        return temp_matches
 
     def get_properties_for_type(self, cell_type) -> tuple[str]:
         """Return the list of properties that must match for a given cell type
