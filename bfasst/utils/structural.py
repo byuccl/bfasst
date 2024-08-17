@@ -672,11 +672,28 @@ class StructuralCompare:
         self, instances_matching_connections, other_net, name, idx
     ) -> set[str]:
         """Helper function for creating matches based off of net equivalence"""
-        return {
+
+        matches = {
             instance
             for instance in instances_matching_connections
             if self.reversed_instance_map[instance].get_pin(name, idx).net == other_net
         }
+
+        if not matches:
+            if other_net.is_gnd:
+                matches = {
+                    instance
+                    for instance in instances_matching_connections
+                    if self.reversed_instance_map[instance].get_pin(name, idx).net.is_gnd
+                }
+            elif other_net.is_vdd:
+                matches = {
+                    instance
+                    for instance in instances_matching_connections
+                    if self.reversed_instance_map[instance].get_pin(name, idx).net.is_vdd
+                }
+
+        return matches
 
     def check_for_potential_bram_mapping(self, instance_name: str) -> set[str]:
         """Special mapping checker for BRAMs"""
@@ -754,13 +771,20 @@ class StructuralCompare:
                 instances_matching_connections, other_net, pin.name, pin.index
             )
 
-            num_instances = len(temp_matches)
-            info = ": " + ",".join(i for i in temp_matches) if num_instances <= 10 else ""
+            instances_matching_connections = temp_matches
+            num_instances = len(instances_matching_connections)
+            info = (
+                ": " + ",".join(i for i in instances_matching_connections)
+                if num_instances <= 10
+                else ""
+            )
             logging.info("    %s remaining%s", num_instances, info)
 
-        logging.info("  %s instance(s) after filtering on connections", len(temp_matches))
-        self.possible_matches[named_instance] = temp_matches
-        return temp_matches
+        logging.info(
+            "  %s instance(s) after filtering on connections", len(instances_matching_connections)
+        )
+        self.possible_matches[named_instance] = instances_matching_connections
+        return instances_matching_connections
 
     def check_for_potential_mapping(self, instance_name: str) -> set[str]:
         """Returns cells that could map to the named_instance"""
@@ -839,13 +863,20 @@ class StructuralCompare:
                 if pin.ignore_net_equivalency:
                     continue
 
-            num_instances = len(temp_matches)
-            info = ": " + ",".join(i for i in temp_matches) if num_instances <= 10 else ""
+            instances_matching_connections = temp_matches
+            num_instances = len(instances_matching_connections)
+            info = (
+                ": " + ",".join(i for i in instances_matching_connections)
+                if num_instances <= 10
+                else ""
+            )
             logging.info("    %s remaining%s", num_instances, info)
 
-        logging.info("  %s instance(s) after filtering on connections", len(temp_matches))
-        self.possible_matches[instance_name] = temp_matches
-        return temp_matches
+        logging.info(
+            "  %s instance(s) after filtering on connections", len(instances_matching_connections)
+        )
+        self.possible_matches[instance_name] = instances_matching_connections
+        return instances_matching_connections
 
     def get_properties_for_type(self, cell_type) -> tuple[str]:
         """Return the list of properties that must match for a given cell type
