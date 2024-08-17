@@ -421,9 +421,9 @@ class StructuralCompare:
         if not instances_matching:
             if not self.debug:
                 raise StructuralCompareError(
-                    f"Not equivalent. {instance.name} has no possible match in the netlist."
+                    f"Not equivalent. {instance_name} has no possible match in the netlist."
                 )
-            cell = self.design.getCell(instance.name)
+            cell = self.design.getCell(instance_name)
             if not cell:
                 # often, the cell name in vivado is a little bit different than in the netlist,
                 # so if it's not an exact match, I used difflib to get the closest match
@@ -431,14 +431,14 @@ class StructuralCompare:
                 cells = list(self.design.getCells())
                 actual_cell_name = str(
                     difflib.get_close_matches(
-                        instance.name, [cell.getName() for cell in cells], n=1
+                        instance_name, [cell.getName() for cell in cells], n=1
                     )[0]
                 )
                 cell = [cell for cell in cells if cell.getName() == actual_cell_name][0]
 
             logging.error(
                 "%s should map to %s_%s_%s, but has no possible match in the netlist",
-                instance.name,
+                instance_name,
                 cell.getTile(),
                 cell.getSite(),
                 cell.getType(),
@@ -539,7 +539,7 @@ class StructuralCompare:
             mapped_instance = self.reversed_instance_map[self.block_mapping.get(instance)]
             if mapped_instance is None:
                 raise StructuralCompareError(
-                    f"Not equivalent. Instance {instance.name} is not mapped to anything."
+                    f"Not equivalent. Instance {instance} is not mapped to anything."
                 )
 
             # Loop through all pins on instance and compare nets
@@ -558,10 +558,10 @@ class StructuralCompare:
                         (
                             f"Not equivalent. Pin "
                             f"{pin_a.name_with_index if not net_a_empty else pin_b.name_with_index}"
-                            f" of {instance.name if not net_a_empty else mapped_instance.name}"
+                            f" of {instance if not net_a_empty else mapped_instance.name}"
                             f" is connected to net {net_a.name if not net_a_empty else net_b.name},"
                             f" but no connection on mapped instance "
-                            f"{mapped_instance.name if net_a_empty else instance.name}."
+                            f"{mapped_instance.name if net_a_empty else instance}."
                         )
                     )
                     continue
@@ -624,7 +624,7 @@ class StructuralCompare:
             if pin_b is None:
                 continue
             net_b = pin_b.net
-            assert net_b, f"{pin_b.name} of {matched_instance.name} is not connected"
+            assert net_b, f"{pin_b.name} of {matched_instance_name} is not connected"
             if net_b is None and net_a.is_gnd:
                 continue
             assert isinstance(net_b, SdnNet), f"{net_b} is not a net"
@@ -726,7 +726,7 @@ class StructuralCompare:
             if not expected_properties:
                 if not self.debug:
                     raise StructuralCompareError("Unexpected BRAM CASCADE Configuration")
-                logging.info("Unexpected BRAM CASCADE Configuration for %s", named_instance.name)
+                logging.info("Unexpected BRAM CASCADE Configuration for %s", instance_name)
 
         instances_matching_connections = self.eliminate_redundant_matches(instance_name)
 
