@@ -668,7 +668,9 @@ class StructuralCompare:
     def eliminate_redundant_matches(self, instance_name: str) -> set[str]:
         return self.possible_matches[instance_name] - set(self.block_mapping.inverse)
 
-    def make_matches_by_nets(self, instances_matching_connections, other_net, name, idx) -> set[str]:
+    def make_matches_by_nets(
+        self, instances_matching_connections, other_net, name, idx
+    ) -> set[str]:
         """Helper function for creating matches based off of net equivalence"""
         return {
             instance
@@ -748,20 +750,15 @@ class StructuralCompare:
 
             logging.info("  Filtering on pin %s, %s", pin.name_with_index, other_net.name)
 
-            temp_matches = self.make_matches_by_nets(instances_matching_connections, other_net, pin.name, pin.index)
-
+            temp_matches = self.make_matches_by_nets(
+                instances_matching_connections, other_net, pin.name, pin.index
+            )
 
             num_instances = len(temp_matches)
-            info = (
-                ": " + ",".join(i for i in temp_matches)
-                if num_instances <= 10
-                else ""
-            )
+            info = ": " + ",".join(i for i in temp_matches) if num_instances <= 10 else ""
             logging.info("    %s remaining%s", num_instances, info)
 
-        logging.info(
-            "  %s instance(s) after filtering on connections", len(temp_matches)
-        )
+        logging.info("  %s instance(s) after filtering on connections", len(temp_matches))
         self.possible_matches[named_instance] = temp_matches
         return temp_matches
 
@@ -800,7 +797,9 @@ class StructuralCompare:
                 if pin.ignore_net_equivalency:
                     continue
 
-            temp_matches = self.make_matches_by_nets(instances_matching_connections, other_net, name, idx)
+            temp_matches = self.make_matches_by_nets(
+                instances_matching_connections, other_net, name, idx
+            )
 
             if not temp_matches and instance.cell_type == "BUFGCTRL" and name[0] == "I":
                 # sometimes f2b routes the clk net to both inputs
@@ -840,18 +839,11 @@ class StructuralCompare:
                 if pin.ignore_net_equivalency:
                     continue
 
-
             num_instances = len(temp_matches)
-            info = (
-                ": " + ",".join(i for i in temp_matches)
-                if num_instances <= 10
-                else ""
-            )
+            info = ": " + ",".join(i for i in temp_matches) if num_instances <= 10 else ""
             logging.info("    %s remaining%s", num_instances, info)
 
-        logging.info(
-            "  %s instance(s) after filtering on connections", len(temp_matches)
-        )
+        logging.info("  %s instance(s) after filtering on connections", len(temp_matches))
         self.possible_matches[instance_name] = temp_matches
         return temp_matches
 
