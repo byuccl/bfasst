@@ -15,10 +15,11 @@ from bfasst.utils.sdn_helpers import SdnNetlistWrapper
 class NetlistCleaner:
     """Clean a netlist."""
 
-    def __init__(self, build_path, netlist_in_path, netlist_out_path):
+    def __init__(self, build_path, netlist_in_path, netlist_out_path, logging_level=logging.DEBUG):
         self.build_path = build_path
         self.netlist_in = netlist_in_path
         self.netlist_out = netlist_out_path
+        self.logging_level = logging_level
 
         self.log_path = self.build_path / "log.txt"
         self.log_path.unlink(missing_ok=True)
@@ -26,7 +27,7 @@ class NetlistCleaner:
         logging.basicConfig(
             filename=self.log_path,
             format="%(asctime)s %(message)s",
-            level=logging.DEBUG,
+            level=self.logging_level,
             datefmt="%Y-%m-%d %H:%M:%S",
         )
 

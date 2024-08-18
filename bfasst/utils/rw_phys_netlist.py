@@ -35,14 +35,15 @@ class PhysNetlistTransformError(Exception):
 class RwPhysNetlist:
     """Creates a xilinx netlist that has only physical primitives"""
 
-    def __init__(self, build_dir):
+    def __init__(self, build_dir, logging_level=logging.DEBUG):
         self.build_dir = Path(build_dir)
         self.stage_dir = self.build_dir / "vivado_phys_netlist"
         (self.stage_dir / "log.txt").unlink(missing_ok=True)
+        self.logging_level = logging_level
         logging.basicConfig(
             filename=self.stage_dir / "log.txt",
             format="%(asctime)s %(message)s",
-            level=logging.DEBUG,
+            level=self.logging_level,
             datefmt="%Y%m%d%H%M%S",
         )
 

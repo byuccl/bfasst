@@ -30,7 +30,14 @@ class StructuralCompareError(Exception):
 class StructuralCompare:
     """Structural compare and map"""
 
-    def __init__(self, named_netlist_path, reversed_netlist_path, log_path, debug) -> None:
+    def __init__(
+        self,
+        named_netlist_path,
+        reversed_netlist_path,
+        log_path,
+        debug,
+        logging_level=logging.DEBUG,
+    ) -> None:
         self.reversed_netlist_path = reversed_netlist_path
         self.named_netlist_path = named_netlist_path
         self.named_netlist = None
@@ -38,13 +45,14 @@ class StructuralCompare:
         self.named_instance_map = None
         self.reversed_netlist = None
         self.debug = debug
+        self.logging_level = logging_level
 
         self.log_path = log_path
         logging.basicConfig(
             filename=self.log_path,
             filemode="w",
             format="%(asctime)s %(message)s",
-            level=logging.DEBUG,
+            level=self.logging_level,
             datefmt="%Y%m%d%H%M%S",
         )
         assert str(log_path).endswith("_cmp.log")
