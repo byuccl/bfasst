@@ -10,7 +10,6 @@ import time
 import spydrnet as sdn
 
 from bfasst.utils.sdn_helpers import SdnNetlistWrapper
-from bfasst.utils.general import log_with_banner
 
 
 class NetlistCleaner:
@@ -34,9 +33,13 @@ class NetlistCleaner:
         # Read netlist with spydrnet
         netlist_ir = sdn.parse(self.netlist_in)
         top = netlist_ir.top_instance
+        self.remove_assign_instances(top)
+        self.remove_unused_instances(top)
+        self.write_netlist(netlist_ir)
 
-        # Find all ASSIGN instances and remove them
-        log_with_banner("Finding and removing all ASSIGN instances")
+    def remove_assign_instances(self, top):
+        """Remove all ASSIGN instances"""
+        logging.info("Finding and removing all ASSIGN instances")
         t_begin = time.perf_counter()
         for instance in top.get_instances():
             if instance.reference.name.startswith("SDN_VERILOG_ASSIGNMENT"):
@@ -48,26 +51,25 @@ class NetlistCleaner:
                     else:
                         pin_out = pin
 
-                assert pin_out is not None
                 for pin in pin_out.wire.pins:
                     if pin == pin_out:
                         continue
                     raise NotImplementedError
                 top.reference.remove_child(instance)
+        logging.info("Total time to remove ASSIGN instances: %s", time.perf_counter() - t_begin)
 
-        t_end = time.perf_counter()
-        log_with_banner(f"Total time to remove ASSIGN instances: {t_end - t_begin}")
-
-        # Remove unused instances
-        log_with_banner("Removing unused instances")
-        t_begin = time.perf_counter()
+    def remove_unused_instances(self, top):
+        """Remove unused instances"""
+        logging.info("Removing unused instances")
         unused_instance_types = {"LUT6_2": ("O5", "O6"), "IBUF": ("O",)}
         netlist_wrapper = SdnNetlistWrapper(top)
-
+        t_begin = time.perf_counter()
         for instance_type, pin_names in unused_instance_types.items():
-            for instance_wrapper in netlist_wrapper.instances:
-                if instance_wrapper.instance.reference.name != instance_type:
-                    continue
+            for instance_wrapper in [
+                instance_wrapper
+                for instance_wrapper in netlist_wrapper.instances
+                if instance_wrapper.instance.reference.name == instance_type
+            ]:
 
                 connected_pins = (
                     netlist_wrapper.wire_to_net[
@@ -77,18 +79,13 @@ class NetlistCleaner:
                 )
                 if not any(connected_pins):
                     top.reference.remove_child(instance_wrapper.instance)
+        logging.info("Total time to remove unused instances: %s", time.perf_counter() - t_begin)
 
-        t_end = time.perf_counter()
-        log_with_banner(f"Total time to remove unused instances: {t_end - t_begin}")
-
-        # Write out netlist
-        log_with_banner("Writing out netlist")
+    def write_netlist(self, netlist_ir):
+        logging.info("Writing out netlist")
         t_begin = time.perf_counter()
-    
         sdn.compose(netlist_ir, self.netlist_out, write_blackbox=False)
-        
-        t_end = time.perf_counter()
-        log_with_banner(f"Total time to write out netlist: {t_end - t_begin}")
+        logging.info("Total time to write out netlist: %s", time.perf_counter() - t_begin)
 
 
 if __name__ == "__main__":
