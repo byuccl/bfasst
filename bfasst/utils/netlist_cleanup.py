@@ -5,10 +5,12 @@
 import argparse
 import logging
 import pathlib
+import time
 
 import spydrnet as sdn
 
 from bfasst.utils.sdn_helpers import SdnNetlistWrapper
+from bfasst.utils.general import log_with_banner
 
 
 class NetlistCleaner:
@@ -34,6 +36,8 @@ class NetlistCleaner:
         top = netlist_ir.top_instance
 
         # Find all ASSIGN instances and remove them
+        log_with_banner("Finding and removing all ASSIGN instances")
+        t_begin = time.perf_counter()
         for instance in top.get_instances():
             if instance.reference.name.startswith("SDN_VERILOG_ASSIGNMENT"):
                 pin_out = None
@@ -49,11 +53,14 @@ class NetlistCleaner:
                     if pin == pin_out:
                         continue
                     raise NotImplementedError
-
-                logging.info("Removing instance: %s", instance)
                 top.reference.remove_child(instance)
 
+        t_end = time.perf_counter()
+        log_with_banner(f"Total time to remove ASSIGN instances: {t_end - t_begin}")
+
         # Remove unused instances
+        log_with_banner("Removing unused instances")
+        t_begin = time.perf_counter()
         unused_instance_types = {"LUT6_2": ("O5", "O6"), "IBUF": ("O",)}
         netlist_wrapper = SdnNetlistWrapper(top)
 
@@ -61,7 +68,6 @@ class NetlistCleaner:
             for instance_wrapper in netlist_wrapper.instances:
                 if instance_wrapper.instance.reference.name != instance_type:
                     continue
-                logging.info("Processing %s %s", instance_type, instance_wrapper.name)
 
                 connected_pins = (
                     netlist_wrapper.wire_to_net[
@@ -72,8 +78,17 @@ class NetlistCleaner:
                 if not any(connected_pins):
                     top.reference.remove_child(instance_wrapper.instance)
 
+        t_end = time.perf_counter()
+        log_with_banner(f"Total time to remove unused instances: {t_end - t_begin}")
+
         # Write out netlist
+        log_with_banner("Writing out netlist")
+        t_begin = time.perf_counter()
+    
         sdn.compose(netlist_ir, self.netlist_out, write_blackbox=False)
+        
+        t_end = time.perf_counter()
+        log_with_banner(f"Total time to write out netlist: {t_end - t_begin}")
 
 
 if __name__ == "__main__":
