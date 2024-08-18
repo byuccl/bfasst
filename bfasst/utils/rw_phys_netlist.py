@@ -251,14 +251,6 @@ class RwPhysNetlist:
             if site_inst.getSiteTypeEnum() not in (SiteTypeEnum.SLICEL, SiteTypeEnum.SLICEM):
                 continue
 
-            # if (
-            #     "X6Y107" in site_inst.getName()
-            #     and site_inst.getSiteTypeEnum() == SiteTypeEnum.SLICEM
-            # ):
-            #     import code
-
-            #     code.interact(local=dict(globals(), **locals()))
-
             gnd_nets = site_inst.getSiteWiresFromNet(self.rw_design.getGndNet())
             vcc_nets = site_inst.getSiteWiresFromNet(self.rw_design.getVccNet())
 
