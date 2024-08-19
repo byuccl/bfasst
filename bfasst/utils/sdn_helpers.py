@@ -335,6 +335,10 @@ class SdnInstanceWrapper:
                     pin_spydernet.inner_pin.port.pins.index(pin_spydernet.inner_pin),
                 )
             ] = pin
+        self.pins.sort(
+            key=lambda p: (p.net.is_vdd if p.net is not None else False)
+            or (p.net.is_gnd if p.net is not None else False)
+        )
 
     def init_connectivity(self):
         """Initialize connectivity for this instance"""
