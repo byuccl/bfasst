@@ -10,7 +10,7 @@ from bfasst.tools.synth.vivado_synth import VivadoSynth
 class VivadoPhysNetlist(Flow):
     """Creates a Vivado netlist that has only physical primitives."""
 
-    def __init__(self, design, synth_options="", logging_level="DEBUG"):
+    def __init__(self, design, synth_options="", logging_level="INFO"):
         # pylint: disable=duplicate-code
         super().__init__(design)
 

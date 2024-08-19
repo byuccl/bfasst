@@ -13,7 +13,7 @@ from bfasst.tools.synth.vivado_synth import VivadoSynth
 class VivadoBitAnalysis(Flow):
     """Flow to reverse a netlist from a bitstream using x-ray."""
 
-    def __init__(self, design, synth_options="", logging_level="DEBUG"):
+    def __init__(self, design, synth_options="", logging_level="INFO"):
         # pylint: disable=duplicate-code
         super().__init__(design)
         self.logging_level = logging_level

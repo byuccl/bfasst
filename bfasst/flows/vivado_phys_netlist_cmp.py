@@ -13,7 +13,7 @@ from bfasst.tools.synth.vivado_synth import VivadoSynth
 class VivadoPhysNetlistCmp(Flow):
     """Structural Comparison of physical netlist and reversed netlist"""
 
-    def __init__(self, design, synth_options="", debug=False, logging_level="DEBUG"):
+    def __init__(self, design, synth_options="", debug=False, logging_level="INFO"):
         # pylint: disable=duplicate-code
         super().__init__(design)
 
