@@ -15,7 +15,7 @@ from bfasst.utils.sdn_helpers import SdnNetlistWrapper
 class NetlistCleaner:
     """Clean a netlist."""
 
-    def __init__(self, build_path, netlist_in_path, netlist_out_path, logging_level=logging.DEBUG):
+    def __init__(self, build_path, netlist_in_path, netlist_out_path, logging_level):
         self.build_path = build_path
         self.netlist_in = netlist_in_path
         self.netlist_out = netlist_out_path
@@ -94,6 +94,9 @@ if __name__ == "__main__":
     parser.add_argument("build_path", type=pathlib.Path, help="Path to build directory")
     parser.add_argument("netlist_in", type=pathlib.Path, help="Path to input netlist")
     parser.add_argument("netlist_out", type=pathlib.Path, help="Path to output netlist")
+    parser.add_argument("--logging_level", help="Decides what levels of logs to display")
     args = parser.parse_args()
 
-    netlist_cleaner = NetlistCleaner(args.build_path, args.netlist_in, args.netlist_out)
+    netlist_cleaner = NetlistCleaner(
+        args.build_path, args.netlist_in, args.netlist_out, args.logging_level
+    )

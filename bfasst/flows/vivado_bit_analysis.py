@@ -13,9 +13,10 @@ from bfasst.tools.synth.vivado_synth import VivadoSynth
 class VivadoBitAnalysis(Flow):
     """Flow to reverse a netlist from a bitstream using x-ray."""
 
-    def __init__(self, design, synth_options=""):
+    def __init__(self, design, synth_options="", logging_level="DEBUG"):
         # pylint: disable=duplicate-code
         super().__init__(design)
+        self.logging_level = logging_level
         self.vivado_synth_tool = VivadoSynth(self, design, synth_options=synth_options)
         self.vivado_impl_tool = VivadoImpl(
             self,
@@ -30,7 +31,10 @@ class VivadoBitAnalysis(Flow):
             bitstream=self.vivado_impl_tool.outputs["bitstream"],
         )
         self.netlist_cleanup_tool = NetlistCleanup(
-            self, design, rev_netlist=self.xrev_tool.outputs["rev_netlist"]
+            self,
+            design,
+            rev_netlist=self.xrev_tool.outputs["rev_netlist"],
+            logging_level=self.logging_level,
         )
         self.netlist_phys_to_logical = NetlistPhysToLogical(
             self, design, cleaned_netlist=self.netlist_cleanup_tool.outputs["netlist_cleaned_path"]

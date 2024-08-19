@@ -18,12 +18,13 @@ from bfasst.utils.error_injector import ErrorType
 class VivadoStructuralErrorInjection(Flow):
     """Inject an error into a xrev netlist and run a structural compare to detect it."""
 
-    def __init__(self, design, num_runs=100, seed=None, synth_options=""):
+    def __init__(self, design, num_runs=100, seed=None, synth_options="", logging_level="DEBUG"):
         # pylint: disable=duplicate-code
         super().__init__(design)
         self.design = design
         self.num_runs = num_runs
         self.seed = seed
+        self.logging_level = logging_level
         if self.seed is not None:
             random.seed(self.seed)
 
@@ -41,6 +42,7 @@ class VivadoStructuralErrorInjection(Flow):
             design,
             impl_checkpoint=self.vivado_impl_tool.outputs["impl_dcp"],
             impl_edf=self.vivado_impl_tool.outputs["impl_edf"],
+            logging_level=self.logging_level,
         )
         self.xrev_tool = Xray(
             self,
@@ -49,7 +51,7 @@ class VivadoStructuralErrorInjection(Flow):
             bitstream=self.vivado_impl_tool.outputs["bitstream"],
         )
         self.default_comparison_tool = Structural(self, design)
-        self.default_injection_tool = ErrorInjector(self, design)
+        self.default_injection_tool = ErrorInjector(self, design, logging_level)
         # pylint: enable=duplicate-code
 
     def create_build_snippets(self):
@@ -68,6 +70,7 @@ class VivadoStructuralErrorInjection(Flow):
                     num=i,
                     multiplier=random_seed_multiplier,
                     reversed_netlist=self.xrev_tool.outputs["rev_netlist"],
+                    logging_level=self.logging_level,
                 )
 
                 error_injector_tool.create_build_snippets()
@@ -79,6 +82,7 @@ class VivadoStructuralErrorInjection(Flow):
                     golden_netlist=error_injector_tool.outputs["corrupt_netlist"],
                     rev_netlist=self.xrev_tool.outputs["rev_netlist"],
                     expect_fail=True,
+                    logging_level=self.logging_level,
                 ).create_build_snippets()
 
     def get_top_level_flow_path(self) -> str:

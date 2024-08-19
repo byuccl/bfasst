@@ -16,6 +16,7 @@ class Structural(Tool):
         rev_netlist=None,
         expect_fail=False,
         debug=False,
+        logging_level=None,
     ):
         super().__init__(flow, design)
         self.build_path = self.design_build_path / "struct_cmp"
@@ -24,6 +25,7 @@ class Structural(Tool):
         self.rev_netlist = rev_netlist
         self.expect_fail = expect_fail
         self.debug = debug
+        self.logging_level = logging_level
         self._init_outputs()
         self.rule_snippet_path = COMPARE_TOOLS_PATH / "structural" / "structural_rules.ninja"
 
@@ -37,6 +39,7 @@ class Structural(Tool):
                 "compare_script_path": str(BFASST_UTILS_PATH / "structural.py"),
                 "expect_fail": "--expect_fail" if self.expect_fail else "",
                 "debug": "--debug True" if self.debug else "",
+                "logging_level": f"--logging_level {self.logging_level}",
             },
         )
 

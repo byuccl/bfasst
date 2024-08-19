@@ -35,7 +35,7 @@ class PhysNetlistTransformError(Exception):
 class RwPhysNetlist:
     """Creates a xilinx netlist that has only physical primitives"""
 
-    def __init__(self, build_dir, logging_level=logging.DEBUG):
+    def __init__(self, build_dir, logging_level):
         self.build_dir = Path(build_dir)
         self.stage_dir = self.build_dir / "vivado_phys_netlist"
         (self.stage_dir / "log.txt").unlink(missing_ok=True)
@@ -984,8 +984,9 @@ if __name__ == "__main__":
         required=True,
         help="The implementation edf file to use for the netlist.",
     )
+    parser.add_argument("--logging_level", help="Decides what levels of logs to display")
     args = parser.parse_args()
-    netlist_generator = RwPhysNetlist(args.build_dir)
+    netlist_generator = RwPhysNetlist(args.build_dir, args.logging_level)
     try:
         netlist_generator.run(args.impl_dcp, args.impl_edf)
     except jpype.JException as e:

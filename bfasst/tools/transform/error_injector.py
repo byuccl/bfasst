@@ -10,13 +10,21 @@ class ErrorInjector(Tool):
     """Create the rule and build snippets for error injection into an xray netlist."""
 
     def __init__(
-        self, flow, design, error_type=None, num=None, multiplier=None, reversed_netlist=None
+        self,
+        flow,
+        design,
+        logging_level,
+        error_type=None,
+        num=None,
+        multiplier=None,
+        reversed_netlist=None,
     ):
         super().__init__(flow, design)
         self.error_type = error_type
         self.num = num
         self.multiplier = multiplier
         self.reversed_netlist = reversed_netlist
+        self.logging_level = logging_level
         self.build_path = self.design_build_path / "error_injection"
         if error_type is not None and num is not None:
             self.injection_log = self.build_path / f"{self.error_type.name.lower()}_{self.num}.log"
@@ -40,6 +48,7 @@ class ErrorInjector(Tool):
                     "seed": self.num * self.multiplier,
                     "error_injector_script_path": str(BFASST_UTILS_PATH / "error_injector.py"),
                     "reversed_netlist": self.reversed_netlist,
+                    "logging_level": f"--logging_level {self.logging_level}",
                 },
             )
 
