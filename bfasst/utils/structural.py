@@ -255,13 +255,13 @@ class StructuralCompare:
             len(self.block_mapping),
             len(self.named_netlist.instances_to_map),
         )
-        logging.info("  Unmapped blocks:")
+        logging.error("  Unmapped blocks:")
         for block in [
             block
             for block in self.named_netlist.instances_to_map
             if block not in self.block_mapping
         ]:
-            logging.info("    %s", block)
+            logging.error("    %s", block)
 
         num_mapped_nets = (
             len([net for net in self.net_mapping if net.is_connected])
@@ -271,7 +271,7 @@ class StructuralCompare:
         num_total_nets = len(self.named_netlist.get_connected_nets())
         logging.info("Number of mapped nets: %s of %s", num_mapped_nets, num_total_nets)
 
-        logging.info("  Unmapped nets:")
+        logging.error("  Unmapped nets:")
         for net in [
             net
             for net in self.named_netlist.get_connected_nets()
@@ -282,7 +282,7 @@ class StructuralCompare:
             # if net.is_vdd or net.is_gnd:
             #     num_total_nets -= 1
             #     continue
-            logging.info("    %s", net.name)
+            logging.error("    %s", net.name)
 
         if len(self.block_mapping) != len(self.named_netlist.instances_to_map):
             raise StructuralCompareError("Could not map all blocks")
@@ -396,13 +396,13 @@ class StructuralCompare:
                 if not instances_matching:
                     instances_matching = grouped_by_cell_type[(instance.cell_type, my_hash)]
                     if not instances_matching:
-                        logging.info(
+                        logging.error(
                             "No property matches for cell %s of type %s. Properties:",
                             instance_name,
                             instance.cell_type,
                         )
                         for prop in self.get_properties_for_type(instance.cell_type):
-                            logging.info("  %s: %s", prop, instance.properties[prop])
+                            logging.error("  %s: %s", prop, instance.properties[prop])
                         raise StructuralCompareError(
                             f"Not equivalent. {instance_name} \
                             has no possible match in the netlist."
