@@ -9,10 +9,11 @@ from bfasst.paths import BFASST_UTILS_PATH, NINJA_TRANSFORM_TOOLS_PATH
 class NetlistCleanup(Tool):
     """Create rule and build snippets for phys netlist creation."""
 
-    def __init__(self, flow, design, rev_netlist):
+    def __init__(self, flow, design, rev_netlist, logging_level):
         super().__init__(flow, design)
 
         self.rev_netlist = rev_netlist
+        self.logging_level = logging_level
 
         self.build_path = self.design_build_path / "netlist_cleanup"
         self._init_outputs()
@@ -34,5 +35,6 @@ class NetlistCleanup(Tool):
                 "netlist_cleanup_output": self.build_path,
                 "netlist_in": self.rev_netlist,
                 "netlist_out": self.outputs["netlist_cleaned_path"],
+                "logging_level": f"--logging_level {self.logging_level}",
             },
         )

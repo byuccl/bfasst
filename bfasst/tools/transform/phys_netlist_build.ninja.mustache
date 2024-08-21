@@ -2,6 +2,7 @@ build {{ phys_netlist_output }}/checkpoint_to_v.tcl: template {{ phys_netlist_ou
 
 build {{ phys_netlist_output }}/viv_impl_physical.edf {{ phys_netlist_output }}/phys_netlist.dcp {{ phys_netlist_output }}/log.txt {{ phys_netlist_output }}/rapidwright_stdout.log: phys_netlist | bfasst/utils/rw_phys_netlist.py {{ impl_edf }} {{ impl_dcp }}
     build_dir = {{ build_dir }}
+    logging_level = {{ logging_level }}
     impl_dcp = {{ impl_dcp }}
     impl_edf = {{ impl_edf }}
 

@@ -35,14 +35,15 @@ class PhysNetlistTransformError(Exception):
 class RwPhysNetlist:
     """Creates a xilinx netlist that has only physical primitives"""
 
-    def __init__(self, build_dir):
+    def __init__(self, build_dir, logging_level):
         self.build_dir = Path(build_dir)
         self.stage_dir = self.build_dir / "vivado_phys_netlist"
         (self.stage_dir / "log.txt").unlink(missing_ok=True)
+        self.logging_level = logging_level
         logging.basicConfig(
             filename=self.stage_dir / "log.txt",
             format="%(asctime)s %(message)s",
-            level=logging.DEBUG,
+            level=self.logging_level,
             datefmt="%Y%m%d%H%M%S",
         )
 
@@ -250,14 +251,6 @@ class RwPhysNetlist:
         for site_inst in self.rw_design.getSiteInsts():
             if site_inst.getSiteTypeEnum() not in (SiteTypeEnum.SLICEL, SiteTypeEnum.SLICEM):
                 continue
-
-            # if (
-            #     "X6Y107" in site_inst.getName()
-            #     and site_inst.getSiteTypeEnum() == SiteTypeEnum.SLICEM
-            # ):
-            #     import code
-
-            #     code.interact(local=dict(globals(), **locals()))
 
             gnd_nets = site_inst.getSiteWiresFromNet(self.rw_design.getGndNet())
             vcc_nets = site_inst.getSiteWiresFromNet(self.rw_design.getVccNet())
@@ -991,8 +984,9 @@ if __name__ == "__main__":
         required=True,
         help="The implementation edf file to use for the netlist.",
     )
+    parser.add_argument("--logging_level", help="Decides what levels of logs to display")
     args = parser.parse_args()
-    netlist_generator = RwPhysNetlist(args.build_dir)
+    netlist_generator = RwPhysNetlist(args.build_dir, args.logging_level)
     try:
         netlist_generator.run(args.impl_dcp, args.impl_edf)
     except jpype.JException as e:

@@ -23,13 +23,6 @@ class SdnNetlistWrapper:
         instances = [SdnInstanceWrapper(i, self) for i in top_instance.get_instances()]
         self.instances = instances
 
-        self.instances_to_map = {
-            i
-            for i in self.instances
-            if i.cell_type not in ("GND", "VCC")
-            and not i.cell_type.startswith("SDN_VERILOG_ASSIGNMENT_")
-        }
-
         SdnNetlistWrapper.GND_NAMES = {i.name for i in self.instances if i.cell_type == "GND"}
         SdnNetlistWrapper.VCC_NAMES = {i.name for i in self.instances if i.cell_type == "VCC"}
 
@@ -335,6 +328,10 @@ class SdnInstanceWrapper:
                     pin_spydernet.inner_pin.port.pins.index(pin_spydernet.inner_pin),
                 )
             ] = pin
+        self.pins.sort(
+            key=lambda p: (p.net.is_vdd if p.net is not None else False)
+            or (p.net.is_gnd if p.net is not None else False)
+        )
 
     def init_connectivity(self):
         """Initialize connectivity for this instance"""
@@ -355,7 +352,4 @@ class SdnInstanceWrapper:
         return self.instance.data.get("VERILOG.Parameters")
 
     def get_pin(self, name, index=0):
-        try:
-            return self.pins_by_name_and_index[(name, index)]
-        except KeyError:
-            return SdnInstanceWrapper.GND_PIN
+        return self.pins_by_name_and_index.get((name, index), SdnInstanceWrapper.GND_PIN)

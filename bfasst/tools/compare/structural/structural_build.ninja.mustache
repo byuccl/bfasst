@@ -1,5 +1,6 @@
 build {{ log_path }}: compare {{ netlist_a }} {{ netlist_b }} | {{ compare_script_path }} bfasst/utils/sdn_helpers.py
     expect_fail = {{ expect_fail }}
     debug = {{ debug }}
+    logging_level = {{ logging_level }}
 
 
