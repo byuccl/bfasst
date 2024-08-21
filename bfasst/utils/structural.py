@@ -232,6 +232,22 @@ class StructuralCompare:
         logging.info("Time after init_netlists: %s".ljust(35), str(time.perf_counter() - t_begin))
 
         # self.load_mappings()
+
+        # a set of tuples with the first element being the instance name
+        # and second element being which mapping function to use
+        self.named_netlist.instances_to_map = {
+            (
+                i.name,
+                (
+                    self.check_for_potential_mapping
+                    if i.cell_type not in {"RAMB36E1", "RAMB18E1"}
+                    else self.check_for_potential_bram_mapping
+                ),
+            )
+            for i in self.named_netlist.instances
+            if i.cell_type not in ("GND", "VCC")
+        }
+
         # Structurally map the rest of the netlists
         self.perform_mapping()
         t_end = time.perf_counter()
@@ -247,9 +263,7 @@ class StructuralCompare:
             logging.info("%s -> %s", key.name, val.name)
 
         log_with_banner("Finalizing")
-        self.named_netlist.instances_to_map = {
-            i.name for i in self.named_netlist.instances if i.cell_type not in ("GND", "VCC")
-        }
+
         logging.info(
             "Number of mapped blocks: %s of %s",
             len(self.block_mapping),
@@ -257,7 +271,7 @@ class StructuralCompare:
         )
         logging.error("  Unmapped blocks:")
         for block in [
-            block
+            block[0]
             for block in self.named_netlist.instances_to_map
             if block not in self.block_mapping
         ]:
@@ -374,7 +388,7 @@ class StructuralCompare:
                     instance.name
                 )
 
-            for instance_name in self.named_netlist.instances_to_map:
+            for instance_name, _ in self.named_netlist.instances_to_map:
                 ###############################################################
                 # First find all instances of the same type and same properties
                 ###############################################################
@@ -415,23 +429,18 @@ class StructuralCompare:
     def count_num_const(self, pins) -> int:
         return sum(1 for pin in pins if pin.net and (pin.net.is_gnd or pin.net.is_vdd))
 
-    def potential_mapping_wrapper(self, instance_name: str) -> bool:
+    def potential_mapping_wrapper(self, instance_name: tuple) -> bool:
         """Wrap check_for_potential_mapping some inital checks/postprocessing"""
-        instance = self.named_instance_map[instance_name]
-        logging.info("Considering %s (%s)", instance_name, instance.cell_type)
-
-        # Get the implemented potential instance to map
-        if not instance.cell_type.startswith("RAMB"):
-            instances_matching = self.check_for_potential_mapping(instance_name)
-        else:
-            instances_matching = self.check_for_potential_bram_mapping(instance_name)
+        instance = self.named_instance_map[instance_name[0]]
+        logging.info("Considering %s (%s)", instance_name[0], instance.cell_type)
+        instances_matching = instance_name[1](instance_name[0])
 
         if not instances_matching:
             if not self.debug:
                 raise StructuralCompareError(
-                    f"Not equivalent. {instance_name} has no possible match in the netlist."
+                    f"Not equivalent. {instance_name[0]} has no possible match in the netlist."
                 )
-            cell = self.design.getCell(instance_name)
+            cell = self.design.getCell(instance_name[0])
             if not cell:
                 # often, the cell name in vivado is a little bit different than in the netlist,
                 # so if it's not an exact match, I used difflib to get the closest match
@@ -446,7 +455,7 @@ class StructuralCompare:
 
             logging.error(
                 "%s should map to %s_%s_%s, but has no possible match in the netlist",
-                instance_name,
+                instance_name[0],
                 cell.getTile(),
                 cell.getSite(),
                 cell.getType(),
@@ -494,22 +503,22 @@ class StructuralCompare:
                 num_total_nets = len(self.named_netlist.get_connected_nets())
                 cell_type = {
                     self.named_instance_map[i].cell_type
-                    for i in self.named_netlist.instances_to_map
+                    for i, _ in self.named_netlist.instances_to_map
                 }
                 if len(cell_type) == 1 and num_mapped_nets == num_total_nets:
                     reversed_remaining = [
-                        self.possible_matches[i] for i in self.named_netlist.instances_to_map
+                        self.possible_matches[i] for i, _ in self.named_netlist.instances_to_map
                     ]
                     remaining = set()
                     for i in reversed_remaining:
                         for j in i:
                             remaining.add(j)
                     if len(remaining) == len(reversed_remaining[0]):
-                        for named, rev in zip(
+                        for named_tuple, rev in zip(
                             set(self.named_netlist.instances_to_map), reversed_remaining[0]
                         ):  # Make a copy of instances_to_map since python won't let you
                             # change the size of a set during iteration
-                            self.add_block_mapping(named, rev)
+                            self.add_block_mapping(named_tuple, rev)
                         break
 
                 logging.info("No more progress can be made. Failed at iteration %s.", iteration)
@@ -522,7 +531,7 @@ class StructuralCompare:
             # Sort the instances based on the length of their possible matches list
             sorted_instances = sorted(
                 set(self.named_netlist.instances_to_map),
-                key=lambda instance: len(self.possible_matches[instance]),
+                key=lambda instance_tuple: len(self.possible_matches[instance_tuple[0]]),
             )
             # Create an iterator from the sorted instances
             instance_iter = iter(sorted_instances)
@@ -543,7 +552,7 @@ class StructuralCompare:
         # Loop through all instances and check for equivalence
         log_with_banner("Verifying equivalence")
         warnings = []
-        for instance in self.named_netlist.instances_to_map:
+        for instance, _ in self.named_netlist.instances_to_map:
             mapped_instance = self.reversed_instance_map[self.block_mapping.get(instance)]
             if mapped_instance is None:
                 raise StructuralCompareError(
@@ -598,12 +607,12 @@ class StructuralCompare:
                 logging.warning("  %s", warning)
             raise StructuralCompareError("Warnings during equivalence verification")
 
-    def add_block_mapping(self, instance_name: str, matched_instance_name: str) -> None:
+    def add_block_mapping(self, instance_name: tuple, matched_instance_name: str) -> None:
         """Add mapping point between two Instances"""
 
-        instance = self.named_instance_map[instance_name]
+        instance = self.named_instance_map[instance_name[0]]
         matched_instance = self.reversed_instance_map[matched_instance_name]
-        self.block_mapping[instance_name] = matched_instance_name
+        self.block_mapping[instance_name[0]] = matched_instance_name
         self.named_netlist.instances_to_map.remove(instance_name)
 
         for pin in instance.pins:
@@ -734,7 +743,7 @@ class StructuralCompare:
             if not expected_properties:
                 if not self.debug:
                     raise StructuralCompareError("Unexpected BRAM CASCADE Configuration")
-                logging.info("Unexpected BRAM CASCADE Configuration for %s", instance_name)
+                logging.error("Unexpected BRAM CASCADE Configuration for %s", instance_name)
 
         instances_matching_connections = self.eliminate_redundant_matches(instance_name)
 
