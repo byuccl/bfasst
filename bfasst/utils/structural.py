@@ -250,7 +250,6 @@ class StructuralCompare:
 
         # Structurally map the rest of the netlists
         self.perform_mapping()
-        t_end = time.perf_counter()
 
         log_with_banner("Mapping (Instances)")
         block_map = dict(self.block_mapping.items())
@@ -317,14 +316,13 @@ class StructuralCompare:
         with open(self.net_mapping_pkl, "wb") as f:
             pickle.dump(net_map, f)
 
-        mtime = round(t_end - t_begin, 1)
+        mtime = round(time.perf_counter() - t_begin, 1)
         logging.info("Mapping time: %s seconds", mtime)
 
         # After establishing mapping, verify equivalence
         t_begin = time.perf_counter()
         self.verify_equivalence()
-        t_end = time.perf_counter()
-        vtime = round(t_end - t_begin, 1)
+        vtime = round(time.perf_counter() - t_begin, 1)
         logging.info("Equivalence verification time: %s seconds", vtime)
         logging.info("Total time: %s seconds", mtime + vtime)
 
@@ -443,26 +441,29 @@ class StructuralCompare:
                 raise StructuralCompareError(
                     f"Not equivalent. {instance_tuple[0]} has no possible match in the netlist."
                 )
-            cell = self.design.getCell(instance_tuple[0])
-            if not cell:
-                # often, the cell name in vivado is a little bit different than in the netlist,
-                # so if it's not an exact match, I used difflib to get the closest match
-                # this has worked for me for the most part, but it might not always
-                cells = list(self.design.getCells())
-                actual_cell_name = str(
-                    difflib.get_close_matches(
-                        instance_tuple[0], [cell.getName() for cell in cells], n=1
-                    )[0]
-                )
-                cell = [cell for cell in cells if cell.getName() == actual_cell_name][0]
+            try:
+                cell = self.design.getCell(instance_tuple[0])
+                if not cell:
+                    # often, the cell name in vivado is a little bit different than in the netlist,
+                    # so if it's not an exact match, I used difflib to get the closest match
+                    # this has worked for me for the most part, but it might not always
+                    cells = list(self.design.getCells())
+                    actual_cell_name = str(
+                        difflib.get_close_matches(
+                            instance_tuple[0], [cell.getName() for cell in cells], n=1
+                        )[0]
+                    )
+                    cell = [cell for cell in cells if cell.getName() == actual_cell_name][0]
 
-            logging.error(
-                "%s should map to %s_%s_%s, but has no possible match in the netlist",
-                instance_tuple[0],
-                cell.getTile(),
-                cell.getSite(),
-                cell.getType(),
-            )
+                logging.error(
+                    "%s should map to %s_%s_%s, but has no possible match in the netlist",
+                    instance_tuple[0],
+                    cell.getTile(),
+                    cell.getSite(),
+                    cell.getType(),
+                )
+            except IndexError:
+                logging.error("%s has no possible match in the netlist", instance_tuple[0])
             self.named_netlist.instances_to_map.remove(instance_tuple)
             return False
 
