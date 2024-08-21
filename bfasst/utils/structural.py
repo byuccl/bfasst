@@ -255,26 +255,29 @@ class StructuralCompare:
         log_with_banner("Mapping (Instances)")
         block_map = dict(self.block_mapping.items())
         for key, val in self.block_mapping.items():
-            logging.info("%s -> %s", key, val)
-        logging.info("")
-        # log_with_banner("Mapping (Nets)")
+            logging.debug("%s -> %s", key, val)
+        logging.debug("")
+        log_with_banner("Mapping (Nets)")
         net_map = {k.name: v.name for k, v in self.net_mapping.items()}
         for key, val in self.net_mapping.items():
-            logging.info("%s -> %s", key.name, val.name)
+            logging.debug("%s -> %s", key.name, val.name)
 
         log_with_banner("Finalizing")
+
+        should_be_mapped = {
+            instance.name
+            for instance in self.named_netlist.instances
+            if instance.cell_type not in ("GND", "VCC")
+        }
 
         logging.info(
             "Number of mapped blocks: %s of %s",
             len(self.block_mapping),
-            len(self.named_netlist.instances_to_map),
+            len(should_be_mapped),
         )
         logging.error("  Unmapped blocks:")
-        for block in [
-            block[0]
-            for block in self.named_netlist.instances_to_map
-            if block not in self.block_mapping
-        ]:
+
+        for block in [block for block in should_be_mapped if block not in self.block_mapping]:
             logging.error("    %s", block)
 
         num_mapped_nets = (
@@ -298,7 +301,7 @@ class StructuralCompare:
             #     continue
             logging.error("    %s", net.name)
 
-        if len(self.block_mapping) != len(self.named_netlist.instances_to_map):
+        if len(self.block_mapping) != len(should_be_mapped):
             raise StructuralCompareError("Could not map all blocks")
         if num_mapped_nets != num_total_nets:
             raise StructuralCompareError("Could not map all nets")
