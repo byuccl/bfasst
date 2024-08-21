@@ -429,18 +429,18 @@ class StructuralCompare:
     def count_num_const(self, pins) -> int:
         return sum(1 for pin in pins if pin.net and (pin.net.is_gnd or pin.net.is_vdd))
 
-    def potential_mapping_wrapper(self, instance_name: tuple) -> bool:
+    def potential_mapping_wrapper(self, instance_tuple: tuple) -> bool:
         """Wrap check_for_potential_mapping some inital checks/postprocessing"""
-        instance = self.named_instance_map[instance_name[0]]
-        logging.info("Considering %s (%s)", instance_name[0], instance.cell_type)
-        instances_matching = instance_name[1](instance_name[0])
+        instance = self.named_instance_map[instance_tuple[0]]
+        logging.info("Considering %s (%s)", instance_tuple[0], instance.cell_type)
+        instances_matching = instance_tuple[1](instance_tuple[0])
 
         if not instances_matching:
             if not self.debug:
                 raise StructuralCompareError(
-                    f"Not equivalent. {instance_name[0]} has no possible match in the netlist."
+                    f"Not equivalent. {instance_tuple[0]} has no possible match in the netlist."
                 )
-            cell = self.design.getCell(instance_name[0])
+            cell = self.design.getCell(instance_tuple[0])
             if not cell:
                 # often, the cell name in vivado is a little bit different than in the netlist,
                 # so if it's not an exact match, I used difflib to get the closest match
@@ -448,19 +448,19 @@ class StructuralCompare:
                 cells = list(self.design.getCells())
                 actual_cell_name = str(
                     difflib.get_close_matches(
-                        instance_name, [cell.getName() for cell in cells], n=1
+                        instance_tuple[0], [cell.getName() for cell in cells], n=1
                     )[0]
                 )
                 cell = [cell for cell in cells if cell.getName() == actual_cell_name][0]
 
             logging.error(
                 "%s should map to %s_%s_%s, but has no possible match in the netlist",
-                instance_name[0],
+                instance_tuple[0],
                 cell.getTile(),
                 cell.getSite(),
                 cell.getType(),
             )
-            self.named_netlist.instances_to_map.remove(instance_name)
+            self.named_netlist.instances_to_map.remove(instance_tuple)
             return False
 
         if len(instances_matching) > 1:
@@ -475,7 +475,7 @@ class StructuralCompare:
 
         logging.info("  Mapped to %s", matched_instance)
 
-        self.add_block_mapping(instance_name, matched_instance)
+        self.add_block_mapping(instance_tuple, matched_instance)
         return True
 
     def perform_mapping(self) -> None:
@@ -607,13 +607,13 @@ class StructuralCompare:
                 logging.warning("  %s", warning)
             raise StructuralCompareError("Warnings during equivalence verification")
 
-    def add_block_mapping(self, instance_name: tuple, matched_instance_name: str) -> None:
+    def add_block_mapping(self, instance_tuple: tuple, matched_instance_name: str) -> None:
         """Add mapping point between two Instances"""
 
-        instance = self.named_instance_map[instance_name[0]]
+        instance = self.named_instance_map[instance_tuple[0]]
         matched_instance = self.reversed_instance_map[matched_instance_name]
-        self.block_mapping[instance_name[0]] = matched_instance_name
-        self.named_netlist.instances_to_map.remove(instance_name)
+        self.block_mapping[instance_tuple[0]] = matched_instance_name
+        self.named_netlist.instances_to_map.remove(instance_tuple)
 
         for pin in instance.pins:
             # Some pins should not be used to establish net mapping
