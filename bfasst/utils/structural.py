@@ -372,18 +372,18 @@ class StructuralCompare:
             ]
 
             grouped_by_cell_type = defaultdict(list)
-            grouped_by_cell_type_and_const = defaultdict(list)
+            # grouped_by_cell_type_and_const = defaultdict(list)
             for instance in all_instances:
-                num_const = self.count_num_const(instance.pins)
+                # num_const = self.count_num_const(instance.pins)
                 properties = set()
                 for prop in self.get_properties_for_type(instance.cell_type):
                     properties.add(
                         f"{prop}{convert_verilog_literal_to_int(instance.properties[prop])}"
                     )
 
-                grouped_by_cell_type_and_const[
-                    (instance.cell_type, hash(frozenset(properties)), num_const)
-                ].append(instance.name)
+                # grouped_by_cell_type_and_const[
+                #     (instance.cell_type, hash(frozenset(properties)), num_const)
+                # ].append(instance.name)
 
                 grouped_by_cell_type[(instance.cell_type, hash(frozenset(properties)))].append(
                     instance.name
@@ -396,7 +396,7 @@ class StructuralCompare:
 
                 # Compute a hash of this instance's properties
                 instance = self.named_instance_map[instance_name]
-                num_const = self.count_num_const(instance.pins)
+                # num_const = self.count_num_const(instance.pins)
                 properties = set()
                 for prop in self.get_properties_for_type(instance.cell_type):
                     properties.add(
@@ -404,24 +404,24 @@ class StructuralCompare:
                     )
                 my_hash = hash(frozenset(properties))
 
-                instances_matching = grouped_by_cell_type_and_const[
-                    (instance.cell_type, my_hash, num_const)
-                ]
+                # instances_matching = grouped_by_cell_type_and_const[
+                #     (instance.cell_type, my_hash, num_const)
+                # ]
 
+                # if not instances_matching:
+                instances_matching = grouped_by_cell_type[(instance.cell_type, my_hash)]
                 if not instances_matching:
-                    instances_matching = grouped_by_cell_type[(instance.cell_type, my_hash)]
-                    if not instances_matching:
-                        logging.error(
-                            "No property matches for cell %s of type %s. Properties:",
-                            instance_name,
-                            instance.cell_type,
-                        )
-                        for prop in self.get_properties_for_type(instance.cell_type):
-                            logging.error("  %s: %s", prop, instance.properties[prop])
-                        raise StructuralCompareError(
-                            f"Not equivalent. {instance_name} \
-                            has no possible match in the netlist."
-                        )
+                    logging.error(
+                        "No property matches for cell %s of type %s. Properties:",
+                        instance_name,
+                        instance.cell_type,
+                    )
+                    for prop in self.get_properties_for_type(instance.cell_type):
+                        logging.error("  %s: %s", prop, instance.properties[prop])
+                    raise StructuralCompareError(
+                        f"Not equivalent. {instance_name} \
+                        has no possible match in the netlist."
+                    )
 
                 self.possible_matches[instance_name] = set(instances_matching)
             with open(self.possible_matches_cache_path, "wb") as f:
