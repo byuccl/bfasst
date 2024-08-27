@@ -1,7 +1,6 @@
 top: Gaussianblur
 
-# vhdl_libs:
-#   - lib/
+vhdl_libs:
+  - lib/ieee_proposed
 
 include_all_verilog_files: True
-include_all_vhdl_files: True
