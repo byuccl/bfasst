@@ -3,6 +3,6 @@ top: gsm_impl
 include_all_verilog_files: True
 
 other_sources:
-  - /home/yonnorc42/bfasst/designs/titan/gsm_switch/gsm_4x4_256/coregen_ngc/fifo_16.ngc
-  - /home/yonnorc42/bfasst/designs/titan/gsm_switch/gsm_4x4_256/coregen_ngc/gsm_sram.ngc
-  - /home/yonnorc42/bfasst/designs/titan/gsm_switch/gsm_4x4_256/coregen_ngc/malloc_core.ngc
+  - gsm_4x4_256/coregen_ngc/fifo_16.ngc
+  - gsm_4x4_256/coregen_ngc/gsm_sram.ngc
+  - gsm_4x4_256/coregen_ngc/malloc_core.ngc
