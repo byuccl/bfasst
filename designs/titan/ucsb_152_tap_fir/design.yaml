@@ -1,0 +1,4 @@
+top: ucsb_152_tap_fir
+
+verilog_files:
+  - ucsb_152_tap_fir.v
