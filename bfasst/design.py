@@ -115,10 +115,10 @@ class Design:
                 self.path / source for source in value
             ),
             "vhdl_libs": lambda value: setattr(self, "vhdl_libs", self.enum_vhdl_libs(value)),
-        }
             "other_sources": lambda value: self.other_sources_file_paths.extend(
                 self.path / source for source in value
             ),
+        }
 
         for key, value in design_props.items():
             if key not in yaml_parse:
