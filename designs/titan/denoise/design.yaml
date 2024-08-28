@@ -1,0 +1,7 @@
+top: denoise_random
+
+vhdl_libs:
+  - lib/ieee_proposed
+
+include_all_verilog_files: True
+include_all_system_verilog_files: True
