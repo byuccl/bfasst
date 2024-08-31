@@ -104,6 +104,7 @@ class StructuralCompare:
             "RAM32X1D",
             "RAM32X1S_1",
             "RAM32X1D_1",
+            "RAM64X1D",
             "RAM256X1S",
             "SRL16E",
             "SRLC16E",
