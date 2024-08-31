@@ -38,6 +38,7 @@ class Design:
         self.system_verilog_file_paths = []
         self.vhdl_file_paths = []
         self.vhdl_libs = {}
+        self.other_sources_file_paths = []
 
         # self.compare_golden_files = []
         # self.golden_is_verilog = None
@@ -114,6 +115,9 @@ class Design:
                 self.path / source for source in value
             ),
             "vhdl_libs": lambda value: setattr(self, "vhdl_libs", self.enum_vhdl_libs(value)),
+            "other_sources": lambda value: self.other_sources_file_paths.extend(
+                self.path / source for source in value
+            ),
         }
 
         for key, value in design_props.items():
