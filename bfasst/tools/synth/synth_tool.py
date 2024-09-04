@@ -15,6 +15,7 @@ class SynthTool(Tool):
         self.system_verilog = []
         self.vhdl = []
         self.vhdl_file_lib_map = {}
+        self.other_sources = []
 
         if ooc:
             self.build_path = self.design_build_path / "synth_ooc"
@@ -36,6 +37,7 @@ class SynthTool(Tool):
             self.system_verilog = []
             self.vhdl = []
             self.vhdl_libs = {}
+            self.other_sources = []
 
         else:
             self.vhdl_libs = self.design_props.vhdl_libs
@@ -48,6 +50,11 @@ class SynthTool(Tool):
             if self.design_props.system_verilog_files is not None:
                 self.system_verilog = [
                     str(self.design_path / file) for file in self.design_props.system_verilog_files
+                ]
+
+            if self.design_props.other_sources is not None:
+                self.other_sources = [
+                    str(self.design_path / file) for file in self.design_props.other_sources
                 ]
 
             if self.verilog or self.system_verilog:
