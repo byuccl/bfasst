@@ -6,12 +6,13 @@ from bfasst.flows.flow import FlowNoDesign
 from bfasst.tools.design_create.rand_soc import RandSoC
 from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.tools.synth.vivado_synth import VivadoSynth
+from bfasst.paths import ROOT_PATH
 
 
 class RandSoc(FlowNoDesign):
     """Flow to create random soc block designs in Vivado"""
 
-    def __init__(self, num_designs=1, part=None):
+    def __init__(self, num_designs=1, part=None, randsoc_config_path=None):
         # pylint: disable=duplicate-code
         super().__init__()
 
@@ -19,8 +20,14 @@ class RandSoc(FlowNoDesign):
         if part is not None:
             self.part = part
 
-        self.rand_soc_tool = RandSoC(self, num_designs=num_designs)
+        # Get configuration of random SoC creator
+        randsoc_config_path = ROOT_PATH / randsoc_config_path
+        assert randsoc_config_path.exists(), f"Config file {randsoc_config_path} does not exist"
 
+        # Create all random designs
+        self.rand_soc_tool = RandSoC(self, num_designs=num_designs, config_path=randsoc_config_path)
+
+        # Build each random design
         for design in self.rand_soc_tool.outputs["design_tcl"]:
             synth_tool = VivadoSynth(self, design.parent)
             synth_tool.synth_build["tcl_sources"] = [str(design)]
