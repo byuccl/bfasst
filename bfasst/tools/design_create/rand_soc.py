@@ -10,11 +10,12 @@ from bfasst.paths import BUILD_PATH, GMT_TOOLS_PATH, NINJA_BUILD_PATH, TOOLS_PAT
 class RandSoC(ToolBase):
     """Tool to create a random SoC"""
 
-    def __init__(self, flow, num_designs):
+    def __init__(self, flow, num_designs, config_path):
         super().__init__(flow)
         self.build_path = BUILD_PATH / "rand_soc"
         self._my_dir_path = pathlib.Path(__file__).parent.resolve()
         self.num_designs = num_designs
+        self.config_path = config_path
         self._init_outputs()
         self.rule_snippet_path = TOOLS_PATH / "design_create" / "rand_soc_rules.ninja"
 
@@ -29,6 +30,7 @@ class RandSoC(ToolBase):
                     f,
                     {
                         "design_dir_path": design_dir_path,
+                        "config_path": self.config_path,
                         "seed": i,
                         "rand_soc_source_files": " ".join((str(s) for s in rand_soc_pkg_files)),
                         "part": self.flow.part,

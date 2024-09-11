@@ -1,0 +1,16 @@
+available_ip:
+  - Accumulator
+  - AxiCdma
+  - AxiHwicap
+  - AxiTimer
+  - AxiUsb2Device
+  - Dft
+  - Emc
+  - Gpio
+  - Microblaze
+  - Uartlite
+  - XadcWiz
+
+
+min_ip: 5
+max_ip: 20
