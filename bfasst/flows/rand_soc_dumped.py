@@ -32,7 +32,7 @@ class RandSocDumped(FlowNoDesign):
         self.rand_soc_tool = RandSoC(self, num_designs=num_designs, config_path=randsoc_config_path)
 
         # Build each random design
-        for i, design_tcl, contraints_tcl in enumerate(
+        for i, (design_tcl, contraints_tcl) in enumerate(
             zip(
                 self.rand_soc_tool.outputs["design_tcl"],
                 self.rand_soc_tool.outputs["impl_constraints_tcl"],
