@@ -11,12 +11,12 @@ from bfasst.utils.general import ensure_tuple, json_write_if_changed
 class VivadoImpl(ImplTool):
     """Tool to create Vivado implementation ninja snippets."""
 
-    def __init__(self, flow, design, synth_edf, constraints_files=None, ooc=False, impl_options=""):
+    def __init__(self, flow, design, synth_edf, constraints_files="", ooc=False, impl_options=""):
         super().__init__(flow, design)
         self.ooc = ooc
 
         self.constraints_file = [
-            str(f) for f in ensure_tuple(constraints_files if not self.ooc else None)
+            str(f) for f in ensure_tuple(constraints_files if not self.ooc else "")
         ]
         self.synth_edf = synth_edf
 
