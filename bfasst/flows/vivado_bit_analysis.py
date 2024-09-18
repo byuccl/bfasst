@@ -22,7 +22,7 @@ class VivadoBitAnalysis(Flow):
             self,
             design,
             synth_edf=self.vivado_synth_tool.outputs["synth_edf"],
-            constraints_file=self.vivado_synth_tool.outputs["synth_constraints"],
+            constraints_files=self.vivado_synth_tool.outputs["synth_constraints"],
         )
         self.xrev_tool = Xray(
             self,

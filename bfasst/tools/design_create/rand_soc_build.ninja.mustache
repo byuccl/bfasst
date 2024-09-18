@@ -1,4 +1,4 @@
-build {{ design_dir_path }}/design.tcl: rand_soc | {{ rand_soc_source_files }}
+build {{ design_dir_path }}/design.tcl {{ design_dir_path }}/impl_constraints.tcl: rand_soc | {{ rand_soc_source_files }}
     design_dir_path = {{ design_dir_path }}
     config_path = {{ config_path }}
     seed = {{ seed }}

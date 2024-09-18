@@ -32,14 +32,19 @@ class RandSocDumped(FlowNoDesign):
         self.rand_soc_tool = RandSoC(self, num_designs=num_designs, config_path=randsoc_config_path)
 
         # Build each random design
-        for i, design in enumerate(self.rand_soc_tool.outputs["design_tcl"]):
-            synth_tool = VivadoSynth(self, design.parent)
-            synth_tool.synth_build["tcl_sources"] = [str(design)]
+        for i, design_tcl, contraints_tcl in enumerate(
+            zip(
+                self.rand_soc_tool.outputs["design_tcl"],
+                self.rand_soc_tool.outputs["impl_constraints_tcl"],
+            )
+        ):
+            synth_tool = VivadoSynth(self, design_tcl.parent)
+            synth_tool.synth_build["tcl_sources"] = [str(design_tcl)]
             impl_tool = VivadoImpl(
                 self,
-                design.parent,
+                design_tcl.parent,
                 synth_edf=synth_tool.outputs["synth_edf"],
-                constraints_file=synth_tool.outputs["synth_constraints"],
+                constraints_files=(synth_tool.outputs["synth_constraints"], contraints_tcl),
             )
             RandsocDump(
                 self,

@@ -31,7 +31,7 @@ class OpenTitan(Flow):
             self,
             design,
             synth_edf=self.vivado_synth_tool.outputs["synth_edf"],
-            constraints_file=self.vivado_synth_tool.outputs["synth_constraints"],
+            constraints_files=self.vivado_synth_tool.outputs["synth_constraints"],
             impl_options={"part": synth_options["part"]},
         )
 

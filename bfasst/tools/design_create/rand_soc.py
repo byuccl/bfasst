@@ -42,9 +42,11 @@ class RandSoC(ToolBase):
 
     def _init_outputs(self):
         self.outputs["design_tcl"] = []
+        self.outputs["impl_constraints_tcl"] = []
         for i in range(self.num_designs):
             design_dir_path = self.build_path / f"design_{i}"
             self.outputs["design_tcl"].append(design_dir_path / "design.tcl")
+            self.outputs["impl_constraints_tcl"].append(design_dir_path / "impl_constraints.tcl")
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
