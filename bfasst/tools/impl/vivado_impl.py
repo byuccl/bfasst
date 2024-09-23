@@ -5,17 +5,19 @@ import pathlib
 from bfasst import config
 from bfasst.tools.impl.impl_tool import ImplTool
 from bfasst.paths import COMMON_TOOLS_PATH, BFASST_UTILS_PATH
-from bfasst.utils.general import json_write_if_changed
+from bfasst.utils.general import ensure_tuple, json_write_if_changed
 
 
 class VivadoImpl(ImplTool):
     """Tool to create Vivado implementation ninja snippets."""
 
-    def __init__(self, flow, design, synth_edf, constraints_file="", ooc=False, impl_options=""):
+    def __init__(self, flow, design, synth_edf, constraints_files="", ooc=False, impl_options=""):
         super().__init__(flow, design)
         self.ooc = ooc
 
-        self.constraints_file = constraints_file if not self.ooc else ""
+        self.constraints_file = [
+            str(f) for f in ensure_tuple(constraints_files if not self.ooc else "")
+        ]
         self.synth_edf = synth_edf
 
         self.build_path = (
@@ -26,7 +28,7 @@ class VivadoImpl(ImplTool):
         self._my_dir_path = pathlib.Path(__file__).parent
 
         self._init_outputs()
-        self.inputs_str = {"xdc": str(self.constraints_file), "synth_edf": str(self.synth_edf)}
+        self.inputs_str = {"xdc": self.constraints_file, "synth_edf": str(self.synth_edf)}
         self.outputs_str = {k: str(v) for k, v in self.outputs.items()}
         self.impl_build = {
             "part": self.flow.part,
@@ -63,7 +65,6 @@ class VivadoImpl(ImplTool):
             {
                 "in_context": not self.ooc,
                 "impl_output": str(self.build_path),
-                "synth_constraints": str(self.constraints_file),
                 "synth_edf": str(self.synth_edf),
                 "impl_library": self._my_dir_path,
                 "cwd": self.build_path,
