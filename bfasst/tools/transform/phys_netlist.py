@@ -15,7 +15,7 @@ from bfasst.utils import compare_json
 class PhysNetlist(Tool):
     """Create rule and build snippets for phys netlist creation."""
 
-    def __init__(self, flow, design, impl_checkpoint, impl_edf, logging_level):
+    def __init__(self, flow, design, impl_checkpoint, impl_edf, *, logging_level="INFO"):
         super().__init__(flow, design)
 
         self.impl_checkpoint = impl_checkpoint

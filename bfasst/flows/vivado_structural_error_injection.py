@@ -51,7 +51,7 @@ class VivadoStructuralErrorInjection(Flow):
             bitstream=self.vivado_impl_tool.outputs["bitstream"],
         )
         self.default_comparison_tool = Structural(self, design)
-        self.default_injection_tool = ErrorInjector(self, design, logging_level)
+        self.default_injection_tool = ErrorInjector(self, design, logging_level=logging_level)
         # pylint: enable=duplicate-code
 
     def create_build_snippets(self):

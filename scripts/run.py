@@ -10,7 +10,6 @@ from bfasst import external_tools
 from bfasst.flows.ninja_flow_manager import NinjaFlowManager
 from bfasst.yaml_parser import FlowDescriptionParser, RunParser
 from bfasst.utils import error, ensure_tuple
-from bfasst.paths import ROOT_PATH
 
 
 class ApplicationRunner:
