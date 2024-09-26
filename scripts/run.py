@@ -141,7 +141,7 @@ if __name__ == "__main__":
         ApplicationRunner().run_flow(
             parsed_args.flow,
             parsed_args.design,
-            parsed_args.flow_arguments,
+            flow_arguments=parsed_args.flow_arguments,
             check_tools=not parsed_args.no_tool_checks,
             num_threads=parsed_args.jobs,
         )
