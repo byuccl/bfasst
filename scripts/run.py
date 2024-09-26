@@ -22,7 +22,7 @@ class ApplicationRunner:
         self.flow_arguments = None
         self.num_threads = None
 
-    def run_flow(self, flow, designs, flow_arguments, check_tools, num_threads):
+    def run_flow(self, flow, designs, *, flow_arguments="", check_tools=True, num_threads=1):
         """Run one ore more designs with a given flow."""
         self.designs = ensure_tuple(designs)
         self.flow = flow
