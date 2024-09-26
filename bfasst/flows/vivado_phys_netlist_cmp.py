@@ -43,7 +43,7 @@ class VivadoPhysNetlistCmp(Flow):
         self.compare_tool = Structural(
             self,
             design,
-            "struct_cmp.log",
+            log_name="struct_cmp.log",
             golden_netlist=self.phys_netlist_tool.outputs["viv_impl_physical_v"],
             rev_netlist=self.xray_tool.outputs["rev_netlist"],
             debug=self.debug,
