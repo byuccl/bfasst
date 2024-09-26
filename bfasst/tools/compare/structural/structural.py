@@ -27,7 +27,9 @@ class Structural(Tool):
         self.debug = debug
         self.logging_level = logging_level
         self._init_outputs()
-        self.rule_snippet_path = COMPARE_TOOLS_PATH / "structural" / "structural_rules.ninja"
+        self.rule_snippet_path = (
+            COMPARE_TOOLS_PATH / "structural" / "structural_rules.ninja.mustache"
+        )
 
     def create_build_snippets(self):
         self._append_build_snippets_default(

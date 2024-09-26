@@ -19,7 +19,7 @@ class Wafove(Tool):
 
         self.build_path = self.design_build_path / "wafove"
         self._init_outputs(self.std_out_log_name, self.std_err_log_name)
-        self.rule_snippet_path = COMPARE_TOOLS_PATH / "wafove" / "wafove_rules.ninja"
+        self.rule_snippet_path = COMPARE_TOOLS_PATH / "wafove" / "wafove_rules.ninja.mustache"
 
     def create_build_snippets(self):
         self._append_build_snippets_default(

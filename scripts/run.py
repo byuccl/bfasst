@@ -61,7 +61,7 @@ class ApplicationRunner:
         cmd = ["ninja"]
         if self.num_threads:
             cmd += ["-j", str(self.num_threads)]
-        proc = subprocess.Popen(cmd, cwd=ROOT_PATH)
+        proc = subprocess.Popen(cmd)
         proc.communicate()
         return_code = proc.wait()
 

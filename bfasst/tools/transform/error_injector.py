@@ -33,7 +33,7 @@ class ErrorInjector(Tool):
             self.injection_log = None
             self.corrupt_netlist = None
         self._init_outputs(self.injection_log, self.corrupt_netlist)
-        self.rule_snippet_path = NINJA_TRANSFORM_TOOLS_PATH / "error_injector_rules.ninja"
+        self.rule_snippet_path = NINJA_TRANSFORM_TOOLS_PATH / "error_injector_rules.ninja.mustache"
 
     def create_build_snippets(self):
         with open(NINJA_TRANSFORM_TOOLS_PATH / "error_injector_build.ninja.mustache", "r") as f:
