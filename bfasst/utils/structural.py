@@ -921,7 +921,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--log_path", type=str, help="The log file path to use as output")
     parser.add_argument("--expect_fail", action="store_true", help="Expect the comparison to fail")
-    parser.add_argument("--debug", help="Utilize debugging functionality")
+    parser.add_argument("--debug", action="store_true", help="Utilize debugging functionality")
     parser.add_argument("--logging_level", help="Decides what levels of logs to display")
     args = parser.parse_args()
     struct_cmp = StructuralCompare(
