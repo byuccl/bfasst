@@ -8,7 +8,14 @@ class Wafove(Tool):
     """Create the rule and build snippets for structural comparison."""
 
     def __init__(
-        self, flow, design, std_out_log_name, std_err_log_name, golden_netlist, rev_netlist
+        self,
+        flow,
+        design,
+        golden_netlist,
+        rev_netlist,
+        *,
+        std_out_log_name="wafove.log",
+        std_err_log_name="wafove_err.log",
     ):
         super().__init__(flow, design)
 
