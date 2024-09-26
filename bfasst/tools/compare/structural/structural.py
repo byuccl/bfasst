@@ -11,6 +11,7 @@ class Structural(Tool):
         self,
         flow,
         design,
+        *,
         log_name=None,
         golden_netlist=None,
         rev_netlist=None,
