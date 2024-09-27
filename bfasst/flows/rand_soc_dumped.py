@@ -13,7 +13,7 @@ from bfasst.paths import ROOT_PATH, GMT_TOOLS_PATH
 class RandSocDumped(FlowNoDesign):
     """Flow to dump bels from random soc block designs with Isoblaze"""
 
-    def __init__(self, num_designs=1, part=None, randsoc_config_path=None):
+    def __init__(self, num_designs=1, part=None, randsoc_config_path=None, start_idx=0):
         # pylint: disable=duplicate-code
         super().__init__()
 
@@ -29,14 +29,17 @@ class RandSocDumped(FlowNoDesign):
         assert randsoc_config_path.exists(), f"Config file {randsoc_config_path} does not exist"
 
         # Create all random designs
-        self.rand_soc_tool = RandSoC(self, num_designs=num_designs, config_path=randsoc_config_path)
+        self.rand_soc_tool = RandSoC(
+            self, num_designs=num_designs, config_path=randsoc_config_path, start_idx=start_idx
+        )
 
         # Build each random design
         for i, (design_tcl, contraints_tcl) in enumerate(
             zip(
                 self.rand_soc_tool.outputs["design_tcl"],
                 self.rand_soc_tool.outputs["impl_constraints_tcl"],
-            )
+            ),
+            start=start_idx,
         ):
             synth_tool = VivadoSynth(self, design_tcl.parent)
             synth_tool.synth_build["tcl_sources"] = [str(design_tcl)]

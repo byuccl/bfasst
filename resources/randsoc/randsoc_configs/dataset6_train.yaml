@@ -1,0 +1,10 @@
+available_ip:
+  - class: Uartlite
+  - class: Accumulator
+  - class: AxiTimer
+  - class: Microblaze
+  - class: Dft
+  - class: Gpio
+
+min_ip: 3
+max_ip: 18
