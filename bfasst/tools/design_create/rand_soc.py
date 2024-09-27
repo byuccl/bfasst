@@ -10,12 +10,13 @@ from bfasst.paths import BUILD_PATH, GMT_TOOLS_PATH, NINJA_BUILD_PATH, TOOLS_PAT
 class RandSoC(ToolBase):
     """Tool to create a random SoC"""
 
-    def __init__(self, flow, num_designs, config_path):
+    def __init__(self, flow, num_designs, config_path, start_idx=0):
         super().__init__(flow)
         self.build_path = BUILD_PATH / "rand_soc"
         self._my_dir_path = pathlib.Path(__file__).parent.resolve()
         self.num_designs = num_designs
         self.config_path = config_path
+        self.start_idx = start_idx
         self._init_outputs()
         self.rule_snippet_path = TOOLS_PATH / "design_create" / "rand_soc_rules.ninja.mustache"
 
@@ -23,7 +24,7 @@ class RandSoC(ToolBase):
         rand_soc_pkg_files = list((GMT_TOOLS_PATH / "rand_soc" / "rand_soc").glob("**/*.py"))
         rand_soc_pkg_files.append(GMT_TOOLS_PATH / "rand_soc" / "main.py")
 
-        for i, design in enumerate(self.outputs["design_tcl"]):
+        for i, design in enumerate(self.outputs["design_tcl"], start=self.start_idx):
             design_dir_path = design.parent
             with open(self._my_dir_path / "rand_soc_build.ninja.mustache", "r") as f:
                 build = chevron.render(
@@ -43,7 +44,7 @@ class RandSoC(ToolBase):
     def _init_outputs(self):
         self.outputs["design_tcl"] = []
         self.outputs["impl_constraints_tcl"] = []
-        for i in range(self.num_designs):
+        for i in range(self.start_idx, self.start_idx + self.num_designs):
             design_dir_path = self.build_path / f"design_{i}"
             self.outputs["design_tcl"].append(design_dir_path / "design.tcl")
             self.outputs["impl_constraints_tcl"].append(design_dir_path / "impl_constraints.tcl")
