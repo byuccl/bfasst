@@ -21,12 +21,23 @@ class ApplicationRunner:
         self.deps = None
         self.flow_arguments = None
         self.num_threads = None
+        self.ignore_errors = False
 
-    def run_flow(self, flow, designs, *, flow_arguments="", check_tools=True, num_threads=1):
+    def run_flow(
+        self,
+        flow,
+        designs,
+        *,
+        flow_arguments="",
+        check_tools=True,
+        num_threads=1,
+        ignore_errors=False,
+    ):
         """Run one ore more designs with a given flow."""
         self.designs = ensure_tuple(designs)
         self.flow = flow
         self.num_threads = num_threads
+        self.ignore_errors = ignore_errors
         if check_tools:
             success = external_tools.check_flow(self.flow)
             if not success:
@@ -58,6 +69,8 @@ class ApplicationRunner:
 
         # run the build.ninja file
         cmd = ["ninja"]
+        if self.ignore_errors:
+            cmd += ["-k", "0"]
         if self.num_threads:
             cmd += ["-j", str(self.num_threads)]
         proc = subprocess.Popen(cmd)
@@ -100,6 +113,11 @@ def parse_args(args):
         "--jobs",
         type=int,
         help="Number of jobs to run in parallel",
+    )
+    parser.add_argument(
+        "--ignore_errors",
+        action="store_true",
+        help="Ignore errors and continue running the flow (Pass -k 0 to ninja)",
     )
 
     # try to parse the arguments, and if none are provided, print the flow choices
@@ -144,6 +162,7 @@ if __name__ == "__main__":
             flow_arguments=parsed_args.flow_arguments,
             check_tools=not parsed_args.no_tool_checks,
             num_threads=parsed_args.jobs,
+            ignore_errors=parsed_args.ignore_errors,
         )
     else:
         ApplicationRunner().run_yaml(
