@@ -1,3 +1,0 @@
-rule netlist_cleanup
-    command = python bfasst/utils/netlist_cleanup.py $build_path  $netlist_in  $netlist_out $logging_level
-    description = netlist cleanup for $in

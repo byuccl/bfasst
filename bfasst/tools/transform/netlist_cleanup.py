@@ -17,7 +17,7 @@ class NetlistCleanup(Tool):
 
         self.build_path = self.design_build_path / "netlist_cleanup"
         self._init_outputs()
-        self.rule_snippet_path = NINJA_TRANSFORM_TOOLS_PATH / "netlist_cleanup_rules.ninja"
+        self.rule_snippet_path = NINJA_TRANSFORM_TOOLS_PATH / "netlist_cleanup_rules.ninja.mustache"
 
     def _init_outputs(self):
         self.outputs["netlist_cleaned_path"] = self.build_path / (

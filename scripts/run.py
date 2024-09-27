@@ -10,7 +10,6 @@ from bfasst import external_tools
 from bfasst.flows.ninja_flow_manager import NinjaFlowManager
 from bfasst.yaml_parser import FlowDescriptionParser, RunParser
 from bfasst.utils import error, ensure_tuple
-from bfasst.paths import ROOT_PATH
 
 
 class ApplicationRunner:
@@ -23,7 +22,7 @@ class ApplicationRunner:
         self.flow_arguments = None
         self.num_threads = None
 
-    def run_flow(self, flow, designs, flow_arguments, check_tools, num_threads):
+    def run_flow(self, flow, designs, *, flow_arguments="", check_tools=True, num_threads=1):
         """Run one ore more designs with a given flow."""
         self.designs = ensure_tuple(designs)
         self.flow = flow
@@ -61,7 +60,7 @@ class ApplicationRunner:
         cmd = ["ninja"]
         if self.num_threads:
             cmd += ["-j", str(self.num_threads)]
-        proc = subprocess.Popen(cmd, cwd=ROOT_PATH)
+        proc = subprocess.Popen(cmd)
         proc.communicate()
         return_code = proc.wait()
 
@@ -142,7 +141,7 @@ if __name__ == "__main__":
         ApplicationRunner().run_flow(
             parsed_args.flow,
             parsed_args.design,
-            parsed_args.flow_arguments,
+            flow_arguments=parsed_args.flow_arguments,
             check_tools=not parsed_args.no_tool_checks,
             num_threads=parsed_args.jobs,
         )
