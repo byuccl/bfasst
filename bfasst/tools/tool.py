@@ -6,7 +6,7 @@ import pathlib
 import chevron
 from bfasst.flows.flow import FlowBase
 
-from bfasst.paths import BUILD_PATH, DESIGNS_PATH, NINJA_BUILD_PATH
+from bfasst.paths import BUILD_PATH, DESIGNS_PATH, NINJA_BUILD_PATH, ROOT_PATH
 from bfasst.yaml_parser import DesignParser
 
 
@@ -25,12 +25,13 @@ class ToolBase(abc.ABC):
     def create_rule_snippets(self):
         """Create the rule snippets for the flow and append them to build.ninja"""
         rules_path = self.rule_snippet_path if hasattr(self, "rule_snippet_path") else None
-        rules_render_dict = self.rules_render_dict if hasattr(self, "rules_render_dict") else None
+        rules_render_dict = self.rules_render_dict if hasattr(self, "rules_render_dict") else {}
         if rules_path in self.flow.rule_paths:
             return
 
         self.flow.rule_paths.append(rules_path)
 
+        rules_render_dict["bfasst_path"] = ROOT_PATH
         with open(rules_path, "r") as f:
             if rules_render_dict:
                 rules = chevron.render(f, rules_render_dict)

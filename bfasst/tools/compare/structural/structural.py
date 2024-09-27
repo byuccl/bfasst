@@ -11,6 +11,7 @@ class Structural(Tool):
         self,
         flow,
         design,
+        *,
         log_name=None,
         golden_netlist=None,
         rev_netlist=None,
@@ -27,7 +28,9 @@ class Structural(Tool):
         self.debug = debug
         self.logging_level = logging_level
         self._init_outputs()
-        self.rule_snippet_path = COMPARE_TOOLS_PATH / "structural" / "structural_rules.ninja"
+        self.rule_snippet_path = (
+            COMPARE_TOOLS_PATH / "structural" / "structural_rules.ninja.mustache"
+        )
 
     def create_build_snippets(self):
         self._append_build_snippets_default(
@@ -38,7 +41,7 @@ class Structural(Tool):
                 "log_path": str(self.outputs["structural_log"]),
                 "compare_script_path": str(BFASST_UTILS_PATH / "structural.py"),
                 "expect_fail": "--expect_fail" if self.expect_fail else "",
-                "debug": "--debug True" if self.debug else "",
+                "debug": "--debug" if self.debug else "",
                 "logging_level": f"--logging_level {self.logging_level}",
             },
         )

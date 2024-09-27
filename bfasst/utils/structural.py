@@ -35,8 +35,9 @@ class StructuralCompare:
         named_netlist_path,
         reversed_netlist_path,
         log_path,
-        debug,
-        logging_level,
+        *,
+        debug=False,
+        logging_level="INFO",
     ) -> None:
         self.reversed_netlist_path = reversed_netlist_path
         self.named_netlist_path = named_netlist_path
@@ -819,7 +820,6 @@ class StructuralCompare:
         instances_matching_connections = self.eliminate_redundant_matches(instance_name)
 
         for pin in instance.pins:
-
             if pin.net not in self.net_mapping:
                 continue
 
@@ -921,7 +921,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--log_path", type=str, help="The log file path to use as output")
     parser.add_argument("--expect_fail", action="store_true", help="Expect the comparison to fail")
-    parser.add_argument("--debug", help="Utilize debugging functionality")
+    parser.add_argument("--debug", action="store_true", help="Utilize debugging functionality")
     parser.add_argument("--logging_level", help="Decides what levels of logs to display")
     args = parser.parse_args()
     struct_cmp = StructuralCompare(

@@ -1,4 +1,0 @@
-rule wafove
-    command = python third_party/WaFoVe/wafove/compare_waveforms.py --top $top --base $base_path --fullScreen --newTests $in >$log_path 2>$std_err_log
-    description = run wafove on the netlists specified as inputs to the rule
-

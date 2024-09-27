@@ -18,7 +18,7 @@ from bfasst.utils.error_injector import ErrorType
 class VivadoStructuralErrorInjection(Flow):
     """Inject an error into a xrev netlist and run a structural compare to detect it."""
 
-    def __init__(self, design, num_runs=100, seed=None, synth_options="", logging_level="INFO"):
+    def __init__(self, design, *, num_runs=100, seed=None, synth_options="", logging_level="INFO"):
         # pylint: disable=duplicate-code
         super().__init__(design)
         self.design = design
@@ -51,7 +51,7 @@ class VivadoStructuralErrorInjection(Flow):
             bitstream=self.vivado_impl_tool.outputs["bitstream"],
         )
         self.default_comparison_tool = Structural(self, design)
-        self.default_injection_tool = ErrorInjector(self, design, logging_level)
+        self.default_injection_tool = ErrorInjector(self, design, logging_level=logging_level)
         # pylint: enable=duplicate-code
 
     def create_build_snippets(self):

@@ -71,7 +71,6 @@ class NetlistCleaner:
                 for instance_wrapper in netlist_wrapper.instances
                 if instance_wrapper.instance.reference.name == instance_type
             ]:
-
                 connected_pins = (
                     netlist_wrapper.wire_to_net[
                         instance_wrapper.get_pin(pin_name).pin.wire

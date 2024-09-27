@@ -22,7 +22,7 @@ jobs:
 
   run-tests:
     needs: collect-tests
-    runs-on: [self-hosted, linux]
+    runs-on: [self-hosted, linux, bfasst]
     strategy:
       matrix:
         experiment: ${{ fromJson(needs.collect-tests.outputs.matrix) }}
