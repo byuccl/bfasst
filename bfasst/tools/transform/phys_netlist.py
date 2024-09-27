@@ -15,7 +15,7 @@ from bfasst.utils import compare_json
 class PhysNetlist(Tool):
     """Create rule and build snippets for phys netlist creation."""
 
-    def __init__(self, flow, design, impl_checkpoint, impl_edf, logging_level):
+    def __init__(self, flow, design, impl_checkpoint, impl_edf, *, logging_level="INFO"):
         super().__init__(flow, design)
 
         self.impl_checkpoint = impl_checkpoint
@@ -25,7 +25,7 @@ class PhysNetlist(Tool):
         self.build_path = self.design_build_path / "vivado_phys_netlist"
 
         self._init_outputs()
-        self.rule_snippet_path = NINJA_TRANSFORM_TOOLS_PATH / "phys_netlist_rules.ninja"
+        self.rule_snippet_path = NINJA_TRANSFORM_TOOLS_PATH / "phys_netlist_rules.ninja.mustache"
 
     def create_build_snippets(self):
         self.__write_json_file()

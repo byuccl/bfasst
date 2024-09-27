@@ -1,4 +1,0 @@
-rule rand_soc
-    command = python third_party/gmt_tools/rand_soc/main.py $design_dir_path $config_path --seed $seed --part $part
-    description = generate a random SoC in $design_dir_path
-

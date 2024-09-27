@@ -19,7 +19,7 @@ class IcestormRevBit(Tool):
 
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()
-        self.rule_snippet_path = REV_BIT_TOOLS_PATH / "icestorm_rules.ninja"
+        self.rule_snippet_path = REV_BIT_TOOLS_PATH / "icestorm_rules.ninja.mustache"
 
     def create_build_snippets(self):
         self._append_build_snippets_default(

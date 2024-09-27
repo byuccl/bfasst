@@ -1,0 +1,3 @@
+rule netlist_phys_to_logical
+    command = python {{ bfasst_path }}/third_party/gmt_tools/netlist_phys_to_logical.py $build_path  $netlist_in  $netlist_out
+    description = netlist physical to logical for $in

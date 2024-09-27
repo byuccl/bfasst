@@ -17,7 +17,7 @@ class RandSoC(ToolBase):
         self.num_designs = num_designs
         self.config_path = config_path
         self._init_outputs()
-        self.rule_snippet_path = TOOLS_PATH / "design_create" / "rand_soc_rules.ninja"
+        self.rule_snippet_path = TOOLS_PATH / "design_create" / "rand_soc_rules.ninja.mustache"
 
     def create_build_snippets(self):
         rand_soc_pkg_files = list((GMT_TOOLS_PATH / "rand_soc" / "rand_soc").glob("**/*.py"))

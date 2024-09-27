@@ -35,8 +35,9 @@ class StructuralCompare:
         named_netlist_path,
         reversed_netlist_path,
         log_path,
-        debug,
-        logging_level,
+        *,
+        debug=False,
+        logging_level="INFO",
     ) -> None:
         self.reversed_netlist_path = reversed_netlist_path
         self.named_netlist_path = named_netlist_path
@@ -819,7 +820,6 @@ class StructuralCompare:
         instances_matching_connections = self.eliminate_redundant_matches(instance_name)
 
         for pin in instance.pins:
-
             if pin.net not in self.net_mapping:
                 continue
 

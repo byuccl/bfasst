@@ -3,3 +3,5 @@ flow: RandSocDumped
 num_designs: 2
 
 part: xc7a200tlffv1156-2L
+
+randsoc_config_path: resources/randsoc/randsoc_configs/ci_small.yaml

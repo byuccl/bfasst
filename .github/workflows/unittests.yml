@@ -29,7 +29,7 @@ jobs:
   # Build a matrix run of all experiments generated in previous job
   run-test:
     needs: collect-experiments
-    runs-on: [self-hosted, linux]
+    runs-on: [self-hosted, linux, bfasst]
     strategy:
       fail-fast: false
       matrix:
@@ -85,7 +85,7 @@ jobs:
           build/**/*.log
 
   unittest:
-    runs-on: [self-hosted, linux]
+    runs-on: [self-hosted, linux, bfasst]
     steps:
     - name: 'Cleanup build folder'
       run: |
