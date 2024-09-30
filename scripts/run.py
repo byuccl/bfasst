@@ -46,7 +46,7 @@ class ApplicationRunner:
             self.flow_arguments = ast.literal_eval(flow_arguments)
         self.__run_ninja()
 
-    def run_yaml(self, yaml_path, check_tools, num_threads):
+    def run_yaml(self, yaml_path, *, check_tools=True, num_threads=1, ignore_errors=False):
         """Run using a yaml configuration file"""
 
         run_config = RunParser(yaml_path)
@@ -55,6 +55,7 @@ class ApplicationRunner:
         self.flow = run_config.flow
         self.flow_arguments = run_config.flow_arguments
         self.num_threads = num_threads
+        self.ignore_errors = ignore_errors
         if check_tools:
             success = external_tools.check_flow(self.flow)
             if not success:
@@ -166,5 +167,8 @@ if __name__ == "__main__":
         )
     else:
         ApplicationRunner().run_yaml(
-            parsed_args.yaml, check_tools=parsed_args.no_tool_checks, num_threads=parsed_args.jobs
+            parsed_args.yaml,
+            check_tools=parsed_args.no_tool_checks,
+            num_threads=parsed_args.jobs,
+            ignore_errors=parsed_args.ignore_errors,
         )
