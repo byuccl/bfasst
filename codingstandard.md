@@ -15,7 +15,7 @@ Note that this is subject to change and discussion.
 + Maximum of 15 locals per function.
 + No else after return statement.
 + Run all code through black.
-+ For string generation, use f-strings.
++ For string generation, use f-strings - except for [logging](https://docs.python.org/3/howto/logging.html#optimization)
 + If a file has a main, the main should take no arguments, parse the argv, and only call another function.
 + If comparing against a singleton object (`True`, `False`, `None`), use `is` instead of `==`, `is not` instead of `!=`.
 + For parsing system parameters, use argparse

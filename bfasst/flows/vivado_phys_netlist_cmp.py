@@ -13,25 +13,26 @@ from bfasst.tools.synth.vivado_synth import VivadoSynth
 class VivadoPhysNetlistCmp(Flow):
     """Structural Comparison of physical netlist and reversed netlist"""
 
-    def __init__(self, design, synth_options="", debug=False):
+    def __init__(self, design, synth_options="", debug=False, logging_level="INFO"):
         # pylint: disable=duplicate-code
         super().__init__(design)
 
         self.synth_options = VivadoPhysNetlist.add_required_synth_options(synth_options)
         self.debug = debug
-
+        self.logging_level = logging_level
         self.vivado_synth_tool = VivadoSynth(self, design, synth_options=self.synth_options)
         self.vivado_impl_tool = VivadoImpl(
             self,
             design,
             synth_edf=self.vivado_synth_tool.outputs["synth_edf"],
-            constraints_file=self.vivado_synth_tool.outputs["synth_constraints"],
+            constraints_files=self.vivado_synth_tool.outputs["synth_constraints"],
         )
         self.phys_netlist_tool = PhysNetlist(
             self,
             design,
             impl_edf=self.vivado_impl_tool.outputs["impl_edf"],
             impl_checkpoint=self.vivado_impl_tool.outputs["impl_dcp"],
+            logging_level=self.logging_level,
         )
         self.xray_tool = Xray(
             self,
@@ -42,10 +43,11 @@ class VivadoPhysNetlistCmp(Flow):
         self.compare_tool = Structural(
             self,
             design,
-            "struct_cmp.log",
+            log_name="struct_cmp.log",
             golden_netlist=self.phys_netlist_tool.outputs["viv_impl_physical_v"],
             rev_netlist=self.xray_tool.outputs["rev_netlist"],
             debug=self.debug,
+            logging_level=self.logging_level,
         )
         # pylint: enable=duplicate-code
 

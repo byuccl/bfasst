@@ -18,7 +18,7 @@ class Vivado(Flow):
             self,
             design,
             synth_edf=self.vivado_synth_tool.outputs["synth_edf"],
-            constraints_file=self.vivado_synth_tool.outputs["synth_constraints"],
+            constraints_files=self.vivado_synth_tool.outputs["synth_constraints"],
             ooc=ooc,
         )
         self.tools = [self.vivado_synth_tool, self.vivado_impl_tool]

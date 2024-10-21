@@ -22,7 +22,7 @@ jobs:
 
   run-tests:
     needs: collect-tests
-    runs-on: [self-hosted, linux]
+    runs-on: [self-hosted, linux, bfasst]
     strategy:
       matrix:
         experiment: ${{ fromJson(needs.collect-tests.outputs.matrix) }}
@@ -43,7 +43,7 @@ jobs:
         make env
         . .venv/bin/activate && python bfasst/external_tools.py install_test_yaml ${{ matrix.experiment }}
     - name: tests
-      timeout-minutes: 60
+      timeout-minutes: 240
       run: |
         source .venv/bin/activate
         python scripts/run.py ${{ matrix.experiment }}

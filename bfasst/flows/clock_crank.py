@@ -17,7 +17,7 @@ class ClockCrank(Flow):
             self,
             design,
             synth_edf=self.vivado_synth_tool.outputs["synth_edf"],
-            constraints_file=self.vivado_synth_tool.outputs["synth_constraints"],
+            constraints_files=self.vivado_synth_tool.outputs["synth_constraints"],
         )
         self.vivado_impl_tool.outputs["clock_crank_tcl"] = (
             self.vivado_impl_tool.build_path / "clock_crank.tcl"

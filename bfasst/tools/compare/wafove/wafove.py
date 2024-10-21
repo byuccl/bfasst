@@ -8,7 +8,14 @@ class Wafove(Tool):
     """Create the rule and build snippets for structural comparison."""
 
     def __init__(
-        self, flow, design, std_out_log_name, std_err_log_name, golden_netlist, rev_netlist
+        self,
+        flow,
+        design,
+        golden_netlist,
+        rev_netlist,
+        *,
+        std_out_log_name="wafove.log",
+        std_err_log_name="wafove_err.log",
     ):
         super().__init__(flow, design)
 
@@ -19,7 +26,7 @@ class Wafove(Tool):
 
         self.build_path = self.design_build_path / "wafove"
         self._init_outputs(self.std_out_log_name, self.std_err_log_name)
-        self.rule_snippet_path = COMPARE_TOOLS_PATH / "wafove" / "wafove_rules.ninja"
+        self.rule_snippet_path = COMPARE_TOOLS_PATH / "wafove" / "wafove_rules.ninja.mustache"
 
     def create_build_snippets(self):
         self._append_build_snippets_default(

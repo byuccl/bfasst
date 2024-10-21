@@ -37,7 +37,7 @@ designs:
   - ooc/a25_wishbone 
   - ooc/basicrsa  
   - ooc/bcd_adder  
-  # - ooc/bubblesort 
+  - ooc/bubblesort 
   - ooc/control_unit 
   - ooc/cpu8080 
   - ooc/data_path 
@@ -50,16 +50,20 @@ designs:
   - ooc/pid 
   # - ooc/quadratic_func 
   - ooc/random_pulse_generator 
-  # - ooc/simon_core 
+  - ooc/simon_core 
   - ooc/tiny_encryption_algorithm 
   - ooc/uart2spi 
   - ooc/wb_lcd 
   - vtr_benchmarks/mkPktMerge 
-  # - vtr_benchmarks/mkSMAdapter4B 
-  # - vtr_benchmarks/raygentop
+  - vtr_benchmarks/mkSMAdapter4B 
+  - vtr_benchmarks/raygentop
   - vtr_benchmarks/sha
   - vtr_benchmarks/stereovision1
   - vtr_benchmarks/stereovision2
   - vtr_benchmarks/stereovision3
 
 flow: vivado_phys_netlist_cmp
+
+
+synth_options:
+  synth_design: "-flatten_hierarchy full -max_dsp 0"

@@ -3,7 +3,6 @@ set_property top_file {{ inputs.synth_edf }} [current_fileset]
 link_design -part {{ part }}
 {{#inputs.xdc}}
 read_xdc {{ . }}
-
 {{/inputs.xdc}}
 {{#clocks}}
 create_clock -period {{period}} -name {{ name }}_gen {{#waveform}} -waveform { {{.}} } {{/waveform}} [get_ports {{ name }}]

@@ -26,13 +26,16 @@ class ErrorInjectorException(Exception):
 class ErrorInjector:
     """Inject errors into an xrev netlist"""
 
-    def __init__(self, build_dir, log_path, seed, error_type, reversed_netlist):
+    def __init__(
+        self, build_dir, log_path, seed, error_type, reversed_netlist, logging_level=logging.DEBUG
+    ):
         self.build_dir = Path(build_dir)
         self.stage_dir = self.build_dir / "error_injection"
         self.log_path = self.stage_dir / log_path
+        self.logging_level = logging_level
         logging.basicConfig(
             filename=self.log_path,
-            level=logging.DEBUG,
+            level=self.logging_level,
             format="%(asctime)s %(message)s",
             datefmt="%Y%m%d%H%M%S",
         )
@@ -264,6 +267,14 @@ if __name__ == "__main__":
     parser.add_argument("--seed", help="Seed for random number generator")
     parser.add_argument("--error_type", type=str, help="Type of error to inject")
     parser.add_argument("--reversed_netlist", type=str, help="Path to reversed netlist")
+    parser.add_argument("--logging_level", help="Decides what levels of logs to display")
     args = parser.parse_args()
 
-    ErrorInjector(args.build_dir, args.log_path, args.seed, args.error_type, args.reversed_netlist)
+    ErrorInjector(
+        args.build_dir,
+        args.log_path,
+        args.seed,
+        args.error_type,
+        args.reversed_netlist,
+        args.logging_level,
+    )

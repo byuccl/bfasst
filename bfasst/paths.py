@@ -28,7 +28,7 @@ CONFORMAL_TOOLS_PATH = COMPARE_TOOLS_PATH / "conformal"
 STRUCTURAL_TOOLS_PATH = COMPARE_TOOLS_PATH / "structural"
 YOSYS_TOOLS_PATH = COMPARE_TOOLS_PATH / "yosys"
 
-NINJA_BUILD_PATH = ROOT_PATH / "build.ninja"
+NINJA_BUILD_PATH = pathlib.Path().cwd() / "build.ninja"
 
 IC2_RESOURCES = RESOURCES_PATH / "iCEcube2"
 LSE_PRJ_TEMPLATE = IC2_RESOURCES / "template_lse_prj.mustache"

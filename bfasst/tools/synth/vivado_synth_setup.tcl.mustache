@@ -16,3 +16,7 @@ read_vhdl {{ . }}
 read_vhdl -library {{1}} {{0}}
 
 {{/vhdl_libs}}
+{{#other_sources}}
+add_files {{ . }}
+
+{{/other_sources}}
