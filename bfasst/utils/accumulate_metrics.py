@@ -17,7 +17,10 @@ def main():
         "analysis_dir", help="The path to the folder containing all analysis files for all graphs."
     )
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable debug logging.")
-    parser.add_argument("-o", help="The name of the output file to create")
+    parser.add_argument("-m", help="The name of the metrics file to create")
+    parser.add_argument(
+        "-s", help="The name of the stats (5-num summary, mean, stddev) file to create"
+    )
     args = parser.parse_args()
 
     # Logging (for debug, don't use in parallel)
@@ -79,11 +82,14 @@ def main():
                     "stddev": stddev,
                 }
 
-    for k, v in master_metrics.items():
-        logger.debug(k + ": " + str(v))
+    # write master_metrics to a file
+    output = args.m if args.m else "master_metrics.log"
+    with open(output, "w") as f:
+        f.write(json.dumps(master_metrics, indent=4))
 
-    for k, v in stats_summary.items():
-        logger.debug(k + ": " + str(v))
+    output = args.s if args.s else "summary_statistics.log"
+    with open(output, "w") as f:
+        f.write(json.dumps(stats_summary, indent=4))
 
 
 def five_number_summary(data):
