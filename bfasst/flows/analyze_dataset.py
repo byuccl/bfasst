@@ -26,8 +26,9 @@ class AnalyzeDataset(Flow):
         iterations = len(directories)
 
         for i in range(1, iterations + 1):
+            num = int(directories[i - 1].name.split("_")[-1])
             graph_metrics_tool = GraphMetrics(
-                self, self.design, directories[i - 1] / f"{directories[i-1].name}.dump", i
+                self, self.design, directories[i - 1] / f"{directories[i - 1].name}.dump", num
             )
             graph_metrics_tool.create_build_snippets()
 
