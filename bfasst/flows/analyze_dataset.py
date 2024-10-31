@@ -1,24 +1,24 @@
 """Analyze dataset metrics."""
 
 from pathlib import Path
-from bfasst.flows.flow import Flow
+import pathlib
+from bfasst.flows.flow import FlowNoDesign
 from bfasst.paths import FLOWS_PATH
 from bfasst.tools.dataset_metrics.accumulate_metrics import AccumulateMetrics
 from bfasst.tools.dataset_metrics.graph_metrics import GraphMetrics
 
 
-class AnalyzeDataset(Flow):
+class AnalyzeDataset(FlowNoDesign):
     """Analyze dataset metrics."""
 
-    def __init__(self, design, dataset):
+    def __init__(self, dataset):
         # pylint: disable=duplicate-code
-        super().__init__(design)
-        self.design = design
+        super().__init__()
         self.dataset = Path(dataset)
 
         # only used for configuring ninja rule snippets
-        self.graph_metrics_default_tool = GraphMetrics(self, design, None, None)
-        self.accumulate_metrics_tool = AccumulateMetrics(self, design, None)
+        self.graph_metrics_default_tool = GraphMetrics(self, None, None)
+        self.accumulate_metrics_tool = AccumulateMetrics(self, None)
         # pylint: enable=duplicate-code
 
     def create_build_snippets(self):
@@ -30,12 +30,20 @@ class AnalyzeDataset(Flow):
         for i in range(1, iterations + 1):
             num = int(directories[i - 1].name.split("_")[-1])
             graph_metrics_tool = GraphMetrics(
-                self, self.design, directories[i - 1] / f"{directories[i - 1].name}.dump", num
+                self, directories[i - 1] / f"{directories[i - 1].name}.dump", num
             )
             pieces.append(graph_metrics_tool.metrics_path)
             graph_metrics_tool.create_build_snippets()
 
-        AccumulateMetrics(self, self.design, pieces).create_build_snippets()
+        AccumulateMetrics(self, pieces).create_build_snippets()
 
-    def get_top_level_flow_path(self) -> str:
-        return FLOWS_PATH / "analyze_dataset.py"
+    @classmethod
+    def flow_build_dir_name(cls) -> str:
+        """Get the name of the build directory for this flow"""
+        return "dataset_metrics"
+
+    def add_ninja_deps(self, deps):
+        super().add_ninja_deps(deps)
+
+    def get_top_level_flow_path(self):
+        return pathlib.Path(__file__).resolve()
