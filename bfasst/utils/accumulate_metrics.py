@@ -31,10 +31,21 @@ def main():
 
     # Initialize the master dictionary
     master_metrics = {}
+    master_metrics_output = args.m if args.m else "master_metrics.log"
+    stats_summary_output = args.s if args.s else "summary_statistics.log"
 
     # Iterate through the files in the analysis directory
     for file in Path(args.analysis_dir).iterdir():
         if file.is_dir():
+            continue
+
+        if (
+            file.name == master_metrics_output
+            or file.name == stats_summary_output
+            # if these exist, don't read them even if master_metrics_output and stats_summary_output are different
+            or file.name == "master_metrics.log"
+            or file.name == "summary_statistics.log"
+        ):
             continue
 
         with open(file, "r") as f:
@@ -83,12 +94,10 @@ def main():
                 }
 
     # write master_metrics to a file
-    output = args.m if args.m else "master_metrics.log"
-    with open(output, "w") as f:
+    with open(master_metrics_output, "w") as f:
         f.write(json.dumps(master_metrics, indent=4))
 
-    output = args.s if args.s else "summary_statistics.log"
-    with open(output, "w") as f:
+    with open(stats_summary_output, "w") as f:
         f.write(json.dumps(stats_summary, indent=4))
 
 
