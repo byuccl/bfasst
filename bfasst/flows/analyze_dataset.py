@@ -3,7 +3,6 @@
 from pathlib import Path
 import pathlib
 from bfasst.flows.flow import FlowNoDesign
-from bfasst.paths import FLOWS_PATH
 from bfasst.tools.dataset_metrics.accumulate_metrics import AccumulateMetrics
 from bfasst.tools.dataset_metrics.graph_metrics import GraphMetrics
 

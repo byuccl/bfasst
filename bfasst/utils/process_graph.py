@@ -130,6 +130,7 @@ def convert_to_adj_list(component_nodes, component_edges):
 
 
 def compute_metrics_per_ip(adj_lists, args):
+    """Compute metrics for each IP in the graph."""
     metrics_per_ip = {}
     for label, adj_list in adj_lists.items():
 
@@ -193,7 +194,7 @@ def compute_metrics_per_ip(adj_lists, args):
 def compute_size(adj_list):
     edge_count = 0
     for node in adj_list:
-        for neighbor in adj_list[node]:
+        for _ in adj_list[node]:
             edge_count += 1
     return edge_count // 2
 
@@ -231,6 +232,8 @@ def compute_average_degree(adj_list):
 
 
 class UnionFind:
+    """Union-find data structure."""
+
     def __init__(self):
         self.parent = {}
         self.rank = {}
@@ -241,6 +244,7 @@ class UnionFind:
             self.rank[u] = 0
 
     def find(self, u):
+        """Find the parent of a node."""
         # Ensure u is in the union find
         self.add(u)
 
@@ -250,6 +254,7 @@ class UnionFind:
         return self.parent[u]
 
     def union(self, u, v):
+        """Union two nodes."""
         self.add(u)
         self.add(v)
         pu, pv = self.find(u), self.find(v)
@@ -265,6 +270,7 @@ class UnionFind:
 
 
 def bfs_farthest(adj_list, start_node):
+    """Breadth-first search to find the farthest node from a starting node."""
     queue = [(start_node, 0)]
     visited = {start_node}
     farthest_node = start_node
@@ -285,6 +291,7 @@ def bfs_farthest(adj_list, start_node):
 
 
 def compute_k_core(adj_list):
+    """Compute the k-core of a graph."""
     degree = {node: len(neighbors) for node, neighbors in adj_list.items()}
     max_k = 0
     k_core_subgraph = {}
@@ -320,6 +327,7 @@ def compute_k_core(adj_list):
 
 
 def compute_global_clustering(adj_list):
+    """Compute the global clustering coefficient of a graph."""
     closed_triplets = 0
     total_triplets = 0
     visited_pairs = set()
@@ -342,6 +350,7 @@ def compute_global_clustering(adj_list):
 
 
 def compute_local_clustering(adj_list):
+    """Compute the local clustering coefficient of a graph."""
     local_clustering_coefficients = []
 
     for node in adj_list:

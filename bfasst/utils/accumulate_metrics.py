@@ -12,6 +12,38 @@ logger = logging.getLogger(__name__)
 def main():
     """Load the graph, convert to adj_list, and compute metrics."""
     # ArgParse
+    args = get_args()
+
+    # Logging (for debug, don't use in parallel)
+    logging.basicConfig(
+        level=logging.DEBUG if args.verbose else logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s",
+    )
+
+    # Initialize the master dictionary
+    master_metrics_output = args.m if args.m else "master_metrics.log"
+    stats_summary_output = args.s if args.s else "summary_statistics.log"
+
+    # Iterate through the files in the analysis directory
+    master_metrics = compute_master_metrics(
+        args.analysis_dir, master_metrics_output, stats_summary_output
+    )
+
+    # sort the values for each metric after merging
+    master_metrics = sort_metrics(master_metrics)
+
+    # Compute the stats for each metric
+    stats_summary = get_stats_summary(master_metrics)
+
+    # write master_metrics to a file
+    with open(master_metrics_output, "w") as f:
+        f.write(json.dumps(master_metrics, indent=4))
+
+    with open(stats_summary_output, "w") as f:
+        f.write(json.dumps(stats_summary, indent=4))
+
+
+def get_args():
     parser = argparse.ArgumentParser(description="Compute metrics on a graph.")
     parser.add_argument(
         "analysis_dir", help="The path to the folder containing all analysis files for all graphs."
@@ -21,30 +53,23 @@ def main():
     parser.add_argument(
         "-s", help="The name of the stats (5-num summary, mean, stddev) file to create"
     )
-    args = parser.parse_args()
+    return parser.parse_args()
 
-    # Logging (for debug, don't use in parallel)
-    logging.basicConfig(
-        level=logging.DEBUG if args.verbose else logging.INFO,
-        format="%(asctime)s - %(levelname)s - %(message)s",
-    )
 
-    # Initialize the master dictionary
+def compute_master_metrics(analysis_dir, master_metrics_output, stats_summary_output):
     master_metrics = {}
-    master_metrics_output = args.m if args.m else "master_metrics.log"
-    stats_summary_output = args.s if args.s else "summary_statistics.log"
-
-    # Iterate through the files in the analysis directory
-    for file in Path(args.analysis_dir).iterdir():
+    for file in Path(analysis_dir).iterdir():
         if file.is_dir():
             continue
 
-        if (
-            file.name == master_metrics_output
-            or file.name == stats_summary_output
-            # if these exist, don't read them even if master_metrics_output and stats_summary_output are different
-            or file.name == "master_metrics.log"
-            or file.name == "summary_statistics.log"
+        if file.name in (
+            master_metrics_output,
+            stats_summary_output,
+            # Skip the master_metrics and stats_summary files
+            # Even if the user has specified different names
+            # for this run
+            "master_metrics.log",
+            "summary_statistics.log",
         ):
             continue
 
@@ -64,51 +89,53 @@ def main():
                 # Concatenate the lists
                 master_metrics[ip][metric].extend(values)
 
-    # sort the values for each metric after merging
-    for ip in master_metrics:
-        for metric in master_metrics[ip]:
-            master_metrics[ip][metric] = sorted(master_metrics[ip][metric])
+    return master_metrics
 
-    # Compute the stats for each metric
-    stats_summary = {}
-    for ip, metrics in master_metrics.items():
+
+def sort_metrics(metrics):
+    """Sort the values for each metric in the dictionary."""
+    for ip, _ in metrics.items():
+        for metric in metrics[ip]:
+            metrics[ip][metric] = sorted(metrics[ip][metric])
+    return metrics
+
+
+def get_stats_summary(metrics):
+    summary = {}
+    for ip, metrics in metrics.items():
         for metric, values in metrics.items():
             # Calculate statistics
             if values:  # Check if the list is not empty
-                min_val, Q1, median, Q3, max_val = five_number_summary(values)
+                min_val, first_quartile, median, third_quartile, max_val = five_number_summary(
+                    values
+                )
                 mean = sum(values) / len(values)
                 stddev = statistics.stdev(values) if len(values) > 1 else 0.0
 
                 # Prepare the summary dictionary
-                if ip not in stats_summary:
-                    stats_summary[ip] = {}
+                if ip not in summary:
+                    summary[ip] = {}
 
-                stats_summary[ip][metric] = {
+                summary[ip][metric] = {
                     "min": min_val,
-                    "Q1": Q1,
+                    "Q1": first_quartile,
                     "median": median,
-                    "Q3": Q3,
+                    "Q3": third_quartile,
                     "max": max_val,
                     "mean": mean,
                     "stddev": stddev,
                 }
-
-    # write master_metrics to a file
-    with open(master_metrics_output, "w") as f:
-        f.write(json.dumps(master_metrics, indent=4))
-
-    with open(stats_summary_output, "w") as f:
-        f.write(json.dumps(stats_summary, indent=4))
+    return summary
 
 
 def five_number_summary(data):
     n = len(data)
     min_val = data[0]
     max_val = data[-1]
-    Q1 = data[n // 4]
+    first_quartile = data[n // 4]
     median = data[n // 2]
-    Q3 = data[(3 * n) // 4]
-    return min_val, Q1, median, Q3, max_val
+    third_quartile = data[(3 * n) // 4]
+    return min_val, first_quartile, median, third_quartile, max_val
 
 
 if __name__ == "__main__":
