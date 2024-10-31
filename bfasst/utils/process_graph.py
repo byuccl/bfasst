@@ -125,6 +125,7 @@ def compute_metrics_per_ip(adj_lists, args):
 
         # Degree
         avg_desgree = compute_average_degree(adj_list)
+        metrics_per_ip[ip]["degree"].append(avg_desgree)
 
         # Diameter
         avg_diameter = compute_average_diameter(adj_list)
