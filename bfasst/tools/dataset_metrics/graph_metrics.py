@@ -7,8 +7,7 @@ from bfasst.paths import NINJA_BUILD_PATH, DATASET_METRICS_TOOLS_PATH, BFASST_UT
 
 
 class GraphMetrics(Tool):
-    """Create the rule and build snippets for computing gnn dataset metrics
-    ."""
+    """Create the rule and build snippets for computing gnn dataset metrics."""
 
     def __init__(
         self,

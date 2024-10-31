@@ -1,0 +1,4 @@
+build {{ metrics_file }} {{ summary_stats }}: accumulate_metrics {{ aggregation_dir }} | {{#pieces}}{{.}} {{/pieces}}
+    metrics_file = {{ metrics_file }}
+    summary_stats = {{ summary_stats }}
+
