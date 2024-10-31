@@ -14,9 +14,7 @@ def main():
     # ArgParse
     parser = argparse.ArgumentParser(description="Compute metrics on a graph.")
     parser.add_argument("graph", help="The graph to compute metrics on.")
-    parser.add_argument(
-        "-v", "--verbose", action="store_true", help="Enable debug logging."
-    )
+    parser.add_argument("-v", "--verbose", action="store_true", help="Enable debug logging.")
     parser.add_argument("-o", help="The name of the output file to create")
     args = parser.parse_args()
 
@@ -112,22 +110,25 @@ def convert_to_adj_list(component_nodes, component_edges):
 def compute_metrics_per_ip(adj_lists, args):
     metrics_per_ip = {}
     for label, adj_list in adj_lists.items():
-        
+
         # set up default entries
         ip = get_ip_name_from_label(label)
         if ip not in metrics_per_ip:
-            metrics_per_ip[ip] = {"order": [], "size": []}
-        
+            metrics_per_ip[ip] = {"order": [], "size": [], "degree": [], "diameter": []}
+
         # Order
         metrics_per_ip[ip]["order"].append(len(adj_list))
 
         # Size
-        edge_count = 0
-        for node in adj_list:
-            for neighbor in adj_list[node]:
-                edge_count += 1
-        edge_count = edge_count // 2
+        edge_count = compute_size(adj_list)
         metrics_per_ip[ip]["size"].append(edge_count)
+
+        # Degree
+        avg_desgree = compute_average_degree(adj_list)
+
+        # Diameter
+        avg_diameter = compute_average_diameter(adj_list)
+        metrics_per_ip[ip]["diameter"].append(avg_diameter)
 
         # Debug (verbose flag only)
         logger.debug(f"IP: {ip}")
@@ -137,6 +138,100 @@ def compute_metrics_per_ip(adj_lists, args):
         logger.debug("")
 
     return metrics_per_ip
+
+
+def compute_size(adj_list):
+    edge_count = 0
+    for node in adj_list:
+        for neighbor in adj_list[node]:
+            edge_count += 1
+    return edge_count // 2
+
+
+def compute_average_diameter(adj_list):
+    uf = UnionFind()
+
+    for u in adj_list:
+        for v in adj_list[u]:
+            uf.union(u, v)
+
+    components = {}
+    for node in adj_list:
+        root = uf.find(node)
+        if root not in components:
+            components[root] = set()
+        components[root].add(node)
+
+    diameters = []
+
+    for component in components.values():
+        node = next(iter(component))
+        u, _ = bfs_farthest(adj_list, node)
+        _, diameter = bfs_farthest(adj_list, u)
+        diameters.append(diameter)
+
+    return sum(diameters) / len(diameters) if diameters else 0
+
+
+def compute_average_degree(adj_list):
+    degrees = []
+    for node in adj_list:
+        degrees.append(len(adj_list[node]))
+    return sum(degrees) / len(degrees) if degrees else 0
+
+
+class UnionFind:
+    def __init__(self):
+        self.parent = {}
+        self.rank = {}
+
+    def add(self, u):
+        if u not in self.parent:
+            self.parent[u] = u
+            self.rank[u] = 0
+
+    def find(self, u):
+        # Ensure u is in the union find
+        self.add(u)
+
+        # Path compression
+        if self.parent[u] != u:
+            self.parent[u] = self.find(self.parent[u])
+        return self.parent[u]
+
+    def union(self, u, v):
+        self.add(u)
+        self.add(v)
+        pu, pv = self.find(u), self.find(v)
+
+        if pv != pu:
+            if self.rank[pu] > self.rank[pv]:
+                self.parent[pv] = pu
+            elif self.rank[pv] > self.rank[pu]:
+                self.parent[pu] = pv
+            else:
+                self.parent[pv] = pu
+                self.rank[pu] += 1
+
+
+def bfs_farthest(adj_list, start_node):
+    queue = [(start_node, 0)]
+    visited = {start_node}
+    farthest_node = start_node
+    max_distance = 0
+
+    while queue:
+        node, distance = queue.pop(0)
+        if distance > max_distance:
+            max_distance = distance
+            farthest_node = node
+
+        for neighbor in adj_list[node]:
+            if neighbor not in visited:
+                queue.append((neighbor, distance + 1))
+                visited.add(neighbor)
+
+    return farthest_node, max_distance
 
 
 def get_ip_name_from_label(label):
