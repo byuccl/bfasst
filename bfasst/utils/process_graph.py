@@ -16,6 +16,28 @@ def main():
     parser.add_argument("graph", help="The graph to compute metrics on.")
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable debug logging.")
     parser.add_argument("-o", help="The name of the output file to create")
+
+    parser.add_argument("--order", action="store_true", help="Compute the order of the graph.")
+    parser.add_argument("--size", action="store_true", help="Compute the size of the graph.")
+    parser.add_argument(
+        "--degree", action="store_true", help="Compute the average degree of the graph."
+    )
+    parser.add_argument(
+        "--diameter", action="store_true", help="Compute the average diameter of the graph."
+    )
+    parser.add_argument("--kcore", action="store_true", help="Compute the k-core of the graph.")
+    parser.add_argument(
+        "--global_clustering_coeff",
+        action="store_true",
+        help="Compute the global clustering coefficient of the graph.",
+    )
+    parser.add_argument(
+        "--local_clustering_coeff",
+        action="store_true",
+        help="Compute the local clustering coefficient of the graph.",
+    )
+    parser.add_argument("--all", action="store_true", help="Compute all metrics.", default=True)
+
     args = parser.parse_args()
 
     # Logging (for debug, don't use in parallel)
@@ -125,31 +147,38 @@ def compute_metrics_per_ip(adj_lists, args):
             }
 
         # Order
-        metrics_per_ip[ip]["order"].append(len(adj_list))
+        if args.all or args.order:
+            metrics_per_ip[ip]["order"].append(len(adj_list))
 
         # Size
-        edge_count = compute_size(adj_list)
-        metrics_per_ip[ip]["size"].append(edge_count)
+        if args.all or args.size:
+            edge_count = compute_size(adj_list)
+            metrics_per_ip[ip]["size"].append(edge_count)
 
         # Degree
-        avg_desgree = compute_average_degree(adj_list)
-        metrics_per_ip[ip]["degree"].append(avg_desgree)
+        if args.all or args.degree:
+            avg_desgree = compute_average_degree(adj_list)
+            metrics_per_ip[ip]["degree"].append(avg_desgree)
 
         # Diameter
-        avg_diameter = compute_average_diameter(adj_list)
-        metrics_per_ip[ip]["diameter"].append(avg_diameter)
+        if args.all or args.diameter:
+            avg_diameter = compute_average_diameter(adj_list)
+            metrics_per_ip[ip]["diameter"].append(avg_diameter)
 
         # K-core
-        max_k, _ = compute_k_core(adj_list)
-        metrics_per_ip[ip]["kcore"].append(max_k)
+        if args.all or args.kcore:
+            max_k, _ = compute_k_core(adj_list)
+            metrics_per_ip[ip]["kcore"].append(max_k)
 
         # Global Clustering Coefficient
-        global_clustering = compute_global_clustering(adj_list)
-        metrics_per_ip[ip]["global_clustering_coeff"].append(global_clustering)
+        if args.all or args.global_clustering_coeff:
+            global_clustering = compute_global_clustering(adj_list)
+            metrics_per_ip[ip]["global_clustering_coeff"].append(global_clustering)
 
         # Local Clustering Coefficient
-        local_clustering = compute_local_clustering(adj_list)
-        metrics_per_ip[ip]["local_clustering_coeff"].append(local_clustering)
+        if args.all or args.local_clustering_coeff:
+            local_clustering = compute_local_clustering(adj_list)
+            metrics_per_ip[ip]["local_clustering_coeff"].append(local_clustering)
 
         # Debug (verbose flag only)
         logger.debug(f"IP: {ip}")
