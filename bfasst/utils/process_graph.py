@@ -120,8 +120,8 @@ def compute_metrics_per_ip(adj_lists, args):
                 "degree": [],
                 "diameter": [],
                 "kcore": [],
-                "clustering": [],
-                "local_clustering": [],
+                "global_clustering_coeff": [],
+                "local_clustering_coeff": [],
             }
 
         # Order
@@ -145,11 +145,11 @@ def compute_metrics_per_ip(adj_lists, args):
 
         # Global Clustering Coefficient
         global_clustering = compute_global_clustering(adj_list)
-        metrics_per_ip[ip]["clustering"].append(global_clustering)
+        metrics_per_ip[ip]["global_clustering_coeff"].append(global_clustering)
 
         # Local Clustering Coefficient
         local_clustering = compute_local_clustering(adj_list)
-        metrics_per_ip[ip]["local_clustering"].append(local_clustering)
+        metrics_per_ip[ip]["local_clustering_coeff"].append(local_clustering)
 
         # Debug (verbose flag only)
         logger.debug(f"IP: {ip}")
