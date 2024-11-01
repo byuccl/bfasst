@@ -182,10 +182,10 @@ def compute_metrics_per_ip(adj_lists, args):
             metrics_per_ip[ip]["local_clustering_coeff"].append(local_clustering)
 
         # Debug (verbose flag only)
-        logger.debug(f"IP: {ip}")
-        logger.debug(f"Component: {label}")
-        logger.debug(f"Nodes: {len(adj_list)}")
-        logger.debug(f"Edges: {edge_count}")
+        logger.debug("IP: %s", ip)
+        logger.debug("Component: %s", label)
+        logger.debug("Nodes: %s", len(adj_list))
+        logger.debug("Edges: %s", edge_count)
         logger.debug("")
 
     return metrics_per_ip
@@ -200,6 +200,7 @@ def compute_size(adj_list):
 
 
 def compute_average_diameter(adj_list):
+    """Compute the average diameter of a graph."""
     uf = UnionFind()
 
     for u in adj_list:

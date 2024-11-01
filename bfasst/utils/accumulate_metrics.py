@@ -44,6 +44,7 @@ def main():
 
 
 def get_args():
+    """Get the command line arguments."""
     parser = argparse.ArgumentParser(description="Compute metrics on a graph.")
     parser.add_argument(
         "analysis_dir", help="The path to the folder containing all analysis files for all graphs."
@@ -57,6 +58,7 @@ def get_args():
 
 
 def compute_master_metrics(analysis_dir, master_metrics_output, stats_summary_output):
+    """Compute the master metrics from the analysis directory."""
     master_metrics = {}
     for file in Path(analysis_dir).iterdir():
         if file.is_dir():
@@ -100,9 +102,10 @@ def sort_metrics(metrics):
     return metrics
 
 
-def get_stats_summary(metrics):
+def get_stats_summary(master_metrics):
+    """Compute the 5-number summary, mean, and standard deviation for each metric."""
     summary = {}
-    for ip, metrics in metrics.items():
+    for ip, metrics in master_metrics.items():
         for metric, values in metrics.items():
             # Calculate statistics
             if values:  # Check if the list is not empty
@@ -129,6 +132,7 @@ def get_stats_summary(metrics):
 
 
 def five_number_summary(data):
+    """Compute the 5-number summary for the given data."""
     n = len(data)
     min_val = data[0]
     max_val = data[-1]
