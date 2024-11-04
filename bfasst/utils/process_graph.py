@@ -25,16 +25,10 @@ def main():
     parser.add_argument(
         "--diameter", action="store_true", help="Compute the average diameter of the graph."
     )
-    parser.add_argument("--kcore", action="store_true", help="Compute the k-core of the graph.")
     parser.add_argument(
         "--global_clustering_coeff",
         action="store_true",
         help="Compute the global clustering coefficient of the graph.",
-    )
-    parser.add_argument(
-        "--local_clustering_coeff",
-        action="store_true",
-        help="Compute the local clustering coefficient of the graph.",
     )
     parser.add_argument("--all", action="store_true", help="Compute all metrics.", default=True)
 
@@ -142,9 +136,7 @@ def compute_metrics_per_ip(adj_lists, args):
                 "size": [],
                 "degree": [],
                 "diameter": [],
-                "kcore": [],
                 "global_clustering_coeff": [],
-                "local_clustering_coeff": [],
             }
 
         # Order
@@ -166,20 +158,10 @@ def compute_metrics_per_ip(adj_lists, args):
             avg_diameter = compute_average_diameter(adj_list)
             metrics_per_ip[ip]["diameter"].append(avg_diameter)
 
-        # K-core
-        if args.all or args.kcore:
-            max_k, _ = compute_k_core(adj_list)
-            metrics_per_ip[ip]["kcore"].append(max_k)
-
         # Global Clustering Coefficient
         if args.all or args.global_clustering_coeff:
             global_clustering = compute_global_clustering(adj_list)
             metrics_per_ip[ip]["global_clustering_coeff"].append(global_clustering)
-
-        # Local Clustering Coefficient
-        if args.all or args.local_clustering_coeff:
-            local_clustering = compute_local_clustering(adj_list)
-            metrics_per_ip[ip]["local_clustering_coeff"].append(local_clustering)
 
         # Debug (verbose flag only)
         logger.debug("IP: %s", ip)
@@ -291,42 +273,6 @@ def bfs_farthest(adj_list, start_node):
     return farthest_node, max_distance
 
 
-def compute_k_core(adj_list):
-    """Compute the k-core of a graph."""
-    degree = {node: len(neighbors) for node, neighbors in adj_list.items()}
-    max_k = 0
-    k_core_subgraph = {}
-
-    k = 1
-    while True:
-        queue = deque(node for node, d in degree.items() if d <= k)
-
-        while queue:
-            node = queue.popleft()
-            for neighbor in adj_list[node]:
-                if degree[neighbor] >= k:
-                    degree[neighbor] -= 1
-                    if degree[neighbor] < k:
-                        queue.append(neighbor)
-            degree[node] = 0
-
-        k_core = {
-            node: {neighbor for neighbor in neighbors if degree[neighbor] >= k}
-            for node, neighbors in adj_list.items()
-            if degree[node] >= k
-        }
-
-        if k_core:
-            k_core_subgraph = k_core
-            max_k = k
-        else:
-            break
-
-        k += 1
-
-    return max_k, k_core_subgraph
-
-
 def compute_global_clustering(adj_list):
     """Compute the global clustering coefficient of a graph."""
     closed_triplets = 0
@@ -348,35 +294,6 @@ def compute_global_clustering(adj_list):
             visited_pairs.add((node, neighbor))
 
     return (3 * closed_triplets) / total_triplets if total_triplets else 0
-
-
-def compute_local_clustering(adj_list):
-    """Compute the local clustering coefficient of a graph."""
-    local_clustering_coefficients = []
-
-    for node in adj_list:
-        neighbors = set(adj_list[node])
-        degree = len(neighbors)
-
-        if degree < 2:
-            local_clustering_coefficients.append(0)
-            continue
-
-        closed_triplets = 0
-
-        for neighbor in neighbors:
-            common_neighbors = neighbors.intersection(set(adj_list[neighbor]))
-            closed_triplets += len(common_neighbors)
-
-        local_clustering_coefficients.append(
-            (closed_triplets) / (degree * (degree - 1)) if degree > 1 else 0
-        )
-
-    return (
-        sum(local_clustering_coefficients) / len(local_clustering_coefficients)
-        if local_clustering_coefficients
-        else 0
-    )
 
 
 def get_ip_name_from_label(label):
