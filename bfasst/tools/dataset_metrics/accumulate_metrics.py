@@ -30,6 +30,7 @@ class AccumulateMetrics(ToolBase):
                     "summary_stats": self.summary_stats,
                     "aggregation_dir": self.build_path,
                     "pieces": self.pieces,
+                    "accumulate_metrics_util": BFASST_UTILS_PATH / "accumulate_metrics.py",
                 },
             )
 

@@ -28,7 +28,11 @@ class GraphMetrics(ToolBase):
         with open(DATASET_METRICS_TOOLS_PATH / "process_graph_build.ninja.mustache", "r") as f:
             build = chevron.render(
                 f,
-                {"output": self.metrics_path, "graph": self.graph},
+                {
+                    "output": self.metrics_path,
+                    "graph": self.graph,
+                    "process_graph_util": BFASST_UTILS_PATH / "process_graph.py",
+                },
             )
 
         with open(NINJA_BUILD_PATH, "a") as f:
