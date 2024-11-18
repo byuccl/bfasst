@@ -71,9 +71,11 @@ def compute_master_metrics(analysis_dir, master_metrics_output, stats_summary_ou
             # Even if the user has specified different names
             # for this run
             "master_metrics.log",
-            "summary_statistics.log",
+            "summary_stats.log",
         ):
             continue
+
+        logger.debug(f"Processing {file}")
 
         with open(file, "r") as f:
             graph_metrics = json.loads(f.readline())

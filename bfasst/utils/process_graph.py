@@ -26,6 +26,9 @@ def main():
         "--diameter", action="store_true", help="Compute the average diameter of the graph."
     )
     parser.add_argument(
+        "--component_count", action="store_true", help="Compute the number of components."
+    )
+    parser.add_argument(
         "--global_clustering_coeff",
         action="store_true",
         help="Compute the global clustering coefficient of the graph.",
@@ -128,35 +131,61 @@ def compute_metrics_per_ip(adj_lists, args):
     metrics_per_ip = {}
     for label, adj_list in adj_lists.items():
 
+        # Compute components
+        components = compute_components(adj_list)
+
         # set up default entries
         ip = get_ip_name_from_label(label)
         if ip not in metrics_per_ip:
             metrics_per_ip[ip] = {
-                "order": [],
-                "size": [],
-                "degree": [],
-                "diameter": [],
+                "instance_order": [],
+                "component_orders": [],
+                "instance_size": [],
+                "component_sizes": [],
+                "avg_degree": [],
+                "avg_diameter": [],
+                "component_diameters": [],
+                "component_count": [],
                 "global_clustering_coeff": [],
             }
 
         # Order
         if args.all or args.order:
-            metrics_per_ip[ip]["order"].append(len(adj_list))
+            metrics_per_ip[ip]["instance_order"].append(len(adj_list))
+
+        # Component-wise order
+        if args.all or args.order:
+            component_orders = compute_component_orders(components)
+            metrics_per_ip[ip]["component_orders"].extend(component_orders)
 
         # Size
         if args.all or args.size:
             edge_count = compute_size(adj_list)
-            metrics_per_ip[ip]["size"].append(edge_count)
+            metrics_per_ip[ip]["instance_size"].append(edge_count)
 
-        # Degree
+        # Component-wise size
+        if args.all or args.size:
+            component_sizes = compute_component_sizes(components, adj_list)
+            metrics_per_ip[ip]["component_sizes"].extend(component_sizes)
+
+        # Avg Degree
         if args.all or args.degree:
             avg_desgree = compute_average_degree(adj_list)
-            metrics_per_ip[ip]["degree"].append(avg_desgree)
+            metrics_per_ip[ip]["avg_degree"].append(avg_desgree)
 
-        # Diameter
+        # Avg Diameter
         if args.all or args.diameter:
-            avg_diameter = compute_average_diameter(adj_list)
-            metrics_per_ip[ip]["diameter"].append(avg_diameter)
+            avg_diameter = compute_average_diameter(components, adj_list)
+            metrics_per_ip[ip]["avg_diameter"].append(avg_diameter)
+
+        # Component Diameters
+        if args.all or args.diameter:
+            component_diameters = compute_component_diameters(components, adj_list)
+            metrics_per_ip[ip]["component_diameters"].extend(component_diameters)
+
+        # Component Count
+        if args.all or args.component_count:
+            metrics_per_ip[ip]["component_count"].append(len(components))
 
         # Global Clustering Coefficient
         if args.all or args.global_clustering_coeff:
@@ -173,6 +202,32 @@ def compute_metrics_per_ip(adj_lists, args):
     return metrics_per_ip
 
 
+def compute_components(adj_list):
+    """Compute the components of a graph."""
+    uf = UnionFind()
+
+    for u in adj_list:
+        for v in adj_list[u]:
+            uf.union(u, v)
+
+    components = {}
+    for node in adj_list:
+        root = uf.find(node)
+        if root not in components:
+            components[root] = set()
+        components[root].add(node)
+
+    return components
+
+
+def compute_component_orders(components):
+    """Compute the order of each component in a graph."""
+    orders = []
+    for component in components.values():
+        orders.append(len(component))
+    return orders
+
+
 def compute_size(adj_list):
     edge_count = 0
     for node in adj_list:
@@ -181,7 +236,20 @@ def compute_size(adj_list):
     return edge_count // 2
 
 
-def compute_average_diameter(adj_list):
+def compute_component_sizes(components, adj_list):
+    """Compute the size of each component in a graph."""
+    sizes = []
+    for component in components.values():
+        edge_count = 0
+        for node in component:
+            for neighbor in adj_list[node]:
+                if neighbor in component:
+                    edge_count += 1
+        sizes.append(edge_count // 2)
+    return sizes
+
+
+def compute_average_diameter(components, adj_list):
     """Compute the average diameter of a graph."""
     uf = UnionFind()
 
@@ -205,6 +273,17 @@ def compute_average_diameter(adj_list):
         diameters.append(diameter)
 
     return sum(diameters) / len(diameters) if diameters else 0
+
+
+def compute_component_diameters(components, adj_list):
+    """Compute the diameter of each component in a graph."""
+    diameters = []
+    for component in components.values():
+        node = next(iter(component))
+        u, _ = bfs_farthest(adj_list, node)
+        _, diameter = bfs_farthest(adj_list, u)
+        diameters.append(diameter)
+    return diameters
 
 
 def compute_average_degree(adj_list):
@@ -301,5 +380,20 @@ def get_ip_name_from_label(label):
     return ip_name if ip_name else label
 
 
+def run_test():
+    adj_list = {
+        "A": ["B", "C"],
+        "B": ["A", "C"],
+        "C": ["A", "B"],
+        "D": ["E"],
+        "E": ["D"],
+    }
+
+    components = compute_components(adj_list)
+    assert len(components) == 2
+    logger.debug(components)
+
+
 if __name__ == "__main__":
     main()
+    run_test()
