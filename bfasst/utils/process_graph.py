@@ -1,7 +1,7 @@
 """Compute metrics on a single graph in a dataset."""
 
 import argparse
-from collections import defaultdict
+from collections import defaultdict, deque
 import logging
 import os
 import json
@@ -32,6 +32,9 @@ def main():
         "--global_clustering_coeff",
         action="store_true",
         help="Compute the global clustering coefficient of the graph.",
+    )
+    parser.add_argument(
+        "--k_core", action="store_true", help="Compute the maximal k-core of the graph."
     )
     parser.add_argument("--all", action="store_true", help="Compute all metrics.", default=True)
 
@@ -147,6 +150,7 @@ def compute_metrics_per_ip(adj_lists, args):
                 "component_diameters": [],
                 "component_count": [],
                 "global_clustering_coeff": [],
+                "max_k_core": [],
             }
 
         # Order
@@ -191,6 +195,11 @@ def compute_metrics_per_ip(adj_lists, args):
         if args.all or args.global_clustering_coeff:
             global_clustering = compute_global_clustering(adj_list)
             metrics_per_ip[ip]["global_clustering_coeff"].append(global_clustering)
+
+        # K-Core
+        if args.all or args.k_core:
+            max_k, _ = compute_k_core(adj_list)
+            metrics_per_ip[ip]["max_k_core"].append(max_k)
 
         # Debug (verbose flag only)
         logger.debug("IP: %s", ip)
@@ -375,12 +384,50 @@ def compute_global_clustering(adj_list):
     return (3 * closed_triplets) / total_triplets if total_triplets else 0
 
 
+def compute_k_core(adj_list):
+    """Compute the k-core of a graph."""
+    degree = {node: len(neighbors) for node, neighbors in adj_list.items()}
+    max_k = 0
+    k_core_subgraph = {}
+
+    k = 1
+    while True:
+        queue = deque(node for node, d in degree.items() if d <= k)
+
+        while queue:
+            node = queue.popleft()
+            for neighbor in adj_list[node]:
+                if degree[neighbor] >= k:
+                    degree[neighbor] -= 1
+                    if degree[neighbor] < k:
+                        queue.append(neighbor)
+            degree[node] = 0
+
+        k_core = {
+            node: {neighbor for neighbor in neighbors if degree[neighbor] >= k}
+            for node, neighbors in adj_list.items()
+            if degree[node] >= k
+        }
+
+        if k_core:
+            k_core_subgraph = k_core
+            max_k = k
+        else:
+            if max_k != 0:
+                max_k += 1
+            break
+
+        k += 1
+
+    return max_k, k_core_subgraph
+
+
 def get_ip_name_from_label(label):
     ip_name = ("_").join(label.split("_")[2:])
     return ip_name if ip_name else label
 
 
-def run_test():
+def test_uf_components():
     """Ensure union find works."""
     adj_list = {
         "A": ["B", "C"],
@@ -395,6 +442,29 @@ def run_test():
     logger.debug(components)
 
 
+def test_k_core():
+    """Ensure k-core works."""
+    adj_list = {
+        "A": ["B", "C", "D", "E"],
+        "B": ["A", "C", "D", "E"],
+        "C": ["A", "B", "D", "F"],
+        "D": ["A", "B", "C", "J"],
+        "E": ["A", "B", "F", "I"],
+        "F": ["C", "E", "G", "H"],
+        "G": ["F"],
+        "H": ["F"],
+        "I": ["E"],
+        "J": ["D", "K", "L"],
+        "K": ["J"],
+        "L": ["J"],
+    }
+
+    max_k, k_core = compute_k_core(adj_list)
+    assert max_k == 3  # A, B, C, D is a 3-core
+    logger.debug(k_core)
+
+
 if __name__ == "__main__":
     main()
-    run_test()
+    test_uf_components()
+    test_k_core()
