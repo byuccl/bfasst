@@ -75,7 +75,7 @@ def compute_master_metrics(analysis_dir, master_metrics_output, stats_summary_ou
         ):
             continue
 
-        logger.debug(f"Processing {file}")
+        logger.debug("Processing %s", file)
 
         with open(file, "r") as f:
             graph_metrics = json.loads(f.readline())

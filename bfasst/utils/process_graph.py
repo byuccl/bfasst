@@ -1,7 +1,7 @@
 """Compute metrics on a single graph in a dataset."""
 
 import argparse
-from collections import defaultdict, deque
+from collections import defaultdict
 import logging
 import os
 import json
@@ -381,6 +381,7 @@ def get_ip_name_from_label(label):
 
 
 def run_test():
+    """Ensure union find works."""
     adj_list = {
         "A": ["B", "C"],
         "B": ["A", "C"],
