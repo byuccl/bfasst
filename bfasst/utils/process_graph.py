@@ -409,15 +409,13 @@ def compute_k_core(adj_list):
             if degree[node] >= k
         }
 
+        k += 1
         if k_core:
             k_core_subgraph = k_core
             max_k = k
         else:
-            if max_k != 0:
-                max_k += 1
             break
 
-        k += 1
 
     return max_k, k_core_subgraph
 
