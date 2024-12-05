@@ -249,6 +249,17 @@ class SdnNet:
         else:
             self.is_vdd = False
 
+    def filter_connected_instances(self, cell_type):
+        """Get the names of the instances connected to this pin. Filtered by cell_type"""
+        pins = set(self.wire.pins)
+        for i in self.alias_wires:
+            pins = pins | set(i.pins)
+        return {
+            i.instance.name
+            for i in pins
+            if (type(i) != sdn.ir.InnerPin) and (i.instance.reference.name == cell_type)
+        }
+
     @property
     def name(self):
         if len(self.wire.cable.wires) > 1:
