@@ -1,0 +1,4 @@
+rule process_graph
+    command = python {{ bfasst_path }}/bfasst/utils/process_graph.py $in -o $out
+    description = compute metrics on $in and save them to $out
+

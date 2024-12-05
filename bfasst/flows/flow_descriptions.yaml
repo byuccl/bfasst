@@ -157,3 +157,9 @@ flows:
   external_tools:
   - vivado
   - opentitan
+
+- name: AnalyzeDataset
+  description: Compute Metrics on an FPGA Circuit dataset for GNNs.
+  module: analyze_dataset
+  class: AnalyzeDataset
+  
