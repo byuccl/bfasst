@@ -727,14 +727,10 @@ class StructuralCompare:
         if bram_do:
             assert named_instance.properties["DOB_REG"] == "0"
 
-        bram_a_only = (
-            named_instance.properties["RAM_MODE"] == '"TDP"'
-            and {
-                None,
-                SdnInstanceWrapper.GND_PIN.net,
-            }
-            >= {named_instance.get_pin("DOBDO", i).net for i in range(32)}
-        )
+        bram_a_only = named_instance.properties["RAM_MODE"] == '"TDP"' and {
+            None,
+            SdnInstanceWrapper.GND_PIN.net,
+        } >= {named_instance.get_pin("DOBDO", i).net for i in range(32)}
 
         if named_instance.cell_type.startswith("RAMB36E1"):
             # A15 is only connected to a non-const net when cascade is enabled
