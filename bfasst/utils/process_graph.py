@@ -416,7 +416,6 @@ def compute_k_core(adj_list):
         else:
             break
 
-
     return max_k, k_core_subgraph
 
 
