@@ -24,7 +24,7 @@ designs:
     - koios/lstm
     - koios/reduction_layer
 
-    # The follow need to be run on a kintex board
+    # The following need to be run on a kintex board
     - koios/dnnweaver
     - koios/gemm_layer
     - koios/bwave_like.float.large
