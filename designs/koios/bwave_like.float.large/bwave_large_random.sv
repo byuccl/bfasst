@@ -278,7 +278,9 @@ Randomize input to bwave_large
 module bwave_large_random (
     input logic clk,
     input logic rst,
-    output logic [`DRAM_DWIDTH-1:0] output_data_DRAM,
+    // get rid of the vector output and output a single bit instead
+    output logic single_xor_out,
+    // output logic [`DRAM_DWIDTH-1:0] output_data_DRAM,
     output logic [`DRAM_AWIDTH-1:0] dram_addr,
     output logic dram_write_enable,
     output logic get_instr,
@@ -286,6 +288,9 @@ module bwave_large_random (
 );
 
 logic [`DRAM_DWIDTH-1:0] input_data_DRAM;
+// add in a temp vector for output data that we can xor into the single bit output
+logic [`DRAM_DWIDTH-1:0] internal_output_data_DRAM;
+
 RandomNumberGenerator #(`DRAM_DWIDTH, 0) rng (
     .clk(clk),
     .reset(rst),
@@ -303,13 +308,15 @@ NPU npu0(
     rst,
     instruction,
     input_data_DRAM,
-    output_data_DRAM,
+    internal_output_data_DRAM,
     dram_addr,
     dram_write_enable,
     get_instr,
     get_instr_addr,
     clk
 );
+
+assign single_xor_out = ^internal_output_data_DRAM;
 
 endmodule
 
