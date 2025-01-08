@@ -1,37 +1,37 @@
 designs:
     # These succeeded Vivado Implementation (bitstream generated) with and without phys_opt_design (no declared clock)
     # Part chosen was xc7a200tsbg484-1
-    - koios/attention_layer
-    - koios/bnn
-    - koios/bwave_like.fixed.large
-    - koios/bwave_like.fixed.small
-    - koios/bwave_like.float.small
-    - koios/clstm_like.large
-    - koios/conv_layer
-    - koios/dla_like.medium
-    - koios/dla_like.small
-    - koios/eltwise_layer
-    - koios/lenet
-    - koios/clstm_like.small
-    - koios/spmv
-    - koios/test
-    - koios/tpu_like.large.ws
-    - koios/tpu_like.large.os
-    - koios/tpu_like.small.ws
-    - koios/tpu_like.small.os
-    - koios/robot_rl
-    - koios/softmax
-    - koios/lstm
-    - koios/reduction_layer
+    # - koios/attention_layer
+    # - koios/bnn
+    # - koios/bwave_like.fixed.large
+    # - koios/bwave_like.fixed.small
+    # - koios/bwave_like.float.small
+    # - koios/clstm_like.large
+    # - koios/conv_layer
+    # - koios/dla_like.medium
+    # - koios/dla_like.small
+    # - koios/eltwise_layer
+    # - koios/lenet
+    # - koios/clstm_like.small
+    # - koios/spmv
+    # - koios/test
+    # - koios/tpu_like.large.ws
+    # - koios/tpu_like.large.os
+    # - koios/tpu_like.small.ws
+    # - koios/tpu_like.small.os
+    # - koios/robot_rl
+    # - koios/softmax
+    # - koios/lstm
+    # - koios/reduction_layer
 
-    # - koios/dla_like.large
-    # - koios/dnnweaver Needs more slices, 160K+ LUTs
-    # - koios/tdarknet_like.small Needs 1600+ BRAMs
-    # - koios/gemm_layer 200k LUTS
+    # - koios/dla_like.large # Takes too long on my ccl2 at least
+    # - koios/dnnweaver # FIXED: Needs more slices, 160K+ LUTs, SOLUTION: needs to be run on xc7k410tfbg900-1 to have enough I/O and slices)
+    # - koios/tdarknet_like.small # Needs 1600+ BRAMs SOLUTION: needs to be run on a virtex part, only ones with enough BRAM, or the design needs to change
+    # - koios/gemm_layer # FIXED: 200k LUTS, SOLUTION: needs to be run on a kintex board
 
-    # - koios/conv_layer_hls Critical Warnings in synthesis
-    # - koios/clstm_like.medium too many I/Os
-    # - koios/bwave_like.float.large # too many I/Os, need to condense output
-    # - koios/tdarknet_like.large # Vivado synth fails -> comb assignment to registers
+    # - koios/conv_layer_hls # Critical Warnings in synthesis
+    # - koios/clstm_like.medium # FIXED: too many I/Os SOLUTION: needs to be run on a kintex board
+    # - koios/bwave_like.float.large # FIXED: too many I/Os, need to condense output, SOLUTION: kept the vector output internal and XOR'd it into a single bit for the output
+    - koios/tdarknet_like.large # Vivado synth fails -> comb assignment to registers
 
 flow: Vivado
