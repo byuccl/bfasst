@@ -3,6 +3,7 @@
 import abc
 
 from bfasst import config
+from bfasst.yaml_parser import DesignParser
 from bfasst.paths import BUILD_PATH, DESIGNS_PATH
 
 
@@ -62,6 +63,9 @@ class Flow(FlowBase):
         super().__init__()
         self.design_path = design_path
         self.design_build_path = BUILD_PATH / design_path.relative_to(DESIGNS_PATH)
+        design_yaml = self.design_path / "design.yaml"
+        parser = DesignParser(design_yaml)
+        self.part = parser.part
 
 
 class FlowNoDesign(FlowBase):
