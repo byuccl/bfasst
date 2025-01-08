@@ -29,8 +29,5 @@ CONFORMAL_TIMEOUT = 600.0
 
 BUILD = "build"
 
-# PART_FAMILY = "artix7"
-# PART = "xc7a200tsbg484-1"
-
-PART_FAMILY = "kintex7"
-PART = "xc7k410tfbg900-1"
+PART_FAMILY = "artix7"
+PART = "xc7a200tsbg484-1"
