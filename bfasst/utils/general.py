@@ -223,3 +223,12 @@ def json_write_if_changed(path, json_str):
     if not json_equivalent:
         with open(path, "w") as f:
             f.write(json_str)
+
+
+def get_family_from_part(part):
+    """
+    part (string): e.g., "xc7a200tsbg484-1"
+    Returns the part family name based on the part name,
+    will have to be changed if we start supporting more part families
+    """
+    return "kintex7" if part[3] == "k" else "artix7"

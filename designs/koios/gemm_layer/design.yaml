@@ -1,1 +1,3 @@
 top: gemm_random
+
+part: xc7k410tfbg900-1
