@@ -631,19 +631,19 @@ class StructuralCompare:
         return self.possible_matches[instance_name] - set(self.block_mapping.inverse)
 
     def make_matches_by_nets(
-        self, instances_matching_connections, other_net, name, idx, cell_type
+        self, instances_matching_connections, other_net, pin_specifications
     ) -> set[str]:
         """Helper function for creating matches based off of net equivalence"""
 
         if not (other_net.is_gnd or other_net.is_vdd):
-            net_instances = other_net.filter_connected_instances(cell_type)
+            net_instances = other_net.filter_connected_instances(pin_specifications[2])
             matches = net_instances & instances_matching_connections
 
         else:
             matches = {
                 instance
                 for instance in instances_matching_connections
-                if other_net == self.reversed_instance_map[instance].get_pin(name, idx).net
+                if other_net == self.reversed_instance_map[instance].get_pin(pin_specifications[0], pin_specifications[1]).net
             }
 
             if not matches:
@@ -651,13 +651,13 @@ class StructuralCompare:
                     matches = {
                         instance
                         for instance in instances_matching_connections
-                        if self.reversed_instance_map[instance].get_pin(name, idx).net.is_gnd
+                        if self.reversed_instance_map[instance].get_pin(pin_specifications[0], pin_specifications[1]).net.is_gnd
                     }
                 elif other_net.is_vdd:
                     matches = {
                         instance
                         for instance in instances_matching_connections
-                        if self.reversed_instance_map[instance].get_pin(name, idx).net.is_vdd
+                        if self.reversed_instance_map[instance].get_pin(pin_specifications[0], pin_specifications[1]).net.is_vdd
                     }
 
         return matches
@@ -736,9 +736,9 @@ class StructuralCompare:
             temp_matches = self.make_matches_by_nets(
                 instances_matching_connections,
                 other_net,
-                pin.name,
+                [pin.name,
                 pin.index,
-                named_instance.cell_type,
+                named_instance.cell_type],
             )
 
             instances_matching_connections = temp_matches
@@ -791,7 +791,7 @@ class StructuralCompare:
                     continue
 
             temp_matches = self.make_matches_by_nets(
-                instances_matching_connections, other_net, name, idx, instance.cell_type
+                instances_matching_connections, other_net, [name, idx, instance.cell_type]
             )
 
             if not temp_matches and instance.cell_type == "BUFGCTRL" and name[0] == "I":
@@ -895,7 +895,7 @@ class StructuralCompare:
                     continue
 
             temp_matches = self.make_matches_by_nets(
-                instances_matching_connections, other_net, name, idx, instance.cell_type
+                instances_matching_connections, other_net, [name, idx, instance.cell_type]
             )
 
             instances_matching_connections = temp_matches

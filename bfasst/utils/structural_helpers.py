@@ -2,6 +2,8 @@
 
 
 def create_cell_props():
+    """Creates a dictionary of cell properties for each cell type."""
+    
     init_only = (
         "LUT6_2",
         "RAM32X1S",

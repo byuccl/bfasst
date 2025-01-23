@@ -257,7 +257,7 @@ class SdnNet:
         return {
             i.instance.name
             for i in pins
-            if (type(i) != sdn.ir.InnerPin) and (i.instance.reference.name == cell_type)
+            if (not isinstance(i, sdn.ir.InnerPin)) and (i.instance.reference.name == cell_type)
         }
 
     @property
