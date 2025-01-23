@@ -643,7 +643,10 @@ class StructuralCompare:
             matches = {
                 instance
                 for instance in instances_matching_connections
-                if other_net == self.reversed_instance_map[instance].get_pin(pin_specifications[0], pin_specifications[1]).net
+                if other_net
+                == self.reversed_instance_map[instance]
+                .get_pin(pin_specifications[0], pin_specifications[1])
+                .net
             }
 
             if not matches:
@@ -651,13 +654,17 @@ class StructuralCompare:
                     matches = {
                         instance
                         for instance in instances_matching_connections
-                        if self.reversed_instance_map[instance].get_pin(pin_specifications[0], pin_specifications[1]).net.is_gnd
+                        if self.reversed_instance_map[instance]
+                        .get_pin(pin_specifications[0], pin_specifications[1])
+                        .net.is_gnd
                     }
                 elif other_net.is_vdd:
                     matches = {
                         instance
                         for instance in instances_matching_connections
-                        if self.reversed_instance_map[instance].get_pin(pin_specifications[0], pin_specifications[1]).net.is_vdd
+                        if self.reversed_instance_map[instance]
+                        .get_pin(pin_specifications[0], pin_specifications[1])
+                        .net.is_vdd
                     }
 
         return matches
@@ -736,9 +743,7 @@ class StructuralCompare:
             temp_matches = self.make_matches_by_nets(
                 instances_matching_connections,
                 other_net,
-                [pin.name,
-                pin.index,
-                named_instance.cell_type],
+                [pin.name, pin.index, named_instance.cell_type],
             )
 
             instances_matching_connections = temp_matches
