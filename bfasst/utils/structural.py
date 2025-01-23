@@ -43,7 +43,6 @@ class StructuralCompare:
         self.reversed_netlist_path = reversed_netlist_path
         self.named_netlist_path = named_netlist_path
         self.named_netlist = None
-        self.reversed_instance_map = None
         self.named_instance_map = None
         self.reversed_netlist = None
         self.debug = debug
@@ -154,9 +153,6 @@ class StructuralCompare:
         self.named_netlist.instances_to_map = set()
         self.named_instance_map = {
             instance.name: instance for instance in self.named_netlist.instances
-        }
-        self.reversed_instance_map = {
-            instance.name: instance for instance in self.reversed_netlist.instances
         }
 
     def compare_netlists(self) -> None:
@@ -317,10 +313,10 @@ class StructuralCompare:
 
                 grouped_by_cell_type_and_const[
                     (instance.cell_type, hash(frozenset(properties)), num_const)
-                ].append(instance.name)
+                ].append(self.reversed_netlist.instances.index(instance))
 
                 grouped_by_cell_type[(instance.cell_type, hash(frozenset(properties)))].append(
-                    instance.name
+                    self.reversed_netlist.instances.index(instance)
                 )
 
             for instance_name, _ in self.named_netlist.instances_to_map:
@@ -333,8 +329,8 @@ class StructuralCompare:
                 if instance.cell_type in self.init_binary_only:
                     # super obvious names so the log makes sense
                     self.possible_matches[instance_name] = {
-                        "bfasst_structcmp_fake_signal0",
-                        "bfasst_struct_cmp_fake_signal1",
+                        0,
+                        1,
                     }
                     continue
                 num_const = count_num_const(instance.pins)
@@ -495,7 +491,7 @@ class StructuralCompare:
         log_with_banner("Verifying equivalence")
         warnings = []
         for instance, _ in self.named_netlist.instances_to_map:
-            mapped_instance = self.reversed_instance_map[self.block_mapping.get(instance)]
+            mapped_instance = self.reversed_netlist.instances[self.block_mapping.get(instance)]
             if mapped_instance is None:
                 raise StructuralCompareError(
                     f"Not equivalent. Instance {instance} is not mapped to anything."
@@ -549,12 +545,12 @@ class StructuralCompare:
                 logging.warning("  %s", warning)
             raise StructuralCompareError("Warnings during equivalence verification")
 
-    def add_block_mapping(self, instance_tuple: tuple, matched_instance_name: str) -> None:
+    def add_block_mapping(self, instance_tuple: tuple, matched_instance_index: int) -> None:
         """Add mapping point between two Instances"""
 
         instance = self.named_instance_map[instance_tuple[0]]
-        matched_instance = self.reversed_instance_map[matched_instance_name]
-        self.block_mapping[instance_tuple[0]] = matched_instance_name
+        matched_instance = self.reversed_netlist.instances[matched_instance_index]
+        self.block_mapping[instance_tuple[0]] = matched_instance_index
         self.named_netlist.instances_to_map.remove(instance_tuple)
 
         for pin in instance.pins:
@@ -641,7 +637,7 @@ class StructuralCompare:
                 instance
                 for instance in instances_matching_connections
                 if other_net
-                == self.reversed_instance_map[instance]
+                == self.reversed_netlist.instances[instance]
                 .get_pin(pin_specifications[0], pin_specifications[1])
                 .net
             }
@@ -651,7 +647,7 @@ class StructuralCompare:
                     matches = {
                         instance
                         for instance in instances_matching_connections
-                        if self.reversed_instance_map[instance]
+                        if self.reversed_netlist.instances[instance]
                         .get_pin(pin_specifications[0], pin_specifications[1])
                         .net.is_gnd
                     }
@@ -659,7 +655,7 @@ class StructuralCompare:
                     matches = {
                         instance
                         for instance in instances_matching_connections
-                        if self.reversed_instance_map[instance]
+                        if self.reversed_netlist.instances[instance]
                         .get_pin(pin_specifications[0], pin_specifications[1])
                         .net.is_vdd
                     }
@@ -802,7 +798,7 @@ class StructuralCompare:
                 temp_matches = {
                     inst
                     for inst in instances_matching_connections
-                    if self.reversed_instance_map[inst].get_pin(name, idx).net
+                    if self.reversed_netlist.instances[inst].get_pin(name, idx).net
                     == instance.get_pin(other_pin, idx).net
                 }
                 pin.ignore_net_equivalency = True
@@ -820,7 +816,7 @@ class StructuralCompare:
                 }
             ):
                 for inst in instances_matching_connections:
-                    instance = self.reversed_instance_map[inst]
+                    instance = self.reversed_netlist.instances[inst]
                     # [3:]   : gets rid of the "{# of bits}'b" at the beginning of the prop
                     # [::-1] : reverses the string since the pins index the opposite as strings
                     reversed_prop = instance.properties[f"IS_{name}_INVERTED"][3:][::-1]
@@ -917,7 +913,9 @@ class StructuralCompare:
             instances_matching_connections = {
                 i
                 for i in instances_matching_connections
-                if convert_verilog_literal_to_int(self.reversed_instance_map[i].properties["INIT"])
+                if convert_verilog_literal_to_int(
+                    self.reversed_netlist.instances[i].properties["INIT"]
+                )
                 == convert_verilog_literal_to_int(instance.properties["INIT"])
             }
 
