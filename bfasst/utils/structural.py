@@ -14,6 +14,7 @@ import spydrnet as sdn
 
 from bfasst import jpype_jvm
 from bfasst.utils import convert_verilog_literal_to_int
+from bfasst.utils.structural_helpers import create_cell_props
 from bfasst.utils.general import log_with_banner
 from bfasst.utils.sdn_helpers import SdnNetlistWrapper, SdnInstanceWrapper, SdnNet, SdnPinWrapper
 
@@ -82,9 +83,14 @@ class StructuralCompare:
         self.block_mapping = bidict()
         self.net_mapping = bidict()
 
-        self._cell_props = None
-        self.init_binary_only = None
-        self.__set_cell_props()
+        self._cell_props = create_cell_props()
+        self.init_binary_only = {
+            "FDSE",
+            "FDRE",
+            "FDCE",
+            "FDPE",
+            "LDCE",
+        }
 
         self.possible_matches = {}
         self.gnd_mappings = set()
@@ -94,88 +100,6 @@ class StructuralCompare:
         self.end_time = 0
 
         jpype_jvm.start()
-
-    def __set_cell_props(self) -> None:
-        init_only = (
-            "LUT6_2",
-            "RAM32X1S",
-            "RAM32X1D",
-            "RAM32X1S_1",
-            "RAM32X1D_1",
-            "RAM64X1D",
-            "RAM256X1S",
-            "SRL16E",
-            "SRLC16E",
-            "SRLC32E",
-            "FDSE",
-            "FDRE",
-            "FDCE",
-            "FDPE",
-            "LDCE",
-        )
-
-        self.init_binary_only = {
-            "FDSE",
-            "FDRE",
-            "FDCE",
-            "FDPE",
-            "LDCE",
-        }
-
-        no_props = ("IBUF", "OBUF", "OBUFT", "MUXF7", "MUXF8", "CARRY4", "IOBUF", "GND", "VCC")
-
-        _cell_props = {x: ("INIT",) for x in init_only}
-        _cell_props.update({x: () for x in no_props})
-        _cell_props["RAM32M"] = ("INIT_A", "INIT_B", "INIT_C", "INIT_D")
-        _cell_props["RAM64M"] = ("INIT_A", "INIT_B", "INIT_C", "INIT_D")
-        _cell_props["RAMB36E1"] = tuple(
-            [f"INIT_{i:02X}" for i in range(int("0x80", base=16))]
-            + ["DOA_REG", "DOB_REG", "RAM_MODE"]
-        )
-        # TODO add INIT_A, INIT_B, INITP_00 - INITP_0F
-        _cell_props["RAMB18E1"] = tuple(
-            f"INIT_{i:02X}" for i in range(int("0x40", base=16))
-        )  # TODO add INIT_A, INIT_B, INITP_00 - INITP_07
-        _cell_props["BUFGCTRL"] = (
-            "INIT_OUT",
-            "IS_CE0_INVERTED",
-            "IS_CE1_INVERTED",
-            "IS_IGNORE0_INVERTED",
-            "IS_IGNORE1_INVERTED",
-            "IS_S0_INVERTED",
-            "IS_S1_INVERTED",
-            "PRESELECT_I0",
-            "PRESELECT_I1",
-        )
-        _cell_props["DSP48E1"] = (
-            "ACASCREG",
-            "ADREG",
-            "A_INPUT",
-            "ALUMODEREG",
-            "AREG",
-            "AUTORESET_PATDET",
-            "BCASCREG",
-            "B_INPUT",
-            "BREG",
-            "CARRYINREG",
-            "CARRYINSELREG",
-            "CREG",
-            "DREG",
-            "INMODEREG",
-            "MASK",
-            "MREG",
-            "OPMODEREG",
-            "PATTERN",
-            "PREG",
-            "SEL_MASK",
-            "SEL_PATTERN",
-            "USE_DPORT",
-            "USE_MULT",
-            "USE_PATTERN_DETECT",
-            "USE_SIMD",
-        )
-
-        self._cell_props = _cell_props
 
     def reset_mappings(self) -> None:
         self.block_mapping = bidict()
@@ -227,6 +151,7 @@ class StructuralCompare:
 
         self.reversed_netlist = netlist_a
         self.named_netlist = netlist_b
+        self.named_netlist.instances_to_map = set()
         self.named_instance_map = {
             instance.name: instance for instance in self.named_netlist.instances
         }
@@ -245,7 +170,6 @@ class StructuralCompare:
 
         # a set of tuples with the first element being the instance name
         # and second element being which mapping function to use
-        self.named_netlist.instances_to_map = set()
         for i in self.named_netlist.instances:
             if i.cell_type in ("GND", "VCC"):
                 continue
@@ -265,10 +189,8 @@ class StructuralCompare:
         self.perform_mapping()
 
         log_with_banner("Mapping (Instances)")
-        block_map = dict(self.block_mapping.items())
         for key, val in self.block_mapping.items():
             logging.debug("%s -> %s", key, val)
-        logging.debug("")
         log_with_banner("Mapping (Nets)")
         net_map = {k.name: v.name for k, v in self.net_mapping.items()}
         for key, val in self.net_mapping.items():
@@ -308,9 +230,7 @@ class StructuralCompare:
             and net.name not in self.vcc_mappings
             and net.name not in self.gnd_mappings
         ]:
-            # if net.is_vdd or net.is_gnd:
-            #     num_total_nets -= 1
-            #     continue
+
             logging.error("    %s", net.name)
 
         if len(self.block_mapping) != len(should_be_mapped):
@@ -324,7 +244,7 @@ class StructuralCompare:
             str(self.net_mapping_pkl),
         )
         with open(self.block_mapping_pkl, "wb") as f:
-            pickle.dump(block_map, f)
+            pickle.dump(dict(self.block_mapping.items()), f)
 
         with open(self.net_mapping_pkl, "wb") as f:
             pickle.dump(net_map, f)
@@ -385,7 +305,7 @@ class StructuralCompare:
             for instance in self.reversed_netlist.instances:
                 if instance.cell_type.startswith("SD"):
                     continue
-                elif instance.cell_type in self.init_binary_only:
+                if instance.cell_type in self.init_binary_only:
                     continue
 
                 num_const = self.count_num_const(instance.pins)
@@ -411,8 +331,9 @@ class StructuralCompare:
                 # Compute a hash of this instance's properties
                 instance = self.named_instance_map[instance_name]
                 if instance.cell_type in self.init_binary_only:
+                    # super obvious names so the log makes sense
                     self.possible_matches[instance_name] = {
-                        "bfasst_structcmp_fake_signal0",  # super obvious names so the log makes sense
+                        "bfasst_structcmp_fake_signal0",
                         "bfasst_struct_cmp_fake_signal1",
                     }
                     continue
@@ -714,22 +635,30 @@ class StructuralCompare:
     ) -> set[str]:
         """Helper function for creating matches based off of net equivalence"""
 
-        net_instances = other_net.filter_connected_instances(cell_type)
-        matches = net_instances & instances_matching_connections
+        if not (other_net.is_gnd or other_net.is_vdd):
+            net_instances = other_net.filter_connected_instances(cell_type)
+            matches = net_instances & instances_matching_connections
 
-        if not matches:
-            if other_net.is_gnd:
-                matches = {
-                    instance
-                    for instance in instances_matching_connections
-                    if self.reversed_instance_map[instance].get_pin(name, idx).net.is_gnd
-                }
-            elif other_net.is_vdd:
-                matches = {
-                    instance
-                    for instance in instances_matching_connections
-                    if self.reversed_instance_map[instance].get_pin(name, idx).net.is_vdd
-                }
+        else:
+            matches = {
+                instance
+                for instance in instances_matching_connections
+                if other_net == self.reversed_instance_map[instance].get_pin(name, idx).net
+            }
+
+            if not matches:
+                if other_net.is_gnd:
+                    matches = {
+                        instance
+                        for instance in instances_matching_connections
+                        if self.reversed_instance_map[instance].get_pin(name, idx).net.is_gnd
+                    }
+                elif other_net.is_vdd:
+                    matches = {
+                        instance
+                        for instance in instances_matching_connections
+                        if self.reversed_instance_map[instance].get_pin(name, idx).net.is_vdd
+                    }
 
         return matches
 
