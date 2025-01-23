@@ -1,7 +1,7 @@
 """Tool to create rule and build snippets that reverse a bitstream using xray."""
 
 import chevron
-from bfasst import config
+from bfasst.utils.general import get_family_from_part
 from bfasst.paths import (
     NINJA_BUILD_PATH,
     REV_BIT_TOOLS_PATH,
@@ -45,7 +45,7 @@ class Xray(Tool):
                     "fasm2bels_path": FASM2BELS_PATH,
                     "fasm2bels_python_path": FASM2BELS_PYTHON_PATH,
                     "bit_to_fasm_path": XRAY_PATH / "utils" / "bit2fasm.py",
-                    "db_root": XRAY_DB_PATH / config.PART_FAMILY,
+                    "db_root": XRAY_DB_PATH / get_family_from_part(self.flow.part),
                     "part": self.flow.part,
                     "input_xdc": self.xdc_input,
                 },

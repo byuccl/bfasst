@@ -2,7 +2,7 @@
 * md5_pipelined top level module that incorporates the random number generator
 * to allow bitstream generation without Vivado interferance
 */
-`include "../random_number_generator.sv"
+`include "../../random_number_generator.sv"
 `include "md5_pipelined.v"
 
 module md5_pipelined_random(

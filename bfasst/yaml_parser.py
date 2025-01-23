@@ -103,6 +103,9 @@ class DesignParser(YamlParser):
 
         props = YamlParser(yaml_path).props
         self.top = props["top"]
+        if "part" in props:
+            self.part = props["part"]
+
         if "vhdl_libs" in props:
             self.vhdl_libs = props["vhdl_libs"]
 

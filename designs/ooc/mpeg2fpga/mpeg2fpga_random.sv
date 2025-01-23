@@ -2,7 +2,7 @@
 * mpeg2fpga top level module that incorporates the random number generator
 * to allow bitstream generation without Vivado interferance
 */
-`include "../random_number_generator.sv"
+`include "../../random_number_generator.sv"
 `include "mpeg2fpga.v"
 
 module mpeg2fpga_random(

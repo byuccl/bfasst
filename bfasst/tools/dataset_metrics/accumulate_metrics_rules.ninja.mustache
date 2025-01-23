@@ -1,0 +1,4 @@
+rule accumulate_metrics
+    command = python {{ bfasst_path }}/bfasst/utils/accumulate_metrics.py $in -m $metrics_file -s $summary_stats
+    description = accumulate metrics from $in to produce master_metrics and summary_stats files
+

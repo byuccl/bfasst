@@ -2,7 +2,7 @@
 * or1200_flat top level module that incorporates the random number generator
 * to allow bitstream generation without Vivado interferance
 */
-`include "../random_number_generator.sv"
+`include "../../random_number_generator.sv"
 
 module or1200_flat_random(
     input logic clk,

@@ -1,0 +1,38 @@
+designs:
+    # These succeeded Vivado Implementation (bitstream generated) with and without phys_opt_design (no declared clock)
+    # Part chosen was xc7a200tsbg484-1
+    - koios/attention_layer
+    - koios/bnn
+    - koios/bwave_like.fixed.large
+    - koios/bwave_like.fixed.small
+    - koios/bwave_like.float.small
+    - koios/clstm_like.large
+    - koios/conv_layer
+    - koios/dla_like.medium
+    - koios/dla_like.small
+    - koios/eltwise_layer
+    - koios/lenet
+    - koios/clstm_like.small
+    - koios/spmv
+    - koios/test
+    - koios/tpu_like.large.ws
+    - koios/tpu_like.large.os
+    - koios/tpu_like.small.ws
+    - koios/tpu_like.small.os
+    - koios/robot_rl
+    - koios/softmax
+    - koios/lstm
+    - koios/reduction_layer
+
+    # The following need to be run on a kintex board
+    - koios/dnnweaver
+    - koios/gemm_layer
+    - koios/bwave_like.float.large
+
+    # - koios/dla_like.large # Overutilized DSPs, LUTs, BRAMs, and SLICEs
+    # - koios/tdarknet_like.small # Needs 1600+ BRAMs
+    # - koios/conv_layer_hls # Critical Warnings in synthesis
+    # - koios/clstm_like.medium # too many I/Os (I ran this and almost everything got optimized out, design was basically empty, no LUTs, no SLICEs, no BRAMs, no DSPs, literally just a couple IO)
+    # - koios/tdarknet_like.large # Vivado synth fails -> comb assignment to registers (fixed that, but 2826+ BRAMs required, overutilizes biggest kintex board)
+
+flow: Vivado
