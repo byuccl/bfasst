@@ -14,7 +14,7 @@ import spydrnet as sdn
 
 from bfasst import jpype_jvm
 from bfasst.utils import convert_verilog_literal_to_int
-from bfasst.utils.structural_helpers import create_cell_props
+from bfasst.utils.structural_helpers import create_cell_props, count_num_const
 from bfasst.utils.general import log_with_banner
 from bfasst.utils.sdn_helpers import SdnNetlistWrapper, SdnInstanceWrapper, SdnNet, SdnPinWrapper
 
@@ -308,7 +308,7 @@ class StructuralCompare:
                 if instance.cell_type in self.init_binary_only:
                     continue
 
-                num_const = self.count_num_const(instance.pins)
+                num_const = count_num_const(instance.pins)
                 properties = set()
                 for prop in self.get_properties_for_type(instance.cell_type):
                     properties.add(
@@ -337,7 +337,7 @@ class StructuralCompare:
                         "bfasst_struct_cmp_fake_signal1",
                     }
                     continue
-                num_const = self.count_num_const(instance.pins)
+                num_const = count_num_const(instance.pins)
                 properties = set()
                 for prop in self.get_properties_for_type(instance.cell_type):
                     properties.add(
@@ -367,9 +367,6 @@ class StructuralCompare:
                 self.possible_matches[instance_name] = set(instances_matching)
             with open(self.possible_matches_cache_path, "wb") as f:
                 pickle.dump(self.possible_matches, f)
-
-    def count_num_const(self, pins) -> int:
-        return sum(1 for pin in pins if pin.net and (pin.net.is_gnd or pin.net.is_vdd))
 
     def potential_mapping_wrapper(self, instance_tuple: tuple) -> bool:
         """Wrap check_for_potential_mapping some inital checks/postprocessing"""

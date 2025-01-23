@@ -1,7 +1,7 @@
 """ Helper functions for structural.py """
 
 
-def create_cell_props():
+def create_cell_props() -> dict:
     """Creates a dictionary of cell properties for each cell type."""
     init_only = (
         "LUT6_2",
@@ -74,3 +74,7 @@ def create_cell_props():
     )
 
     return cell_props
+
+
+def count_num_const(pins) -> int:
+    return sum(1 for pin in pins if pin.net and (pin.net.is_gnd or pin.net.is_vdd))
