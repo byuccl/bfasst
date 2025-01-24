@@ -45,6 +45,7 @@ class StructuralCompare:
         self.named_netlist = None
         self.named_instance_map = None
         self.reversed_netlist = None
+        self.reversed_netlist_names = None
         self.debug = debug
         self.logging_level = logging_level
 
@@ -154,6 +155,9 @@ class StructuralCompare:
         self.named_instance_map = {
             instance.name: instance for instance in self.named_netlist.instances
         }
+        self.reversed_netlist_names = [
+            instance.name for instance in self.reversed_netlist.instances
+        ]
 
     def compare_netlists(self) -> None:
         """Map the golden and reversed netlists through automated block mapping"""
@@ -411,7 +415,7 @@ class StructuralCompare:
         assert len(instances_matching) == 1
         matched_instance = instances_matching.pop()
 
-        logging.info("  Mapped to %s", matched_instance)
+        logging.info("  Mapped to %s", self.reversed_netlist.instances[matched_instance].name)
 
         self.add_block_mapping(instance_tuple, matched_instance)
         return True
@@ -579,7 +583,7 @@ class StructuralCompare:
             if pin_b is None:
                 continue
             net_b = pin_b.net
-            assert net_b, f"{pin_b.name} of {matched_instance_name} is not connected"
+            assert net_b, f"{pin_b.name} of {matched_instance.name} is not connected"
             if net_b is None and net_a.is_gnd:
                 continue
             assert isinstance(net_b, SdnNet), f"{net_b} is not a net"
@@ -630,7 +634,11 @@ class StructuralCompare:
 
         if not (other_net.is_gnd or other_net.is_vdd):
             net_instances = other_net.filter_connected_instances(pin_specifications[2])
-            matches = net_instances & instances_matching_connections
+            matches = {
+                instance
+                for instance in instances_matching_connections
+                if self.reversed_netlist_names[instance] in net_instances
+            }
 
         else:
             matches = {
@@ -742,7 +750,10 @@ class StructuralCompare:
             instances_matching_connections = temp_matches
             num_instances = len(instances_matching_connections)
             info = (
-                ": " + ",".join(i for i in instances_matching_connections)
+                ": "
+                + ",".join(
+                    self.reversed_netlist.instances[i].name for i in instances_matching_connections
+                )
                 if num_instances <= 10
                 else ""
             )
@@ -833,7 +844,10 @@ class StructuralCompare:
             instances_matching_connections = temp_matches
             num_instances = len(instances_matching_connections)
             info = (
-                ": " + ",".join(i for i in instances_matching_connections)
+                ": "
+                + ",".join(
+                    self.reversed_netlist.instances[i].name for i in instances_matching_connections
+                )
                 if num_instances <= 10
                 else ""
             )
@@ -874,6 +888,10 @@ class StructuralCompare:
                 instances_matching_connections = other_net.filter_connected_instances(
                     instance.cell_type
                 )
+                instances_matching_connections = {
+                    self.reversed_netlist_names.index(instance)
+                    for instance in instances_matching_connections
+                }
                 instances_matching_connections = instances_matching_connections - set(
                     self.block_mapping.inverse
                 )
@@ -899,7 +917,10 @@ class StructuralCompare:
             instances_matching_connections = temp_matches
             num_instances = len(instances_matching_connections)
             info = (
-                ": " + ",".join(i for i in instances_matching_connections)
+                ": "
+                + ",".join(
+                    self.reversed_netlist.instances[i].name for i in instances_matching_connections
+                )
                 if num_instances <= 10
                 else ""
             )
