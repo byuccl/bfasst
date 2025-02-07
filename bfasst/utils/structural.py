@@ -452,7 +452,7 @@ class StructuralCompare:
             sorted_instances = sorted(
                 set(self.named_netlist.instances_to_map),
                 key=lambda instance_tuple: len(self.possible_matches[instance_tuple[0]]),
-            )  # TODO: Right now all registers always have a fake number of possible matches -> 2
+            )
             # Create an iterator from the sorted instances
             instance_iter = iter(sorted_instances)
             try:
