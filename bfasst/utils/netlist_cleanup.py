@@ -43,7 +43,7 @@ class NetlistCleaner:
         logging.info("Finding and removing all ASSIGN instances")
         t_begin = time.perf_counter()
         for instance in top.get_instances():
-            if instance.reference.name.startswith("SDN_VERILOG_ASSIGNMENT"):
+            if instance.reference.name.startswith("SD"):
                 pin_out = None
 
                 for pin in instance.pins:
