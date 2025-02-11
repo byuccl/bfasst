@@ -42,21 +42,24 @@ class NetlistCleaner:
         """Remove all ASSIGN instances"""
         logging.info("Finding and removing all ASSIGN instances")
         t_begin = time.perf_counter()
-        for instance in top.get_instances():
-            if instance.reference.name.startswith("SD"):
-                pin_out = None
 
-                for pin in instance.pins:
-                    if pin.inner_pin.port.name == "i":
-                        pass
-                    else:
-                        pin_out = pin
+        instances = top.get_instances()
+        top_ref = top.reference
 
-                for pin in pin_out.wire.pins:
-                    if pin == pin_out:
-                        continue
-                    raise NotImplementedError
-                top.reference.remove_child(instance)
+        for instance in instances:
+            if not instance.reference.name.startswith("SD"):
+                continue
+            try:
+                pin_out = next(pin for pin in instance.pins 
+                            if pin.inner_pin.port.name != "i")
+            except StopIteration:
+                continue
+
+            if len(pin_out.wire.pins) > 1:
+                raise NotImplementedError
+
+            top_ref.remove_child(instance)
+
         logging.info("Total time to remove ASSIGN instances: %s", time.perf_counter() - t_begin)
 
     def remove_unused_instances(self, top):
