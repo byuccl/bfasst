@@ -38,6 +38,18 @@ class NetlistCleaner:
         self.remove_unused_instances(top)
         self.write_netlist(netlist_ir)
 
+    def valid_assign_instance(self, instance):
+        """Check which instances are ASSIGN instances which need to be removed"""
+        if not instance.reference.name.startswith("SD"):
+            return False
+        try:
+            pin_out = next(pin for pin in instance.pins if pin.inner_pin.port.name != "i")
+        except StopIteration:
+            return False
+        if len(pin_out.wire.pins) > 1:
+            raise NotImplementedError("Multiple connections for ASSIGN instance not supported")
+        return True
+
     def remove_assign_instances(self, top):
         """Remove all ASSIGN instances"""
         logging.info("Finding and removing all ASSIGN instances")
@@ -45,32 +57,13 @@ class NetlistCleaner:
 
         top_ref = top.reference
 
-        def valid_assign_instance(instance):
-            # Only consider instances whose reference name starts with "SD"
-            if not instance.reference.name.startswith("SD"):
-                return False
-            # Attempt to get the first pin whose inner_pin port is not "i"
-            try:
-                pin_out = next(pin for pin in instance.pins if pin.inner_pin.port.name != "i")
-            except StopIteration:
-                return False
-            # If the pin's wire is connected to more than one pin, we haven't implemented that case
-            if len(pin_out.wire.pins) > 1:
-                raise NotImplementedError("Multiple connections for ASSIGN instance not supported")
-            return True
-
-        # Use a set comprehension to create the set of instances to be removed.
         instances_to_remove = {
-            instance
-            for instance in top.get_instances()
-            if valid_assign_instance(instance)
+            instance for instance in top.get_instances() if self.valid_assign_instance(instance)
         }
 
-        # Remove all collected instances at once.
         top_ref.remove_children_from(instances_to_remove)
 
         logging.info("Total time to remove ASSIGN instances: %s", time.perf_counter() - t_begin)
-
 
     def remove_unused_instances(self, top):
         """Remove unused instances"""
@@ -82,7 +75,7 @@ class NetlistCleaner:
         instances = netlist_wrapper.instances
 
         t_begin = time.perf_counter()
-        
+
         # Group instances by type so we don't have to iterate over instances multiple times
         instances_by_type = {}
         for instance in instances:
