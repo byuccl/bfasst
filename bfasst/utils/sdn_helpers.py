@@ -242,6 +242,7 @@ class SdnNet:
         # Check for constant GND/VDD.  Top-level I/O will not be GND/VDD
         if isinstance(pin, sdn.OuterPin) and self.driver_pin.instance.reference.name == "GND":
             self.is_gnd = True
+            self.is_const = True
         else:
             self.is_gnd = False
         if isinstance(pin, sdn.OuterPin) and self.driver_pin.instance.reference.name in (
@@ -249,6 +250,7 @@ class SdnNet:
             "VCC",
         ):
             self.is_vdd = True
+            self.is_const = True
         else:
             self.is_vdd = False
 
