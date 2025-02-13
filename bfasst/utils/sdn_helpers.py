@@ -171,6 +171,7 @@ class SdnNet:
         self.driver_pin = None
         self.is_vdd = False
         self.is_gnd = False
+        self.is_const = False
         self.is_connected = None
 
     def add_alias_wire(self, wire):
@@ -225,11 +226,13 @@ class SdnNet:
             or self.wire.cable.name in SdnNetlistWrapper.GND_NAMES
         ):
             self.is_gnd = True
+            self.is_const = True
         elif (
             self.wire.cable.name == r"\<const1>"
             or self.wire.cable.name in SdnNetlistWrapper.VCC_NAMES
         ):
             self.is_vdd = True
+            self.is_const = True
 
     def set_driver_pin(self, pin):
         """Set the driver pin"""

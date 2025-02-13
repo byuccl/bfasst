@@ -740,6 +740,11 @@ class StructuralCompare:
 
         instances_matching_connections = self.eliminate_redundant_matches(instance_name)
 
+        logging.info(
+            "  %s instance(s) after elimating matched instances",
+            len(instances_matching_connections),
+        )
+
         for pin in instance.pins:
             if pin.net not in self.net_mapping:
                 continue
