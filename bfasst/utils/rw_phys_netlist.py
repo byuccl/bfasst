@@ -581,6 +581,8 @@ class RwPhysNetlist:
             logging.info("  Inputs not permuted, skipping")
             return []
 
+        rw.PinMap.ensure_connected(cell.getEDIFCellInst(), self.gnd)
+
         raise NotImplementedError
 
     def __process_bufg(self, bufg_cell):

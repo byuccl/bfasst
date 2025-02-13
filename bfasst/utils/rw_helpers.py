@@ -473,6 +473,25 @@ class _PinMapping:
 
         return True
 
+    def ensure_connected(self, edif_cell_inst, net):
+        """
+        Ensure that all ports on the cell are connected to the net.
+
+        Sometimes Vivado leaves ports undriven, which can cause the port to not be
+        explicitly shown in the verilog netlist.  This can cause issues since
+        spydrnet will not infer ground for these signals. Use this function to make
+        sure all ports are shown by connecting them.
+        """
+
+        type_name = edif_cell_inst.getCellType().getName()
+        port_names = self.CELL_PIN_MAP[type_name]
+
+        for phys_name, log_name in port_names.items():
+            port = edif_cell_inst.getPortInst(phys_name)
+            if port is None:
+                new_port = edif_cell_inst.getPort(log_name)
+                net.createPortInst(new_port, edif_cell_inst)
+
 
 class _PinMap(MutableMapping):
     """
