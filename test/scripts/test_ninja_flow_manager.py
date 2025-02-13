@@ -107,7 +107,7 @@ class TestNinjaFlowManager(unittest.TestCase):
         self.__check_flow_run("vivado_phys_netlist", 15)
 
     def test_run_phys_compare_flow(self):
-        self.__check_flow_run("vivado_phys_netlist_cmp", 18)
+        self.__check_flow_run("vivado_phys_netlist_cmp", 19)
 
     def test_run_cmp_error_injection_flow(self):
         # There should be 200 injections and 200 comparisons for one flow
