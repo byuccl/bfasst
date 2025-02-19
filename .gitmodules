@@ -17,6 +17,3 @@
 [submodule "third_party/icestorm"]
 	path = third_party/icestorm
 	url = https://github.com/YosysHQ/icestorm.git
-[submodule "designs/opentitan"]
-	path = designs/opentitan
-	url = https://github.com/lowRISC/opentitan.git

@@ -13,7 +13,7 @@ pylint
 pyyaml
 requests
 scp
-spydrnet @ git+https://github.com/byuccl/spydrnet@next_release
+spydrnet @ git+https://github.com/byuccl/spydrnet@bfasst_spydrnet
 werkzeug
 boolean.py
 xlsxwriter

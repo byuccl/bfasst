@@ -14,6 +14,7 @@ import spydrnet as sdn
 
 from bfasst import jpype_jvm
 from bfasst.utils import convert_verilog_literal_to_int
+from bfasst.utils.structural_helpers import create_cell_props, count_num_const
 from bfasst.utils.general import log_with_banner
 from bfasst.utils.sdn_helpers import SdnNetlistWrapper, SdnInstanceWrapper, SdnNet, SdnPinWrapper
 
@@ -42,9 +43,9 @@ class StructuralCompare:
         self.reversed_netlist_path = reversed_netlist_path
         self.named_netlist_path = named_netlist_path
         self.named_netlist = None
-        self.reversed_instance_map = None
         self.named_instance_map = None
         self.reversed_netlist = None
+        self.reversed_netlist_names = None
         self.debug = debug
         self.logging_level = logging_level
 
@@ -82,9 +83,7 @@ class StructuralCompare:
         self.block_mapping = bidict()
         self.net_mapping = bidict()
 
-        self._cell_props = None
-        self.__set_cell_props()
-
+        self._cell_props = create_cell_props()
         self.possible_matches = {}
         self.gnd_mappings = set()
         self.vcc_mappings = set()
@@ -93,79 +92,6 @@ class StructuralCompare:
         self.end_time = 0
 
         jpype_jvm.start()
-
-    def __set_cell_props(self) -> None:
-        init_only = (
-            "LUT6_2",
-            "FDSE",
-            "FDRE",
-            "FDCE",
-            "FDPE",
-            "RAM32X1S",
-            "RAM32X1D",
-            "RAM32X1S_1",
-            "RAM32X1D_1",
-            "RAM64X1D",
-            "RAM256X1S",
-            "SRL16E",
-            "SRLC16E",
-            "SRLC32E",
-            "LDCE",
-        )
-        no_props = ("IBUF", "OBUF", "OBUFT", "MUXF7", "MUXF8", "CARRY4", "IOBUF", "GND", "VCC")
-
-        _cell_props = {x: ("INIT",) for x in init_only}
-        _cell_props.update({x: () for x in no_props})
-        _cell_props["RAM32M"] = ("INIT_A", "INIT_B", "INIT_C", "INIT_D")
-        _cell_props["RAM64M"] = ("INIT_A", "INIT_B", "INIT_C", "INIT_D")
-        _cell_props["RAMB36E1"] = tuple(
-            [f"INIT_{i:02X}" for i in range(int("0x80", base=16))]
-            + ["DOA_REG", "DOB_REG", "RAM_MODE"]
-        )
-        # TODO add INIT_A, INIT_B, INITP_00 - INITP_0F
-        _cell_props["RAMB18E1"] = tuple(
-            f"INIT_{i:02X}" for i in range(int("0x40", base=16))
-        )  # TODO add INIT_A, INIT_B, INITP_00 - INITP_07
-        _cell_props["BUFGCTRL"] = (
-            "INIT_OUT",
-            "IS_CE0_INVERTED",
-            "IS_CE1_INVERTED",
-            "IS_IGNORE0_INVERTED",
-            "IS_IGNORE1_INVERTED",
-            "IS_S0_INVERTED",
-            "IS_S1_INVERTED",
-            "PRESELECT_I0",
-            "PRESELECT_I1",
-        )
-        _cell_props["DSP48E1"] = (
-            "ACASCREG",
-            "ADREG",
-            "A_INPUT",
-            "ALUMODEREG",
-            "AREG",
-            "AUTORESET_PATDET",
-            "BCASCREG",
-            "B_INPUT",
-            "BREG",
-            "CARRYINREG",
-            "CARRYINSELREG",
-            "CREG",
-            "DREG",
-            "INMODEREG",
-            "MASK",
-            "MREG",
-            "OPMODEREG",
-            "PATTERN",
-            "PREG",
-            "SEL_MASK",
-            "SEL_PATTERN",
-            "USE_DPORT",
-            "USE_MULT",
-            "USE_PATTERN_DETECT",
-            "USE_SIMD",
-        )
-
-        self._cell_props = _cell_props
 
     def reset_mappings(self) -> None:
         self.block_mapping = bidict()
@@ -217,12 +143,13 @@ class StructuralCompare:
 
         self.reversed_netlist = netlist_a
         self.named_netlist = netlist_b
+        self.named_netlist.instances_to_map = set()
         self.named_instance_map = {
             instance.name: instance for instance in self.named_netlist.instances
         }
-        self.reversed_instance_map = {
-            instance.name: instance for instance in self.reversed_netlist.instances
-        }
+        self.reversed_netlist_names = [
+            instance.name for instance in self.reversed_netlist.instances
+        ]
 
     def compare_netlists(self) -> None:
         """Map the golden and reversed netlists through automated block mapping"""
@@ -233,31 +160,24 @@ class StructuralCompare:
 
         logging.info("Time after init_netlists: %s".ljust(35), str(time.perf_counter() - t_begin))
 
-        # self.load_mappings()
-
         # a set of tuples with the first element being the instance name
         # and second element being which mapping function to use
-        self.named_netlist.instances_to_map = {
-            (
-                i.name,
-                (
-                    self.check_for_potential_mapping
-                    if i.cell_type not in {"RAMB36E1", "RAMB18E1"}
-                    else self.check_for_potential_bram_mapping
-                ),
-            )
-            for i in self.named_netlist.instances
-            if i.cell_type not in ("GND", "VCC")
-        }
+        for i in self.named_netlist.instances:
+            if i.cell_type in ("GND", "VCC"):
+                continue
+            if i.cell_type not in {"RAMB36E1", "RAMB18E1"}:
+                self.named_netlist.instances_to_map.add((i.name, self.check_for_potential_mapping))
+            else:
+                self.named_netlist.instances_to_map.add(
+                    (i.name, self.check_for_potential_bram_mapping)
+                )
 
-        # Structurally map the rest of the netlists
+        # Structurally map the netlists
         self.perform_mapping()
 
         log_with_banner("Mapping (Instances)")
-        block_map = dict(self.block_mapping.items())
         for key, val in self.block_mapping.items():
             logging.debug("%s -> %s", key, val)
-        logging.debug("")
         log_with_banner("Mapping (Nets)")
         net_map = {k.name: v.name for k, v in self.net_mapping.items()}
         for key, val in self.net_mapping.items():
@@ -297,9 +217,7 @@ class StructuralCompare:
             and net.name not in self.vcc_mappings
             and net.name not in self.gnd_mappings
         ]:
-            # if net.is_vdd or net.is_gnd:
-            #     num_total_nets -= 1
-            #     continue
+
             logging.error("    %s", net.name)
 
         if len(self.block_mapping) != len(should_be_mapped):
@@ -313,7 +231,7 @@ class StructuralCompare:
             str(self.net_mapping_pkl),
         )
         with open(self.block_mapping_pkl, "wb") as f:
-            pickle.dump(block_map, f)
+            pickle.dump(dict(self.block_mapping.items()), f)
 
         with open(self.net_mapping_pkl, "wb") as f:
             pickle.dump(net_map, f)
@@ -369,14 +287,13 @@ class StructuralCompare:
         else:
             log_with_banner("Initializing possible matches based on cell type and properties")
 
-            all_instances = [
-                i for i in self.reversed_netlist.instances if not i.cell_type.startswith("SD")
-            ]
-
             grouped_by_cell_type = defaultdict(list)
             grouped_by_cell_type_and_const = defaultdict(list)
-            for instance in all_instances:
-                num_const = self.count_num_const(instance.pins)
+            for instance in self.reversed_netlist.instances:
+                if instance.cell_type.startswith("SD"):
+                    continue
+
+                num_const = count_num_const(instance.pins)
                 properties = set()
                 for prop in self.get_properties_for_type(instance.cell_type):
                     properties.add(
@@ -385,10 +302,10 @@ class StructuralCompare:
 
                 grouped_by_cell_type_and_const[
                     (instance.cell_type, hash(frozenset(properties)), num_const)
-                ].append(instance.name)
+                ].append(self.reversed_netlist.instances.index(instance))
 
                 grouped_by_cell_type[(instance.cell_type, hash(frozenset(properties)))].append(
-                    instance.name
+                    self.reversed_netlist.instances.index(instance)
                 )
 
             for instance_name, _ in self.named_netlist.instances_to_map:
@@ -398,7 +315,7 @@ class StructuralCompare:
 
                 # Compute a hash of this instance's properties
                 instance = self.named_instance_map[instance_name]
-                num_const = self.count_num_const(instance.pins)
+                num_const = count_num_const(instance.pins)
                 properties = set()
                 for prop in self.get_properties_for_type(instance.cell_type):
                     properties.add(
@@ -428,9 +345,6 @@ class StructuralCompare:
                 self.possible_matches[instance_name] = set(instances_matching)
             with open(self.possible_matches_cache_path, "wb") as f:
                 pickle.dump(self.possible_matches, f)
-
-    def count_num_const(self, pins) -> int:
-        return sum(1 for pin in pins if pin.net and (pin.net.is_gnd or pin.net.is_vdd))
 
     def potential_mapping_wrapper(self, instance_tuple: tuple) -> bool:
         """Wrap check_for_potential_mapping some inital checks/postprocessing"""
@@ -479,7 +393,7 @@ class StructuralCompare:
         assert len(instances_matching) == 1
         matched_instance = instances_matching.pop()
 
-        logging.info("  Mapped to %s", matched_instance)
+        logging.info("  Mapped to %s", self.reversed_netlist.instances[matched_instance].name)
 
         self.add_block_mapping(instance_tuple, matched_instance)
         return True
@@ -559,7 +473,7 @@ class StructuralCompare:
         log_with_banner("Verifying equivalence")
         warnings = []
         for instance, _ in self.named_netlist.instances_to_map:
-            mapped_instance = self.reversed_instance_map[self.block_mapping.get(instance)]
+            mapped_instance = self.reversed_netlist.instances[self.block_mapping.get(instance)]
             if mapped_instance is None:
                 raise StructuralCompareError(
                     f"Not equivalent. Instance {instance} is not mapped to anything."
@@ -613,12 +527,12 @@ class StructuralCompare:
                 logging.warning("  %s", warning)
             raise StructuralCompareError("Warnings during equivalence verification")
 
-    def add_block_mapping(self, instance_tuple: tuple, matched_instance_name: str) -> None:
+    def add_block_mapping(self, instance_tuple: tuple, matched_instance_index: int) -> None:
         """Add mapping point between two Instances"""
 
         instance = self.named_instance_map[instance_tuple[0]]
-        matched_instance = self.reversed_instance_map[matched_instance_name]
-        self.block_mapping[instance_tuple[0]] = matched_instance_name
+        matched_instance = self.reversed_netlist.instances[matched_instance_index]
+        self.block_mapping[instance_tuple[0]] = matched_instance_index
         self.named_netlist.instances_to_map.remove(instance_tuple)
 
         for pin in instance.pins:
@@ -647,7 +561,7 @@ class StructuralCompare:
             if pin_b is None:
                 continue
             net_b = pin_b.net
-            assert net_b, f"{pin_b.name} of {matched_instance_name} is not connected"
+            assert net_b, f"{pin_b.name} of {matched_instance.name} is not connected"
             if net_b is None and net_a.is_gnd:
                 continue
             assert isinstance(net_b, SdnNet), f"{net_b} is not a net"
@@ -692,28 +606,32 @@ class StructuralCompare:
         return self.possible_matches[instance_name] - set(self.block_mapping.inverse)
 
     def make_matches_by_nets(
-        self, instances_matching_connections, other_net, name, idx
+        self, instances_matching_connections, mapped_net, pin_name, pin_index
     ) -> set[str]:
         """Helper function for creating matches based off of net equivalence"""
-
         matches = {
             instance
             for instance in instances_matching_connections
-            if self.reversed_instance_map[instance].get_pin(name, idx).net == other_net
+            if self.reversed_netlist.instances[instance].get_pin(pin_name, pin_index).net
+            == mapped_net
         }
 
         if not matches:
-            if other_net.is_gnd:
+            if mapped_net.is_gnd:
                 matches = {
                     instance
                     for instance in instances_matching_connections
-                    if self.reversed_instance_map[instance].get_pin(name, idx).net.is_gnd
+                    if self.reversed_netlist.instances[instance]
+                    .get_pin(pin_name, pin_index)
+                    .net.is_gnd
                 }
-            elif other_net.is_vdd:
+            elif mapped_net.is_vdd:
                 matches = {
                     instance
                     for instance in instances_matching_connections
-                    if self.reversed_instance_map[instance].get_pin(name, idx).net.is_vdd
+                    if self.reversed_netlist.instances[instance]
+                    .get_pin(pin_name, pin_index)
+                    .net.is_vdd
                 }
 
         return matches
@@ -796,7 +714,10 @@ class StructuralCompare:
             instances_matching_connections = temp_matches
             num_instances = len(instances_matching_connections)
             info = (
-                ": " + ",".join(i for i in instances_matching_connections)
+                ": "
+                + ",".join(
+                    self.reversed_netlist.instances[i].name for i in instances_matching_connections
+                )
                 if num_instances <= 10
                 else ""
             )
@@ -852,7 +773,7 @@ class StructuralCompare:
                 temp_matches = {
                     inst
                     for inst in instances_matching_connections
-                    if self.reversed_instance_map[inst].get_pin(name, idx).net
+                    if self.reversed_netlist.instances[inst].get_pin(name, idx).net
                     == instance.get_pin(other_pin, idx).net
                 }
                 pin.ignore_net_equivalency = True
@@ -870,7 +791,7 @@ class StructuralCompare:
                 }
             ):
                 for inst in instances_matching_connections:
-                    instance = self.reversed_instance_map[inst]
+                    instance = self.reversed_netlist.instances[inst]
                     # [3:]   : gets rid of the "{# of bits}'b" at the beginning of the prop
                     # [::-1] : reverses the string since the pins index the opposite as strings
                     reversed_prop = instance.properties[f"IS_{name}_INVERTED"][3:][::-1]
@@ -887,7 +808,10 @@ class StructuralCompare:
             instances_matching_connections = temp_matches
             num_instances = len(instances_matching_connections)
             info = (
-                ": " + ",".join(i for i in instances_matching_connections)
+                ": "
+                + ",".join(
+                    self.reversed_netlist.instances[i].name for i in instances_matching_connections
+                )
                 if num_instances <= 10
                 else ""
             )
