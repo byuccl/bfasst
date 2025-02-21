@@ -15,7 +15,7 @@ import spydrnet as sdn
 from bfasst import jpype_jvm
 from bfasst.utils import convert_verilog_literal_to_int
 from bfasst.utils.structural_helpers import create_cell_props, count_num_const
-from bfasst.utils.general import log_with_banner
+from bfasst.utils.general import log_with_banner, get_size
 from bfasst.utils.sdn_helpers import SdnNetlistWrapper, SdnInstanceWrapper, SdnNet, SdnPinWrapper
 
 # pylint: disable=wrong-import-order
@@ -343,6 +343,7 @@ class StructuralCompare:
                         )
 
                 self.possible_matches[instance_name] = set(instances_matching)
+            logging.info("The size of the possible_matches dict is %d", get_size(self.possible_matches))
             with open(self.possible_matches_cache_path, "wb") as f:
                 pickle.dump(self.possible_matches, f)
 
