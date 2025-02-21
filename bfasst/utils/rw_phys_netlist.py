@@ -17,16 +17,16 @@ from bfasst import jpype_jvm
 import bfasst.utils.rw_helpers as rw
 
 
-# pylint: disable=wrong-import-position,wrong-import-order
+# pylint: disable=wrong-import-position,wrong-import-order,import-error
 jpype_jvm.start()
 from com.xilinx.rapidwright.device import SiteTypeEnum
 from com.xilinx.rapidwright.design import Design, Unisim
-from com.xilinx.rapidwright.edif import EDIFNet, EDIFPropertyValue, EDIFValueType, EDIFNetlist, EDIFTools
+from com.xilinx.rapidwright.edif import EDIFNet, EDIFPropertyValue, EDIFValueType
 from com.xilinx.rapidwright.interchange import LogNetlistWriter
 from java.lang import System
 from java.io import PrintStream, File
 
-# pylint: enable=wrong-import-position,wrong-import-order
+# pylint: enable=wrong-import-position,wrong-import-order,import-error
 
 
 class PhysNetlistTransformError(Exception):
@@ -245,8 +245,13 @@ class RwPhysNetlist:
         logging.info("")
         logging.info("Writing EDIF phsyical netlist: %s", phys_netlist_edif_path)
         self.rw_netlist.exportEDIF(phys_netlist_edif_path)
-        logging.info("Writing capnp interchange netlist: %s", str(self.stage_dir / "phys_logical_netlist.capnp" ))
-        LogNetlistWriter.writeLogNetlist(self.rw_netlist, str(self.stage_dir / "phys_logical_netlist.capnp" ))
+        logging.info(
+            "Writing capnp interchange netlist: %s",
+            str(self.stage_dir / "phys_logical_netlist.capnp"),
+        )
+        LogNetlistWriter.writeLogNetlist(
+            self.rw_netlist, str(self.stage_dir / "phys_logical_netlist.capnp")
+        )
 
     def __process_all_luts(self, cells_already_visited):
         """Visit all LUTs and replace them with LUT6_2 instances"""
@@ -329,6 +334,7 @@ class RwPhysNetlist:
                 return True
         return False
 
+    # pylint: disable=too-many-positional-arguments
     def __check_lut_const_nets(
         self, lut6_cell, lut6_pin_out, lut5_cell, lut5_pin_out, gnd_nets, vcc_nets, site_inst
     ):
@@ -651,6 +657,8 @@ class RwPhysNetlist:
             routed_to_port_inst.getNet().removePortInst(routed_to_port_inst)
             new_net.createPortInst(new_port, routed_to_cell_inst)
             new_net.createPortInst(new_port, routed_to_cell_inst)
+
+    # pylint: enable=too-many-positional-arguments
 
     def __process_lut_const_net(self, site_inst, new_cell_inst, pin_out, is_gnd):
         """
