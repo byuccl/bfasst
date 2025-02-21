@@ -21,7 +21,8 @@ import bfasst.utils.rw_helpers as rw
 jpype_jvm.start()
 from com.xilinx.rapidwright.device import SiteTypeEnum
 from com.xilinx.rapidwright.design import Design, Unisim
-from com.xilinx.rapidwright.edif import EDIFNet, EDIFPropertyValue, EDIFValueType
+from com.xilinx.rapidwright.edif import EDIFNet, EDIFPropertyValue, EDIFValueType, EDIFNetlist, EDIFTools
+from com.xilinx.rapidwright.interchange import LogNetlistWriter
 from java.lang import System
 from java.io import PrintStream, File
 
@@ -244,6 +245,8 @@ class RwPhysNetlist:
         logging.info("")
         logging.info("Writing EDIF phsyical netlist: %s", phys_netlist_edif_path)
         self.rw_netlist.exportEDIF(phys_netlist_edif_path)
+        logging.info("Writing capnp interchange netlist: %s", str(self.stage_dir / "phys_logical_netlist.capnp" ))
+        LogNetlistWriter.writeLogNetlist(self.rw_netlist, str(self.stage_dir / "phys_logical_netlist.capnp" ))
 
     def __process_all_luts(self, cells_already_visited):
         """Visit all LUTs and replace them with LUT6_2 instances"""

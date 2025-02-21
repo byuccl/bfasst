@@ -48,6 +48,9 @@ class Xray(Tool):
                     "db_root": XRAY_DB_PATH / get_family_from_part(self.flow.part),
                     "part": self.flow.part,
                     "input_xdc": self.xdc_input,
+                    "output_capnp_log": self.build_path / (self.design_props.top + "_reversed_log.capnp"),
+                    "output_capnp_phys": self.build_path / (self.design_props.top + "_reversed_phys.capnp"),
+                    "output_capnp_xdc": self.build_path / (self.design_props.top + "_reversed_xdc.capnp"),
                 },
             )
 
