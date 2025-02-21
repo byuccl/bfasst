@@ -261,7 +261,10 @@ class RwPhysNetlist:
                 lut5_cell = site_inst.getCell(lut5_bel)
 
                 gnd_luts = self.__check_lut_const_nets(
-                    lut6_cell, lut6_pin_out, lut5_cell, lut5_pin_out, gnd_nets, vcc_nets, site_inst
+                    (lut6_cell, lut6_pin_out),
+                    (lut5_cell, lut5_pin_out),
+                    (gnd_nets, vcc_nets),
+                    site_inst,
                 )
                 if gnd_luts:
                     cells_already_visited.update(gnd_luts)
@@ -326,42 +329,47 @@ class RwPhysNetlist:
                 return True
         return False
 
-    def __check_lut_const_nets(
-        self, lut6_cell, lut6_pin_out, lut5_cell, lut5_pin_out, gnd_nets, vcc_nets, site_inst
-    ):
+    def __check_lut_const_nets(self, lut6, lut5, const_nets, site_inst):
         """
         Check if the LUT6 or LUT5 are connected to a const net
         Covers O5/O6 being gnd
         Covers O5/O6 being vcc
         Covers one output being gnd and the other being vcc
+
+        lut6: Tuple (lut6_cell, lut6_pin_out)
+        lut5: Tuple (lut5_cell, lut5_pin_out)
+        const_nets: Tuple (gnd_nets, vcc_nets)
         """
+
+        gnd_nets, vcc_nets = const_nets
+
         const_generator_pins = [None, None]
         pin1_gnd = None
         pin2_gnd = None
         for is_gnd, const_net in ((True, gnd_nets), (False, vcc_nets)):
-            if lut6_pin_out in const_net:
+            if lut6[1] in const_net:
                 # If a gnd net, then there can't be a cell there
-                assert lut6_cell is None
-                if lut5_cell is not None:
-                    self.__process_lut5_and_const_lut(lut5_cell, lut6_pin_out, site_inst, is_gnd)
+                assert lut6[0] is None
+                if lut5[0] is not None:
+                    self.__process_lut5_and_const_lut(lut5[0], lut6[1], site_inst, is_gnd)
                     return {
-                        lut5_cell,
+                        lut5[0],
                     }
                 assert const_generator_pins[0] is None
-                const_generator_pins[0] = lut6_pin_out
+                const_generator_pins[0] = lut6[1]
                 pin1_gnd = is_gnd
 
-            if lut5_pin_out in const_net:
+            if lut5[1] in const_net:
                 # If a gnd net, then there can't be a cell there
                 # This assumption is not true for LUTRAMs
-                assert lut5_cell is None
-                if lut6_cell is not None:
-                    self.__process_lut5_and_const_lut(lut6_cell, lut5_pin_out, site_inst, is_gnd)
+                assert lut5[0] is None
+                if lut6[0] is not None:
+                    self.__process_lut5_and_const_lut(lut6[0], lut5[1], site_inst, is_gnd)
                     return {
-                        lut6_cell,
+                        lut6[0],
                     }
                 assert const_generator_pins[1] is None
-                const_generator_pins[1] = lut5_pin_out
+                const_generator_pins[1] = lut5[1]
                 pin2_gnd = is_gnd
 
         if const_generator_pins[0] is not None or const_generator_pins[1] is not None:
@@ -629,12 +637,14 @@ class RwPhysNetlist:
 
         return [bufg_cell]
 
-    def __check_carry4_const_net(self, site_inst, const_type, pin_out, new_net, is_gnd):
+    def __check_carry4_const_net(self, site_inst, const_info, pin_out, new_net):
         """
         It seems that if the const lut output is routed to a carry4, the
         mux it routes through also doesn't have a cell, so you have to check
         the c4 input pins.
         """
+
+        const_type, is_gnd = const_info
         cell = site_inst.getCell("CARRY4")
         assert cell, f"{const_type} LUT routed to no cells"
         pin_in = "DI" if pin_out.endswith("O5") else "S"
@@ -702,7 +712,7 @@ class RwPhysNetlist:
                 new_net.createPortInst(routed_to_port_inst.getPort(), routed_to_cell_inst)
 
         if site_inst.getCell("CARRY4") is not None:
-            self.__check_carry4_const_net(site_inst, const_type, pin_out, new_net, is_gnd)
+            self.__check_carry4_const_net(site_inst, (const_type, is_gnd), pin_out, new_net)
 
     def __process_lut_const(self, site_inst, pins, pin1_gnd, pin2_gnd):
         """
@@ -788,7 +798,7 @@ class RwPhysNetlist:
             physical_pins_to_nets[physical_pin] = port_inst.getNet()
 
             rw.lut_move_net_to_new_cell(
-                lut6_edif_cell_inst, new_cell_inst, logical_pin, physical_pin
+                (lut6_edif_cell_inst, new_cell_inst), logical_pin, physical_pin
             )
 
         # Now do the same for the other LUT
@@ -805,8 +815,7 @@ class RwPhysNetlist:
                 # Disconnect net from logical pin on old cell,
                 # and connect to new logical pin (based on physical pin) of new cell
                 rw.lut_move_net_to_new_cell(
-                    lut5_edif_cell_inst,
-                    new_cell_inst,
+                    (lut5_edif_cell_inst, new_cell_inst),
                     logical_pin,
                     physical_pin,
                     logging.info,
@@ -878,7 +887,7 @@ class RwPhysNetlist:
             assert port_inst
 
             rw.lut_move_net_to_new_cell(
-                lut5_edif_cell_inst, new_cell_inst, logical_pin, physical_pin
+                (lut5_edif_cell_inst, new_cell_inst), logical_pin, physical_pin
             )
 
         if lut5.isRoutethru():

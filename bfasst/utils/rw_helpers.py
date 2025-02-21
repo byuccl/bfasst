@@ -211,8 +211,7 @@ def remove_and_disconnect_cell(cell, log=logging.info):
 
 
 def lut_move_net_to_new_cell(
-    old_edif_cell_inst,
-    new_edif_cell_inst,
+    edif_cell_insts,
     old_logical_pin,
     physical_pin,
     log=logging.info,
@@ -224,6 +223,8 @@ def lut_move_net_to_new_cell(
     new cell, in which case only the disconnect from old cell needs to be performed."""
 
     log(f"  Processing logical pin {old_logical_pin}, physical pin {physical_pin}")
+
+    old_edif_cell_inst, new_edif_cell_inst = edif_cell_insts
 
     port_inst = old_edif_cell_inst.getPortInst(old_logical_pin)
     logical_net = port_inst.getNet()
