@@ -79,6 +79,8 @@ class StructuralCompare:
         self.comparison_time_log = (
             str(log_path).split("_cmp.log", maxsplit=1)[0] + "_comparison_time.txt"
         )
+        self.mem_dump_log = (str(log_path).split("_cmp.log", maxsplit=1)[0] + "_comparison_mem_dump.txt")
+        self.mem = 0
 
         self.block_mapping = bidict()
         self.net_mapping = bidict()
@@ -251,6 +253,8 @@ class StructuralCompare:
         logging.info(total_time_msg)
         with open(self.comparison_time_log, "w") as f:
             f.write(f"{self.end_time - self.start_time}\n")
+        with open(self.mem_dump_log, "w") as f:
+            f.write(f"{self.mem}\n")
 
     def map_ports(self) -> None:
         """Map top-level ports"""
@@ -343,7 +347,8 @@ class StructuralCompare:
                         )
 
                 self.possible_matches[instance_name] = set(instances_matching)
-            logging.info("The size of the possible_matches dict is %d", get_size(self.possible_matches))
+            self.mem = get_size(self.possible_matches)
+            logging.info("The size of the possible_matches dict is %d", self.mem)
             with open(self.possible_matches_cache_path, "wb") as f:
                 pickle.dump(self.possible_matches, f)
 

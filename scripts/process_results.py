@@ -168,6 +168,7 @@ def phys_cmp_results(designs):
             "T_TIME": 0,
             "C_TIME": 0,
             "S_TIME": 0,
+            "S_MEM": 0,
         }
         utilization_file = root_dir / f"{design}/vivado_impl/utilization.txt"
         if not utilization_file.is_file():
@@ -193,6 +194,8 @@ def phys_cmp_results(designs):
             row["C_TIME"] = round(float(f.read().strip()), 2)
         with open(root_dir / design / "struct_cmp/struct_comparison_time.txt", "r") as f:
             row["S_TIME"] = round(float(f.read().strip()), 2)
+        with open(root_dir / design / "struct_cmp/struct_comparison_mem_dump.txt", "r") as f:
+            row["S_MEM"] = f.read().strip()
         rows.append(row)
 
     with open(out, "w", newline="") as f:
@@ -207,7 +210,7 @@ def phys_cmp_results(designs):
             "T_TIME",
             "C_TIME",
             "S_TIME",
-
+            "S_MEM"
         ]
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
