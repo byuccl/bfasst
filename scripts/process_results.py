@@ -5,7 +5,6 @@ with statuses and utilization data for each design.
 
 from argparse import ArgumentParser
 import csv
-import json
 from pathlib import Path
 import xlsxwriter
 
@@ -156,7 +155,7 @@ def phys_cmp_results(designs):
     out = "results.csv"
     rows = []
 
-    for design in designs:    
+    for design in designs:
         row = {
             "Design": design.split("/")[1],
             "LUT": 0,
@@ -210,7 +209,7 @@ def phys_cmp_results(designs):
             "T_TIME",
             "C_TIME",
             "S_TIME",
-            "S_MEM"
+            "S_MEM",
         ]
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()

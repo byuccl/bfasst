@@ -79,7 +79,9 @@ class StructuralCompare:
         self.comparison_time_log = (
             str(log_path).split("_cmp.log", maxsplit=1)[0] + "_comparison_time.txt"
         )
-        self.mem_dump_log = (str(log_path).split("_cmp.log", maxsplit=1)[0] + "_comparison_mem_dump.txt")
+        self.mem_dump_log = (
+            str(log_path).split("_cmp.log", maxsplit=1)[0] + "_comparison_mem_dump.txt"
+        )
         self.mem = 0
 
         self.block_mapping = bidict()
