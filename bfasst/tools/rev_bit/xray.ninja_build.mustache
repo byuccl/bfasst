@@ -14,4 +14,7 @@ build {{ rev_netlist }} {{ xray_xdc }}: fasm_to_netlist {{ xray_fasm }}
     verilog_file = {{ rev_netlist }}
     xdc_file = {{ xray_xdc }}
     input_xdc = {{ input_xdc }}
+    output_capnp_log = {{ output_capnp_log }}
+    output_capnp_phys = {{output_capnp_phys}}
+    output_capnp_xdc =  {{output_capnp_xdc}}
 
