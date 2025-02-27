@@ -669,7 +669,6 @@ class RwPhysNetlist:
             new_net.createPortInst(new_port, routed_to_cell_inst)
             new_net.createPortInst(new_port, routed_to_cell_inst)
 
-
     def __process_lut_const_net(self, site_inst, new_cell_inst, pin_out, is_gnd):
         """
         Replace the global const net on an input with the const routethru LUT output.
