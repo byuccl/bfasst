@@ -295,24 +295,21 @@ class StructuralCompare:
 
             grouped_by_cell_type = defaultdict(list)
             grouped_by_cell_type_and_const = defaultdict(list)
-            for instance in self.reversed_netlist.instances:
+            for idx, instance in enumerate(self.reversed_netlist.instances):
                 if instance.cell_type.startswith("SD"):
                     continue
 
                 num_const = count_num_const(instance.pins)
-                properties = set()
-                for prop in self.get_properties_for_type(instance.cell_type):
-                    properties.add(
-                        f"{prop}{convert_verilog_literal_to_int(instance.properties[prop])}"
-                    )
+                properties = {
+                    f"{prop}{convert_verilog_literal_to_int(instance.properties[prop])}"
+                    for prop in self.get_properties_for_type(instance.cell_type)
+                }
 
                 grouped_by_cell_type_and_const[
                     (instance.cell_type, hash(frozenset(properties)), num_const)
-                ].append(self.reversed_netlist.instances.index(instance))
+                ].append(idx)
 
-                grouped_by_cell_type[(instance.cell_type, hash(frozenset(properties)))].append(
-                    self.reversed_netlist.instances.index(instance)
-                )
+                grouped_by_cell_type[(instance.cell_type, hash(frozenset(properties)))].append(idx)
 
             for instance_name, _ in self.named_netlist.instances_to_map:
                 ###############################################################
@@ -322,11 +319,10 @@ class StructuralCompare:
                 # Compute a hash of this instance's properties
                 instance = self.named_instance_map[instance_name]
                 num_const = count_num_const(instance.pins)
-                properties = set()
-                for prop in self.get_properties_for_type(instance.cell_type):
-                    properties.add(
-                        f"{prop}{convert_verilog_literal_to_int(instance.properties[prop])}"
-                    )
+                properties = {
+                    f"{prop}{convert_verilog_literal_to_int(instance.properties[prop])}"
+                    for prop in self.get_properties_for_type(instance.cell_type)
+                }
                 my_hash = hash(frozenset(properties))
 
                 instances_matching = grouped_by_cell_type_and_const[
@@ -349,10 +345,10 @@ class StructuralCompare:
                         )
 
                 self.possible_matches[instance_name] = set(instances_matching)
-            self.mem = get_size(self.possible_matches)
-            logging.info("The size of the possible_matches dict is %d", self.mem)
             with open(self.possible_matches_cache_path, "wb") as f:
                 pickle.dump(self.possible_matches, f)
+        self.mem = get_size(self.possible_matches)
+        logging.info("The size of the possible_matches dict is %d", self.mem)
 
     def potential_mapping_wrapper(self, instance_tuple: tuple) -> bool:
         """Wrap check_for_potential_mapping some inital checks/postprocessing"""
