@@ -5,7 +5,6 @@ with statuses and utilization data for each design.
 
 from argparse import ArgumentParser
 import csv
-import json
 from pathlib import Path
 import xlsxwriter
 
@@ -145,27 +144,20 @@ def transform_stats(designs_yaml):
     workbook.close()
 
 
-def phys_cmp_results(flow):
+def phys_cmp_results(designs):
     """
     Gather results from phys_cmp flow and create a CSV file with
     utilization data, transformation times, comparison times, and
     success status.
     """
-    root_dir = ROOT_PATH / "build" / flow
-
-    results = root_dir / "results.json"
+    root_dir = ROOT_PATH / "build"
 
     out = "results.csv"
-
-    with open(results, "r") as f:
-        data = json.load(f)
-
     rows = []
-    for design, status in data.items():
-        status = "Success" if not status else status
+
+    for design in designs:
         row = {
             "Design": design.split("/")[1],
-            "Status": status,
             "LUT": 0,
             "LUT_MEM": 0,
             "SRL": 0,
@@ -173,7 +165,9 @@ def phys_cmp_results(flow):
             "CARRY4": 0,
             "BRAM": 0,
             "T_TIME": 0,
+            "C_TIME": 0,
             "S_TIME": 0,
+            "S_MEM": 0,
         }
         utilization_file = root_dir / f"{design}/vivado_impl/utilization.txt"
         if not utilization_file.is_file():
@@ -193,24 +187,29 @@ def phys_cmp_results(flow):
                 elif "| Block RAM Tile" in line:
                     row["BRAM"] = line.split("|")[2].strip()
 
-        with open(root_dir / f"{design}/xilinx_phys_netlist/transformation_time.txt", "r") as f:
+        with open(root_dir / design / "vivado_phys_netlist/transformation_time.txt", "r") as f:
             row["T_TIME"] = round(float(f.read().strip()), 2)
-        with open(root_dir / f"{design}/struct_cmp/comparison_time.txt", "r") as f:
+        with open(root_dir / design / "netlist_cleanup/cleanup_time.txt", "r") as f:
+            row["C_TIME"] = round(float(f.read().strip()), 2)
+        with open(root_dir / design / "struct_cmp/struct_comparison_time.txt", "r") as f:
             row["S_TIME"] = round(float(f.read().strip()), 2)
+        with open(root_dir / design / "struct_cmp/struct_comparison_mem_dump.txt", "r") as f:
+            row["S_MEM"] = f.read().strip()
         rows.append(row)
 
     with open(out, "w", newline="") as f:
         fieldnames = [
             "Design",
-            "Status",
             "LUT",
             "LUT_MEM",
             "SRL",
             "FF",
             "CARRY4",
             "BRAM",
-            "S_TIME",
             "T_TIME",
+            "C_TIME",
+            "S_TIME",
+            "S_MEM",
         ]
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
