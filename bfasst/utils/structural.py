@@ -660,12 +660,12 @@ class StructuralCompare:
             expected_properties = (
                 named_instance.properties["RAM_EXTENSION_A"] == '"NONE"'
                 and named_instance.properties["RAM_EXTENSION_B"] == '"NONE"'
-                and named_instance.get_pin("ADDRARDADDR", 15).net.is_vdd
-                and named_instance.get_pin("ADDRBWRADDR", 15).net.is_vdd
-                and named_instance.get_pin("CASCADEINA", 0).net.is_vdd
-                and named_instance.get_pin("CASCADEINB", 0).net.is_vdd
-                and named_instance.get_pin("CASCADEOUTA", 0).net.is_gnd
-                and named_instance.get_pin("CASCADEOUTB", 0).net.is_gnd
+                and named_instance.get_pin("ADDRARDADDR", 15).net.is_const
+                and named_instance.get_pin("ADDRBWRADDR", 15).net.is_const
+                and named_instance.get_pin("CASCADEINA", 0).net.is_const
+                and named_instance.get_pin("CASCADEINB", 0).net.is_const
+                and named_instance.get_pin("CASCADEOUTA", 0).net.is_const
+                and named_instance.get_pin("CASCADEOUTB", 0).net.is_const
             )
 
             if not expected_properties:
