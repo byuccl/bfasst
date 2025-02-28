@@ -490,7 +490,9 @@ class _PinMapping:
         for phys_name, log_name in port_names.items():
             port = edif_cell_inst.getPortInst(phys_name)
             if port is None:
-                log(f"  Port {phys_name} not found on {edif_cell_inst.getName()}, connecting to net")
+                log(
+                    f"  Port {phys_name} not found on {edif_cell_inst.getName()}, connecting to net"
+                )
                 new_port = edif_cell_inst.getPort(log_name)
                 net.createPortInst(new_port, edif_cell_inst)
 
