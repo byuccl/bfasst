@@ -469,12 +469,12 @@ class _PinMapping:
         l2p = cell.getPinMappingsL2P()
         for logical, physical in default_l2p_map.items():
             if logical in l2p and list(l2p[logical]) != [physical]:
-                print(list(l2p[logical]), "<>", [physical])
+                logging.warning(list(l2p[logical]), "<>", [physical])
                 return False
 
         return True
 
-    def ensure_connected(self, edif_cell_inst, net):
+    def ensure_connected(self, edif_cell_inst, net, log=logging.info):
         """
         Ensure that all ports on the cell are connected to the net.
 
@@ -490,6 +490,7 @@ class _PinMapping:
         for phys_name, log_name in port_names.items():
             port = edif_cell_inst.getPortInst(phys_name)
             if port is None:
+                log(f"  Port {phys_name} not found on {edif_cell_inst.getName()}, connecting to net")
                 new_port = edif_cell_inst.getPort(log_name)
                 net.createPortInst(new_port, edif_cell_inst)
 
