@@ -79,6 +79,7 @@ flows:
   external_tools:
   - vivado
   - fasm2bels
+  - rapidwright
 
 
 - name: RandSoc
@@ -104,6 +105,7 @@ flows:
   external_tools:
   - vivado
   - wafove
+  - rapidwright
 
 - name: Ic2LseConformal
   description: Verify Lattice RTL-2-Bit with Conformal (LSE Synth)

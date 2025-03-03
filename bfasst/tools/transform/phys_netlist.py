@@ -71,6 +71,7 @@ class PhysNetlist(Tool):
         self.outputs["phys_netlist_log"] = self.build_path / "log.txt"
         self.outputs["checkpoint_to_v_json"] = self.build_path / "checkpoint_to_v.json"
         self.outputs["rapidwright_log"] = self.build_path / "rapidwright_stdout.log"
+        self.outputs["interchange"] = self.build_path / "phys_logical_netlist.capnp"
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
