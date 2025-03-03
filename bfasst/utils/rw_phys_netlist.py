@@ -252,8 +252,13 @@ class RwPhysNetlist:
         LogNetlistWriter.writeLogNetlist(
             self.rw_netlist, str(self.stage_dir / "phys_logical_netlist.capnp")
         )
-        logging.info("Writing capnp interchange physical netlist: %s", str(self.stage_dir / "phys_physical_netlist.capnp"))
-        PhysNetlistWriter.writePhysNetlist(self.rw_design, str(self.stage_dir / "phys_physical_netlist.capnp"))
+        logging.info(
+            "Writing capnp interchange physical netlist: %s",
+            str(self.stage_dir / "phys_physical_netlist.capnp"),
+        )
+        PhysNetlistWriter.writePhysNetlist(
+            self.rw_design, str(self.stage_dir / "phys_physical_netlist.capnp")
+        )
 
     def __process_all_luts(self, cells_already_visited):
         """Visit all LUTs and replace them with LUT6_2 instances"""
