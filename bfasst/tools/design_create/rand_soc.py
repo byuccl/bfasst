@@ -4,7 +4,7 @@ import pathlib
 import chevron
 
 from bfasst.tools.tool import ToolBase
-from bfasst.paths import BUILD_PATH, GMT_TOOLS_PATH, NINJA_BUILD_PATH, TOOLS_PATH
+from bfasst.paths import GMT_TOOLS_PATH, NINJA_BUILD_PATH, TOOLS_PATH
 
 
 class RandSoC(ToolBase):
@@ -12,7 +12,7 @@ class RandSoC(ToolBase):
 
     def __init__(self, flow, num_designs, config_path, start_idx=0):
         super().__init__(flow)
-        self.build_path = BUILD_PATH / "rand_soc"
+        self.build_path = self.flow.build_path / "rand_soc"
         self._my_dir_path = pathlib.Path(__file__).parent.resolve()
         self.num_designs = num_designs
         self.config_path = config_path

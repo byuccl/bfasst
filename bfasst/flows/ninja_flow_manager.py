@@ -16,7 +16,10 @@ from bfasst.yaml_parser import FlowDescriptionParser
 class NinjaFlowManager:
     """Utility to manage the creation and execution of ninja flows."""
 
-    def __init__(self):
+    def __init__(self, build_path):
+        # The path to the build directory
+        self.build_path = build_path
+
         # The flow objects, each of which will create ninja snippets for a single design
         # for the given flow.
         self.flows = None
@@ -46,7 +49,7 @@ class NinjaFlowManager:
                 f"Flow {flow_name} does not take a design as input, "
                 f"but a design was provided ({designs})"
             )
-            flow = flow_class(**self.flow_arguments)
+            flow = flow_class(self.build_path, **self.flow_arguments)
             self.flows.append(flow)
 
         else:
@@ -117,6 +120,7 @@ def get_design_basenames(designs):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument("build_path", type=pathlib.Path, help="Path to the build directory")
     parser.add_argument("flow", type=str, help="Name of the flow to run")
     parser.add_argument("designs", nargs="*", help="Designs to run the flow on")
     parser.add_argument(
@@ -128,7 +132,7 @@ if __name__ == "__main__":
     flow_arguments_dict = ast.literal_eval(parsed_args.flow_arguments)
     assert isinstance(flow_arguments_dict, dict)
 
-    flow_manager = NinjaFlowManager()
+    flow_manager = NinjaFlowManager(parsed_args.build_path)
     flow_manager.create_flows(
         parsed_args.flow, get_design_basenames(parsed_args.designs), flow_arguments_dict
     )

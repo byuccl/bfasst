@@ -2,7 +2,7 @@
 
 from pathlib import Path
 from bfasst.tools.tool import ToolBase
-from bfasst.paths import BFASST_UTILS_PATH, BUILD_PATH, NINJA_TRANSFORM_TOOLS_PATH
+from bfasst.paths import BFASST_UTILS_PATH, NINJA_TRANSFORM_TOOLS_PATH
 
 
 class RandsocDump(ToolBase):
@@ -11,7 +11,7 @@ class RandsocDump(ToolBase):
     def __init__(self, flow, checkpoint, dumpfile):
         super().__init__(flow)
 
-        self.build_path = BUILD_PATH / "randsoc_dump" / Path(dumpfile).stem
+        self.build_path = self.flow.build_path / "randsoc_dump" / Path(dumpfile).stem
         self.checkpoint = checkpoint
         self.dumpfile = dumpfile
         self._init_outputs()

@@ -13,9 +13,9 @@ from bfasst.paths import ROOT_PATH, GMT_TOOLS_PATH
 class RandSocDumped(FlowNoDesign):
     """Flow to dump bels from random soc block designs with Isoblaze"""
 
-    def __init__(self, num_designs=1, part=None, randsoc_config_path=None, start_idx=0):
+    def __init__(self, build_path, num_designs=1, part=None, randsoc_config_path=None, start_idx=0):
         # pylint: disable=duplicate-code
-        super().__init__()
+        super().__init__(build_path)
 
         # Override default part
         if part is not None:
