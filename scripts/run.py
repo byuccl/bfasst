@@ -8,6 +8,7 @@ import sys
 
 from bfasst import external_tools
 from bfasst.flows.ninja_flow_manager import NinjaFlowManager
+from bfasst.paths import BUILD_DEFAULT_PATH
 from bfasst.yaml_parser import FlowDescriptionParser, RunParser
 from bfasst.utils import error, ensure_tuple
 
@@ -16,6 +17,7 @@ class ApplicationRunner:
     """Runs a given flow on one or more designs using Ninja."""
 
     def __init__(self):
+        self.build_path = None
         self.designs = None
         self.flow = None
         self.deps = None
@@ -25,6 +27,7 @@ class ApplicationRunner:
 
     def run_flow(
         self,
+        build_path,
         flow,
         designs,
         *,
@@ -34,6 +37,7 @@ class ApplicationRunner:
         ignore_errors=False,
     ):
         """Run one ore more designs with a given flow."""
+        self.build_path = build_path
         self.designs = ensure_tuple(designs)
         self.flow = flow
         self.num_threads = num_threads
@@ -46,11 +50,14 @@ class ApplicationRunner:
             self.flow_arguments = ast.literal_eval(flow_arguments)
         self.__run_ninja()
 
-    def run_yaml(self, yaml_path, *, check_tools=True, num_threads=1, ignore_errors=False):
+    def run_yaml(
+        self, build_path, yaml_path, *, check_tools=True, num_threads=1, ignore_errors=False
+    ):
         """Run using a yaml configuration file"""
 
         run_config = RunParser(yaml_path)
 
+        self.build_path = build_path
         self.designs = run_config.design_paths
         self.flow = run_config.flow
         self.flow_arguments = run_config.flow_arguments
@@ -64,7 +71,7 @@ class ApplicationRunner:
 
     def __run_ninja(self):
         # create a flow manager to handle the build.ninja file creation and update by flows
-        flow_manager = NinjaFlowManager()
+        flow_manager = NinjaFlowManager(self.build_path)
         flow_manager.create_flows(self.flow, self.designs, self.flow_arguments)
         flow_manager.run_flows()
 
@@ -120,6 +127,12 @@ def parse_args(args):
         action="store_true",
         help="Ignore errors and continue running the flow (Pass -k 0 to ninja)",
     )
+    parser.add_argument(
+        "--build_dir",
+        type=pathlib.Path,
+        help="Directory to store temporary build files",
+        default=BUILD_DEFAULT_PATH,
+    )
 
     # try to parse the arguments, and if none are provided, print the flow choices
     try:
@@ -158,6 +171,7 @@ if __name__ == "__main__":
 
     if hasattr(parsed_args, "flow"):
         ApplicationRunner().run_flow(
+            parsed_args.build_dir,
             parsed_args.flow,
             parsed_args.design,
             flow_arguments=parsed_args.flow_arguments,
@@ -167,6 +181,7 @@ if __name__ == "__main__":
         )
     else:
         ApplicationRunner().run_yaml(
+            parsed_args.build_dir,
             parsed_args.yaml,
             check_tools=parsed_args.no_tool_checks,
             num_threads=parsed_args.jobs,
