@@ -1,4 +1,5 @@
 """Tool to create Vivado implementation ninja snippets."""
+
 import json
 import pathlib
 from bfasst import config
@@ -10,12 +11,16 @@ from bfasst.utils.general import json_write_if_changed
 class VivadoImpl(ImplTool):
     """Tool to create Vivado implementation ninja snippets."""
 
-    def __init__(self, flow, design, ooc=False):
+    def __init__(self, flow, design, ooc=False, synth_path=None):
         super().__init__(flow, design)
         self.ooc = ooc
         if self.ooc:
             self.build_path = self.build_path.parent / "impl_ooc"
         self._my_dir_path = pathlib.Path(__file__).parent
+        if synth_path:
+            self.synth_path = synth_path
+        else:
+            self.synth_path = self.build_path.parent / ("synth" if not self.ooc else "synth_ooc")
         self._init_outputs()
 
     def create_build_snippets(self):
@@ -26,9 +31,7 @@ class VivadoImpl(ImplTool):
             "xdc": str(self.build_path.parent / "synth" / "design.xdc") if not self.ooc else False,
             "bit": str(self.build_path / "design.bit") if not self.ooc else False,
             "impl_output": str(self.build_path),
-            "synth_output": str(
-                self.build_path.parent / ("synth" if not self.ooc else "synth_ooc")
-            ),
+            "synth_output": str(self.synth_path),
         }
         impl_json = json.dumps(impl, indent=4)
         json_write_if_changed(self.build_path / "impl.json", impl_json)
@@ -38,7 +41,7 @@ class VivadoImpl(ImplTool):
             {
                 "in_context": not self.ooc,
                 "impl_output": str(self.build_path),
-                "synth_output": self.build_path.parent / ("synth" if not self.ooc else "synth_ooc"),
+                "synth_output": str(self.synth_path),
                 "impl_library": self._my_dir_path,
                 "cwd": self.build_path,
             },

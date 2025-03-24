@@ -5,7 +5,3 @@ build {{ final }}.dcp {{ final }}.edif {{ final }}_unencrypted.bit {{ final }}_u
     journal = {{ cwd }}/vivado.jou
     log = {{ cwd }}/vivado.log
 
-build {{ final }}_patched.bin: encrypted_ip_bit_patcher {{ final }}.dcp {{ final }}_unencrypted_pblock_user_partial.bit | third_party/encrypted_ip/Project/python_scripts/getLutDataGenPatched2.py
-    cwd = {{ cwd }}
-    log = {{ cwd }}/patcher_log.txt
-    encypted_ip_yaml_path = {{ encrypted_ip_yaml_path }}

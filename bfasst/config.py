@@ -24,4 +24,5 @@ CONFORMAL_TIMEOUT = 600.0
 BUILD = "build"
 
 PART_FAMILY = "artix7"
-PART = "xc7a100t-csg324-3"
+# PART = "xc7a100t-csg324-3"
+PART = "xc7a200t-fbg484-3"

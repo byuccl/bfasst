@@ -27,9 +27,9 @@ puts "Loader impl end time: $timen"
 
 
 #Step 6: Write out encrypted bitstream
-set_property BITSTREAM.ENCRYPTION.ENCRYPT YES [get_designs checkpoint_implemented_loader]
-set_property BITSTREAM.ENCRYPTION.ENCRYPTKEYSELECT EFUSE [get_designs checkpoint_implemented_loader]
-set_property BITSTREAM.ENCRYPTION.KEYFILE {{ key_files }}/design_1_wrapper.nky [get_designs checkpoint_implemented_loader]
+#set_property BITSTREAM.ENCRYPTION.ENCRYPT YES [get_designs impl_1]
+#set_property BITSTREAM.ENCRYPTION.ENCRYPTKEYSELECT EFUSE [get_designs impl_1]
+#set_property BITSTREAM.ENCRYPTION.KEYFILE {{ key_files }}/design_1_wrapper.nky [get_designs impl_1]
 #set_property BITSTREAM.GENERAL.CRC DISABLE [get_designs checkpoint_$env(LOADER_DESIGN_NAME_IMPLEMENTED)]
 write_bitstream -bin_file {{ final }}_encrypted.bit -force
 puts "Time ending writing bitstream  not applicable for timing DTIMING"

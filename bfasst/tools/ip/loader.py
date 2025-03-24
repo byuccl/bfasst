@@ -32,7 +32,7 @@ class EncryptedIpLoader(Tool):
     def create_build_snippets(self):
         vivado_tcl_dict = {
             "loader_impl_dcp": str(
-                ENCRYPTED_IP_PATH / "Project" / "loader_imp_design" / "implemented_loader.dcp"
+                ENCRYPTED_IP_PATH / "Project" / "loader_imp_design" / "implemented_loader_200t.dcp"
             ),
             "user_synth_dcp": str(self.user_synth_dcp_path),
             "user_partial_bitstream": str(self.build_path / "user_partial.bit"),
