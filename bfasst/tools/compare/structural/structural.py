@@ -52,3 +52,5 @@ class Structural(Tool):
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
         deps.append(BFASST_UTILS_PATH / "structural.py")
+        deps.append(BFASST_UTILS_PATH / "structural_helpers.py")
+        deps.append(BFASST_UTILS_PATH / "sdn_helpers.py")
