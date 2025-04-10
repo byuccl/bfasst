@@ -1,10 +1,11 @@
 """
-Parse results.json file from run_experiments flow and generate a CSV file 
+Parse results.json file from run_experiments flow and generate a CSV file
 with statuses and utilization data for each design.
 """
 
 from argparse import ArgumentParser
 import csv
+import json
 from pathlib import Path
 import xlsxwriter
 
@@ -144,20 +145,30 @@ def transform_stats(designs_yaml):
     workbook.close()
 
 
-def phys_cmp_results(designs):
+def phys_cmp_results(flow):
     """
     Gather results from phys_cmp flow and create a CSV file with
     utilization data, transformation times, comparison times, and
     success status.
     """
-    root_dir = ROOT_PATH / "build"
+    root_dir = ROOT_PATH
 
     out = "results.csv"
-    rows = []
 
+    fl = yaml_parser.RunParser(flow)
+
+    designs = [
+        BUILD_PATH / Path(design).parent.name / Path(design).name for design in fl.design_paths
+    ]
+
+    rows = []
     for design in designs:
+        status = (
+            "Success" if (design / "struct_cmp/struct_comparison_time.txt").exists() else "FAILED"
+        )
         row = {
-            "Design": design.split("/")[1],
+            "Design": design.name,
+            "Status": status,
             "LUT": 0,
             "LUT_MEM": 0,
             "SRL": 0,
@@ -167,9 +178,11 @@ def phys_cmp_results(designs):
             "T_TIME": 0,
             "C_TIME": 0,
             "S_TIME": 0,
-            "S_MEM": 0,
         }
-        utilization_file = root_dir / f"{design}/vivado_impl/utilization.txt"
+        if status == "FAILED":
+            rows.append(row)
+            continue
+        utilization_file = design / "vivado_impl/utilization.txt"
         if not utilization_file.is_file():
             continue
         with open(utilization_file, "r") as f:
@@ -187,29 +200,33 @@ def phys_cmp_results(designs):
                 elif "| Block RAM Tile" in line:
                     row["BRAM"] = line.split("|")[2].strip()
 
-        with open(root_dir / design / "vivado_phys_netlist/transformation_time.txt", "r") as f:
+        with open(design / "vivado_phys_netlist/transformation_time.txt", "r") as f:
             row["T_TIME"] = round(float(f.read().strip()), 2)
-        with open(root_dir / design / "netlist_cleanup/cleanup_time.txt", "r") as f:
-            row["C_TIME"] = round(float(f.read().strip()), 2)
-        with open(root_dir / design / "struct_cmp/struct_comparison_time.txt", "r") as f:
-            row["S_TIME"] = round(float(f.read().strip()), 2)
-        with open(root_dir / design / "struct_cmp/struct_comparison_mem_dump.txt", "r") as f:
-            row["S_MEM"] = f.read().strip()
+        if (design / "netlist_cleanup/log.txt").exists():
+            with open(design / "netlist_cleanup/log.txt", "r") as f:
+                time = 0
+                for line in f:
+                    if "time" in line:
+                        time += float(line.split(" ")[-1])
+                row["C_TIME"] = round(time, 2)
+        if (design / "struct_cmp/struct_comparison_time.txt").exists():
+            with open(design / "struct_cmp/struct_comparison_time.txt", "r") as f:
+                row["S_TIME"] = round(float(f.read().strip()), 2)
         rows.append(row)
 
     with open(out, "w", newline="") as f:
         fieldnames = [
             "Design",
+            "Status",
             "LUT",
             "LUT_MEM",
             "SRL",
             "FF",
             "CARRY4",
             "BRAM",
-            "T_TIME",
-            "C_TIME",
             "S_TIME",
-            "S_MEM",
+            "C_TIME",
+            "T_TIME",
         ]
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
