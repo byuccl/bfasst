@@ -1,9 +1,10 @@
-""" Helper functions for structural.py """
+"""Helper functions for structural.py"""
 
 
 def create_cell_props() -> dict:
     """Creates a dictionary of cell properties for each cell type."""
     init_only = (
+        "LUT6",
         "LUT6_2",
         "RAM32X1S",
         "RAM32X1D",

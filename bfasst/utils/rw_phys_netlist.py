@@ -1,28 +1,38 @@
-""" Creates a xilinx netlist that has only physical primitives"""
+"""Creates a xilinx netlist that has only physical primitives"""
 
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-public-methods
 
 from argparse import ArgumentParser
 import logging
+from pathlib import Path
 import sys
 import time
-from pathlib import Path
+
+import code
+import traceback
 
 import jpype
-import jpype.imports
 from jpype.types import JInt
 
 from bfasst import jpype_jvm
+from bfasst.config import PART
+from bfasst.utils import convert_verilog_literal_to_int
 import bfasst.utils.rw_helpers as rw
+from bfasst.utils.structural_helpers import create_cell_props
 
 
 # pylint: disable=wrong-import-position,wrong-import-order,import-error
 jpype_jvm.start()
-from com.xilinx.rapidwright.device import SiteTypeEnum
+from com.xilinx.rapidwright.device import Device, SiteTypeEnum
 from com.xilinx.rapidwright.design import Design, Unisim
 from com.xilinx.rapidwright.edif import EDIFNet, EDIFPropertyValue, EDIFValueType
-from com.xilinx.rapidwright.interchange import LogNetlistWriter, PhysNetlistWriter
+from com.xilinx.rapidwright.interchange import (
+    LogNetlistReader,
+    PhysNetlistReader,
+    LogNetlistWriter,
+    PhysNetlistWriter,
+)
 from java.lang import System
 from java.io import PrintStream, File
 
@@ -31,6 +41,10 @@ from java.io import PrintStream, File
 
 class PhysNetlistTransformError(Exception):
     """Exception for errors in phys netlist transformation"""
+
+
+class StructuralCompareError(Exception):
+    """Exception for structural comparison errors"""
 
 
 class RwPhysNetlist:
@@ -49,8 +63,19 @@ class RwPhysNetlist:
         )
 
         # Rapidwright design / netlist
-        self.rw_design = None
-        self.rw_netlist = None
+        self.vivado_design = None
+        self.vivado_netlist = None
+        self.rev_design = None
+        self.rev_netlist = None
+
+        self.phys_capnp = None
+        self.log_capnp = None
+        self.rw_value_mismatch = 0
+        self.rw_value_mismatches = []
+
+        self._cell_props = create_cell_props()
+        self.matches = {}  # edif cell names: cell names (vivado: rev)
+        self.net_map = {}  # net names: net names (vivado: rev)
 
         # Const nets
         self.vcc = None
@@ -74,13 +99,47 @@ class RwPhysNetlist:
             ("D6LUT", "D6LUT_O6", "D5LUT", "D5LUT_O5"),
         ]
 
-    def run(self, impl_netlist_checkpoint, impl_netlist_edif_path):
+    def get_capnp_cell(self, cell_name):
+        p = self.phys_capnp
+        n = self.log_capnp
+        pidx = None
+        for pidx, tmp in enumerate(p.strList):
+            if tmp == cell_name:
+                break
+
+        capnp_cell = None
+        for capnp_cell in p.placements:
+            if capnp_cell.cellName == pidx:
+                break
+
+        lidx = None
+        for lidx, tmp in enumerate(n.strList):
+            if tmp == cell_name.split("/")[0]:
+                break
+
+        lcapnp_cell = None
+        for lcapnp_cell in n.instList:
+            if lcapnp_cell.name == lidx:
+                break
+
+        return capnp_cell, lcapnp_cell
+
+    def get_properties_for_type(self, cell_type) -> tuple[str]:
+        """Return the list of properties that must match for a given cell type
+        for the cell to be considered equivalent."""
+        try:
+            return self._cell_props[cell_type]
+        except KeyError as err:
+            raise StructuralCompareError(f"Unhandled properties for type {cell_type}") from err
+
+    def run(self, impl_netlist_checkpoint, impl_netlist_edif_path, phys_capnp, edf_capnp):
         """Transform the logical netlist into a netlist with only physical primitives"""
         phys_netlist_edif_path = self.stage_dir / "viv_impl_physical.edf"
 
         # Redirect rapidwright output to file
         rapidwright_log_path = str(self.stage_dir / "rapidwright_stdout.log")
         System.setOut(PrintStream(File(rapidwright_log_path)))
+        System.setErr(PrintStream(File(rapidwright_log_path)))
 
         phys_netlist_checkpoint = self.stage_dir / "phys_netlist.dcp"
         logging.info(
@@ -95,15 +154,38 @@ class RwPhysNetlist:
         # Don't raise from as this is also problematic.
         try:
             self.__run_rapidwright(
-                phys_netlist_checkpoint,
-                phys_netlist_edif_path,
                 impl_netlist_checkpoint,
                 impl_netlist_edif_path,
+                phys_capnp,
+                edf_capnp,
             )
         except jpype.JException as exc:
             raise rw.RapidwrightException from exc  # pylint: disable=bad-exception-cause
         end_time = time.time()
 
+        # Export checkpoint, then run vivado to generate a new netlist
+        # TODO Uncomment
+        # self.vivado_design.unplaceDesign()
+        # self.vivado_design.writeCheckpoint(phys_netlist_checkpoint)
+
+        # logging.info("")
+        # logging.info("Writing EDIF phsyical netlist: %s", phys_netlist_edif_path)
+        # self.vivado_netlist.exportEDIF(phys_netlist_edif_path)
+        # logging.info(
+        #     "Writing capnp interchange netlist: %s",
+        #     str(self.stage_dir / "phys_logical_netlist.capnp"),
+        # )
+        # LogNetlistWriter.writeLogNetlist(
+        #     self.vivado_netlist, str(self.stage_dir / "phys_logical_netlist.capnp")
+        # )
+        # logging.info(
+        #     "Writing capnp interchange physical netlist: %s",
+        #     str(self.stage_dir / "phys_physical_netlist.capnp"),
+        # )
+        # PhysNetlistWriter.writePhysNetlist(
+        #     self.vivado_design, str(self.stage_dir / "phys_physical_netlist.capnp")
+        # )
+        logging.info("Rapidwright bug count %d", self.rw_value_mismatch)
         logging.info("Transformation time %s seconds", f"{end_time - start_time:0.2f}")
         with open(self.stage_dir / "transformation_time.txt", "w") as fp:
             fp.write(f"{end_time - start_time:.2f}\n")
@@ -112,11 +194,11 @@ class RwPhysNetlist:
         """Init VCC and GND nets"""
         net_tuples = ((Unisim.GND, "G", "gnd"), (Unisim.VCC, "P", "vcc"))
         for unisim_cell, port, name in net_tuples:
-            edif_cell = self.rw_netlist.getHDIPrimitive(unisim_cell)
+            edif_cell = self.vivado_netlist.getHDIPrimitive(unisim_cell)
 
             cell_insts = [
                 inst
-                for inst in self.rw_netlist.getTopCell().getCellInsts()
+                for inst in self.vivado_netlist.getTopCell().getCellInsts()
                 if inst.getCellType() == edif_cell
             ]
             if len(cell_insts) > 1:
@@ -136,12 +218,12 @@ class RwPhysNetlist:
                 continue
 
             # Create new const instance as part of top-level
-            const_edif_inst = self.rw_netlist.getTopCell().createChildCellInst(
+            const_edif_inst = self.vivado_netlist.getTopCell().createChildCellInst(
                 f"{name}_phys_netlist", edif_cell
             )
 
             # Create const net as part of top-level
-            const_net = EDIFNet(name + "_net_phys_netlist", self.rw_netlist.getTopCell())
+            const_net = EDIFNet(name + "_net_phys_netlist", self.vivado_netlist.getTopCell())
             assert const_net
             setattr(self, name, const_net)
 
@@ -149,29 +231,39 @@ class RwPhysNetlist:
             assert const_port
             const_net.createPortInst(const_port, const_edif_inst)
 
-    def __run_rapidwright(
-        self,
-        phys_netlist_checkpoint,
-        phys_netlist_edif_path,
-        impl_netlist_checkpoint,
-        impl_netlist_edif_path,
-    ):
+    def __run_rapidwright(self, impl_dcp, impl_edf, phys_capnp, edf_capnp):
         """Do all rapidwright related processing on the netlist"""
 
-        self.rw_design = Design.readCheckpoint(impl_netlist_checkpoint, impl_netlist_edif_path)
-        self.rw_netlist = self.rw_design.getNetlist()
+        device = Device.getDevice(PART)
+        logging.info("Loading vivado dcp and edf files: %s, %s", str(impl_dcp), str(impl_edf))
+        start_time = time.time()
+        self.vivado_design = Design.readCheckpoint(impl_dcp, impl_edf)
+        self.vivado_netlist = self.vivado_design.getNetlist()
+        self.vivado_design.flattenDesign()
+        self.vivado_netlist.expandMacroUnisims(device.getSeries())
+        logging.info("Loading vivado netlist took %s seconds.", time.time() - start_time)
+        logging.info("Loading reversed capnp objects: %s, %s", str(phys_capnp), str(edf_capnp))
+        start_time = time.time()
+        self.rev_netlist = LogNetlistReader.readLogNetlist(str(edf_capnp))
+        self.rev_design = PhysNetlistReader.readPhysNetlist(str(phys_capnp), self.rev_netlist)
+        self.rev_design.flattenDesign()
+        self.rev_netlist.expandMacroUnisims(device.getSeries())
+        logging.info("Loading reversed capnp objects took %s seconds.", time.time() - start_time)
+
+        self.phys_capnp = rw.read_phys_capnp(str(phys_capnp))
+        self.log_capnp = rw.read_log_capnp(str(edf_capnp))
 
         self.__init_const_nets()
 
         # Init BUFGCTRL cell template
-        self.bufgctrl_edif_cell = self.rw_netlist.getHDIPrimitive(Unisim.BUFGCTRL)
+        self.bufgctrl_edif_cell = self.vivado_netlist.getHDIPrimitive(Unisim.BUFGCTRL)
 
         # Init LUT cell templates
-        self.lut6_2_edif_cell = self.rw_netlist.getHDIPrimitive(Unisim.LUT6_2)
-        self.ram32x1s_edif_cell = self.rw_netlist.getHDIPrimitive(Unisim.RAM32X1S)
-        self.ram32x1s1_edif_cell = self.rw_netlist.getHDIPrimitive(Unisim.RAM32X1S_1)
-        self.ram32x1d_edif_cell = self.rw_netlist.getHDIPrimitive(Unisim.RAM32X1D)
-        self.ram32m_edif_cell = self.rw_netlist.getHDIPrimitive(Unisim.RAM32M)
+        self.lut6_2_edif_cell = self.vivado_netlist.getHDIPrimitive(Unisim.LUT6_2)
+        self.ram32x1s_edif_cell = self.vivado_netlist.getHDIPrimitive(Unisim.RAM32X1S)
+        self.ram32x1s1_edif_cell = self.vivado_netlist.getHDIPrimitive(Unisim.RAM32X1S_1)
+        self.ram32x1d_edif_cell = self.vivado_netlist.getHDIPrimitive(Unisim.RAM32X1D)
+        self.ram32m_edif_cell = self.vivado_netlist.getHDIPrimitive(Unisim.RAM32M)
 
         # Keep a list of cells already visited and skip them
         # This happens when we process LUTS mapped to the same BEL
@@ -184,7 +276,7 @@ class RwPhysNetlist:
         logging.info("Finished processing LUTs")
 
         # Loop through all cells in the design
-        for cell in self.rw_design.getCells():
+        for cell in self.vivado_design.getCells():
             edif_cell_inst = cell.getEDIFCellInst()
 
             logging.info(
@@ -227,9 +319,11 @@ class RwPhysNetlist:
                 "LDCE",
                 "DSP48E1",
             ):
+                self._compare_cell(
+                    edif_cell_inst, cell.getName(), cell.getSiteInst(), cell.getBELName()
+                )
                 continue
 
-            # TODO: Handle other primitives? SRL, FIFO36, DSP48E1, etc.
             print(cell)
             raise PhysNetlistTransformError(f"Unsupported cell type {cell_type}")
 
@@ -238,37 +332,15 @@ class RwPhysNetlist:
         for cell in self.cells_to_remove:
             rw.remove_and_disconnect_cell(cell)
 
-        # Export checkpoint, then run vivado to generate a new netlist
-        self.rw_design.unplaceDesign()
-        self.rw_design.writeCheckpoint(phys_netlist_checkpoint)
-
-        logging.info("")
-        logging.info("Writing EDIF phsyical netlist: %s", phys_netlist_edif_path)
-        self.rw_netlist.exportEDIF(phys_netlist_edif_path)
-        logging.info(
-            "Writing capnp interchange netlist: %s",
-            str(self.stage_dir / "phys_logical_netlist.capnp"),
-        )
-        LogNetlistWriter.writeLogNetlist(
-            self.rw_netlist, str(self.stage_dir / "phys_logical_netlist.capnp")
-        )
-        logging.info(
-            "Writing capnp interchange physical netlist: %s",
-            str(self.stage_dir / "phys_physical_netlist.capnp"),
-        )
-        PhysNetlistWriter.writePhysNetlist(
-            self.rw_design, str(self.stage_dir / "phys_physical_netlist.capnp")
-        )
-
     def __process_all_luts(self, cells_already_visited):
         """Visit all LUTs and replace them with LUT6_2 instances"""
 
-        for site_inst in self.rw_design.getSiteInsts():
+        for site_inst in self.vivado_design.getSiteInsts():
             if site_inst.getSiteTypeEnum() not in (SiteTypeEnum.SLICEL, SiteTypeEnum.SLICEM):
                 continue
 
-            gnd_nets = site_inst.getSiteWiresFromNet(self.rw_design.getGndNet())
-            vcc_nets = site_inst.getSiteWiresFromNet(self.rw_design.getVccNet())
+            gnd_nets = site_inst.getSiteWiresFromNet(self.vivado_design.getGndNet())
+            vcc_nets = site_inst.getSiteWiresFromNet(self.vivado_design.getVccNet())
 
             lut_rams = []
             for lut6_bel, lut6_pin_out, lut5_bel, lut5_pin_out in self.lut_pair_bel_names:
@@ -587,6 +659,9 @@ class RwPhysNetlist:
         logging.info("Processing %s %s", type_name, cell)
         if rw.PinMap.cell_is_default_mapping(cell):
             logging.info("  Inputs not permuted, skipping")
+            self._compare_cell(
+                cell.getEDIFCellInst(), cell.getName(), cell.getSiteInst(), cell.getBELName()
+            )
             return []
 
         raise NotImplementedError
@@ -602,6 +677,9 @@ class RwPhysNetlist:
 
         if rw.PinMap.cell_is_default_mapping(cell):
             logging.info("  Inputs not permuted, skipping")
+            self._compare_cell(
+                cell.getEDIFCellInst(), cell.getName(), cell.getSiteInst(), cell.getBELName()
+            )
             return []
 
         rw.PinMap.ensure_connected(cell.getEDIFCellInst(), self.gnd)
@@ -650,6 +728,8 @@ class RwPhysNetlist:
             assert port
             self.vcc.createPortInst(port, bufgctrl)
 
+        self._compare_cell(bufgctrl, bufgctrl.getName(), bufg_cell.getSiteInst(), "BUFGCTRL")
+
         return [bufg_cell]
 
     def __check_carry4_const_net(self, site_inst, const_info, pin_out, new_net):
@@ -686,7 +766,7 @@ class RwPhysNetlist:
         # Create a new net to replace the global ground
         new_net_name = f"{site_inst.getName()}.{pin_out}.{const_type}"
         logging.info("  Creating new %s net %s", const_type, new_net_name)
-        new_net = EDIFNet(new_net_name, self.rw_design.getTopEDIFCell())
+        new_net = EDIFNet(new_net_name, self.vivado_design.getTopEDIFCell())
 
         # Drive net using LUT output port
         lut_out_port = new_cell_inst.getPort("O6" if pin_out.endswith("O6") else "O5")
@@ -739,12 +819,12 @@ class RwPhysNetlist:
 
         logging.info("")
         logging.info(
-            "Processing const LUT at site %s {site_inst.getName()}, pin(s): %s",
+            "Processing const LUT at site %s, pin(s): %s",
             site_inst.getName(),
             ",".join(str(p) for p in pins),
         )
 
-        new_cell_inst = self.rw_design.getTopEDIFCell().createChildCellInst(
+        new_cell_inst = self.vivado_design.getTopEDIFCell().createChildCellInst(
             rw.generate_const_lut_name(site_inst, pins, pin1_gnd, pin2_gnd), self.lut6_2_edif_cell
         )
         init6 = "00000000" if pin1_gnd else "FFFFFFFF"
@@ -767,6 +847,8 @@ class RwPhysNetlist:
         for logical_port in rw.PinMap["LUT6_2"]:
             if logical_port.startswith("I"):
                 self.vcc.createPortInst(new_cell_inst.getPort(logical_port), new_cell_inst)
+
+        self._compare_cell(new_cell_inst, new_cell_inst.getName(), site_inst, f"{pins[0][0]}6LUT")
 
     def __process_lut(self, lut6_cell, lut5_cell, lut5_only=False):
         """
@@ -854,17 +936,17 @@ class RwPhysNetlist:
 
         # Fix the new LUT INIT property based on the new pin mappings
         if not lut5_only:
-            rw.process_lut_init(lut6_cell, lut5_cell, new_cell_inst)
+            new_init = rw.process_lut_init(lut6_cell, lut5_cell)
         else:
-            rw.process_lut_init(None, lut6_cell, new_cell_inst)
+            new_init = rw.process_lut_init(None, lut6_cell)
+        logging.info(f"  New LUT INIT: {new_init}")
+        new_cell_inst.addProperty("INIT", new_init)
 
-        # Return the cells to be removed
-        cells_to_remove = []
-        if not lut6_cell.isRoutethru():
-            cells_to_remove.append(lut6_cell)
-        if lut5_cell and not lut5_cell.isRoutethru():
-            cells_to_remove.append(lut5_cell)
-        return cells_to_remove
+        self._compare_cell(
+            new_cell_inst, lut6_cell.getName(), lut6_cell.getSiteInst(), lut6_cell.getBELName()
+        )
+
+        return new_cell_inst
 
     def __process_lut5_and_const_lut(self, lut5, const_pin, site_inst, is_gnd):
         """Process a LUT5 and GND LUT pair."""
@@ -928,6 +1010,7 @@ class RwPhysNetlist:
 
         # Fix the new LUT INIT property based on the new pin mappings
         rw.process_shared_gnd_lut_eqn(lut5, const_pin, new_cell_inst, is_gnd)
+        self._compare_cell(new_cell_inst, lut5.getName(), site_inst, lut5.getBELName())
         return lut5
 
     def __create_lut_routethru_net(self, cell, is_lut5, new_lut_cell):
@@ -989,6 +1072,97 @@ class RwPhysNetlist:
         else:
             new_net.createPortInst(routed_to_port_inst.getPort(), routed_to_cell_inst)
 
+    def _compare_cell(self, ecell, log_name, site, bel_name):
+        """
+        Compare the post-implementation cell to the reversed cell.
+
+        ecell: The transformed edif cell (used for properties and connections)
+        cell: The original post-implementation cell (used for location data)
+        """
+        try:
+            site_name = site.getName()
+            rev_site = self.rev_design.getSiteInst(site_name)
+            assert rev_site
+            rev_cell = rev_site.getCell(bel_name)
+
+            logging.info(
+                "Comparing cell %s on BEL %s to reversed cell %s",
+                log_name,
+                bel_name,
+                rev_cell.getName(),
+            )
+
+            rev_ecell = rev_cell.getEDIFCellInst()
+            if ecell.getCellType().getName() != rev_ecell.getCellType().getName():
+                assert "LUT" in ecell.getCellType().getName()
+                logging.info(
+                    "Warning: Comparing LUT cell %s to %s",
+                    ecell.getCellType().getName(),
+                    rev_ecell.getCellType().getName(),
+                )
+
+            # Check properties
+            cell_props = (
+                ecell.getPropertiesMap()
+            )  # The regular cell may have out of date properties
+            rev_props = rev_cell.getProperties()
+            keys = self.get_properties_for_type(ecell.getCellType().getName())
+
+            for name in keys:
+                if name not in rev_props:
+                    raise StructuralCompareError(
+                        f"Property {name} not in rev cell {rev_cell.getName()} properties."
+                    )
+                value = convert_verilog_literal_to_int(cell_props[name].getValue())
+                rev_value = convert_verilog_literal_to_int(rev_props[name].getValue())
+
+                if rev_value != value:
+                    capnp_cell, lcapnp_cell = self.get_capnp_cell(rev_cell.getName())
+                    assert lcapnp_cell is not None
+                    cvalue = None
+                    for props in lcapnp_cell.propMap.entries:
+                        if self.log_capnp.strList[props.key] == name:
+                            cvalue = self.log_capnp.strList[props.textValue]
+                            break
+                    assert cvalue is not None
+                    cvalue = convert_verilog_literal_to_int(cvalue)
+                    self.rw_value_mismatch += 1
+                    self.rw_value_mismatches.append(
+                        f"Property {name} in rev cell {rev_cell.getName()} does not match. ({value} != {cvalue} != {rev_value})"
+                    )
+                    if cvalue != value:
+                        raise StructuralCompareError(
+                            f"Property {name} in rev cell {rev_cell.getName()} does not match. ({cvalue} != {rev_value})"
+                        )
+            # Check nets
+            # Assume nets match -> throw an error if an already matched net is contradicted
+            for port in ecell.getPortInsts():
+                rev_port = rev_ecell.getPortInst(port.getName())
+                if rev_port is None:
+                    continue
+                    assert len(ecell.getPortInsts()) == len(rev_ecell.getPortInsts())
+                    assert port.getName()[0] == "O"
+                    rev_port = rev_ecell.getPortInst("O")
+                net = port.getNet().getName()
+                if net not in self.net_map:
+                    logging.info("Mapping net %s to %s", net, rev_port.getNet().getName())
+                    self.net_map[net] = rev_port.getNet().getName()
+                # elif self.net_map[net] != rev_port.getNet().getName():
+                #     raise StructuralCompareError(
+                #         f"Net {net} on port {port.getName()} in cell {ecell.getName()} already mapped. ({self.net_map[net]} != {rev_port.getNet().getName()})"
+                #     )
+
+            self.matches[ecell.getName()] = rev_cell.getName()
+        except Exception as e:
+            logging.shutdown()
+            traceback.print_exc()
+            print(f"RW errors: {self.rw_value_mismatch}")
+            p = self.phys_capnp
+            n = self.log_capnp
+            capnp_cell, lcapnp_cell = self.get_capnp_cell(rev_cell.getName())
+
+            code.interact(local=dict(globals(), **locals()))
+
 
 if __name__ == "__main__":
     parser = ArgumentParser()
@@ -1010,11 +1184,25 @@ if __name__ == "__main__":
         required=True,
         help="The implementation edf file to use for the netlist.",
     )
-    parser.add_argument("--logging_level", help="Decides what levels of logs to display")
+    parser.add_argument(
+        "--phys_capnp",
+        type=Path,
+        required=True,
+        help="The capnp physical netlist to compare against",
+    )
+    parser.add_argument(
+        "--edf_capnp",
+        type=Path,
+        required=True,
+        help="The capnp logical netlist to compare against",
+    )
+    parser.add_argument(
+        "--logging_level", default="INFO", help="Decides what levels of logs to display"
+    )
     args = parser.parse_args()
     netlist_generator = RwPhysNetlist(args.build_dir, args.logging_level)
     try:
-        netlist_generator.run(args.impl_dcp, args.impl_edf)
+        netlist_generator.run(args.impl_dcp, args.impl_edf, args.phys_capnp, args.edf_capnp)
     except jpype.JException as e:
         logging.error("ERROR: %s", e)
         sys.exit(1)

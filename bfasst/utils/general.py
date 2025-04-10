@@ -1,6 +1,7 @@
 """Utility functions"""
 
 import json
+from jpype.types import JString
 import logging
 from pathlib import Path
 import re
@@ -97,8 +98,11 @@ def convert_verilog_literal_to_int(prop):
     >>> convert_verilog_literal_to_int("32'hdeadbeef")
     3735928559
     """
+    # For rapidwright compatibility
+    if isinstance(prop, JString):
+        prop = str(prop)
     # Not a string? just return the prop
-    if not isinstance(prop, str):
+    elif not isinstance(prop, str):
         return prop
 
     # Try to convert to int

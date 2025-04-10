@@ -15,11 +15,23 @@ from bfasst.utils import compare_json
 class PhysNetlist(Tool):
     """Create rule and build snippets for phys netlist creation."""
 
-    def __init__(self, flow, design, impl_checkpoint, impl_edf, *, logging_level="INFO"):
+    def __init__(
+        self,
+        flow,
+        design,
+        impl_checkpoint,
+        impl_edf,
+        phys_capnp,
+        edf_capnp,
+        *,
+        logging_level="INFO",
+    ):
         super().__init__(flow, design)
 
         self.impl_checkpoint = impl_checkpoint
         self.impl_edf = impl_edf
+        self.phys_capnp = phys_capnp
+        self.edf_capnp = edf_capnp
         self.logging_level = logging_level
 
         self.build_path = self.design_build_path / "vivado_phys_netlist"
@@ -57,6 +69,8 @@ class PhysNetlist(Tool):
                     "logging_level": f"--logging_level {self.logging_level}",
                     "impl_dcp": self.impl_checkpoint,
                     "impl_edf": self.impl_edf,
+                    "phys_capnp": self.phys_capnp,
+                    "edf_capnp": self.edf_capnp,
                 },
             )
 
