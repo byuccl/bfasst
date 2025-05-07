@@ -34,8 +34,6 @@ jobs:
         rm -rf ./.??* || true
         ls -la ./
     - uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.GMT_TOOLS_PAT }}
     - name: Install external tools
       run: |
         eval `ssh-agent -s`
