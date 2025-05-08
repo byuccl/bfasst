@@ -11,7 +11,9 @@ from bfasst.utils.general import ensure_tuple, json_write_if_changed
 class VivadoImpl(ImplTool):
     """Tool to create Vivado implementation ninja snippets."""
 
-    def __init__(self, flow, design, synth_edf, constraints_files="", ooc=False, impl_options=""):
+    def __init__(
+        self, flow, design, synth_edf, constraints_files="", ooc=False, impl_options=""
+    ):  # pylint: disable=too-many-function-args
         super().__init__(flow, design)
         self.ooc = ooc
 
@@ -36,7 +38,11 @@ class VivadoImpl(ImplTool):
             "synth_output": str(
                 self.build_path.parent / ("synth" if not self.ooc else "synth_ooc")
             ),
-            "clocks": self.design_props.clocks if self.design_props is not None and type(self.flow).__name__ == "ClockCrank"  else "",
+            "clocks": (
+                self.design_props.clocks
+                if self.design_props is not None and type(self.flow).__name__ == "ClockCrank"
+                else ""
+            ),
             "outputs": self.outputs_str,
             "tcl_sources": [
                 self.outputs_str["setup_tcl"],
