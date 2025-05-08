@@ -13,7 +13,7 @@ class VivadoImpl(ImplTool):
 
     def __init__(
         self, flow, design, synth_edf, constraints_files="", ooc=False, impl_options=""
-    ):  # pylint: disable=too-many-function-args
+    ):  # pylint: disable=too-many-positional-arguments
         super().__init__(flow, design)
         self.ooc = ooc
 
