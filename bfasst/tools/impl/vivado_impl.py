@@ -36,7 +36,7 @@ class VivadoImpl(ImplTool):
             "synth_output": str(
                 self.build_path.parent / ("synth" if not self.ooc else "synth_ooc")
             ),
-            "clocks": self.design_props.clocks if self.design_props is not None else "",
+            "clocks": self.design_props.clocks if self.design_props is not None and type(self.flow).__name__ == "ClockCrank"  else "",
             "outputs": self.outputs_str,
             "tcl_sources": [
                 self.outputs_str["setup_tcl"],
