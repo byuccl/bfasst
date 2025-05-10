@@ -35,9 +35,9 @@ jobs:
         ls -la ./
     - uses: actions/checkout@v4
 
-    # - name: Environment variables
-    #   run: |
-    #     echo "BFASST_PATH_FASM2BELS=$(realpath -se ${{ runner.temp }}/../../cache/fasm2bels)" >> $GITHUB_ENV
+    - name: Environment variables
+      run: |
+        echo "BFASST_PATH_FASM2BELS=$(realpath -se ${{ runner.temp }}/../../cache/fasm2bels)" >> $GITHUB_ENV
         
     - name: Install external tools
       run: |
