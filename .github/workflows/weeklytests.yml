@@ -35,15 +35,16 @@ jobs:
         ls -la ./
     - uses: actions/checkout@v4
 
-    - name: Environment variables
-      run: |
-        echo "BFASST_PATH_FASM2BELS=$(realpath -se ${{ runner.temp }}/../../cache/fasm2bels)" >> $GITHUB_ENV
+    # - name: Environment variables
+    #   run: |
+    #     echo "BFASST_PATH_FASM2BELS=$(realpath -se ${{ runner.temp }}/../../cache/fasm2bels)" >> $GITHUB_ENV
         
     - name: Install external tools
       run: |
         eval `ssh-agent -s`
         ssh-add - <<< '${{ secrets.GMT_TOOLS_DEPLOY_SSH_KEY }}'
         make env
+        make install_cmake
         . .venv/bin/activate && python bfasst/external_tools.py install_test_yaml ${{ matrix.experiment }}
     - name: tests
       timeout-minutes: 240
