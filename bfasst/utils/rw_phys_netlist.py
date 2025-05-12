@@ -72,10 +72,15 @@ class RwPhysNetlist:
         self.log_capnp = None
         self.rw_value_mismatch = 0
         self.rw_value_mismatches = []
+        self.rw_problem_cells = set()
+
+        self.rw_port_mismatch = 0
+        self.rw_port_mismatch_cells = set()
 
         self._cell_props = create_cell_props()
-        self.matches = {}  # edif cell names: cell names (vivado: rev)
-        self.net_map = {}  # net names: net names (vivado: rev)
+        self.matches = {}  # vivado edif cell name: (vivado_edif_cell, rev_edif_cell)
+        # nets are named based on the net driver.
+        self.net_map = {}  # net names: [net names and alias nets] (vivado: rev)
 
         # Const nets
         self.vcc = None
@@ -168,8 +173,7 @@ class RwPhysNetlist:
         # self.vivado_design.unplaceDesign()
         # self.vivado_design.writeCheckpoint(phys_netlist_checkpoint)
 
-        # logging.info("")
-        # logging.info("Writing EDIF phsyical netlist: %s", phys_netlist_edif_path)
+        # logging.info("\nWriting EDIF phsyical netlist: %s", phys_netlist_edif_path)
         # self.vivado_netlist.exportEDIF(phys_netlist_edif_path)
         # logging.info(
         #     "Writing capnp interchange netlist: %s",
@@ -185,7 +189,6 @@ class RwPhysNetlist:
         # PhysNetlistWriter.writePhysNetlist(
         #     self.vivado_design, str(self.stage_dir / "phys_physical_netlist.capnp")
         # )
-        logging.info("Rapidwright bug count %d", self.rw_value_mismatch)
         logging.info("Transformation time %s seconds", f"{end_time - start_time:0.2f}")
         with open(self.stage_dir / "transformation_time.txt", "w") as fp:
             fp.write(f"{end_time - start_time:.2f}\n")
@@ -272,15 +275,14 @@ class RwPhysNetlist:
         # First loop through all sites and deal with LUTs.  We can't the later loop that iterates
         # over Design.getCells() as it does not return LUT routethru objects.
         self.__process_all_luts(cells_already_visited)
-        logging.info("")
-        logging.info("Finished processing LUTs")
+        logging.info("\nFinished processing LUTs")
 
         # Loop through all cells in the design
         for cell in self.vivado_design.getCells():
             edif_cell_inst = cell.getEDIFCellInst()
 
             logging.info(
-                "%s (%s)",
+                "Examining %s (%s)",
                 cell.getName(),
                 f"{edif_cell_inst.getCellType().getName() if edif_cell_inst else 'None'}",
             )
@@ -326,6 +328,10 @@ class RwPhysNetlist:
 
             print(cell)
             raise PhysNetlistTransformError(f"Unsupported cell type {cell_type}")
+
+        logging.info("Rapidwright bug count %d", self.rw_value_mismatch)
+        # Check nets of matched cells
+        self._check_nets()
 
         # Remove old unusued cells
         logging.info("Removing old cells...")
@@ -522,8 +528,7 @@ class RwPhysNetlist:
         parent, edif_cells = self.__lutram_assertions(cells)
         new_cell_name = f"{rw.generate_combinded_cell_name(edif_cells)}_ram32x1d_phys"
         cell_str = f"2 LUT_RAMS ({' '.join([str(n.getName()) for n in cells])})"
-        logging.info("")
-        logging.info("Converting %s to RAM32X1D %s", cell_str, new_cell_name)
+        logging.info("\nConverting %s to RAM32X1D %s", cell_str, new_cell_name)
 
         ram32x1d = parent.createChildCellInst(new_cell_name, self.ram32x1d_edif_cell)
 
@@ -558,8 +563,7 @@ class RwPhysNetlist:
         parent, edif_cells = self.__lutram_assertions(cells)
         new_cell_name = f"{rw.generate_combinded_cell_name(edif_cells)}_ram32m_phys"
         cell_str = f"4 LUT_RAMS ({' '.join([str(n.getName()) for n in cells])})"
-        logging.info("")
-        logging.info("Converting %s to RAM32M %s", cell_str, new_cell_name)
+        logging.info("\nConverting %s to RAM32M %s", cell_str, new_cell_name)
 
         ram32m = parent.createChildCellInst(new_cell_name, self.ram32m_edif_cell)
 
@@ -655,8 +659,7 @@ class RwPhysNetlist:
         they are permuted in some way."""
 
         type_name = cell.getEDIFCellInst().getCellType().getName()
-        logging.info("")
-        logging.info("Processing %s %s", type_name, cell)
+        logging.info("\nProcessing %s %s", type_name, cell)
         if rw.PinMap.cell_is_default_mapping(cell):
             logging.info("  Inputs not permuted, skipping")
             self._compare_cell(
@@ -672,8 +675,7 @@ class RwPhysNetlist:
         assume they can't be and throw a NotImplementedError exception if
         they are permuted in some way."""
         type_name = cell.getEDIFCellInst().getCellType().getName()
-        logging.info("")
-        logging.info("Processing %s %s", type_name, cell)
+        logging.info("\nProcessing %s %s", type_name, cell)
 
         if rw.PinMap.cell_is_default_mapping(cell):
             logging.info("  Inputs not permuted, skipping")
@@ -816,10 +818,8 @@ class RwPhysNetlist:
 
         len(pins) <= 2
         """
-
-        logging.info("")
         logging.info(
-            "Processing const LUT at site %s, pin(s): %s",
+            "\nProcessing const LUT at site %s, pin(s): %s",
             site_inst.getName(),
             ",".join(str(p) for p in pins),
         )
@@ -858,9 +858,8 @@ class RwPhysNetlist:
         lut5_only: The lut6_cell was none and is replaced with the lut5_cell.
             If True, lut5_cell is None. Sometimes the lut5 is a lone lut or a rt.
         """
-        logging.info("")
         logging.info(
-            "Processing and replacing LUT(s): %s",
+            "\nProcessing and replacing LUT(s): %s",
             ",".join(
                 str(lut_cell) + ("(routethru)" if lut_cell.isRoutethru() else "")
                 for lut_cell in (lut6_cell, lut5_cell)
@@ -955,9 +954,8 @@ class RwPhysNetlist:
             raise PhysNetlistTransformError("LUTRAM paired with gnd LUT not supported")
 
         const_type = "GND" if is_gnd else "VCC"
-        logging.info("")
         logging.info(
-            "Processing and replacing LUT5 %s paired with %s LUT %s on site %s",
+            "\nProcessing and replacing LUT5 %s paired with %s LUT %s on site %s",
             lut5.getName(),
             const_type,
             const_pin,
@@ -1130,38 +1128,93 @@ class RwPhysNetlist:
                     self.rw_value_mismatches.append(
                         f"Property {name} in rev cell {rev_cell.getName()} does not match. ({value} != {cvalue} != {rev_value})"
                     )
+                    self.rw_problem_cells.add(rev_cell.getName())
                     if cvalue != value:
                         raise StructuralCompareError(
                             f"Property {name} in rev cell {rev_cell.getName()} does not match. ({cvalue} != {rev_value})"
                         )
-            # Check nets
-            # Assume nets match -> throw an error if an already matched net is contradicted
-            for port in ecell.getPortInsts():
-                rev_port = rev_ecell.getPortInst(port.getName())
-                if rev_port is None:
-                    continue
-                    assert len(ecell.getPortInsts()) == len(rev_ecell.getPortInsts())
-                    assert port.getName()[0] == "O"
-                    rev_port = rev_ecell.getPortInst("O")
-                net = port.getNet().getName()
-                if net not in self.net_map:
-                    logging.info("Mapping net %s to %s", net, rev_port.getNet().getName())
-                    self.net_map[net] = rev_port.getNet().getName()
-                # elif self.net_map[net] != rev_port.getNet().getName():
-                #     raise StructuralCompareError(
-                #         f"Net {net} on port {port.getName()} in cell {ecell.getName()} already mapped. ({self.net_map[net]} != {rev_port.getNet().getName()})"
-                #     )
 
-            self.matches[ecell.getName()] = rev_cell.getName()
+            self.matches[ecell.getName()] = (ecell, rev_cell, rev_ecell)
         except Exception as e:
             logging.shutdown()
             traceback.print_exc()
-            print(f"RW errors: {self.rw_value_mismatch}")
             p = self.phys_capnp
             n = self.log_capnp
             capnp_cell, lcapnp_cell = self.get_capnp_cell(rev_cell.getName())
 
             code.interact(local=dict(globals(), **locals()))
+
+    def _check_nets(self):
+        """
+        Check nets at the end once all transformations are done.
+        Assume nets match -> throw an error if an already matched net is contradicted
+        """
+        for name, (ecell, rev_cell, rev_ecell) in self.matches.items():
+            rev_hecell = rev_cell.getEDIFHierCellInst()
+            # try:
+            num_ports = len(ecell.getPortInsts())
+            rev_port_insts = rev_hecell.getHierPortInsts()
+            if num_ports != len(rev_port_insts):
+                connected_ports = [  # sometimes unconnected output ports are included
+                    i for i in rev_port_insts if len(i.getHierarchicalNet().getPortInsts()) > 1
+                ]
+                if num_ports != len(connected_ports):
+                    self.rw_port_mismatch += 1
+                    self.rw_port_mismatch_cells.add(rev_hecell.getFullHierarchicalInstName())
+                    if rev_hecell.getFullHierarchicalInstName() not in self.rw_problem_cells:
+                        logging.info(
+                            "New rw error cell %s", rev_hecell.getFullHierarchicalInstName()
+                        )
+                        raise Exception
+                    continue
+            for port in ecell.getPortInsts():
+                rev_port = rev_hecell.getPortInst(port.getName())
+                if rev_port is None:
+                    assert port.getName()[0] == "O"
+                    rev_port = rev_hecell.getPortInst("O")
+                    assert rev_port is not None
+                src = port.getNet().getSourcePortInsts(True)
+                assert len(src) == 1
+                net_driver = src[0].getFullName()
+                rev_net = rev_port.getHierarchicalNet()
+
+                # this does not include top level I/Os
+                rev_net_drivers = rev_net.getLeafHierPortInsts(True, False)
+                if not rev_net_drivers:
+                    # This does include top level I/Os, but not alias wires
+                    # So far top level I/Os do not have aliases in f2b
+                    # rev_net_drivers = rev_net.getSourcePortInsts(True) # possible rw bug -> output net did not trigger.
+                    rev_net_drivers = []
+                    for port in rev_net.getPortInsts():
+                        if port.isInput():
+                            rev_net_drivers.append(str(port))
+                    if len(rev_net_drivers) == 2:
+                        # this happens with IBUF
+                        assert net_driver in rev_net_drivers
+                        rev_net_drivers = [net_driver]
+
+                assert len(rev_net_drivers) == 1
+
+                rev_net_driver = str(rev_net_drivers[0])
+                if net_driver not in self.net_map:
+                    logging.info("Mapping net %s to %s", net_driver, rev_net_driver)
+                    self.net_map[net_driver] = rev_net_driver
+                elif self.net_map[net_driver] != rev_net_driver:
+                    raise StructuralCompareError(
+                        f"Net {net_driver} on port {port.getName()} in cell {ecell.getName()}"
+                        + f" already mapped. ({self.net_map[net_driver]} != {rev_net_driver})\n\t"
+                        + f"Edif Cell/port: {name}/{port.getName()}  \n\t"
+                        + f"Rev Edif Cell/port: {str(rev_port)}"
+                    )
+            # except Exception as e:
+            #     logging.shutdown()
+            #     traceback.print_exc()
+            #     p = self.phys_capnp
+            #     n = self.log_capnp
+            #     # rev_cell = self.rev_design.getCell(rev_ecell.getCellName())
+            #     # capnp_cell, lcapnp_cell = self.get_capnp_cell(rev_cell.getCellName())
+
+            #     code.interact(local=dict(globals(), **locals()))
 
 
 if __name__ == "__main__":
