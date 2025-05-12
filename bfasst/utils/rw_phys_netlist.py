@@ -98,6 +98,7 @@ class RwPhysNetlist:
         self.matches = {}  # vivado edif cell name: (vivado_edif_cell, rev_edif_cell)
         # nets are named based on the net driver.
         self.net_map = {}  # net names: [net names and alias nets] (vivado: rev)
+        self.leaf_driver_cache = {}
         self.cmp_cell_time = 0
 
         # Const nets
@@ -1210,21 +1211,26 @@ class RwPhysNetlist:
                 net_driver = src[0].getFullName()
                 rev_net = rev_port.getHierarchicalNet()
 
-                # this does not include top level I/Os
-                rev_net_drivers = rev_net.getLeafHierPortInsts(True, False)
-                if not rev_net_drivers:
-                    # This does include top level I/Os, but not alias wires
-                    # So far top level I/Os do not have aliases in f2b
-                    # rev_net_drivers = rev_net.getSourcePortInsts(True) # possible rw bug -> output net did not trigger.
-                    rev_net_drivers = []
-                    for port in rev_net.getPortInsts():
-                        if port.isInput():
-                            rev_net_drivers.append(str(port))
-                    if len(rev_net_drivers) == 2:
-                        # this happens with IBUF
-                        assert net_driver in rev_net_drivers
-                        rev_net_drivers = [net_driver]
 
+                if rev_net not in self.leaf_driver_cache:
+                    # this does not include top level I/Os
+                    rev_net_drivers = rev_net.getLeafHierPortInsts(True, False)
+                    if not rev_net_drivers:
+                        # This does include top level I/Os, but not alias wires
+                        # So far top level I/Os do not have aliases in f2b
+                        # rev_net_drivers = rev_net.getSourcePortInsts(True) # possible rw bug -> output net did not trigger.
+                        rev_net_drivers = []
+                        for port in rev_net.getPortInsts():
+                            if port.isInput():
+                                rev_net_drivers.append(str(port))
+                        if len(rev_net_drivers) == 2:
+                            # this happens with IBUF
+                            assert net_driver in rev_net_drivers
+                            rev_net_drivers = [net_driver]
+                    self.leaf_driver_cache[rev_net] = rev_net_drivers
+                else:
+                    rev_net_drivers = self.leaf_driver_cache[rev_net]
+                
                 assert len(rev_net_drivers) == 1
 
                 rev_net_driver = str(rev_net_drivers[0])
