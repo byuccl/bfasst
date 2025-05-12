@@ -100,3 +100,10 @@ install_opentitan:
 	fusesoc --cores-root . run --build-root build/opentitan --flag=fileset_top --target=synth --no-export --setup lowrisc:systems:chip_earlgrey_cw310
 	mv build/opentitan/synth-vivado build/opentitan/vivado_synth
 	echo "launch_runs impl_1" >> build/opentitan/vivado_synth/lowrisc_systems_chip_earlgrey_cw310_0.1.tcl
+
+################################################################################
+# CMake
+################################################################################
+CMAKE_VERSION ?= 3.27.7
+install_cmake:
+	@bash scripts/install-cmake.sh $(CMAKE_VERSION)

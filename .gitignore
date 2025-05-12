@@ -38,3 +38,6 @@ env.sh
 build.ninja
 .ninja_log
 .ninja_deps
+
+# Cmake installations
+third_party/cmake/*

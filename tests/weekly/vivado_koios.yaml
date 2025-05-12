@@ -25,9 +25,10 @@ designs:
     - koios/reduction_layer
 
     # The following need to be run on a kintex board
-    - koios/dnnweaver
-    - koios/gemm_layer
-    - koios/bwave_like.float.large
+    # Commenting out for now since the runner is not set up for kintex parts
+    # - koios/dnnweaver
+    # - koios/gemm_layer
+    # - koios/bwave_like.float.large
 
     # - koios/dla_like.large # Overutilized DSPs, LUTs, BRAMs, and SLICEs
     # - koios/tdarknet_like.small # Needs 1600+ BRAMs
