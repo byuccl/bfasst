@@ -47,6 +47,23 @@ class StructuralCompareError(Exception):
     """Exception for structural comparison errors"""
 
 
+class CapnpCells:
+    def __init__(self, phys_capnp, log_capnp):
+        self.phys_cells = {}
+        self.log_cells = {}
+
+        for cell in phys_capnp.placements:
+            cell_name = phys_capnp.strList[cell.cellName]
+            self.phys_cells[cell_name] = cell
+
+        for cell in log_capnp.instList:
+            cell_name = log_capnp.strList[cell.name]
+            self.log_cells[cell_name] = cell
+
+    def get_capnp_cell(self, cell_name):
+        return self.phys_cells[cell_name], self.log_cells[cell_name.split("/")[0]]
+
+
 class RwPhysNetlist:
     """Creates a xilinx netlist that has only physical primitives"""
 
@@ -81,6 +98,7 @@ class RwPhysNetlist:
         self.matches = {}  # vivado edif cell name: (vivado_edif_cell, rev_edif_cell)
         # nets are named based on the net driver.
         self.net_map = {}  # net names: [net names and alias nets] (vivado: rev)
+        self.cmp_cell_time = 0
 
         # Const nets
         self.vcc = None
@@ -104,30 +122,30 @@ class RwPhysNetlist:
             ("D6LUT", "D6LUT_O6", "D5LUT", "D5LUT_O5"),
         ]
 
-    def get_capnp_cell(self, cell_name):
-        p = self.phys_capnp
-        n = self.log_capnp
-        pidx = None
-        for pidx, tmp in enumerate(p.strList):
-            if tmp == cell_name:
-                break
+    # def get_capnp_cell(self, cell_name):
+    #     p = self.phys_capnp
+    #     n = self.log_capnp
+    #     pidx = None
+    #     for pidx, tmp in enumerate(p.strList):
+    #         if tmp == cell_name:
+    #             break
 
-        capnp_cell = None
-        for capnp_cell in p.placements:
-            if capnp_cell.cellName == pidx:
-                break
+    #     capnp_cell = None
+    #     for capnp_cell in p.placements:
+    #         if capnp_cell.cellName == pidx:
+    #             break
 
-        lidx = None
-        for lidx, tmp in enumerate(n.strList):
-            if tmp == cell_name.split("/")[0]:
-                break
+    #     lidx = None
+    #     for lidx, tmp in enumerate(n.strList):
+    #         if tmp == cell_name.split("/")[0]:
+    #             break
 
-        lcapnp_cell = None
-        for lcapnp_cell in n.instList:
-            if lcapnp_cell.name == lidx:
-                break
+    #     lcapnp_cell = None
+    #     for lcapnp_cell in n.instList:
+    #         if lcapnp_cell.name == lidx:
+    #             break
 
-        return capnp_cell, lcapnp_cell
+    #     return capnp_cell, lcapnp_cell
 
     def get_properties_for_type(self, cell_type) -> tuple[str]:
         """Return the list of properties that must match for a given cell type
@@ -256,6 +274,8 @@ class RwPhysNetlist:
         self.phys_capnp = rw.read_phys_capnp(str(phys_capnp))
         self.log_capnp = rw.read_log_capnp(str(edf_capnp))
 
+        self.capnp_cells = CapnpCells(self.phys_capnp, self.log_capnp)
+
         self.__init_const_nets()
 
         # Init BUFGCTRL cell template
@@ -274,8 +294,11 @@ class RwPhysNetlist:
 
         # First loop through all sites and deal with LUTs.  We can't the later loop that iterates
         # over Design.getCells() as it does not return LUT routethru objects.
+        start_time = time.time()
         self.__process_all_luts(cells_already_visited)
-        logging.info("\nFinished processing LUTs")
+        logging.info("\nFinished processing LUTs in %s seconds", time.time() - start_time)
+        # print("Finished processing LUTs in %s seconds", time.time() - start_time)
+        start_time = time.time()
 
         # Loop through all cells in the design
         for cell in self.vivado_design.getCells():
@@ -330,8 +353,15 @@ class RwPhysNetlist:
             raise PhysNetlistTransformError(f"Unsupported cell type {cell_type}")
 
         logging.info("Rapidwright bug count %d", self.rw_value_mismatch)
+        logging.info("Processed other cells in %s seconds", time.time() - start_time)
+        # print("Processed other cells in %s seconds", time.time() - start_time)
+        # print(f"Cmp cell time: %s", self.cmp_cell_time)
+        # exit()
+        start_time = time.time()
         # Check nets of matched cells
         self._check_nets()
+        logging.info("Checked nets in %s seconds", time.time() - start_time)
+        # print("Checked nets in %s seconds", time.time() - start_time)
 
         # Remove old unusued cells
         logging.info("Removing old cells...")
@@ -1077,72 +1107,74 @@ class RwPhysNetlist:
         ecell: The transformed edif cell (used for properties and connections)
         cell: The original post-implementation cell (used for location data)
         """
-        try:
-            site_name = site.getName()
-            rev_site = self.rev_design.getSiteInst(site_name)
-            assert rev_site
-            rev_cell = rev_site.getCell(bel_name)
+        start = time.time()
+        # try:
+        site_name = site.getName()
+        rev_site = self.rev_design.getSiteInst(site_name)
+        assert rev_site
+        rev_cell = rev_site.getCell(bel_name)
 
+        logging.info(
+            "Comparing cell %s on BEL %s to reversed cell %s",
+            log_name,
+            bel_name,
+            rev_cell.getName(),
+        )
+
+        rev_ecell = rev_cell.getEDIFCellInst()
+        if ecell.getCellType().getName() != rev_ecell.getCellType().getName():
+            assert "LUT" in ecell.getCellType().getName()
             logging.info(
-                "Comparing cell %s on BEL %s to reversed cell %s",
-                log_name,
-                bel_name,
-                rev_cell.getName(),
+                "Warning: Comparing LUT cell %s to %s",
+                ecell.getCellType().getName(),
+                rev_ecell.getCellType().getName(),
             )
 
-            rev_ecell = rev_cell.getEDIFCellInst()
-            if ecell.getCellType().getName() != rev_ecell.getCellType().getName():
-                assert "LUT" in ecell.getCellType().getName()
-                logging.info(
-                    "Warning: Comparing LUT cell %s to %s",
-                    ecell.getCellType().getName(),
-                    rev_ecell.getCellType().getName(),
+        # Check properties
+        cell_props = (
+            ecell.getPropertiesMap()
+        )  # The regular cell may have out of date properties
+        rev_props = rev_cell.getProperties()
+        keys = self.get_properties_for_type(ecell.getCellType().getName())
+
+        for name in keys:
+            if name not in rev_props:
+                raise StructuralCompareError(
+                    f"Property {name} not in rev cell {rev_cell.getName()} properties."
                 )
+            value = convert_verilog_literal_to_int(cell_props[name].getValue())
+            rev_value = convert_verilog_literal_to_int(rev_props[name].getValue())
 
-            # Check properties
-            cell_props = (
-                ecell.getPropertiesMap()
-            )  # The regular cell may have out of date properties
-            rev_props = rev_cell.getProperties()
-            keys = self.get_properties_for_type(ecell.getCellType().getName())
-
-            for name in keys:
-                if name not in rev_props:
+            if rev_value != value:
+                capnp_cell, lcapnp_cell = self.capnp_cells.get_capnp_cell(rev_cell.getName())
+                assert lcapnp_cell is not None
+                cvalue = None
+                for props in lcapnp_cell.propMap.entries:
+                    if self.log_capnp.strList[props.key] == name:
+                        cvalue = self.log_capnp.strList[props.textValue]
+                        break
+                assert cvalue is not None
+                cvalue = convert_verilog_literal_to_int(cvalue)
+                self.rw_value_mismatch += 1
+                self.rw_value_mismatches.append(
+                    f"Property {name} in rev cell {rev_cell.getName()} does not match. ({value} != {cvalue} != {rev_value})"
+                )
+                self.rw_problem_cells.add(rev_cell.getName())
+                if cvalue != value:
                     raise StructuralCompareError(
-                        f"Property {name} not in rev cell {rev_cell.getName()} properties."
+                        f"Property {name} in rev cell {rev_cell.getName()} does not match. ({cvalue} != {rev_value})"
                     )
-                value = convert_verilog_literal_to_int(cell_props[name].getValue())
-                rev_value = convert_verilog_literal_to_int(rev_props[name].getValue())
 
-                if rev_value != value:
-                    capnp_cell, lcapnp_cell = self.get_capnp_cell(rev_cell.getName())
-                    assert lcapnp_cell is not None
-                    cvalue = None
-                    for props in lcapnp_cell.propMap.entries:
-                        if self.log_capnp.strList[props.key] == name:
-                            cvalue = self.log_capnp.strList[props.textValue]
-                            break
-                    assert cvalue is not None
-                    cvalue = convert_verilog_literal_to_int(cvalue)
-                    self.rw_value_mismatch += 1
-                    self.rw_value_mismatches.append(
-                        f"Property {name} in rev cell {rev_cell.getName()} does not match. ({value} != {cvalue} != {rev_value})"
-                    )
-                    self.rw_problem_cells.add(rev_cell.getName())
-                    if cvalue != value:
-                        raise StructuralCompareError(
-                            f"Property {name} in rev cell {rev_cell.getName()} does not match. ({cvalue} != {rev_value})"
-                        )
+        self.matches[ecell.getName()] = (ecell, rev_cell, rev_ecell)
+        self.cmp_cell_time += time.time() - start
+        # except Exception as e:
+        #     logging.shutdown()
+        #     traceback.print_exc()
+        #     p = self.phys_capnp
+        #     n = self.log_capnp
+        #     capnp_cell, lcapnp_cell = self.capnp_cells.get_capnp_cell(rev_cell.getName())
 
-            self.matches[ecell.getName()] = (ecell, rev_cell, rev_ecell)
-        except Exception as e:
-            logging.shutdown()
-            traceback.print_exc()
-            p = self.phys_capnp
-            n = self.log_capnp
-            capnp_cell, lcapnp_cell = self.get_capnp_cell(rev_cell.getName())
-
-            code.interact(local=dict(globals(), **locals()))
+        #     code.interact(local=dict(globals(), **locals()))
 
     def _check_nets(self):
         """
@@ -1212,7 +1244,7 @@ class RwPhysNetlist:
             #     p = self.phys_capnp
             #     n = self.log_capnp
             #     # rev_cell = self.rev_design.getCell(rev_ecell.getCellName())
-            #     # capnp_cell, lcapnp_cell = self.get_capnp_cell(rev_cell.getCellName())
+            #     # capnp_cell, lcapnp_cell = self.capnp_cells.get_capnp_cell(rev_cell.getCellName())
 
             #     code.interact(local=dict(globals(), **locals()))
 

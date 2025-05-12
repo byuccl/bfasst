@@ -127,6 +127,11 @@ def convert_verilog_literal_to_int(prop):
     if matches:
         return int(matches.group(1), 16)
 
+    if prop.upper() == "TRUE":
+        return True
+    elif prop.upper() == "FALSE":
+        return False
+
     return prop
 
 
