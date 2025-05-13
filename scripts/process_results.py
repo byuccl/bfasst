@@ -1,5 +1,5 @@
 """
-Parse results.json file from run_experiments flow and generate a CSV file 
+Parse results.json file from run_experiments flow and generate a CSV file
 with statuses and utilization data for each design.
 """
 
@@ -150,14 +150,27 @@ def phys_cmp_results(designs):
     utilization data, transformation times, comparison times, and
     success status.
     """
-    root_dir = ROOT_PATH / "build"
+    root_dir = ROOT_PATH
 
     out = "results.csv"
-    rows = []
 
+    fl = yaml_parser.RunParser(flow)
+
+    designs = [
+        BUILD_PATH / Path(design).parent.name / Path(design).name for design in fl.design_paths
+    ]
+    import code
+
+    # code.interact(local=dict(globals(), **locals()))
+
+    rows = []
     for design in designs:
+        status = (
+            "Success" if (design / "struct_cmp/struct_comparison_time.txt").exists() else "FAILED"
+        )
         row = {
-            "Design": design.split("/")[1],
+            "Design": design.name,
+            "Status": status,
             "LUT": 0,
             "LUT_MEM": 0,
             "SRL": 0,
@@ -169,7 +182,10 @@ def phys_cmp_results(designs):
             "S_TIME": 0,
             "S_MEM": 0,
         }
-        utilization_file = root_dir / f"{design}/vivado_impl/utilization.txt"
+        if status == "FAILED":
+            rows.append(row)
+            continue
+        utilization_file = design / "vivado_impl/utilization.txt"
         if not utilization_file.is_file():
             continue
         with open(utilization_file, "r") as f:
@@ -187,6 +203,7 @@ def phys_cmp_results(designs):
                 elif "| Block RAM Tile" in line:
                     row["BRAM"] = line.split("|")[2].strip()
 
+<<<<<<< HEAD
         with open(root_dir / design / "vivado_phys_netlist/transformation_time.txt", "r") as f:
             row["T_TIME"] = round(float(f.read().strip()), 2)
         with open(root_dir / design / "netlist_cleanup/cleanup_time.txt", "r") as f:
@@ -195,6 +212,20 @@ def phys_cmp_results(designs):
             row["S_TIME"] = round(float(f.read().strip()), 2)
         with open(root_dir / design / "struct_cmp/struct_comparison_mem_dump.txt", "r") as f:
             row["S_MEM"] = f.read().strip()
+=======
+        with open(design / "vivado_phys_netlist/transformation_time.txt", "r") as f:
+            row["T_TIME"] = round(float(f.read().strip()), 2)
+        if (design / "netlist_cleanup/log.txt").exists():
+            with open(design / "netlist_cleanup/log.txt", "r") as f:
+                time = 0
+                for line in f:
+                    if "time" in line:
+                        time += float(line.split(" ")[-1])
+                row["C_TIME"] = round(time, 2)
+        if (design / "struct_cmp/struct_comparison_time.txt").exists():
+            with open(design / "struct_cmp/struct_comparison_time.txt", "r") as f:
+                row["S_TIME"] = round(float(f.read().strip()), 2)
+>>>>>>> main
         rows.append(row)
 
     with open(out, "w", newline="") as f:
@@ -206,6 +237,11 @@ def phys_cmp_results(designs):
             "FF",
             "CARRY4",
             "BRAM",
+<<<<<<< HEAD
+=======
+            "S_TIME",
+            "C_TIME",
+>>>>>>> main
             "T_TIME",
             "C_TIME",
             "S_TIME",
