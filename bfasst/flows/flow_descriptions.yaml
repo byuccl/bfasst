@@ -87,7 +87,6 @@ flows:
   class: VivadoReimplCompare
   external_tools:
   - vivado
-  - physcmp
 
 - name: RandSoc
   description: Create random block design(s) in Vivado
