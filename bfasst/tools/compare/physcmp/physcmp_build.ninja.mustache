@@ -1,0 +1,3 @@
+build {{ log_path }}: physcmp {{ golden_dcp }} {{ test_dcp }} {{ golden_edf }} {{ test_edf }} | {{ compare_script_path }}
+  logging_level = {{ logging_level }}
+

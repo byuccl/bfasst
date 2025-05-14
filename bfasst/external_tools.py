@@ -49,6 +49,9 @@ def check_icestorm():
 def check_fasm2bels():
     return (FASM2BELS_PATH / "env").is_dir() and (FASM2BELS_PATH / f"{PART}_db").is_file()
 
+# TODO make this actually check
+def check_physcmp():
+    return True
 
 def check_conformal():
     try:

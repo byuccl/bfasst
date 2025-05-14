@@ -1,0 +1,4 @@
+rule physcmp
+  command = python {{ compare_script_path }} --golden_dcp $in_newline_0 --test_dcp $in_newline_1 --golden_edf $in_newline_2 --test_edf $in_newline_3 --log_path $out {{ logging_level }}
+  description = physically compare $in
+

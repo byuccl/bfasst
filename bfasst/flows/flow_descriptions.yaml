@@ -81,6 +81,13 @@ flows:
   - fasm2bels
   - rapidwright
 
+- name: VivadoReimplCompare
+  description: Synthesize, implement, modify netlist, reimplement, and compare
+  module: vivado_reimpl_compare
+  class: VivadoReimplCompare
+  external_tools:
+  - vivado
+  - physcmp
 
 - name: RandSoc
   description: Create random block design(s) in Vivado
