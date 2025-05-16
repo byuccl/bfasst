@@ -11,6 +11,7 @@ class NetlistTransform(Tool):
             self,
             flow,
             design,
+            *,
             dcp_path,
             edf_path,
             transform_type="purge_luts",

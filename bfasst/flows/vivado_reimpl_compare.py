@@ -25,19 +25,12 @@ class VivadoReimplCompare(Flow):
 
     def __init__(self, design):
         super().__init__(design)
-
-        synth_opts = {"synth_design": "-flatten_hierarchy full"}
+        
+        self.synth_opts = {"synth_design": "-flatten_hierarchy full"}
         self.vivado_synth = VivadoSynth(
                 self, 
                 design, 
-                synth_options=synth_opts
-        )
-
-        self.impl_orig = VivadoImpl(
-                self,
-                design,
-                synth_edf=self.vivado_synth.outputs["synth_edf"],
-                constraints_files=self.vivado_synth.outputs["synth_constraints"]
+                synth_options=self.synth_opts
         )
 
         self.netlist_transform = NetlistTransform(
@@ -50,11 +43,18 @@ class VivadoReimplCompare(Flow):
                 log_file="netlist_transform.log"
         )
 
+        self.impl_orig = VivadoImpl(
+                self,
+                design,
+                synth_edf=self.vivado_synth.outputs["synth_edf"],
+                constraints_files=self.vivado_synth.outputs["synth_constraints"],
+        )
+
         self.impl_transform = VivadoImpl(
                 self,
                 design,
                 synth_edf=self.netlist_transform.outputs["transformed_synth_edf"],
-                constraints_files=self.vivado_synth.outputs["synth_constraints"]
+                constraints_files=self.vivado_synth.outputs["synth_constraints"],
         )
 
         self.impl_transform.build_path = self.impl_transform.build_path.parent / "vivado_reimpl"
@@ -79,30 +79,44 @@ class VivadoReimplCompare(Flow):
             ],
             "inputs": self.impl_transform.inputs_str,
         }
-        
+
         self.physcmp = PhysCmp(
             self,
             design,
+        
             golden_dcp=self.impl_orig.outputs["impl_dcp"],
             golden_edf=self.impl_orig.outputs["impl_edf"],
+            golden_setup_timing=self.impl_orig.outputs["setup_timing"],
+            golden_hold_timing=self.impl_orig.outputs["hold_timing"],
+            golden_timing_summary_full=self.impl_orig.outputs["timing_summary_full"],
+            golden_utilization=self.impl_orig.outputs["utilization"],
+            golden_power=self.impl_orig.outputs["power"],
+        
             test_dcp=self.impl_transform.outputs["impl_dcp"],
             test_edf=self.impl_transform.outputs["impl_edf"],
+            test_setup_timing=self.impl_transform.outputs["setup_timing"],
+            test_hold_timing=self.impl_transform.outputs["hold_timing"],
+            test_timing_summary_full=self.impl_transform.outputs["timing_summary_full"],
+            test_utilization=self.impl_transform.outputs["utilization"],
+            test_power=self.impl_transform.outputs["power"],
+        
             log_name="phys_cmp.log",
             logging_level="DEBUG",
         )
 
+
         self.tools = [
             self.vivado_synth,
-            self.impl_orig,
             self.netlist_transform,
+            self.impl_orig,
             self.impl_transform,
             self.physcmp,
         ]
 
     def create_build_snippets(self):
         self.vivado_synth.create_build_snippets()
-        self.impl_orig.create_build_snippets()
         self.netlist_transform.create_build_snippets()
+        self.impl_orig.create_build_snippets()
         self.impl_transform.create_build_snippets()
         self.physcmp.create_build_snippets()
 

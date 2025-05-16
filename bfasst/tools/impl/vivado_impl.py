@@ -92,10 +92,14 @@ class VivadoImpl(ImplTool):
         self.outputs["impl_dcp"] = self.build_path / "impl.dcp"
         self.outputs["utilization"] = self.build_path / "utilization.txt"
         self.outputs["timing"] = self.build_path / "timing_summary.txt"
+        self.outputs["hold_timing"] = self.build_path / "hold_timing.txt"
+        self.outputs["setup_timing"] = self.build_path / "setup_timing.txt"
+        self.outputs["timing_summary_full"] = self.build_path / "full_timing_summary.txt"
+        self.outputs["power"] = self.build_path / "power_summary.txt"
         self.outputs["journal"] = self.build_path / "vivado.jou"
         self.outputs["log"] = self.build_path / "vivado.log"
         self.outputs["bitstream"] = self.build_path / "design.bit" if not self.ooc else ""
-
+        
     def add_ninja_deps(self, deps):
         """Add dependencies to the master ninja file that would cause it to rebuild if modified."""
         self._add_ninja_deps_default(deps, __file__)

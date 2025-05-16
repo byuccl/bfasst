@@ -9,9 +9,8 @@ import json
 import spydrnet as sdn
 
 def get_masking_init(lut_size):
-    width = 2 ** lut_size
-    val = 1 << (width - 1)
-    return f"{width}'h{val:0{width // 4}X}"
+    bits = 2**lut_size
+    return f"0x{'0'*(bits//4 - 1)}1"
 
 def purge_lut_init_and_log(top, log_path):
     """
@@ -29,7 +28,11 @@ def purge_lut_init_and_log(top, log_path):
         try:
             lut_size = int(ref_name.replace("LUT", ""))
         except ValueError:
+            logging.debug("Skipping LUT with name: {ref_name}")
             continue  # Skip weird cell names
+
+        if lut_size == 1:
+            continue
 
         prop_list = inst.get("EDIF.properties", None)
         if not prop_list:
