@@ -16,7 +16,7 @@ PRIVATE_SUBMODULES = \
 
 include external_tools.mk
 
-install: submodules venv python_packages install_rapidwright env install_fasm2bels install_yosys install_wafove
+install: submodules venv install_cmake python_packages install_rapidwright env install_fasm2bels install_yosys install_wafove
 
 venv:
 ifneq "$(PYTHON312)" ""
@@ -29,44 +29,7 @@ endif
 	$(IN_ENV) python -m pip install -U pip
 
 packages:
-	apt-get update
-	apt-get install -y \
-		bison \
-		build-essential \
-		capnproto \
-		clang \
-		default-jre-headless \
-		flex \
-		gawk \
-		graphviz \
-		gtkwave \
-		iverilog \
-		jq \
-		libantlr4-runtime-dev \
-		libboost-filesystem-dev \
-		libboost-python-dev \
-		libboost-system-dev \
-		libc++-dev \
-		libcapnp-dev \
-		libelf-dev:i386 \
-		libffi-dev \
-		libftdi-dev \
-		libncurses5 \
-		libreadline-dev \
-		libstdc++-12-dev \
-		ninja-build \
-		openjdk-18-jdk \
-		pkg-config \
-		python3-dev \
-		python3-pip \
-		python3-venv \
-		python3-venv \
-		swig \
-		tcl-dev \
-		uuid-dev \
-		virtualenv \
-		xdot \
-		zlib1g-dev \
+	./install_packages.sh
 	
 python_packages:
 	$(IN_ENV) python -m pip install -r requirements.txt
