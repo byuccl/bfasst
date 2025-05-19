@@ -1,4 +1,7 @@
-"""Purge INIT values for all LUTs in a synthesized design and replace them with dummy values"""
+"""
+Tool to perform obfuscation on a post-synthesis netlist.
+Currently its only function is to purge INIT values for 
+all LUTs in a synthesized design and replace them with dummy values"""
 
 import argparse
 import logging
@@ -10,6 +13,7 @@ import spydrnet as sdn
 
 def get_masking_init(lut_size):
     bits = 2**lut_size
+    # This INIT string works to obfuscate the LUTs and doesn't change placement and routing
     return f"0x{'0'*(bits//4 - 1)}1"
 
 def purge_lut_init_and_log(top, log_path):
@@ -51,6 +55,7 @@ def purge_lut_init_and_log(top, log_path):
                 count += 1
 
     # Save the INIT map to JSON
+    # TODO: Put the old INITs back into the post implementation netlist
     with open(log_path, "w") as f:
         json.dump(init_map, f, indent=2)
 
@@ -116,7 +121,7 @@ def main():
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
-    logging.info("=== NetlistTransform start ===")
+    logging.info("NetlistTransform start")
 
     t0 = time.perf_counter()
     shutil.copyfile(args.dcp, args.out_dcp)
@@ -140,7 +145,7 @@ def main():
         time.perf_counter() - t1,
     )
 
-    logging.info("=== NetlistTransform done ===")
+    logging.info("NetlistTransform done")
 
 
 if __name__ == "__main__":

@@ -1,9 +1,14 @@
 """
 RapidWright physical‐comparison runner.
 
-Uses the RwPhysNetlist transformer and RW helpers to generate
-physical EDIF netlists from two DCP+EDF inputs, then runs
-a basic cell‐by‐cell equivalence check.
+Runs a cell-by-cell and net-by-net comparison to ensure
+placement and routing between two designs are identical.
+
+Also runs a text-based diff on timing and utilization reports.
+
+This tool is very strict in its comparisons. It may say that
+two equivalent designs are different depending on naming/ordering of
+design elements. But if it says designs are equivalent, they definitely are.
 """
 
 import sys
@@ -50,7 +55,7 @@ def make_phys_netlist(build_dir: Path, dcp: Path, edif: Path) -> Path:
 
 
 def load_and_trim(file_path):
-    # Skip first 10 lines (header/metadata)
+    # Skip first 11 lines (header/metadata)
     with open(file_path, 'r') as f:
         lines = f.readlines()[11:]
     return lines
@@ -143,7 +148,7 @@ def compare_phys(
     design1 = Design.readCheckpoint(golden_dcp)
     design2 = Design.readCheckpoint(test_dcp)
 
-    # ——— CELL COMPARISON ———
+    # CELL COMPARISON
     name_to_cell2 = {c.getName(): c for c in design2.getCells()}
     site_bel_to_cell2 = {
         (str(c.getSite()), str(c.getBEL())): c for c in design2.getCells()
@@ -188,7 +193,7 @@ def compare_phys(
     logging.info(f"[CELL] Design 1 total cells: {design1.getCells().size()}")
     logging.info(f"[CELL] Design 2 total cells: {design2.getCells().size()}")
 
-    # ——— NET COMPARISON ———
+    # NET COMPARISON
     def net_signature(net):
         src = net.getSource()
         drv_sig = src.getSitePinName() if src else "<NONE>"
@@ -215,7 +220,7 @@ def compare_phys(
     logging.info(f"[NET] Design 1 total nets: {design1.getNets().size()}")
     logging.info(f"[NET] Design 2 total nets: {design2.getNets().size()}")
 
-    # ——— TIMING & UTILIZATION & POWER REPORT COMPARISON ———
+    # TIMING & UTILIZATION & POWER REPORT COMPARISON
     setup_diffs   = log_report_diff("SETUP_TIMING",        golden_setup_timing,        test_setup_timing)
     hold_diffs    = log_report_diff("HOLD_TIMING",         golden_hold_timing,         test_hold_timing)
     summary_diffs = log_report_diff("FULL_TIMING_SUMMARY", golden_timing_summary_full, test_timing_summary_full)
