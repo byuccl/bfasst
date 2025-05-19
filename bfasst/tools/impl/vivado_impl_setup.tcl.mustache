@@ -1,17 +1,13 @@
-if {[string match "*.dcp" "{{ inputs.synth_edf }}"]} {
-    open_checkpoint {{ inputs.synth_edf }}
-} else {
-    read_edif {{ inputs.synth_edf }}
-    set_property top_file {{ inputs.synth_edf }} [current_fileset]
-    link_design -part {{ part }}
-    set_property design_mode GateLvl [current_fileset]
-}
+read_edif {{ inputs.synth_edf }}
+set_property top_file {{ inputs.synth_edf }} [current_fileset]
+link_design -part {{ part }}
+set_property design_mode GateLvl [current_fileset]
 
 {{#inputs.xdc}}
 read_xdc {{ . }}
 {{/inputs.xdc}}
 
 {{#clocks}}
-create_clock -period {{period}} -name {{ name }}_gen{{#waveform}} -waveform { {{.}} }{{/waveform}} [get_ports {{ name }}]
+create_clock -period {{period}} -name {{ name }}_gen {{#waveform}} -waveform { {{.}} } {{/waveform}} [get_ports {{ name }}]
 {{/clocks}}
 
