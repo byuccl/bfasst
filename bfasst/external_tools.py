@@ -49,6 +49,7 @@ def check_icestorm():
 def check_fasm2bels():
     return (FASM2BELS_PATH / "env").is_dir() and (FASM2BELS_PATH / f"{PART}_db").is_file()
 
+
 def check_conformal():
     try:
         client = ConformalCompare.connect_to_remote_machine()

@@ -81,10 +81,10 @@ flows:
   - fasm2bels
   - rapidwright
 
-- name: VivadoReimplCompare
+- name: ImplObfuscate
   description: Synthesize, implement, modify netlist, reimplement, and compare
-  module: vivado_reimpl_compare
-  class: VivadoReimplCompare
+  module: impl_obfuscate
+  class: ImplObfuscate
   external_tools:
   - vivado
 

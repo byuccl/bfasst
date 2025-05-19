@@ -12,19 +12,23 @@ design elements. But if it says designs are equivalent, they definitely are.
 """
 
 import sys
+import re
 import logging
 from argparse import ArgumentParser
 from pathlib import Path
 from bfasst import jpype_jvm
-jpype_jvm.start()
-
-import re
 import bfasst.utils.rw_helpers as rw
 from bfasst.utils.rw_phys_netlist import RwPhysNetlist
 from com.xilinx.rapidwright.design import Design
 
+jpype_jvm.start()
+
 
 def setup_logging(log_path, level_str):
+    """
+    Setup logging with the logging module
+    """
+
     level = getattr(logging, level_str.upper(), logging.INFO)
 
     logger = logging.getLogger()
@@ -32,16 +36,14 @@ def setup_logging(log_path, level_str):
     logger.setLevel(level)
 
     file_handler = logging.FileHandler(log_path, mode="w")
-    file_handler.setFormatter(
-        logging.Formatter("%(asctime)s %(message)s", "%Y%m%d%H%M%S")
-    )
+    file_handler.setFormatter(logging.Formatter("%(asctime)s %(message)s", "%Y%m%d%H%M%S"))
     logger.addHandler(file_handler)
 
     console = logging.StreamHandler()
     console.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
     logger.addHandler(console)
 
-    logger.info(f"Logging at {level_str}")
+    logger.info("Logging at %s", level_str)
 
 
 def make_phys_netlist(build_dir: Path, dcp: Path, edif: Path) -> Path:
@@ -56,7 +58,7 @@ def make_phys_netlist(build_dir: Path, dcp: Path, edif: Path) -> Path:
 
 def load_and_trim(file_path):
     # Skip first 11 lines (header/metadata)
-    with open(file_path, 'r') as f:
+    with open(file_path, "r") as f:
         lines = f.readlines()[11:]
     return lines
 
@@ -84,20 +86,24 @@ def compare_reports(golden_path, test_path, label=None):
             t_match = re.search(rf_pattern, t_stripped)
             if g_match and t_match:
                 # Compare all parts except the r/f character
-                if g_match.group(1, 2, 4) == t_match.group(1, 2, 4) and g_match.group(3) != t_match.group(3):
+                if g_match.group(1, 2, 4) == t_match.group(1, 2, 4) and g_match.group(
+                    3
+                ) != t_match.group(3):
                     rise_fall_swaps.append((line_num, g_stripped, t_stripped))
                     continue
 
         diffs.append((line_num, g_stripped, t_stripped))
 
-    extra_golden = golden_lines[len(test_lines):]
-    extra_test = test_lines[len(golden_lines):]
+    extra_golden = golden_lines[len(test_lines) :]
+    extra_test = test_lines[len(golden_lines) :]
 
     return diffs, extra_golden, extra_test, rise_fall_swaps
 
 
 def log_report_diff(label, golden_path, test_path):
-    diffs, extra_golden, extra_test, rise_fall_swaps = compare_reports(golden_path, test_path, label=label)
+    diffs, extra_golden, extra_test, rise_fall_swaps = compare_reports(
+        golden_path, test_path, label=label
+    )
     differences_found = False
 
     if diffs:
@@ -107,7 +113,9 @@ def log_report_diff(label, golden_path, test_path):
             logging.debug(f"[{label}] Line {line_num}:\n\tGOLD: {g_line}\n\tTEST: {t_line}")
     else:
         if "timing" in label.lower():
-            logging.debug(f"[{label}] No significant differences found (excluding rise/fall changes)")
+            logging.debug(
+                f"[{label}] No significant differences found (excluding rise/fall changes)"
+            )
         else:
             logging.debug(f"[{label}] No significant differences found")
 
@@ -140,7 +148,7 @@ def compare_phys(
     test_utilization,
     test_power,
     log_path,
-    logging_level
+    logging_level,
 ):
     setup_logging(log_path, logging_level)
 
@@ -150,9 +158,7 @@ def compare_phys(
 
     # CELL COMPARISON
     name_to_cell2 = {c.getName(): c for c in design2.getCells()}
-    site_bel_to_cell2 = {
-        (str(c.getSite()), str(c.getBEL())): c for c in design2.getCells()
-    }
+    site_bel_to_cell2 = {(str(c.getSite()), str(c.getBEL())): c for c in design2.getCells()}
 
     num_cell_differences = 0
 
@@ -177,9 +183,7 @@ def compare_phys(
 
     # Cells in design2 not in design1
     name_to_cell1 = {c.getName(): c for c in design1.getCells()}
-    site_bel_to_cell1 = {
-        (str(c.getSite()), str(c.getBEL())): c for c in design1.getCells()
-    }
+    site_bel_to_cell1 = {(str(c.getSite()), str(c.getBEL())): c for c in design1.getCells()}
     for cell2 in design2.getCells():
         cell1 = name_to_cell1.get(cell2.getName())
         if cell1 is None:
@@ -221,10 +225,12 @@ def compare_phys(
     logging.info(f"[NET] Design 2 total nets: {design2.getNets().size()}")
 
     # TIMING & UTILIZATION & POWER REPORT COMPARISON
-    setup_diffs   = log_report_diff("SETUP_TIMING",        golden_setup_timing,        test_setup_timing)
-    hold_diffs    = log_report_diff("HOLD_TIMING",         golden_hold_timing,         test_hold_timing)
-    summary_diffs = log_report_diff("FULL_TIMING_SUMMARY", golden_timing_summary_full, test_timing_summary_full)
-    util_diffs    = log_report_diff("UTILIZATION",         golden_utilization,         test_utilization)
+    setup_diffs = log_report_diff("SETUP_TIMING", golden_setup_timing, test_setup_timing)
+    hold_diffs = log_report_diff("HOLD_TIMING", golden_hold_timing, test_hold_timing)
+    summary_diffs = log_report_diff(
+        "FULL_TIMING_SUMMARY", golden_timing_summary_full, test_timing_summary_full
+    )
+    util_diffs = log_report_diff("UTILIZATION", golden_utilization, test_utilization)
     # power_diffs   = log_report_diff("POWER",               golden_power,               test_power)
 
     logging.info("Done comparing designs")
@@ -235,11 +241,11 @@ def compare_phys(
         logging.warning(f"Found layout differences between designs: {total_differences}")
 
     for label, found in [
-        ("SETUP_TIMING",        setup_diffs),
-        ("HOLD_TIMING",         hold_diffs),
+        ("SETUP_TIMING", setup_diffs),
+        ("HOLD_TIMING", hold_diffs),
         ("FULL_TIMING_SUMMARY", summary_diffs),
-        ("UTILIZATION",         util_diffs),
-    #    ("POWER",               power_diffs),
+        ("UTILIZATION", util_diffs),
+        #    ("POWER",               power_diffs),
     ]:
         if found:
             logging.warning(f"Found {label.lower()} differences between designs")
@@ -257,17 +263,17 @@ if __name__ == "__main__":
     p.add_argument(
         "--golden_setup_timing",
         required=True,
-        help="First setup timing report (report_timing -file)"
+        help="First setup timing report (report_timing -file)",
     )
     p.add_argument(
         "--golden_hold_timing",
         required=True,
-        help="First hold timing report (report_timing -hold -file)"
+        help="First hold timing report (report_timing -hold -file)",
     )
     p.add_argument(
         "--golden_timing_summary_full",
         required=True,
-        help="First full timing-summary report (report_timing_summary -file)"
+        help="First full timing-summary report (report_timing_summary -file)",
     )
     p.add_argument("--golden_utilization", required=True, help="First utilization report")
     p.add_argument("--golden_power", required=True, help="First power report")
@@ -277,25 +283,24 @@ if __name__ == "__main__":
     p.add_argument(
         "--test_setup_timing",
         required=True,
-        help="Second setup timing report (report_timing -file)"
+        help="Second setup timing report (report_timing -file)",
     )
     p.add_argument(
         "--test_hold_timing",
         required=True,
-        help="Second hold timing report (report_timing -hold -file)"
+        help="Second hold timing report (report_timing -hold -file)",
     )
     p.add_argument(
         "--test_timing_summary_full",
         required=True,
-        help="Second full timing-summary report (report_timing_summary -file)"
+        help="Second full timing-summary report (report_timing_summary -file)",
     )
     p.add_argument("--test_utilization", required=True, help="Second utilization report")
     p.add_argument("--test_power", required=True, help="Second power report")
 
     p.add_argument("--log_path", required=True, help="Output log file")
     p.add_argument(
-        "--logging_level", default="INFO",
-        help="Logging level: DEBUG, INFO, WARNING, etc."
+        "--logging_level", default="INFO", help="Logging level: DEBUG, INFO, WARNING, etc."
     )
 
     args = p.parse_args()
@@ -318,4 +323,3 @@ if __name__ == "__main__":
         args.log_path,
         args.logging_level,
     )
-

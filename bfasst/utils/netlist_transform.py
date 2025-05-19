@@ -1,7 +1,8 @@
 """
 Tool to perform obfuscation on a post-synthesis netlist.
 Currently its only function is to purge INIT values for 
-all LUTs in a synthesized design and replace them with dummy values"""
+all LUTs in a synthesized design and replace them with dummy values
+"""
 
 import argparse
 import logging
@@ -11,10 +12,24 @@ import shutil
 import json
 import spydrnet as sdn
 
+
+def obfuscate_dsp_blocks(top):
+    """
+    Change parameters of DSP blocks
+    """
+    for inst in top.get_instances(recursive=True):
+        if inst.reference.name == "DSP48E1":
+            logging.info("Found DSP: %s", inst.name)
+            props = inst.data.get("EDIF.properties", [])
+            for prop in props:
+                logging.info("%s = %s" % (prop["name"], prop["value"]))
+
+
 def get_masking_init(lut_size):
     bits = 2**lut_size
     # This INIT string works to obfuscate the LUTs and doesn't change placement and routing
     return f"0x{'0'*(bits//4 - 1)}1"
+
 
 def purge_lut_init_and_log(top, log_path):
     """
@@ -32,7 +47,7 @@ def purge_lut_init_and_log(top, log_path):
         try:
             lut_size = int(ref_name.replace("LUT", ""))
         except ValueError:
-            logging.debug("Skipping LUT with name: {ref_name}")
+            logging.debug("Skipping LUT with name: %s", ref_name)
             continue  # Skip weird cell names
 
         if lut_size == 1:
@@ -50,7 +65,7 @@ def purge_lut_init_and_log(top, log_path):
                 init_map[inst["EDIF.identifier"]] = {
                     "original_init": original,
                     "new_init": new_init,
-                    "lut_size": lut_size
+                    "lut_size": lut_size,
                 }
                 count += 1
 
@@ -59,10 +74,16 @@ def purge_lut_init_and_log(top, log_path):
     with open(log_path, "w") as f:
         json.dump(init_map, f, indent=2)
 
-    logging.info(f"Scrubbed {count} LUT INITs and saved to {log_path}")
+    logging.info("Scrubbed %d LUT INITs and saved to %s", count, log_path)
     return count
 
+
 def main():
+    """
+    Tool to perform obfuscation on a post-synthesis netlist.
+    Currently its only function is to purge INIT values for
+    all LUTs in a synthesized design and replace them with dummy values
+    """
     parser = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -150,4 +171,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

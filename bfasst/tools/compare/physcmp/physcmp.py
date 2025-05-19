@@ -2,10 +2,11 @@
 
 from bfasst.tools.tool import Tool
 from bfasst.paths import BFASST_UTILS_PATH, COMPARE_TOOLS_PATH, BFASST_PATH
-import pathlib
 
 
 class PhysCmp(Tool):
+    """Tool to create RapidWright-based physical comparison ninja snippets."""
+
     def __init__(
         self,
         flow,
@@ -26,7 +27,7 @@ class PhysCmp(Tool):
         test_utilization,
         test_power,
         log_name="phys_cmp.log",
-        logging_level="INFO"
+        logging_level="INFO",
     ):
         super().__init__(flow, design)
         self.build_path = self.design_build_path / "phys_cmp"
@@ -87,4 +88,3 @@ class PhysCmp(Tool):
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
         deps.append(BFASST_UTILS_PATH / "physcmp.py")
-

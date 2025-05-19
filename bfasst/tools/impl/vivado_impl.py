@@ -99,7 +99,7 @@ class VivadoImpl(ImplTool):
         self.outputs["journal"] = self.build_path / "vivado.jou"
         self.outputs["log"] = self.build_path / "vivado.log"
         self.outputs["bitstream"] = self.build_path / "design.bit" if not self.ooc else ""
-        
+
     def add_ninja_deps(self, deps):
         """Add dependencies to the master ninja file that would cause it to rebuild if modified."""
         self._add_ninja_deps_default(deps, __file__)
