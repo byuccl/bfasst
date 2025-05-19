@@ -105,6 +105,7 @@ jobs:
         eval `ssh-agent -s`
         ssh-add - <<< '${{ secrets.GMT_TOOLS_DEPLOY_SSH_KEY }}'
         make env
+        make install_cmake
         . .venv/bin/activate && python bfasst/external_tools.py install rapidwright fasm2bels gmt_tools
 
     - name: Run unittest

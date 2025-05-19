@@ -9,6 +9,9 @@ The BFASST tool is a Python package located at `bfasst/`.  The tool can be used 
 
 Example designs are located in the `designs/` directory.
 
+Before running any bfasst flows, always make sure you have activated the BFASST environment:
+```. .venv/bin/activate``` (ran in the bfasst root directory).
+
 To run bfasst, use `python scripts/run.py` as follows:
 
 ```
@@ -42,8 +45,6 @@ Note that if a yaml file is specified, neither a design nor flow should be speci
 
 ## Tools
 BFASST can be used to compose different CAD flows from severals tools.  These tools are installed with BFASST.
-Before running any bfasst flows, always make sure you have activated the BFASST environment:
-```. .venv/bin/activate``` (ran in the bfasst root directory).
 
 ### WaFoVe
 A Waveform Verification tool. In other words, a tool used to confirm that two Verilog designs are equivalent through analyzing their waveforms.
