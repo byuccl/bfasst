@@ -122,31 +122,6 @@ class RwPhysNetlist:
             ("D6LUT", "D6LUT_O6", "D5LUT", "D5LUT_O5"),
         ]
 
-    # def get_capnp_cell(self, cell_name):
-    #     p = self.phys_capnp
-    #     n = self.log_capnp
-    #     pidx = None
-    #     for pidx, tmp in enumerate(p.strList):
-    #         if tmp == cell_name:
-    #             break
-
-    #     capnp_cell = None
-    #     for capnp_cell in p.placements:
-    #         if capnp_cell.cellName == pidx:
-    #             break
-
-    #     lidx = None
-    #     for lidx, tmp in enumerate(n.strList):
-    #         if tmp == cell_name.split("/")[0]:
-    #             break
-
-    #     lcapnp_cell = None
-    #     for lcapnp_cell in n.instList:
-    #         if lcapnp_cell.name == lidx:
-    #             break
-
-    #     return capnp_cell, lcapnp_cell
-
     def get_properties_for_type(self, cell_type) -> tuple[str]:
         """Return the list of properties that must match for a given cell type
         for the cell to be considered equivalent."""
@@ -155,7 +130,7 @@ class RwPhysNetlist:
         except KeyError as err:
             raise StructuralCompareError(f"Unhandled properties for type {cell_type}") from err
 
-    def run(self, impl_netlist_checkpoint, impl_netlist_edif_path, phys_capnp, edf_capnp):
+    def run(self, impl_netlist_checkpoint, impl_netlist_edif_path, phys_capnp=None, edf_capnp=None):
         """Transform the logical netlist into a netlist with only physical primitives"""
         phys_netlist_edif_path = self.stage_dir / "viv_impl_physical.edf"
 
@@ -187,26 +162,25 @@ class RwPhysNetlist:
         end_time = time.time()
 
         # Export checkpoint, then run vivado to generate a new netlist
-        # TODO Uncomment
-        # self.vivado_design.unplaceDesign()
-        # self.vivado_design.writeCheckpoint(phys_netlist_checkpoint)
+        self.vivado_design.unplaceDesign()
+        self.vivado_design.writeCheckpoint(phys_netlist_checkpoint)
 
-        # logging.info("\nWriting EDIF phsyical netlist: %s", phys_netlist_edif_path)
-        # self.vivado_netlist.exportEDIF(phys_netlist_edif_path)
-        # logging.info(
-        #     "Writing capnp interchange netlist: %s",
-        #     str(self.stage_dir / "phys_logical_netlist.capnp"),
-        # )
-        # LogNetlistWriter.writeLogNetlist(
-        #     self.vivado_netlist, str(self.stage_dir / "phys_logical_netlist.capnp")
-        # )
-        # logging.info(
-        #     "Writing capnp interchange physical netlist: %s",
-        #     str(self.stage_dir / "phys_physical_netlist.capnp"),
-        # )
-        # PhysNetlistWriter.writePhysNetlist(
-        #     self.vivado_design, str(self.stage_dir / "phys_physical_netlist.capnp")
-        # )
+        logging.info("\nWriting EDIF phsyical netlist: %s", phys_netlist_edif_path)
+        self.vivado_netlist.exportEDIF(phys_netlist_edif_path)
+        logging.info(
+            "Writing capnp interchange netlist: %s",
+            str(self.stage_dir / "phys_logical_netlist.capnp"),
+        )
+        LogNetlistWriter.writeLogNetlist(
+            self.vivado_netlist, str(self.stage_dir / "phys_logical_netlist.capnp")
+        )
+        logging.info(
+            "Writing capnp interchange physical netlist: %s",
+            str(self.stage_dir / "phys_physical_netlist.capnp"),
+        )
+        PhysNetlistWriter.writePhysNetlist(
+            self.vivado_design, str(self.stage_dir / "phys_physical_netlist.capnp")
+        )
         logging.info("Transformation time %s seconds", f"{end_time - start_time:0.2f}")
         with open(self.stage_dir / "transformation_time.txt", "w") as fp:
             fp.write(f"{end_time - start_time:.2f}\n")
@@ -252,7 +226,7 @@ class RwPhysNetlist:
             assert const_port
             const_net.createPortInst(const_port, const_edif_inst)
 
-    def __run_rapidwright(self, impl_dcp, impl_edf, phys_capnp, edf_capnp):
+    def __run_rapidwright(self, impl_dcp, impl_edf, phys_capnp=None, edf_capnp=None):
         """Do all rapidwright related processing on the netlist"""
 
         device = Device.getDevice(PART)
@@ -263,18 +237,25 @@ class RwPhysNetlist:
         self.vivado_design.flattenDesign()
         self.vivado_netlist.expandMacroUnisims(device.getSeries())
         logging.info("Loading vivado netlist took %s seconds.", time.time() - start_time)
-        logging.info("Loading reversed capnp objects: %s, %s", str(phys_capnp), str(edf_capnp))
-        start_time = time.time()
-        self.rev_netlist = LogNetlistReader.readLogNetlist(str(edf_capnp))
-        self.rev_design = PhysNetlistReader.readPhysNetlist(str(phys_capnp), self.rev_netlist)
-        self.rev_design.flattenDesign()
-        self.rev_netlist.expandMacroUnisims(device.getSeries())
-        logging.info("Loading reversed capnp objects took %s seconds.", time.time() - start_time)
+        if phys_capnp is not None:
+            logging.info("Loading reversed capnp objects: %s, %s", str(phys_capnp), str(edf_capnp))
+            start_time = time.time()
+            self.rev_netlist = LogNetlistReader.readLogNetlist(str(edf_capnp))
+            self.rev_design = PhysNetlistReader.readPhysNetlist(str(phys_capnp), self.rev_netlist)
+            self.rev_design.flattenDesign()
+            self.rev_netlist.expandMacroUnisims(device.getSeries())
+            logging.info(
+                "Loading reversed capnp objects took %s seconds.", time.time() - start_time
+            )
 
-        self.phys_capnp = rw.read_phys_capnp(str(phys_capnp))
-        self.log_capnp = rw.read_log_capnp(str(edf_capnp))
+            self.phys_capnp = rw.read_phys_capnp(str(phys_capnp))
+            self.log_capnp = rw.read_log_capnp(str(edf_capnp))
 
-        self.capnp_cells = CapnpCells(self.phys_capnp, self.log_capnp)
+            self.capnp_cells = CapnpCells(self.phys_capnp, self.log_capnp)
+        else:
+            assert edf_capnp is None
+            logging.info("No capnp objects provided, skipping comparison")
+            self._compare_cell = self.__dummy_compare
 
         self.__init_const_nets()
 
@@ -357,11 +338,12 @@ class RwPhysNetlist:
         # print("Processed other cells in %s seconds", time.time() - start_time)
         # print(f"Cmp cell time: %s", self.cmp_cell_time)
         # exit()
-        start_time = time.time()
-        # Check nets of matched cells
-        self._check_nets()
-        logging.info("Checked nets in %s seconds", time.time() - start_time)
-        # print("Checked nets in %s seconds", time.time() - start_time)
+        if edf_capnp is not None:
+            start_time = time.time()
+            # Check nets of matched cells
+            self._check_nets()
+            logging.info("Checked nets in %s seconds", time.time() - start_time)
+            # print("Checked nets in %s seconds", time.time() - start_time)
 
         # Remove old unusued cells
         logging.info("Removing old cells...")
@@ -1100,6 +1082,9 @@ class RwPhysNetlist:
         else:
             new_net.createPortInst(routed_to_port_inst.getPort(), routed_to_cell_inst)
 
+    def __dummy_compare(self, ecell, log_name, site, bel_name):
+        pass
+
     def _compare_cell(self, ecell, log_name, site, bel_name):
         """
         Compare the post-implementation cell to the reversed cell.
@@ -1131,9 +1116,7 @@ class RwPhysNetlist:
             )
 
         # Check properties
-        cell_props = (
-            ecell.getPropertiesMap()
-        )  # The regular cell may have out of date properties
+        cell_props = ecell.getPropertiesMap()  # The regular cell may have out of date properties
         rev_props = rev_cell.getProperties()
         keys = self.get_properties_for_type(ecell.getCellType().getName())
 
