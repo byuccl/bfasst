@@ -37,18 +37,21 @@ class VivadoStructuralErrorInjection(Flow):
             synth_edf=self.vivado_synth_tool.outputs["synth_edf"],
             constraints_files=self.vivado_synth_tool.outputs["synth_constraints"],
         )
-        self.phys_netlist_tool = PhysNetlist(
-            self,
-            design,
-            impl_checkpoint=self.vivado_impl_tool.outputs["impl_dcp"],
-            impl_edf=self.vivado_impl_tool.outputs["impl_edf"],
-            logging_level=self.logging_level,
-        )
         self.xrev_tool = Xray(
             self,
             design,
             xdc_input=self.vivado_synth_tool.outputs["synth_constraints"],
             bitstream=self.vivado_impl_tool.outputs["bitstream"],
+        )
+        raise AssertionError  # update for new comp tool
+        self.phys_netlist_tool = PhysNetlist(
+            self,
+            design,
+            impl_checkpoint=self.vivado_impl_tool.outputs["impl_dcp"],
+            impl_edf=self.vivado_impl_tool.outputs["impl_edf"],
+            phys_capnp=self.xrev_tool.outputs["phys_capnp"],
+            edf_capnp=self.xrev_tool.outputs["edf_capnp"],
+            logging_level=self.logging_level,
         )
         self.default_comparison_tool = Structural(self, design)
         self.default_injection_tool = ErrorInjector(self, design, logging_level=logging_level)
@@ -100,7 +103,7 @@ class VivadoStructuralErrorInjection(Flow):
                 # remove the error injection artifact, the corrupt netlist, and the compare log if
                 # the compare tool says the two netlists are different
                 basename = f"{error.name.lower()}_{i}"
-                cmp_log = cmp_dir / f"{basename}_cmp.log"
+                cmp_log = cmp_dir / "log.txt"
                 with open(cmp_log, "r") as f:
                     if "SUCCESS: Structural comparison found mismatch as expected" in f.read():
                         err_log = error_dir / f"{basename}.log"

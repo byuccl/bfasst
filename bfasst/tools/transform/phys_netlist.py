@@ -21,9 +21,9 @@ class PhysNetlist(Tool):
         design,
         impl_checkpoint,
         impl_edf,
-        phys_capnp,
-        edf_capnp,
         *,
+        phys_capnp=False,
+        edf_capnp=False,
         logging_level="INFO",
     ):
         super().__init__(flow, design)
@@ -38,6 +38,10 @@ class PhysNetlist(Tool):
 
         self._init_outputs()
         self.rule_snippet_path = NINJA_TRANSFORM_TOOLS_PATH / "phys_netlist_rules.ninja.mustache"
+        self.rules_render_dict = {
+            "phys_netlist": self.phys_capnp,
+            "edf_capnp": self.edf_capnp,
+        }
 
     def create_build_snippets(self):
         self.__write_json_file()
@@ -66,7 +70,7 @@ class PhysNetlist(Tool):
                     "phys_netlist_output": self.build_path,
                     "phys_netlist_library": NINJA_TRANSFORM_TOOLS_PATH,
                     "build_dir": self.build_path.parent,
-                    "logging_level": f"--logging_level {self.logging_level}",
+                    "logging_level": self.logging_level,
                     "impl_dcp": self.impl_checkpoint,
                     "impl_edf": self.impl_edf,
                     "phys_capnp": self.phys_capnp,

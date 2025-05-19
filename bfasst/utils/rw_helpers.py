@@ -1,6 +1,5 @@
 """Helper functions for interacting with RapidWright"""
 
-from bidict import bidict
 from collections.abc import MutableMapping
 import enum
 from fnmatch import fnmatch
@@ -10,6 +9,8 @@ import os
 from os.path import commonprefix
 from pathlib import Path
 import re
+
+from bidict import bidict
 import spydrnet as sdn
 
 # pylint: disable=wrong-import-position,wrong-import-order
@@ -18,7 +19,9 @@ from bfasst.config import PART
 from bfasst.paths import INTERCHANGE_SCHEMA_DIR, JAVA_SCHEMA
 import capnp
 
+# pylint: disable=no-member
 capnp.remove_import_hook()
+# pylint: enable=no-member
 
 jpype_jvm.start()
 from com.xilinx.rapidwright.design import Cell, Design, Unisim
@@ -614,10 +617,12 @@ def read_phys_capnp(f_in):
     """
     Read a physical netlist from a capnp file.
     """
+    # pylint: disable=no-member
     schema = capnp.load(
         str(INTERCHANGE_SCHEMA_DIR / "PhysicalNetlist.capnp"),
         imports=SEARCH_PATH,
     )
+    # pylint: enable=no-member
 
     # Read the physical netlist
     with _read_capnp_file(schema.PhysNetlist, f_in) as netlist:
@@ -628,10 +633,12 @@ def read_log_capnp(f_in):
     """
     Read a logical netlist from a capnp file.
     """
+    # pylint: disable=no-member
     schema = capnp.load(
         str(INTERCHANGE_SCHEMA_DIR / "LogicalNetlist.capnp"),
         imports=SEARCH_PATH,
     )
+    # pylint: enable=no-member
 
     # Read the logical netlist
     with _read_capnp_file(schema.Netlist, f_in) as netlist:
