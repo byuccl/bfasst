@@ -11,8 +11,8 @@ import sys
 import time
 from typing import Optional
 
-import code
-import traceback
+# import code
+# import traceback
 
 import jpype
 from jpype.types import JInt
@@ -59,6 +59,8 @@ class StructuralCompareError(Exception):
 
 
 class CapnpCells:
+    """Helper class for retrieving capnp cells"""
+
     def __init__(self, phys_capnp: Path, log_capnp: Path) -> None:
         self.phys_cells = {}
         self.log_cells = {}
@@ -98,6 +100,7 @@ class RwPhysNetlist:
 
         self.phys_capnp = None
         self.log_capnp = None
+        self.capnp_cells = None
         self.rw_value_mismatch = 0
         self.rw_value_mismatches = []
         self.rw_problem_cells = set()
@@ -111,7 +114,6 @@ class RwPhysNetlist:
         self.net_map = {}  # net names: [net names and alias nets] (vivado: rev)
         self.driver_cache = {}  # EDIFNet: driver_full_name_str
         self.rev_driver_cache = {}  # EDIFHierPortInst: driver_full_name_str
-        self.cmp_cell_time = 0
 
         # Const nets
         self.vcc = None
@@ -216,15 +218,9 @@ class RwPhysNetlist:
                 if inst.getCellType() == edif_cell
             ]
             if len(cell_insts) > 1:
-                net_name = cell_insts[0].getPortInst(port).getNet().getName()
-                unisim = "GND" if unisim_cell == Unisim.GND else "VCC"
-                logging.warning(
-                    "WARNING: Multiple constant %s nets found in netlist. Using first one: %s",
-                    unisim,
-                    net_name,
+                rw.combine_const_nets(
+                    port, cell_insts[1:], cell_insts[0], unisim_cell, logging.warning
                 )
-                for inst in cell_insts[1:]:
-                    rw.combine_const_nets(port, inst, cell_insts[0])
 
             if cell_insts:
                 const_net = cell_insts[0].getPortInst(port).getNet()
@@ -245,11 +241,10 @@ class RwPhysNetlist:
             assert const_port
             const_net.createPortInst(const_port, const_edif_inst)
 
-    def __run_rapidwright(
+    def load_designs(
         self, impl_dcp: Path, impl_edf: Path, phys_capnp: Path, edf_capnp: Path
     ) -> None:
-        """Do all rapidwright related processing on the netlist"""
-
+        """Load the designs from the given paths"""
         device = Device.getDevice(PART)
         logging.info("Loading vivado dcp and edf files: %s, %s", str(impl_dcp), str(impl_edf))
         start_time = time.time()
@@ -276,9 +271,13 @@ class RwPhysNetlist:
         else:
             assert edf_capnp is None
             logging.info("No capnp objects provided, skipping comparison")
-            # pylint: disable=method-hidden
             self._compare_cell = self.__dummy_compare
-            # pylint: enable=method-hidden
+
+    def __run_rapidwright(
+        self, impl_dcp: Path, impl_edf: Path, phys_capnp: Path, edf_capnp: Path
+    ) -> None:
+        """Do all rapidwright related processing on the netlist"""
+        self.load_designs(impl_dcp, impl_edf, phys_capnp, edf_capnp)
 
         self.__init_const_nets()
 
@@ -989,7 +988,7 @@ class RwPhysNetlist:
             new_init = rw.process_lut_init(lut6_cell, lut5_cell)
         else:
             new_init = rw.process_lut_init(None, lut6_cell)
-        logging.info(f"  New LUT INIT: {new_init}")
+        logging.info("  New LUT INIT: %s", new_init)
         new_cell_inst.addProperty("INIT", new_init)
 
         self._compare_cell(
@@ -1128,6 +1127,7 @@ class RwPhysNetlist:
     def __dummy_compare(self, ecell, log_name, site, bel_name):
         pass
 
+    # pylint: disable=method-hidden
     def _compare_cell(
         self, ecell: EDIFCellInst, log_name: str, site: SiteInst, bel_name: str
     ) -> None:
@@ -1137,74 +1137,68 @@ class RwPhysNetlist:
         ecell: The transformed edif cell (used for properties and connections)
         cell: The original post-implementation cell (used for location data)
         """
-        start = time.time()
-        try:
-            site_name = site.getName()
-            rev_site = self.rev_design.getSiteInst(site_name)
-            assert rev_site
-            rev_cell = rev_site.getCell(bel_name)
+        # try:
+        rev_cell = self.rev_design.getSiteInst(site.getName()).getCell(bel_name)
 
-            logging.info(
-                "Comparing cell %s on BEL %s to reversed cell %s",
-                log_name,
-                bel_name,
-                rev_cell.getName(),
+        logging.info(
+            "Comparing cell %s on BEL %s to reversed cell %s",
+            log_name,
+            bel_name,
+            rev_cell.getName(),
+        )
+
+        rev_ecell = rev_cell.getEDIFCellInst()
+        if ecell.getCellType().getName() != rev_ecell.getCellType().getName():
+            assert "LUT" in ecell.getCellType().getName()
+            logging.warning(
+                "Warning: Comparing LUT cell %s to %s",
+                ecell.getCellType().getName(),
+                rev_ecell.getCellType().getName(),
             )
 
-            rev_ecell = rev_cell.getEDIFCellInst()
-            if ecell.getCellType().getName() != rev_ecell.getCellType().getName():
-                assert "LUT" in ecell.getCellType().getName()
-                logging.info(
-                    "Warning: Comparing LUT cell %s to %s",
-                    ecell.getCellType().getName(),
-                    rev_ecell.getCellType().getName(),
+        # Check properties
+        cell_props = ecell.getPropertiesMap()  # The regular cell may have out of date properties
+        rev_props = rev_cell.getProperties()
+        keys = self.get_properties_for_type(ecell.getCellType().getName())
+
+        for name in keys:
+            if name not in rev_props:
+                raise StructuralCompareError(
+                    f"Property {name} not in rev cell {rev_cell.getName()} properties."
                 )
+            value = convert_verilog_literal_to_int(cell_props[name].getValue())
+            rev_value = convert_verilog_literal_to_int(rev_props[name].getValue())
 
-            # Check properties
-            cell_props = (
-                ecell.getPropertiesMap()
-            )  # The regular cell may have out of date properties
-            rev_props = rev_cell.getProperties()
-            keys = self.get_properties_for_type(ecell.getCellType().getName())
-
-            for name in keys:
-                if name not in rev_props:
-                    raise StructuralCompareError(
-                        f"Property {name} not in rev cell {rev_cell.getName()} properties."
-                    )
-                value = convert_verilog_literal_to_int(cell_props[name].getValue())
-                rev_value = convert_verilog_literal_to_int(rev_props[name].getValue())
-
+            if rev_value != value:
+                _, lcapnp_cell = self.capnp_cells.get_capnp_cell(rev_cell.getName())
+                assert lcapnp_cell is not None
+                rev_value = None
+                for props in lcapnp_cell.propMap.entries:
+                    if self.log_capnp.strList[props.key] == name:
+                        rev_value = self.log_capnp.strList[props.textValue]
+                        break
+                assert rev_value is not None
+                rev_value = convert_verilog_literal_to_int(rev_value)
+                self.rw_value_mismatch += 1
+                self.rw_problem_cells.add(rev_cell.getName())
                 if rev_value != value:
-                    capnp_cell, lcapnp_cell = self.capnp_cells.get_capnp_cell(rev_cell.getName())
-                    assert lcapnp_cell is not None
-                    cvalue = None
-                    for props in lcapnp_cell.propMap.entries:
-                        if self.log_capnp.strList[props.key] == name:
-                            cvalue = self.log_capnp.strList[props.textValue]
-                            break
-                    assert cvalue is not None
-                    cvalue = convert_verilog_literal_to_int(cvalue)
-                    self.rw_value_mismatch += 1
-                    self.rw_value_mismatches.append(
-                        f"Property {name} in rev cell {rev_cell.getName()} does not match. ({value} != {cvalue} != {rev_value})"
+                    raise StructuralCompareError(
+                        f"Property {name} in rev cell {rev_cell.getName()} does not match. "
+                        + f"({value} != {rev_value} != "
+                        + f"{convert_verilog_literal_to_int(rev_props[name].getValue())})"
                     )
-                    self.rw_problem_cells.add(rev_cell.getName())
-                    if cvalue != value:
-                        raise StructuralCompareError(
-                            f"Property {name} in rev cell {rev_cell.getName()} does not match. ({cvalue} != {rev_value})"
-                        )
 
-            self.matches[ecell.getName()] = (ecell, rev_cell, rev_ecell)
-            self.cmp_cell_time += time.time() - start
-        except Exception as e:
-            logging.shutdown()
-            traceback.print_exc()
-            p = self.phys_capnp
-            n = self.log_capnp
-            capnp_cell, lcapnp_cell = self.capnp_cells.get_capnp_cell(rev_cell.getName())
+        self.matches[ecell.getName()] = (ecell, rev_cell, rev_ecell)
+        # except Exception as e:
+        #     logging.shutdown()
+        #     traceback.print_exc()
+        #     p = self.phys_capnp
+        #     n = self.log_capnp
+        #     capnp_cell, lcapnp_cell = self.capnp_cells.get_capnp_cell(rev_cell.getName())
 
-            code.interact(local=dict(globals(), **locals()))
+        #     code.interact(local=dict(globals(), **locals()))
+
+    # pylint: enable=method-hidden
 
     def _check_nets(self) -> None:
         """
@@ -1218,17 +1212,16 @@ class RwPhysNetlist:
 
             rev_hecell = rev_cell.getEDIFHierCellInst()
             rev_port_insts = rev_hecell.getHierPortInsts()
-            rev_num_ports = len(rev_port_insts)
 
             # Check each cell has the same number of connections
-            if num_ports != rev_num_ports:
+            if num_ports != len(rev_port_insts):
                 if not self._check_connected_ports(num_ports, rev_port_insts):
                     rev_hecell_name = rev_hecell.getFullHierarchicalInstName()
                     if rev_hecell_name not in self.rw_problem_cells:
                         self.rw_port_mismatch += 1
                         self.rw_port_mismatch_cells.add(rev_hecell_name)
                         logging.error("New rw error cell %s", rev_hecell_name)
-                        raise Exception
+                        raise StructuralCompareError
                     continue
 
             # Get the corresponding ports

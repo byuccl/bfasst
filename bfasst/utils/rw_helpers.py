@@ -7,7 +7,6 @@ import gzip
 import logging
 import os
 from os.path import commonprefix
-from pathlib import Path
 import re
 
 from bidict import bidict
@@ -16,7 +15,7 @@ import spydrnet as sdn
 # pylint: disable=wrong-import-position,wrong-import-order
 from bfasst import jpype_jvm
 from bfasst.config import PART
-from bfasst.paths import INTERCHANGE_SCHEMA_DIR, JAVA_SCHEMA
+from bfasst.paths import INTERCHANGE_SCHEMA_DIR
 import capnp
 
 # pylint: disable=no-member
@@ -211,27 +210,36 @@ def transfer_global_pins(old_cells, new_cell, global_pins):
             net.removePortInst(old_port)
 
 
-def combine_const_nets(port, old_inst, new_inst):
+def combine_const_nets(port, old_insts, new_inst, unisim_cell, log=logging.warning):
     """
     Moves the connections from multiple const nets to a single const net
 
     Parameters:
-    port (str)
-    old_inst (EDIFCellInst)
-    new_inst (EDIFCellInst)
+    port      (str)
+    old_insts (list[EDIFCellInst])
+    new_inst  (EDIFCellInst)
     """
-    old_net = old_inst.getPortInst(port).getNet()
-    main_net = new_inst.getPortInst(port).getNet()
-    port_insts = list(old_net.getPortInsts())
-    ground_instances = []
-    for port_inst in port_insts:
-        if not port_inst.isPrimitiveStaticSource():
-            old_net.removePortInst(port_inst)
-            main_net.addPortInst(port_inst)
-        else:
-            ground_instances.append(port_inst)
-    for ground_instance in ground_instances:
-        old_net.removePortInst(ground_instance)
+    net_name = new_inst.getPortInst(port).getNet().getName()
+    unisim = "GND" if unisim_cell == Unisim.GND else "VCC"
+    log(
+        "WARNING: Multiple constant %s nets found in netlist. Using first one: %s",
+        unisim,
+        net_name,
+    )
+
+    for old_inst in old_insts:
+        old_net = old_inst.getPortInst(port).getNet()
+        main_net = new_inst.getPortInst(port).getNet()
+        port_insts = list(old_net.getPortInsts())
+        ground_instances = []
+        for port_inst in port_insts:
+            if not port_inst.isPrimitiveStaticSource():
+                old_net.removePortInst(port_inst)
+                main_net.addPortInst(port_inst)
+            else:
+                ground_instances.append(port_inst)
+        for ground_instance in ground_instances:
+            old_net.removePortInst(ground_instance)
 
 
 def remove_and_disconnect_cell(cell, log=logging.info):
@@ -655,20 +663,11 @@ def _read_capnp_file(
         if compression_format == CompressionFormat.GZIP:
             with gzip.GzipFile(fileobj=f, mode="rb") as f_comp:
                 data = f_comp.read()
-                if is_packed:
-                    return capnp_schema.from_bytes_packed(
-                        data,
-                        traversal_limit_in_words=NO_TRAVERSAL_LIMIT,
-                        nesting_limit=NESTING_LIMIT,
-                    )
-                else:
-                    return capnp_schema.from_bytes(
-                        data,
-                        traversal_limit_in_words=NO_TRAVERSAL_LIMIT,
-                        nesting_limit=NESTING_LIMIT,
-                    )
-        else:
-            if is_packed:
-                return capnp_schema.read_packed(f, traversal_limit_in_words=NO_TRAVERSAL_LIMIT)
-            else:
-                return capnp_schema.read(f, traversal_limit_in_words=NO_TRAVERSAL_LIMIT)
+                fb = capnp_schema.from_bytes_packed if is_packed else capnp_schema.from_bytes
+                return fb(
+                    data,
+                    traversal_limit_in_words=NO_TRAVERSAL_LIMIT,
+                    nesting_limit=NESTING_LIMIT,
+                )
+        capnp_read = capnp_schema.read_packed if is_packed else capnp_schema.read
+        return capnp_read(f, traversal_limit_in_words=NO_TRAVERSAL_LIMIT)
