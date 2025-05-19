@@ -57,6 +57,7 @@ class VivadoReimplCompare(Flow):
                 constraints_files=self.vivado_synth.outputs["synth_constraints"],
         )
 
+        # We have to do some hacky stuff to get two instances of VivadoImpl running
         self.impl_transform.build_path = self.impl_transform.build_path.parent / "vivado_reimpl"
         self.impl_transform._init_outputs()
         self.impl_transform.outputs_str = {k: str(v) for k, v in self.impl_transform.outputs.items()}
