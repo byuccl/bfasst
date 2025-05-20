@@ -15,7 +15,7 @@ import spydrnet as sdn
 
 def get_masking_init(lut_size):
     bits = 2**lut_size
-    # This INIT string works to obfuscate the LUTs and doesn't change placement and routing
+    # This INIT string works to obfuscate the LUTs and doesn't seem to change implementation
     return f"0x{'0'*(bits//4 - 1)}1"
 
 
@@ -84,7 +84,8 @@ def obfuscate_cell_properties(top, out_path):
         if ref_name.startswith("LUT"):
             modified = obfuscate_lut(inst)
         elif ref_name == "DSP48E1":
-            modified = obfuscate_dsp(inst)
+            continue # don't do this yet
+            # modified = obfuscate_dsp(inst)
         else:
             continue
 
