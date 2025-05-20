@@ -42,7 +42,6 @@ class NetlistObfuscate(Tool):
         }
 
     def create_build_snippets(self):
-        self.create_rule_snippets()
         self._append_build_snippets_default(
             __file__,
             self.rules_render_dict,

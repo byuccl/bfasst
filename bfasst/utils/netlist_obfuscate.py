@@ -188,9 +188,11 @@ def main():
     )
     t1 = time.perf_counter()
     netlist_ir = sdn.parse(str(args.edf))
-    top = netlist_ir.top_instance
 
-    count = obfuscate_cell_properties(top, args.original_cell_props)
+    top = netlist_ir.top_instance
+    orig_cell_props = args.build_path / args.original_cell_props
+
+    count = obfuscate_cell_properties(top, orig_cell_props)
 
     sdn.compose(netlist_ir, str(args.out_edf), write_blackbox=False)
     logging.info(
