@@ -87,6 +87,8 @@ flows:
   class: ImplObfuscate
   external_tools:
   - vivado
+  - rapidwright
+  - fasm2bels
 
 - name: RandSoc
   description: Create random block design(s) in Vivado
