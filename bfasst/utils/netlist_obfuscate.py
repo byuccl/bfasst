@@ -13,82 +13,96 @@ import json
 import spydrnet as sdn
 
 
-def obfuscate_dsp_blocks(top):
-    """
-    Change parameters of DSP blocks
-    """
-    count = 0
-    logging.info("Obfuscating DSP blocks")
-    for inst in top.get_instances(recursive=True):
-        if inst.reference.name != "DSP48E1":
-            continue
-        logging.info("Found DSP: %s", inst.name)
-        count += 1
-        props = inst.data.get("EDIF.properties", [])
-        for prop in props:
-            logging.debug("Erasing value: %s", prop["value"])
-            if isinstance(prop["value"], bool):
-                prop["value"] = False
-            elif isinstance(prop["value"], int):
-                prop["value"] = 0
-            elif isinstance(prop["value"], str) and prop["value"].startswith("48'h"):
-                prop["value"] = "48'h000000000000"
-            else:
-                prop["value"] = "NONE"  # for enums like "MULTIPLY", "ONE48", etc.
-
-        logging.info(f"Zeroed %d properties", len(props))
-
-
 def get_masking_init(lut_size):
     bits = 2**lut_size
     # This INIT string works to obfuscate the LUTs and doesn't change placement and routing
     return f"0x{'0'*(bits//4 - 1)}1"
 
 
-def purge_lut_init_and_log(top, log_path):
+def obfuscate_lut(inst):
     """
-    Replace INIT values with dummy logic and record the original values.
+    Overwrite INIT in LUT if present.
+    Returns True if changed.
     """
-    init_map = {}
+    ref_name = inst.reference.name
+    try:
+        lut_size = int(ref_name.replace("LUT", ""))
+    except ValueError:
+        return False
+
+    if lut_size == 1:
+        return False
+
+    changed = False
+    for prop in inst.data.get("EDIF.properties", []):
+        if prop.get("identifier") == "INIT":
+            prop["value"] = get_masking_init(lut_size)
+            changed = True
+    return changed
+
+
+def obfuscate_dsp(inst):
+    """
+    Zero out DSP properties.
+    Returns True if any property was changed.
+    """
+    changed = False
+    for prop in inst.data.get("EDIF.properties", []):
+        old = prop["value"]
+        if isinstance(old, bool):
+            new = False
+        elif isinstance(old, int):
+            new = 0
+        elif isinstance(old, str) and old.startswith("48'h"):
+            new = "48'h000000000000"
+        else:
+            new = "NONE"
+
+        if prop["value"] != new:
+            prop["value"] = new
+            changed = True
+
+    return changed
+
+
+def obfuscate_cell_properties(top, out_path):
+    """
+    Obfuscate LUTs and DSPs in a design, saving all original properties to a JSON log.
+    """
+    modified_cells = {}
     count = 0
 
-    for inst in top.get_instances():
-        ref_name = inst.reference.name
-        if not ref_name.startswith("LUT"):
+    for inst in top.get_instances(recursive=True):
+        ref = inst.reference
+        if ref is None:
             continue
 
-        # Infer LUT width from name: LUT2, LUT3, ..., LUT6
-        try:
-            lut_size = int(ref_name.replace("LUT", ""))
-        except ValueError:
-            logging.debug("Skipping LUT with name: %s", ref_name)
-            continue  # Skip weird cell names
+        ref_name = ref.name
+        cell_id = inst["EDIF.identifier"]
+        original_props = list(inst.data.get("EDIF.properties", []))  # copy
 
-        if lut_size == 1:
+        if ref_name.startswith("LUT"):
+            modified = obfuscate_lut(inst)
+        elif ref_name == "DSP48E1":
+            modified = obfuscate_dsp(inst)
+        else:
             continue
 
-        prop_list = inst.get("EDIF.properties", None)
-        if not prop_list:
-            continue
+        if modified:
+            new_props = list(inst.data.get("EDIF.properties", []))  # after modification
+            modified_cells[cell_id] = {
+                "name": inst.get(".NAME", ""),
+                "type": ref_name,
+                "original_properties": original_props,
+                "new_properties": new_props,
+            }
+            count += 1
 
-        for prop in prop_list:
-            if prop.get("identifier") == "INIT":
-                original = prop["value"]
-                new_init = get_masking_init(lut_size)
-                prop["value"] = new_init
-                init_map[inst["EDIF.identifier"]] = {
-                    "original_init": original,
-                    "new_init": new_init,
-                    "lut_size": lut_size,
-                }
-                count += 1
+    with open(out_path, "w") as f:
+        json.dump(modified_cells, f, indent=2)
 
-    # Save the INIT map to JSON
-    # TODO: Put the old INITs back into the post implementation netlist
-    with open(log_path, "w") as f:
-        json.dump(init_map, f, indent=2)
+    logging.info("Obfuscated %d cells. Original properties written to %s", count, out_path)
 
-    logging.info("Scrubbed %d LUT INITs and saved to %s", count, log_path)
     return count
 
 
@@ -132,6 +146,11 @@ def main():
         help="Where to write the transformed EDIF",
     )
     parser.add_argument(
+        "--original_cell_props",
+        default="original_cell_props.json",
+        help="Location of original cell properties before obfuscation",
+    )
+    parser.add_argument(
         "--log",
         default="netlist_transform.log",
         help="Log filename (inside build_path)",
@@ -166,21 +185,19 @@ def main():
         args.out_dcp,
         time.perf_counter() - t0,
     )
-
     t1 = time.perf_counter()
     netlist_ir = sdn.parse(str(args.edf))
     top = netlist_ir.top_instance
-    init_log_path = args.build_path / "init_backup.json"
-    count = purge_lut_init_and_log(top, init_log_path)
-    obfuscate_dsp_blocks(top)
+
+    count = obfuscate_cell_properties(top, args.original_cell_props)
+
     sdn.compose(netlist_ir, str(args.out_edf), write_blackbox=False)
     logging.info(
-        "Purged INIT on %d LUT instances; wrote EDIF %s  (%.3f s)",
+        "Obfuscated %d cells; wrote EDIF %s  (%.3f s)",
         count,
         args.out_edf,
         time.perf_counter() - t1,
     )
-
     logging.info("NetlistObfuscate done")
 
 

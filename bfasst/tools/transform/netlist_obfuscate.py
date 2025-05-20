@@ -35,6 +35,7 @@ class NetlistObfuscate(Tool):
             "edf_path": str(self.edf_path),
             "transformed_synth_dcp": str(self.outputs["transformed_synth_dcp"]),
             "transformed_synth_edf": str(self.outputs["transformed_synth_edf"]),
+            "original_cell_props": str(self.outputs["original_cell_props"]),
             "log_path": str(self.outputs["log_file"]),
             "logging_level": f"--logging_level {self.logging_level}",
             "build_path": str(self.build_path),
@@ -51,6 +52,7 @@ class NetlistObfuscate(Tool):
         self.outputs["log_file"] = self.build_path / self.log_file
         self.outputs["transformed_synth_dcp"] = self.build_path / "transformed_synth.dcp"
         self.outputs["transformed_synth_edf"] = self.build_path / "transformed_synth.edf"
+        self.outputs["original_cell_props"] = self.build_path / "original_cell_props.json"
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
