@@ -23,6 +23,7 @@ from bfasst.flows.vivado_phys_netlist_cmp import VivadoPhysNetlistCmp
 from bfasst.flows.vivado_structural_error_injection import VivadoStructuralErrorInjection
 from bfasst.flows.vivado_conformal import VivadoConformal
 from bfasst.flows.vivado_yosys_cmp import VivadoYosysCmp
+from bfasst.flows.impl_obfuscate import ImplObfuscate
 
 from bfasst.flows.ninja_flow_manager import NinjaFlowManager, get_design_basenames
 
