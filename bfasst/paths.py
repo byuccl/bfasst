@@ -1,11 +1,11 @@
-""" Repository paths using pathlib """
+"""Repository paths using pathlib"""
 
 import pathlib
 import os
 
 ROOT_PATH = pathlib.Path(__file__).resolve().parent.parent
 
-BUILD_PATH = pathlib.Path().cwd() / "build"
+BUILD_DEFAULT_PATH = pathlib.Path().cwd() / "build"
 
 DESIGNS_PATH = ROOT_PATH / "designs"
 BFASST_PATH = ROOT_PATH / "bfasst"

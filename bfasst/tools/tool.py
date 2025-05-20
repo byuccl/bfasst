@@ -6,7 +6,7 @@ import pathlib
 import chevron
 from bfasst.flows.flow import FlowBase
 
-from bfasst.paths import BUILD_PATH, DESIGNS_PATH, NINJA_BUILD_PATH, ROOT_PATH
+from bfasst.paths import DESIGNS_PATH, NINJA_BUILD_PATH, ROOT_PATH
 from bfasst.yaml_parser import DesignParser
 
 
@@ -95,9 +95,9 @@ class Tool(ToolBase, abc.ABC):
         self.design_path = design_path
 
         if design_path.is_relative_to(DESIGNS_PATH):
-            self.design_build_path = BUILD_PATH / design_path.relative_to(DESIGNS_PATH)
+            self.design_build_path = self.flow.build_path / design_path.relative_to(DESIGNS_PATH)
         else:
-            self.design_build_path = BUILD_PATH / "<external>" / design_path
+            self.design_build_path = self.flow.build_path / "<external>" / design_path
 
         design_yaml = design_path / "design.yaml"
         self.design_props = None
