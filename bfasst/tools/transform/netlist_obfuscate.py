@@ -4,7 +4,7 @@ from bfasst.tools.tool import Tool
 from bfasst.paths import NINJA_TRANSFORM_TOOLS_PATH, BFASST_UTILS_PATH
 
 
-class NetlistTransform(Tool):
+class NetlistObfuscate(Tool):
     """Purge INIT values for all LUTs in a synthesized design and replace them with dummy values"""
 
     def __init__(
@@ -16,21 +16,21 @@ class NetlistTransform(Tool):
         edf_path,
         transform_type="purge_luts",
         logging_level="INFO",
-        log_file="netlist_transform.log",
+        log_file="netlist_obfuscate.log",
     ):
         super().__init__(flow, design)
         self.dcp_path = dcp_path
         self.edf_path = edf_path
         self.transform_type = transform_type
-        self.build_path = self.design_build_path / "netlist_transform"
+        self.build_path = self.design_build_path / "netlist_obfuscate"
         self.logging_level = logging_level
         self.log_file = log_file
         self.rule_snippet_path = (
-            NINJA_TRANSFORM_TOOLS_PATH / "netlist_transform_rules.ninja.mustache"
+            NINJA_TRANSFORM_TOOLS_PATH / "netlist_obfuscate_rules.ninja.mustache"
         )
         self._init_outputs()
         self.rules_render_dict = {
-            "transform_script_path": str(BFASST_UTILS_PATH / "netlist_transform.py"),
+            "transform_script_path": str(BFASST_UTILS_PATH / "netlist_obfuscate.py"),
             "dcp_path": str(self.dcp_path),
             "edf_path": str(self.edf_path),
             "transformed_synth_dcp": str(self.outputs["transformed_synth_dcp"]),
@@ -54,4 +54,4 @@ class NetlistTransform(Tool):
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
-        deps.append(BFASST_UTILS_PATH / "netlist_transform.py")
+        deps.append(BFASST_UTILS_PATH / "netlist_obfuscate.py")

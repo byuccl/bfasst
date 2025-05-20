@@ -11,7 +11,7 @@ from bfasst.flows.flow import Flow
 from bfasst.tools.synth.vivado_synth import VivadoSynth
 from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.tools.compare.physcmp.physcmp import PhysCmp
-from bfasst.tools.transform.netlist_transform import NetlistTransform
+from bfasst.tools.transform.netlist_obfuscate import NetlistObfuscate
 from bfasst.utils.physcmp_data_types import ImplReports
 from bfasst.paths import FLOWS_PATH
 
@@ -25,14 +25,14 @@ class ImplObfuscate(Flow):
         self.synth_opts = {"synth_design": "-flatten_hierarchy full"}
         self.vivado_synth = VivadoSynth(self, design, synth_options=self.synth_opts)
 
-        self.netlist_transform = NetlistTransform(
+        self.netlist_obfuscate = NetlistObfuscate(
             self,
             design,
             dcp_path=self.vivado_synth.outputs["synth_dcp"],
             edf_path=self.vivado_synth.outputs["synth_edf"],
             transform_type="purge_luts",
             logging_level="DEBUG",
-            log_file="netlist_transform.log",
+            log_file="netlist_obfuscate.log",
         )
 
         self.impl_orig = VivadoImpl(
@@ -45,7 +45,7 @@ class ImplObfuscate(Flow):
         self.impl_transform = VivadoImpl(
             self,
             design,
-            synth_edf=self.netlist_transform.outputs["transformed_synth_edf"],
+            synth_edf=self.netlist_obfuscate.outputs["transformed_synth_edf"],
             constraints_files=self.vivado_synth.outputs["synth_constraints"],
         )
 
@@ -108,14 +108,14 @@ class ImplObfuscate(Flow):
         self.tools = [
             self.vivado_synth,
             self.impl_orig,
-            self.netlist_transform,
+            self.netlist_obfuscate,
             self.impl_transform,
             self.physcmp,
         ]
 
     def create_build_snippets(self):
         self.vivado_synth.create_build_snippets()
-        self.netlist_transform.create_build_snippets()
+        self.netlist_obfuscate.create_build_snippets()
         self.impl_orig.create_build_snippets()
         self.impl_transform.create_build_snippets()
         self.physcmp.create_build_snippets()

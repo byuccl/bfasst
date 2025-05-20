@@ -17,12 +17,26 @@ def obfuscate_dsp_blocks(top):
     """
     Change parameters of DSP blocks
     """
+    count = 0
+    logging.info("Obfuscating DSP blocks")
     for inst in top.get_instances(recursive=True):
-        if inst.reference.name == "DSP48E1":
-            logging.info("Found DSP: %s", inst.name)
-            props = inst.data.get("EDIF.properties", [])
-            for prop in props:
-                logging.info("%s = %s", prop["name"], prop["value"])
+        if inst.reference.name != "DSP48E1":
+            continue
+        logging.info("Found DSP: %s", inst.name)
+        count += 1
+        props = inst.data.get("EDIF.properties", [])
+        for prop in props:
+            logging.debug("Erasing value: %s", prop["value"])
+            if isinstance(prop["value"], bool):
+                prop["value"] = False
+            elif isinstance(prop["value"], int):
+                prop["value"] = 0
+            elif isinstance(prop["value"], str) and prop["value"].startswith("48'h"):
+                prop["value"] = "48'h000000000000"
+            else:
+                prop["value"] = "NONE"  # for enums like "MULTIPLY", "ONE48", etc.
+
+        logging.info(f"Zeroed %d properties", len(props))
 
 
 def get_masking_init(lut_size):
@@ -142,7 +156,7 @@ def main():
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
-    logging.info("NetlistTransform start")
+    logging.info("NetlistObfuscate start")
 
     t0 = time.perf_counter()
     shutil.copyfile(args.dcp, args.out_dcp)
@@ -158,6 +172,7 @@ def main():
     top = netlist_ir.top_instance
     init_log_path = args.build_path / "init_backup.json"
     count = purge_lut_init_and_log(top, init_log_path)
+    obfuscate_dsp_blocks(top)
     sdn.compose(netlist_ir, str(args.out_edf), write_blackbox=False)
     logging.info(
         "Purged INIT on %d LUT instances; wrote EDIF %s  (%.3f s)",
@@ -166,7 +181,7 @@ def main():
         time.perf_counter() - t1,
     )
 
-    logging.info("NetlistTransform done")
+    logging.info("NetlistObfuscate done")
 
 
 if __name__ == "__main__":
