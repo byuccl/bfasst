@@ -22,7 +22,7 @@ def obfuscate_dsp_blocks(top):
             logging.info("Found DSP: %s", inst.name)
             props = inst.data.get("EDIF.properties", [])
             for prop in props:
-                logging.info("%s = %s" % (prop["name"], prop["value"]))
+                logging.info("%s = %s", prop["name"], prop["value"])
 
 
 def get_masking_init(lut_size):

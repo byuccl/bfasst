@@ -12,6 +12,7 @@ from bfasst.tools.synth.vivado_synth import VivadoSynth
 from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.tools.compare.physcmp.physcmp import PhysCmp
 from bfasst.tools.transform.netlist_transform import NetlistTransform
+from bfasst.utils.physcmp_data_types import ImplReports
 from bfasst.paths import FLOWS_PATH
 
 
@@ -76,31 +77,38 @@ class ImplObfuscate(Flow):
             "inputs": self.impl_transform.inputs_str,
         }
 
+        golden = ImplReports(
+            dcp=self.impl_orig.outputs["impl_dcp"],
+            edf=self.impl_orig.outputs["impl_edf"],
+            setup_timing=self.impl_orig.outputs["setup_timing"],
+            hold_timing=self.impl_orig.outputs["hold_timing"],
+            timing_summary_full=self.impl_orig.outputs["timing_summary_full"],
+            utilization=self.impl_orig.outputs["utilization"],
+            power=self.impl_orig.outputs["power"],
+        )
+        test = ImplReports(
+            dcp=self.impl_transform.outputs["impl_dcp"],
+            edf=self.impl_transform.outputs["impl_edf"],
+            setup_timing=self.impl_transform.outputs["setup_timing"],
+            hold_timing=self.impl_transform.outputs["hold_timing"],
+            timing_summary_full=self.impl_transform.outputs["timing_summary_full"],
+            utilization=self.impl_transform.outputs["utilization"],
+            power=self.impl_transform.outputs["power"],
+        )
+
         self.physcmp = PhysCmp(
             self,
             design,
-            golden_dcp=self.impl_orig.outputs["impl_dcp"],
-            golden_edf=self.impl_orig.outputs["impl_edf"],
-            golden_setup_timing=self.impl_orig.outputs["setup_timing"],
-            golden_hold_timing=self.impl_orig.outputs["hold_timing"],
-            golden_timing_summary_full=self.impl_orig.outputs["timing_summary_full"],
-            golden_utilization=self.impl_orig.outputs["utilization"],
-            golden_power=self.impl_orig.outputs["power"],
-            test_dcp=self.impl_transform.outputs["impl_dcp"],
-            test_edf=self.impl_transform.outputs["impl_edf"],
-            test_setup_timing=self.impl_transform.outputs["setup_timing"],
-            test_hold_timing=self.impl_transform.outputs["hold_timing"],
-            test_timing_summary_full=self.impl_transform.outputs["timing_summary_full"],
-            test_utilization=self.impl_transform.outputs["utilization"],
-            test_power=self.impl_transform.outputs["power"],
-            log_name="phys_cmp.log",
+            golden=golden,
+            test=test,
+            log_name="physcmp.log",
             logging_level="DEBUG",
         )
 
         self.tools = [
             self.vivado_synth,
-            self.netlist_transform,
             self.impl_orig,
+            self.netlist_transform,
             self.impl_transform,
             self.physcmp,
         ]
