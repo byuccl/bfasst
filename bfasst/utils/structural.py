@@ -767,7 +767,7 @@ class StructuralCompare:
                 f"{prop}{convert_verilog_literal_to_int(instance.properties[prop])}"
             )
         my_hash = hash(frozenset(properties))
-        return set(self.grouped_by_cell_type[(cell_type, my_hash)]) - set(self.block_mapping.inverse)
+        return set(self.grouped_by_cell_type[(cell_type, my_hash)])
     
     def check_for_potential_mapping(self, instance_name: str) -> set[str]:
         """Returns cells that could map to the named_instance"""
