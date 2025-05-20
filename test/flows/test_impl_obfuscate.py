@@ -2,6 +2,7 @@
 # pylint: disable=duplicate-code
 
 import unittest
+import os
 
 from bfasst.flows.flow_utils import create_build_file
 from bfasst.flows.impl_obfuscate import ImplObfuscate
@@ -15,6 +16,7 @@ class TestImplObfuscate(unittest.TestCase):
     def setUpClass(cls):
         create_build_file()
         cls.flow = ImplObfuscate(DESIGNS_PATH / "byu/alu")
+        os.makedirs(cls.flow.vivado_synth.build_path, exist_ok=True)
         cls.flow.create_rule_snippets()
         cls.flow.create_build_snippets()
 
