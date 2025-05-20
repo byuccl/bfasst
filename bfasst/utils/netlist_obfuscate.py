@@ -84,7 +84,7 @@ def obfuscate_cell_properties(top, out_path):
         if ref_name.startswith("LUT"):
             modified = obfuscate_lut(inst)
         elif ref_name == "DSP48E1":
-            continue # don't do this yet
+            continue  # don't do this yet
             # modified = obfuscate_dsp(inst)
         else:
             continue
