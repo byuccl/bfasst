@@ -17,6 +17,8 @@ class TestImplObfuscate(unittest.TestCase):
         create_build_file()
         cls.flow = ImplObfuscate(DESIGNS_PATH / "byu/alu")
         os.makedirs(cls.flow.vivado_synth.build_path, exist_ok=True)
+        os.makedirs(cls.flow.impl_orig.build_path, exist_ok=True)
+        os.makedirs(cls.flow.impl_transform.build_path, exist_ok=True)
         cls.flow.create_rule_snippets()
         cls.flow.create_build_snippets()
 
