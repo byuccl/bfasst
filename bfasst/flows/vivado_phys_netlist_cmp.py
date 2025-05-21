@@ -39,8 +39,6 @@ class VivadoPhysNetlistCmp(Flow):
             design,
             impl_edf=self.vivado_impl_tool.outputs["impl_edf"],
             impl_checkpoint=self.vivado_impl_tool.outputs["impl_dcp"],
-            phys_capnp=self.xray_tool.outputs["phys_capnp"],
-            edf_capnp=self.xray_tool.outputs["edf_capnp"],
             logging_level=self.logging_level,
         )
 
