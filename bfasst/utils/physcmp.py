@@ -203,8 +203,8 @@ def compare_all(
     """
     setup_logging(log_path, log_level)
     logging.info("Reading design checkpoints")
-    d1 = Design.readCheckpoint(golden.dcp)
-    d2 = Design.readCheckpoint(test.dcp)
+    d1 = Design.readCheckpoint(golden.dcp, golden.edf)
+    d2 = Design.readCheckpoint(test.dcp, golden.edf)
 
     cell_diffs = compare_cells(d1, d2)
     net_diffs = compare_nets(d1, d2)
