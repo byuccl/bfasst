@@ -1,6 +1,6 @@
 build {{ phys_netlist_output }}/checkpoint_to_v.tcl: template {{ phys_netlist_output }}/checkpoint_to_v.json {{ phys_netlist_library }}/checkpoint_to_v.tcl.mustache
 
-build {{ phys_netlist_output }}/viv_impl_physical.edf {{ phys_netlist_output }}/phys_netlist.dcp {{ phys_netlist_output }}/{{log_name}} {{ phys_netlist_output }}/rapidwright_stdout.log: phys_netlist | bfasst/utils/rw_phys_netlist.py {{ impl_edf }} {{ impl_dcp }} {{phys_capnp}} {{ edf_capnp }}
+build {{ phys_netlist_output }}/viv_impl_physical.edf {{ phys_netlist_output }}/phys_netlist.dcp {{ phys_netlist_output }}/{{ log_name }} {{ phys_netlist_output }}/rapidwright_stdout.log: phys_netlist | bfasst/utils/rw_phys_netlist.py {{ impl_edf }} {{ impl_dcp }} {{ phys_capnp }} {{ edf_capnp }}
     logging_level = {{ logging_level }}
     impl_dcp = {{ impl_dcp }}
     impl_edf = {{ impl_edf }}
@@ -10,6 +10,6 @@ build {{ phys_netlist_output }}/viv_impl_physical.edf {{ phys_netlist_output }}/
     {{/phys_capnp}}
     {{#edf_capnp}}
     edf_capnp = {{ . }} 
-    {{/edf_capnp }}
-    build_dir = {{build_dir}}
+    {{/edf_capnp}}
+    build_dir = {{ build_dir }}
 
