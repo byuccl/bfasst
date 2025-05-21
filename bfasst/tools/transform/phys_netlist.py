@@ -39,7 +39,7 @@ class PhysNetlist(Tool):
         self._init_outputs()
         self.rule_snippet_path = NINJA_TRANSFORM_TOOLS_PATH / "phys_netlist_rules.ninja.mustache"
         self.rules_render_dict = {
-            "phys_netlist": self.phys_capnp,
+            "phys_capnp": self.phys_capnp,
             "edf_capnp": self.edf_capnp,
         }
 
