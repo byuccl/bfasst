@@ -22,8 +22,8 @@ class PhysNetlist(Tool):
         impl_checkpoint,
         impl_edf,
         *,
-        phys_capnp=False,
-        edf_capnp=False,
+        phys_capnp=None,
+        edf_capnp=None,
         logging_level="INFO",
     ):
         super().__init__(flow, design)
