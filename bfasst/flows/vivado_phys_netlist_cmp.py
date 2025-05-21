@@ -44,22 +44,22 @@ class VivadoPhysNetlistCmp(Flow):
             logging_level=self.logging_level,
         )
 
-        # self.netlist_cleanup_tool = NetlistCleanup(
-        #     self,
-        #     design,
-        #     rev_netlist=self.xray_tool.outputs["rev_netlist"],
-        #     logging_level=self.logging_level,
-        # )
+        self.netlist_cleanup_tool = NetlistCleanup(
+            self,
+            design,
+            rev_netlist=self.xray_tool.outputs["rev_netlist"],
+            logging_level=self.logging_level,
+        )
 
-        # self.compare_tool = Structural(
-        #     self,
-        #     design,
-        #     log_name="struct_cmp.log",
-        #     golden_netlist=self.phys_netlist_tool.outputs["viv_impl_physical_v"],
-        #     rev_netlist=self.netlist_cleanup_tool.outputs["netlist_cleaned_path"],
-        #     debug=self.debug,
-        #     logging_level=self.logging_level,
-        # )
+        self.compare_tool = Structural(
+            self,
+            design,
+            log_name="struct_cmp.log",
+            golden_netlist=self.phys_netlist_tool.outputs["viv_impl_physical_v"],
+            rev_netlist=self.netlist_cleanup_tool.outputs["netlist_cleaned_path"],
+            debug=self.debug,
+            logging_level=self.logging_level,
+        )
         # pylint: enable=duplicate-code
 
     def get_top_level_flow_path(self):
