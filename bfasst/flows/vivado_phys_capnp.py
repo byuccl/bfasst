@@ -20,7 +20,7 @@ class VivadoPhysCapnp(Flow):
 
         self.synth_options = VivadoPhysNetlist.add_required_synth_options(synth_options)
         self.debug = debug
-        self.logging_level = "ERROR"
+        self.logging_level = logging_level
         self.vivado_synth_tool = VivadoSynth(self, design, synth_options=self.synth_options)
         self.vivado_impl_tool = VivadoImpl(
             self,
