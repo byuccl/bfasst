@@ -11,7 +11,7 @@ from bfasst.utils.general import json_write_if_changed
 class ImplDetailedReports(ImplTool):
     """Tool to generate every post‐implementation Vivado report."""
 
-    def __init__(self, flow, design, impl_dcp, tag="", report_options=None):
+    def __init__(self, flow, design, impl_dcp, tag=""):
         super().__init__(flow, design)
 
         base_name = "impl_detailed_reports"
@@ -37,8 +37,6 @@ class ImplDetailedReports(ImplTool):
             "outputs": self.outputs_str,
             "tcl_sources": [self.outputs_str["reports_tcl"]],
         }
-        if report_options:
-            self.report_build.update(report_options)
 
         self.rule_snippet_path = COMMON_TOOLS_PATH / "vivado_rules.ninja.mustache"
         self.rules_render_dict = {

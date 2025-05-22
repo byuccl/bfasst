@@ -1,8 +1,8 @@
 """Tool to generate ninja snippets for netlist deobfuscation"""
 
+import pathlib
 from bfasst.tools.tool import Tool
 from bfasst.paths import NINJA_TRANSFORM_TOOLS_PATH, BFASST_UTILS_PATH
-import pathlib
 
 
 class NetlistDeobfuscate(Tool):
