@@ -36,9 +36,6 @@ def setup_logging(log_path: pathlib.Path, level_str: str):
     logging.info("Logging at %s", level_str)
 
 
-import re
-
-
 def canonicalize(name: str) -> str:
     """
     Normalize ANY cell name to a pure “words and underscores” form:
