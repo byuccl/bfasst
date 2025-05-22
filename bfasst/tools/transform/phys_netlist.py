@@ -63,20 +63,35 @@ class PhysNetlist(Tool):
                 f.write(checkpoint_to_v_json)
 
     def __append_build_snippets(self):
-        with open(NINJA_TRANSFORM_TOOLS_PATH / "phys_netlist_build.ninja.mustache") as f:
-            phys_netlist_ninja = chevron.render(
-                f,
-                {
-                    "phys_netlist_output": self.build_path,
-                    "phys_netlist_library": NINJA_TRANSFORM_TOOLS_PATH,
-                    "build_dir": self.build_path.parent,
-                    "logging_level": self.logging_level,
-                    "impl_dcp": self.impl_checkpoint,
-                    "impl_edf": self.impl_edf,
-                    "phys_capnp": self.phys_capnp,
-                    "edf_capnp": self.edf_capnp,
-                },
-            )
+        if self.flow.__class__.__name__ != "VivadoPhysNetlistCmp":  
+            with open(NINJA_TRANSFORM_TOOLS_PATH / "phys_netlist_capnp_build.ninja.mustache") as f:
+                phys_netlist_ninja = chevron.render(
+                    f,
+                    {
+                        "phys_netlist_output": self.build_path,
+                        "phys_netlist_library": NINJA_TRANSFORM_TOOLS_PATH,
+                        "build_dir": self.build_path.parent,
+                        "logging_level": self.logging_level,
+                        "impl_dcp": self.impl_checkpoint,
+                        "impl_edf": self.impl_edf,
+                        "phys_capnp": self.phys_capnp,
+                        "edf_capnp": self.edf_capnp,
+                    },
+                )
+        else:
+            with open(NINJA_TRANSFORM_TOOLS_PATH / "phys_netlist_build.ninja.mustache") as f:
+                phys_netlist_ninja = chevron.render(
+                    f,
+                    {
+                        "phys_netlist_output": self.build_path,
+                        "phys_netlist_library": NINJA_TRANSFORM_TOOLS_PATH,
+                        "build_dir": self.build_path.parent,
+                        "logging_level": self.logging_level,
+                        "impl_dcp": self.impl_checkpoint,
+                        "impl_edf": self.impl_edf,
+                    },
+                )
+
 
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(phys_netlist_ninja)
