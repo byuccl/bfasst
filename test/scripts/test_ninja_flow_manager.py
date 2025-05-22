@@ -23,6 +23,7 @@ from bfasst.flows.vivado_phys_netlist_cmp import VivadoPhysNetlistCmp
 from bfasst.flows.vivado_structural_error_injection import VivadoStructuralErrorInjection
 from bfasst.flows.vivado_conformal import VivadoConformal
 from bfasst.flows.vivado_yosys_cmp import VivadoYosysCmp
+from bfasst.flows.impl_obfuscate import ImplObfuscate
 
 from bfasst.flows.ninja_flow_manager import NinjaFlowManager, get_design_basenames
 
@@ -74,6 +75,9 @@ class TestNinjaFlowManager(unittest.TestCase):
     def test_create_vivado_wafove_flow(self):
         self.__check_flow_creation(VivadoWafove, "vivado_wafove")
 
+    def test_create_impl_obfuscate_flow(self):
+        self.__check_flow_creation(ImplObfuscate, "impl_obfuscate")
+
     def __check_flow_run(self, name, correct_num_build_statements):
         """Check that running flows correctly creates the build.ninja file"""
         # Only run with byu/alu. This design is supported by all flows.
@@ -123,6 +127,9 @@ class TestNinjaFlowManager(unittest.TestCase):
 
     def test_run_vivado_wafove_flow(self):
         self.__check_flow_run("vivado_wafove", 15)
+
+    def test_run_impl_obfuscate(self):
+        self.__check_flow_run("impl_obfuscate", 24)
 
     # This is disabled right now because it seems to be failing due
     # to file modification time race conditions

@@ -1,4 +1,4 @@
-VIVADO_PATH := "/tools/Xilinx/Vivado/2022.2/bin/vivado"
+VIVADO_PATH := "/tools/Xilinx/Vivado/2024.2/bin/vivado"
 IN_ENV = if [ -e .venv/bin/activate ]; then . .venv/bin/activate; fi;
 CAPNPJ := $(shell which capnpc-java)
 PYTHON311 := $(shell which python3.11)
@@ -50,7 +50,6 @@ endif
 submodules:
 	$(foreach submodule,$(PUBLIC_SUBMODULES),git submodule init $(submodule); git submodule update $(submodule);)
 	$(foreach submodule,$(PRIVATE_SUBMODULES),git submodule init $(submodule); git submodule update $(submodule) || echo "Ignoring failed clone of private submodule ($(submodule))";)
-
 
 env: venv python_packages 
 	echo >> ".venv/bin/activate"
