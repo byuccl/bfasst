@@ -43,14 +43,12 @@ class VivadoStructuralErrorInjection(Flow):
             xdc_input=self.vivado_synth_tool.outputs["synth_constraints"],
             bitstream=self.vivado_impl_tool.outputs["bitstream"],
         )
-        raise AssertionError  # update for new comp tool
+        # TODO: for now, don't run the capnp comparison in this flow, can change later
         self.phys_netlist_tool = PhysNetlist(
             self,
             design,
             impl_checkpoint=self.vivado_impl_tool.outputs["impl_dcp"],
             impl_edf=self.vivado_impl_tool.outputs["impl_edf"],
-            phys_capnp=self.xrev_tool.outputs["phys_capnp"],
-            edf_capnp=self.xrev_tool.outputs["edf_capnp"],
             logging_level=self.logging_level,
         )
         self.default_comparison_tool = Structural(self, design)

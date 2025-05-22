@@ -1,7 +1,6 @@
 """Utility functions"""
 
 import json
-from jpype.types import JString
 import logging
 from pathlib import Path
 import re
@@ -9,6 +8,7 @@ import sys
 import shutil
 import enum
 
+from jpype.types import JString
 from bfasst.paths import DESIGNS_PATH
 from bfasst.config import BUILD
 
@@ -112,24 +112,27 @@ def convert_verilog_literal_to_int(prop):
     except ValueError:
         pass
 
+    converted = None
     # Decimal literal
-    matches = re.match(r"\d+'d(\d+)", prop)
-    if matches:
-        return int(matches.group(1))
-
-    # Binary literal
-    matches = re.match(r"\d+'b([01]+)", prop)
-    if matches:
-        return int(matches.group(1), 2)
-
-    # Hex literal
-    matches = re.match(r"\d+'h([0-9a-fA-F]+)", prop)
-    if matches:
-        return int(matches.group(1), 16)
+    m = re.match(r"\d+'d(\d+)", prop)
+    if m:
+        converted = int(m.group(1))
+    else:
+        # Binary literal
+        m = re.match(r"\d+'b([01]+)", prop)
+        if m:
+            converted = int(m.group(1), 2)
+        else:
+            # Hex literal
+            m = re.match(r"\d+'h([0-9a-fA-F]+)", prop)
+            if m:
+                converted = int(m.group(1), 16)
+    if converted:
+        return converted
 
     if prop.upper() == "TRUE":
         return True
-    elif prop.upper() == "FALSE":
+    if prop.upper() == "FALSE":
         return False
 
     return prop

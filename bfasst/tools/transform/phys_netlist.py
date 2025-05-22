@@ -63,7 +63,11 @@ class PhysNetlist(Tool):
                 f.write(checkpoint_to_v_json)
 
     def __append_build_snippets(self):
-        if self.flow.__class__.__name__ != "VivadoPhysNetlistCmp":
+        # the phys netlist tool can be used in 2 different ways so we need a way to differentiate
+        if self.flow.__class__.__name__ not in {
+            "VivadoPhysNetlistCmp",
+            "VivadoStructuralErrorInjection",
+        }:
             with open(NINJA_TRANSFORM_TOOLS_PATH / "phys_netlist_capnp_build.ninja.mustache") as f:
                 phys_netlist_ninja = chevron.render(
                     f,

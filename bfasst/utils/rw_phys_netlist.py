@@ -178,7 +178,7 @@ class RwPhysNetlist:
                 phys_capnp,
                 edf_capnp,
             )
-        except jpype.JException as exc:
+        except jpype.JException as exc:  # pylint: disable=no-member
             raise rw.RapidwrightException from exc  # pylint: disable=bad-exception-cause
         end_time = time.time()
 
@@ -1344,6 +1344,6 @@ if __name__ == "__main__":
     netlist_generator = RwPhysNetlist(args.build_dir, args.logging_level, args.log_name)
     try:
         netlist_generator.run(args.impl_dcp, args.impl_edf, args.phys_capnp, args.edf_capnp)
-    except jpype.JException as e:
+    except jpype.JException as e:  # pylint: disable=no-member
         logging.error("ERROR: %s", e)
         sys.exit(1)
