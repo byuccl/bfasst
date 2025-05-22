@@ -1,17 +1,16 @@
 """
-Parse results.json file from run_experiments flow and generate a CSV file
+Parse results files from build directory and generate a CSV file
 with statuses and utilization data for each design.
 """
 
 from argparse import ArgumentParser
 import csv
-import json
 from pathlib import Path
 import xlsxwriter
 
 
 from bfasst import yaml_parser
-from bfasst.paths import ROOT_PATH, BUILD_PATH
+from bfasst.paths import BUILD_PATH
 
 
 class TransformStats:
@@ -144,13 +143,13 @@ def transform_stats(designs_yaml):
         row += 1
     workbook.close()
 
-def phys_netlist_results(flow, out="results.csv"):
+
+def phys_capnp_results(flow, out="results.csv"):
     """
     Gather results from phys_cmp flow and create a CSV file with
     utilization data, transformation times, comparison times, and
     success status.
     """
-    root_dir = ROOT_PATH
 
     fl = yaml_parser.RunParser(flow)
 
@@ -161,7 +160,9 @@ def phys_netlist_results(flow, out="results.csv"):
     rows = []
     for design in designs:
         status = (
-            "Success" if (design / "vivado_phys_netlist/transformation_time.txt").exists() else "FAILED"
+            "Success"
+            if (design / "vivado_phys_netlist/transformation_time.txt").exists()
+            else "FAILED"
         )
         row = {
             "Design": design.name,
@@ -178,8 +179,6 @@ def phys_netlist_results(flow, out="results.csv"):
             rows.append(row)
             continue
         utilization_file = design / "vivado_impl/utilization.txt"
-        if not utilization_file.is_file():
-            continue
         with open(utilization_file, "r") as f:
             for line in f:
                 if "| LUT as Logic" in line:
@@ -213,19 +212,15 @@ def phys_netlist_results(flow, out="results.csv"):
         ]
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
-        for row in rows:
-            writer.writerow(row)
+        writer.writerows(rows)
 
 
-def phys_cmp_results(flow):
+def phys_cmp_results(flow, out="results.csv"):
     """
     Gather results from phys_cmp flow and create a CSV file with
     utilization data, transformation times, comparison times, and
     success status.
     """
-    root_dir = ROOT_PATH
-
-    out = "results.csv"
 
     fl = yaml_parser.RunParser(flow)
 
@@ -255,8 +250,6 @@ def phys_cmp_results(flow):
             rows.append(row)
             continue
         utilization_file = design / "vivado_impl/utilization.txt"
-        if not utilization_file.is_file():
-            continue
         with open(utilization_file, "r") as f:
             for line in f:
                 if "| LUT as Logic" in line:
@@ -281,9 +274,8 @@ def phys_cmp_results(flow):
                     if "time" in line:
                         time += float(line.split(" ")[-1])
                 row["C_TIME"] = round(time, 2)
-        if (design / "struct_cmp/struct_comparison_time.txt").exists():
-            with open(design / "struct_cmp/struct_comparison_time.txt", "r") as f:
-                row["S_TIME"] = round(float(f.read().strip()), 2)
+        with open(design / "struct_cmp/struct_comparison_time.txt", "r") as f:
+            row["S_TIME"] = round(float(f.read().strip()), 2)
         rows.append(row)
 
     with open(out, "w", newline="") as f:
@@ -302,8 +294,7 @@ def phys_cmp_results(flow):
         ]
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
-        for row in rows:
-            writer.writerow(row)
+        writer.writerows(rows)
 
 
 if __name__ == "__main__":

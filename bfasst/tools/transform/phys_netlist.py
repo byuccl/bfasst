@@ -63,7 +63,7 @@ class PhysNetlist(Tool):
                 f.write(checkpoint_to_v_json)
 
     def __append_build_snippets(self):
-        if self.flow.__class__.__name__ != "VivadoPhysNetlistCmp":  
+        if self.flow.__class__.__name__ != "VivadoPhysNetlistCmp":
             with open(NINJA_TRANSFORM_TOOLS_PATH / "phys_netlist_capnp_build.ninja.mustache") as f:
                 phys_netlist_ninja = chevron.render(
                     f,
@@ -91,7 +91,6 @@ class PhysNetlist(Tool):
                         "impl_edf": self.impl_edf,
                     },
                 )
-
 
         with open(NINJA_BUILD_PATH, "a") as f:
             f.write(phys_netlist_ninja)
