@@ -129,7 +129,7 @@ class TestNinjaFlowManager(unittest.TestCase):
         self.__check_flow_run("vivado_wafove", 15)
 
     def test_run_impl_obfuscate(self):
-        self.__check_flow_run("impl_obfuscate", 19)
+        self.__check_flow_run("impl_obfuscate", 24)
 
     # This is disabled right now because it seems to be failing due
     # to file modification time race conditions

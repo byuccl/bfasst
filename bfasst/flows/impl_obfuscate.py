@@ -48,36 +48,9 @@ class ImplObfuscate(Flow):
             self,
             design,
             synth_edf=self.netlist_obfuscate.outputs["transformed_synth_edf"],
+            build_path="vivado_reimpl",
             constraints_files=self.vivado_synth.outputs["synth_constraints"],
         )
-
-        # We have to do some hacky stuff to get two instances of VivadoImpl running
-        self.impl_transform.build_path = self.impl_transform.build_path.parent / "vivado_reimpl"
-        self.impl_transform._init_outputs()
-        self.impl_transform.outputs_str = {
-            k: str(v) for k, v in self.impl_transform.outputs.items()
-        }
-        self.impl_transform.impl_build = {
-            "part": self.impl_transform.flow.part,
-            "impl_output": str(self.impl_transform.build_path),
-            "synth_output": str(
-                self.impl_transform.build_path.parent
-                / ("synth" if not self.impl_transform.ooc else "synth_ooc")
-            ),
-            "clocks": (
-                self.impl_transform.design_props.clocks
-                if self.impl_transform.design_props is not None
-                and type(self.impl_transform.flow).__name__ == "ClockCrank"
-                else ""
-            ),
-            "outputs": self.impl_transform.outputs_str,
-            "tcl_sources": [
-                self.impl_transform.outputs_str["setup_tcl"],
-                self.impl_transform.outputs_str["impl_tcl"],
-                self.impl_transform.outputs_str["reports_tcl"],
-            ],
-            "inputs": self.impl_transform.inputs_str,
-        }
 
         self.netlist_deobfuscate = NetlistDeobfuscate(
             self,

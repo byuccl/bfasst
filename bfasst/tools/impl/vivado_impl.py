@@ -12,7 +12,14 @@ class VivadoImpl(ImplTool):
     """Tool to create Vivado implementation ninja snippets."""
 
     def __init__(
-        self, flow, design, synth_edf, constraints_files="", ooc=False, impl_options=""
+        self,
+        flow,
+        design,
+        synth_edf,
+        build_path=None,
+        constraints_files="",
+        ooc=False,
+        impl_options="",
     ):  # pylint: disable=too-many-positional-arguments
         super().__init__(flow, design)
         self.ooc = ooc
@@ -22,11 +29,13 @@ class VivadoImpl(ImplTool):
         ]
         self.synth_edf = synth_edf
 
-        self.build_path = (
-            self.build_path.with_name("vivado_ooc_impl")
-            if ooc
-            else self.build_path.with_name("vivado_impl")
-        )
+        if build_path:
+            self.build_path = self.build_path.with_name(build_path)
+        elif ooc:
+            self.build_path = self.build_path.with_name("vivado_ooc_impl")
+        else:
+            self.build_path = self.build_path.with_name("vivado_impl")
+
         self._my_dir_path = pathlib.Path(__file__).parent
 
         self._init_outputs()

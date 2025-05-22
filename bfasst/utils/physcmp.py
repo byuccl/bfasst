@@ -47,24 +47,29 @@ def load_and_trim(path: Path) -> list[str]:
         return f.readlines()[11:]
 
 
+def is_rise_fall_swap(gs: str, ts: str) -> bool:
+    """
+    Determines if a difference in two files is just a swap of r/f
+    Returns true if everything else on the line is identical
+    """
+    pat = r"(-?\d+\.\d+)\s+(-?\d+\.\d+)\s+([rf])\s+(.+)"
+    mg, mt = re.search(pat, gs), re.search(pat, ts)
+    if mg and mt:
+        same_delay = mg.group(1) == mt.group(1)
+        same_slack = mg.group(2) == mt.group(2)
+        same_rest = mg.group(4) == mt.group(4)
+        different_edge = mg.group(3) != mt.group(3)
+
+        if same_delay and same_slack and same_rest and different_edge:
+            logging.debug("[rise/fall swap]")
+            logging.debug("  G: %s", gs)
+            logging.debug("  T: %s", ts)
+            return True
+    return False
+
+
 def compare_reports(golden_path: Path, test_path: Path, label: Optional[str] = None):
     """Run a text-based comparison between two implementation reports."""
-
-    def is_rise_fall_swap(gs: str, ts: str) -> bool:
-        pat = r"(-?\d+\.\d+)\s+(-?\d+\.\d+)\s+([rf])\s+(.+)"
-        mg, mt = re.search(pat, gs), re.search(pat, ts)
-        if mg and mt:
-            same_delay = mg.group(1) == mt.group(1)
-            same_slack = mg.group(2) == mt.group(2)
-            same_rest = mg.group(4) == mt.group(4)
-            different_edge = mg.group(3) != mt.group(3)
-
-            if same_delay and same_slack and same_rest and different_edge:
-                logging.debug("[rise/fall swap]")
-                logging.debug("  G: %s", gs)
-                logging.debug("  T: %s", ts)
-                return True
-        return False
 
     diffs = []
     swaps = []
@@ -119,34 +124,50 @@ def log_report_diff(label: str, golden_path: Path, test_path: Path) -> bool:
 
 
 def compare_cells(d1: Design, d2: Design) -> int:
-    """Compare physical placement of all cells in a design"""
+    """Compare physical placement of all cells between two designs."""
 
-    by_name2 = {c.getName(): c for c in d2.getCells()}
-    by_site2 = {(str(c.getSite()), str(c.getBEL())): c for c in d2.getCells()}
+    site_bel_d1 = {}
+    for c in d1.getCells():
+        site = str(c.getSite())
+        bel = str(c.getBEL())
+        key = (site, bel)
+        site_bel_d1[key] = c
+
+    site_bel_d2 = {}
+    for c in d2.getCells():
+        site = str(c.getSite())
+        bel = str(c.getBEL())
+        key = (site, bel)
+        site_bel_d2[key] = c
+
     diffs = 0
-
     for c1 in d1.getCells():
-        c2 = by_name2.get(c1.getName()) or by_site2.get((str(c1.getSite()), str(c1.getBEL())))
-        if not c2:
+        name = c1.getName()
+        c2 = d2.getCell(name)
+        if c2 is None:
+            c2 = site_bel_d2.get((str(c1.getSite()), str(c1.getBEL())))
+        if c2 is None:
             diffs += 1
-            logging.debug("[CELL] %s missing in second design", c1.getName())
+            logging.debug("[CELL] %s missing in second design", name)
         elif c1.getSite() != c2.getSite() or c1.getBEL() != c2.getBEL():
             diffs += 1
             logging.debug(
                 "[CELL] %s placed differently: %s/%s vs %s/%s",
-                c1.getName(),
+                name,
                 c1.getSite(),
                 c1.getBEL(),
                 c2.getSite(),
                 c2.getBEL(),
             )
 
-    by_name1 = {c.getName(): c for c in d1.getCells()}
-    by_site1 = {(str(c.getSite()), str(c.getBEL())): c for c in d1.getCells()}
     for c2 in d2.getCells():
-        if not (by_name1.get(c2.getName()) or by_site1.get((str(c2.getSite()), str(c2.getBEL())))):
+        name = c2.getName()
+        c1 = d1.getCell(name)
+        if c1 is None:
+            c1 = site_bel_d1.get((str(c2.getSite()), str(c2.getBEL())))
+        if c1 is None:
             diffs += 1
-            logging.debug("[CELL] %s missing in first design", c2.getName())
+            logging.debug("[CELL] %s missing in first design", name)
 
     logging.info("[CELL] Done comparing cells. Differences: %d", diffs)
     logging.info("[CELL] Design 1 total cells: %d", d1.getCells().size())

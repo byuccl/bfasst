@@ -4,12 +4,14 @@ Go through a bunch of different cell types and wipe their properties
 """
 
 import argparse
+import re
 import logging
 import pathlib
 import time
 import shutil
 import json
 import copy
+from collections import defaultdict
 import spydrnet as sdn
 
 
@@ -21,15 +23,16 @@ def get_masking_init(lut_size):
 
 def obfuscate_lut(inst):
     """
-    Overwrite INIT in LUT if present.
+    Overwrite INIT in LUT if present and not size 1.
     Returns True if changed.
     """
     ref_name = inst.reference.name
-    try:
-        lut_size = int(ref_name.replace("LUT", ""))
-    except ValueError:
+    match = re.match(r"LUT(\d)", ref_name)
+    if not match:
+        logging.warning("LUT not matched when blanking INIT string: %s", ref_name)
         return False
 
+    lut_size = int(match.group(1))
     if lut_size == 1:
         return False
 
@@ -41,13 +44,39 @@ def obfuscate_lut(inst):
     return changed
 
 
-def obfuscate_dsp(inst):
+def obfuscate_bram(inst):
     """
-    Zero out DSP properties.
+    Obfuscate BRAM properties while preserving critical ones.
+    """
+    # Preserve key BRAM parameters like width, depth, write mode, etc.
+    skip_props = [
+        "READ_WIDTH_A",
+        "WRITE_WIDTH_A",
+        "READ_WIDTH_B",
+        "WRITE_WIDTH_B",
+        "WRITE_MODE_A",
+        "WRITE_MODE_B",
+        "RAM_MODE",
+    ]
+    return obfuscate_all(inst, skip_props=skip_props)
+
+
+def obfuscate_all(inst, skip_props=None):
+    """
+    Zero out all properties except those in skip_props.
     Returns True if any property was changed.
     """
+    if skip_props is None:
+        skip_props = set()
+    else:
+        skip_props = set(skip_props)
+
     changed = False
     for prop in inst.data.get("EDIF.properties", []):
+        name = prop["identifier"]
+        if name in skip_props:
+            continue
+
         old = prop["value"]
         if isinstance(old, bool):
             new = False
@@ -87,40 +116,48 @@ def obfuscate_cell_properties(top, out_path):
     Obfuscate LUTs and DSPs in a design, saving all original properties to a JSON log.
     """
     modified_cells = {}
+    type_counts = defaultdict(int)
     count = 0
 
-    for inst in top.get_instances(recursive=True):
-        ref = inst.reference
-        if ref is None:
+    logging.debug("Beginning iteration through all instances")
+    for inst in top.get_instances():
+        if inst.reference is None:
             continue
 
-        ref_name = ref.name
-        cell_id = inst["EDIF.identifier"]
+        ref_name = inst.reference.name
+        # logging.debug("Working with reference: %s", ref_name)
+
         original_props = copy.deepcopy(inst.data.get("EDIF.properties", []))  # copy
 
         if ref_name.startswith("LUT"):
             modified = obfuscate_lut(inst)
-        elif ref_name == "DSP48E1":
-            modified = obfuscate_dsp(inst)
+        elif ref_name.startswith("DSP"):
+            modified = obfuscate_all(inst)
+        elif ref_name.startswith("BRAM"):
+            modified = obfuscate_bram(inst)
         else:
             continue
 
         if modified:
+            # logging.debug("Obfuscated properties from: %s", ref_name)
             new_props = inst.data.get("EDIF.properties", [])
             modified_props = get_modified_props(original_props, new_props)
-
             if modified_props:
-                modified_cells[cell_id] = {
+                modified_cells[inst["EDIF.identifier"]] = {
                     "name": inst.get(".NAME", ""),
                     "type": ref_name,
                     "original_properties": modified_props,
                 }
+                type_counts[ref_name] += 1
                 count += 1
 
     with open(out_path, "w") as f:
         json.dump(modified_cells, f, indent=2)
 
     logging.info("Obfuscated %d cells. Original properties written to %s", count, out_path)
+    logging.debug("Summary of obfuscated cell types:")
+    for cell_type, type_count in sorted(type_counts.items()):
+        logging.debug("  %s: %d", cell_type, type_count)
 
     return count
 
@@ -199,27 +236,34 @@ def main():
     t0 = time.perf_counter()
     shutil.copyfile(args.dcp, args.out_dcp)
     logging.info(
-        "Copied DCP %s → %s  (%.3f s)",
+        "Copied DCP %s -> %s in %.3f s",
         args.dcp,
         args.out_dcp,
         time.perf_counter() - t0,
     )
-    t1 = time.perf_counter()
-    netlist_ir = sdn.parse(str(args.edf))
 
+    t1 = time.perf_counter()
+    logging.debug("Parsing EDF...")
+    netlist_ir = sdn.parse(str(args.edf))
+    logging.debug("Finished parsing EDF in %.3f s", time.perf_counter() - t1)
+
+    t2 = time.perf_counter()
+    logging.debug("Starting cell property obfuscation...")
     top = netlist_ir.top_instance
     orig_cell_props = args.build_path / args.original_cell_props
-
     count = obfuscate_cell_properties(top, orig_cell_props)
+    logging.debug("Finished cell property obfuscation in %.3f s", time.perf_counter() - t2)
+    logging.debug("%d properties changed", count)
 
+    t3 = time.perf_counter()
+    logging.debug("Starting EDF write...")
     sdn.compose(netlist_ir, str(args.out_edf), write_blackbox=False)
     logging.info(
-        "Obfuscated %d cells; wrote EDIF %s  (%.3f s)",
-        count,
+        "Wrote EDF %s in %.3f s",
         args.out_edf,
-        time.perf_counter() - t1,
+        time.perf_counter() - t3,
     )
-    logging.info("NetlistObfuscate done")
+    logging.info("NetlistObfuscate done in %.3f s", time.perf_counter() - t0)
 
 
 if __name__ == "__main__":
