@@ -12,6 +12,8 @@ from bfasst.tools.synth.vivado_synth import VivadoSynth
 from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.tools.compare.physcmp.physcmp import PhysCmp
 from bfasst.tools.transform.netlist_obfuscate import NetlistObfuscate
+from bfasst.tools.impl.impl_detailed_reports import ImplDetailedReports
+from bfasst.tools.transform.netlist_deobfuscate import NetlistDeobfuscate
 from bfasst.utils.physcmp_data_types import ImplReports
 from bfasst.paths import FLOWS_PATH
 
@@ -77,23 +79,39 @@ class ImplObfuscate(Flow):
             "inputs": self.impl_transform.inputs_str,
         }
 
+        self.netlist_deobfuscate = NetlistDeobfuscate(
+            self,
+            design,
+            dcp_path=self.impl_transform.outputs["impl_dcp"],
+            edf_path=self.impl_transform.outputs["impl_edf"],
+            props_json=self.netlist_obfuscate.outputs["original_cell_props"],
+        )
+
+        self.impl_detailed_reports_orig = ImplDetailedReports(
+            self, design, impl_dcp=self.impl_orig.outputs["impl_dcp"], tag="orig"
+        )
+        self.impl_detailed_reports_transform = ImplDetailedReports(
+            self, design, impl_dcp=self.netlist_deobfuscate.outputs["deobf_dcp"], tag="transform"
+        )
+
         golden = ImplReports(
             dcp=self.impl_orig.outputs["impl_dcp"],
             edf=self.impl_orig.outputs["impl_edf"],
-            setup_timing=self.impl_orig.outputs["setup_timing"],
-            hold_timing=self.impl_orig.outputs["hold_timing"],
-            timing_summary_full=self.impl_orig.outputs["timing_summary_full"],
-            utilization=self.impl_orig.outputs["utilization"],
-            power=self.impl_orig.outputs["power"],
+            setup_timing=self.impl_detailed_reports_orig.outputs["setup_timing"],
+            hold_timing=self.impl_detailed_reports_orig.outputs["hold_timing"],
+            timing_summary_full=self.impl_detailed_reports_orig.outputs["full_timing_summary"],
+            utilization=self.impl_detailed_reports_orig.outputs["utilization"],
+            power=self.impl_detailed_reports_orig.outputs["power_summary"],
         )
+
         test = ImplReports(
             dcp=self.impl_transform.outputs["impl_dcp"],
             edf=self.impl_transform.outputs["impl_edf"],
-            setup_timing=self.impl_transform.outputs["setup_timing"],
-            hold_timing=self.impl_transform.outputs["hold_timing"],
-            timing_summary_full=self.impl_transform.outputs["timing_summary_full"],
-            utilization=self.impl_transform.outputs["utilization"],
-            power=self.impl_transform.outputs["power"],
+            setup_timing=self.impl_detailed_reports_transform.outputs["setup_timing"],
+            hold_timing=self.impl_detailed_reports_transform.outputs["hold_timing"],
+            timing_summary_full=self.impl_detailed_reports_transform.outputs["full_timing_summary"],
+            utilization=self.impl_detailed_reports_transform.outputs["utilization"],
+            power=self.impl_detailed_reports_transform.outputs["power_summary"],
         )
 
         self.physcmp = PhysCmp(
@@ -110,6 +128,9 @@ class ImplObfuscate(Flow):
             self.impl_orig,
             self.netlist_obfuscate,
             self.impl_transform,
+            self.netlist_deobfuscate,
+            self.impl_detailed_reports_orig,
+            self.impl_detailed_reports_transform,
             self.physcmp,
         ]
 
@@ -118,6 +139,9 @@ class ImplObfuscate(Flow):
         self.netlist_obfuscate.create_build_snippets()
         self.impl_orig.create_build_snippets()
         self.impl_transform.create_build_snippets()
+        self.netlist_deobfuscate.create_build_snippets()
+        self.impl_detailed_reports_orig.create_build_snippets()
+        self.impl_detailed_reports_transform.create_build_snippets()
         self.physcmp.create_build_snippets()
 
     def get_top_level_flow_path(self):

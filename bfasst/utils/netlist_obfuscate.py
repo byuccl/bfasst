@@ -1,7 +1,6 @@
 """
 Tool to perform obfuscation on a post-synthesis netlist.
-Currently its only function is to purge INIT values for 
-all LUTs in a synthesized design and replace them with dummy values
+Go through a bunch of different cell types and wipe their properties
 """
 
 import argparse
@@ -10,6 +9,7 @@ import pathlib
 import time
 import shutil
 import json
+import copy
 import spydrnet as sdn
 
 
@@ -65,6 +65,23 @@ def obfuscate_dsp(inst):
     return changed
 
 
+def get_modified_props(before: list[dict], after: list[dict]) -> list[dict]:
+    """
+    Returns a list of properties that were changed between `before` and `after`.
+    Comparison is based on 'identifier' and 'value'.
+    """
+    before_map = {p["identifier"]: p["value"] for p in before}
+    after_map = {p["identifier"]: p["value"] for p in after}
+
+    modified = []
+    for key, after_val in after_map.items():
+        before_val = before_map.get(key, None)
+        if before_val != after_val:
+            modified.append({"identifier": key, "value": before_val})
+
+    return modified
+
+
 def obfuscate_cell_properties(top, out_path):
     """
     Obfuscate LUTs and DSPs in a design, saving all original properties to a JSON log.
@@ -79,25 +96,26 @@ def obfuscate_cell_properties(top, out_path):
 
         ref_name = ref.name
         cell_id = inst["EDIF.identifier"]
-        original_props = list(inst.data.get("EDIF.properties", []))  # copy
+        original_props = copy.deepcopy(inst.data.get("EDIF.properties", []))  # copy
 
         if ref_name.startswith("LUT"):
             modified = obfuscate_lut(inst)
         elif ref_name == "DSP48E1":
-            continue  # don't do this yet
-            # modified = obfuscate_dsp(inst)
+            modified = obfuscate_dsp(inst)
         else:
             continue
 
         if modified:
-            new_props = list(inst.data.get("EDIF.properties", []))  # after modification
-            modified_cells[cell_id] = {
-                "name": inst.get(".NAME", ""),
-                "type": ref_name,
-                "original_properties": original_props,
-                "new_properties": new_props,
-            }
-            count += 1
+            new_props = inst.data.get("EDIF.properties", [])
+            modified_props = get_modified_props(original_props, new_props)
+
+            if modified_props:
+                modified_cells[cell_id] = {
+                    "name": inst.get(".NAME", ""),
+                    "type": ref_name,
+                    "original_properties": modified_props,
+                }
+                count += 1
 
     with open(out_path, "w") as f:
         json.dump(modified_cells, f, indent=2)

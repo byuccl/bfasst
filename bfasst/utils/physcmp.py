@@ -18,7 +18,6 @@ from bfasst.utils.physcmp_data_types import ImplReports
 
 jpype_jvm.start()
 
-# We need to import this after jpype_jvm.start() as far as I can tell
 # pylint: disable=wrong-import-position, wrong-import-order
 from com.xilinx.rapidwright.design import Design
 
@@ -54,7 +53,18 @@ def compare_reports(golden_path: Path, test_path: Path, label: Optional[str] = N
     def is_rise_fall_swap(gs: str, ts: str) -> bool:
         pat = r"(-?\d+\.\d+)\s+(-?\d+\.\d+)\s+([rf])\s+(.+)"
         mg, mt = re.search(pat, gs), re.search(pat, ts)
-        return mg and mt and mg.group(1, 2, 4) == mt.group(1, 2, 4) and mg.group(3) != mt.group(3)
+        if mg and mt:
+            same_delay = mg.group(1) == mt.group(1)
+            same_slack = mg.group(2) == mt.group(2)
+            same_rest = mg.group(4) == mt.group(4)
+            different_edge = mg.group(3) != mt.group(3)
+
+            if same_delay and same_slack and same_rest and different_edge:
+                logging.debug("[rise/fall swap]")
+                logging.debug("  G: %s", gs)
+                logging.debug("  T: %s", ts)
+                return True
+        return False
 
     diffs = []
     swaps = []
