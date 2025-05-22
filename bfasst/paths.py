@@ -41,7 +41,9 @@ YOSYS_RESOURCES = RESOURCES_PATH / "yosys"
 YOSYS_SYNTH_SCRIPT_TEMPLATE = YOSYS_RESOURCES / "yosys_synth_template.mustache"
 GMT_TOOLS_PATH = THIRD_PARTY_PATH / "gmt_tools"
 RAPIDWRIGHT_PATH = THIRD_PARTY_PATH / "RapidWright"
-INTERCHANGE_SCHEMA_DIR = RAPIDWRIGHT_PATH / "interchange" / "fpga-interchange-schema" / "interchange"
+INTERCHANGE_SCHEMA_DIR = (
+    RAPIDWRIGHT_PATH / "interchange" / "fpga-interchange-schema" / "interchange"
+)
 JAVA_SCHEMA = RAPIDWRIGHT_PATH / "interchange" / "schema"
 YOSYS_PATH = THIRD_PARTY_PATH / "yosys"
 YOSYS_EXE_PATH = YOSYS_PATH / "yosys"
