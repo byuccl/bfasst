@@ -13,6 +13,7 @@ import json
 import copy
 from collections import defaultdict
 import spydrnet as sdn
+from bfasst.utils.general import json_write_if_changed
 
 
 def get_masking_init(lut_size):
@@ -151,8 +152,8 @@ def obfuscate_cell_properties(top, out_path):
                 type_counts[ref_name] += 1
                 count += 1
 
-    with open(out_path, "w") as f:
-        json.dump(modified_cells, f, indent=2)
+    json_str = json.dumps(modified_cells, indent=2)
+    json_write_if_changed(out_path, json_str)
 
     logging.info("Obfuscated %d cells. Original properties written to %s", count, out_path)
     logging.debug("Summary of obfuscated cell types:")
