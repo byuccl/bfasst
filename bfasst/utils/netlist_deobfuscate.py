@@ -15,13 +15,15 @@ import re
 
 from bfasst import jpype_jvm
 
-# Start the JVM so we can import RapidWright
 jpype_jvm.start()
+
+# pylint: disable=wrong-import-position, wrong-import-order
 from com.xilinx.rapidwright.design import Design
-from com.xilinx.rapidwright.edif import EDIFCellInst
 
 
 def setup_logging(log_path: pathlib.Path, level_str: str):
+    """Setup logging for this util"""
+
     level = getattr(logging, level_str.upper(), logging.INFO)
     logging.basicConfig(
         filename=log_path,
@@ -84,18 +86,13 @@ def apply_properties(design: Design, props: dict[str, dict]):
             key = p["identifier"]
             val = p["value"]
 
-            try:
-                if isinstance(val, bool):
-                    cell.addProperty(key, True)
-                else:
-                    # everything else as string
-                    cell.addProperty(key, str(val))
+            if isinstance(val, bool):
+                cell.addProperty(key, True)
+            else:
+                # everything else as string
+                cell.addProperty(key, str(val))
                 # logging.debug("Added property '%s' = %s to %s", key, val, cell.getName())
-                updated += 1
-            except Exception as e:
-                logging.warning(
-                    "Failed to add property '%s' = %s to %s: %s", key, val, cell.getName(), e
-                )
+            updated += 1
 
     logging.info("Re-applied %d properties across %d cells", updated, len(props) - missing)
 
@@ -104,6 +101,14 @@ def apply_properties(design: Design, props: dict[str, dict]):
 
 
 def main():
+    """
+    Netlist De-obfuscation runner using RapidWright.
+
+    Loads a Vivado checkpoint (.dcp) and EDIF (.edf), reapplies
+    the original cell properties stored in JSON, and writes out
+    de-obfuscated checkpoint and EDIF for downstream reporting.
+    """
+
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument(
         "--build_path", required=True, type=pathlib.Path, help="Directory for logs/intermediates"
