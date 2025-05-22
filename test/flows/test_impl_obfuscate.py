@@ -19,6 +19,10 @@ class TestImplObfuscate(unittest.TestCase):
         os.makedirs(cls.flow.vivado_synth.build_path, exist_ok=True)
         os.makedirs(cls.flow.impl_orig.build_path, exist_ok=True)
         os.makedirs(cls.flow.impl_transform.build_path, exist_ok=True)
+        os.makedirs(cls.flow.netlist_obfuscate.build_path, exist_ok=True)
+        os.makedirs(cls.flow.netlist_deobfuscate.build_path, exist_ok=True)
+        os.makedirs(cls.flow.impl_detailed_reports_orig.build_path, exist_ok=True)
+        os.makedirs(cls.flow.impl_detailed_reports_transform.build_path, exist_ok=True)
         cls.flow.create_rule_snippets()
         cls.flow.create_build_snippets()
 
@@ -26,7 +30,6 @@ class TestImplObfuscate(unittest.TestCase):
         """Check that core Vivado / transform / compare rules are in build.ninja."""
         with open(NINJA_BUILD_PATH, "r") as f:
             ninja = f.read()
-    
         self.assertIn("rule vivado", ninja)
         self.assertIn("rule netlist_obfuscate", ninja)
         self.assertIn("rule netlist_deobfuscate", ninja)
@@ -37,7 +40,6 @@ class TestImplObfuscate(unittest.TestCase):
         """Verify that each stage (synth, impl, reimpl, transform, physcmp) appears."""
         with open(NINJA_BUILD_PATH, "r") as f:
             ninja = f.read()
-    
         self.assertIn("vivado_synth", ninja)
         self.assertIn("vivado_impl", ninja)
         self.assertIn("vivado_reimpl", ninja)
@@ -55,4 +57,3 @@ class TestImplObfuscate(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
