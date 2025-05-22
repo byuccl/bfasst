@@ -1277,20 +1277,6 @@ class RwPhysNetlist:
         Helper to return exactly one driver-string for rev_net,
         caching results and handling the 2-driver IBUF case.
         """
-        # if rev_net not in self.rev_driver_cache:
-        #     leafs = rev_net.getLeafHierPortInsts(True, False)
-        #     if not leafs:
-        #         # fallback for top-level I/Os
-        #         leafs = [p for p in rev_net.getPortInsts() if p.isInput()]
-        #         if len(leafs) == 2:
-        #             # IBUF nets: pick the one that matches driver
-        #             leafs = [l for l in leafs if str(l) == driver]
-        #     self.rev_driver_cache[rev_net] = leafs
-
-        # drvs = self.rev_driver_cache[rev_net]
-        # assert len(drvs) == 1, f"Expected 1 driver on {rev_net}, found {drvs}"
-        # return str(drvs[0])
-
         if rev_port not in self.rev_driver_cache:
             leafs = rev_net.getLeafHierPortInsts(True, True)
             drivers = []
