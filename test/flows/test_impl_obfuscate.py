@@ -26,20 +26,25 @@ class TestImplObfuscate(unittest.TestCase):
         """Check that core Vivado / transform / compare rules are in build.ninja."""
         with open(NINJA_BUILD_PATH, "r") as f:
             ninja = f.read()
-
+    
         self.assertIn("rule vivado", ninja)
         self.assertIn("rule netlist_obfuscate", ninja)
+        self.assertIn("rule netlist_deobfuscate", ninja)
         self.assertIn("rule physcmp", ninja)
+
 
     def test_build_targets_exist(self):
         """Verify that each stage (synth, impl, reimpl, transform, physcmp) appears."""
         with open(NINJA_BUILD_PATH, "r") as f:
             ninja = f.read()
-
+    
         self.assertIn("vivado_synth", ninja)
         self.assertIn("vivado_impl", ninja)
         self.assertIn("vivado_reimpl", ninja)
         self.assertIn("netlist_obfuscate.log", ninja)
+        self.assertIn("impl_deobf.dcp", ninja)
+        self.assertIn("utilization.txt", ninja)
+        self.assertIn("full_timing_summary.txt", ninja)
         self.assertIn("physcmp.log", ninja)
 
     def test_get_top_level_flow_path(self):
