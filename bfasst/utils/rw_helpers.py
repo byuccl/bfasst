@@ -1,8 +1,11 @@
 """Helper functions for interacting with RapidWright"""
 
 from collections.abc import MutableMapping
+import enum
 from fnmatch import fnmatch
+import gzip
 import logging
+import os
 from os.path import commonprefix
 import re
 
@@ -12,6 +15,12 @@ import spydrnet as sdn
 # pylint: disable=wrong-import-position,wrong-import-order
 from bfasst import jpype_jvm
 from bfasst.config import PART
+from bfasst.paths import INTERCHANGE_SCHEMA_DIR
+import capnp
+
+# pylint: disable=no-member
+capnp.remove_import_hook()
+# pylint: enable=no-member
 
 jpype_jvm.start()
 from com.xilinx.rapidwright.design import Cell, Design, Unisim
@@ -21,6 +30,29 @@ from java.util import ArrayList as JArrayList
 from java.lang import IllegalArgumentException
 
 # pylint: enable=wrong-import-position,wrong-import-order
+
+
+# CAPNPROTO Constants
+# Define capnproto compression format
+class CompressionFormat(enum.Enum):
+    UNCOMPRESSED = 0
+    GZIP = 1
+
+
+# Set capnproto traversal limit
+NO_TRAVERSAL_LIMIT = 2**63 - 1
+NESTING_LIMIT = 1024
+
+SEARCH_PATH = [os.path.dirname(os.path.dirname(capnp.__file__))]
+if "CONDA_PREFIX" in os.environ:
+    SEARCH_PATH.append(os.path.join(os.environ["CONDA_PREFIX"], "include"))
+
+if "CAPNP_PATH" in os.environ:
+    SEARCH_PATH.append(os.environ["CAPNP_PATH"])
+
+for path in ["/usr/local/include", "/usr/include"]:
+    if os.path.exists(path):
+        SEARCH_PATH.append(path)
 
 
 class RapidwrightException(Exception):
@@ -178,27 +210,36 @@ def transfer_global_pins(old_cells, new_cell, global_pins):
             net.removePortInst(old_port)
 
 
-def combine_const_nets(port, old_inst, new_inst):
+def combine_const_nets(port, old_insts, new_inst, unisim_cell, log=logging.warning):
     """
     Moves the connections from multiple const nets to a single const net
 
     Parameters:
-    port (str)
-    old_inst (EDIFCellInst)
-    new_inst (EDIFCellInst)
+    port      (str)
+    old_insts (list[EDIFCellInst])
+    new_inst  (EDIFCellInst)
     """
-    old_net = old_inst.getPortInst(port).getNet()
-    main_net = new_inst.getPortInst(port).getNet()
-    port_insts = list(old_net.getPortInsts())
-    ground_instances = []
-    for port_inst in port_insts:
-        if not port_inst.isPrimitiveStaticSource():
-            old_net.removePortInst(port_inst)
-            main_net.addPortInst(port_inst)
-        else:
-            ground_instances.append(port_inst)
-    for ground_instance in ground_instances:
-        old_net.removePortInst(ground_instance)
+    net_name = new_inst.getPortInst(port).getNet().getName()
+    unisim = "GND" if unisim_cell == Unisim.GND else "VCC"
+    log(
+        "WARNING: Multiple constant %s nets found in netlist. Using first one: %s",
+        unisim,
+        net_name,
+    )
+
+    for old_inst in old_insts:
+        old_net = old_inst.getPortInst(port).getNet()
+        main_net = new_inst.getPortInst(port).getNet()
+        port_insts = list(old_net.getPortInsts())
+        ground_instances = []
+        for port_inst in port_insts:
+            if not port_inst.isPrimitiveStaticSource():
+                old_net.removePortInst(port_inst)
+                main_net.addPortInst(port_inst)
+            else:
+                ground_instances.append(port_inst)
+        for ground_instance in ground_instances:
+            old_net.removePortInst(ground_instance)
 
 
 def remove_and_disconnect_cell(cell, log=logging.info):
@@ -211,8 +252,7 @@ def remove_and_disconnect_cell(cell, log=logging.info):
 
 
 def lut_move_net_to_new_cell(
-    old_edif_cell_inst,
-    new_edif_cell_inst,
+    edif_cell_insts,
     old_logical_pin,
     physical_pin,
     log=logging.info,
@@ -224,6 +264,8 @@ def lut_move_net_to_new_cell(
     new cell, in which case only the disconnect from old cell needs to be performed."""
 
     log(f"  Processing logical pin {old_logical_pin}, physical pin {physical_pin}")
+
+    old_edif_cell_inst, new_edif_cell_inst = edif_cell_insts
 
     port_inst = old_edif_cell_inst.getPortInst(old_logical_pin)
     logical_net = port_inst.getNet()
@@ -299,8 +341,6 @@ def process_lut_eqn(cell, is_lut5, log=logging.info):
 
     # Physical LUT inputs use A#, but LUTTools expect I#
     eqn = eqn.replace("A", "I")
-
-    log(f"  New LUT{s6_or_5} eqn: {eqn}")
     return eqn
 
 
@@ -315,10 +355,8 @@ def process_shared_gnd_lut_eqn(lut5, gnd_pin, new_cell_inst, is_gnd, log=logging
     new_cell_inst.addProperty("INIT", init_str)
 
 
-def process_lut_init(lut6_cell, lut5_cell, new_cell_inst, log=logging.info):
+def process_lut_init(lut6_cell, lut5_cell, log=logging.info):
     """Fix the LUT INIT property for the new_cell_inst"""
-
-    log("Fixing INIT string")
 
     lut6_eqn_phys = None
     if lut6_cell:
@@ -342,8 +380,7 @@ def process_lut_init(lut6_cell, lut5_cell, new_cell_inst, log=logging.info):
             + LUTTools.getLUTInitFromEquation(lut6_eqn_phys, 5)[4:].zfill(8)
             + LUTTools.getLUTInitFromEquation(lut5_eqn_phys, 5)[4:].zfill(8)
         )
-    log(f"  New LUT INIT: {init_str}")
-    new_cell_inst.addProperty("INIT", init_str)
+    return init_str
 
 
 def get_unisim_inputs(unisim):
@@ -468,10 +505,32 @@ class _PinMapping:
         l2p = cell.getPinMappingsL2P()
         for logical, physical in default_l2p_map.items():
             if logical in l2p and list(l2p[logical]) != [physical]:
-                print(list(l2p[logical]), "<>", [physical])
+                logging.warning(list(l2p[logical]), "<>", [physical])
                 return False
 
         return True
+
+    def ensure_connected(self, edif_cell_inst, net, log=logging.info):
+        """
+        Ensure that all ports on the cell are connected to the net.
+
+        Sometimes Vivado leaves ports undriven, which can cause the port to not be
+        explicitly shown in the verilog netlist.  This can cause issues since
+        spydrnet will not infer ground for these signals. Use this function to make
+        sure all ports are shown by connecting them.
+        """
+
+        type_name = edif_cell_inst.getCellType().getName()
+        port_names = self.CELL_PIN_MAP[type_name]
+
+        for phys_name, log_name in port_names.items():
+            port = edif_cell_inst.getPortInst(phys_name)
+            if port is None:
+                log(
+                    f"  Port {phys_name} not found on {edif_cell_inst.getName()}, connecting to net"
+                )
+                new_port = edif_cell_inst.getPort(log_name)
+                net.createPortInst(new_port, edif_cell_inst)
 
 
 class _PinMap(MutableMapping):
@@ -560,3 +619,55 @@ class _PinMap(MutableMapping):
 
 
 PinMap = _PinMapping()
+
+
+def read_phys_capnp(f_in):
+    """
+    Read a physical netlist from a capnp file.
+    """
+    # pylint: disable=no-member
+    schema = capnp.load(
+        str(INTERCHANGE_SCHEMA_DIR / "PhysicalNetlist.capnp"),
+        imports=SEARCH_PATH,
+    )
+    # pylint: enable=no-member
+
+    # Read the physical netlist
+    with _read_capnp_file(schema.PhysNetlist, f_in) as netlist:
+        return netlist
+
+
+def read_log_capnp(f_in):
+    """
+    Read a logical netlist from a capnp file.
+    """
+    # pylint: disable=no-member
+    schema = capnp.load(
+        str(INTERCHANGE_SCHEMA_DIR / "LogicalNetlist.capnp"),
+        imports=SEARCH_PATH,
+    )
+    # pylint: enable=no-member
+
+    # Read the logical netlist
+    with _read_capnp_file(schema.Netlist, f_in) as netlist:
+        return netlist
+
+
+def _read_capnp_file(
+    capnp_schema, f_in, compression_format=CompressionFormat.GZIP, is_packed=False
+):
+    """
+    Return capnp files as python objects.
+    """
+    with open(f_in, "rb") as f:
+        if compression_format == CompressionFormat.GZIP:
+            with gzip.GzipFile(fileobj=f, mode="rb") as f_comp:
+                data = f_comp.read()
+                fb = capnp_schema.from_bytes_packed if is_packed else capnp_schema.from_bytes
+                return fb(
+                    data,
+                    traversal_limit_in_words=NO_TRAVERSAL_LIMIT,
+                    nesting_limit=NESTING_LIMIT,
+                )
+        capnp_read = capnp_schema.read_packed if is_packed else capnp_schema.read
+        return capnp_read(f, traversal_limit_in_words=NO_TRAVERSAL_LIMIT)
