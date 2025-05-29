@@ -35,9 +35,9 @@ def setup_logging(log_path: str, level_str: str):
     fh.setFormatter(fmt)
     root.addHandler(fh)
 
-    ch = logging.StreamHandler()
-    ch.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
-    root.addHandler(ch)
+    # ch = logging.StreamHandler()
+    # ch.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
+    # root.addHandler(ch)
 
     root.info("Logging at %s", level_str)
 
@@ -165,7 +165,6 @@ def compare_cells(d1: Design, d2: Design) -> int:
         c1 = d1.getCell(name)
         if c1 is None:
             c1 = site_bel_d1.get((str(c2.getSite()), str(c2.getBEL())))
-        if c1 is None:
             diffs += 1
             logging.debug("[CELL] %s missing in first design", name)
 

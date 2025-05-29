@@ -32,10 +32,10 @@ def setup_logging(log_path: pathlib.Path, level_str: str):
         format="%(asctime)s %(levelname)s: %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
-    console = logging.StreamHandler()
-    console.setLevel(level)
-    console.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
-    logging.getLogger().addHandler(console)
+    # console = logging.StreamHandler()
+    # console.setLevel(level)
+    # console.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
+    # logging.getLogger().addHandler(console)
     logging.info("Logging at %s", level_str)
 
 
