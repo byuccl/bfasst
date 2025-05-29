@@ -146,10 +146,10 @@ def compare_cells(d1: Design, d2: Design) -> int:
         c2 = d2.getCell(name)
         if c2 is None:
             c2 = site_bel_d2.get((str(c1.getSite()), str(c1.getBEL())))
-        if c2 is None:
-            diffs += 1
-            logging.debug("[CELL] %s missing in second design", name)
-        elif c1.getSite() != c2.getSite() or c1.getBEL() != c2.getBEL():
+            if c2 is None:
+                diffs += 1
+                logging.debug("[CELL] %s missing in second design", name)
+        if c1.getSite() != c2.getSite() or c1.getBEL() != c2.getBEL():
             diffs += 1
             logging.debug(
                 "[CELL] %s placed differently: %s/%s vs %s/%s",
