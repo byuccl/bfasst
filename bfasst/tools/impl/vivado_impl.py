@@ -12,7 +12,14 @@ class VivadoImpl(ImplTool):
     """Tool to create Vivado implementation ninja snippets."""
 
     def __init__(
-        self, flow, design, synth_edf, constraints_files="", ooc=False, impl_options=""
+        self,
+        flow,
+        design,
+        synth_edf,
+        build_path=None,
+        constraints_files="",
+        ooc=False,
+        impl_options="",
     ):  # pylint: disable=too-many-positional-arguments
         super().__init__(flow, design)
         self.ooc = ooc
@@ -22,11 +29,13 @@ class VivadoImpl(ImplTool):
         ]
         self.synth_edf = synth_edf
 
-        self.build_path = (
-            self.build_path.with_name("vivado_ooc_impl")
-            if ooc
-            else self.build_path.with_name("vivado_impl")
-        )
+        if build_path:
+            self.build_path = self.build_path.with_name(build_path)
+        elif ooc:
+            self.build_path = self.build_path.with_name("vivado_ooc_impl")
+        else:
+            self.build_path = self.build_path.with_name("vivado_impl")
+
         self._my_dir_path = pathlib.Path(__file__).parent
 
         self._init_outputs()
@@ -92,6 +101,10 @@ class VivadoImpl(ImplTool):
         self.outputs["impl_dcp"] = self.build_path / "impl.dcp"
         self.outputs["utilization"] = self.build_path / "utilization.txt"
         self.outputs["timing"] = self.build_path / "timing_summary.txt"
+        self.outputs["hold_timing"] = self.build_path / "hold_timing.txt"
+        self.outputs["setup_timing"] = self.build_path / "setup_timing.txt"
+        self.outputs["timing_summary_full"] = self.build_path / "full_timing_summary.txt"
+        self.outputs["power"] = self.build_path / "power_summary.txt"
         self.outputs["journal"] = self.build_path / "vivado.jou"
         self.outputs["log"] = self.build_path / "vivado.log"
         self.outputs["bitstream"] = self.build_path / "design.bit" if not self.ooc else ""

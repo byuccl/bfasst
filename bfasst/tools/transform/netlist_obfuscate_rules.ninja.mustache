@@ -1,0 +1,4 @@
+rule netlist_obfuscate
+    command = python {{transform_script_path}} --dcp {{dcp_path}} --edf {{edf_path}} --out_dcp {{transformed_synth_dcp}} --out_edf {{transformed_synth_edf}} --log {{log_path}} {{logging_level}} {{build_path}}
+    description = [NetlistObfuscate] Obfuscating netlist
+
