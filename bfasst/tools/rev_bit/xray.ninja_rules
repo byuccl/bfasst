@@ -3,6 +3,6 @@ rule bit_to_fasm
     description = convert $in to fasm file
 
 rule fasm_to_netlist
-    command = cd $fasm2bels_path; $fasm2bels_python_path -mfasm2bels --connection_database $part_db --db_root $db_root --part $part --fasm_file $in --verilog_file $verilog_file --xdc_file $xdc_file --input_xdc $input_xdc --logical_netlist $output_capnp_log --physical_netlist $output_capnp_phys --interchange_xdc $output_capnp_xdc --interchange_capnp_schema_dir $$INTERCHANGE_SCHEMA_PATH
+    command = cd $fasm2bels_path; $fasm2bels_python_path -mfasm2bels --allow_orphan_sinks --connection_database $part_db --db_root $db_root --part $part --fasm_file $in --verilog_file $verilog_file --xdc_file $xdc_file --input_xdc $input_xdc --logical_netlist $output_capnp_log --physical_netlist $output_capnp_phys --interchange_xdc $output_capnp_xdc --interchange_capnp_schema_dir $$INTERCHANGE_SCHEMA_PATH > $log_file
     description = convert $in to netlist
 

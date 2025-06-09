@@ -8,6 +8,7 @@ import sys
 import shutil
 import enum
 
+from jpype.types import JString
 from bfasst.paths import DESIGNS_PATH
 from bfasst.config import BUILD
 
@@ -97,8 +98,11 @@ def convert_verilog_literal_to_int(prop):
     >>> convert_verilog_literal_to_int("32'hdeadbeef")
     3735928559
     """
+    # For rapidwright compatibility
+    if isinstance(prop, JString):
+        prop = str(prop)
     # Not a string? just return the prop
-    if not isinstance(prop, str):
+    elif not isinstance(prop, str):
         return prop
 
     # Try to convert to int
@@ -108,20 +112,20 @@ def convert_verilog_literal_to_int(prop):
     except ValueError:
         pass
 
-    # Decimal literal
-    matches = re.match(r"\d+'d(\d+)", prop)
-    if matches:
-        return int(matches.group(1))
+    regex_nums = (  # Regex patterns for different verilog number formats.
+        (r"\d+'d(\d+)", 10),
+        (r"\d+'b([01]+)", 2),
+        (r"\d+'h([0-9a-fA-F]+)", 16),
+    )
+    for regex, base in regex_nums:
+        matches = re.match(regex, prop)
+        if matches:
+            return int(matches.group(1), base)
 
-    # Binary literal
-    matches = re.match(r"\d+'b([01]+)", prop)
-    if matches:
-        return int(matches.group(1), 2)
-
-    # Hex literal
-    matches = re.match(r"\d+'h([0-9a-fA-F]+)", prop)
-    if matches:
-        return int(matches.group(1), 16)
+    if prop.upper() == "TRUE":
+        return True
+    if prop.upper() == "FALSE":
+        return False
 
     return prop
 
@@ -232,3 +236,22 @@ def get_family_from_part(part):
     will have to be changed if we start supporting more part families
     """
     return "kintex7" if part[3] == "k" else "artix7"
+
+
+def get_size(obj, seen=None):
+    """Recursively finds size of objects using generators."""
+    size = sys.getsizeof(obj)
+    if seen is None:
+        seen = set()
+    obj_id = id(obj)
+    if obj_id in seen:
+        return 0
+    seen.add(obj_id)
+    if isinstance(obj, dict):
+        size += sum(get_size(v, seen) for v in obj.values())
+        size += sum(get_size(k, seen) for k in obj.keys())
+    elif hasattr(obj, "__dict__"):
+        size += get_size(obj.__dict__, seen)
+    elif hasattr(obj, "__iter__") and not isinstance(obj, (str, bytes, bytearray)):
+        size += sum(get_size(i, seen) for i in obj)
+    return size

@@ -22,6 +22,15 @@ flows:
   - rapidwright
   - fasm2bels
 
+- name: VivadoPhysCapnp
+  description: Reverse bitstream and use location data to compare to netlist
+  module: vivado_phys_capnp
+  class: VivadoPhysCapnp
+  external_tools:
+  - vivado
+  - rapidwright
+  - fasm2bels
+
 - name: VivadoPhysNetlistCmp
   description: Reverse bitstream and compare to netlist
   module: vivado_phys_netlist_cmp

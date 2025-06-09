@@ -3,15 +3,13 @@
 from bfasst.flows.flow import Flow
 from bfasst.flows.vivado_phys_netlist import VivadoPhysNetlist
 from bfasst.tools.impl.vivado_impl import VivadoImpl
-from bfasst.tools.compare.structural.structural import Structural
 from bfasst.tools.rev_bit.xray import Xray
-from bfasst.tools.transform.netlist_cleanup import NetlistCleanup
 from bfasst.tools.transform.phys_netlist import PhysNetlist
 from bfasst.paths import FLOWS_PATH
 from bfasst.tools.synth.vivado_synth import VivadoSynth
 
 
-class VivadoPhysNetlistCmp(Flow):
+class VivadoPhysCapnp(Flow):
     """Structural Comparison of physical netlist and reversed netlist"""
 
     def __init__(self, design, synth_options="", debug=False, logging_level="INFO"):
@@ -39,26 +37,11 @@ class VivadoPhysNetlistCmp(Flow):
             design,
             impl_edf=self.vivado_impl_tool.outputs["impl_edf"],
             impl_checkpoint=self.vivado_impl_tool.outputs["impl_dcp"],
-            logging_level=self.logging_level,
-        )
-
-        self.netlist_cleanup_tool = NetlistCleanup(
-            self,
-            design,
-            rev_netlist=self.xray_tool.outputs["rev_netlist"],
-            logging_level=self.logging_level,
-        )
-
-        self.compare_tool = Structural(
-            self,
-            design,
-            log_name="struct_cmp.log",
-            golden_netlist=self.phys_netlist_tool.outputs["viv_impl_physical_v"],
-            rev_netlist=self.netlist_cleanup_tool.outputs["netlist_cleaned_path"],
-            debug=self.debug,
+            phys_capnp=self.xray_tool.outputs["phys_capnp"],
+            edf_capnp=self.xray_tool.outputs["edf_capnp"],
             logging_level=self.logging_level,
         )
         # pylint: enable=duplicate-code
 
     def get_top_level_flow_path(self):
-        return f"{FLOWS_PATH}/vivado_phys_netlist_cmp.py"
+        return f"{FLOWS_PATH}/vivado_phys_capnp.py"

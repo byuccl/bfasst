@@ -17,6 +17,7 @@ jpype_jvm.start()
 from com.xilinx.rapidwright.design import Cell, Design, Unisim
 from com.xilinx.rapidwright.design.tools import LUTTools
 from com.xilinx.rapidwright.edif import EDIFDirection as RwDirection
+from com.xilinx.rapidwright.edif import EDIFCellInst, EDIFHierPortInst, EDIFPortInst
 from java.util import ArrayList as JArrayList
 from java.lang import IllegalArgumentException
 
@@ -178,27 +179,36 @@ def transfer_global_pins(old_cells, new_cell, global_pins):
             net.removePortInst(old_port)
 
 
-def combine_const_nets(port, old_inst, new_inst):
+def combine_const_nets(port, old_insts, new_inst, unisim_cell, log=logging.warning):
     """
     Moves the connections from multiple const nets to a single const net
 
     Parameters:
-    port (str)
-    old_inst (EDIFCellInst)
-    new_inst (EDIFCellInst)
+    port      (str)
+    old_insts (list[EDIFCellInst])
+    new_inst  (EDIFCellInst)
     """
-    old_net = old_inst.getPortInst(port).getNet()
-    main_net = new_inst.getPortInst(port).getNet()
-    port_insts = list(old_net.getPortInsts())
-    ground_instances = []
-    for port_inst in port_insts:
-        if not port_inst.isPrimitiveStaticSource():
-            old_net.removePortInst(port_inst)
-            main_net.addPortInst(port_inst)
-        else:
-            ground_instances.append(port_inst)
-    for ground_instance in ground_instances:
-        old_net.removePortInst(ground_instance)
+    net_name = new_inst.getPortInst(port).getNet().getName()
+    unisim = "GND" if unisim_cell == Unisim.GND else "VCC"
+    log(
+        "WARNING: Multiple constant %s nets found in netlist. Using first one: %s",
+        unisim,
+        net_name,
+    )
+
+    for old_inst in old_insts:
+        old_net = old_inst.getPortInst(port).getNet()
+        main_net = new_inst.getPortInst(port).getNet()
+        port_insts = list(old_net.getPortInsts())
+        ground_instances = []
+        for port_inst in port_insts:
+            if not port_inst.isPrimitiveStaticSource():
+                old_net.removePortInst(port_inst)
+                main_net.addPortInst(port_inst)
+            else:
+                ground_instances.append(port_inst)
+        for ground_instance in ground_instances:
+            old_net.removePortInst(ground_instance)
 
 
 def remove_and_disconnect_cell(cell, log=logging.info):
@@ -211,8 +221,7 @@ def remove_and_disconnect_cell(cell, log=logging.info):
 
 
 def lut_move_net_to_new_cell(
-    old_edif_cell_inst,
-    new_edif_cell_inst,
+    edif_cell_insts,
     old_logical_pin,
     physical_pin,
     log=logging.info,
@@ -224,6 +233,8 @@ def lut_move_net_to_new_cell(
     new cell, in which case only the disconnect from old cell needs to be performed."""
 
     log(f"  Processing logical pin {old_logical_pin}, physical pin {physical_pin}")
+
+    old_edif_cell_inst, new_edif_cell_inst = edif_cell_insts
 
     port_inst = old_edif_cell_inst.getPortInst(old_logical_pin)
     logical_net = port_inst.getNet()
@@ -299,8 +310,6 @@ def process_lut_eqn(cell, is_lut5, log=logging.info):
 
     # Physical LUT inputs use A#, but LUTTools expect I#
     eqn = eqn.replace("A", "I")
-
-    log(f"  New LUT{s6_or_5} eqn: {eqn}")
     return eqn
 
 
@@ -315,10 +324,8 @@ def process_shared_gnd_lut_eqn(lut5, gnd_pin, new_cell_inst, is_gnd, log=logging
     new_cell_inst.addProperty("INIT", init_str)
 
 
-def process_lut_init(lut6_cell, lut5_cell, new_cell_inst, log=logging.info):
+def process_lut_init(lut6_cell, lut5_cell, log=logging.info):
     """Fix the LUT INIT property for the new_cell_inst"""
-
-    log("Fixing INIT string")
 
     lut6_eqn_phys = None
     if lut6_cell:
@@ -342,8 +349,7 @@ def process_lut_init(lut6_cell, lut5_cell, new_cell_inst, log=logging.info):
             + LUTTools.getLUTInitFromEquation(lut6_eqn_phys, 5)[4:].zfill(8)
             + LUTTools.getLUTInitFromEquation(lut5_eqn_phys, 5)[4:].zfill(8)
         )
-    log(f"  New LUT INIT: {init_str}")
-    new_cell_inst.addProperty("INIT", init_str)
+    return init_str
 
 
 def get_unisim_inputs(unisim):
@@ -377,6 +383,28 @@ def get_sdn_direction_for_unisim(unisim, port_name):
         return sdn.INOUT
 
     raise RapidwrightException(f"Unknown direction for {unisim} {port_name}")
+
+
+def flip_const_port_signal(
+    design: Design, ecell: EDIFCellInst, port_name: str, idx=-1, log=logging.info
+):
+    """Flip the constant port signal for a given port in an EDIF cell instance."""
+    port_inst = ecell.getPortInst(port_name)
+    if port_inst is None:
+        log("Port %s disconnected... Assuming gnd and flipping to vcc", port_name)
+        EDIFPortInst(ecell.getPort(port_name), design.getVccNet().getLogicalNet(), idx, ecell)
+        return
+    old_net = port_inst.getNet()
+    if old_net.isGND():
+        log("\tSetting %s to VCC (was GND)", str(port_inst))
+        old_net.removePortInst(port_inst)
+        design.getVccNet().getLogicalNet().addPortInst(port_inst)
+    elif old_net.isVCC():
+        log("\tSetting %s to GND (was VCC)", str(port_inst))
+        old_net.removePortInst(port_inst)
+        design.getGndNet().getLogicalNet().addPortInst(port_inst)
+    else:
+        raise RapidwrightException("Unsupported nonconstant net for inversion")
 
 
 class _PinMapping:
@@ -468,10 +496,32 @@ class _PinMapping:
         l2p = cell.getPinMappingsL2P()
         for logical, physical in default_l2p_map.items():
             if logical in l2p and list(l2p[logical]) != [physical]:
-                print(list(l2p[logical]), "<>", [physical])
+                logging.warning(list(l2p[logical]), "<>", [physical])
                 return False
 
         return True
+
+    def ensure_connected(self, edif_cell_inst, net, log=logging.info):
+        """
+        Ensure that all ports on the cell are connected to the net.
+
+        Sometimes Vivado leaves ports undriven, which can cause the port to not be
+        explicitly shown in the verilog netlist.  This can cause issues since
+        spydrnet will not infer ground for these signals. Use this function to make
+        sure all ports are shown by connecting them.
+        """
+
+        type_name = edif_cell_inst.getCellType().getName()
+        port_names = self.CELL_PIN_MAP[type_name]
+
+        for phys_name, log_name in port_names.items():
+            port = edif_cell_inst.getPortInst(phys_name)
+            if port is None:
+                log(
+                    f"  Port {phys_name} not found on {edif_cell_inst.getName()}, connecting to net"
+                )
+                new_port = edif_cell_inst.getPort(log_name)
+                net.createPortInst(new_port, edif_cell_inst)
 
 
 class _PinMap(MutableMapping):
@@ -560,3 +610,24 @@ class _PinMap(MutableMapping):
 
 
 PinMap = _PinMapping()
+
+
+def is_connected(port_inst: EDIFHierPortInst) -> bool:
+    """
+    A net is considered connected if it's connected to more than 1 port
+    """
+    net = port_inst.getHierarchicalNet()
+    if net is None:
+        return False
+    if not len(net.getPortInsts()) > 1:
+        return False
+    return len(net.getLeafHierPortInsts(False, True)) > 0
+
+
+def check_connected_ports(num_ports: int, port_insts: list[EDIFHierPortInst]) -> bool:
+    """
+    Sometimes unconnected output ports are included in the number
+    of ports in the reversed netlist. This compares the number of
+    only connected ports.
+    """
+    return num_ports == sum(is_connected(port_inst) for port_inst in port_insts)
