@@ -49,9 +49,11 @@ class RwPhysNetlist:
     def __init__(self, build_dir: str, logging_level: str, log_name: str) -> None:
         self.build_dir = Path(build_dir)
         self.stage_dir = self.build_dir / "vivado_phys_netlist"
-        (self.stage_dir / log_name).unlink(missing_ok=True)
         self.logging_level = logging_level
         log_path = self.stage_dir / log_name if "/" not in log_name else Path(log_name)
+        log_path.unlink(missing_ok=True)
+        if not log_path.parent.exists():
+            log_path.parent.mkdir(parents=True)
         logging.basicConfig(
             filename=log_path,
             format="%(asctime)s %(message)s",

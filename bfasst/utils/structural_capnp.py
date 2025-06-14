@@ -240,7 +240,8 @@ class StructuralCapnp(RwPhysNetlist):
                 # Get the driver for the net
                 net = port.getNet()
                 if net not in self.driver_cache:
-                    self.driver_cache[net] = net.getSourcePortInsts(True)[0].getFullName()
+                    drv = f"{net.getParentCell()}/{net.getSourcePortInsts(True)[0].getFullName()}"
+                    self.driver_cache[net] = drv
                 net_driver = self.driver_cache[net]
 
                 # Get the driver for the reversed net
@@ -315,8 +316,10 @@ class StructuralCapnp(RwPhysNetlist):
                 drivers = [p for p in rev_net.getPortInsts() if p.isInput()]
                 if len(drivers) == 2:
                     # IBUF nets: pick the one that matches driver
-                    drivers = [l for l in drivers if str(l) == driver]
+                    top_io = driver.split("/")[-1]
+                    drivers = [l for l in drivers if str(l) == top_io]
             assert len(drivers) == 1, f"Expected 1 driver on {rev_net}, found {drivers}"
+
             tmp = dict.fromkeys(sinks, str(drivers[0]))
             self.rev_driver_cache.update(tmp)
             self.rev_driver_cache[drivers[0]] = str(drivers[0])

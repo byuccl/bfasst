@@ -41,7 +41,7 @@ class StructuralCapnpCmp(Tool):
 
         self._init_outputs()
         self.rule_snippet_path = (
-            COMPARE_TOOLS_PATH / "structural" / "phys_capnp_rules.ninja.mustache"
+            COMPARE_TOOLS_PATH / "structural" / "structural_capnp_rules.ninja.mustache"
         )
         self.rules_render_dict = {
             "phys_capnp": self.phys_capnp,
@@ -79,7 +79,7 @@ class StructuralCapnpCmp(Tool):
             "edf_capnp": self.edf_capnp,
         }
         build_dict.update({k: str(v) for k, v in self.outputs.items()})
-        with open(COMPARE_TOOLS_PATH / "structural" / "phys_capnp_build.ninja.mustache") as f:
+        with open(COMPARE_TOOLS_PATH / "structural" / "structural_capnp_build.ninja.mustache") as f:
             phys_capnp_ninja = chevron.render(f, build_dict)
 
         with open(NINJA_BUILD_PATH, "a") as f:
@@ -99,8 +99,6 @@ class StructuralCapnpCmp(Tool):
         self._add_ninja_deps_default(deps, __file__)
         deps.append(BFASST_UTILS_PATH / "rw_phys_netlist.py")
         deps.append(BFASST_UTILS_PATH / "rw_helpers.py")
-        deps.append(COMPARE_TOOLS_PATH / "structural" / "phys_capnp_build.ninja.mustache")
-        deps.append(COMPARE_TOOLS_PATH / "structural" / "phys_capnp_rules.ninja.mustache")
         deps.append(BFASST_UTILS_PATH / "structural_capnp.py")
         deps.append(BFASST_UTILS_PATH / "capnp_cells.py")
         deps.append(BFASST_UTILS_PATH / "general.py")
