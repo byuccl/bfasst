@@ -1,0 +1,14 @@
+build {{ viv_impl_physical_edf }} {{ phys_capnp_checkpoint }} {{ phys_capnp_log }} {{ rapidwright_log }}: phys_capnp_cmp | bfasst/utils/structural_capnp.py {{ impl_edf }} {{ impl_dcp }} {{ phys_capnp }} {{ edf_capnp }}
+    logging_level = {{ logging_level }}
+    impl_dcp = {{ impl_dcp }}
+    impl_edf = {{ impl_edf }}
+    log_name = {{ phys_capnp_log }}
+    phys_capnp = {{ phys_capnp }} 
+    edf_capnp = {{ edf_capnp }} 
+    build_dir = {{ build_dir }} 
+
+build {{ checkpoint_to_v_tcl }}: template {{ checkpoint_to_v_json }} {{ transform_library }}/checkpoint_to_v.tcl.mustache
+
+build {{ viv_impl_physical_v }}: vivado {{ checkpoint_to_v_tcl }} | {{ viv_impl_physical_edf }} {{ phys_capnp_checkpoint }} 
+    journal = {{ phys_capnp_output }}/vivado_checkpoint_to_v.jou
+    log = {{ phys_capnp_output }}/vivado_checkpoint_to_v.log
