@@ -1,172 +1,100 @@
 """
 RapidWright physical‐comparison runner.
 
-Runs a cell-by-cell and net-by-net comparison to ensure
-placement and routing between two designs are identical.
-
-Also runs a text-based diff on timing and utilization reports.
+Runs physical and logical comparisons on two post-implementation netlists
+Then compares the bitstreams to verify full equivalence
 """
 
-import re
 import logging
 from argparse import ArgumentParser
 from pathlib import Path
-from typing import Optional
 
 from bfasst import jpype_jvm
-from bfasst.utils.physcmp_data_types import ImplReports
+from bfasst.utils.physcmp_data_types import ImplReports, PhyscmpException
 
 jpype_jvm.start()
 
 # pylint: disable=wrong-import-position, wrong-import-order
 from com.xilinx.rapidwright.design import Design
+from com.xilinx.rapidwright.design.compare import DesignComparator
+from com.xilinx.rapidwright.edif.compare import EDIFNetlistComparator
+from java.io import ByteArrayOutputStream, PrintStream, FileOutputStream
+from java.lang import System
 
 
 def setup_logging(log_path: str, level_str: str):
     """Setup logging related functionality"""
+    fos = FileOutputStream(str(log_path), True)
+    ps = PrintStream(fos, True)
+    System.setOut(ps)
 
     level = getattr(logging, level_str.upper(), logging.INFO)
     root = logging.getLogger()
     root.handlers.clear()
     root.setLevel(level)
 
-    fmt = logging.Formatter("%(asctime)s %(message)s", "%Y%m%d%H%M%S")
+    fmt = logging.Formatter("%(asctime)s %(message)s", "%Y-%m-%d %H:%M:%S")
     fh = logging.FileHandler(log_path, mode="w")
     fh.setFormatter(fmt)
     root.addHandler(fh)
 
-    # ch = logging.StreamHandler()
-    # ch.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
-    # root.addHandler(ch)
-
     root.info("Logging at %s", level_str)
 
 
-def load_and_trim(path: Path) -> list[str]:
-    with open(path, "r") as f:
-        return f.readlines()[11:]
+def compare_bitstreams(golden_path: Path, test_path: Path, ignore_bytes: int = 200) -> bool:
+    """Compare two bitstreams, ignoring the first `ignore_bytes` bytes."""
+    with open(golden_path, "rb") as f1, open(test_path, "rb") as f2:
+        golden_data = f1.read()
+        test_data = f2.read()
 
+    if len(golden_data) != len(test_data):
+        logging.warning(
+            "Bitstreams have different sizes: golden=%d, test=%d", len(golden_data), len(test_data)
+        )
+        return True
 
-def is_rise_fall_swap(gs: str, ts: str) -> bool:
-    """
-    Determines if a difference in two files is just a swap of r/f
-    Returns true if everything else on the line is identical
-    """
-    pat = r"(-?\d+\.\d+)\s+(-?\d+\.\d+)\s+([rf])\s+(.+)"
-    mg, mt = re.search(pat, gs), re.search(pat, ts)
-    if mg and mt:
-        same_delay = mg.group(1) == mt.group(1)
-        same_slack = mg.group(2) == mt.group(2)
-        same_rest = mg.group(4) == mt.group(4)
-        different_edge = mg.group(3) != mt.group(3)
+    differences = 0
+    # We skip the first bytes because that's just a header and timestamps mess up the comparison
+    for i in range(ignore_bytes, len(golden_data)):
+        if golden_data[i] != test_data[i]:
+            logging.debug(
+                "Bitstream difference at byte %d: golden=0x%02X, test=0x%02X",
+                i,
+                golden_data[i],
+                test_data[i],
+            )
+            differences += 1
+            if differences > 10:
+                logging.debug("Stopping after 10 differences")
+                break
 
-        if same_delay and same_slack and same_rest and different_edge:
-            logging.debug("[rise/fall swap]")
-            logging.debug("  G: %s", gs)
-            logging.debug("  T: %s", ts)
-            return True
+    if differences > 0:
+        logging.warning("Bitstreams differ after ignoring first %d bytes", ignore_bytes)
+        return True
+
+    logging.info("Bitstreams match (ignoring first %d bytes)", ignore_bytes)
     return False
 
 
-def compare_reports(golden_path: Path, test_path: Path, label: Optional[str] = None):
-    """Run a text-based comparison between two implementation reports."""
-
-    diffs = []
-    swaps = []
-
-    g_lines = load_and_trim(golden_path)
-    t_lines = load_and_trim(test_path)
-
-    for idx, (g, t) in enumerate(zip(g_lines, t_lines), start=12):
-        gs, ts = g.strip(), t.strip()
-        if gs == ts:
-            continue
-
-        if label and "timing" in label.lower() and is_rise_fall_swap(gs, ts):
-            swaps.append((idx, gs, ts))
-            continue
-
-        diffs.append((idx, gs, ts))
-
-    extra_g = g_lines[len(t_lines) :]
-    extra_t = t_lines[len(g_lines) :]
-    return diffs, extra_g, extra_t, swaps
-
-
-def log_report_diff(label: str, golden_path: Path, test_path: Path) -> bool:
-    """Helper function to report report file differences"""
-
-    diffs, extra_g, extra_t, swaps = compare_reports(golden_path, test_path, label)
-    saw = False
-
-    if diffs:
-        saw = True
-        logging.debug("[%s] Differences found in %d lines:", label, len(diffs))
-        for ln, g, t in diffs:
-            logging.debug("[%s] Line %d:\n\tGOLD: %s\n\tTEST: %s", label, ln, g, t)
-    else:
-        msg = "[%s] No significant differences found"
-        if "timing" in label.lower():
-            msg += " (excluding rise/fall changes)"
-        logging.debug(msg, label)
-
-    if swaps:
-        saw = True
-        logging.info("[%s] Ignored %d rise/fall-only swaps.", label, len(swaps))
-    if extra_g:
-        saw = True
-        logging.debug("[%s] Golden has %d extra lines.", label, len(extra_g))
-    if extra_t:
-        saw = True
-        logging.debug("[%s] Test has %d extra lines.", label, len(extra_t))
-
-    return saw
-
-
 def compare_cells(d1: Design, d2: Design) -> int:
-    """Compare physical placement of all cells between two designs."""
-
-    site_bel_d1 = {}
-    for c in d1.getCells():
-        site = str(c.getSite())
-        bel = str(c.getBEL())
-        key = (site, bel)
-        site_bel_d1[key] = c
-
-    site_bel_d2 = {}
-    for c in d2.getCells():
-        site = str(c.getSite())
-        bel = str(c.getBEL())
-        key = (site, bel)
-        site_bel_d2[key] = c
-
+    """
+    Compare all cells between two designs
+    Really just to help see where INIT values differ
+    """
     diffs = 0
-    for c1 in d1.getCells():
-        name = c1.getName()
-        c2 = d2.getCell(name)
-        if c2 is None:
-            c2 = site_bel_d2.get((str(c1.getSite()), str(c1.getBEL())))
-            if c2 is None:
-                diffs += 1
-                logging.debug("[CELL] %s missing in second design", name)
-        if c1.getSite() != c2.getSite() or c1.getBEL() != c2.getBEL():
-            diffs += 1
-            logging.debug(
-                "[CELL] %s placed differently: %s/%s vs %s/%s",
-                name,
-                c1.getSite(),
-                c1.getBEL(),
-                c2.getSite(),
-                c2.getBEL(),
-            )
 
-    for c2 in d2.getCells():
-        name = c2.getName()
-        c1 = d1.getCell(name)
-        if c1 is None:
-            c1 = site_bel_d1.get((str(c2.getSite()), str(c2.getBEL())))
+    cells_a = {cell.getName(): cell for cell in d1.getCells()}
+    cells_b = {cell.getName(): cell for cell in d2.getCells()}
+
+    common_names = set(cells_a.keys()) & set(cells_b.keys())
+    for name in common_names:
+        cell_a = cells_a[name]
+        cell_b = cells_b[name]
+
+        if cell_a.getProperty("INIT") != cell_b.getProperty("INIT"):
+            if diffs < 10:
+                logging.debug("INIT values differ for %s", name)
             diffs += 1
-            logging.debug("[CELL] %s missing in first design", name)
 
     logging.info("[CELL] Done comparing cells. Differences: %d", diffs)
     logging.info("[CELL] Design 1 total cells: %d", d1.getCells().size())
@@ -174,47 +102,35 @@ def compare_cells(d1: Design, d2: Design) -> int:
     return diffs
 
 
-def compare_nets(d1: Design, d2: Design) -> int:
-    """Compare physical nets in a design"""
+def log_diff_summary(layout_comparator, netlist_comparator, layout_lines=30, netlist_lines=50):
+    """
+    Function to log all the differences found by the RW design and netlist comparators
+    """
+    # Layout comparator output
+    layout_baos = ByteArrayOutputStream()
+    layout_ps = PrintStream(layout_baos)
+    layout_comparator.printDiffReport(layout_ps)
+    layout_ps.flush()
+    layout_report_str = str(layout_baos.toString())
+    layout_report_lines = layout_report_str.splitlines()
+    truncated_layout = "\n".join(layout_report_lines[:layout_lines])
+    if len(layout_report_lines) > layout_lines:
+        truncated_layout += f"\n... (truncated, total {len(layout_report_lines)} lines)"
 
-    def sig(n):
-        src = n.getSource()
-        drv = src.getSitePinName() if src else "<NONE>"
-        sinks = frozenset(p.getSitePinName() for p in n.getSinkPins())
-        return (drv, sinks)
+    # Netlist comparator output
+    netlist_baos = ByteArrayOutputStream()
+    netlist_ps = PrintStream(netlist_baos)
+    netlist_comparator.printDiffReport(netlist_ps)
+    netlist_ps.flush()
+    netlist_report_str = str(netlist_baos.toString())
+    netlist_report_lines = netlist_report_str.splitlines()
+    truncated_netlist = "\n".join(netlist_report_lines[:netlist_lines])
+    if len(netlist_report_lines) > netlist_lines:
+        truncated_netlist += f"\n... (truncated, total {len(netlist_report_lines)} lines)"
 
-    s1 = {sig(n) for n in d1.getNets()}
-    s2 = {sig(n) for n in d2.getNets()}
-    diffs = 0
-
-    for drv, sinks in s1 - s2:
-        diffs += 1
-        logging.debug("[NET] %s -> %d sinks missing in second design", drv, len(sinks))
-    for drv, sinks in s2 - s1:
-        diffs += 1
-        logging.debug("[NET] %s -> %d sinks missing in first design", drv, len(sinks))
-
-    logging.info("[NET] Done comparing nets. Differences: %d", diffs)
-    logging.info("[NET] Design 1 total nets: %d", d1.getNets().size())
-    logging.info("[NET] Design 2 total nets: %d", d2.getNets().size())
-    return diffs
-
-
-def log_layout_summary(total: int):
-    if total == 0:
-        logging.info("No layout differences found between designs")
-    else:
-        logging.warning("Found layout differences between designs: %d", total)
-
-
-def log_report_summary(flags: dict[str, bool]):
-    for label, saw in flags.items():
-        if saw:
-            logging.warning("Found %s differences between designs", label.lower())
-        else:
-            logging.info("No %s differences found between designs", label.lower())
-    if logging.getLogger().getEffectiveLevel() >= logging.INFO:
-        print("Note: Set logging level to DEBUG for more details")
+    # Combine and log
+    logging.info("Layout diff report (first %d lines):\n%s", layout_lines, truncated_layout)
+    logging.info("Netlist diff report (first %d lines):\n%s", netlist_lines, truncated_netlist)
 
 
 def compare_all(
@@ -224,33 +140,40 @@ def compare_all(
     log_level: str,
 ):
     """
-    Orchestrate:
-      1) setup logging
-      2) read checkpoints
-      3) cell & net compares
-      4) text-diff compares
-      5) final summaries
+    1) setup logging
+    2) read checkpoints
+    3) design comparison
+    4) netlist comparison
+    5) bitstream comparison
     """
     setup_logging(log_path, log_level)
     logging.info("Reading design checkpoints")
     d1 = Design.readCheckpoint(golden.dcp, golden.edf)
-    d2 = Design.readCheckpoint(test.dcp, golden.edf)
+    d2 = Design.readCheckpoint(test.dcp, test.edf)
 
-    cell_diffs = compare_cells(d1, d2)
-    net_diffs = compare_nets(d1, d2)
+    layout_comparator = DesignComparator()
+    layout_comparator.setComparePlacement(True)
+    layout_comparator.setComparePIPs(True)
+    layout_comparator.setComparePIPFlags(True)
+    num_diffs = layout_comparator.compareDesigns(d1, d2)
 
-    report_flags = {
-        "SETUP_TIMING": log_report_diff("SETUP_TIMING", golden.setup_timing, test.setup_timing),
-        "HOLD_TIMING": log_report_diff("HOLD_TIMING", golden.hold_timing, test.hold_timing),
-        "FULL_SUMMARY": log_report_diff(
-            "FULL_TIMING_SUMMARY", golden.timing_summary_full, test.timing_summary_full
-        ),
-        "UTILIZATION": log_report_diff("UTILIZATION", golden.utilization, test.utilization),
-        # "POWER":         log_report_diff("POWER",         golden.power,       test.power),
-    }
+    netlist_comparator = EDIFNetlistComparator()
+    netlist1 = d1.getNetlist()
+    netlist2 = d2.getNetlist()
+    num_diffs += netlist_comparator.compareNetlists(netlist1, netlist2)
 
-    log_layout_summary(cell_diffs + net_diffs)
-    log_report_summary(report_flags)
+    num_diffs += compare_cells(d1, d2)
+
+    logging.info("Total layout/logic differences between designs: %d", num_diffs)
+    log_diff_summary(layout_comparator, netlist_comparator)
+
+    logging.info("Comparing bitstreams...")
+    bitstream_diff = compare_bitstreams(golden.bitstream, test.bitstream)
+    if bitstream_diff:
+        logging.error("\033[31mFound differences in bitstream comparison.\033[0m")
+        raise PhyscmpException
+
+    logging.info("\033[32mNo differences found in bitstream comparison.\033[0m")
 
 
 if __name__ == "__main__":
@@ -262,6 +185,7 @@ if __name__ == "__main__":
     p.add_argument("--golden_timing_summary_full", required=True)
     p.add_argument("--golden_utilization", required=True)
     p.add_argument("--golden_power", required=True)
+    p.add_argument("--golden_bitstream", required=True)
 
     p.add_argument("--test_dcp", required=True)
     p.add_argument("--test_edf", required=True)
@@ -270,6 +194,7 @@ if __name__ == "__main__":
     p.add_argument("--test_timing_summary_full", required=True)
     p.add_argument("--test_utilization", required=True)
     p.add_argument("--test_power", required=True)
+    p.add_argument("--test_bitstream", required=True)
 
     p.add_argument("--log_path", required=True)
     p.add_argument("--logging_level", default="INFO")

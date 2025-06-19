@@ -58,6 +58,8 @@ class ImplDetailedReports(ImplTool):
         self.outputs["power_summary"] = bp / "power_summary.txt"
         self.outputs["clocks"] = bp / "clocks.txt"
         self.outputs["journal"] = bp / "vivado.jou"
+        self.outputs["drc"] = bp / "drc_report.txt"
+        self.outputs["bitstream"] = bp / "bitstream.bit"
         self.outputs["log"] = bp / "vivado.log"
 
     def create_build_snippets(self):
