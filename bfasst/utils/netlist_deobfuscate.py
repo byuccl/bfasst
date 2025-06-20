@@ -13,7 +13,7 @@ import json
 import time
 import re
 
-from bfasst.utils.netlist_obfuscate_helpers import TAG_PROP, SENTINEL_VALUES
+from bfasst.utils.netlist_obfuscate_helpers import TAG_PROP
 from bfasst import jpype_jvm
 
 jpype_jvm.start()
@@ -229,10 +229,11 @@ def find_inversion_roots(netlist, json_db) -> list[str]:
                 cur_init = str(init_prop.getValue())
 
                 if "tag" in entry:
-                    if lut_size in SENTINEL_VALUES and is_bitwise_invert(
-                        SENTINEL_VALUES[lut_size], cur_init
-                    ):
-                        roots.append(hname)
+                    # if lut_size in SENTINEL_VALUES and is_bitwise_invert(
+                    #     SENTINEL_VALUES[lut_size], cur_init
+                    # ):
+                    #     roots.append(hname)
+                    logging.info(".")
                 else:
                     base_init = next(
                         (

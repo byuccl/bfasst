@@ -66,7 +66,7 @@ def obfuscate_lut(inst, counts) -> tuple[bool, list[dict[str, str]]]:
         return False, []
 
     old_init = str(props_map.get("INIT").getValue())
-    new_init = get_masking_init(lut_size)
+    new_init = get_masking_init(str(old_init), lut_size)
 
     inst.getInst().addProperty("INIT", new_init)
 
