@@ -327,7 +327,7 @@ class RwPhysNetlist:
             logging.info("  Creating new net %s for %s driving ff D input", new_net, src)
             new_net.createPortInst(new_cell_inst.getPort("D"), new_cell_inst)
             new_net.addPortInst(src)
-            self.phys_cells.append(new_cell_inst, site_inst, ff.getBELName())
+            self.phys_cells.append((new_cell_inst, site_inst, ff.getBELName()))
         return visited
 
     def __check_lutram_srl(
@@ -513,8 +513,7 @@ class RwPhysNetlist:
             rw.valid_bus_transfer(["O"], f"DO{i}", cell, ram32m)
 
         self.cells_to_remove.extend(cells)
-        for cell in cells:
-            parent = cell.getEDIFHierCellInst().getParent()
+        for parent in (cell.getEDIFHierCellInst().getParent() for cell in cells):
             self.cells_to_remove.append(parent)
         return ram32m
 
@@ -522,8 +521,7 @@ class RwPhysNetlist:
         """
         Run sanity assertions on LUTRAMs.
 
-        Returns:
-        (EDIFCell, [EDIFCellInst]) -> (parent cell, [child insts])
+        Returns -> (parent cell, [child insts])
         """
         hedif_cells = [c.getEDIFHierCellInst() for c in lut_rams]
         parents1 = [c.getParent() for c in hedif_cells]
