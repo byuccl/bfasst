@@ -4,7 +4,7 @@ build {{outputs.impl_tcl}}: template {{outputs.impl_json}} {{impl_library}}/viva
 build {{outputs.reports_tcl}}: template {{outputs.impl_json}} {{impl_library}}/vivado_impl_reports.tcl.mustache
 build {{outputs.run_tcl}}: template {{outputs.impl_json}} {{common_tools_path }}/vivado_top_tcl.mustache | {{#tcl_sources}} {{.}} {{/tcl_sources}}
 
-build {{outputs.impl_verilog }} {{outputs.impl_edf}} {{outputs.impl_dcp}} {{outputs.bitstream}} {{outputs.utilization}} {{outputs.timing}} {{outputs.hold_timing}} {{outputs.setup_timing}} {{outputs.timing_summary_full}} {{outputs.power}} : vivado {{outputs.run_tcl}} | {{inputs.synth_edf}} {{#inputs.xdc}} {{ . }} {{/inputs.xdc}} {{#outputs.clock_crank_tcl}} {{.}} {{/outputs.clock_crank_tcl}} {{outputs.setup_tcl}} {{outputs.impl_tcl}} {{outputs.reports_tcl}}
+build {{outputs.impl_verilog }} {{outputs.impl_edf}} {{outputs.impl_dcp}} {{outputs.bitstream }} {{outputs.utilization}}: vivado {{outputs.run_tcl}} {{inputs.synth_edf}} | {{#inputs.xdc}} {{ . }} {{/inputs.xdc}} {{#outputs.clock_crank_tcl}} {{.}} {{/outputs.clock_crank_tcl}} {{outputs.setup_tcl}} {{outputs.impl_tcl}} {{outputs.reports_tcl}}
     journal = {{outputs.journal}}
     log = {{outputs.log}}
 
