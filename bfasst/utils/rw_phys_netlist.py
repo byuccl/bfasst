@@ -1007,8 +1007,8 @@ if __name__ == "__main__":
         required=True,
         help="The build_directory to create a vivado netlist for.",
     )
-    add_path_arg("--impl_dcp", help="The implementation dcp file to use for the netlist.")
-    add_path_arg("--impl_edf", help="The implementation edf file to use for the netlist.")
+    add_path_arg(parser, "--impl_dcp", "The implementation dcp file to use for the netlist.")
+    add_path_arg(parser, "--impl_edf", "The implementation edf file to use for the netlist.")
     parser.add_argument(
         "--logging_level", default="INFO", help="Decides what levels of logs to display"
     )
