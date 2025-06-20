@@ -16,7 +16,7 @@ from bfasst.tools.impl.impl_detailed_reports import ImplDetailedReports
 from bfasst.tools.transform.netlist_deobfuscate import NetlistDeobfuscate
 from bfasst.utils.physcmp_data_types import ImplReports
 from bfasst.paths import FLOWS_PATH
-
+from bfasst.yaml_parser import DesignParser
 
 class ImplObfuscate(Flow):
     """Tool to synthesize, implement, reimplement, and compare designs"""
@@ -29,6 +29,9 @@ class ImplObfuscate(Flow):
         self.vivado_synth = VivadoSynth(
             self, design, opt_design=True, synth_options=self.synth_opts
         )
+        parser = DesignParser(self.design_path / "design.yaml")
+        if parser.clocks is None:
+            print("Warning: No clocks found in yaml file")
 
         self.netlist_obfuscate = NetlistObfuscate(
             self,
