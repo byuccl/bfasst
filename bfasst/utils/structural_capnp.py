@@ -47,9 +47,9 @@ class StructuralCapnp(RwPhysNetlist):
     """
 
     def __init__(
-        self, build_dir: str, impl_dcp: Path, impl_edif: Path, logging_level: str, log_name: str
+        self, build_dir: str, impl_checkpoint: tuple[Path, Path], logging_level: str, log_name: str
     ) -> None:
-        super().__init__(build_dir, impl_dcp, impl_edif, logging_level, log_name)
+        super().__init__(build_dir, impl_checkpoint, logging_level, log_name)
         self.cmp_stage_dir = Path(self.build_dir) / "capnp_cmp"
         self.cmp_stage_dir.mkdir(parents=True, exist_ok=True)
         self.cmp_log_path = self.cmp_stage_dir / log_name.split("/")[-1]

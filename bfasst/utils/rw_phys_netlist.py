@@ -46,7 +46,7 @@ class RwPhysNetlist:
     """Creates a xilinx netlist that has only physical primitives"""
 
     def __init__(
-        self, build_dir: str, impl_dcp: Path, impl_edf: Path, logging_level: str, log_name: str
+        self, build_dir: str, impl_checkpoint: tuple[Path, Path], logging_level: str, log_name: str
     ) -> None:
         self.build_dir = Path(build_dir)
         self.stage_dir = self.build_dir / "vivado_phys_netlist"
@@ -67,7 +67,7 @@ class RwPhysNetlist:
         System.setErr(PrintStream(File(rapidwright_log_path)))
 
         # Rapidwright design / netlist
-        self.vivado_design, self.vivado_netlist = self._load_designs(impl_dcp, impl_edf)
+        self.vivado_design, self.vivado_netlist = self._load_designs(impl_checkpoint)
 
         # Const nets
         self.vcc, self.gnd = None, None
@@ -131,8 +131,9 @@ class RwPhysNetlist:
             assert const_port
             const_net.createPortInst(const_port, const_edif_inst)
 
-    def _load_designs(self, impl_dcp: Path, impl_edf: Path) -> tuple[Design, EDIFNetlist]:
+    def _load_designs(self, impl_checkpoint: tuple[Path, Path]) -> tuple[Design, EDIFNetlist]:
         """Load the designs from the given paths"""
+        impl_dcp, impl_edf = impl_checkpoint
         logging.info("Loading vivado dcp and edf files: %s, %s", str(impl_dcp), str(impl_edf))
         start_time = time.time()
         vivado_design = Design.readCheckpoint(impl_dcp, impl_edf)
