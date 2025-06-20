@@ -1,14 +1,9 @@
 write_checkpoint -force -file {{ outputs.impl_dcp }}
 write_edif -force -file {{ outputs.impl_edf }}
 write_verilog -force -file {{ outputs.impl_verilog }}
-
-report_utilization -hierarchical -file {{ outputs.utilization }}
+report_utilization -file {{ outputs.utilization }}
 report_timing -file {{ outputs.timing }}
-report_timing -setup -max_paths 1000 -sort_by group -path_type full -file {{ outputs.setup_timing }}
-report_timing -hold -max_paths 1000 -sort_by group -path_type full -file {{ outputs.hold_timing }}
-report_timing_summary -delay_type max -report_unconstrained -check_timing_verbose -file {{ outputs.timing_summary_full }}
-report_power -verbose -file {{ outputs.power }}
-
+report_qor_suggestions -name retarget -report_all_suggestions -file retarget.rpt
 {{#outputs.bitstream}}
 write_bitstream -force {{ . }}
 {{/outputs.bitstream}}

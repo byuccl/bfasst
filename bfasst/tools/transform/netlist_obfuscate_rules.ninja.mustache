@@ -1,4 +1,3 @@
 rule netlist_obfuscate
-    command = python {{transform_script_path}} --dcp {{dcp_path}} --edf {{edf_path}} --out_dcp {{transformed_synth_dcp}} --out_edf {{transformed_synth_edf}} --log {{log_path}} {{logging_level}} {{build_path}}
-    description = [NetlistObfuscate] Obfuscating netlist
-
+  command = python $script --build_path $build_path --dcp $dcp --edf $edf --orig_dcp $orig_dcp --orig_edf $orig_edf --out_dcp $out_dcp --out_edf $out_edf --untransformed_out_dcp $untrans_dcp --untransformed_out_edf $untrans_edf --original_cell_props $orig_props --log $log $logging_level
+  description = [NetlistObfuscate] Obfuscating netlist
