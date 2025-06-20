@@ -21,6 +21,7 @@ jpype_jvm.start()
 
 # pylint: disable=wrong-import-position, wrong-import-order
 from java.lang import System
+from java.util import ArrayList
 from java.io import PrintStream, FileOutputStream
 from com.xilinx.rapidwright.design import Design
 from com.xilinx.rapidwright.design.tools import LUTTools

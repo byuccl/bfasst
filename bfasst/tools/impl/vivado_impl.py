@@ -54,7 +54,8 @@ class VivadoImpl(ImplTool):
             ),
             "clocks": (
                 self.design_props.clocks
-                if self.design_props is not None and type(self.flow).__name__ == "ClockCrank"
+                if self.design_props is not None
+                and type(self.flow).__name__ in ("ClockCrank", "ImplObfuscate")
                 else ""
             ),
             "outputs": self.outputs_str,

@@ -273,9 +273,29 @@ def restore_all_properties(design: Design, json_db: dict[str, dict], inversion_r
             for h_inst in inst_list:
                 hname = h_inst.getFullHierarchicalInstName()
                 entry = json_db.get(hname)
+                
+                # Handle if hierarchical name was somehow changed during implementation
                 if entry is None:
-                    logging.warning("Hierarchical name %s not found in JSON file", hname)
-                    continue
+                    logging.warning("Hierarchical name %s not found in JSON file; finding cell based on tag instead", hname)
+                    cell = h_inst.getInst()
+                    cell_tag_prop = cell.getPropertiesMap().get(TAG_PROP)
+                    
+                    if cell_tag_prop is None:
+                        logging.warning("No tag for cell %s in design; skipping", hname)
+                        continue
+                    
+                    cell_tag = (cell_tag_prop.getValue())
+
+                    for json_hname, json_entry in json_db.items():
+                        if json_entry.get("tag") == cell_tag:
+                            logging.info("Matched tag %s to %s", cell_tag, json_hname)
+                            entry = json_entry
+                            break
+                    
+                    if entry is None:
+                        logging.warning("No matching tag found in json_db for cell %s", hname)
+                        continue
+
                 restore_properties_for_cell(h_inst.getInst(), entry, hname, inversion_roots)
 
 
