@@ -2,7 +2,42 @@
 opt_design
 {{/opt_design}}
 
-place_design
+set luts [get_cells -hier -filter {REF_NAME =~ LUT[2-6]}]
+
+foreach c $luts {
+
+    # ------------------------------------------------------------------
+    # 1.  Ask Vivado which BEL the cell is now on
+    #     (e.g. A6LUT, D5LUT …).  This tells us how many *physical*
+    #     pins exist (A6..A1 or A5..A1) and which are fastest.
+    # ------------------------------------------------------------------
+    set bel  [get_property BEL $c]
+    # examples:  SLICE_X12Y34/A6LUT   →  belName = A6LUT
+    #            SLICEL/D5LUT         →           D5LUT
+    set belName [lindex [split $bel "/"] end]
+
+    # ------------------------------------------------------------------
+    # 2.  Derive default logical-to-physical map for that BEL
+    # ------------------------------------------------------------------
+    set k  [regexp -inline -nocase {\d} $belName]   ;# "6" or "5" …
+    if {$k eq ""} { set k 6 }                       ;# fall-back
+
+    # Fastest pin of a k-LUT BEL is Ak (A6 or A5)
+    # Build map:  I(k-1):Ak  …  I0:A( k - (k) ) = A1
+    set map ""
+    set fastest $k
+    for {set i [expr {$k-1}]} {$i >= 0} {incr i -1} {
+        append map "I${i}:A${fastest} "
+        incr fastest -1
+    }
+
+    # ------------------------------------------------------------------
+    # 3.  Apply the lock
+    # ------------------------------------------------------------------
+    set_property LOCK_PINS $map $c
+}
+
+place_design -no_psip
 # write_checkpoint -file {{outputs.impl_verilog}}
 
 {{#phys_opt_design}}

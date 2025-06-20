@@ -93,10 +93,10 @@ def get_masking_init(orig_init: str, lut_size: int) -> str:
     new_value = shuffle_preserve_bucket(value, lut_size)
 
     # Guarantee the new value is actually different (rare corner case)
-    if new_value == value:
-        logging.info("new_value == value")
+    # if new_value == value:
+        # logging.info("new_value == value")
         # force at least one extra swap
-        new_value ^= 1 << random.randrange(1 << lut_size)
+        # new_value ^= 1 << random.randrange(1 << lut_size)
 
     width = 1 << lut_size  # 4,8,16,32,64
     logging.info("Old INIT: %s; New INIT: %s", orig_init, f"{width:02d}'h{new_value:0{width//4}X}")
