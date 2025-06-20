@@ -10,7 +10,7 @@ import time
 
 from bfasst import jpype_jvm
 from bfasst.config import PART
-from bfasst.utils import convert_verilog_literal_to_int
+from bfasst.utils import convert_verilog_literal_to_int, add_path_arg
 from bfasst.utils.capnp_cells import CapnpCells
 from bfasst.utils.rw_phys_netlist import RwPhysNetlist
 import bfasst.utils.rw_helpers as rw
@@ -462,10 +462,6 @@ class StructuralCapnp(RwPhysNetlist):
                     rw.flip_const_port_signal(self.rev_design, ecell, f"{port_name}[{idx}]", idx)
 
 
-def add_path_arg(p, arg, help_msg):
-    p.add_argument(arg, type=Path, required=True, help=help_msg)
-
-
 if __name__ == "__main__":
     parser = ArgumentParser()
     add_path_arg(parser, "--impl_edf", "The implementation edf file to use for the netlist.")
@@ -486,6 +482,6 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     copmarator = StructuralCapnp(
-        args.build_dir, args.impl_dcp, args.impl_edf, args.logging_level, args.log_name
+        args.build_dir, (args.impl_dcp, args.impl_edf), args.logging_level, args.log_name
     )
     copmarator.run(phys_capnp=args.phys_capnp, edf_capnp=args.edf_capnp)

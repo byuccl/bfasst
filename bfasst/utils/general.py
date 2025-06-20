@@ -1,5 +1,6 @@
 """Utility functions"""
 
+from argparse import ArgumentParser
 import json
 import logging
 from pathlib import Path
@@ -255,3 +256,7 @@ def get_size(obj, seen=None):
     elif hasattr(obj, "__iter__") and not isinstance(obj, (str, bytes, bytearray)):
         size += sum(get_size(i, seen) for i in obj)
     return size
+
+
+def add_path_arg(p: ArgumentParser, arg: str, help_msg: str):
+    p.add_argument(arg, type=Path, required=True, help=help_msg)

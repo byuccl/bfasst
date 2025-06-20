@@ -12,6 +12,7 @@ from jpype.types import JInt
 
 from bfasst import jpype_jvm
 from bfasst.config import PART
+from bfasst.utils import add_path_arg
 import bfasst.utils.rw_helpers as rw
 
 
@@ -374,7 +375,6 @@ class RwPhysNetlist:
         lut6: Tuple (lut6_cell, lut6_pin_out)
         lut5: Tuple (lut5_cell, lut5_pin_out)
         """
-
         output_nets = {
             lut6[1]: site_inst.getNetFromSiteWire(lut6[1]),
             lut5[1]: site_inst.getNetFromSiteWire(lut5[1]),
@@ -385,8 +385,7 @@ class RwPhysNetlist:
         if not const_nets:
             return set()
 
-        if len(output_nets) == len(const_nets):
-            # All outputs are const nets
+        if len(output_nets) == len(const_nets):  # Check if all outputs are const nets
             self.__process_lut_const(site_inst, const_nets)
             return {self.empty_cell}
 
@@ -545,14 +544,11 @@ class RwPhysNetlist:
         single RAM primitive.  RAMS32 is wrapped in RAM32X1S (parent cell), so
         LUTRAMs only need processed if they can be combined.
         """
-
         parents = [c.getEDIFHierCellInst().getParent() for c in lut_rams]
-        if len(set(parents)) == 1:
-            # Sometimes LUTRAM cells are already combined into bigger primitive
+        if len(set(parents)) == 1:  # Sometimes LUTRAMs are already combined into bigger primitive
             return
 
         cell_type = {c.getType() for c in lut_rams}
-
         if not cell_type <= {"RAMS32", "RAMD32"}:
             raise PhysNetlistTransformError(f"Unexpected child cell type {cell_type}")
 
@@ -585,12 +581,7 @@ class RwPhysNetlist:
             self.__check_ram32m(lut_rams, parents)
 
     def __process_muxf7_muxf8(self, cell: Cell) -> list:
-        """
-        Process MUXF7/MUXF8 primitive
-        Not sure whether inputs can be permuted or not, but for now let's
-        raise NotImplementedError if they are.
-        """
-
+        """Process MUXF7/MUXF8 primitive"""
         if rw.PinMap.cell_is_default_mapping(cell):
             self.phys_cells.append((cell.getEDIFCellInst(), cell.getSiteInst(), cell.getBELName()))
             return []
@@ -599,17 +590,12 @@ class RwPhysNetlist:
         raise NotImplementedError
 
     def __process_carry4(self, cell: Cell) -> list:
-        """
-        Process CARRY4 primitive
-        Not sure whether inputs can be permuted or not, but for now let's
-        raise NotImplementedError if they are.
-        """
+        """Process CARRY4 primitive"""
         if rw.PinMap.cell_is_default_mapping(cell):
             self.phys_cells.append((cell.getEDIFCellInst(), cell.getSiteInst(), cell.getBELName()))
             return []
 
         logging.info("\tInputs are permuted. Ensuring connections")
-
         rw.PinMap.ensure_connected(cell.getEDIFCellInst(), self.gnd)
 
         raise NotImplementedError
@@ -1021,18 +1007,8 @@ if __name__ == "__main__":
         required=True,
         help="The build_directory to create a vivado netlist for.",
     )
-    parser.add_argument(
-        "--impl_dcp",
-        type=Path,
-        required=True,
-        help="The implementation dcp file to use for the netlist.",
-    )
-    parser.add_argument(
-        "--impl_edf",
-        type=Path,
-        required=True,
-        help="The implementation edf file to use for the netlist.",
-    )
+    add_path_arg("--impl_dcp", help="The implementation dcp file to use for the netlist.")
+    add_path_arg("--impl_edf", help="The implementation edf file to use for the netlist.")
     parser.add_argument(
         "--logging_level", default="INFO", help="Decides what levels of logs to display"
     )
@@ -1040,7 +1016,5 @@ if __name__ == "__main__":
         "--log_name", type=str, default="log.txt", help="The log file path to use as output"
     )
     args = parser.parse_args()
-    netlist_generator = RwPhysNetlist(
-        args.build_dir, args.impl_dcp, args.impl_edf, args.logging_level, args.log_name
-    )
-    netlist_generator.run()
+    impl_files = (args.impl_dcp, args.impl_edf)
+    RwPhysNetlist(args.build_dir, impl_files, args.logging_level, args.log_name).run()
