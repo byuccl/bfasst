@@ -5,7 +5,7 @@ build {{ xray_fasm }}: bit_to_fasm {{ bitstream_path }}
     db_root = {{ db_root }}
     part = {{ part }}
 
-build {{ rev_netlist }} {{ xray_xdc }}: fasm_to_netlist {{ xray_fasm }}
+build {{ rev_netlist }} {{ xray_xdc }} {{ output_capnp_log }} {{ output_capnp_phys }} {{ output_capnp_xdc }} {{log_file}}: fasm_to_netlist {{ xray_fasm }}
     fasm2bels_path = {{ fasm2bels_path }}
     fasm2bels_python_path = {{ fasm2bels_python_path }}
     part_db = {{ part }}_db
@@ -15,6 +15,6 @@ build {{ rev_netlist }} {{ xray_xdc }}: fasm_to_netlist {{ xray_fasm }}
     xdc_file = {{ xray_xdc }}
     input_xdc = {{ input_xdc }}
     output_capnp_log = {{ output_capnp_log }}
-    output_capnp_phys = {{output_capnp_phys}}
-    output_capnp_xdc =  {{output_capnp_xdc}}
-
+    output_capnp_phys = {{ output_capnp_phys }}
+    output_capnp_xdc =  {{ output_capnp_xdc }}
+    log_file = {{ log_file }}
