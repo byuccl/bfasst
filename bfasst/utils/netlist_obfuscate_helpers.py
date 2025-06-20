@@ -59,6 +59,27 @@ def _shuffle_init_same_pins(init: int, lut_size: int) -> int:
     return new_init
 
 
+def shuffle_preserve_bucket(init, size):
+    pins = _active_pins(init, size)
+    # 1. Partition minterms by the *fastest* pin
+    fastest = max(pins)           # e.g. 5 for LUT6
+    half = 1 << fastest
+    # Each pair (m, m^half) must still differ after shuffle
+    bits = [(init >> i) & 1 for i in range(1 << size)]
+    pairs = [(i, i ^ half) for i in range(half)]
+    ones_in_fast = sum(bits[a] ^ bits[b] for a, b in pairs)
+    for a, b in random.sample(pairs, len(pairs)):   # random order
+        if bits[a] ^ bits[b]:
+            # swap with 50 % chance but keep the same (#pairs with diff)
+            if random.getrandbits(1):
+                bits[a], bits[b] = bits[b], bits[a]
+    # reassemble
+    new = 0
+    for i, b in enumerate(bits):
+        new |= b << i
+    return new if new != init else shuffle_preserve_bucket(init, size)
+
+
 def get_masking_init(orig_init: str, lut_size: int) -> str:
     """
     Given the *string* INIT from an EDIF/Verilog property (e.g. "64'h699696..."),
@@ -69,7 +90,7 @@ def get_masking_init(orig_init: str, lut_size: int) -> str:
 
     # parse the incoming hex literal  int
     value = int(orig_init.split("'h")[1], 16)
-    new_value = _shuffle_init_same_pins(value, lut_size)
+    new_value = shuffle_preserve_bucket(value, lut_size)
 
     # Guarantee the new value is actually different (rare corner case)
     if new_value == value:
@@ -78,5 +99,6 @@ def get_masking_init(orig_init: str, lut_size: int) -> str:
         new_value ^= 1 << random.randrange(1 << lut_size)
 
     width = 1 << lut_size  # 4,8,16,32,64
+    logging.info("Old INIT: %s; New INIT: %s", orig_init, f"{width:02d}'h{new_value:0{width//4}X}")
     return f"{width:02d}'h{new_value:0{width//4}X}"
 
