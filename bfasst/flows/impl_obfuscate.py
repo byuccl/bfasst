@@ -24,15 +24,18 @@ class ImplObfuscate(Flow):
     def __init__(self, design):
         super().__init__(design)
 
-        self.synth_opts = {"synth_design": "-flatten_hierarchy full"}
-        self.vivado_synth = VivadoSynth(self, design, synth_options=self.synth_opts)
+        self.synth_opts = {"synth_design": ""}
+        self.vivado_synth = VivadoSynth(
+            self, design, opt_design=True, synth_options=self.synth_opts
+        )
 
         self.netlist_obfuscate = NetlistObfuscate(
             self,
             design,
             dcp_path=self.vivado_synth.outputs["synth_dcp"],
             edf_path=self.vivado_synth.outputs["synth_edf"],
-            transform_type="purge_luts",
+            orig_dcp_path=self.vivado_synth.outputs["synth_dcp"],
+            orig_edf_path=self.vivado_synth.outputs["synth_edf"],
             logging_level="DEBUG",
             log_file="netlist_obfuscate.log",
         )
@@ -40,7 +43,9 @@ class ImplObfuscate(Flow):
         self.impl_orig = VivadoImpl(
             self,
             design,
-            synth_edf=self.vivado_synth.outputs["synth_edf"],
+            synth_edf=self.netlist_obfuscate.outputs["untransformed_synth_edf"],
+            opt_design=False,
+            phys_opt_design=True,
             constraints_files=self.vivado_synth.outputs["synth_constraints"],
         )
 
@@ -49,6 +54,8 @@ class ImplObfuscate(Flow):
             design,
             synth_edf=self.netlist_obfuscate.outputs["transformed_synth_edf"],
             build_path="vivado_reimpl",
+            opt_design=False,
+            phys_opt_design=True,
             constraints_files=self.vivado_synth.outputs["synth_constraints"],
         )
 
@@ -57,34 +64,41 @@ class ImplObfuscate(Flow):
             design,
             dcp_path=self.impl_transform.outputs["impl_dcp"],
             edf_path=self.impl_transform.outputs["impl_edf"],
+            unmodified_dcp_path=self.impl_orig.outputs["impl_dcp"],
+            unmodified_edf_path=self.impl_orig.outputs["impl_edf"],
             props_json=self.netlist_obfuscate.outputs["original_cell_props"],
         )
 
         self.impl_detailed_reports_orig = ImplDetailedReports(
-            self, design, impl_dcp=self.impl_orig.outputs["impl_dcp"], tag="orig"
+            self,
+            design,
+            impl_dcp=self.netlist_deobfuscate.outputs["unmodified_deobf_dcp"],
+            tag="orig",
         )
         self.impl_detailed_reports_transform = ImplDetailedReports(
             self, design, impl_dcp=self.netlist_deobfuscate.outputs["deobf_dcp"], tag="transform"
         )
 
         golden = ImplReports(
-            dcp=self.impl_orig.outputs["impl_dcp"],
-            edf=self.impl_orig.outputs["impl_edf"],
+            dcp=self.netlist_deobfuscate.outputs["unmodified_deobf_dcp"],
+            edf=self.netlist_deobfuscate.outputs["unmodified_deobf_edf"],
             setup_timing=self.impl_detailed_reports_orig.outputs["setup_timing"],
             hold_timing=self.impl_detailed_reports_orig.outputs["hold_timing"],
             timing_summary_full=self.impl_detailed_reports_orig.outputs["full_timing_summary"],
             utilization=self.impl_detailed_reports_orig.outputs["utilization"],
             power=self.impl_detailed_reports_orig.outputs["power_summary"],
+            bitstream=self.impl_detailed_reports_orig.outputs["bitstream"],
         )
 
         test = ImplReports(
-            dcp=self.impl_transform.outputs["impl_dcp"],
-            edf=self.impl_transform.outputs["impl_edf"],
+            dcp=self.netlist_deobfuscate.outputs["deobf_dcp"],
+            edf=self.netlist_deobfuscate.outputs["deobf_edf"],
             setup_timing=self.impl_detailed_reports_transform.outputs["setup_timing"],
             hold_timing=self.impl_detailed_reports_transform.outputs["hold_timing"],
             timing_summary_full=self.impl_detailed_reports_transform.outputs["full_timing_summary"],
             utilization=self.impl_detailed_reports_transform.outputs["utilization"],
             power=self.impl_detailed_reports_transform.outputs["power_summary"],
+            bitstream=self.impl_detailed_reports_transform.outputs["bitstream"],
         )
 
         self.physcmp = PhysCmp(

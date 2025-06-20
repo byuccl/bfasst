@@ -11,7 +11,9 @@ from bfasst.utils.general import json_write_if_changed
 class VivadoSynth(SynthTool):
     """Tool to create vivado synthesis ninja snippets."""
 
-    def __init__(self, flow, design_path, synth_options="", ooc=False):
+    def __init__(
+        self, flow, design_path, synth_options="", opt_design=False, ooc=False
+    ):  # pylint: disable=too-many-positional-arguments
         super().__init__(flow, design_path, ooc=ooc)
         self._my_dir_path = pathlib.Path(__file__).parent
         self.build_path = (
@@ -22,6 +24,7 @@ class VivadoSynth(SynthTool):
 
         self.deps = []  # add member for flows to add their own deps to (see opentitan)
 
+        self.opt_design = opt_design
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()
         self.outputs_str = {k: str(v) for k, v in self.outputs.items()}
@@ -34,6 +37,7 @@ class VivadoSynth(SynthTool):
             "verilog": self.verilog,
             "system_verilog": self.system_verilog,
             "other_sources": self.other_sources,
+            "opt_design": self.opt_design,
             "io": str(self.build_path / "report_io.txt") if not self.ooc else False,
             "synth_output": str(self.build_path),
             "synth_design": "",
