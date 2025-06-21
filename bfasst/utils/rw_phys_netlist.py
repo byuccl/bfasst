@@ -260,7 +260,7 @@ class RwPhysNetlist:
         )
 
         for site_inst in slicel_slicem_sites:
-            self.__process_lut(site_inst, cells_already_visited)
+            self.__process_luts(site_inst, cells_already_visited)
             self.__process_ffs(site_inst, cells_already_visited)
 
         cells_already_visited.discard(None)
@@ -268,7 +268,7 @@ class RwPhysNetlist:
 
         self._resolve_hanging_pins()
 
-    def __process_lut(self, site_inst: SiteInst, cells_already_visited: set[Cell]):
+    def __process_luts(self, site_inst: SiteInst, cells_already_visited: set[Cell]):
         lut_rams = []
         if site_inst.getName().startsWith("STATIC_SOURCE"):
             logging.info("Site %s is static signal generator", site_inst.getName())
