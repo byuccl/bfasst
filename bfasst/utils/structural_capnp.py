@@ -4,12 +4,12 @@ Check two netlists for structural equivalence using location data.
 
 from argparse import ArgumentParser
 import logging
-from itertools import groupby
 from pathlib import Path
 import time
 
+from jpype.types import JString
+
 from bfasst import jpype_jvm
-from bfasst.config import PART
 from bfasst.utils import convert_verilog_literal_to_int, add_path_arg
 from bfasst.utils.capnp_cells import CapnpCells
 from bfasst.utils.rw_phys_netlist import RwPhysNetlist
@@ -19,7 +19,6 @@ from bfasst.utils.structural_helpers import create_cell_props
 
 # pylint: disable=wrong-import-position,wrong-import-order,import-error
 jpype_jvm.start()
-from com.xilinx.rapidwright.device import Device
 from com.xilinx.rapidwright.design import SiteInst, Cell
 from com.xilinx.rapidwright.edif import (
     EDIFCellInst,
@@ -70,6 +69,7 @@ class StructuralCapnp(RwPhysNetlist):
         # nets are named based on the net driver.
         self.net_map = {}  # net names: [net names and alias nets] (vivado: rev)
         self.driver_cache = {}  # EDIFNet: driver_full_name_str
+        self.rev_net_cache = set()  # Set to avoid reprocessing nets
         self.rev_driver_cache = {}  # EDIFHierPortInst: driver_full_name_str
 
     def run(self, phys_capnp: Path, edf_capnp: Path):
@@ -93,9 +93,9 @@ class StructuralCapnp(RwPhysNetlist):
 
         self.load_capnp_design(phys_capnp, edf_capnp)
         comp_start_time = time.time()
+        self.fix_rev_dsps()
         for ecell, site_inst, bel_name in self.phys_cells:
             self._compare_cell(ecell, site_inst, bel_name)
-        self.fix_rev_dsps()
         self._check_nets()
         end_time = time.time()
         logging.info("Total Comparison Time: %s seconds", end_time - comp_start_time)
@@ -111,7 +111,7 @@ class StructuralCapnp(RwPhysNetlist):
         self.rev_netlist = LogNetlistReader.readLogNetlist(str(edf_capnp))
         self.rev_design = PhysNetlistReader.readPhysNetlist(str(phys_capnp), self.rev_netlist)
         self.rev_design.flattenDesign()
-        self.rev_netlist.expandMacroUnisims(Device.getDevice(PART).getSeries())
+        self.rev_netlist.expandMacroUnisims(self.device.getSeries())
         logging.info("Loading reversed capnp objects took %s seconds.", time.time() - start_time)
 
         self.capnp_cells = CapnpCells(phys_capnp, edf_capnp)
@@ -153,8 +153,7 @@ class StructuralCapnp(RwPhysNetlist):
         cell: The original post-implementation cell (used for location data)
         """
 
-        rev_cell = self.rev_design.getSiteInst(site.getName()).getCell(bel_name)
-
+        rev_cell = self.rev_design.getSiteInst(site.getSiteName()).getCell(bel_name)
         logging.info(
             "Comparing cell %s on BEL %s to reversed cell %s",
             ecell.getName(),
@@ -163,19 +162,12 @@ class StructuralCapnp(RwPhysNetlist):
         )
 
         rev_ecell = rev_cell.getEDIFCellInst()
-
         if ecell.getCellType().getName() != rev_ecell.getCellType().getName():
             if "LUT" not in ecell.getCellType().getName():
                 raise StructuralCompareError(
                     f"Cell type {ecell.getCellType().getName()} does not match reversed cell "
                     + f"{rev_ecell.getCellType().getName()}."
                 )
-            # if __debug__:
-            #     logging.warning(
-            #         "Warning: Comparing LUT cell %s to %s",
-            #         ecell.getCellType().getName(),
-            #         rev_ecell.getCellType().getName(),
-            #     )
 
         # Check properties
         cell_props = ecell.getPropertiesMap()  # The regular cell may have out of date properties
@@ -253,20 +245,18 @@ class StructuralCapnp(RwPhysNetlist):
         if bram_do:
             assert ecell.getProperty("DOB_REG").getValue() == "0"
             ignore_pins.update(("RSTREGARSTREG", "RSTREGB", "REGCEAREGCE", "REGCEB"))
-
-        bram_a_only = ecell.getProperty("RAM_MODE").getValue() == '"TDP"' and not [
-            p
-            for i in range(32)
-            for p in ecell.getPortInst(f"DOBDO[{i}]")
-            if p is not None and not p.getNet().isGND()
-        ]
+        bram_a_only = False
+        if ecell.getProperty("RAM_MODE").getValue() == "TDP":
+            port_gen = (ecell.getPortInst(f"DOBDO[{i}]") for i in range(32))
+            ports = [p for p in port_gen if p is not None and not p.getNet().isGND()]
+            bram_a_only = not ports
         if bram_a_only:
             ignore_pins.update(
                 ("CASCADEINA", "CASCADEINB", "CASCADEOUTA", "CASCADEOUTB", "CLKBWRCLK", "ENBWREN")
             )
 
         # According to the BRAM Doc, if SDP, then these ports are not used.
-        if ecell.getProperty("RAM_MODE").getValue() == '"SDP"':
+        if ecell.getProperty("RAM_MODE").getValue() == "SDP":
             ignore_pins.update(
                 ("CASCADEINA", "CASCADEINB", "CASCADEOUTA", "CASCADEOUTB", "REGCEB", "RSTREGB")
             )
@@ -353,6 +343,7 @@ class StructuralCapnp(RwPhysNetlist):
                     # p = self.capnp_cells.phys_capnp
                     # n = self.capnp_cells.log_capnp
                     # capnp_cell, lcapnp_cell = self.capnp_cells.get_capnp_cell(rev_cell.getName())
+                    # si = self.vivado_design.getSiteInst(rev_cell.getSiteInst().getSiteName())
                     # logging.info(
                     #     f"Net {net_driver} on port {port.getName()} in cell {ecell.getName()}"
                     #     + f" already mapped. ({self.net_map[net_driver]} != {rev_net_driver})\n\t"
@@ -360,9 +351,7 @@ class StructuralCapnp(RwPhysNetlist):
                     #     + f"Rev Edif Cell/port: {rev_port}"
                     # )
                     # logging.shutdown()
-                    # import code
-
-                    # code.interact(local=dict(globals(), **locals()))
+                    # interpreter(locals())
                     raise StructuralCompareError(
                         f"Net {net_driver} on port {port.getName()} in cell {ecell.getName()}"
                         + f" already mapped. ({self.net_map[net_driver]} != {rev_net_driver})\n\t"
@@ -385,30 +374,24 @@ class StructuralCapnp(RwPhysNetlist):
         Helper to return exactly one driver-string for rev_net,
         caching results and handling the 2-driver IBUF case.
         """
-        if rev_port not in self.rev_driver_cache:
-            leafs = rev_net.getLeafHierPortInsts(True, True)
-            drivers = []
-            sinks = []
-            for k, g in groupby(leafs, key=lambda x: x.isOutput()):
-                if k:
-                    drivers.extend(g)
-                else:
-                    sinks.extend(g)
-            if not drivers:
-                # fallback for top-level I/Os
-                drivers = [p for p in rev_net.getPortInsts() if p.isInput()]
-                if len(drivers) == 2:
-                    # IBUF nets: pick the one that matches driver
-                    top_io = driver.split("/")[-1]
-                    drivers = [l for l in drivers if str(l) == top_io]
-            assert len(drivers) == 1, f"Expected 1 driver on {rev_net}, found {drivers}"
-
-            tmp = dict.fromkeys(sinks, str(drivers[0]))
-            self.rev_driver_cache.update(tmp)
-            self.rev_driver_cache[drivers[0]] = str(drivers[0])
-            self.rev_driver_cache[rev_port] = str(drivers[0])
-
-        return self.rev_driver_cache[rev_port]
+        if rev_port in self.rev_driver_cache:
+            return self.rev_driver_cache[rev_port]
+        drv = rev_net.getLeafHierPortInsts(True, False)
+        if not drv:  # fallback for top-level I/Os
+            drv = [p for p in rev_net.getPortInsts() if p.isInput()]
+            if len(drv) == 2:  # IBUF nets: pick the one that matches driver
+                top_io = driver.split("/")[-1]
+                drv = [l for l in drv if str(l) == top_io]
+        assert len(drv) == 1, f"Expected 1 driver on {rev_net}, found {drv}"
+        drv = str(drv[0])
+        if rev_net not in self.rev_net_cache:  # Often only one port is missing.
+            self.rev_net_cache.add(rev_net)
+            sinks = rev_net.getLeafHierPortInsts(False, True)
+            for s in sinks:  # This is way faster than dict.update(dict.from_keys(sinks,drv))
+                self.rev_driver_cache[s] = drv
+            self.rev_driver_cache[drv] = drv
+        self.rev_driver_cache[rev_port] = drv
+        return drv
 
     def fix_rev_dsps(self) -> None:
         """
@@ -424,9 +407,7 @@ class StructuralCapnp(RwPhysNetlist):
             for port_name, bus_size in (("PCIN", 48), ("PCOUT", 48))
             for idx in range(bus_size)
         ]
-        for cell in self.rev_design.getCells():
-            if cell.getType() != "DSP48E1":
-                continue
+        for cell in (c for c in self.rev_design.getCells() if c.getType() == "DSP48E1"):
             logging.info("Processing reversed DSP %s for inverted signals", cell.getName())
             ecell = cell.getEDIFCellInst()
             assert ecell
@@ -441,11 +422,11 @@ class StructuralCapnp(RwPhysNetlist):
             # to the neighboring DSP site.
             # Other inputs control the mux, so as long as this matches, the cascade values
             # are irrelevant. See Xilinx UG479 Figure 2-1 for more information.
-            site_name = cell.getSite().getName()
-            viv_cell = self.vivado_design.getSiteInst(site_name).getCell(cell.getBELName())
-            viv_ecell = viv_cell.getEDIFCellInst()
+            name = cell.getSite().getName()
+            viv_cell = self.vivado_design.getSiteInstFromSiteName(name).getCell(cell.getBELName())
+            viv_cell = viv_cell.getEDIFCellInst()
             for port_name in constant_ports:
-                viv_port_inst = viv_ecell.getPortInst(port_name)
+                viv_port_inst = viv_cell.getPortInst(port_name)
                 if viv_port_inst is None or viv_port_inst.getNet().isGND():
                     logging.info("Disconnecting %s port", port_name)
                     port_inst = ecell.getPortInst(port_name)
@@ -460,6 +441,24 @@ class StructuralCapnp(RwPhysNetlist):
                     if not int(inv):
                         continue
                     rw.flip_const_port_signal(self.rev_design, ecell, f"{port_name}[{idx}]", idx)
+            # FASM2BELS just sets USE_MULT to "MULTIPLY" -> infer new value based on OPMODE
+            # If opmode is not constant, then the value is DYNAMIC
+            # The multiply unit (output) is only used if opmode[3:0] = 4'b0101
+            opmode = [
+                ecell.getPortInst(port_name).getNet()
+                for port_name in ("OPMODE[3]", "OPMODE[2]", "OPMODE[1]", "OPMODE[0]")
+            ]
+            if [net for net in opmode if not rw.is_static_net(net)]:
+                logging.info(
+                    "Nonconstant OPMODE: Setting USE_MULT to DYNAMIC for %s", cell.getName()
+                )
+                ecell.addProperty("USE_MULT", JString("DYNAMIC"))
+            elif [net.isVCC() for net in opmode] != [False, True, False, True]:
+                logging.info(
+                    "Constant OPMODE bypasses mult output. Setting USE_MULT to NONE for %s",
+                    cell.getName(),
+                )
+                ecell.addProperty("USE_MULT", JString("NONE"))
 
 
 if __name__ == "__main__":
@@ -480,8 +479,12 @@ if __name__ == "__main__":
     parser.add_argument(
         "--log_name", type=str, default="log.txt", help="The log file path to use as output"
     )
+
     args = parser.parse_args()
     copmarator = StructuralCapnp(
         args.build_dir, (args.impl_dcp, args.impl_edf), args.logging_level, args.log_name
     )
     copmarator.run(phys_capnp=args.phys_capnp, edf_capnp=args.edf_capnp)
+    # except StructuralCompareError as err:
+    #     logging.error("Structural comparison failed: %s", err)
+    #     exit(0)
