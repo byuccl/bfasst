@@ -441,6 +441,9 @@ class StructuralCapnp(RwPhysNetlist):
                     if not int(inv):
                         continue
                     rw.flip_const_port_signal(self.rev_design, ecell, f"{port_name}[{idx}]", idx)
+            if ecell.getProperty("IS_CLK_INVERTED").getValue() == "1'b1":
+                rw.flip_const_port_signal(self.rev_design, ecell, "CLK")
+
             # FASM2BELS just sets USE_MULT to "MULTIPLY" -> infer new value based on OPMODE
             # If opmode is not constant, then the value is DYNAMIC
             # The multiply unit (output) is only used if opmode[3:0] = 4'b0101
