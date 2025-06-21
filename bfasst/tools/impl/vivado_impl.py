@@ -17,6 +17,8 @@ class VivadoImpl(ImplTool):
         design,
         synth_edf,
         build_path=None,
+        opt_design=True,
+        phys_opt_design=False,
         constraints_files="",
         ooc=False,
         impl_options="",
@@ -38,6 +40,9 @@ class VivadoImpl(ImplTool):
 
         self._my_dir_path = pathlib.Path(__file__).parent
 
+        self.opt_design = opt_design
+        self.phys_opt_design = phys_opt_design
+
         self._init_outputs()
         self.inputs_str = {"xdc": self.constraints_file, "synth_edf": str(self.synth_edf)}
         self.outputs_str = {k: str(v) for k, v in self.outputs.items()}
@@ -53,6 +58,8 @@ class VivadoImpl(ImplTool):
                 else ""
             ),
             "outputs": self.outputs_str,
+            "opt_design": self.opt_design,
+            "phys_opt_design": self.phys_opt_design,
             "tcl_sources": [
                 self.outputs_str["setup_tcl"],
                 self.outputs_str["impl_tcl"],
@@ -101,10 +108,6 @@ class VivadoImpl(ImplTool):
         self.outputs["impl_dcp"] = self.build_path / "impl.dcp"
         self.outputs["utilization"] = self.build_path / "utilization.txt"
         self.outputs["timing"] = self.build_path / "timing_summary.txt"
-        self.outputs["hold_timing"] = self.build_path / "hold_timing.txt"
-        self.outputs["setup_timing"] = self.build_path / "setup_timing.txt"
-        self.outputs["timing_summary_full"] = self.build_path / "full_timing_summary.txt"
-        self.outputs["power"] = self.build_path / "power_summary.txt"
         self.outputs["journal"] = self.build_path / "vivado.jou"
         self.outputs["log"] = self.build_path / "vivado.log"
         self.outputs["bitstream"] = self.build_path / "design.bit" if not self.ooc else ""
@@ -117,3 +120,4 @@ class VivadoImpl(ImplTool):
                 deps.append(dep)
         for tcl in self.impl_build["tcl_sources"]:
             deps.append(tcl)
+        deps.append(self.synth_edf)

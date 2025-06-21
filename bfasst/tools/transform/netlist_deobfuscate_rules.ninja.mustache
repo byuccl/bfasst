@@ -1,3 +1,3 @@
 rule netlist_deobfuscate
-  command = python {{ transform_script_path }} --build_path {{ build_path }} --dcp_in {{ dcp_in }} --edf_in {{ edf_in }} --props {{ props }} --out_dcp {{ out_dcp }} --out_edf {{ out_edf }} --log {{ log_path }}
-  description = De-obfuscate netlist: apply saved properties
+  command = python $script --build_path $build_path --dcp_in $dcp_in --edf_in $edf_in --unmodified_dcp_in $unmod_dcp_in --unmodified_edf_in $unmod_edf_in --props $props --out_dcp $out_dcp --out_edf $out_edf --unmodified_out_dcp $unmod_out_dcp --unmodified_out_edf $unmod_out_edf --log $log
+  description = De-obfuscate netlist: Apply saved properties
