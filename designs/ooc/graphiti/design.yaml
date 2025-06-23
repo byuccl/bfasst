@@ -2,3 +2,7 @@ top: graphiti
 top_architecture: behaviour
 
 include_all_vhdl_files: True
+
+clocks:
+  - name: clk
+    period:  7.000

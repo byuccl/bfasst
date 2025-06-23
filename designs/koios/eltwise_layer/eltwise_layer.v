@@ -98,7 +98,6 @@
 
 module eltwise_layer(
   input clk,
-  input clk_mem,
   input resetn,
   input pe_resetn,
   input        [`REG_ADDRWIDTH-1:0] PADDR,
@@ -118,7 +117,8 @@ module eltwise_layer(
   input  [`CU_SIZE-1:0] bram_we_ext
 );
 
-
+  wire clk_mem;
+  assign clk_mem = clk;
   wire PCLK;
   assign PCLK = clk;
   wire PRESETn;

@@ -28,6 +28,12 @@ class VivadoPhysNetlistCmp(Flow):
             synth_edf=self.vivado_synth_tool.outputs["synth_edf"],
             constraints_files=self.vivado_synth_tool.outputs["synth_constraints"],
         )
+        self.xray_tool = Xray(
+            self,
+            design,
+            xdc_input=self.vivado_synth_tool.outputs["synth_constraints"],
+            bitstream=self.vivado_impl_tool.outputs["bitstream"],
+        )
         self.phys_netlist_tool = PhysNetlist(
             self,
             design,
@@ -35,12 +41,7 @@ class VivadoPhysNetlistCmp(Flow):
             impl_checkpoint=self.vivado_impl_tool.outputs["impl_dcp"],
             logging_level=self.logging_level,
         )
-        self.xray_tool = Xray(
-            self,
-            design,
-            xdc_input=self.vivado_synth_tool.outputs["synth_constraints"],
-            bitstream=self.vivado_impl_tool.outputs["bitstream"],
-        )
+
         self.netlist_cleanup_tool = NetlistCleanup(
             self,
             design,

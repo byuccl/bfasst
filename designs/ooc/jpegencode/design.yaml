@@ -20,3 +20,6 @@ verilog_files:
   - sync_fifo_32.v
   - sync_fifo_ff.v
   - jpegencode.v
+clocks:
+  - name: clk
+    period:  11.000

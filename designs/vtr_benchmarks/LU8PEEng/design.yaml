@@ -1,3 +1,6 @@
 top: LU8PEEng
 
 include_all_verilog_files: yes
+clocks:
+  - name: clk
+    period:  97.000
