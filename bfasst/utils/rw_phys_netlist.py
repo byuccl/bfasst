@@ -280,7 +280,7 @@ class RwPhysNetlist:
             logging.info("Site %s is static signal generator", site_inst.getName())
             for p in site_inst.getSitePinInsts():
                 # Some LUT generators are only detetable by the fact that the output pin is used.
-                # This catches most of them, however, sometimes they occur on sites with cells. 
+                # This catches most of them, however, sometimes they occur on sites with cells.
                 # Currently, we detect those ones during _resolve_hanging_pins when the dictionary
                 # query fails.
                 assert p.getNet().isStaticNet()
@@ -342,7 +342,8 @@ class RwPhysNetlist:
             if driver not in self.site_pin_to_net:
                 logging.info("Inferring constant generator on LUT based on site pin %s", driver)
                 new_net = self.__process_lut_const(  # only O6 has direct output to the site
-                    driver.getSiteInst(), [(f"{driver.getName()}6LUT_O6", driver.getNet().isGNDNet())]
+                    driver.getSiteInst(),
+                    [(f"{driver.getName()}6LUT_O6", driver.getNet().isGNDNet())],
                 )[0]
                 self.site_pin_to_net[driver] = new_net
             net = self.site_pin_to_net[driver]
@@ -661,8 +662,7 @@ class RwPhysNetlist:
             return set(parents), ret
 
         if len(lut_rams) == 2:
-            ret = self.__check_ram32m(lut_rams, parents) or parents_insts
-            return set(parents), ret
+            parents_insts = self.__check_ram32m(lut_rams, parents) or parents_insts
         return set(parents), parents_insts
 
     def __process_muxf7_muxf8(self, cell: Cell) -> list:
