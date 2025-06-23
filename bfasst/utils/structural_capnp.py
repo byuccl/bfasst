@@ -199,7 +199,7 @@ class StructuralCapnp(RwPhysNetlist):
             cell_type = rev_hcell.getCellType().getName()
         elif cell_type == "DSP48E1":
             self.fix_rev_dsp(rev_cell)
-            
+
         logging.info(
             "Comparing cell %s on BEL %s to reversed cell %s",
             str(ecell),
