@@ -14,6 +14,7 @@ from bfasst.tools.compare.physcmp.physcmp import PhysCmp
 from bfasst.tools.transform.netlist_obfuscate import NetlistObfuscate
 from bfasst.tools.impl.impl_detailed_reports import ImplDetailedReports
 from bfasst.tools.transform.netlist_deobfuscate import NetlistDeobfuscate
+from bfasst.tools.compare.structural.structural import Structural
 from bfasst.utils.physcmp_data_types import ImplReports
 from bfasst.paths import FLOWS_PATH
 from bfasst.yaml_parser import DesignParser
@@ -49,7 +50,7 @@ class ImplObfuscate(Flow):
             design,
             synth_edf=self.netlist_obfuscate.outputs["untransformed_synth_edf"],
             opt_design=False,
-            phys_opt_design=False,
+            phys_opt_design=True,
             constraints_files=self.vivado_synth.outputs["synth_constraints"],
         )
 
@@ -59,7 +60,7 @@ class ImplObfuscate(Flow):
             synth_edf=self.netlist_obfuscate.outputs["transformed_synth_edf"],
             build_path="vivado_reimpl",
             opt_design=False,
-            phys_opt_design=False,
+            phys_opt_design=True,
             constraints_files=self.vivado_synth.outputs["synth_constraints"],
         )
 
@@ -79,9 +80,21 @@ class ImplObfuscate(Flow):
             impl_dcp=self.netlist_deobfuscate.outputs["unmodified_deobf_dcp"],
             tag="orig",
         )
+        
         self.impl_detailed_reports_transform = ImplDetailedReports(
             self, design, impl_dcp=self.netlist_deobfuscate.outputs["deobf_dcp"], tag="transform"
         )
+
+        # self.structural_compare = Structural(
+        #     self,
+        #     design,
+        #     log_name="structural_cmp.log",
+        #     golden_netlist=self.netlist_deobfuscate.outputs["deobf_edf"],
+        #     rev_netlist=self.netlist_deobfuscate.outputs["unmodified_deobf_edf"],
+        #     expect_fail=True,
+        #     debug=False,
+        #     logging_level="DEBUG"
+        # )
 
         golden = ImplReports(
             dcp=self.netlist_deobfuscate.outputs["unmodified_deobf_dcp"],
@@ -122,6 +135,7 @@ class ImplObfuscate(Flow):
             self.netlist_deobfuscate,
             self.impl_detailed_reports_orig,
             self.impl_detailed_reports_transform,
+            # self.structural_compare,
             self.physcmp,
         ]
 
@@ -133,6 +147,7 @@ class ImplObfuscate(Flow):
         self.netlist_deobfuscate.create_build_snippets()
         self.impl_detailed_reports_orig.create_build_snippets()
         self.impl_detailed_reports_transform.create_build_snippets()
+        # self.structural_compare.create_build_snippets()
         self.physcmp.create_build_snippets()
 
     def get_top_level_flow_path(self):
