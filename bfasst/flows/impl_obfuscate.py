@@ -25,8 +25,8 @@ class ImplObfuscate(Flow):
     def __init__(self, design):
         super().__init__(design)
 
-        # self.synth_opts = {"synth_design": "-flatten_hierarchy full"}
-        self.synth_opts = {"synth_design": ""}
+        self.synth_opts = {"synth_design": "-flatten_hierarchy full"}
+        # self.synth_opts = {"synth_design": ""}
         self.vivado_synth = VivadoSynth(
             self, design, opt_design=True, synth_options=self.synth_opts
         )
