@@ -3,11 +3,14 @@ opt_design
 {{/opt_design}}
 
 place_design
-# write_checkpoint -file {{outputs.impl_verilog}}
+# -no_timing_driven
+write_checkpoint -file {{outputs.post_place_dcp}}
 
 {{#phys_opt_design}}
 phys_opt_design
 report_phys_opt
+write_checkpoint -file {{outputs.post_phys_opt_dcp}}
 {{/phys_opt_design}}
 
-route_design
+route_design 
+# -no_timing_driven

@@ -107,6 +107,8 @@ class VivadoImpl(ImplTool):
         self.outputs["impl_verilog"] = self.build_path / "viv_impl.v"
         self.outputs["impl_edf"] = self.build_path / "viv_impl.edf"
         self.outputs["impl_dcp"] = self.build_path / "impl.dcp"
+        self.outputs["post_place_dcp"] = self.build_path / "post_place.dcp"
+        self.outputs["post_phys_opt_dcp"] = self.build_path / "post_phys_opt.dcp"
         self.outputs["utilization"] = self.build_path / "utilization.txt"
         self.outputs["timing"] = self.build_path / "timing_summary.txt"
         self.outputs["journal"] = self.build_path / "vivado.jou"

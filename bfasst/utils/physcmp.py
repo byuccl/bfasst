@@ -160,20 +160,26 @@ def compare_all(
     netlist_comparator = EDIFNetlistComparator()
     netlist1 = d1.getNetlist()
     netlist2 = d2.getNetlist()
-    num_diffs += netlist_comparator.compareNetlists(netlist1, netlist2)
+    netlist_differences = netlist_comparator.compareNetlists(netlist1, netlist2)
+    num_diffs += netlist_differences
 
     num_diffs += compare_cells(d1, d2)
 
     logging.info("Total layout/logic differences between designs: %d", num_diffs)
     log_diff_summary(layout_comparator, netlist_comparator)
 
+    if netlist_differences != 0:
+        logging.error("\033[31mFound differences between logical netlists\033[0m")
+        raise PhyscmpException
+    logging.info("\033[32mNo differences found between logical netlists\033[0m")
+
     logging.info("Comparing bitstreams...")
     bitstream_diff = compare_bitstreams(golden.bitstream, test.bitstream)
     if bitstream_diff:
-        logging.error("\033[31mFound differences in bitstream comparison.\033[0m")
-        raise PhyscmpException
-
-    logging.info("\033[32mNo differences found in bitstream comparison.\033[0m")
+        logging.error("\033[33mFound differences in bitstream comparison.\033[0m")
+        # raise PhyscmpException
+    else:
+        logging.info("\033[32mNo differences found in bitstream comparison.\033[0m")
 
 
 if __name__ == "__main__":

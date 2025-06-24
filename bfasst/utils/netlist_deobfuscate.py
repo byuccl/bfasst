@@ -233,7 +233,7 @@ def find_inversion_roots(netlist, json_db) -> list[str]:
                     #     SENTINEL_VALUES[lut_size], cur_init
                     # ):
                     #     roots.append(hname)
-                    logging.info(".")
+                    logging.info("")
                 else:
                     base_init = next(
                         (
@@ -256,8 +256,10 @@ def restore_properties_for_cell(cell, entry: dict, hname: str, inversion_roots: 
         val = item["value"]
         typ = EDIFValueType.valueOf(item.get("type"))
 
-        if key == "INIT" and hname in inversion_roots:
-            val = invert_init_literal(val)
+        if key == "INIT":
+            if hname in inversion_roots:
+                val = invert_init_literal(val)
+            val = re.sub(r"(h)([0-9a-fA-F]+)", lambda m: m.group(1) + m.group(2).upper(), val)
 
         cell.addProperty(key, val, typ)
 

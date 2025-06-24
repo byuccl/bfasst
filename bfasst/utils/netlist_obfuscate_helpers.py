@@ -80,25 +80,37 @@ def shuffle_preserve_bucket(init, size):
     return new if new != init else shuffle_preserve_bucket(init, size)
 
 
+SENTINEL_VALUES = {
+    2: "4'h9",
+    3: "8'h69",
+    4: "16'h6996",
+    5: "32'h69969669",
+    6: "64'h6996966969969669",
+}
+
+
 def get_masking_init(orig_init: str, lut_size: int) -> str:
     """
-    Given the *string* INIT from an EDIF/Verilog property (e.g. "64'h699696..."),
-    return a different INIT string that is timing-equivalent but unpredictable.
+    Return an INIT string from SENTINEL_VALUES
     """
-    if lut_size == 1:
-        return orig_init  # leave LUT1 untouched
+    if lut_size not in SENTINEL_VALUES:
+        raise ValueError(f"No parity mask for LUT{lut_size}")
+    return SENTINEL_VALUES[lut_size]
 
-    # parse the incoming hex literal  int
-    value = int(orig_init.split("'h")[1], 16)
-    new_value = shuffle_preserve_bucket(value, lut_size)
 
-    # Guarantee the new value is actually different (rare corner case)
-    if new_value == value:
-        logging.info("new_value == value")
-        # force at least one extra swap
-        new_value ^= 1 << random.randrange(1 << lut_size)
+# def get_masking_init(orig_init: str, lut_size: int) -> str:
+#     """
+#     Given the *string* INIT from an EDIF/Verilog property (e.g. "64'h699696..."),
+#     return a different INIT string that is timing-equivalent but unpredictable.
+#     """
+#     if lut_size == 1:
+#         return orig_init  # leave LUT1 untouched
 
-    width = 1 << lut_size  # 4,8,16,32,64
-    logging.info("Old INIT: %s; New INIT: %s", orig_init, f"{width:02d}'h{new_value:0{width//4}X}")
-    return f"{width:02d}'h{new_value:0{width//4}X}"
+#     # parse the incoming hex literal  int
+#     value = int(orig_init.split("'h")[1], 16)
+#     new_value = shuffle_preserve_bucket(value, lut_size)
+
+#     width = 1 << lut_size  # 4,8,16,32,64
+#     # logging.info("Old INIT: %s; New INIT: %s", orig_init, f"{width:02d}'h{new_value:0{width//4}X}")
+#     return f"{width:02d}'h{new_value:0{width//4}X}"
 
