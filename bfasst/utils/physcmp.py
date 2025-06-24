@@ -185,8 +185,7 @@ def compare_all(golden, test, log_path: str, log_level: str):
     num_netlist_diffs = _count_meaningful(netlist_lines)
     num_total         = num_layout_diffs + num_netlist_diffs
 
-    logging.info("Full Layout diff report:\n%s",  "\n".join(layout_lines))
-    logging.info("Full Netlist diff report:\n%s", "\n".join(netlist_lines))
+    _log_diff_summary(layout_lines, netlist_lines)
     logging.info("Meaningful layout/logic diffs: %d", num_total)
     
     if num_netlist_diffs:
