@@ -25,8 +25,8 @@ class ImplObfuscate(Flow):
     def __init__(self, design):
         super().__init__(design)
 
-        self.synth_opts = {"synth_design": "-flatten_hierarchy full"}
-        #self.synth_opts = {"synth_design": ""}
+        # self.synth_opts = {"synth_design": "-flatten_hierarchy full"}
+        self.synth_opts = {"synth_design": ""}
         self.vivado_synth = VivadoSynth(
             self, design, opt_design=True, synth_options=self.synth_opts
         )
@@ -85,17 +85,6 @@ class ImplObfuscate(Flow):
             self, design, impl_dcp=self.netlist_deobfuscate.outputs["deobf_dcp"], tag="transform"
         )
 
-        # self.structural_compare = Structural(
-        #     self,
-        #     design,
-        #     log_name="structural_cmp.log",
-        #     golden_netlist=self.netlist_deobfuscate.outputs["deobf_edf"],
-        #     rev_netlist=self.netlist_deobfuscate.outputs["unmodified_deobf_edf"],
-        #     expect_fail=True,
-        #     debug=False,
-        #     logging_level="DEBUG"
-        # )
-
         golden = ImplReports(
             dcp=self.netlist_deobfuscate.outputs["unmodified_deobf_dcp"],
             edf=self.netlist_deobfuscate.outputs["unmodified_deobf_edf"],
@@ -135,7 +124,6 @@ class ImplObfuscate(Flow):
             self.netlist_deobfuscate,
             self.impl_detailed_reports_orig,
             self.impl_detailed_reports_transform,
-            # self.structural_compare,
             self.physcmp,
         ]
 
@@ -147,7 +135,6 @@ class ImplObfuscate(Flow):
         self.netlist_deobfuscate.create_build_snippets()
         self.impl_detailed_reports_orig.create_build_snippets()
         self.impl_detailed_reports_transform.create_build_snippets()
-        # self.structural_compare.create_build_snippets()
         self.physcmp.create_build_snippets()
 
     def get_top_level_flow_path(self):
