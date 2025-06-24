@@ -3,4 +3,4 @@ top_architecture: behavioral
 
 clocks:
   - name: clk_i
-    period: 3.000
+    period:  3.000

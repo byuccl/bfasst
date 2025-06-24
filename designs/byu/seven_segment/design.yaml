@@ -1,1 +1,4 @@
 top: seven_segment
+clocks:
+  - name: clk
+    period: 100

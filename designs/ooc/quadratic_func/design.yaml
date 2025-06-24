@@ -5,4 +5,4 @@ include_all_vhdl_files: True
 
 clocks:
   - name: clk
-    period: 6.000
+    period:  6.000
