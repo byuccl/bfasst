@@ -41,7 +41,7 @@ def update_clock(d: list[str]):
         with open(design_config, "r") as f:
             for ln in f:
                 if "period" in ln:
-                    new_lines.append(f"    period:  {clock_period.group(0)}")
+                    new_lines.append(f"    period:  {clock_period.group(0)}\n")
                 else:
                     new_lines.append(ln)
         with open(design_config, "w") as f:
