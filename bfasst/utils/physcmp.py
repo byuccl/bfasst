@@ -160,7 +160,7 @@ def compare_all(golden, test, log_path: str, log_level: str):
     log_netlist_diffs(netlist_cmp)
 
     num_layout_diffs = layout_cmp.getDiffCount()
-    num_netlist_diffs = layout_cmp.getDiffCount()
+    num_netlist_diffs = netlist_cmp.getDiffCount()
 
     if num_netlist_diffs:
         logging.error("\033[31mFound differences between logical netlists\033[0m")
