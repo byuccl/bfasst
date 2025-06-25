@@ -94,6 +94,7 @@ def log_netlist_diffs(netlist_comparator):
     logging.info(_capture_report_lines(netlist_comparator))
 
     count = 0
+    skipped = 0
     for entry in diff_map.entrySet():
         diff_type = entry.getKey()
         diff_list = entry.getValue()
@@ -101,14 +102,16 @@ def log_netlist_diffs(netlist_comparator):
         logging.info("Diff Type: %s", diff_type)
         if str(diff_type) == "PROPERTY_VALUE":
             logging.info("Skipping diffs of type %s", diff_type)
+            skipped += diff_list.size()
             continue
 
         for diff in diff_list:
             if count > 10:
+                logging.info("Truncating output")
                 return count
             count += 1
             printDiff(diff)
-    return count
+    return skipped
 
 
 def log_layout_diffs(design_comparator):
@@ -121,16 +124,13 @@ def log_layout_diffs(design_comparator):
         diff_list = entry.getValue()
 
         logging.info("Diff Type: %s", diff_type)
-        if str(diff_type) == "PROPERTY_VALUE":
-            logging.info("Skipping diffs of type %s", diff_type)
-            continue
-
         for diff in diff_list:
             if count > 10:
+                logging.info("Truncating output")
                 return count
             count += 1
             printDiff(diff)
-    return count
+    return 0
 
 
 def compare_all(golden, test, log_path: str, log_level: str):
@@ -157,12 +157,12 @@ def compare_all(golden, test, log_path: str, log_level: str):
     netlist_cmp.compareNetlists(d1.getNetlist(), d2.getNetlist())
     
     log_layout_diffs(layout_cmp)
-    log_netlist_diffs(netlist_cmp)
+    netlist_skipped = log_netlist_diffs(netlist_cmp)
 
     num_layout_diffs = layout_cmp.getDiffCount()
     num_netlist_diffs = netlist_cmp.getDiffCount()
 
-    if num_netlist_diffs:
+    if num_netlist_diffs - netlist_skipped:
         logging.error("\033[31mFound differences between logical netlists\033[0m")
         raise PhyscmpException
     logging.info("\033[32mNo differences found between logical netlists\033[0m")
