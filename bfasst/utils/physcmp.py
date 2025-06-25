@@ -42,7 +42,7 @@ def setup_logging(log_path: str, level_str: str):
 
 
 def compare_bitstreams(golden_path: Path, test_path: Path, ignore_bytes: int = 200) -> bool:
-    """Compare two bitstreams, ignoring the first `ignore_bytes` bytes."""
+    """Compare two bitstreams, ignoring the first ignore_bytes bytes."""
     with open(golden_path, "rb") as f1, open(test_path, "rb") as f2:
         golden_data = f1.read()
         test_data = f2.read()
@@ -54,7 +54,7 @@ def compare_bitstreams(golden_path: Path, test_path: Path, ignore_bytes: int = 2
         return True
 
     differences = 0
-    # We skip the first bytes because that's just a header and timestamps mess up the comparison
+    # We skip the first bytes because it's just a header and timestamps mess up the comparison
     for i in range(ignore_bytes, len(golden_data)):
         if golden_data[i] != test_data[i]:
             logging.debug(
@@ -76,90 +76,69 @@ def compare_bitstreams(golden_path: Path, test_path: Path, ignore_bytes: int = 2
     return False
 
 
-def compare_cells(d1: Design, d2: Design) -> int:
-    """
-    Compare all cells between two designs
-    Really just to help see where INIT values differ
-    """
-    diffs = 0
-
-    cells_a = {cell.getName(): cell for cell in d1.getCells()}
-    cells_b = {cell.getName(): cell for cell in d2.getCells()}
-
-    common_names = set(cells_a.keys()) & set(cells_b.keys())
-    for name in common_names:
-        cell_a = cells_a[name]
-        cell_b = cells_b[name]
-
-        if cell_a.getProperty("INIT") != cell_b.getProperty("INIT"):
-            if diffs < 10:
-                logging.debug("INIT values differ for %s", name)
-            diffs += 1
-
-    logging.info("[CELL] Done comparing cells. Differences: %d", diffs)
-    logging.info("[CELL] Design 1 total cells: %d", d1.getCells().size())
-    logging.info("[CELL] Design 2 total cells: %d", d2.getCells().size())
-    return diffs
-
-
-_NOISE_PATTERNS = [
-    r'^\s*$',
-    # individual integer mismatch
-    r'^\s*Mismatch found \(\d+ != \d+\), expected integer\(\d+\), '
-    r'but found integer\(\d+\)',
-    # property-value section header / footer / totals
-    r'^\s*\*\*\* PROPERTY_VALUE: \d+ diffs',
-    r'^\s*\d+\s+(CELL_|LIBRARY_).+ Diffs',
-    r'^\s*-{5,}$',
-    r'^\s*\d+\s+Total Diffs$',
-    # top-level summary banner and table lines
-    r'^={5,}',
-    r'^\s*= EDIFNetlist Diff Summary',
-    r'^\s*\d+\s+[A-Z_]+\s+Diffs$',
-]
-
-_NOISE_RE = re.compile("|".join(_NOISE_PATTERNS))
-
-
 def _capture_report_lines(comparator):
-    """Run printDiffReport and return the **full** list of lines."""
+    """Run printDiffReport and return the list of lines."""
     baos, ps = ByteArrayOutputStream(), PrintStream(ByteArrayOutputStream())
     ps = PrintStream(baos)
-    comparator.printDiffReport(ps)
+    comparator.printDiffReportSummary(ps)
     ps.flush()
-    return str(baos.toString()).splitlines()
+    return "\n" + str(baos.toString())
 
 
-def _count_meaningful(lines):
-    """Return how many lines are NOT noise."""
-    return sum(1 for l in lines if not _NOISE_RE.match(l))
+def printDiff(diff):
+    logging.info("Diff: %s", diff.toString())
 
-# ────────────────────────────────────────────────────────────────────────────
-# Utility: write (truncated) diff reports to the main log
-# ────────────────────────────────────────────────────────────────────────────
-def _log_diff_summary(layout_lines, netlist_lines,
-                      keep_layout=30, keep_netlist=50):
 
-    def _truncate(lines, keep):
-        txt = "\n".join(lines[:keep])
-        if len(lines) > keep:
-            txt += f"\n... (truncated, total {len(lines)} lines)"
-        return txt
+def log_netlist_diffs(netlist_comparator):
+    diff_map = netlist_comparator.getDiffMap()
+    logging.info(_capture_report_lines(netlist_comparator))
 
-    logging.info("Layout diff report (first %d lines):\n%s",
-                 keep_layout,  _truncate(layout_lines,  keep_layout))
-    logging.info("Netlist diff report (first %d lines):\n%s",
-                 keep_netlist, _truncate(netlist_lines, keep_netlist))
+    count = 0
+    for entry in diff_map.entrySet():
+        diff_type = entry.getKey()
+        diff_list = entry.getValue()
 
-# ────────────────────────────────────────────────────────────────────────────
-# Main comparison routine (copy / replace your current compare_all)
-# ────────────────────────────────────────────────────────────────────────────
+        logging.info("Diff Type: %s", diff_type)
+        if str(diff_type) == "PROPERTY_VALUE":
+            logging.info("Skipping diffs of type %s", diff_type)
+            continue
+
+        for diff in diff_list:
+            if count > 10:
+                return count
+            count += 1
+            printDiff(diff)
+    return count
+
+
+def log_layout_diffs(design_comparator):
+    diff_map = design_comparator.getDiffMap()
+    logging.info(_capture_report_lines(design_comparator))
+
+    count = 0
+    for entry in diff_map.entrySet():
+        diff_type = entry.getKey()
+        diff_list = entry.getValue()
+
+        logging.info("Diff Type: %s", diff_type)
+        if str(diff_type) == "PROPERTY_VALUE":
+            logging.info("Skipping diffs of type %s", diff_type)
+            continue
+
+        for diff in diff_list:
+            if count > 10:
+                return count
+            count += 1
+            printDiff(diff)
+    return count
+
+
 def compare_all(golden, test, log_path: str, log_level: str):
     """
-    • read checkpoints
-    • compare placement / routing
-    • compare EDIF netlists
-    • compare bitstreams
+     read checkpoints
+     compare placement / routing
+     compare EDIF netlists
+     compare bitstreams
     """
 
     setup_logging(log_path, log_level)
@@ -177,17 +156,12 @@ def compare_all(golden, test, log_path: str, log_level: str):
     netlist_cmp = EDIFNetlistComparator()
     netlist_cmp.compareNetlists(d1.getNetlist(), d2.getNetlist())
     
-    layout_lines  = _capture_report_lines(layout_cmp)
-    netlist_lines = _capture_report_lines(netlist_cmp)
+    log_layout_diffs(layout_cmp)
+    log_netlist_diffs(netlist_cmp)
 
-    # Counts after noise-filtering
-    num_layout_diffs  = 0
-    num_netlist_diffs = _count_meaningful(netlist_lines)
-    num_total         = num_layout_diffs + num_netlist_diffs
+    num_layout_diffs = layout_cmp.getDiffCount()
+    num_netlist_diffs = layout_cmp.getDiffCount()
 
-    _log_diff_summary(layout_lines, netlist_lines)
-    logging.info("Meaningful layout/logic diffs: %d", num_total)
-    
     if num_netlist_diffs:
         logging.error("\033[31mFound differences between logical netlists\033[0m")
         raise PhyscmpException
