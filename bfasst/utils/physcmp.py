@@ -86,51 +86,64 @@ def _capture_report_lines(comparator):
 
 
 def printDiff(diff):
-    logging.info("Diff: %s", diff.toString())
+    logging.info("Diff found: %s", diff.toString())
+    source_inst = diff.getSourceInst()
+    if source_inst is not None:
+        logging.info("Differing cell name: %s", source_inst.getName())
+        logging.info("Differing cell properties:")
+        props_map = source_inst.getPropertiesMap()
+        for entry in props_map.entrySet():
+            key = entry.getKey()
+            value = entry.getValue()
+            logging.info("  %s = %s", key, value)
+
+    if diff.getPropertyKey() is not None:
+        logging.info("Differing property: %s", diff.getPropertyKey())
 
 
 def log_netlist_diffs(netlist_comparator):
     diff_map = netlist_comparator.getDiffMap()
     logging.info(_capture_report_lines(netlist_comparator))
 
+    skip_substrings = {"HOLD_DETOUR", "ECO_CHECKSUM"}
+
     count = 0
-    skipped = 0
     for entry in diff_map.entrySet():
         diff_type = entry.getKey()
         diff_list = entry.getValue()
 
-        logging.info("Diff Type: %s", diff_type)
-        if str(diff_type) == "PROPERTY_VALUE":
-            logging.info("Skipping diffs of type %s", diff_type)
-            skipped += diff_list.size()
-            continue
+        logging.info("\u001B[1mDiff Type: %s\u001B[0m", diff_type)
 
+        shown = 0
+        skipped = 0
         for diff in diff_list:
-            if count > 10:
-                logging.info("Truncating output")
-                return count
+            property_key = diff.getPropertyKey()
+            key_str = property_key if property_key is not None else ""
+
+            if any(skip_str in key_str for skip_str in skip_substrings):
+                skipped += 1
+                continue
+
             count += 1
-            printDiff(diff)
-    return skipped
+            MAX_TO_SHOW = 2
+            if shown < MAX_TO_SHOW:
+                printDiff(diff)
+                shown += 1
+            elif shown == MAX_TO_SHOW:
+                logging.info("Stopped printing after %d diffs", MAX_TO_SHOW)
+                shown += 1
+        
+        logging.info("Total meaningful %s diffs found: %d\n", diff_type, diff_list.size() - skipped)
+        if skipped:
+            logging.info("Skipped %d non-essential properties\n", skipped)
+
+    return count
 
 
 def log_layout_diffs(design_comparator):
     diff_map = design_comparator.getDiffMap()
     logging.info(_capture_report_lines(design_comparator))
-
-    count = 0
-    for entry in diff_map.entrySet():
-        diff_type = entry.getKey()
-        diff_list = entry.getValue()
-
-        logging.info("Diff Type: %s", diff_type)
-        for diff in diff_list:
-            if count > 10:
-                logging.info("Truncating output")
-                return count
-            count += 1
-            printDiff(diff)
-    return 0
+    return design_comparator.getDiffCount()
 
 
 def compare_all(golden, test, log_path: str, log_level: str):
@@ -156,13 +169,10 @@ def compare_all(golden, test, log_path: str, log_level: str):
     netlist_cmp = EDIFNetlistComparator()
     netlist_cmp.compareNetlists(d1.getNetlist(), d2.getNetlist())
     
-    log_layout_diffs(layout_cmp)
-    netlist_skipped = log_netlist_diffs(netlist_cmp)
+    num_layout_diffs = log_layout_diffs(layout_cmp)
+    num_netlist_diffs = log_netlist_diffs(netlist_cmp)
 
-    num_layout_diffs = layout_cmp.getDiffCount()
-    num_netlist_diffs = netlist_cmp.getDiffCount()
-
-    if num_netlist_diffs - netlist_skipped:
+    if num_netlist_diffs != 0:
         logging.error("\033[31mFound differences between logical netlists\033[0m")
         raise PhyscmpException
     logging.info("\033[32mNo differences found between logical netlists\033[0m")
