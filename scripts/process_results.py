@@ -1,17 +1,16 @@
 """
-Parse results.json file from run_experiments flow and generate a CSV file 
+Parse results files from build directory and generate a CSV file
 with statuses and utilization data for each design.
 """
 
 from argparse import ArgumentParser
 import csv
-import json
 from pathlib import Path
 import xlsxwriter
 
 
 from bfasst import yaml_parser
-from bfasst.paths import ROOT_PATH, BUILD_PATH
+from bfasst.paths import BUILD_PATH
 
 
 class TransformStats:
@@ -145,26 +144,103 @@ def transform_stats(designs_yaml):
     workbook.close()
 
 
-def phys_cmp_results(flow):
+def phys_capnp_results(flow, out="new_results.csv"):
     """
     Gather results from phys_cmp flow and create a CSV file with
     utilization data, transformation times, comparison times, and
     success status.
     """
-    root_dir = ROOT_PATH / "build" / flow
 
-    results = root_dir / "results.json"
+    fl = yaml_parser.RunParser(flow)
 
-    out = "results.csv"
-
-    with open(results, "r") as f:
-        data = json.load(f)
+    designs = [
+        BUILD_PATH / Path(design).parent.name / Path(design).name for design in fl.design_paths
+    ]
 
     rows = []
-    for design, status in data.items():
-        status = "Success" if not status else status
+    for design in designs:
+        status = "Success" if (design / "capnp_cmp/cmp_time.txt").exists() else "FAILED"
         row = {
-            "Design": design.split("/")[1],
+            "Design": design.name,
+            "Status": status,
+            "LUT": 0,
+            "LUT_MEM": 0,
+            "SRL": 0,
+            "FF": 0,
+            "DSP48E1": 0,
+            "CARRY4": 0,
+            "BRAM": 0,
+            "T_TIME": 0,
+            "S_TIME": 0,
+        }
+        if status == "FAILED":
+            rows.append(row)
+            continue
+        utilization_file = design / "vivado_impl/utilization.txt"
+        with open(utilization_file, "r") as f:
+            for line in f:
+                if "| LUT as Logic" in line:
+                    row["LUT"] = line.split("|")[2].strip()
+                elif "|   LUT as Distributed RAM" in line:
+                    row["LUT_MEM"] = line.split("|")[2].strip()
+                elif "|   LUT as Shift Register" in line:
+                    row["SRL"] = line.split("|")[2].strip()
+                elif "| DSP48E1" in line:
+                    row["DSP48E1"] = line.split("|")[2].strip()
+                elif "| Slice Registers" in line:
+                    row["FF"] = line.split("|")[2].strip()
+                elif "| CARRY4" in line:
+                    row["CARRY4"] = line.split("|")[2].strip()
+                elif "| Block RAM Tile" in line:
+                    row["BRAM"] = line.split("|")[2].strip()
+
+        with open(design / "vivado_phys_netlist/transformation_time.txt", "r") as f:
+            row["T_TIME"] = round(float(f.read().strip()), 2)
+        rows.append(row)
+
+        with open(design / "capnp_cmp/cmp_time.txt", "r") as f:
+            row["S_TIME"] = round(float(f.read().strip()), 2)
+        rows.append(row)
+
+    with open(out, "w", newline="") as f:
+        fieldnames = [
+            "Design",
+            "Status",
+            "LUT",
+            "LUT_MEM",
+            "SRL",
+            "FF",
+            "CARRY4",
+            "DSP48E1",
+            "BRAM",
+            "T_TIME",
+            "S_TIME",
+        ]
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def phys_cmp_results(flow, out="results.csv"):
+    """
+    Gather results from phys_cmp flow and create a CSV file with
+    utilization data, transformation times, comparison times, and
+    success status.
+    """
+
+    fl = yaml_parser.RunParser(flow)
+
+    designs = [
+        BUILD_PATH / Path(design).parent.name / Path(design).name for design in fl.design_paths
+    ]
+
+    rows = []
+    for design in designs:
+        status = (
+            "Success" if (design / "struct_cmp/struct_comparison_time.txt").exists() else "FAILED"
+        )
+        row = {
+            "Design": design.name,
             "Status": status,
             "LUT": 0,
             "LUT_MEM": 0,
@@ -173,11 +249,13 @@ def phys_cmp_results(flow):
             "CARRY4": 0,
             "BRAM": 0,
             "T_TIME": 0,
+            "C_TIME": 0,
             "S_TIME": 0,
         }
-        utilization_file = root_dir / f"{design}/vivado_impl/utilization.txt"
-        if not utilization_file.is_file():
+        if status == "FAILED":
+            rows.append(row)
             continue
+        utilization_file = design / "vivado_impl/utilization.txt"
         with open(utilization_file, "r") as f:
             for line in f:
                 if "| LUT as Logic" in line:
@@ -193,9 +271,16 @@ def phys_cmp_results(flow):
                 elif "| Block RAM Tile" in line:
                     row["BRAM"] = line.split("|")[2].strip()
 
-        with open(root_dir / f"{design}/xilinx_phys_netlist/transformation_time.txt", "r") as f:
+        with open(design / "vivado_phys_netlist/transformation_time.txt", "r") as f:
             row["T_TIME"] = round(float(f.read().strip()), 2)
-        with open(root_dir / f"{design}/struct_cmp/comparison_time.txt", "r") as f:
+        if (design / "netlist_cleanup/log.txt").exists():
+            with open(design / "netlist_cleanup/log.txt", "r") as f:
+                time = 0
+                for line in f:
+                    if "time" in line:
+                        time += float(line.split(" ")[-1])
+                row["C_TIME"] = round(time, 2)
+        with open(design / "struct_cmp/struct_comparison_time.txt", "r") as f:
             row["S_TIME"] = round(float(f.read().strip()), 2)
         rows.append(row)
 
@@ -210,16 +295,16 @@ def phys_cmp_results(flow):
             "CARRY4",
             "BRAM",
             "S_TIME",
+            "C_TIME",
             "T_TIME",
         ]
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
-        for row in rows:
-            writer.writerow(row)
+        writer.writerows(rows)
 
 
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("flow", help="The flow to process results for")
     args = parser.parse_args()
-    phys_cmp_results(args.flow)
+    phys_capnp_results(args.flow)

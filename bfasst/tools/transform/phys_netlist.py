@@ -76,4 +76,8 @@ class PhysNetlist(Tool):
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
         deps.append(BFASST_UTILS_PATH / "rw_phys_netlist.py")
+        deps.append(BFASST_UTILS_PATH / "general.py")
+        deps.append(BFASST_UTILS_PATH / "rw_helpers.py")
+        deps.append(NINJA_TRANSFORM_TOOLS_PATH / "phys_netlist_rules.ninja.mustache")
+        deps.append(NINJA_TRANSFORM_TOOLS_PATH / "phys_netlist_build.ninja.mustache")
         deps.append(NINJA_TRANSFORM_TOOLS_PATH / "checkpoint_to_v.tcl.mustache")

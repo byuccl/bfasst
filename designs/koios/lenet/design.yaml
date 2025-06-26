@@ -1,1 +1,5 @@
 top: myproject
+
+clocks:
+  - name: ap_clk
+    period:  12.000

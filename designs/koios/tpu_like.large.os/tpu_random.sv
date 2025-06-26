@@ -37,7 +37,6 @@ Random I/Os for TPU
 
 module tpu_random(
     input wire logic clk,
-    input wire logic clk_mem,
     input wire logic reset,
     input wire logic resetn,
     input wire logic [`REG_ADDRWIDTH-1:0] PADDR,
@@ -54,6 +53,9 @@ module tpu_random(
     input wire logic [5:0] o_sel,
     output logic [7:0] o_data
 );
+
+logic clk_mem;
+assign clk_mem = clk;
 
 logic [`DESIGN_SIZE*`DWIDTH-1:0] bram_wdata_a_ext;
 logic [`DESIGN_SIZE*`DWIDTH-1:0] bram_wdata_b_ext;

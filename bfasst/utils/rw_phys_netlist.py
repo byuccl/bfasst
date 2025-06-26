@@ -1,30 +1,35 @@
-""" Creates a xilinx netlist that has only physical primitives"""
-
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-public-methods
+"""Creates a xilinx netlist that has only physical primitives"""
 
 from argparse import ArgumentParser
 import logging
-import sys
-import time
 from pathlib import Path
+import time
+from typing import Optional
 
-import jpype
-import jpype.imports
 from jpype.types import JInt
-
 from bfasst import jpype_jvm
+from bfasst import utils
+from bfasst.utils.phys_netlist import PhysNetlist
 import bfasst.utils.rw_helpers as rw
 
 
 # pylint: disable=wrong-import-position,wrong-import-order,import-error
 jpype_jvm.start()
-from com.xilinx.rapidwright.device import SiteTypeEnum
-from com.xilinx.rapidwright.design import Design, Unisim
-from com.xilinx.rapidwright.edif import EDIFNet, EDIFPropertyValue, EDIFValueType
-from com.xilinx.rapidwright.interchange import LogNetlistWriter
-from java.lang import System
-from java.io import PrintStream, File
+from com.xilinx.rapidwright.device import BELPin
+from com.xilinx.rapidwright.device.SiteTypeEnum import SLICEL, SLICEM
+from com.xilinx.rapidwright.design import Cell, SiteInst, SitePinInst
+from com.xilinx.rapidwright.edif import (
+    EDIFNet,
+    EDIFCell,
+    EDIFCellInst,
+    EDIFHierCellInst,
+    EDIFPropertyValue,
+    EDIFValueType,
+)
+from com.xilinx.rapidwright.interchange import (
+    LogNetlistWriter,
+    PhysNetlistWriter,
+)
 
 # pylint: enable=wrong-import-position,wrong-import-order,import-error
 
@@ -33,357 +38,346 @@ class PhysNetlistTransformError(Exception):
     """Exception for errors in phys netlist transformation"""
 
 
-class RwPhysNetlist:
+class RwPhysNetlist(PhysNetlist):
     """Creates a xilinx netlist that has only physical primitives"""
 
-    def __init__(self, build_dir, logging_level):
+    def __init__(
+        self, build_dir: str, impl_checkpoint: tuple[Path, Path], logging_level: str, log_name: str
+    ) -> None:
         self.build_dir = Path(build_dir)
         self.stage_dir = self.build_dir / "vivado_phys_netlist"
-        (self.stage_dir / "log.txt").unlink(missing_ok=True)
         self.logging_level = logging_level
+        log_path = self.stage_dir / log_name if "/" not in log_name else Path(log_name)
+        log_path.unlink(missing_ok=True)
+        if not log_path.parent.exists():
+            log_path.parent.mkdir(parents=True)
         logging.basicConfig(
-            filename=self.stage_dir / "log.txt",
+            filename=log_path,
             format="%(asctime)s %(message)s",
             level=self.logging_level,
             datefmt="%Y%m%d%H%M%S",
         )
-
-        # Rapidwright design / netlist
-        self.rw_design = None
-        self.rw_netlist = None
-
-        # Const nets
-        self.vcc = None
-        self.gnd = None
-
-        # Cells to use for new Primitives
-        self.lut6_2_edif_cell = None
-        self.ram32x1s_edif_cell = None
-        self.ram32x1s1_edif_cell = None
-        self.ram32x1d_edif_cell = None
-        self.ram32m_edif_cell = None
-        self.bufgctrl_edif_cell = None
-
-        # Keep a list of old replaced cells to remove after processing
-        self.cells_to_remove = []
-
-        self.lut_pair_bel_names = [
-            ("A6LUT", "A6LUT_O6", "A5LUT", "A5LUT_O5"),
-            ("B6LUT", "B6LUT_O6", "B5LUT", "B5LUT_O5"),
-            ("C6LUT", "C6LUT_O6", "C5LUT", "C5LUT_O5"),
-            ("D6LUT", "D6LUT_O6", "D5LUT", "D5LUT_O5"),
-        ]
-
-    def run(self, impl_netlist_checkpoint, impl_netlist_edif_path):
-        """Transform the logical netlist into a netlist with only physical primitives"""
-        phys_netlist_edif_path = self.stage_dir / "viv_impl_physical.edf"
-
-        # Redirect rapidwright output to file
         rapidwright_log_path = str(self.stage_dir / "rapidwright_stdout.log")
-        System.setOut(PrintStream(File(rapidwright_log_path)))
+        super().__init__(rapidwright_log_path, impl_checkpoint)
+        # Redirect rapidwright output to file
 
+    def run(self) -> None:
+        """Transform the logical netlist into a netlist with only physical primitives"""
+        self.run_rapidwright()
+        self.export_transformation()
+
+    def export_transformation(self):
+        """Export checkpoint, then run vivado to generate a new netlist"""
         phys_netlist_checkpoint = self.stage_dir / "phys_netlist.dcp"
-        logging.info(
-            "Starting logical to physical netlist conversion for %s %s",
-            f"{self.build_dir / 'in_context' / 'impl' / 'impl.dcp'}",
-            f"{self.build_dir / 'in_context' / 'impl' / 'viv_impl.edf'}",
-        )
+        self.vivado_design.unplaceDesign()
+        self.vivado_design.writeCheckpoint(phys_netlist_checkpoint)
 
-        start_time = time.time()
-        # Catch all Java exceptions since they are not picklable,
-        # and so cannot be handled properly by multiprocessing
-        # Don't raise from as this is also problematic.
-        try:
-            self.__run_rapidwright(
-                phys_netlist_checkpoint,
-                phys_netlist_edif_path,
-                impl_netlist_checkpoint,
-                impl_netlist_edif_path,
-            )
-        except jpype.JException as exc:
-            raise rw.RapidwrightException from exc  # pylint: disable=bad-exception-cause
-        end_time = time.time()
-
-        logging.info("Transformation time %s seconds", f"{end_time - start_time:0.2f}")
-        with open(self.stage_dir / "transformation_time.txt", "w") as fp:
-            fp.write(f"{end_time - start_time:.2f}\n")
-
-    def __init_const_nets(self):
-        """Init VCC and GND nets"""
-        net_tuples = ((Unisim.GND, "G", "gnd"), (Unisim.VCC, "P", "vcc"))
-        for unisim_cell, port, name in net_tuples:
-            edif_cell = self.rw_netlist.getHDIPrimitive(unisim_cell)
-
-            cell_insts = [
-                inst
-                for inst in self.rw_netlist.getTopCell().getCellInsts()
-                if inst.getCellType() == edif_cell
-            ]
-            if len(cell_insts) > 1:
-                net_name = cell_insts[0].getPortInst(port).getNet().getName()
-                unisim = "GND" if unisim_cell == Unisim.GND else "VCC"
-                logging.warning(
-                    "WARNING: Multiple constant %s nets found in netlist. Using first one: %s",
-                    unisim,
-                    net_name,
-                )
-                for inst in cell_insts[1:]:
-                    rw.combine_const_nets(port, inst, cell_insts[0])
-
-            if cell_insts:
-                const_net = cell_insts[0].getPortInst(port).getNet()
-                setattr(self, name, const_net)
-                continue
-
-            # Create new const instance as part of top-level
-            const_edif_inst = self.rw_netlist.getTopCell().createChildCellInst(
-                f"{name}_phys_netlist", edif_cell
-            )
-
-            # Create const net as part of top-level
-            const_net = EDIFNet(name + "_net_phys_netlist", self.rw_netlist.getTopCell())
-            assert const_net
-            setattr(self, name, const_net)
-
-            const_port = const_edif_inst.getPort(port)
-            assert const_port
-            const_net.createPortInst(const_port, const_edif_inst)
-
-    def __run_rapidwright(
-        self,
-        phys_netlist_checkpoint,
-        phys_netlist_edif_path,
-        impl_netlist_checkpoint,
-        impl_netlist_edif_path,
-    ):
-        """Do all rapidwright related processing on the netlist"""
-
-        self.rw_design = Design.readCheckpoint(impl_netlist_checkpoint, impl_netlist_edif_path)
-        self.rw_netlist = self.rw_design.getNetlist()
-
-        self.__init_const_nets()
-
-        # Init BUFGCTRL cell template
-        self.bufgctrl_edif_cell = self.rw_netlist.getHDIPrimitive(Unisim.BUFGCTRL)
-
-        # Init LUT cell templates
-        self.lut6_2_edif_cell = self.rw_netlist.getHDIPrimitive(Unisim.LUT6_2)
-        self.ram32x1s_edif_cell = self.rw_netlist.getHDIPrimitive(Unisim.RAM32X1S)
-        self.ram32x1s1_edif_cell = self.rw_netlist.getHDIPrimitive(Unisim.RAM32X1S_1)
-        self.ram32x1d_edif_cell = self.rw_netlist.getHDIPrimitive(Unisim.RAM32X1D)
-        self.ram32m_edif_cell = self.rw_netlist.getHDIPrimitive(Unisim.RAM32M)
-
-        # Keep a list of cells already visited and skip them
-        # This happens when we process LUTS mapped to the same BEL
-        cells_already_visited = set()
-
-        # First loop through all sites and deal with LUTs.  We can't the later loop that iterates
-        # over Design.getCells() as it does not return LUT routethru objects.
-        self.__process_all_luts(cells_already_visited)
-        logging.info("")
-        logging.info("Finished processing LUTs")
-
-        # Loop through all cells in the design
-        for cell in self.rw_design.getCells():
-            edif_cell_inst = cell.getEDIFCellInst()
-
-            logging.info(
-                "%s (%s)",
-                cell.getName(),
-                f"{edif_cell_inst.getCellType().getName() if edif_cell_inst else 'None'}",
-            )
-
-            if edif_cell_inst is None:
-                logging.info("  Skipping")
-                continue
-
-            if cell in cells_already_visited:
-                continue
-
-            cell_type = edif_cell_inst.getCellType().getName()
-            if cell_type in ("MUXF7", "MUXF8"):
-                self.cells_to_remove.extend(self.__process_muxf7_muxf8(cell))
-                continue
-
-            if cell_type in ("CARRY4",):
-                self.cells_to_remove.extend(self.__process_carry4(cell))
-                continue
-
-            if cell_type in ("BUFG",):
-                self.cells_to_remove.extend(self.__process_bufg(cell))
-                continue
-
-            # These primitives don't need to get transformed
-            if cell_type in (
-                "IBUF",
-                "OBUF",
-                "OBUFT",
-                "FDSE",
-                "FDRE",
-                "FDCE",
-                "FDPE",
-                "RAMB36E1",
-                "RAMB18E1",
-                "LDCE",
-                "DSP48E1",
-            ):
-                continue
-
-            # TODO: Handle other primitives? SRL, FIFO36, DSP48E1, etc.
-            print(cell)
-            raise PhysNetlistTransformError(f"Unsupported cell type {cell_type}")
-
-        # Remove old unusued cells
-        logging.info("Removing old cells...")
-        for cell in self.cells_to_remove:
-            rw.remove_and_disconnect_cell(cell)
-
-        # Export checkpoint, then run vivado to generate a new netlist
-        self.rw_design.unplaceDesign()
-        self.rw_design.writeCheckpoint(phys_netlist_checkpoint)
-
-        logging.info("")
+        phys_netlist_edif_path = self.stage_dir / "viv_impl_physical.edf"
         logging.info("Writing EDIF phsyical netlist: %s", phys_netlist_edif_path)
-        self.rw_netlist.exportEDIF(phys_netlist_edif_path)
+        self.vivado_netlist.exportEDIF(phys_netlist_edif_path)
         logging.info(
             "Writing capnp interchange netlist: %s",
             str(self.stage_dir / "phys_logical_netlist.capnp"),
         )
         LogNetlistWriter.writeLogNetlist(
-            self.rw_netlist, str(self.stage_dir / "phys_logical_netlist.capnp")
+            self.vivado_netlist, str(self.stage_dir / "phys_logical_netlist.capnp")
+        )
+        logging.info(
+            "Writing capnp interchange physical netlist: %s",
+            str(self.stage_dir / "phys_physical_netlist.capnp"),
+        )
+        PhysNetlistWriter.writePhysNetlist(
+            self.vivado_design, str(self.stage_dir / "phys_physical_netlist.capnp")
         )
 
-    def __process_all_luts(self, cells_already_visited):
-        """Visit all LUTs and replace them with LUT6_2 instances"""
+    def run_rapidwright(self) -> None:
+        """Do all rapidwright related processing on the netlist"""
+        logging.info("Starting logical to physical netlist conversion for %s", self.build_dir.name)
 
-        for site_inst in self.rw_design.getSiteInsts():
-            if site_inst.getSiteTypeEnum() not in (SiteTypeEnum.SLICEL, SiteTypeEnum.SLICEM):
+        # First loop through all sites and deal with LUTs.  We can't the later loop that iterates
+        # over Design.getCells() as it does not return LUT routethru objects.
+        fun_start_time = time.time()
+        self.__process_all_clbs()
+        logging.info("Finished processing CLBs in %s seconds", time.time() - fun_start_time)
+
+        start_time = time.time()
+        cells_gen = (
+            c
+            for c in self.vivado_design.getCells()
+            if c.getEDIFCellInst() is not None and c not in self.visited_cells
+        )
+        for c in cells_gen:
+            ctype = c.getType()
+            logging.info("Examining %s (%s)", c.getName(), f"{ctype}")
+            match ctype:
+                case "MUXF7" | "MUXF8" | "CARRY4":
+                    self.cells_to_remove.extend(self.__process_generic_primitive(c))
+                    self.phys_ecells.append((c.getEDIFCellInst(), c.getSiteInst(), c.getBELName()))
+                case "BUFG":
+                    self.cells_to_remove.extend(self.__process_bufg(c))
+                case (
+                    "IBUF"
+                    | "OBUF"
+                    | "OBUFT"
+                    | "FDSE"
+                    | "FDRE"
+                    | "FDCE"
+                    | "FDPE"
+                    | "RAMB36E1"
+                    | "RAMB18E1"
+                    | "LDCE"
+                    | "DSP48E1"
+                ):
+                    self.phys_ecells.append((c.getEDIFCellInst(), c.getSiteInst(), c.getBELName()))
+                case _:
+                    logging.error("Unsupported cell type %s. Exiting...", ctype)
+                    raise PhysNetlistTransformError(f"Unsupported cell type {ctype}")
+        assert not self.hanging_pins
+        logging.info("Processed other cells in %s seconds", time.time() - start_time)
+        logging.info("Removing old cells...")
+        _ = [rw.remove_and_disconnect_cell(cell) for cell in self.cells_to_remove]
+
+        # Attempt to uniquify all nets, this breaks Net.getLogicalNet() -> EDIFNet
+        hedif_cells = (
+            (c.getEDIFHierCellInst(), c)
+            for c in self.vivado_design.getCells()
+            if c.getEDIFHierCellInst() is not None
+        )
+        output_ports = (
+            (c[1], p.getPortInst(), p.getNet())
+            for c in hedif_cells
+            for p in c[0].getHierPortInsts()
+            if p.isOutput() and p.getNet() is not None and not rw.is_static_net(p.getNet())
+        )
+        nets_processed = set()
+        for cell, port, net in output_ports:
+            if net.getName() in nets_processed:
+                continue
+            drv_str = f"{cell.getSiteName()}/{cell.getBELName()}/{port.getName()}"
+            logging.info("Adding driver location %s to net name %s", drv_str, net.getName())
+            net.rename(f"{drv_str}_{net.getName()}")
+            nets_processed.add(net.getName())
+
+        ttime = time.time() - fun_start_time
+        logging.info("Transformation time %s seconds", f"{ttime:0.2f}")
+        with open(self.stage_dir / "transformation_time.txt", "w") as fp:
+            fp.write(f"{ttime:.2f}\n")
+
+    def __process_all_clbs(self) -> None:
+        """
+        Visit all LUTs and replace them with LUT6_2 instances.
+        Check FF for latch routethrus
+        """
+        # Design.getSiteInsts() won't return some sites w/only constant generators. RW Issue #1228
+        site_insts = {self.vivado_design.getSiteInstFromSite(s) for s in self.device.getAllSites()}
+        site_insts.remove(None)
+        for site_inst in (s for s in site_insts if s.getSiteTypeEnum() in (SLICEL, SLICEM)):
+            self.__process_luts(site_inst)
+
+        # Now that all LUT Generators are instanced, process FFs
+        for site_inst in (s for s in site_insts if s.getSiteTypeEnum() in (SLICEL, SLICEM)):
+            self.__process_ffs(site_inst)
+
+        self.visited_cells.discard(None)
+        self.visited_cells.discard(self.empty_cell)
+
+    def __process_luts(self, site_inst: SiteInst):
+        """
+        Replace all logical luts with appropriate LUT6_2 instances.
+        Look for LUT routethrus and constant generators.
+        Combine LUTRAMs into a single RAM cell if possible.
+        """
+        self._handle_ghost_luts(site_inst)
+        lut_rams = []
+        lrams_post = []
+        for lut6_bel, lut6_pin_out, lut5_bel, lut5_pin_out in self.lut_pair_bel_names:
+            lut6_cell = site_inst.getCell(lut6_bel)
+            lut5_cell = site_inst.getCell(lut5_bel)
+
+            gnd_luts = self.__check_lut_const_nets(
+                (lut6_cell, lut6_pin_out),
+                (lut5_cell, lut5_pin_out),
+                site_inst,
+            )
+            if gnd_luts:
+                self.visited_cells.update(gnd_luts)
                 continue
 
-            gnd_nets = site_inst.getSiteWiresFromNet(self.rw_design.getGndNet())
-            vcc_nets = site_inst.getSiteWiresFromNet(self.rw_design.getVccNet())
-
-            lut_rams = []
-            for lut6_bel, lut6_pin_out, lut5_bel, lut5_pin_out in self.lut_pair_bel_names:
-                lut6_cell = site_inst.getCell(lut6_bel)
-                lut5_cell = site_inst.getCell(lut5_bel)
-
-                gnd_luts = self.__check_lut_const_nets(
-                    lut6_cell, lut6_pin_out, lut5_cell, lut5_pin_out, gnd_nets, vcc_nets, site_inst
-                )
-                if gnd_luts:
-                    cells_already_visited.update(gnd_luts)
-                    continue
-
-                if self.__check_lutram_srl(lut6_cell, lut5_cell, lut_rams, cells_already_visited):
-                    continue
-
-                if len(lut_rams) > 1:
-                    self.__process_lutrams(lut_rams)
-                    lut_rams = []
-
-                if lut6_cell or lut5_cell:
-                    if lut6_cell is not None:
-                        self.__process_lut(lut6_cell, lut5_cell)
-                    else:
-                        if (
-                            not lut5_cell.isRoutethru() and "LUT" not in lut5_cell.getType()
-                        ):  # Possible RW bug -> sometimes lut6 cell is none and lut5 is FDRE
-                            raise PhysNetlistTransformError(
-                                "LUT6 cell is None and LUT5 is not routethru or LUT"
-                            )
-                        self.__process_lut(lut5_cell, None, True)
-
-                cells_already_visited.add(lut6_cell)
-                cells_already_visited.add(lut5_cell)
+            if self.__check_lutram_srl(lut6_cell, lut5_cell, lut_rams):
+                continue
 
             if len(lut_rams) > 1:
-                self.__process_lutrams(lut_rams)
-        cells_already_visited.discard(None)
+                lrams_post.append(self.__process_lutrams(lut_rams))
+                lut_rams = []
 
-    def __check_lutram_srl(self, lut6_cell, lut5_cell, lut_rams, cells_already_visited):
+            if lut6_cell or lut5_cell:
+                if lut6_cell is not None:
+                    self.__process_lut(lut6_cell, lut5_cell)
+                else:
+                    if not lut5_cell.isRoutethru() and "LUT" not in lut5_cell.getType():
+                        raise PhysNetlistTransformError("No LUT6 cell, LUT5 is not rt or LUT")
+                    self.__process_lut(lut5_cell, None, True)
+
+            self.visited_cells.add(lut6_cell)
+            self.visited_cells.add(lut5_cell)
+
+        if len(lut_rams) > 1:
+            lrams_post.append(self.__process_lutrams(lut_rams))
+        if lrams_post:
+            parents = {j for i in lrams_post for j in i[0]}
+            _ = [
+                self.visited_cells.add(c)
+                for c in site_inst.getCells()
+                if c.getEDIFHierCellInst().getParent() in parents
+            ]
+            _ = [
+                self.phys_ecells.append((c, site_inst, bel)) for i in lrams_post for c, bel in i[1]
+            ]
+
+    def _handle_ghost_luts(self, site_inst: SiteInst) -> None:
+        """Some LUT generators are only detectable by the fact that the site output pin is used."""
+        site_pins = (
+            (site_inst.getSitePinInst(p), p)
+            for p in ("A", "B", "C", "D")
+            if site_inst.getSitePinInst(p) is not None  # Site pin is used
+            and site_inst.getNetFromSiteWire(f"{p}6LUT_O6") is None  # Site wire appears unused
+            and site_inst.getSitePinInst(p).getNet().isStaticNet()  # Static net = const generator
+        )
+        for src_pin, p in site_pins:
+            old_net = src_pin.getNet()
+            logging.info("Inferring constant generator on LUT based on site pin %s", src_pin)
+            new_net = self.__process_lut_const(site_inst, [(f"{p}6LUT_O6", old_net.isGNDNet())])[0]
+            self.site_pin_to_net[src_pin] = new_net
+
+    def __process_ffs(self, site_inst: SiteInst):
+        """Process FF routethru cell and add it to the design."""
+        cell_gen = (site_inst.getCell(ff_name) for ff_name in ("AFF", "BFF", "CFF", "DFF"))
+        for ff in (ff for ff in cell_gen if ff is not None and ff.getEDIFCellInst() is None):
+            assert ff.isRoutethru()
+            self.visited_cells.add(ff)
+            logging.info("Processing FF routethru %s", str(ff))
+            new_cell_inst = self.vivado_design.getTopEDIFCell().createChildCellInst(
+                f"{ff.getName()}_phys_rt", self.ldce_edif_cell
+            )
+            logging.info("  Setting INIT to 0")
+            new_cell_inst.addProperty("INIT", JInt(0))
+
+            input_pins = {
+                "CK": ("G", self.vcc),
+                "CE": ("GE", self.vcc),
+                "SR": ("CLR", self.gnd),
+                "D": ("D", None),
+            }
+            if ff.getName() in self.hanging_pins:
+                for drv, _, bp in self.hanging_pins.pop(ff.getName()):
+                    logp = input_pins[bp.getName()][0]
+                    input_pins[bp.getName()] = (logp, self.site_pin_to_net[drv])
+            for physp, (logp, net) in list(input_pins.items())[:-1]:
+                port = new_cell_inst.getOrCreatePortInst(logp)
+                assert port
+                logging.info("  Connecting %s to %s (%s)", net, logp, physp)
+                net.addPortInst(port)
+
+            physp = "D"
+            logp, net = input_pins[physp]
+            if net is None:
+                # Make the rt ff drive the logical net
+                edif_net = site_inst.getNetFromSiteWire(ff.getName()[-2:]).getLogicalNet()
+                src = edif_net.getSourcePortInsts(True)
+                assert len(src) == 1
+                src = src[0]
+                logging.info("  Switch driver on net %s from %s to routethru ff Q", edif_net, src)
+                edif_net.createPortInst(new_cell_inst.getPort("Q"), new_cell_inst)
+                edif_net.removePortInst(src)
+
+                # Make a new net to connect the old driver to the ff input
+                net = EDIFNet(f"{ff.getName()}_rt_net", self.vivado_design.getTopEDIFCell())
+                logging.info("  Creating new net %s for %s driving ff D input", net, src)
+                net.addPortInst(src)
+            net.createPortInst(new_cell_inst.getPort("D"), new_cell_inst)
+            self.phys_ecells.append((new_cell_inst, site_inst, ff.getBELName()))
+
+    def __check_lutram_srl(self, lut6_cell: Cell, lut5_cell: Cell, lut_rams: list) -> bool:
         """Check for lutrams or srl luts"""
         if lut6_cell:
             cell_type = str(lut6_cell.getType())
             if cell_type.startswith("RAM"):
                 lut_rams.append(lut6_cell)
-                cells_already_visited.add(lut6_cell)
+                self.visited_cells.add(lut6_cell)
                 # Currently do not support designs with inverted LUTRAM clk
                 if lut6_cell.getEDIFCellInst().getProperty("IS_CLK_INVERTED").getValue() != "1'b0":
                     raise PhysNetlistTransformError("LUTRAM with inverted clock not supported")
                 if not lut5_cell:
                     return True
             elif cell_type.startswith("SRL"):
-                # assert lut5_cell is None
+                self.phys_ecells.append(
+                    (lut6_cell.getEDIFCellInst(), lut6_cell.getSiteInst(), lut6_cell.getBELName())
+                )
                 if lut5_cell is not None:
                     assert lut5_cell.getType() == lut6_cell.getType()
-                    cells_already_visited.add(lut5_cell)
-                cells_already_visited.add(lut6_cell)
+                    self.visited_cells.add(lut5_cell)
+                self.visited_cells.add(lut6_cell)
                 return True
         if lut5_cell:
             cell_type = str(lut5_cell.getType())
             if cell_type.startswith("RAM"):
-                cells_already_visited.add(lut5_cell)
+                self.visited_cells.add(lut5_cell)
                 # Pretty sure this only happens when the LUT6 is a RAM
                 assert lut6_cell.getType() == lut5_cell.getType()
                 # Also pretty sure LUTRAM-O5 cells are never combined? TBD if comparison fails
                 return True
             if cell_type.startswith("SRL"):
                 assert lut6_cell is None
-                cells_already_visited.add(lut5_cell)
+                self.phys_ecells.append(
+                    (lut5_cell.getEDIFCellInst(), lut5_cell.getSiteInst(), lut5_cell.getBELName())
+                )
+                self.visited_cells.add(lut5_cell)
                 return True
         return False
 
-    # pylint: disable=too-many-positional-arguments
     def __check_lut_const_nets(
-        self, lut6_cell, lut6_pin_out, lut5_cell, lut5_pin_out, gnd_nets, vcc_nets, site_inst
-    ):
+        self, lut6: tuple[Cell, str], lut5: tuple[Cell, str], site_inst: SiteInst
+    ) -> set[Cell]:
         """
-        Check if the LUT6 or LUT5 are connected to a const net
-        Covers O5/O6 being gnd
-        Covers O5/O6 being vcc
-        Covers one output being gnd and the other being vcc
+        Covers any combination of LUT outputs connected to const nets.
+        Covers a combo const generator and a routethru.
+
+        lut6: Tuple (lut6_cell, lut6_pin_out)
+        lut5: Tuple (lut5_cell, lut5_pin_out)
         """
-        const_generator_pins = [None, None]
-        pin1_gnd = None
-        pin2_gnd = None
-        for is_gnd, const_net in ((True, gnd_nets), (False, vcc_nets)):
-            if lut6_pin_out in const_net:
-                # If a gnd net, then there can't be a cell there
-                assert lut6_cell is None
-                if lut5_cell is not None:
-                    self.__process_lut5_and_const_lut(lut5_cell, lut6_pin_out, site_inst, is_gnd)
-                    return {
-                        lut5_cell,
-                    }
-                assert const_generator_pins[0] is None
-                const_generator_pins[0] = lut6_pin_out
-                pin1_gnd = is_gnd
+        output_nets = {
+            lut6[1]: site_inst.getNetFromSiteWire(lut6[1]),
+            lut5[1]: site_inst.getNetFromSiteWire(lut5[1]),
+        }
+        output_nets = [(k, v) for k, v in output_nets.items() if v is not None]
+        const_nets = [(k, v.isGNDNet()) for k, v in output_nets if v.isStaticNet()]
 
-            if lut5_pin_out in const_net:
-                # If a gnd net, then there can't be a cell there
-                # This assumption is not true for LUTRAMs
-                assert lut5_cell is None
-                if lut6_cell is not None:
-                    self.__process_lut5_and_const_lut(lut6_cell, lut5_pin_out, site_inst, is_gnd)
-                    return {
-                        lut6_cell,
-                    }
-                assert const_generator_pins[1] is None
-                const_generator_pins[1] = lut5_pin_out
-                pin2_gnd = is_gnd
-
-        if const_generator_pins[0] is not None or const_generator_pins[1] is not None:
-            if None in const_generator_pins:
-                const_generator_pins.remove(None)
-            self.__process_lut_const(site_inst, const_generator_pins, pin1_gnd, pin2_gnd)
+        if not const_nets:
             return set()
-        return set()
 
-    def __check_ram32x1d(self, lut_rams, parents):
+        if len(output_nets) == len(const_nets):  # Check if all outputs are const nets
+            self.__process_lut_const(site_inst, const_nets)
+            return {self.empty_cell}
+
+        lut, const_pin, is_gnd = None, None, None
+        for pin, net in output_nets:
+            if net.isStaticNet():
+                const_pin = pin
+                is_gnd = net.isGNDNet()
+            elif pin[-1] == "5":
+                lut = lut5[0]
+            elif pin[-1] == "6":
+                lut = lut6[0]
+        assert lut is not None, "Expected a routethru on the site, but none found"
+        assert const_pin is not None, "Expected a const pin, but none found"
+        self.__process_lut5_and_const_lut(lut, const_pin, site_inst, is_gnd)
+        return {lut} if lut.getType().startsWith("LUT") else {self.empty_cell}
+
+    def __check_ram32x1d(
+        self, lut_rams: list[Cell], parents: list[EDIFHierCellInst]
+    ) -> Optional[EDIFCellInst]:
         """Check if RAM32X1S/RAMS32 cells can be combined to RAM32X1D"""
         same_nets = ["WE", "WCLK", "D"]
-
         # check for ram32x1d (2 luts)
         lut6_cell = lut_rams[0]
         ram32x1s_cell = parents[0].getInst()
@@ -406,10 +400,11 @@ class RwPhysNetlist:
                     lut6_cell = lut6_cell_rh
                     break
             else:
-                self.__process_ram32x1d((lut6_cell, lut6_cell_rh))
-                return lut_rams
+                return self.__process_ram32x1d((lut6_cell, lut6_cell_rh))
 
-    def __check_ram32m(self, lut_rams, parents):
+    def __check_ram32m(
+        self, lut_rams: list[Cell], parents: list[EDIFHierCellInst]
+    ) -> Optional[EDIFCellInst]:
         """
         Check if RAM32X1S/RAMS32 or RAM32X1D/RAMD32 cells can be
         combined to RAM32M.
@@ -425,18 +420,16 @@ class RwPhysNetlist:
                 if lh != rh:
                     if lut6_cell.getType() == "RAMS32":
                         return self.__check_ram32x1d(lut_rams, parents)
-                    return lut_rams
-        self.__process_ram32m(lut_rams)
-        return lut_rams
+                    return None
+        return self.__process_ram32m(lut_rams)
 
-    def __process_ram32x1d(self, cells):
+    def __process_ram32x1d(self, cells: list[Cell]) -> list[EDIFCellInst, str]:
         """
         Replace two RAM32X1S cells with a single RAM32X1D cell.
         """
         parent, edif_cells = self.__lutram_assertions(cells)
         new_cell_name = f"{rw.generate_combinded_cell_name(edif_cells)}_ram32x1d_phys"
         cell_str = f"2 LUT_RAMS ({' '.join([str(n.getName()) for n in cells])})"
-        logging.info("")
         logging.info("Converting %s to RAM32X1D %s", cell_str, new_cell_name)
 
         ram32x1d = parent.createChildCellInst(new_cell_name, self.ram32x1d_edif_cell)
@@ -459,9 +452,10 @@ class RwPhysNetlist:
         for cell in cells:
             parent = cell.getEDIFHierCellInst().getParent()
             self.cells_to_remove.append(parent)
-        return ram32x1d
+        self.phys_ecells.append((ram32x1d, parent.getSiteInst(), ram32x1d.getBELName()))
+        return [(ram32x1d, cells[0].getBELName())]
 
-    def __process_ram32m(self, cells):
+    def __process_ram32m(self, cells: list[Cell]) -> EDIFCellInst:
         """
         Replace four RAM32X1S or two RAM32X1D cells with a single RAM32M
         cell.
@@ -472,7 +466,6 @@ class RwPhysNetlist:
         parent, edif_cells = self.__lutram_assertions(cells)
         new_cell_name = f"{rw.generate_combinded_cell_name(edif_cells)}_ram32m_phys"
         cell_str = f"4 LUT_RAMS ({' '.join([str(n.getName()) for n in cells])})"
-        logging.info("")
         logging.info("Converting %s to RAM32M %s", cell_str, new_cell_name)
 
         ram32m = parent.createChildCellInst(new_cell_name, self.ram32m_edif_cell)
@@ -492,17 +485,14 @@ class RwPhysNetlist:
             rw.valid_bus_transfer(["O"], f"DO{i}", cell, ram32m)
 
         self.cells_to_remove.extend(cells)
-        for cell in cells:
-            parent = cell.getEDIFHierCellInst().getParent()
+        for parent in (cell.getEDIFHierCellInst().getParent() for cell in cells):
             self.cells_to_remove.append(parent)
-        return ram32m
+        return [(ram32m, cells[0].getBELName())]
 
-    def __lutram_assertions(self, lut_rams):
+    def __lutram_assertions(self, lut_rams: list[Cell]) -> tuple[EDIFCell, list[EDIFCellInst]]:
         """
         Run sanity assertions on LUTRAMs.
-
-        Returns:
-        (EDIFCell, [EDIFCellInst]) -> (parent cell, [child insts])
+        Returns -> (parent cell, [child insts])
         """
         hedif_cells = [c.getEDIFHierCellInst() for c in lut_rams]
         parents1 = [c.getParent() for c in hedif_cells]
@@ -517,82 +507,59 @@ class RwPhysNetlist:
 
         return (parent.pop().getCellType(), [c.getParent().getInst() for c in hedif_cells])
 
-    def __process_lutrams(self, lut_rams):
+    def __process_lutrams(
+        self, lut_rams: list[Cell]
+    ) -> tuple[set[EDIFHierCellInst], list[tuple[EDIFCellInst, str]]]:
         """
         Look at LUTRAMs in a site and see if they should be combined into a
         single RAM primitive.  RAMS32 is wrapped in RAM32X1S (parent cell), so
         LUTRAMs only need processed if they can be combined.
         """
-
         parents = [c.getEDIFHierCellInst().getParent() for c in lut_rams]
-        if len(set(parents)) == 1:
-            # Sometimes LUTRAM cells are already combined into bigger primitive
-            return
+        parents_insts = [(p.getInst(), c.getBELName()) for p, c in zip(parents, lut_rams)]
+        if len(set(parents)) == 1:  # Sometimes LUTRAMs are already combined into bigger primitive
+            return (set(parents), parents_insts)
 
         cell_type = {c.getType() for c in lut_rams}
-
         if not cell_type <= {"RAMS32", "RAMD32"}:
             raise PhysNetlistTransformError(f"Unexpected child cell type {cell_type}")
 
         if len(cell_type) > 1:
             if len(lut_rams) == 2:
-                return
+                return (set(parents), parents_insts)
             assert len(lut_rams) != 4
             if lut_rams[0].getType() == lut_rams[1].getType():
                 lut_rams = lut_rams[0:2]
             elif lut_rams[1].getType() == lut_rams[2].getType():
                 lut_rams = lut_rams[1:]
                 parents = parents[1:]
-            else:
-                # Should not reach here
+            else:  # Should not reach here
                 type_str = ", ".join([c.getType() for c in lut_rams])
                 raise PhysNetlistTransformError(
                     f"Unexpected lutram configuration in slice: {type_str}"
                 )
-            self.__check_ram32x1d(lut_rams, parents)
-            return
+            ret = self.__check_ram32x1d(lut_rams, parents) or parents_insts
+            return set(parents), ret
 
         if cell_type.pop() == "RAMS32":
             if len(lut_rams) == 4:
-                self.__check_ram32m(lut_rams, parents)
-                return
-            self.__check_ram32x1d(lut_rams, parents)
-            return
+                ret = self.__check_ram32m(lut_rams, parents) or parents_insts
+                return set(parents), ret
+            ret = self.__check_ram32x1d(lut_rams, parents) or parents_insts
+            return set(parents), ret
 
         if len(lut_rams) == 2:
-            self.__check_ram32m(lut_rams, parents)
+            parents_insts = self.__check_ram32m(lut_rams, parents) or parents_insts
+        return set(parents), parents_insts
 
-    def __process_muxf7_muxf8(self, cell):
-        """Process MUXF7/MUXF8 primitive
-        Not sure whether inputs can be permuted or not, but for now let's
-        assume they can't be and throw a NotImplementedError exception if
-        they are permuted in some way."""
-
-        type_name = cell.getEDIFCellInst().getCellType().getName()
-        logging.info("")
-        logging.info("Processing %s %s", type_name, cell)
+    def __process_generic_primitive(self, cell: Cell) -> list:
+        """Process CARRY4/MUXF7/MUXF8 primitive"""
         if rw.PinMap.cell_is_default_mapping(cell):
-            logging.info("  Inputs not permuted, skipping")
             return []
-
+        logging.error("\tInputs are unexpectedly permuted... Exiting")
         raise NotImplementedError
 
-    def __process_carry4(self, cell):
-        """Process CARRY4 primitive
-        Not sure whether inputs can be permuted or not, but for now let's
-        assume they can't be and throw a NotImplementedError exception if
-        they are permuted in some way."""
-        type_name = cell.getEDIFCellInst().getCellType().getName()
-        logging.info("")
-        logging.info("Processing %s %s", type_name, cell)
-
-        if rw.PinMap.cell_is_default_mapping(cell):
-            logging.info("  Inputs not permuted, skipping")
-            return []
-
-        raise NotImplementedError
-
-    def __process_bufg(self, bufg_cell):
+    def __process_bufg(self, bufg_cell: Cell) -> list[Cell]:
         """Convert BUFG to BUFGCTRL"""
         bufg_edif_inst = bufg_cell.getEDIFCellInst()
         assert bufg_edif_inst
@@ -628,39 +595,97 @@ class RwPhysNetlist:
         for pins in bufg_cell.getPinMappingsL2P().items():
             rw.valid_net_transfer(*pins, bufg_edif_inst, bufgctrl)
 
-        # Set default connections
-        for port_name in ("CE0", "CE1", "I1", "IGNORE0", "IGNORE1", "S0", "S1"):
+        ports = set(("CE0", "CE1", "I1", "IGNORE0", "IGNORE1", "S0", "S1"))
+        if bufg_cell.getName() in self.hanging_pins:
+            # If the bufg has hanging pins, then connect them to the site pin nets
+            for src_pin, cell, pin in self.hanging_pins.pop(bufg_cell.getName()):
+                assert pin.getName() in ports
+                logging.info("  Connecting %s to %s", src_pin, pin)
+                logical_pin = cell.getLogicalPinMapping(pin.getName())
+                port = bufgctrl.getOrCreatePortInst(logical_pin)
+                assert port
+                self.site_pin_to_net[src_pin].addPortInst(port)
+                ports.remove(pin.getName())
+        for port_name in ports:  # Set default connections
+            logging.info("  Setting %s to VCC", port_name)
             port = bufgctrl.getPort(port_name)
             assert port
             self.vcc.createPortInst(port, bufgctrl)
-
+        self.phys_ecells.append((bufgctrl, bufg_cell.getSiteInst(), "BUFGCTRL"))
         return [bufg_cell]
 
-    def __check_carry4_const_net(self, site_inst, const_type, pin_out, new_net, is_gnd):
+    def __check_carry4_ff_const_net(
+        self, site_inst: SiteInst, pin_out: str, new_net: EDIFNet, is_gnd: bool
+    ) -> None:
         """
-        It seems that if the const lut output is routed to a carry4, the
-        mux it routes through also doesn't have a cell, so you have to check
-        the c4 input pins.
+        It seems that if the const lut output is routed to a carry4 or site ff,
+        the mux it routes through also doesn't have a cell, so you have to check
+        the primitive input pins.
         """
+        dest_ports = []
         cell = site_inst.getCell("CARRY4")
-        assert cell, f"{const_type} LUT routed to no cells"
-        pin_in = "DI" if pin_out.endswith("O5") else "S"
-        idx = {"A": 0, "B": 1, "C": 2, "D": 3}[pin_out[0]]
-        routed_to_cell_inst = cell.getEDIFCellInst()
-        bus = routed_to_cell_inst.getPort(pin_in)
-        new_port = bus.getPortInstNameFromPort(bus.getPortIndexFromNameIndex(idx))
-        routed_to_port_inst = routed_to_cell_inst.getPortInst(new_port)
-        assert routed_to_port_inst
-        if (is_gnd and routed_to_port_inst.getNet().getName() == "<const0>") or (
-            not is_gnd and routed_to_port_inst.getNet().getName() == "<const1>"
-        ):
-            routed_to_port_inst.getNet().removePortInst(routed_to_port_inst)
-            new_net.createPortInst(new_port, routed_to_cell_inst)
-            new_net.createPortInst(new_port, routed_to_cell_inst)
+        if cell:
+            pin_in = "DI" if pin_out.endswith("O5") else "S"
+            idx = {"A": 0, "B": 1, "C": 2, "D": 3}[pin_out[0]]
+            routed_to_cell_inst = cell.getEDIFCellInst()
+            bus = routed_to_cell_inst.getPort(pin_in)
+            log_port_name = bus.getPortInstNameFromPort(bus.getPortIndexFromNameIndex(idx))
+            dest_port = routed_to_cell_inst.getPortInst(log_port_name)
+            assert dest_port
+            dest_ports.append((routed_to_cell_inst, log_port_name, dest_port))
+        cell = site_inst.getCell(f"{pin_out[0]}FF")
+        if cell:
+            routed_to_cell_inst = cell.getEDIFCellInst()
+            if routed_to_cell_inst is not None:
+                dest_port = routed_to_cell_inst.getPortInst("D")
+                assert dest_port
+                dest_ports.append((routed_to_cell_inst, "D", dest_port))
+        if not dest_ports:
+            return
+        for routed_to_cell_inst, log_port_name, dest_port in dest_ports:
+            log_net = dest_port.getNet()
+            if (is_gnd and log_net.isGND()) or (not is_gnd and log_net.isVCC()):
+                log_net.removePortInst(dest_port)
+                new_net.createPortInst(log_port_name, routed_to_cell_inst)
 
-    # pylint: enable=too-many-positional-arguments
+    def __find_site_pin_sinks(self, src_pin: SitePinInst) -> list[tuple[Cell, BELPin]]:
+        """Find the sinks of a site pin by its Net"""
+        old_net = src_pin.getNet()
+        if old_net.getName() not in self.const_net_nd_to_pip:
+            # Not every design needs this initialized, so wait to until needed
+            ntp = {}  # See DesignTools.getConnectionPIPs()
+            for pip in old_net.getPIPs():
+                src = pip.getStartNode()
+                if src not in ntp or not pip.isBidirectional():
+                    ntp[src] = pip
+                if pip.isBidirectional():
+                    assert False  # Currently Unexpected
+            self.const_net_nd_to_pip[old_net.getName()] = ntp
+        ntp = self.const_net_nd_to_pip[old_net.getName()]
+        pip = ntp[src_pin.getConnectedNode()]
+        while pip.getEndNode() in ntp:
+            pip = ntp[pip.getEndNode()]
+        sink_site_pin = pip.getEndNode().getSitePin()
+        sink_site = self.vivado_design.getSiteInstFromSite(sink_site_pin.getSite())
+        sink_pin = sink_site.getSitePinInst(sink_site_pin.getPinName())
+        cells = rw.get_cells_from_site_pin(sink_pin, sink_site)
+        valid_cells = []  # Some cells still need to be transformed
+        for cell, pin in cells:
+            if cell.getEDIFCellInst() is not None:
+                if cell.getLogicalPinMapping(pin.getName()) is not None:
+                    valid_cells.append((cell, pin))
+                else:  # If the edif cell exists, with no pin mapping, then the port is not used
+                    assert old_net.isGNDNet()
+            else:
+                if cell.getName() in self.hanging_pins:
+                    self.hanging_pins[cell.getName()].append((src_pin, cell, pin))
+                else:
+                    self.hanging_pins[cell.getName()] = [(src_pin, cell, pin)]
+        return valid_cells
 
-    def __process_lut_const_net(self, site_inst, new_cell_inst, pin_out, is_gnd):
+    def __process_lut_const_net(
+        self, site_inst: SiteInst, new_cell_inst: EDIFCellInst, pin_out: str, is_gnd: bool
+    ) -> EDIFNet:
         """
         Replace the global const net on an input with the const routethru LUT output.
         """
@@ -670,67 +695,62 @@ class RwPhysNetlist:
         # Create a new net to replace the global ground
         new_net_name = f"{site_inst.getName()}.{pin_out}.{const_type}"
         logging.info("  Creating new %s net %s", const_type, new_net_name)
-        new_net = EDIFNet(new_net_name, self.rw_design.getTopEDIFCell())
+        new_net = EDIFNet(new_net_name, self.vivado_design.getTopEDIFCell())
 
         # Drive net using LUT output port
-        lut_out_port = new_cell_inst.getPort("O6" if pin_out.endswith("O6") else "O5")
-        logging.info("  Connecting new net to LUT output port %s", lut_out_port.getName())
-        assert lut_out_port
-        new_net.createPortInst(lut_out_port, new_cell_inst)
+        logging.info("  Connecting new net to LUT output port %s", pin_out[6:])
+        new_net.addPortInst(new_cell_inst.getOrCreatePortInst(pin_out[6:]))
 
         # Loop through ports this const net needs to drive and connect them up
-        cells = [site_inst.getCell(pin.getBEL()) for pin in site_inst.getSiteWirePins(pin_out)]
-        for cell, pin_in in zip(cells, site_inst.getSiteWirePins(pin_out)):
-            if not cell:
-                continue
-
-            logging.info(" %s %s %s", pin_in, pin_in.getBEL(), site_inst.getCell(pin_in.getBEL()))
-            routed_to_cell_inst = cell.getEDIFCellInst()
-
+        cells = [(site_inst.getCell(p.getBEL()), p) for p in site_inst.getSiteWirePins(pin_out)]
+        if pin_out.endswith("O6") and site_inst.getSitePinInst(pin_out[0]) is not None:
+            # Check if this LUT drives anything off-site
+            cells += self.__find_site_pin_sinks(site_inst.getSitePinInst(pin_out[0]))
+        cells_gen = (
+            (c, c[0].getEDIFCellInst())
+            for c in cells
+            if c[0] is not None and c[0].getEDIFCellInst() is not None
+        )
+        for (cell, pin_in), routed_to_cell_inst in cells_gen:
+            logging.info(" %s %s %s", pin_in, pin_in.getBEL(), cell)
             # Map physical pin back to logical netlist port name
-            assert rw.PinMap.cell_is_default_mapping(cell)
-            logical_port_name = rw.PinMap[routed_to_cell_inst.getCellType().getName()].inverse[
-                pin_in.getName()
-            ]
-
+            logical_port_name = cell.getLogicalPinMapping(pin_in.getName())
             routed_to_port_inst = routed_to_cell_inst.getPortInst(logical_port_name)
             assert routed_to_port_inst
             # Disconnect const net from pin
-            routed_to_cell_inst.getPortInst(logical_port_name).getNet().removePortInst(
-                routed_to_port_inst
-            )
+            routed_to_port_inst.getNet().removePortInst(routed_to_port_inst)
+            new_net.addPortInst(routed_to_port_inst)
 
-            # Connect up new LUT const net to pin
-            if routed_to_port_inst.getPort().isBus():
-                new_net.createPortInst(
-                    routed_to_port_inst.getPort(),
-                    routed_to_port_inst.getIndex(),
-                    routed_to_cell_inst,
-                )
-            else:
-                new_net.createPortInst(routed_to_port_inst.getPort(), routed_to_cell_inst)
+        self.__check_carry4_ff_const_net(site_inst, pin_out, new_net, is_gnd)
+        return new_net
 
-        if site_inst.getCell("CARRY4") is not None:
-            self.__check_carry4_const_net(site_inst, const_type, pin_out, new_net, is_gnd)
-
-    def __process_lut_const(self, site_inst, pins, pin1_gnd, pin2_gnd):
+    def __process_lut_const(
+        self, site_inst: SiteInst, pins: list[tuple[str, bool]]
+    ) -> list[EDIFNet]:
         """
         Process a LUT that isn't part of the design (ie no cell), but
         is configured to generate a GND signal.
 
-        len(pins) <= 2
+        pins: list of tuples (pin_name, is_gnd)
         """
-
-        logging.info("")
         logging.info(
-            "Processing const LUT at site %s {site_inst.getName()}, pin(s): %s",
+            "Processing const LUT at site %s, pin(s): %s",
             site_inst.getName(),
-            ",".join(str(p) for p in pins),
+            ",".join(str(p[0]) for p in pins),
         )
 
-        new_cell_inst = self.rw_design.getTopEDIFCell().createChildCellInst(
-            rw.generate_const_lut_name(site_inst, pins, pin1_gnd, pin2_gnd), self.lut6_2_edif_cell
+        new_cell_inst = self.vivado_design.getTopEDIFCell().createChildCellInst(
+            rw.generate_const_lut_name(site_inst, pins), self.lut6_2_edif_cell
         )
+        pin1_gnd, pin2_gnd = None, None
+        if len(pins) == 1:
+            if pins[0][0][-1] == "6":
+                pin1_gnd = pins[0][1]
+            else:
+                pin2_gnd = pins[0][1]
+        else:
+            pin1_gnd, pin2_gnd = pins[0][1], pins[1][1]
+
         init6 = "00000000" if pin1_gnd else "FFFFFFFF"
         init5 = "00000000" if pin2_gnd else "FFFFFFFF"
         prop_str = (
@@ -739,20 +759,21 @@ class RwPhysNetlist:
         )
         new_cell_inst.setPropertiesMap({"INIT": EDIFPropertyValue(prop_str, EDIFValueType.STRING)})
         logging.info("Created new cell %s", new_cell_inst.getName())
-        if len(pins) == 2:
-            self.__process_lut_const_net(site_inst, new_cell_inst, pins[0], pin1_gnd)
-            self.__process_lut_const_net(site_inst, new_cell_inst, pins[1], pin2_gnd)
-        else:
-            self.__process_lut_const_net(
-                site_inst, new_cell_inst, pins[0], pin1_gnd if pin1_gnd is not None else pin2_gnd
-            )
+        new_nets = [
+            self.__process_lut_const_net(site_inst, new_cell_inst, pin, is_gnd)
+            for pin, is_gnd in pins
+        ]
 
-        # Connect inputs to VCC
+        # Connect inputs to VCC to relect f2b
         for logical_port in rw.PinMap["LUT6_2"]:
             if logical_port.startswith("I"):
                 self.vcc.createPortInst(new_cell_inst.getPort(logical_port), new_cell_inst)
+        self.phys_ecells.append((new_cell_inst, site_inst, f"{pins[0][0][0]}6LUT"))
+        return new_nets
 
-    def __process_lut(self, lut6_cell, lut5_cell, lut5_only=False):
+    def __process_lut(
+        self, lut6_cell: Cell, lut5_cell: Cell, lut5_only: bool = False
+    ) -> EDIFCellInst:
         """
         This function takes a LUT* from the netlist and replaces with with a LUT6_2
         with logical mapping equal to the physical mapping.
@@ -760,7 +781,6 @@ class RwPhysNetlist:
         lut5_only: The lut6_cell was none and is replaced with the lut5_cell.
             If True, lut5_cell is None. Sometimes the lut5 is a lone lut or a rt.
         """
-        logging.info("")
         logging.info(
             "Processing and replacing LUT(s): %s",
             ",".join(
@@ -782,7 +802,6 @@ class RwPhysNetlist:
 
         ##### Copy all properties from existing LUT to new LUT (INIT will be fixed later)
         new_cell_inst.setPropertiesMap(lut6_edif_cell_inst.createDuplicatePropertiesMap())
-        # TODO: If other_lut_cell is not None, then check that properties don't conflict?
 
         #### Wire up inputs/outputs
         physical_pins_to_nets = {}
@@ -797,25 +816,21 @@ class RwPhysNetlist:
             physical_pins_to_nets[physical_pin] = port_inst.getNet()
 
             rw.lut_move_net_to_new_cell(
-                lut6_edif_cell_inst, new_cell_inst, logical_pin, physical_pin
+                (lut6_edif_cell_inst, new_cell_inst), logical_pin, physical_pin
             )
 
         # Now do the same for the other LUT
         if lut5_cell:
             logging.info("Processing LUT %s", lut5_cell.getName())
+            lut5_edif_cell_inst = lut5_cell.getEDIFCellInst()
             for logical_pin, physical_pin in lut5_cell.getPinMappingsL2P().items():
                 assert len(physical_pin) == 1
                 physical_pin = list(physical_pin)[0]
 
-                lut5_edif_cell_inst = lut5_cell.getEDIFCellInst()
-                port_inst = lut5_edif_cell_inst.getPortInst(logical_pin)
-                assert port_inst
-
                 # Disconnect net from logical pin on old cell,
                 # and connect to new logical pin (based on physical pin) of new cell
                 rw.lut_move_net_to_new_cell(
-                    lut5_edif_cell_inst,
-                    new_cell_inst,
+                    (lut5_edif_cell_inst, new_cell_inst),
                     logical_pin,
                     physical_pin,
                     logging.info,
@@ -833,32 +848,31 @@ class RwPhysNetlist:
         # a new net is needed to connect LUT output to FF
 
         if lut6_cell.isRoutethru():
-            self.__create_lut_routethru_net(lut6_cell, lut5_only, new_cell_inst)
+            rw.create_lut_routethru_net(lut6_cell, lut5_only, new_cell_inst)
         if lut5_cell and lut5_cell.isRoutethru():
-            self.__create_lut_routethru_net(lut5_cell, True, new_cell_inst)
+            rw.create_lut_routethru_net(lut5_cell, True, new_cell_inst)
 
         # Fix the new LUT INIT property based on the new pin mappings
         if not lut5_only:
-            rw.process_lut_init(lut6_cell, lut5_cell, new_cell_inst)
+            new_init = rw.process_lut_init(lut6_cell, lut5_cell)
         else:
-            rw.process_lut_init(None, lut6_cell, new_cell_inst)
+            new_init = rw.process_lut_init(None, lut6_cell)
+        logging.info("  New LUT INIT: %s", new_init)
+        new_cell_inst.addProperty("INIT", new_init)
 
-        # Return the cells to be removed
-        cells_to_remove = []
-        if not lut6_cell.isRoutethru():
-            cells_to_remove.append(lut6_cell)
-        if lut5_cell and not lut5_cell.isRoutethru():
-            cells_to_remove.append(lut5_cell)
-        return cells_to_remove
+        self.phys_ecells.append((new_cell_inst, lut6_cell.getSiteInst(), lut6_cell.getBELName()))
 
-    def __process_lut5_and_const_lut(self, lut5, const_pin, site_inst, is_gnd):
+        return new_cell_inst
+
+    def __process_lut5_and_const_lut(
+        self, lut5: Cell, const_pin: str, site_inst: SiteInst, is_gnd: bool
+    ) -> Cell:
         """Process a LUT5 and GND LUT pair."""
         assert lut5 is not None
         if str(lut5.getType()).startswith("RAM"):
             raise PhysNetlistTransformError("LUTRAM paired with gnd LUT not supported")
 
         const_type = "GND" if is_gnd else "VCC"
-        logging.info("")
         logging.info(
             "Processing and replacing LUT5 %s paired with %s LUT %s on site %s",
             lut5.getName(),
@@ -876,8 +890,12 @@ class RwPhysNetlist:
         )
 
         #### Copy all properties from existing LUT to new LUT (INIT will be fixed later)
-        new_cell_inst.setPropertiesMap(lut5_edif_cell_inst.createDuplicatePropertiesMap())
-        logging.info("Processing LUT %s", lut5_edif_cell_inst.getName())
+        if lut5.getType().startsWith("LUT"):
+            new_cell_inst.setPropertiesMap(lut5_edif_cell_inst.createDuplicatePropertiesMap())
+            logging.info("Processing LUT %s", lut5_edif_cell_inst.getName())
+        else:
+            logging.info("Processing routethru/const ghost LUT connected to %s", lut5.getName())
+            assert lut5.isRoutethru(), "Expected a routethru LUT5 cell"
 
         for logical_pin, physical_pin in lut5.getPinMappingsL2P().items():
             assert len(physical_pin) == 1
@@ -887,7 +905,7 @@ class RwPhysNetlist:
             assert port_inst
 
             rw.lut_move_net_to_new_cell(
-                lut5_edif_cell_inst, new_cell_inst, logical_pin, physical_pin
+                (lut5_edif_cell_inst, new_cell_inst), logical_pin, physical_pin
             )
 
         if lut5.isRoutethru():
@@ -899,7 +917,7 @@ class RwPhysNetlist:
             in_pins.remove(rt_pin)
             for pin in in_pins:
                 self.vcc.createPortInst(new_cell_inst.getPort(pin), new_cell_inst)
-            self.__create_lut_routethru_net(lut5, const_pin.endswith("O6"), new_cell_inst)
+            rw.create_lut_routethru_net(lut5, const_pin[-1] == "6", new_cell_inst)
 
         for logical_port in rw.PinMap["LUT6_2"]:
             if logical_port.startswith("I") and not new_cell_inst.getPortInst(logical_port):
@@ -913,66 +931,8 @@ class RwPhysNetlist:
 
         # Fix the new LUT INIT property based on the new pin mappings
         rw.process_shared_gnd_lut_eqn(lut5, const_pin, new_cell_inst, is_gnd)
+        self.phys_ecells.append((new_cell_inst, site_inst, lut5.getBELName()))
         return lut5
-
-    def __create_lut_routethru_net(self, cell, is_lut5, new_lut_cell):
-        """Extra processing for LUT route through.  Need to create a new net
-        connecting from the new LUT6_2 instance to the FF"""
-
-        logging.info("Creating routethru for %s", cell.getName())
-
-        site_str = f"X{cell.getSite().getInstanceX()}Y{cell.getSite().getInstanceY()}"
-        # Create the new net
-        new_net_name = (
-            cell.getName()
-            + f"_routethru_{site_str}:"
-            + str(cell.getBEL().getName())[0]
-            + ("6" if not is_lut5 else "5")
-        )
-        logging.info("  Creating new net %s", new_net_name)
-        new_net = EDIFNet(new_net_name, cell.getEDIFCellInst().getParentCell())
-
-        # Connect net to LUT output
-        lut_out_port = new_lut_cell.getPort("O5" if is_lut5 else "O6")
-        assert lut_out_port
-        logging.info(
-            "  Connecting new net to LUT %s port %s", new_lut_cell.getName(), lut_out_port.getName()
-        )
-        new_net.createPortInst(lut_out_port, new_lut_cell)
-
-        # Connect net to the input of the other cell in this site (FF, CARRY4)
-        matching_cells = [
-            other_cell
-            for other_cell in cell.getSiteInst().getCells()
-            if other_cell.getName() == cell.getName() and not other_cell.isRoutethru()
-        ]
-        assert len(matching_cells) == 1
-        routed_to_cell = matching_cells[0]
-        routed_to_cell_inst = routed_to_cell.getEDIFCellInst()
-
-        # First figure out which logical pin this routethru goes to.
-        # Even though we are calling the gePinMappingsL2P on the LUT cell,
-        # it doesn't actually return the logical pin on the LUT, but rather
-        # the downstream cell (FF, CARRY4).
-        logical_pins = list(cell.getPinMappingsL2P().keys())
-        assert len(logical_pins) == 1
-        routed_to_port_name = str(logical_pins[0])
-
-        routed_to_port_inst = routed_to_cell_inst.getPortInst(routed_to_port_name)
-        assert routed_to_port_inst
-
-        logging.info(
-            "  Connecting new net to BEL %s, port %s",
-            routed_to_cell.getBEL().getName(),
-            routed_to_port_name,
-        )
-
-        if routed_to_port_inst.getPort().isBus():
-            new_net.createPortInst(
-                routed_to_port_inst.getPort(), routed_to_port_inst.getIndex(), routed_to_cell_inst
-            )
-        else:
-            new_net.createPortInst(routed_to_port_inst.getPort(), routed_to_cell_inst)
 
 
 if __name__ == "__main__":
@@ -983,23 +943,14 @@ if __name__ == "__main__":
         required=True,
         help="The build_directory to create a vivado netlist for.",
     )
+    utils.add_path_arg(parser, "--impl_dcp", "The implementation dcp file to use for the netlist.")
+    utils.add_path_arg(parser, "--impl_edf", "The implementation edf file to use for the netlist.")
     parser.add_argument(
-        "--impl_dcp",
-        type=Path,
-        required=True,
-        help="The implementation dcp file to use for the netlist.",
+        "--logging_level", default="INFO", help="Decides what levels of logs to display"
     )
     parser.add_argument(
-        "--impl_edf",
-        type=Path,
-        required=True,
-        help="The implementation edf file to use for the netlist.",
+        "--log_name", type=str, default="log.txt", help="The log file path to use as output"
     )
-    parser.add_argument("--logging_level", help="Decides what levels of logs to display")
     args = parser.parse_args()
-    netlist_generator = RwPhysNetlist(args.build_dir, args.logging_level)
-    try:
-        netlist_generator.run(args.impl_dcp, args.impl_edf)
-    except jpype.JException as e:
-        logging.error("ERROR: %s", e)
-        sys.exit(1)
+    impl_files = (args.impl_dcp, args.impl_edf)
+    RwPhysNetlist(args.build_dir, impl_files, args.logging_level, args.log_name).run()

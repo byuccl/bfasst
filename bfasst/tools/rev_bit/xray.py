@@ -48,12 +48,10 @@ class Xray(Tool):
                     "db_root": XRAY_DB_PATH / get_family_from_part(self.flow.part),
                     "part": self.flow.part,
                     "input_xdc": self.xdc_input,
-                    "output_capnp_log": self.build_path
-                    / (self.design_props.top + "_reversed_log.capnp"),
-                    "output_capnp_phys": self.build_path
-                    / (self.design_props.top + "_reversed_phys.capnp"),
-                    "output_capnp_xdc": self.build_path
-                    / (self.design_props.top + "_reversed_xdc.capnp"),
+                    "output_capnp_log": self.outputs["edf_capnp"],
+                    "output_capnp_phys": self.outputs["phys_capnp"],
+                    "output_capnp_xdc": self.outputs["xdc_capnp"],
+                    "log_file": str(self.outputs["f2b_log_file"]),
                 },
             )
 
@@ -64,6 +62,16 @@ class Xray(Tool):
         self.outputs["xray_fasm"] = self.fasm_path
         self.outputs["rev_netlist"] = self.reversed_netlist_path
         self.outputs["xray_xdc"] = self.xdc_path
+        self.outputs["phys_capnp"] = self.build_path / (
+            self.design_props.top + "_reversed_phys.capnp"
+        )
+        self.outputs["edf_capnp"] = self.build_path / (
+            self.design_props.top + "_reversed_edf.capnp"
+        )
+        self.outputs["xdc_capnp"] = self.build_path / (
+            self.design_props.top + "_reversed_xdc.capnp"
+        )
+        self.outputs["f2b_log_file"] = self.build_path / "fasm2bels.log"
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
