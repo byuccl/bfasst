@@ -129,7 +129,7 @@ class StructuralCapnp(RwPhysNetlist):
 
         self.load_capnp_design(phys_capnp, edf_capnp)
         comp_start_time = time.time()
-        for ecell, site_inst, bel_name in self.phys_cells:
+        for ecell, site_inst, bel_name in self.phys_ecells:
             self._compare_cell(ecell, site_inst, bel_name)
         self._check_nets()
         end_time = time.time()

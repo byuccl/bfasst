@@ -144,7 +144,7 @@ def transform_stats(designs_yaml):
     workbook.close()
 
 
-def phys_capnp_results(flow, out="results.csv"):
+def phys_capnp_results(flow, out="new_results.csv"):
     """
     Gather results from phys_cmp flow and create a CSV file with
     utilization data, transformation times, comparison times, and
@@ -159,11 +159,7 @@ def phys_capnp_results(flow, out="results.csv"):
 
     rows = []
     for design in designs:
-        status = (
-            "Success"
-            if (design / "vivado_phys_netlist/transformation_time.txt").exists()
-            else "FAILED"
-        )
+        status = "Success" if (design / "capnp_cmp/cmp_time.txt").exists() else "FAILED"
         row = {
             "Design": design.name,
             "Status": status,
@@ -171,9 +167,11 @@ def phys_capnp_results(flow, out="results.csv"):
             "LUT_MEM": 0,
             "SRL": 0,
             "FF": 0,
+            "DSP48E1": 0,
             "CARRY4": 0,
             "BRAM": 0,
-            "P_TIME": 0,
+            "T_TIME": 0,
+            "S_TIME": 0,
         }
         if status == "FAILED":
             rows.append(row)
@@ -187,6 +185,8 @@ def phys_capnp_results(flow, out="results.csv"):
                     row["LUT_MEM"] = line.split("|")[2].strip()
                 elif "|   LUT as Shift Register" in line:
                     row["SRL"] = line.split("|")[2].strip()
+                elif "| DSP48E1" in line:
+                    row["DSP48E1"] = line.split("|")[2].strip()
                 elif "| Slice Registers" in line:
                     row["FF"] = line.split("|")[2].strip()
                 elif "| CARRY4" in line:
@@ -195,7 +195,11 @@ def phys_capnp_results(flow, out="results.csv"):
                     row["BRAM"] = line.split("|")[2].strip()
 
         with open(design / "vivado_phys_netlist/transformation_time.txt", "r") as f:
-            row["P_TIME"] = round(float(f.read().strip()), 2)
+            row["T_TIME"] = round(float(f.read().strip()), 2)
+        rows.append(row)
+
+        with open(design / "capnp_cmp/cmp_time.txt", "r") as f:
+            row["S_TIME"] = round(float(f.read().strip()), 2)
         rows.append(row)
 
     with open(out, "w", newline="") as f:
@@ -207,8 +211,10 @@ def phys_capnp_results(flow, out="results.csv"):
             "SRL",
             "FF",
             "CARRY4",
+            "DSP48E1",
             "BRAM",
-            "P_TIME",
+            "T_TIME",
+            "S_TIME",
         ]
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
@@ -301,4 +307,4 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("flow", help="The flow to process results for")
     args = parser.parse_args()
-    phys_cmp_results(args.flow)
+    phys_capnp_results(args.flow)

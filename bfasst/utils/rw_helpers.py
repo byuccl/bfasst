@@ -14,7 +14,9 @@ from bfasst import jpype_jvm
 from bfasst.config import PART
 
 jpype_jvm.start()
-from com.xilinx.rapidwright.design import Cell, Design, Unisim
+from com.xilinx.rapidwright.device import BELPin
+from com.xilinx.rapidwright.design import Cell, Design, SiteInst, SitePinInst, Unisim
+from com.xilinx.rapidwright.design.DesignTools import getConnectionPIPs
 from com.xilinx.rapidwright.design.tools import LUTTools
 from com.xilinx.rapidwright.edif import EDIFDirection as RwDirection
 from com.xilinx.rapidwright.edif import EDIFCellInst, EDIFHierPortInst, EDIFPortInst, EDIFNet
@@ -213,13 +215,18 @@ def combine_const_nets(port, old_insts, new_inst, unisim_cell, log=logging.warni
             old_net.removePortInst(ground_instance)
 
 
-def remove_and_disconnect_cell(cell, log=logging.info):
+def remove_and_disconnect_cell(cell):
     if isinstance(cell, Cell):
         cell = cell.getEDIFHierCellInst()
-    log(f"  {cell.getFullHierarchicalInstName()} removed")
-    # Remove the port instances
-    cell = cell.getInst()
-    cell.getParentCell().removeCellInst(cell)
+    if cell.getInst().getParentCell() is not None:
+        logging.info("  %s removed", cell.getFullHierarchicalInstName())
+        # Remove the port instances
+        cell = cell.getInst()
+        cell.getParentCell().removeCellInst(cell)
+    else:
+        logging.warning(
+            "Warning: %s not removed, no parent cell found", cell.getFullHierarchicalInstName()
+        )
 
 
 def lut_move_net_to_new_cell(
@@ -463,6 +470,36 @@ def create_lut_routethru_net(cell: Cell, is_lut5: bool, new_lut_cell: EDIFCellIn
 
     logging.info("  Connecting new net to BEL %s, port %s", routed_to_cell.getBELName(), dest_port)
     new_net.addPortInst(dest_port_inst)
+
+
+def get_cells_from_site_pin(
+    sink_pin: SitePinInst, sink_site: SiteInst
+) -> list[tuple[Cell, BELPin]]:
+    """
+    Get the cells that are driven by this site pin.
+    Currently assumes at most one site pip in between the site pin and the cell.
+    """
+    cells = []
+    for pin in sink_pin.getSiteWireBELPins():
+        cell = sink_site.getCell(pin.getBEL())
+        if cell is not None:
+            cells.append((cell, pin))
+        elif sink_site.getUsedSitePIP(pin) is not None:
+            wire = sink_site.getUsedSitePIP(pin).getOutputPin().getSiteWireName()
+            for bp in (t for t in sink_site.getSiteWirePins(wire) if t != pin and t.isInput()):
+                cell = sink_site.getCell(bp.getBEL())
+                if cell is not None:
+                    cells.append((cell, bp))
+    return cells
+
+
+def get_site_pin_driver(sink_pin: SitePinInst, design: Design):
+    """Look at the intersite connection to get the site pin that drives sink_pin."""
+    drv_node = getConnectionPIPs(sink_pin)[-1].getStartNode()
+    drv_pin = drv_node.getSitePin()
+    src_site_inst = design.getSiteInstFromSite(drv_pin.getSite())
+    spi = src_site_inst.getSitePinInst(drv_pin.getPinName())
+    return spi
 
 
 class _PinMapping:

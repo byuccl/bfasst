@@ -25,7 +25,7 @@ designs:
   - byu/uart_ssc 
   - byu/uart_tx 
   - byu/UpDownButtonCount 
-  # - ooc/aes128 # Adjust f2b bram_models combining brams before running
+  # # - ooc/aes128 # Adjust f2b bram_models combining brams before running
   - ooc/EX_stage 
   - ooc/ID_stage 
   - ooc/IF_stage 
@@ -69,6 +69,7 @@ designs:
   - ooc/fm_3d_core
   - ooc/graphiti
   - ooc/jpegencode
+  - ooc/mpeg2fpga
   - ooc/vga
 
   - vtr_benchmarks/LU8PEEng
