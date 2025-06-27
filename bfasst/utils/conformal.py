@@ -121,12 +121,13 @@ class ConformalCompare:
         return do_file_path
 
     def __get_hdl_src_type_flag(self):
+        return "-EDIF"
         hdl_type = get_hdl_src_types(self.hdl_srcs)
         if hdl_type == HdlType.VERILOG:
             return "-Verilog"
         if hdl_type == HdlType.VHDL:
             return "-Vhdl"
-        return None
+        return "-EDIF"
 
     def __template_do_file(self, gold_src_type):
         with open(paths.CONFORMAL_TOOLS_PATH / "conformal.do.mustache", "r") as f:
@@ -144,8 +145,10 @@ class ConformalCompare:
                     "rev_netlist": str(
                         bfasst.config.CONFORMAL_REMOTE_WORK_DIR / self.rev_netlist.name
                     ),
-                    "renaming_rule_vector": "add renaming rule"
-                    + r" vector_expand %s\[%d\] @1_@2 -Both -map",
+                    "renaming_rule_vector": (
+                        "add renaming rule wildcard %s_replica* @1 -Both -map\n"
+                        "add renaming rule vector_expand %s\\[%d\\] @1_@2 -Both -map\n"
+                    ),
                 },
             )
         return do_text

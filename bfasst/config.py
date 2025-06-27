@@ -14,10 +14,10 @@ IC2_SYNPLIFY_PATH = IC2_INSTALL_DIR / "synpbase"
 IC2_SYNPLIFY_BIN = IC2_SYNPLIFY_LD_LIBRARY_PATH / "synpwrap"
 
 CONFORMAL_REMOTE_MACHINE = "ssh.et.byu.edu"
-CONFORMAL_REMOTE_MACHINE_USER = "jgoeders"
+CONFORMAL_REMOTE_MACHINE_USER = "erydell"
 CONFORMAL_REMOTE_SOURCE_SCRIPT = Path("/ee2/Cadence/local/designkits/ee451/cdssetup/bashrc_cadence")
-CONFORMAL_REMOTE_WORK_DIR = Path("/fsj/jgoeders/bfasst_work")
-CONFORMAL_REMOTE_LIBS_DIR = Path("/fsj/jgoeders/bfasst_libs")
+CONFORMAL_REMOTE_WORK_DIR = Path("/fsi/erydell/bfasst_work")
+CONFORMAL_REMOTE_LIBS_DIR = Path("/fsi/erydell/bfasst_libs")
 CONFORMAL_REMOTE_PATH = Path("/ee2/Cadence/CONFRML152/bin/lec")
 
 VIVADO_BIN_PATH = Path(os.environ["VIVADO_PATH"])
