@@ -4,14 +4,16 @@ import abc
 
 from bfasst import config
 from bfasst.yaml_parser import DesignParser
-from bfasst.paths import BUILD_PATH, DESIGNS_PATH
+from bfasst.paths import BUILD_DEFAULT_PATH, DESIGNS_PATH
 
 
 class FlowBase(abc.ABC):
     """Base class for all ninja flows"""
 
-    def __init__(self) -> None:
+    def __init__(self, build_path) -> None:
         super().__init__()
+
+        self.build_path = build_path
 
         # A list of tools used by this flow
         self.tools = []
@@ -59,10 +61,10 @@ class Flow(FlowBase):
     """Base class for all ninja flows that use a design as input.
     This is the common case.  Some flows, e.g. rand_soc, create their own designs."""
 
-    def __init__(self, design_path):
-        super().__init__()
+    def __init__(self, build_path, design_path):
+        super().__init__(build_path)
         self.design_path = design_path
-        self.design_build_path = BUILD_PATH / design_path.relative_to(DESIGNS_PATH)
+        self.design_build_path = self.build_path / design_path.relative_to(DESIGNS_PATH)
         design_yaml = self.design_path / "design.yaml"
         parser = DesignParser(design_yaml)
         self.part = parser.part
@@ -70,10 +72,6 @@ class Flow(FlowBase):
 
 class FlowNoDesign(FlowBase):
     """Base class for all ninja flows that do not use a design as input."""
-
-    def __init__(self):
-        super().__init__()
-        # self.design_build_path = BUILD_DIR / self.flow_build_dir_name()
 
     @classmethod
     @abc.abstractmethod
