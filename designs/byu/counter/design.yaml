@@ -1,1 +1,4 @@
 top: counter
+clocks:
+  - name: clk
+    period: 100
