@@ -144,6 +144,10 @@ class ErrorInjectorCapnp:
         """Load the capnp design and netlist."""
         logging.info("Loading reversed capnp objects: %s, %s", str(phys_capnp), str(edf_capnp))
         start_time = time.time()
+        
+        # Looking at capnp comparison, it looks like we read the properties of the physical design, so I
+        # believe that's the only file I need to modify
+        
         # self.rev_netlist = LogNetlistReader.readLogNetlist(str(edf_capnp))
         self.rev_design = PhysNetlistReader.readPhysNetlist(str(phys_capnp), self.rev_netlist)
         self.rev_design.flattenDesign()
