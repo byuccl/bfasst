@@ -1,3 +1,5 @@
+"""Convert physical netlist to logical netlist by replacing LUT6_2s with logical LUTs."""
+
 import argparse
 import logging
 import pathlib
@@ -5,12 +7,13 @@ import pathlib
 import boolean
 
 import spydrnet as sdn
-from bfasst.utils.general import convert_verilog_literal_to_int, properties_are_equal
 from bfasst.utils.sdn_helpers import SdnInstanceWrapper, SdnNetlistWrapper
 
 from bfasst import jpype_jvm
 
 jpype_jvm.start()
+
+# pylint: disable=wrong-import-position, wrong-import-order
 from com.xilinx.rapidwright.design.tools import LUTTools
 
 
@@ -18,6 +21,8 @@ from com.xilinx.rapidwright.design.tools import LUTTools
 
 
 class NetlistPhysToLogical:
+    """Convert physical netlist to logical netlist by replacing LUT6_2s with logical LUTs."""
+
     def __init__(self, build_path, netlist_in_path, netlist_out_path):
         self.build_path = build_path
         self.netlist_in = netlist_in_path
@@ -76,7 +81,8 @@ class NetlistPhysToLogical:
             eqn = boolean.BooleanAlgebra().parse(eqn)
 
             if o5_net_connected:
-                # 05 output uses only half the equation, so perform the substitution and simplification
+                # 05 output uses only half the equation,
+                # so perform the substitution and simplification
                 o5_eqn = eqn.subs({boolean.Symbol("I5"): eqn.FALSE}).simplify()
                 self.create_new_lut(
                     netlist_wrapper,
@@ -188,7 +194,7 @@ class NetlistPhysToLogical:
             )
             input_wire.connect_pin(pin)
 
-    def create_new_lut(self, netlist_wrapper, eqn, old_instance_wrapper, name, output_pin):
+    def create_new_lut(self, netlist_wrapper, eqn, old_instance_wrapper, *, name, output_pin):
         """Create a new logical LUT given the old physical LUT instance wrapper and a new name"""
 
         assert isinstance(old_instance_wrapper, SdnInstanceWrapper)
@@ -213,10 +219,10 @@ class NetlistPhysToLogical:
         # If constant generator, handle and exit out here
         if eqn == eqn.FALSE:
             self.replace_lut_with_constant(old_output_pin_wrapper, is_gnd=True)
-            return
-        elif eqn == eqn.TRUE:
+            return None
+        if eqn == eqn.TRUE:
             self.replace_lut_with_constant(old_output_pin_wrapper, is_gnd=False)
-            return
+            return None
 
         num_inputs = len(eqn.symbols)
         assert num_inputs >= 1
@@ -228,14 +234,14 @@ class NetlistPhysToLogical:
                 input_pin_wrapper=old_instance_wrapper.get_pin(str(eqn)),
                 output_pin_wrapper=old_output_pin_wrapper,
             )
-            return
+            return None
 
         try:
             defn = next(
-                d for d in self.library_hdi_primitives.definitions if d.name == "LUT%d" % num_inputs
+                d for d in self.library_hdi_primitives.definitions if d.name == f"LUT{num_inputs}"
             )
         except StopIteration:
-            defn = self.library_hdi_primitives.create_definition(name="LUT%d" % num_inputs)
+            defn = self.library_hdi_primitives.create_definition(name=f"LUT{num_inputs}")
             for i in range(num_inputs):
                 defn.create_port(name=f"I{i}", direction=sdn.IN, pins=1)
             defn.create_port(name="O", direction=sdn.OUT, pins=1)
@@ -245,7 +251,7 @@ class NetlistPhysToLogical:
         mapping = {}
         logical_idx = 0
         for symbol in eqn.symbols:
-            mapping[symbol] = boolean.Symbol("I%d" % logical_idx)
+            mapping[symbol] = boolean.Symbol(f"I{logical_idx}")
             logical_idx += 1
         logging.info(
             "  physical to logical mapping: %s", {str(k): str(v) for k, v in mapping.items()}
