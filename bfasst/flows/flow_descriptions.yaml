@@ -31,6 +31,15 @@ flows:
   - rapidwright
   - fasm2bels
 
+- name: VivadoCapnpErrorInjection
+  description: Perform fault-injection test on capnp comp tool
+  module: vivado_capnp_error_injection
+  class: VivadoCapnpErrorInjection
+  external_tools:
+  - vivado
+  - rapidwright
+  - fasm2bels
+
 - name: VivadoPhysNetlistCmp
   description: Reverse bitstream and compare to netlist
   module: vivado_phys_netlist_cmp
@@ -39,7 +48,6 @@ flows:
   - vivado
   - rapidwright
   - fasm2bels
-
 
 - name: VivadoStructuralErrorInjection
   description: Perform fault-injection test of comp tool
