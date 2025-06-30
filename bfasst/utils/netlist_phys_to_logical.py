@@ -75,7 +75,7 @@ class NetlistPhysToLogical:
             eqn = LUTTools.getLUTEquation(instance_wrapper.properties["INIT"])[2:].replace("!", "~")
             eqn = boolean.BooleanAlgebra().parse(eqn)
 
-            if  o5_net_connected:
+            if o5_net_connected:
                 # 05 output uses only half the equation, so perform the substitution and simplification
                 o5_eqn = eqn.subs({boolean.Symbol("I5"): eqn.FALSE}).simplify()
                 self.create_new_lut(
@@ -88,7 +88,7 @@ class NetlistPhysToLogical:
 
             if o6_net_connected:
                 if o5_net_connected:
-                    # 06 output when O5 is also present uses only half the equation, 
+                    # 06 output when O5 is also present uses only half the equation,
                     # so perform the substitution and simplification
                     o6_eqn = eqn.subs({boolean.Symbol("I5"): eqn.TRUE}).simplify()
                     self.create_new_lut(
@@ -100,7 +100,7 @@ class NetlistPhysToLogical:
                     )
 
                 else:
-                    # O6 is connected, but O5 is not. 
+                    # O6 is connected, but O5 is not.
                     name = instance_wrapper.name
                     instance_wrapper.instance.name = instance_wrapper.instance.name + ".OLD"
                     self.create_new_lut(
