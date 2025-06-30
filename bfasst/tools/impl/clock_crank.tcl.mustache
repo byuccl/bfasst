@@ -5,7 +5,10 @@ set clock_port {{ name }}
 set clock_name {{ name }}_gen
 {{/clocks}}
 set slack [get_property SLACK [lindex [get_timing_paths] 0]]
-set new_period [expr $period - ceil($slack)]
+if {[catch {set new_period [expr $period - ceil($slack)]}]} {
+    set slack [get_property DATAPATH_DELAY [lindex [get_timing_paths] 0]]
+    set new_period [expr ceil($slack)]
+}
 create_clock -period $new_period -name $clock_name [get_ports $clock_port]
 while {1} {
     if { [ catch {
