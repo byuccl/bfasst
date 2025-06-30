@@ -30,40 +30,38 @@ def analyze_impl_log_line(line, stats):
     Pull timing transformation summary data for a line of a Vivado
     Implementation log.
     """
-    if "LUT Combining" in line:
-        stats.lut_comb[0] += int(line.split()[3])
-        stats.lut_comb[1] += int(line.split()[5])
-        stats.lut_comb[2] += int(line.split()[7])
-    elif "Retime" in line:
-        stats.retime[0] += int(line.split()[3])
-        stats.retime[1] += int(line.split()[5])
-        stats.retime[2] += int(line.split()[7])
-    elif "Very High Fanout" in line:
-        stats.fanout[0] += int(line.split()[5])
-        stats.fanout[1] += int(line.split()[7])
-        stats.fanout[2] += int(line.split()[9])
-    elif "DSP Register" in line:
-        stats.dsp_reg[0] += int(line.split()[4])
-        stats.dsp_reg[1] += int(line.split()[6])
-        stats.dsp_reg[2] += int(line.split()[8])
-    elif "Shift Register to Pipeline" in line:
-        stats.shift_reg_to_pipe[0] += int(line.split()[6])
-        stats.shift_reg_to_pipe[1] += int(line.split()[8])
-        stats.shift_reg_to_pipe[2] += int(line.split()[10])
-    elif "Shift Register" in line:
-        stats.shift_reg[0] += int(line.split()[4])
-        stats.shift_reg[1] += int(line.split()[6])
-        stats.shift_reg[2] += int(line.split()[8])
-    elif "BRAM Register" in line:
-        stats.bram[0] += int(line.split()[4])
-        stats.bram[1] += int(line.split()[6])
-        stats.bram[2] += int(line.split()[8])
-    elif "Dynamic/Static Region Interface Net Replication" in line:
-        stats.net_repl[0] += int(line.split()[7])
-        stats.net_repl[1] += int(line.split()[9])
-        stats.net_repl[2] += int(line.split()[11])
-    else:
+    if not line or line[0] != "|":
         return False
+    fields = line.split()[1:]
+    try:
+        added = int(fields[1])
+    except ValueError:
+        return False
+    removed, optimized = int(fields[2]), int(fields[3])
+    stats_list = None
+    match fields[0].strip():
+        case "LUT Combining":
+            stats_list = stats.lut_comb
+        case "Retime":
+            stats_list = stats.retime
+        case "Very High Fanout":
+            stats_list = stats.fanout
+        case "DSP Register":
+            stats_list = stats.dsp_reg
+        case "Shift Register to Pipeline":
+            stats_list = stats.shift_reg_to_pipe
+        case "Shift Register":
+            stats_list = stats.shift_reg
+        case "BRAM Register":
+            stats_list = stats.bram
+        case "Dynamic/Static Region Interface Net Replication":
+            stats_list = stats.net_repl
+        case _:
+            return False
+    # Sum to account for possible multiple phys_opt_design calls
+    stats_list[0] += added
+    stats_list[1] += removed
+    stats_list[2] += optimized
     return True
 
 
@@ -73,74 +71,116 @@ def transform_stats(designs_yaml):
     phys_opt_design post-placement in Vivado.
     """
     design_paths = yaml_parser.RunParser(designs_yaml).design_paths
-    stats = TransformStats()
+    design_stats = {}
     for design in design_paths:
         design = Path(design)
-        stats = BUILD_PATH / design.parent.name / design.name / "impl/vivado.log"
-        with open(stats) as f:
-            line = next(f)
-            while True:
-                if "Summary of Physical Synthesis Optimizations" in line:
-                    break
+        key = f"{design.parent.name}_{design.name}"
+        log = BUILD_PATH / design.parent.name / design.name / "vivado_impl/vivado.log"
+        stats = None
+        with open(log) as f:
+            try:
                 line = next(f)
-            line = next(f)
-            while True:
-                try:
-                    if not analyze_impl_log_line(line, stats) and "Total" in line:
-                        cnt = 0
-                        while cnt < 2:
-                            if "Summary of Physical Synthesis Optimizations" in line:
-                                cnt += 1
-                            line = next(f)
+                while True:
+                    if "Summary of Physical Synthesis Optimizations" in line:
+                        stats = TransformStats()
+                        break
                     line = next(f)
-                except ValueError as e:
-                    print(line.split())
-                    raise e
-                except StopIteration:
-                    break
+                line = next(f)
+                while True:
+                    try:
+                        if not analyze_impl_log_line(line.strip(), stats) and "Total" in line:
+                            cnt = 0
+                            while cnt < 2:
+                                if "Summary of Physical Synthesis Optimizations" in line:
+                                    cnt += 1
+                                line = next(f)
+                        line = next(f)
+                    except ValueError as e:
+                        print(design.name)
+                        print(line.split())
+                        raise e
+            except StopIteration:
+                if stats is None:
+                    print(f"Possibly no clock for {design.name}")
+                design_stats[key] = stats
     # make xlsx file with values and averages
-    workbook = xlsxwriter.Workbook("stats.xlsx")
-    worksheet = workbook.add_worksheet()
+    workbook = xlsxwriter.Workbook("timing_stats.xlsx")
+    worksheet = workbook.add_worksheet("Summary")
     row = 0
     col = 0
-    worksheet.write(row, col, "Optimization")
-    worksheet.write(row, col + 1, "Added Cells")
-    worksheet.write(row, col + 2, "Removed Cells")
-    worksheet.write(row, col + 3, "Optimized Cells/Nets")
-    worksheet.write(row, col + 4, "Average Added Cells")
-    worksheet.write(row, col + 5, "Average Removed Cells")
-    worksheet.write(row, col + 6, "Average Optimized Cells/Nets")
+    worksheet.write(row, col, "Design")
+    optimizations = [
+        "LUT Combining",
+        "Retime",
+        "Very High Fanout",
+        "DSP Register",
+        "Shift Register to Pipeline",
+        "Shift Register",
+        "BRAM Register",
+        "Dynamic/Static Region Interface Net Replication",
+    ]
+    for offset, title in enumerate(optimizations, 1):
+        worksheet.write(row, col + offset, title)
     row += 1
-    for stat, title in zip(
-        [
-            stats.lut_comb,
-            stats.retime,
-            stats.fanout,
-            stats.dsp_reg,
-            stats.shift_reg_to_pipe,
-            stats.shift_reg,
-            stats.bram,
-            stats.net_repl,
-        ],
-        [
-            "LUT Combining",
-            "Retime",
-            "Very High Fanout",
-            "DSP Register",
-            "Shift Register to Pipeline",
-            "Shift Register",
-            "BRAM Register",
-            "Dynamic/Static Region Interface Net Replication",
-        ],
-    ):
-        worksheet.write(row, col, title)
-        worksheet.write(row, col + 1, stat[0])
-        worksheet.write(row, col + 2, stat[1])
-        worksheet.write(row, col + 3, stat[2])
-        worksheet.write(row, col + 4, stat[0] / len(design_paths))
-        worksheet.write(row, col + 5, stat[1] / len(design_paths))
-        worksheet.write(row, col + 6, stat[2] / len(design_paths))
+    for design, stats in design_stats.items():
+        worksheet.write(row, col, design)
+        if stats is None:
+            row += 1
+            continue
+        for offset, stat in enumerate(
+            [
+                stats.lut_comb,
+                stats.retime,
+                stats.fanout,
+                stats.dsp_reg,
+                stats.shift_reg_to_pipe,
+                stats.shift_reg,
+                stats.bram,
+                stats.net_repl,
+            ],
+            1,
+        ):
+            opt_present = sum(stat) > 0
+            worksheet.write(row, col + offset, opt_present)
         row += 1
+
+    for design, stats in design_stats.items():
+        if stats is None:
+            continue
+        if len(design) > 23:
+            design = design[:19] + "..." + design[-1]
+        worksheet = workbook.add_worksheet(f"{design}_details")
+        row = 0
+        col = 0
+        worksheet.write(row, col, "Optimization")
+        worksheet.write(row, col + 1, "Added Cells")
+        worksheet.write(row, col + 2, "Removed Cells")
+        worksheet.write(row, col + 3, "Optimized Cells/Nets")
+        worksheet.write(row, col + 4, "Average Added Cells")
+        worksheet.write(row, col + 5, "Average Removed Cells")
+        worksheet.write(row, col + 6, "Average Optimized Cells/Nets")
+        row += 1
+        for stat, title in zip(
+            [
+                stats.lut_comb,
+                stats.retime,
+                stats.fanout,
+                stats.dsp_reg,
+                stats.shift_reg_to_pipe,
+                stats.shift_reg,
+                stats.bram,
+                stats.net_repl,
+            ],
+            optimizations,
+        ):
+            worksheet.write(row, col, title)
+            worksheet.write(row, col + 1, stat[0])
+            worksheet.write(row, col + 2, stat[1])
+            worksheet.write(row, col + 3, stat[2])
+            worksheet.write(row, col + 4, stat[0] / len(design_paths))
+            worksheet.write(row, col + 5, stat[1] / len(design_paths))
+            worksheet.write(row, col + 6, stat[2] / len(design_paths))
+            row += 1
     workbook.close()
 
 
@@ -307,4 +347,4 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("flow", help="The flow to process results for")
     args = parser.parse_args()
-    phys_capnp_results(args.flow)
+    transform_stats(args.flow)

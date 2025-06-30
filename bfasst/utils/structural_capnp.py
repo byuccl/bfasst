@@ -123,12 +123,12 @@ class StructuralCapnp(RwPhysNetlist, F2BDesign):
             rev_cell = self.rev_design.getSiteInst(site.getSiteName()).getCell(bel_name)
         except AttributeError:
             # Sometimes F2B misses a LUT GND generator directly driving the O6 site pin output.
-            assert bel_name.startswith("LUT")
+            assert "LUT" in bel_name
             init = ecell.getProperty("INIT").getValue()
             assert utils.convert_verilog_literal_to_int(init) == 0
             logging.warning("F2B missed lut gnd gen at %s:%s", site.getSiteName(), bel_name)
-            utils.interpreter(locals())
-            self.lut_gnd_net.add(ecell.getPortInst("O"))
+            self.lut_gnd_net.add(ecell.getPortInst("O6").getNet().getName())
+            return
 
         rev_hcell = rev_cell.getEDIFHierCellInst()
         cell_type = rev_hcell.getCellType().getName()
@@ -245,7 +245,7 @@ class StructuralCapnp(RwPhysNetlist, F2BDesign):
 
                 # If the net is already mapped to a different rev net, raise an error
                 elif self.net_map[net_driver] != rev_net_driver:
-                    if net.isGND() and (
+                    if (net.isGND() or net.getName() in self.lut_gnd_net) and (
                         rev_port is None
                         or not rw.is_connected(rev_port)
                         or rev_port.getNet().isGND()
