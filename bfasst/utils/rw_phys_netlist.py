@@ -73,7 +73,7 @@ class RwPhysNetlist(PhysNetlist):
         self.vivado_design.writeCheckpoint(phys_netlist_checkpoint)
 
         phys_netlist_edif_path = self.stage_dir / "viv_impl_physical.edf"
-        logging.info("Writing EDIF phsyical netlist: %s", phys_netlist_edif_path)
+        logging.info("Writing EDIF physical netlist: %s", phys_netlist_edif_path)
         self.vivado_netlist.exportEDIF(phys_netlist_edif_path)
         logging.info(
             "Writing capnp interchange netlist: %s",
