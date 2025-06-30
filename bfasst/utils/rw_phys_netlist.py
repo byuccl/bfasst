@@ -674,8 +674,6 @@ class RwPhysNetlist(PhysNetlist):
             if cell.getEDIFCellInst() is not None:
                 if cell.getLogicalPinMapping(pin.getName()) is not None:
                     valid_cells.append((cell, pin))
-                else:  # If the edif cell exists, with no pin mapping, then the port is not used
-                    assert old_net.isGNDNet()
             else:
                 if cell.getName() in self.hanging_pins:
                     self.hanging_pins[cell.getName()].append((src_pin, cell, pin))
