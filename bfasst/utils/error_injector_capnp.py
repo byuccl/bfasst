@@ -136,7 +136,7 @@ class ErrorInjectorCapnp:
         Writes the new logical netlist
         """
         PhysNetlistWriter.writePhysNetlist(self.rev_design, str(self.stage_dir / "corrupt_phys_netlist.capnp"))
-        # LogNetlistWriter.writeLogNetlist(self.rev_netlist, str(self.stage_dir / "corrupt_log_netlist.capnp"))
+        LogNetlistWriter.writeLogNetlist(self.rev_netlist, str(self.stage_dir / "corrupt_log_netlist.capnp"))
         logging.info("Finished writing netlist")
 
 
@@ -145,13 +145,10 @@ class ErrorInjectorCapnp:
         logging.info("Loading reversed capnp objects: %s, %s", str(phys_capnp), str(edf_capnp))
         start_time = time.time()
         
-        # Looking at capnp comparison, it looks like we read the properties of the physical design, so I
-        # believe that's the only file I need to modify
-        
-        # self.rev_netlist = LogNetlistReader.readLogNetlist(str(edf_capnp))
+        self.rev_netlist = LogNetlistReader.readLogNetlist(str(edf_capnp))
         self.rev_design = PhysNetlistReader.readPhysNetlist(str(phys_capnp), self.rev_netlist)
         self.rev_design.flattenDesign()
-        # self.rev_netlist.expandMacroUnisims(self.device.getSeries())
+        self.rev_netlist.expandMacroUnisims(self.device.getSeries())
         logging.info("Loading reversed capnp objects took %s seconds.", time.time() - start_time)
 
         self.capnp_cells = CapnpCells(phys_capnp, edf_capnp)
