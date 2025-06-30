@@ -42,7 +42,12 @@ class RwPhysNetlist(PhysNetlist):
     """Creates a xilinx netlist that has only physical primitives"""
 
     def __init__(
-        self, build_dir: str, impl_checkpoint: tuple[Path, Path], logging_level: str, log_name: str
+        self,
+        build_dir: str,
+        impl_checkpoint: tuple[Path, Path],
+        logging_level: str,
+        log_name: str,
+        **kwargs,
     ) -> None:
         self.build_dir = Path(build_dir)
         self.stage_dir = self.build_dir / "vivado_phys_netlist"
@@ -58,7 +63,7 @@ class RwPhysNetlist(PhysNetlist):
             datefmt="%Y%m%d%H%M%S",
         )
         rapidwright_log_path = str(self.stage_dir / "rapidwright_stdout.log")
-        super().__init__(rapidwright_log_path, impl_checkpoint)
+        super().__init__(rapidwright_log_path, impl_checkpoint, **kwargs)
         # Redirect rapidwright output to file
 
     def run(self) -> None:

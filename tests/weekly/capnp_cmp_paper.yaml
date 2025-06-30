@@ -70,8 +70,10 @@ designs:
   - ooc/graphiti
   - ooc/jpegencode
   - ooc/mpeg2fpga
+  - ooc/pwm
   - ooc/vga
 
+  - vtr_benchmarks/bgm
   - vtr_benchmarks/LU8PEEng
   - vtr_benchmarks/mkDelayWorker32B
 

@@ -26,7 +26,7 @@ class PhysNetlist:
     Physical Netlist object to hold the physical netlist data.
     """
 
-    def __init__(self, rw_log: str, impl_checkpoint: tuple[Path, Path]):
+    def __init__(self, rw_log: str, impl_checkpoint: tuple[Path, Path], **kwargs):
         """Init constants for RW Netlist processing"""
         System.setOut(PrintStream(File(rw_log)))
         System.setErr(PrintStream(File(rw_log)))
@@ -72,6 +72,8 @@ class PhysNetlist:
         self.cells_to_remove = []
         self.visited_cells = set()
         self.phys_ecells = []  # tuple(EDIFCellInst, SiteInst, str(bel_name))
+
+        super().__init__(**kwargs)
 
     def __init_const_nets(self) -> None:
         """Init VCC and GND nets"""
