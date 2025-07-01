@@ -4,14 +4,13 @@ fasm2bels IS_..._INVERTED properties.
 """
 
 import logging
-from pathlib import Path
 import time
 
 from bfasst import jpype_jvm
 from bfasst import utils
 from bfasst.config import PART
 import bfasst.utils.rw_helpers as rw
-from bfasst.utils.capnp_cells import CapnpCells
+from bfasst.utils.capnp_cells import CapnpCells, CapnpException
 
 # pylint: disable=wrong-import-position,wrong-import-order,import-error
 jpype_jvm.start()
@@ -97,19 +96,16 @@ class F2BDesign:
         So far this has only been LUT Init strings.
         """
         _, lcapnp_cell = self.capnp_cells.get_capnp_cell(rev_cell.getName())
-        assert lcapnp_cell is not None
-        rev_value = None
 
         for props in lcapnp_cell.propMap.entries:
-            if self.capnp_cells.log_capnp.strList[props.key] == prop_name:
-                rev_value = self.capnp_cells.log_capnp.strList[props.textValue]
-                break
-        assert rev_value is not None
-        rev_value = utils.convert_verilog_literal_to_int(rev_value)
-        self.rw_value_mismatch += 1
-        self.rw_problem_cells.add(rev_cell.getName())
-        logging.warning("Adding cell %s to rw problem cells", rev_cell.getName())
-        return rev_value
+            if self.capnp_cells.log_strs[props.key] == prop_name:
+                rev_value = self.capnp_cells.log_strs[props.textValue]
+                rev_value = utils.convert_verilog_literal_to_int(rev_value)
+                self.rw_value_mismatch += 1
+                self.rw_problem_cells.add(rev_cell.getName())
+                logging.warning("Adding cell %s to rw problem cells", rev_cell.getName())
+                return rev_value
+        raise CapnpException(f"Property {prop_name} not found in capnp cell {rev_cell.getName()}")
 
     def update_lut_ports(self, rev_cell: Cell, rev_port_insts: dict[str, EDIFHierPortInst]) -> None:
         """Update port_insts on the reversed LUT to reflect the combined LUT6_2 cell."""
