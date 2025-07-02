@@ -1,7 +1,7 @@
 """Tool to convert a physical netlist to a logical netlist"""
 
 from bfasst.tools.tool import Tool
-from bfasst.paths import BFASST_UTILS_PATH, GMT_TOOLS_PATH, NINJA_TRANSFORM_TOOLS_PATH
+from bfasst.paths import BFASST_UTILS_PATH, NINJA_TRANSFORM_TOOLS_PATH
 
 
 class NetlistPhysToLogical(Tool):

@@ -17,9 +17,6 @@ jpype_jvm.start()
 from com.xilinx.rapidwright.design.tools import LUTTools
 
 
-# from gmt_tools.sop_eqn import SopEqn
-
-
 class NetlistPhysToLogical:
     """Convert physical netlist to logical netlist by replacing LUT6_2s with logical LUTs."""
 
