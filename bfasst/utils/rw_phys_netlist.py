@@ -137,7 +137,10 @@ class RwPhysNetlist(PhysNetlist):
                 case _:
                     logging.error("Unsupported cell type %s. Exiting...", ctype)
                     raise PhysNetlistTransformError(f"Unsupported cell type {ctype}")
-        assert not self.hanging_pins
+
+        if self.hanging_pins:
+            raise PhysNetlistTransformError("Some lut generator sink pins were left disconnected")
+
         logging.info("Processed other cells in %s seconds", time.time() - start_time)
         logging.info("Removing old cells...")
         _ = [rw.remove_and_disconnect_cell(cell) for cell in self.cells_to_remove]
@@ -274,9 +277,10 @@ class RwPhysNetlist(PhysNetlist):
                 "D": ("D", None),
             }
             if ff.getName() in self.hanging_pins:
-                for drv, _, bp in self.hanging_pins.pop(ff.getName()):
-                    logp = input_pins[bp.getName()][0]
-                    input_pins[bp.getName()] = (logp, self.site_pin_to_net[drv])
+                for drv, _, belpin in self.hanging_pins.pop(ff.getName()):
+                    logging.info("  Connecting hanging pin %s to %s", drv, belpin.getName())
+                    logp = input_pins[belpin.getName()][0]
+                    input_pins[belpin.getName()] = (logp, self.site_pin_to_net[drv])
             for physp, (logp, net) in list(input_pins.items())[:-1]:
                 port = new_cell_inst.getOrCreatePortInst(logp)
                 assert port
@@ -661,29 +665,38 @@ class RwPhysNetlist(PhysNetlist):
             ntp = {}  # See DesignTools.getConnectionPIPs()
             for pip in old_net.getPIPs():
                 src = pip.getStartNode()
-                if src not in ntp or not pip.isBidirectional():
-                    ntp[src] = pip
+                if src not in ntp:
+                    ntp[src] = [pip]
+                else:
+                    ntp[src].append(pip)
                 if pip.isBidirectional():
-                    assert False  # Currently Unexpected
+                    assert False  # Currently Unexpected/Handled
             self.const_net_nd_to_pip[old_net.getName()] = ntp
         ntp = self.const_net_nd_to_pip[old_net.getName()]
-        pip = ntp[src_pin.getConnectedNode()]
-        while pip.getEndNode() in ntp:
-            pip = ntp[pip.getEndNode()]
-        sink_site_pin = pip.getEndNode().getSitePin()
-        sink_site = self.vivado_design.getSiteInstFromSite(sink_site_pin.getSite())
-        sink_pin = sink_site.getSitePinInst(sink_site_pin.getPinName())
-        cells = rw.get_cells_from_site_pin(sink_pin, sink_site)
+        sink_pips = []
+        pips = ntp[src_pin.getConnectedNode()]
+        while pips:
+            pip = pips.pop()
+            if pip.getEndNode() not in ntp:
+                sink_pips.append(pip)
+                continue
+            pips += ntp[pip.getEndNode()]
         valid_cells = []  # Some cells still need to be transformed
-        for cell, pin in cells:
-            if cell.getEDIFCellInst() is not None:
-                if cell.getLogicalPinMapping(pin.getName()) is not None:
-                    valid_cells.append((cell, pin))
-            else:
-                if cell.getName() in self.hanging_pins:
-                    self.hanging_pins[cell.getName()].append((src_pin, cell, pin))
+        for pip in sink_pips:
+            sink_site_pin = pip.getEndNode().getSitePin()
+            sink_site = self.vivado_design.getSiteInstFromSite(sink_site_pin.getSite())
+            sink_pin = sink_site.getSitePinInst(sink_site_pin.getPinName())
+            cells = rw.get_cells_from_site_pin(sink_pin, sink_site)
+            for cell, pin in cells:
+                if cell.getEDIFCellInst() is not None:
+                    if cell.getLogicalPinMapping(pin.getName()) is not None:
+                        valid_cells.append((cell, pin))
                 else:
-                    self.hanging_pins[cell.getName()] = [(src_pin, cell, pin)]
+                    logging.info("Adding hanging pin %s to %s:%s", src_pin, cell, pin)
+                    if cell.getName() in self.hanging_pins:
+                        self.hanging_pins[cell.getName()].append((src_pin, cell, pin))
+                    else:
+                        self.hanging_pins[cell.getName()] = [(src_pin, cell, pin)]
         return valid_cells
 
     def __process_lut_const_net(
