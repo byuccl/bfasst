@@ -41,8 +41,6 @@ jobs:
         
     - name: Install external tools
       run: |
-        eval `ssh-agent -s`
-        ssh-add - <<< '${{ secrets.GMT_TOOLS_DEPLOY_SSH_KEY }}'
         make env
         make install_cmake
         . .venv/bin/activate && python bfasst/external_tools.py install_test_yaml ${{ matrix.experiment }}
