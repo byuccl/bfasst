@@ -83,6 +83,7 @@ designs:
   - koios/lenet
   - koios/lstm 
   - koios/reduction_layer
+  - koios/robot_rl
   - koios/softmax
   - koios/test
   - koios/tpu_like.large.os         # Run Time 127.9s. Utilization 108k LUTs, 328 LUTRAMs, 32 RAM18, 0 DSP, 14.7k CARRY4, 77.7k FFs
