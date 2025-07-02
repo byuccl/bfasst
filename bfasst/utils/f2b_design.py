@@ -203,7 +203,7 @@ class F2BDesign:
 
         return ignore_pins
 
-    def fix_rev_bufg(self, cell: Cell, deferSort: bool = False) -> None:
+    def fix_rev_bufg(self, cell: Cell, defer_sort: bool = False) -> None:
         """
         Sometimes F2B puts the same clock signal to both bufgctrl input ports, instead of just I0.
         """
@@ -222,9 +222,9 @@ class F2BDesign:
             val = ecell.getProperty(prop).getValue()
             if val == "1'b1":
                 logging.info("Flipping %s port on BUFGCTRL %s", port_name, cell.getName())
-                rw.flip_const_port_signal(self.rev_design, ecell, port_name, deferSort=deferSort)
+                rw.flip_const_port_signal(self.rev_design, ecell, port_name, defer_sort=defer_sort)
 
-    def fix_rev_dsp(self, cell: Cell, viv_ecell: EDIFCellInst, deferSort: bool = False) -> None:
+    def fix_rev_dsp(self, cell: Cell, viv_ecell: EDIFCellInst, defer_sort: bool = False) -> None:
         """
         Fasm2bels does not accurately set the OPMODE, ALUMODE, INMODE pins.
         The fasm file specifies some incoming nets to these ports should be
@@ -236,7 +236,7 @@ class F2BDesign:
         ecell = cell.getEDIFCellInst()
 
         # XRAY erroneously does not output feature to invert carryin signal.
-        rw.flip_const_port_signal(self.rev_design, ecell, "CARRYIN", deferSort=deferSort)
+        rw.flip_const_port_signal(self.rev_design, ecell, "CARRYIN", defer_sort=defer_sort)
 
         viv_ports = ((p, viv_ecell.getPortInst(p)) for p in self.dsp_constant_ports)
         for port_name in (p for p, vp in viv_ports if vp is None or rw.is_vcc(vp.getNet())):
@@ -250,10 +250,10 @@ class F2BDesign:
             val = ecell.getProperty(prop).getValue()
             for idx in (idx for idx, inv in enumerate(reversed(val[3:])) if int(inv)):
                 rw.flip_const_port_signal(
-                    self.rev_design, ecell, f"{port_name}[{idx}]", idx, deferSort=deferSort
+                    self.rev_design, ecell, f"{port_name}[{idx}]", idx, defer_sort=defer_sort
                 )
         if ecell.getProperty("IS_CLK_INVERTED").getValue() == "1'b1":
-            rw.flip_const_port_signal(self.rev_design, ecell, "CLK", deferSort=deferSort)
+            rw.flip_const_port_signal(self.rev_design, ecell, "CLK", defer_sort=defer_sort)
 
         # FASM2BELS just sets USE_MULT to "MULTIPLY" -> infer new value based on OPMODE
         # If opmode is not constant, then the value is DYNAMIC
@@ -272,7 +272,7 @@ class F2BDesign:
             )
             ecell.addProperty("USE_MULT", "NONE")
 
-    def fix_rev_bram(self, cell: Cell, ignore_pins: set[str], deferSort: bool = False) -> None:
+    def fix_rev_bram(self, cell: Cell, ignore_pins: set[str], defer_sort: bool = False) -> None:
         """
         Invert BRAM ports based on f2b properties.
         Ignore pins takes non zero timme, so skip if possible.
@@ -285,4 +285,4 @@ class F2BDesign:
         for prop, port_name in (p for p in self.bram_inv_props if p[1] not in ignore_pins):
             val = int(str(ecell.getProperty(prop).getValue()))
             if val:
-                rw.flip_const_port_signal(self.rev_design, ecell, port_name, deferSort=deferSort)
+                rw.flip_const_port_signal(self.rev_design, ecell, port_name, defer_sort=defer_sort)
