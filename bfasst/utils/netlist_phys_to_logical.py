@@ -47,77 +47,70 @@ class NetlistPhysToLogical:
                 self.library_hdi_primitives = library
 
         # Get or create contsant nets (used by constant generator LUTs)
-        netlist_wrapper = SdnNetlistWrapper(self.top)
-        self.const0 = netlist_wrapper.get_const_wire(is_gnd=True)
-        self.const1 = netlist_wrapper.get_const_wire(is_gnd=False)
+        self.netlist_wrapper = SdnNetlistWrapper(self.top)
+        self.const0 = self.netlist_wrapper.get_const_wire(is_gnd=True)
+        self.const1 = self.netlist_wrapper.get_const_wire(is_gnd=False)
 
         # Next split all LUT6_2s into logical LUTs
-        netlist_wrapper = SdnNetlistWrapper(self.top)
-        for instance_wrapper in netlist_wrapper.instances:
+        self.netlist_wrapper = SdnNetlistWrapper(self.top)
+        for instance_wrapper in self.netlist_wrapper.instances:
             assert isinstance(instance_wrapper, SdnInstanceWrapper)
             if instance_wrapper.instance.reference.name != "LUT6_2":
                 continue
 
-            logging.info("=" * 80)
-            logging.info("Creating logical LUT(s) for LUT6_2 instance: %s", instance_wrapper.name)
-            o6_pin_wrapper = instance_wrapper.get_pin("O6")
-            o6_wire = o6_pin_wrapper.pin.wire
-            assert o6_wire
-            o6_net = netlist_wrapper.wire_to_net[o6_wire]
-            assert o6_net
-            o6_net_connected = o6_net.is_connected
-
-            o5_pin_wrapper = instance_wrapper.get_pin("O5")
-            o5_wire = o5_pin_wrapper.pin.wire
-            assert o5_wire
-            o5_net = netlist_wrapper.wire_to_net[o5_wire]
-            assert o5_net
-            o5_net_connected = o5_net.is_connected
-
-            assert o6_net_connected or o5_net_connected
-
-            # Get equation for LUT outputs
-            eqn = LUTTools.getLUTEquation(instance_wrapper.properties["INIT"])[2:].replace("!", "~")
-            eqn = boolean.BooleanAlgebra().parse(eqn)
-
-            if o5_net_connected:
-                # 05 output uses only half the equation,
-                # so perform the substitution and simplification
-                o5_eqn = eqn.subs({boolean.Symbol("I5"): eqn.FALSE}).simplify()
-                self.create_new_lut(
-                    netlist_wrapper,
-                    o5_eqn,
-                    instance_wrapper,
-                    name=instance_wrapper.name + "O5",
-                    output_pin="O5",
-                )
-
-            if o6_net_connected:
-                if o5_net_connected:
-                    # 06 output when O5 is also present uses only half the equation,
-                    # so perform the substitution and simplification
-                    o6_eqn = eqn.subs({boolean.Symbol("I5"): eqn.TRUE}).simplify()
-                    self.create_new_lut(
-                        netlist_wrapper,
-                        o6_eqn,
-                        instance_wrapper,
-                        name=instance_wrapper.name + "O6",
-                        output_pin="O6",
-                    )
-
-                else:
-                    # O6 is connected, but O5 is not.
-                    name = instance_wrapper.name
-                    instance_wrapper.instance.name = instance_wrapper.instance.name + ".OLD"
-                    self.create_new_lut(
-                        netlist_wrapper, eqn, instance_wrapper, name=name, output_pin="O6"
-                    )
+            self._split_lut6_2(instance_wrapper)
 
             logging.info("Removing instance: %s", instance_wrapper.name)
             self.top.reference.remove_child(instance_wrapper.instance)
 
         # Write out netlist
         sdn.compose(netlist_ir, self.netlist_out, write_blackbox=False)
+
+    def _split_lut6_2(self, instance_wrapper):
+        logging.info("=" * 80)
+        logging.info("Creating logical LUT(s) for LUT6_2 instance: %s", instance_wrapper.name)
+        o6_pin_wrapper = instance_wrapper.get_pin("O6")
+        o6_wire = o6_pin_wrapper.pin.wire
+        assert o6_wire
+        o6_net = self.netlist_wrapper.wire_to_net[o6_wire]
+        assert o6_net
+        o6_net_connected = o6_net.is_connected
+
+        o5_pin_wrapper = instance_wrapper.get_pin("O5")
+        o5_wire = o5_pin_wrapper.pin.wire
+        assert o5_wire
+        o5_net = self.netlist_wrapper.wire_to_net[o5_wire]
+        assert o5_net
+        o5_net_connected = o5_net.is_connected
+
+        assert o6_net_connected or o5_net_connected
+
+        # Get equation for LUT outputs
+        eqn = LUTTools.getLUTEquation(instance_wrapper.properties["INIT"])[2:].replace("!", "~")
+        eqn = boolean.BooleanAlgebra().parse(eqn)
+
+        if o5_net_connected:
+            # 05 output uses only half the equation,
+            # so perform the substitution and simplification
+            o5_eqn = eqn.subs({boolean.Symbol("I5"): eqn.FALSE}).simplify()
+            self.create_new_lut(
+                o5_eqn, instance_wrapper, name=instance_wrapper.name + "O5", output_pin="O5"
+            )
+
+        if o6_net_connected:
+            if o5_net_connected:
+                # 06 output when O5 is also present uses only half the equation,
+                # so perform the substitution and simplification
+                o6_eqn = eqn.subs({boolean.Symbol("I5"): eqn.TRUE}).simplify()
+                self.create_new_lut(
+                    o6_eqn, instance_wrapper, name=instance_wrapper.name + "O6", output_pin="O6"
+                )
+
+            else:
+                # O6 is connected, but O5 is not.
+                name = instance_wrapper.name
+                instance_wrapper.instance.name = instance_wrapper.instance.name + ".OLD"
+                self.create_new_lut(eqn, instance_wrapper, name=name, output_pin="O6")
 
     def replace_lut_with_constant(self, old_pin_wrapper, is_gnd):
         """Replace a LUT with a constant generator"""
@@ -194,7 +187,7 @@ class NetlistPhysToLogical:
             )
             input_wire.connect_pin(pin)
 
-    def create_new_lut(self, netlist_wrapper, eqn, old_instance_wrapper, *, name, output_pin):
+    def create_new_lut(self, eqn, old_instance_wrapper, *, name, output_pin):
         """Create a new logical LUT given the old physical LUT instance wrapper and a new name"""
 
         assert isinstance(old_instance_wrapper, SdnInstanceWrapper)
@@ -205,8 +198,7 @@ class NetlistPhysToLogical:
         logging.info("  equation: %s", eqn)
 
         # Replace constant inputs in equation
-        inputs = eqn.symbols
-        for lut_input in inputs:
+        for lut_input in eqn.symbols:
             old_pin_wrapper = old_instance_wrapper.get_pin(str(lut_input))
             assert old_pin_wrapper.net, old_pin_wrapper.name
 
@@ -236,6 +228,21 @@ class NetlistPhysToLogical:
             )
             return None
 
+        # Establish mapping from physical to logical inputs
+        mapping = self._get_phys_to_logical_mapping(eqn)
+
+        eqn = eqn.subs(mapping).simplify()
+        logging.info("  equation after mapping: %s", eqn)
+
+        instance, instance_wrapper = self._create_new_lut_instance(name, eqn, num_inputs)
+
+        self._new_lut_wiring(
+            old_instance_wrapper, instance_wrapper, mapping, old_output_pin_wrapper
+        )
+
+        return instance
+
+    def _create_new_lut_instance(self, name, eqn, num_inputs):
         try:
             defn = next(
                 d for d in self.library_hdi_primitives.definitions if d.name == f"LUT{num_inputs}"
@@ -247,7 +254,25 @@ class NetlistPhysToLogical:
             defn.create_port(name="O", direction=sdn.OUT, pins=1)
         logging.info("  New LUT will be created using definition %s", defn.name)
 
-        # Establish mapping from physical to logical inputs
+        # Create INIT string for logical LUT
+        eqn = str(eqn)
+        eqn = eqn.replace("~", "!")
+        eqn = eqn.replace("|", "+")
+        eqn = "O=" + eqn
+
+        init = str(LUTTools.getLUTInitFromEquation(eqn, num_inputs))
+        logging.info("  INIT: %s", init)
+
+        # Create new LUT instance
+        instance = self.top.reference.create_child(
+            name, reference=defn, properties={"VERILOG.Parameters": {"INIT": init}}
+        )
+        instance_wrapper = SdnInstanceWrapper(instance, self.netlist_wrapper)
+        self.netlist_wrapper.instances.append(instance_wrapper)
+
+        return instance, instance_wrapper
+
+    def _get_phys_to_logical_mapping(self, eqn):
         mapping = {}
         logical_idx = 0
         for symbol in eqn.symbols:
@@ -256,51 +281,40 @@ class NetlistPhysToLogical:
         logging.info(
             "  physical to logical mapping: %s", {str(k): str(v) for k, v in mapping.items()}
         )
-        eqn = eqn.subs(mapping).simplify()
-        logging.info("  equation after mapping: %s", eqn)
+        return mapping
 
-        # Create INIT string for logical LUT
-        eqn = str(eqn)
-        eqn = eqn.replace("~", "!")
-        eqn = eqn.replace("|", "+")
-        eqn = "O=" + eqn
-        init = str(LUTTools.getLUTInitFromEquation(eqn, num_inputs))
-        logging.info("  INIT: %s", init)
-
-        # Create new LUT instance
-        instance = self.top.reference.create_child(
-            name, reference=defn, properties={"VERILOG.Parameters": {"INIT": init}}
-        )
-        instance_wrapper = SdnInstanceWrapper(instance, netlist_wrapper)
-        netlist_wrapper.instances.append(instance_wrapper)
-
+    def _new_lut_wiring(
+        self,
+        old_instance_wrapper,
+        new_instance_wrapper,
+        phys_to_logical_mapping,
+        old_output_pin_wrapper,
+    ):
         # Wire up the inputs
-        for physical, logical in mapping.items():
+        for physical, logical in phys_to_logical_mapping.items():
             logging.info("  Wiring %s to %s", logical, physical)
             old_pin_wrapper = old_instance_wrapper.get_pin(str(physical))
-            new_pin_wrapper = instance_wrapper.get_pin(str(logical))
+            new_pin_wrapper = new_instance_wrapper.get_pin(str(logical))
             wire_driver = old_pin_wrapper.pin.wire
             logging.info(
                 "  Connecting %s to %s.%s",
                 wire_driver.cable.name,
-                instance_wrapper.name,
+                new_instance_wrapper.name,
                 new_pin_wrapper.name,
             )
             wire_driver.connect_pin(new_pin_wrapper.pin)
 
         # Wire up the output
-        new_pin_wrapper = instance_wrapper.get_pin("O")
+        new_pin_wrapper = new_instance_wrapper.get_pin("O")
         assert new_pin_wrapper.pin.inner_pin.port.name == "O"
         wire_driver = old_output_pin_wrapper.pin.wire
         logging.info(
             "  Connecting %s to %s.%s",
             wire_driver.cable.name,
-            instance_wrapper.name,
+            new_instance_wrapper.name,
             new_pin_wrapper.name,
         )
         wire_driver.connect_pin(new_pin_wrapper.pin)
-
-        return instance
 
 
 if __name__ == "__main__":
