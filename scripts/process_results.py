@@ -87,23 +87,22 @@ def transform_stats(designs_yaml):
                     line = next(f)
                 line = next(f)
                 while True:
-                    try:
-                        if not analyze_impl_log_line(line.strip(), stats) and "Total" in line:
-                            cnt = 0
-                            while cnt < 2:
-                                if "Summary of Physical Synthesis Optimizations" in line:
-                                    cnt += 1
-                                line = next(f)
-                        line = next(f)
-                    except ValueError as e:
-                        print(design.name)
-                        print(line.split())
-                        raise e
+                    if not analyze_impl_log_line(line.strip(), stats) and "Total" in line:
+                        cnt = 0
+                        while cnt < 2:
+                            if "Summary of Physical Synthesis Optimizations" in line:
+                                cnt += 1
+                            line = next(f)
+                    line = next(f)
             except StopIteration:
                 if stats is None:
                     print(f"Possibly no clock for {design.name}")
                 design_stats[key] = stats
-    # make xlsx file with values and averages
+    export_design_stats_xlxs(design_stats, len(design_paths))
+
+
+def export_design_stats_xlxs(design_stats, num_designs):
+    """make xlsx file with values and averages"""
     workbook = xlsxwriter.Workbook("timing_stats.xlsx")
     worksheet = workbook.add_worksheet("Summary")
     row = 0
@@ -177,14 +176,14 @@ def transform_stats(designs_yaml):
             worksheet.write(row, col + 1, stat[0])
             worksheet.write(row, col + 2, stat[1])
             worksheet.write(row, col + 3, stat[2])
-            worksheet.write(row, col + 4, stat[0] / len(design_paths))
-            worksheet.write(row, col + 5, stat[1] / len(design_paths))
-            worksheet.write(row, col + 6, stat[2] / len(design_paths))
+            worksheet.write(row, col + 4, stat[0] / num_designs)
+            worksheet.write(row, col + 5, stat[1] / num_designs)
+            worksheet.write(row, col + 6, stat[2] / num_designs)
             row += 1
     workbook.close()
 
 
-def phys_capnp_results(flow, out="new_results.csv"):
+def phys_capnp_results(flow, out="fast_results.csv"):
     """
     Gather results from phys_cmp flow and create a CSV file with
     utilization data, transformation times, comparison times, and
@@ -347,4 +346,4 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("flow", help="The flow to process results for")
     args = parser.parse_args()
-    transform_stats(args.flow)
+    phys_capnp_results(args.flow)
