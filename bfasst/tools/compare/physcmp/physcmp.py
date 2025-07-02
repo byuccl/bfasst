@@ -3,7 +3,7 @@
 from argparse import Namespace
 
 from bfasst.tools.tool import Tool
-from bfasst.paths import BFASST_UTILS_PATH, COMPARE_TOOLS_PATH, BFASST_PATH
+from bfasst.paths import BFASST_UTILS_PATH, COMPARE_TOOLS_PATH
 from bfasst.utils.physcmp_data_types import ImplReports
 
 
