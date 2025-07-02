@@ -9,10 +9,8 @@ PUBLIC_SUBMODULES = \
 	third_party/RapidWright \
 	third_party/yosys \
 	third_party/WaFoVe \
-	third_party/icestorm
-
-PRIVATE_SUBMODULES = \
-	third_party/gmt_tools
+	third_party/icestorm \
+	third_party/rand_soc
 
 include external_tools.mk
 
@@ -34,9 +32,6 @@ packages:
 python_packages:
 	$(IN_ENV) python -m pip install -r requirements.txt
 	$(IN_ENV) python -m pip install -e .
-	if [ -f third_party/gmt_tools/requirements.txt ]; then \
-		$(IN_ENV) cd third_party/gmt_tools && python -m pip install -r requirements.txt; \
-	fi
 
 capnproto_java:
 ifeq "$(CAPNPJ)" ""
@@ -49,7 +44,6 @@ endif
 
 submodules:
 	$(foreach submodule,$(PUBLIC_SUBMODULES),git submodule init $(submodule); git submodule update $(submodule);)
-	$(foreach submodule,$(PRIVATE_SUBMODULES),git submodule init $(submodule); git submodule update $(submodule) || echo "Ignoring failed clone of private submodule ($(submodule))";)
 
 env: venv python_packages 
 	echo >> ".venv/bin/activate"

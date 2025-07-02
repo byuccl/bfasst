@@ -51,8 +51,6 @@ jobs:
     
     - name: Install external tools
       run: |
-        eval `ssh-agent -s`
-        ssh-add - <<< '${{ secrets.GMT_TOOLS_DEPLOY_SSH_KEY }}'
         make env
         . .venv/bin/activate && python bfasst/external_tools.py install_test_yaml ${{ matrix.experiment }}
 
@@ -102,11 +100,9 @@ jobs:
 
     - name: Install external tools
       run: |
-        eval `ssh-agent -s`
-        ssh-add - <<< '${{ secrets.GMT_TOOLS_DEPLOY_SSH_KEY }}'
         make env
         make install_cmake
-        . .venv/bin/activate && python bfasst/external_tools.py install rapidwright fasm2bels gmt_tools
+        . .venv/bin/activate && python bfasst/external_tools.py install rapidwright fasm2bels rand_soc
 
     - name: Run unittest
       run: |

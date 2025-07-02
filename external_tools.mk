@@ -9,34 +9,6 @@ install_vivado:
 
 
 ################################################################################
-# Fasm2bels
-################################################################################
-
-install_fasm2bels:
-	./scripts/install-fasm2bels.sh
-
-################################################################################
-# GMT Tools
-################################################################################
-
-install_gmt_tools:
-	git submodule init third_party/gmt_tools
-	git submodule update third_party/gmt_tools
-
-	$(IN_ENV) cd third_party/gmt_tools && pip install -r requirements.txt
-
-
-################################################################################
-# Conformal
-################################################################################
-
-install_conformal:
-	@echo "Conformal is not installed by this Makefile. The conformal tool is"
-	@echo "expected to be installed on a remote computer. Please set the"
-	@echo "necessary variables in config.py to point to the remote computer."
-
-
-################################################################################
 # Rapidwright
 ################################################################################
 
@@ -54,6 +26,34 @@ install_rapidwright:
 	echo "fi" >> ".venv/bin/activate"
 	echo "export INTERCHANGE_SCHEMA_PATH=`pwd`/third_party/RapidWright/interchange/fpga-interchange-schema/interchange" >> ".venv/bin/activate"
 	echo "unset INTERCHANGE_SCHEMA_PATH" >> ".venv/bin/deactivate"
+
+
+################################################################################
+# Fasm2bels
+################################################################################
+
+install_fasm2bels: install_rapidwright
+	./scripts/install-fasm2bels.sh
+
+################################################################################
+# rand_soc
+################################################################################
+
+install_rand_soc:
+	git submodule init third_party/rand_soc
+	git submodule update third_party/rand_soc
+
+	$(IN_ENV) cd third_party/rand_soc && pip install -r requirements.txt
+
+
+################################################################################
+# Conformal
+################################################################################
+
+install_conformal:
+	@echo "Conformal is not installed by this Makefile. The conformal tool is"
+	@echo "expected to be installed on a remote computer. Please set the"
+	@echo "necessary variables in config.py to point to the remote computer."
 
 
 ################################################################################

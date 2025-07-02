@@ -4,7 +4,7 @@ import pathlib
 import chevron
 
 from bfasst.tools.tool import ToolBase
-from bfasst.paths import BUILD_PATH, GMT_TOOLS_PATH, NINJA_BUILD_PATH, TOOLS_PATH
+from bfasst.paths import BUILD_PATH, NINJA_BUILD_PATH, RAND_SOC_PATH, TOOLS_PATH
 
 
 class RandSoC(ToolBase):
@@ -21,8 +21,8 @@ class RandSoC(ToolBase):
         self.rule_snippet_path = TOOLS_PATH / "design_create" / "rand_soc_rules.ninja.mustache"
 
     def create_build_snippets(self):
-        rand_soc_pkg_files = list((GMT_TOOLS_PATH / "rand_soc" / "rand_soc").glob("**/*.py"))
-        rand_soc_pkg_files.append(GMT_TOOLS_PATH / "rand_soc" / "main.py")
+        rand_soc_pkg_files = list((RAND_SOC_PATH / "rand_soc").glob("**/*.py"))
+        rand_soc_pkg_files.append(RAND_SOC_PATH / "main.py")
 
         for i, design in enumerate(self.outputs["design_tcl"], start=self.start_idx):
             design_dir_path = design.parent

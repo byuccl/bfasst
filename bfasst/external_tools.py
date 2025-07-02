@@ -1,4 +1,4 @@
-""" Manage installation of external tools"""
+"""Manage installation of external tools"""
 
 import argparse
 import socket
@@ -30,8 +30,8 @@ from bfasst.yaml_parser import FlowDescriptionParser
 ################################################################################
 
 
-def check_gmt_tools():
-    return (THIRD_PARTY_PATH / "gmt_tools" / "requirements.txt").is_file()
+def check_rand_soc():
+    return (THIRD_PARTY_PATH / "rand_soc" / "requirements.txt").is_file()
 
 
 def check_vivado():

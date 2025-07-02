@@ -7,7 +7,7 @@ from bfasst.tools.design_create.rand_soc import RandSoC
 from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.tools.synth.vivado_synth import VivadoSynth
 from bfasst.tools.transform.randsoc_dump import RandsocDump
-from bfasst.paths import ROOT_PATH, GMT_TOOLS_PATH
+from bfasst.paths import RAND_SOC_PATH, ROOT_PATH
 
 
 class RandSocDumped(FlowNoDesign):
@@ -23,7 +23,7 @@ class RandSocDumped(FlowNoDesign):
 
         # Get configuration of random SoC creator
         if randsoc_config_path is None:
-            randsoc_config_path = GMT_TOOLS_PATH / "rand_soc" / "default_config.yaml"
+            randsoc_config_path = RAND_SOC_PATH / "default_config.yaml"
         else:
             randsoc_config_path = ROOT_PATH / randsoc_config_path
         assert randsoc_config_path.exists(), f"Config file {randsoc_config_path} does not exist"
