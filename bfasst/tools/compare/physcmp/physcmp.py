@@ -53,7 +53,6 @@ class PhysCmp(Tool):
             "test_bitstream": str(self.test.bitstream),
             "log_path": str(self.outputs["physcmp_log"]),
             "logging_level": f"--logging_level {self.logging_level}",
-            "bfasst_path": str(BFASST_PATH),
         }
 
     def _init_outputs(self):

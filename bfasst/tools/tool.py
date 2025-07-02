@@ -65,6 +65,7 @@ class ToolBase(abc.ABC):
             build_snippet_path.is_file()
         ), f"Build snippet template {build_snippet_path} does not exist"
 
+        render_dict["bfasst_path"] = ROOT_PATH
         with open(build_snippet_path) as f:
             build_snippet = chevron.render(f, render_dict)
 
