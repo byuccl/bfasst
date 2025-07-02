@@ -402,23 +402,25 @@ def get_sdn_direction_for_unisim(unisim, port_name):
 
 
 def flip_const_port_signal(
-    design: Design, ecell: EDIFCellInst, port_name: str, idx=-1, log=logging.info
+    design: Design, ecell: EDIFCellInst, port_name: str, idx=-1, deferSort=False, log=logging.info
 ):
     """Flip the constant port signal for a given port in an EDIF cell instance."""
     port_inst = ecell.getPortInst(port_name)
     if port_inst is None:
         log("Port %s disconnected... Assuming gnd and flipping to vcc", port_name)
-        EDIFPortInst(ecell.getPort(port_name), design.getVccNet().getLogicalNet(), idx, ecell)
+        EDIFPortInst(
+            ecell.getPort(port_name), design.getVccNet().getLogicalNet(), idx, ecell, deferSort
+        )
         return
     old_net = port_inst.getNet()
     if old_net.isGND():
         log("\tSetting %s to VCC (was GND)", str(port_inst))
         old_net.removePortInst(port_inst)
-        design.getVccNet().getLogicalNet().addPortInst(port_inst)
+        design.getVccNet().getLogicalNet().addPortInst(port_inst, deferSort)
     elif old_net.isVCC():
         log("\tSetting %s to GND (was VCC)", str(port_inst))
         old_net.removePortInst(port_inst)
-        design.getGndNet().getLogicalNet().addPortInst(port_inst)
+        design.getGndNet().getLogicalNet().addPortInst(port_inst, deferSort)
     else:
         logging.info("F2B marked non static port %s inverted, no action taken", str(port_inst))
 

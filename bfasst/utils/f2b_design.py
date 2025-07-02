@@ -203,7 +203,7 @@ class F2BDesign:
 
         return ignore_pins
 
-    def fix_rev_bufg(self, cell: Cell) -> None:
+    def fix_rev_bufg(self, cell: Cell, deferSort: bool = False) -> None:
         """
         Sometimes F2B puts the same clock signal to both bufgctrl input ports, instead of just I0.
         """
@@ -222,9 +222,9 @@ class F2BDesign:
             val = ecell.getProperty(prop).getValue()
             if val == "1'b1":
                 logging.info("Flipping %s port on BUFGCTRL %s", port_name, cell.getName())
-                rw.flip_const_port_signal(self.rev_design, ecell, port_name)
+                rw.flip_const_port_signal(self.rev_design, ecell, port_name, deferSort=deferSort)
 
-    def fix_rev_dsp(self, cell: Cell) -> None:
+    def fix_rev_dsp(self, cell: Cell, viv_ecell: EDIFCellInst, deferSort: bool = False) -> None:
         """
         Fasm2bels does not accurately set the OPMODE, ALUMODE, INMODE pins.
         The fasm file specifies some incoming nets to these ports should be
@@ -234,31 +234,26 @@ class F2BDesign:
         """
         logging.info("Processing reversed DSP %s for inverted signals", cell.getName())
         ecell = cell.getEDIFCellInst()
-        assert ecell
 
         # XRAY erroneously does not output feature to invert carryin signal.
-        rw.flip_const_port_signal(self.rev_design, ecell, "CARRYIN")
+        rw.flip_const_port_signal(self.rev_design, ecell, "CARRYIN", deferSort=deferSort)
 
-        name = cell.getSite().getName()
-        viv_cell = self.vivado_design.getSiteInstFromSiteName(name).getCell(cell.getBELName())
-        viv_cell = viv_cell.getEDIFCellInst()
-        for port_name in self.dsp_constant_ports:
-            viv_port_inst = viv_cell.getPortInst(port_name)
-            if viv_port_inst is None or viv_port_inst.getNet().isGND():
-                logging.info("Disconnecting %s port", port_name)
-                port_inst = ecell.getPortInst(port_name)
-                assert port_inst
-                port_inst.getNet().removePortInst(port_inst)
+        viv_ports = ((p, viv_ecell.getPortInst(p)) for p in self.dsp_constant_ports)
+        for port_name in (p for p, vp in viv_ports if vp is None or vp.getNet().isGND()):
+            logging.info("Disconnecting %s port", port_name)
+            port_inst = ecell.getPortInst(port_name)
+            assert port_inst
+            port_inst.getNet().removePortInst(port_inst)
 
         # Flip dsp signals according to f2b properties
         for prop, port_name in self.dsp_inv_props:
             val = ecell.getProperty(prop).getValue()
-            for idx, inv in enumerate(reversed(val[3:])):
-                if not int(inv):
-                    continue
-                rw.flip_const_port_signal(self.rev_design, ecell, f"{port_name}[{idx}]", idx)
+            for idx in (idx for idx, inv in enumerate(reversed(val[3:])) if int(inv)):
+                rw.flip_const_port_signal(
+                    self.rev_design, ecell, f"{port_name}[{idx}]", idx, deferSort=deferSort
+                )
         if ecell.getProperty("IS_CLK_INVERTED").getValue() == "1'b1":
-            rw.flip_const_port_signal(self.rev_design, ecell, "CLK")
+            rw.flip_const_port_signal(self.rev_design, ecell, "CLK", deferSort=deferSort)
 
         # FASM2BELS just sets USE_MULT to "MULTIPLY" -> infer new value based on OPMODE
         # If opmode is not constant, then the value is DYNAMIC
@@ -277,7 +272,7 @@ class F2BDesign:
             )
             ecell.addProperty("USE_MULT", "NONE")
 
-    def fix_rev_bram(self, cell: Cell, ignore_pins: set[str]) -> None:
+    def fix_rev_bram(self, cell: Cell, ignore_pins: set[str], deferSort: bool = False) -> None:
         """
         Invert BRAM ports based on f2b properties.
         Ignore pins takes non zero timme, so skip if possible.
@@ -290,4 +285,4 @@ class F2BDesign:
         for prop, port_name in (p for p in self.bram_inv_props if p[1] not in ignore_pins):
             val = int(str(ecell.getProperty(prop).getValue()))
             if val:
-                rw.flip_const_port_signal(self.rev_design, ecell, port_name)
+                rw.flip_const_port_signal(self.rev_design, ecell, port_name, deferSort=deferSort)

@@ -95,13 +95,17 @@ class StructuralCapnp(RwPhysNetlist, F2BDesign):
         comp_start_time = time.time()
         for ecell, site_inst, bel_name in self.phys_ecells:
             self._compare_cell(ecell, site_inst, bel_name)
+
+        # Sort vcc/gnd ports insts after fixing dps/bufgctrl cells
+        self.rev_design.getGndNet().getLogicalNet().getPortInsts().reSortList()
+        self.rev_design.getVccNet().getLogicalNet().getPortInsts().reSortList()
+
         self._check_nets()
         end_time = time.time()
         logging.info("Total Comparison Time: %s seconds", end_time - comp_start_time)
         logging.info("Total Transformation and Comparison Time: %s seconds", end_time - start_time)
         with open(self.cmp_stage_dir / "cmp_time.txt", "w") as f:
             f.write(f"{end_time - start_time:2f}\n")
-        self.export_transformation()
 
     def get_properties_for_type(self, cell_type: str) -> tuple[str]:
         """Return the list of properties that must match for a given cell type
@@ -140,9 +144,9 @@ class StructuralCapnp(RwPhysNetlist, F2BDesign):
             ecell = site.getCell(rev_cell.getBELName()).getEDIFHierCellInst().getParent().getInst()
             cell_type = rev_hcell.getCellType().getName()
         elif cell_type == "DSP48E1":
-            self.fix_rev_dsp(rev_cell)
+            self.fix_rev_dsp(rev_cell, ecell, True)
         elif cell_type == "BUFGCTRL":
-            self.fix_rev_bufg(rev_cell)
+            self.fix_rev_bufg(rev_cell, True)
 
         logging.info(
             "Comparing cell %s on BEL %s to reversed cell %s",
@@ -259,9 +263,6 @@ class StructuralCapnp(RwPhysNetlist, F2BDesign):
                             + "with Disconnected port... Assuming ground connection"
                         )
 
-                    # p = self.capnp_cells.phys_capnp
-                    # n = self.capnp_cells.log_capnp
-                    # capnp_cell, lcapnp_cell = self.capnp_cells.get_capnp_cell(rev_cell.getName())
                     # logging.info(
                     #     f"Net {net_driver} on port {port.getName()} in cell {ecell.getName()}"
                     #     + f" already mapped. ({self.net_map[net_driver]} != {rev_net_driver})\n\t"
@@ -292,15 +293,20 @@ class StructuralCapnp(RwPhysNetlist, F2BDesign):
         Helper to return exactly one driver-string for rev_net,
         caching results and handling the 2-driver IBUF case.
         """
-        if rev_port in self.rev_driver_cache:
-            return self.rev_driver_cache[rev_port]
+        drv = self.rev_driver_cache.get(rev_port)
+        if drv is not None:
+            return drv
+
         drv = rev_net.getLeafHierPortInsts(True, False)
         if not drv:  # fallback for top-level I/Os
             drv = [p for p in rev_net.getPortInsts() if p.isInput()]
             if len(drv) == 2:  # IBUF nets: pick the one that matches driver
                 top_io = driver.split("/")[-1]
                 drv = [l for l in drv if str(l) == top_io]
-        assert len(drv) == 1, f"Expected 1 driver on {rev_net}, found {drv}"
+        if len(drv) != 1:
+            raise StructuralCompareError(
+                f"Expected 1 driver on {rev_net}, found {len(drv)}: {drv} for port {rev_port}"
+            )
         drv = str(drv[0])
         if rev_net not in self.rev_net_cache:  # Often only one port is missing.
             self.rev_net_cache.add(rev_net)
