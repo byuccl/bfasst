@@ -35,51 +35,58 @@ class _RWStaticNets:
 
     vcc_nets = set()
     gnd_nets = set()
-
-    @staticmethod
-    def is_vcc(net: EDIFNet) -> bool:
-        """Check if the net is a VCC net."""
-        name = net.getName()
-        if name in _RWStaticNets.vcc_nets:
-            return True
-        if name in _RWStaticNets.gnd_nets:
-            return False
-        if net.isVCC():
-            _RWStaticNets.vcc_nets.add(name)
-            return True
-        elif net.isGND():
-            _RWStaticNets.gnd_nets.add(name)
-            return False
-        return False
-
-    @staticmethod
-    def is_gnd(net: EDIFNet) -> bool:
-        """Check if the net is a GND net."""
-        name = net.getName()
-        if name in _RWStaticNets.gnd_nets:
-            return True
-        if name in _RWStaticNets.vcc_nets:
-            return False
-        if net.isGND():
-            _RWStaticNets.gnd_nets.add(name)
-            return True
-        elif net.isVCC():
-            _RWStaticNets.vcc_nets.add(name)
-            return False
+    processed = set()
 
 
 def is_vcc(net: EDIFNet) -> bool:
     """Check if the net is a VCC net."""
-    return _RWStaticNets.is_vcc(net)
+    name = net.getName()
+    if name in _RWStaticNets.vcc_nets:
+        return True
+    if name in _RWStaticNets.processed:
+        return False
+    _RWStaticNets.processed.add(name)
+    if net.isVCC():
+        _RWStaticNets.vcc_nets.add(name)
+        return True
+    if net.isGND():
+        _RWStaticNets.gnd_nets.add(name)
+        return False
+    return False
 
 
 def is_gnd(net: EDIFNet) -> bool:
     """Check if the net is a GND net."""
-    return _RWStaticNets.is_gnd(net)
+    name = net.getName()
+    if name in _RWStaticNets.gnd_nets:
+        return True
+    if name in _RWStaticNets.processed:
+        return False
+    _RWStaticNets.processed.add(name)
+    if net.isGND():
+        _RWStaticNets.gnd_nets.add(name)
+        return True
+    if net.isVCC():
+        _RWStaticNets.vcc_nets.add(name)
+        return False
+    return False
 
 
 def is_static_net(net: EDIFNet) -> bool:
-    return _RWStaticNets.is_gnd(net) or _RWStaticNets.is_vcc(net)
+    """Check if the net is a static net (VCC or GND)"""
+    name = net.getName()
+    if name in (_RWStaticNets.vcc_nets | _RWStaticNets.gnd_nets):
+        return True
+    if name in _RWStaticNets.processed:
+        return False
+    _RWStaticNets.processed.add(name)
+    if net.isVCC():
+        _RWStaticNets.vcc_nets.add(name)
+        return True
+    if net.isGND():
+        _RWStaticNets.gnd_nets.add(name)
+        return True
+    return False
 
 
 def cell_is_6lut(cell):
@@ -118,8 +125,8 @@ def generate_lut62_name(lut6_edif_cell_inst, lut6_cell, lut5_cell):
 
 def generate_const_lut_name(site_inst, pins):
     suffix = ""
-    for pin, is_gnd in pins:
-        suffix += f"{pin}.{'GND' if is_gnd else 'VCC'}"
+    for pin, gnd in pins:
+        suffix += f"{pin}.{'GND' if gnd else 'VCC'}"
     return str(site_inst.getName()) + suffix
 
 
@@ -377,9 +384,9 @@ def process_lut_eqn(cell, is_lut5, log=logging.info):
     return eqn
 
 
-def process_shared_gnd_lut_eqn(lut5, gnd_pin, new_cell_inst, is_gnd, log=logging.info):
+def process_shared_gnd_lut_eqn(lut5, gnd_pin, new_cell_inst, gnd, log=logging.info):
     lut5_eqn = process_lut_eqn(lut5, True, log)
-    const_str = "00000000" if is_gnd else "FFFFFFFF"
+    const_str = "00000000" if gnd else "FFFFFFFF"
     if gnd_pin.endswith("O5"):
         init_str = "64'h" + LUTTools.getLUTInitFromEquation(lut5_eqn, 5)[4:].zfill(8) + const_str
     else:
@@ -450,25 +457,25 @@ def get_sdn_direction_for_unisim(unisim, port_name):
 
 
 def flip_const_port_signal(
-    design: Design, ecell: EDIFCellInst, port_name: str, idx=-1, deferSort=False, log=logging.info
+    design: Design, ecell: EDIFCellInst, port_name: str, idx=-1, defer_sort=False
 ):
     """Flip the constant port signal for a given port in an EDIF cell instance."""
     port_inst = ecell.getPortInst(port_name)
     if port_inst is None:
-        log("Port %s disconnected... Assuming gnd and flipping to vcc", port_name)
+        logging.info("Port %s disconnected... Assuming gnd and flipping to vcc", port_name)
         EDIFPortInst(
-            ecell.getPort(port_name), design.getVccNet().getLogicalNet(), idx, ecell, deferSort
+            ecell.getPort(port_name), design.getVccNet().getLogicalNet(), idx, ecell, defer_sort
         )
         return
     old_net = port_inst.getNet()
-    if _RWStaticNets.is_gnd(old_net):
-        log("\tSetting %s to VCC (was GND)", str(port_inst))
+    if is_gnd(old_net):
+        logging.info("\tSetting %s to VCC (was GND)", str(port_inst))
         old_net.removePortInst(port_inst)
-        design.getVccNet().getLogicalNet().addPortInst(port_inst, deferSort)
-    elif _RWStaticNets.is_vcc(old_net):
-        log("\tSetting %s to GND (was VCC)", str(port_inst))
+        design.getVccNet().getLogicalNet().addPortInst(port_inst, defer_sort)
+    elif is_vcc(old_net):
+        logging.info("\tSetting %s to GND (was VCC)", str(port_inst))
         old_net.removePortInst(port_inst)
-        design.getGndNet().getLogicalNet().addPortInst(port_inst, deferSort)
+        design.getGndNet().getLogicalNet().addPortInst(port_inst, defer_sort)
     else:
         logging.info("F2B marked non static port %s inverted, no action taken", str(port_inst))
 
