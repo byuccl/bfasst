@@ -16,14 +16,14 @@ install_fasm2bels:
 	./scripts/install-fasm2bels.sh
 
 ################################################################################
-# GMT Tools
+# rand_soc
 ################################################################################
 
-install_gmt_tools:
-	git submodule init third_party/gmt_tools
-	git submodule update third_party/gmt_tools
+install_rand_soc:
+	git submodule init third_party/rand_soc
+	git submodule update third_party/rand_soc
 
-	$(IN_ENV) cd third_party/gmt_tools && pip install -r requirements.txt
+	$(IN_ENV) cd third_party/rand_soc && pip install -r requirements.txt
 
 
 ################################################################################
