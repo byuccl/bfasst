@@ -16,4 +16,4 @@
 	url = https://github.com/YosysHQ/icestorm.git
 [submodule "third_party/rand_soc"]
 	path = third_party/rand_soc
-	url = git@github.com:byuccl/rand_soc.git
+	url = https://github.com/byuccl/rand_soc.git
