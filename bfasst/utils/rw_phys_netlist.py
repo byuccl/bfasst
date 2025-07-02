@@ -254,7 +254,7 @@ class RwPhysNetlist(PhysNetlist):
         for src_pin, p in site_pins:
             old_net = src_pin.getNet()
             logging.info("Inferring constant generator on LUT based on site pin %s", src_pin)
-            new_net = self.__process_lut_const(site_inst, [(f"{p}6LUT_O6", old_net.isGNDNet())])[0]
+            new_net = self.__process_lut_const(site_inst, [(f"{p}6LUT_O6", rw.is_gnd(old_net))])[0]
             self.site_pin_to_net[src_pin] = new_net
 
     def __process_ffs(self, site_inst: SiteInst):
@@ -653,7 +653,7 @@ class RwPhysNetlist(PhysNetlist):
             return
         for routed_to_cell_inst, log_port_name, dest_port in dest_ports:
             log_net = dest_port.getNet()
-            if (is_gnd and log_net.isGND()) or (not is_gnd and log_net.isVCC()):
+            if (is_gnd and rw.is_gnd(log_net)) or (not is_gnd and rw.is_vcc(log_net)):
                 log_net.removePortInst(dest_port)
                 new_net.createPortInst(log_port_name, routed_to_cell_inst)
 

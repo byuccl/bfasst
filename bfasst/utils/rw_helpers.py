@@ -30,8 +30,56 @@ class RapidwrightException(Exception):
     pass
 
 
+class _RWStaticNets:
+    """Cache RW static nets. Expects nets' srcs to not change in between calls."""
+
+    vcc_nets = set()
+    gnd_nets = set()
+
+    @staticmethod
+    def is_vcc(net: EDIFNet) -> bool:
+        """Check if the net is a VCC net."""
+        name = net.getName()
+        if name in _RWStaticNets.vcc_nets:
+            return True
+        if name in _RWStaticNets.gnd_nets:
+            return False
+        if net.isVCC():
+            _RWStaticNets.vcc_nets.add(name)
+            return True
+        elif net.isGND():
+            _RWStaticNets.gnd_nets.add(name)
+            return False
+        return False
+
+    @staticmethod
+    def is_gnd(net: EDIFNet) -> bool:
+        """Check if the net is a GND net."""
+        name = net.getName()
+        if name in _RWStaticNets.gnd_nets:
+            return True
+        if name in _RWStaticNets.vcc_nets:
+            return False
+        if net.isGND():
+            _RWStaticNets.gnd_nets.add(name)
+            return True
+        elif net.isVCC():
+            _RWStaticNets.vcc_nets.add(name)
+            return False
+
+
+def is_vcc(net: EDIFNet) -> bool:
+    """Check if the net is a VCC net."""
+    return _RWStaticNets.is_vcc(net)
+
+
+def is_gnd(net: EDIFNet) -> bool:
+    """Check if the net is a GND net."""
+    return _RWStaticNets.is_gnd(net)
+
+
 def is_static_net(net: EDIFNet) -> bool:
-    return net.isGND() or net.isVCC()
+    return _RWStaticNets.is_gnd(net) or _RWStaticNets.is_vcc(net)
 
 
 def cell_is_6lut(cell):
@@ -413,11 +461,11 @@ def flip_const_port_signal(
         )
         return
     old_net = port_inst.getNet()
-    if old_net.isGND():
+    if _RWStaticNets.is_gnd(old_net):
         log("\tSetting %s to VCC (was GND)", str(port_inst))
         old_net.removePortInst(port_inst)
         design.getVccNet().getLogicalNet().addPortInst(port_inst, deferSort)
-    elif old_net.isVCC():
+    elif _RWStaticNets.is_vcc(old_net):
         log("\tSetting %s to GND (was VCC)", str(port_inst))
         old_net.removePortInst(port_inst)
         design.getGndNet().getLogicalNet().addPortInst(port_inst, deferSort)

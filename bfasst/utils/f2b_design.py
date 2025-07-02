@@ -162,7 +162,7 @@ class F2BDesign:
             ignore_pins.update(("SBITERR", "ECCPARITY", "RDADDRECC"))
             # Continue check for bram_a_only
             port_gen = (ecell.getPortInst(f"DOBDO[{i}]") for i in range(32))
-            ports = [p for p in port_gen if p is not None and not p.getNet().isGND()]
+            ports = [p for p in port_gen if p is not None and not rw.is_vcc(p.getNet())]
             bram_a_only = not ports
         if bram_a_only:
             ignore_pins.update(
@@ -211,7 +211,7 @@ class F2BDesign:
         assert ecell
         i1_port = ecell.getPortInst("I1")
         i1_net = i1_port.getNet()
-        if not i1_net.isVCC():
+        if not rw.is_vcc(i1_net):
             i0 = ecell.getPortInst("I0").getNet()
             assert i0.getName() == i1_net.getName()
             logging.info("F2B BUFGCTRL %s has same clock on both inputs, switching I1 to VCC", cell)
@@ -239,7 +239,7 @@ class F2BDesign:
         rw.flip_const_port_signal(self.rev_design, ecell, "CARRYIN", deferSort=deferSort)
 
         viv_ports = ((p, viv_ecell.getPortInst(p)) for p in self.dsp_constant_ports)
-        for port_name in (p for p, vp in viv_ports if vp is None or vp.getNet().isGND()):
+        for port_name in (p for p, vp in viv_ports if vp is None or rw.is_vcc(vp.getNet())):
             logging.info("Disconnecting %s port", port_name)
             port_inst = ecell.getPortInst(port_name)
             assert port_inst
@@ -265,7 +265,7 @@ class F2BDesign:
         if [net for net in opmode if not rw.is_static_net(net)]:
             logging.info("Nonconstant OPMODE: Setting USE_MULT to DYNAMIC for %s", cell.getName())
             ecell.addProperty("USE_MULT", "DYNAMIC")
-        elif [net.isVCC() for net in opmode] != [False, True, False, True]:
+        elif [rw.is_vcc(net) for net in opmode] != [False, True, False, True]:
             logging.info(
                 "Constant OPMODE bypasses mult output. Setting USE_MULT to NONE for %s",
                 cell.getName(),
