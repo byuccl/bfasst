@@ -79,6 +79,7 @@ flows:
   - vivado
   - rapidwright
   - fasm2bels
+  - gmt_tools
 
 - name: VivadoBitToNetlist
   description: Reverse bitstream into a phys netlist
@@ -86,8 +87,8 @@ flows:
   class: VivadoBitToNetlist
   external_tools:
   - vivado
-  - fasm2bels
   - rapidwright
+  - fasm2bels
 
 - name: ImplObfuscate
   description: Synthesize, implement, modify netlist, reimplement, and compare
@@ -104,7 +105,7 @@ flows:
   class: RandSoc
   external_tools:
   - vivado
-  - rand_soc
+  - gmt_tools
 
 - name: RandSocDumped
   description: Dump random block design(s)
@@ -112,7 +113,7 @@ flows:
   class: RandSocDumped
   external_tools:
   - vivado
-  - rand_soc
+  - gmt_tools
 
 - name: VivadoWafove
   description: Verify netlist equivalence with Wafove
