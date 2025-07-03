@@ -80,12 +80,9 @@ class ErrorInjectorCapnp:
         cells = []
         for site in sites:
             cells.extend(site.getCells())
-        edif_cells = []
-        for cell in cells:
-            edif_cells.append(cell.getEDIFHierCellInst())
-        luts = [edif_cell for edif_cell in edif_cells if "LUT" in edif_cell.toString()]
-        luts.sort(key=lambda x: x.toString())
-        self.luts = [instance.getInst() for instance in luts]
+        luts = [cell for cell in cells if "LUT" in cell.toString()]
+        luts.sort(key=lambda x: x.getName())
+        self.luts = luts
         
 
     def pick_lut(self):
@@ -114,13 +111,14 @@ class ErrorInjectorCapnp:
         Flips the bit, creates a new INIT property, and replaces the old one
         """
         init_size = self.get_init_size(lut)
-        old_init = lut.getProperty("INIT").getValue()
+        # old_init = phys_lut.getProperty("INIT").getValue()
+        old_init = self.handle_missing_prop(lut, "INIT")
         new_init_int = convert_verilog_literal_to_int(old_init) ^ (1 << bit_num)
         hex_digits = (init_size + 3) // 4
         new_hex = format(new_init_int & ((1 << init_size) - 1), f"0{hex_digits}x")
         new_init = f"{init_size}'h" + new_hex
-        prop = lut.getProperty("INIT")
-        prop.setValue(new_init)
+        lut.addProperty("INIT", new_init)
+
 
 
     def inject_bit_flip(self) -> None:
@@ -152,6 +150,26 @@ class ErrorInjectorCapnp:
         logging.info("Loading reversed capnp objects took %s seconds.", time.time() - start_time)
 
         self.capnp_cells = CapnpCells(phys_capnp, edf_capnp)
+
+    def handle_missing_prop(self, rev_cell, prop_name: str) -> int:
+        """
+        Sometimes properties from capnp are missing in the RapidWright data structure.
+        So far this has only been LUT Init strings.
+        """
+        _, lcapnp_cell = self.capnp_cells.get_capnp_cell(rev_cell.getName())
+        assert lcapnp_cell is not None
+        rev_value = None
+
+        for props in lcapnp_cell.propMap.entries:
+            if self.capnp_cells.log_capnp.strList[props.key] == prop_name:
+                rev_value = self.capnp_cells.log_capnp.strList[props.textValue]
+                break
+        assert rev_value is not None
+        # rev_value = utils.convert_verilog_literal_to_int(rev_value)
+        # self.rw_value_mismatch += 1
+        # self.rw_problem_cells.add(rev_cell.getName())
+        logging.warning("Adding cell %s to rw problem cells", rev_cell.getName())
+        return rev_value
 
 
 
