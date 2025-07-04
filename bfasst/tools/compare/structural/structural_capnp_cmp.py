@@ -74,6 +74,7 @@ class StructuralCapnpCmp(Tool):
             "impl_edf": self.impl_edf,
             "phys_capnp": self.phys_capnp,
             "edf_capnp": self.edf_capnp,
+            "design": f"{self.design_build_path.parent.name}/{self.design_build_path.name}",
         }
         build_dict.update({k: str(v) for k, v in self.outputs.items()})
         with open(COMPARE_TOOLS_PATH / "structural" / "structural_capnp_build.ninja.mustache") as f:

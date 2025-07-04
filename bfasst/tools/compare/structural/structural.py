@@ -43,7 +43,6 @@ class Structural(Tool):
                 "expect_fail": "--expect_fail" if self.expect_fail else "",
                 "debug": "--debug" if self.debug else "",
                 "logging_level": f"--logging_level {self.logging_level}",
-                "design": f"{self.design_build_path.parent.name}/{self.design_build_path.name}",
             },
         )
 
