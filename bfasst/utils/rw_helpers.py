@@ -5,6 +5,7 @@ from fnmatch import fnmatch
 import logging
 from os.path import commonprefix
 import re
+from typing import Optional
 
 from bidict import bidict
 import spydrnet as sdn
@@ -12,6 +13,7 @@ import spydrnet as sdn
 # pylint: disable=wrong-import-position,wrong-import-order
 from bfasst import jpype_jvm
 from bfasst.config import PART
+import bfasst.utils as utils
 
 jpype_jvm.start()
 from com.xilinx.rapidwright.device import BELPin
@@ -480,7 +482,9 @@ def flip_const_port_signal(
         logging.info("F2B marked non static port %s inverted, no action taken", str(port_inst))
 
 
-def create_lut_routethru_net(cell: Cell, is_lut5: bool, new_lut_cell: EDIFCellInst) -> None:
+def create_lut_routethru_net(
+    cell: Cell, is_lut5: bool, new_lut_cell: EDIFCellInst
+) -> Optional[tuple[Cell, EDIFNet]]:
     """
     Extra processing for LUT route through.  Need to create a new net
     connecting from the new LUT6_2 instance to the FF
@@ -527,6 +531,26 @@ def create_lut_routethru_net(cell: Cell, is_lut5: bool, new_lut_cell: EDIFCellIn
 
     logging.info("  Connecting new net to BEL %s, port %s", routed_to_cell.getBELName(), dest_port)
     new_net.addPortInst(dest_port_inst)
+    if cell.getType() == "CARRY4":
+        return check_lut_rt_ff(cell, is_lut5, new_net)
+
+
+def check_lut_rt_ff(cell: Cell, is_lut5: bool, new_net: EDIFNet) -> Optional[tuple[Cell, EDIFNet]]:
+    site_inst = cell.getSiteInst()
+    bel_name = f"{cell.getBELName()[0]}{5 if is_lut5 else ""}FF"
+    ff = site_inst.getCell(bel_name)
+    if ff is None:
+        return
+    bel_name = bel_name + "MUX_OUT"
+    site_pin = bel_name[0] + list(list(cell.getPinMappingsL2P().values())[0])[0][1]
+    ff_net = site_inst.getNetFromSiteWire(bel_name).getName()
+    lut_net = site_inst.getSitePinInst(site_pin).getNet().getName()
+    if ff_net == lut_net:
+        if ff.isRoutethru():
+            return ff, new_net
+        ff_port = ff.getEDIFCellInst().getPortInst("D")
+        ff_port.getNet().removePortInst(ff_port)
+        new_net.addPortInst(ff_port)
 
 
 def get_cells_from_site_pin(

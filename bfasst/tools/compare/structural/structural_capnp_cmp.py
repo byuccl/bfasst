@@ -56,6 +56,7 @@ class StructuralCapnpCmp(Tool):
         checkpoint_to_v = {
             "phys_netlist_verilog_path": str(self.outputs["viv_impl_physical_v"]),
             "phys_netlist_checkpoint": str(self.outputs["phys_capnp_checkpoint"]),
+            "cmp_time": str(self.outputs["cmp_time"]),
         }
         checkpoint_to_v_json = json.dumps(checkpoint_to_v, indent=4)
         json_equivalent = compare_json(self.outputs["checkpoint_to_v_json"], checkpoint_to_v_json)
@@ -91,6 +92,7 @@ class StructuralCapnpCmp(Tool):
         self.outputs["checkpoint_to_v_json"] = phys_net_dir / "checkpoint_to_v.json"
         self.outputs["rapidwright_log"] = self.build_path / "rapidwright_stdout.log"
         self.outputs["interchange"] = phys_net_dir / "phys_logical_netlist.capnp"
+        self.outputs["cmp_time"] = self.build_path / "cmp_time.txt"
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)

@@ -101,6 +101,7 @@ class RwPhysNetlist(PhysNetlist):
 
         # First loop through all sites and deal with LUTs.  We can't the later loop that iterates
         # over Design.getCells() as it does not return LUT routethru objects.
+        (self.stage_dir / "transformation_time.txt").unlink(missing_ok=True)
         fun_start_time = time.time()
         self.__process_all_clbs()
         logging.info("Finished processing CLBs in %s seconds", time.time() - fun_start_time)
@@ -184,7 +185,13 @@ class RwPhysNetlist(PhysNetlist):
 
         # Now that all LUT Generators are instanced, process FFs
         for site_inst in (s for s in site_insts if s.getSiteTypeEnum() in (SLICEL, SLICEM)):
-            self.__process_ffs(site_inst)
+            cell_gen = (site_inst.getCell(ff_name) for ff_name in ("AFF", "BFF", "CFF", "DFF"))
+            for ff in (
+                ff
+                for ff in cell_gen
+                if ff is not None and ff.isRoutethru() and ff not in self.visited_cells
+            ):
+                self.__process_ff(site_inst, ff)
 
         self.visited_cells.discard(None)
         self.visited_cells.discard(self.empty_cell)
@@ -254,57 +261,64 @@ class RwPhysNetlist(PhysNetlist):
         for src_pin, p in site_pins:
             old_net = src_pin.getNet()
             logging.info("Inferring constant generator on LUT based on site pin %s", src_pin)
-            new_net = self.__process_lut_const(site_inst, [(f"{p}6LUT_O6", rw.is_gnd(old_net))])[0]
+            new_net = self.__process_lut_const(site_inst, [(f"{p}6LUT_O6", old_net.isGNDNet())])[0]
             self.site_pin_to_net[src_pin] = new_net
 
-    def __process_ffs(self, site_inst: SiteInst):
+    def __process_ff(self, site_inst: SiteInst, ff: Cell, rt_net: EDIFNet = None) -> None:
         """Process FF routethru cell and add it to the design."""
-        cell_gen = (site_inst.getCell(ff_name) for ff_name in ("AFF", "BFF", "CFF", "DFF"))
-        for ff in (ff for ff in cell_gen if ff is not None and ff.getEDIFCellInst() is None):
-            assert ff.isRoutethru()
-            self.visited_cells.add(ff)
-            logging.info("Processing FF routethru %s", str(ff))
-            new_cell_inst = self.vivado_design.getTopEDIFCell().createChildCellInst(
-                f"{ff.getName()}_phys_rt", self.ldce_edif_cell
-            )
-            logging.info("  Setting INIT to 0")
-            new_cell_inst.addProperty("INIT", JInt(0))
+        self.visited_cells.add(ff)
+        logging.info("Processing FF routethru %s", str(ff))
+        new_cell_inst = self.vivado_design.getTopEDIFCell().createChildCellInst(
+            f"{ff.getName()}_phys_rt", self.ldce_edif_cell
+        )
+        logging.info("  Setting INIT to 0")
+        new_cell_inst.addProperty("INIT", JInt(0))
 
-            input_pins = {
-                "CK": ("G", self.vcc),
-                "CE": ("GE", self.vcc),
-                "SR": ("CLR", self.gnd),
-                "D": ("D", None),
-            }
-            if ff.getName() in self.hanging_pins:
-                for drv, _, belpin in self.hanging_pins.pop(ff.getName()):
-                    logging.info("  Connecting hanging pin %s to %s", drv, belpin.getName())
-                    logp = input_pins[belpin.getName()][0]
-                    input_pins[belpin.getName()] = (logp, self.site_pin_to_net[drv])
-            for physp, (logp, net) in list(input_pins.items())[:-1]:
-                port = new_cell_inst.getOrCreatePortInst(logp)
-                assert port
-                logging.info("  Connecting %s to %s (%s)", net, logp, physp)
-                net.addPortInst(port)
+        input_pins = {
+            "CK": ("G", self.vcc),
+            "CE": ("GE", self.vcc),
+            "SR": ("CLR", self.gnd),
+            "D": ("D", None),
+        }
+        if ff.getName() in self.hanging_pins:
+            for drv, _, belpin in self.hanging_pins.pop(ff.getName()):
+                logging.info("  Connecting hanging pin %s to %s", drv, belpin.getName())
+                logp = input_pins[belpin.getName()][0]
+                input_pins[belpin.getName()] = (logp, self.site_pin_to_net[drv])
+        for physp, (logp, net) in list(input_pins.items())[:-1]:
+            port = new_cell_inst.getOrCreatePortInst(logp)
+            assert port
+            logging.info("  Connecting %s to %s (%s)", net, logp, physp)
+            net.addPortInst(port)
 
-            physp = "D"
-            logp, net = input_pins[physp]
-            if net is None:
-                # Make the rt ff drive the logical net
-                edif_net = site_inst.getNetFromSiteWire(ff.getName()[-2:]).getLogicalNet()
-                src = edif_net.getSourcePortInsts(True)
-                assert len(src) == 1
-                src = src[0]
-                logging.info("  Switch driver on net %s from %s to routethru ff Q", edif_net, src)
-                edif_net.createPortInst(new_cell_inst.getPort("Q"), new_cell_inst)
-                edif_net.removePortInst(src)
-
-                # Make a new net to connect the old driver to the ff input
-                net = EDIFNet(f"{ff.getName()}_rt_net", self.vivado_design.getTopEDIFCell())
-                logging.info("  Creating new net %s for %s driving ff D input", net, src)
-                net.addPortInst(src)
+        physp = "D"
+        logp, net = input_pins[physp]
+        if net is not None:
             net.createPortInst(new_cell_inst.getPort("D"), new_cell_inst)
             self.phys_ecells.append((new_cell_inst, site_inst, ff.getBELName()))
+            return
+
+        # Make the rt ff drive the logical net
+        edif_net = site_inst.getNetFromSiteWire(ff.getName()[-2:]).getLogicalNet()
+        if rt_net is None:
+            src = edif_net.getSourcePortInsts(True)
+            assert len(src) == 1
+            src = src[0]
+            # Currently assumes src is in the same site as ff
+            # If this fails, use getSitePIP(BELPin) to then traverse pips to sink
+            cells_gen = (c.getEDIFCellInst() for c in site_inst.getCells())
+            assert src.getCellInst().getName() in {c.getName() for c in cells_gen if c is not None}
+            logging.info("  Switch driver on net %s from %s to routethru ff Q", edif_net, src)
+            edif_net.removePortInst(src)
+        edif_net.createPortInst(new_cell_inst.getPort("Q"), new_cell_inst)
+
+        # Make a new net to connect the old driver to the ff input
+        if rt_net is None:
+            rt_net = EDIFNet(f"{ff.getName()}_rt_net", self.vivado_design.getTopEDIFCell())
+            logging.info("  Creating new net %s for %s driving ff D input", rt_net, src)
+            rt_net.addPortInst(src)
+        rt_net.createPortInst(new_cell_inst.getPort("D"), new_cell_inst)
+        self.phys_ecells.append((new_cell_inst, site_inst, ff.getBELName()))
 
     def __check_lutram_srl(self, lut6_cell: Cell, lut5_cell: Cell, lut_rams: list) -> bool:
         """Check for lutrams or srl luts"""
@@ -864,9 +878,13 @@ class RwPhysNetlist(PhysNetlist):
         # a new net is needed to connect LUT output to FF
 
         if lut6_cell.isRoutethru():
-            rw.create_lut_routethru_net(lut6_cell, lut5_only, new_cell_inst)
+            ret = rw.create_lut_routethru_net(lut6_cell, lut5_only, new_cell_inst)
+            if ret is not None:
+                self.__process_ff(lut6_cell.getSiteInst(), ret[0], ret[1])
         if lut5_cell and lut5_cell.isRoutethru():
-            rw.create_lut_routethru_net(lut5_cell, True, new_cell_inst)
+            ret = rw.create_lut_routethru_net(lut5_cell, True, new_cell_inst)
+            if ret is not None:
+                self.__process_ff(lut5_cell.getSiteInst(), ret[0], ret[1])
 
         # Fix the new LUT INIT property based on the new pin mappings
         if not lut5_only:
@@ -933,7 +951,9 @@ class RwPhysNetlist(PhysNetlist):
             in_pins.remove(rt_pin)
             for pin in in_pins:
                 self.vcc.createPortInst(new_cell_inst.getPort(pin), new_cell_inst)
-            rw.create_lut_routethru_net(lut5, const_pin[-1] == "6", new_cell_inst)
+            ret = rw.create_lut_routethru_net(lut5, const_pin[-1] == "6", new_cell_inst)
+            if ret is not None:
+                self.__process_ff(site_inst, ret[0], ret[1])
 
         for logical_port in rw.PinMap["LUT6_2"]:
             if logical_port.startswith("I") and not new_cell_inst.getPortInst(logical_port):
@@ -953,20 +973,9 @@ class RwPhysNetlist(PhysNetlist):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument(
-        "--build_dir",
-        type=str,
-        required=True,
-        help="The build_directory to create a vivado netlist for.",
-    )
     utils.add_path_arg(parser, "--impl_dcp", "The implementation dcp file to use for the netlist.")
     utils.add_path_arg(parser, "--impl_edf", "The implementation edf file to use for the netlist.")
-    parser.add_argument(
-        "--logging_level", default="INFO", help="Decides what levels of logs to display"
-    )
-    parser.add_argument(
-        "--log_name", type=str, default="log.txt", help="The log file path to use as output"
-    )
+    utils.add_standard_args(parser)
     args = parser.parse_args()
     impl_files = (args.impl_dcp, args.impl_edf)
     RwPhysNetlist(args.build_dir, impl_files, args.logging_level, args.log_name).run()

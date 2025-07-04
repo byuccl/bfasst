@@ -79,6 +79,7 @@ class StructuralCapnp(RwPhysNetlist, F2BDesign):
 
     def run(self):
         """Adjust for implementation transformations and then compare design with capnp netlist."""
+        (self.cmp_stage_dir / "cmp_time.txt").unlink(missing_ok=True)
         start_time = time.time()
         self.run_rapidwright()
 
@@ -328,18 +329,7 @@ if __name__ == "__main__":
     utils.add_path_arg(
         parser, "--edf_capnp", "The capnp file containing the reversed logical netlist."
     )
-    parser.add_argument(
-        "--build_dir",
-        type=str,
-        required=True,
-        help="The build_directory for transformation and comparison.",
-    )
-    parser.add_argument(
-        "--logging_level", default="INFO", help="Decides what levels of logs to display"
-    )
-    parser.add_argument(
-        "--log_name", type=str, default="log.txt", help="The log file path to use as output"
-    )
+    utils.add_standard_args(parser)
 
     args = parser.parse_args()
     copmarator = StructuralCapnp(

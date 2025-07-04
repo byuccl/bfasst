@@ -1,4 +1,4 @@
-build {{ phys_capnp_log }} {{ rapidwright_log }}: phys_capnp_cmp | bfasst/utils/structural_capnp.py {{ impl_edf }} {{ impl_dcp }} {{ phys_capnp }} {{ edf_capnp }}
+build {{cmp_time}} {{ phys_capnp_log }} {{ rapidwright_log }}: phys_capnp_cmp | bfasst/utils/structural_capnp.py {{ impl_edf }} {{ impl_dcp }} {{ phys_capnp }} {{ edf_capnp }}
     logging_level = {{ logging_level }}
     impl_dcp = {{ impl_dcp }}
     impl_edf = {{ impl_edf }}
@@ -6,3 +6,4 @@ build {{ phys_capnp_log }} {{ rapidwright_log }}: phys_capnp_cmp | bfasst/utils/
     phys_capnp = {{ phys_capnp }} 
     edf_capnp = {{ edf_capnp }} 
     build_dir = {{ build_dir }} 
+    design = {{ design }}
