@@ -8,14 +8,30 @@ new clock period.
 
 import re
 from argparse import ArgumentParser
-from math import ceil
 
 from bfasst.paths import BUILD_PATH, DESIGNS_PATH
 
 
+def get_clock_wns(timing_summary: str) -> tuple[float, float]:
+    """Get design clock period and negative slack if any"""
+    clock_period = None
+    neg_slack = None
+    with open(timing_summary, "r") as f:
+        for line in f:
+            line = line.strip()
+            if line.startswith("Requirement:"):
+                line = line.split()[1]
+                clock_period = re.match(r"\d+\.?\d*", line)
+                break
+            if line.startswith("Slack") and "VIOLATED" in line:
+                line = line.split()[3]
+                # Also match a negative slack value
+                neg_slack = re.match(r"-?\d+\.?\d*", line)
+    return clock_period, neg_slack
+
+
 def update_clock(designs: list[str]):
     """Update clock period based on timing_summary.txt."""
-    improvement = []
     for d in designs:
         src_dir = DESIGNS_PATH / d
         design_config = src_dir / "design.yaml"
@@ -26,19 +42,7 @@ def update_clock(designs: list[str]):
             continue
 
         # Extract clock period from timing summary
-        clock_period = None
-        neg_slack = None
-        with open(timing_summary, "r") as f:
-            for line in f:
-                line = line.strip()
-                if line.startswith("Requirement:"):
-                    line = line.split()[1]
-                    clock_period = re.match(r"\d+\.?\d*", line)
-                    break
-                if line.startswith("Slack") and "VIOLATED" in line:
-                    line = line.split()[3]
-                    # Also match a negative slack value
-                    neg_slack = re.match(r"-?\d+\.?\d*", line)
+        clock_period, neg_slack = get_clock_wns(timing_summary)
 
         if clock_period is None:
             print(f"No clock period found in timing summary for design {d}. Skipping update.")
@@ -60,13 +64,6 @@ def update_clock(designs: list[str]):
                         tmp = ln[:fix]
                         fix = ln[fix:]
                         ln = tmp
-                    old = ln.strip().split()[-1]
-                    try:
-                        improvement.append(float(old) - float(clk))
-                    except ValueError:
-                        from bfasst.utils import interpreter
-
-                        interpreter(locals())
                     new_lines.append(f"    period:  {clk}\n")
                     if fix != -1:
                         new_lines.append("\n")
@@ -76,10 +73,8 @@ def update_clock(designs: list[str]):
         with open(design_config, "w") as f:
             f.writelines(new_lines)
 
-    print(f"Improvement avg {sum(improvement) / len(improvement):.2f} ns")
 
-
-def init_clock(d: list[str], clock_name: str = "clk", period: int = 100):
+def init_clock(designs: list[str], clock_name: str = "clk", period: int = 100):
     """Add defualt clock signal and period to design.yaml if not already defined."""
     for d in designs:
         src_dir = DESIGNS_PATH / d
@@ -114,13 +109,13 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    designs = []
-    with open(args.flow_file, "r") as f:
-        gen = (ln.strip() for ln in f if ln and ln.strip().startswith("-"))
-        designs = [ln.split(" ")[1] for ln in gen]
+    design_list = []
+    with open(args.flow_file, "r") as ff:
+        gen = (ln.strip() for ln in ff if ln and ln.strip().startswith("-"))
+        design_list = [ln.split(" ")[1] for ln in gen]
 
     if args.init:
-        init_clock(designs)
+        init_clock(design_list)
 
     if args.update:
-        update_clock(designs)
+        update_clock(design_list)

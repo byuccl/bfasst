@@ -1,31 +1,40 @@
 """Helper functions for interacting with RapidWright"""
 
-from fnmatch import fnmatch
+import builtins
 import logging
-from os.path import commonprefix
-from pathlib import Path
 import re
 import time
-from typing import Optional
+from fnmatch import fnmatch
+from os.path import commonprefix
+from pathlib import Path
+from typing import Optional, TypeAlias
 
-from bidict import bidict
 import spydrnet as sdn
+from bidict import bidict
 
 # pylint: disable=wrong-import-position,wrong-import-order
 from bfasst import jpype_jvm
 from bfasst.config import PART
 
 jpype_jvm.start()
-from com.xilinx.rapidwright.device import BELPin, Device, Series
+from java.util import ArrayList as JArrayList
+
 from com.xilinx.rapidwright.design import Cell, Design, SiteInst, SitePinInst, Unisim
 from com.xilinx.rapidwright.design.DesignTools import getConnectionPIPs
 from com.xilinx.rapidwright.design.tools import LUTTools
+from com.xilinx.rapidwright.device import BELPin, Device, Series
+from com.xilinx.rapidwright.edif import EDIFCellInst
 from com.xilinx.rapidwright.edif import EDIFDirection as RwDirection
-from com.xilinx.rapidwright.edif import EDIFNetlist
-from com.xilinx.rapidwright.edif import EDIFCellInst, EDIFHierPortInst, EDIFPortInst, EDIFNet
-from java.util import ArrayList as JArrayList
+from com.xilinx.rapidwright.edif import (
+    EDIFHierPortInst,
+    EDIFNet,
+    EDIFNetlist,
+    EDIFPortInst,
+)
 
 # pylint: enable=wrong-import-position,wrong-import-order
+
+DesignCells: TypeAlias = dict[tuple[str, str], EDIFCellInst]  # (site_name, bel_name): EDIFCellInst
 
 
 def load_design(
@@ -547,14 +556,16 @@ def create_lut_routethru_net(
     new_net.addPortInst(dest_port_inst)
     if cell.getType() == "CARRY4":
         return check_lut_rt_ff(cell, is_lut5, new_net)
+    return None
 
 
 def check_lut_rt_ff(cell: Cell, is_lut5: bool, new_net: EDIFNet) -> Optional[tuple[Cell, EDIFNet]]:
+    """Handle the connection from a routethru LUT to a FF in the same site."""
     site_inst = cell.getSiteInst()
-    bel_name = f"{cell.getBELName()[0]}{5 if is_lut5 else ""}FF"
+    bel_name = f"{cell.getBELName()[0]}{5 if is_lut5 else ''}FF"
     ff = site_inst.getCell(bel_name)
     if ff is None:
-        return
+        return None
     bel_name = bel_name + "MUX_OUT"
     site_pin = bel_name[0] + list(list(cell.getPinMappingsL2P().values())[0])[0][1]
     ff_net = site_inst.getNetFromSiteWire(bel_name).getName()
@@ -565,6 +576,28 @@ def check_lut_rt_ff(cell: Cell, is_lut5: bool, new_net: EDIFNet) -> Optional[tup
         ff_port = ff.getEDIFCellInst().getPortInst("D")
         ff_port.getNet().removePortInst(ff_port)
         new_net.addPortInst(ff_port)
+    return None
+
+
+def check_ff_routethru_src(
+    site_inst: SiteInst, src: EDIFPortInst, additional_cells: DesignCells = builtins.dict
+):
+    """
+    Currently assumes src is in the same site as ff.
+    If this fails, use getSitePIP(BELPin) to then traverse pips to sink.
+    """
+    cells_gen = (c.getEDIFCellInst() for c in site_inst.getCells())
+    src_name = src.getCellInst().getName()
+    if src_name not in {c.getName() for c in cells_gen if c is not None}:
+        for location, cell in additional_cells.items():
+            if cell.getName() == src_name:
+                if location[0] != site_inst.getSiteName():
+                    raise RapidwrightException(
+                        f"Source {src_name} not found in sink site {site_inst.getName()}"
+                    )
+                break
+        else:
+            raise RapidwrightException(f"Source {src} not found in sink site {site_inst.getName()}")
 
 
 def get_cells_from_site_pin(

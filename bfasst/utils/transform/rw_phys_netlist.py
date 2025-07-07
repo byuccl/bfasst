@@ -5,7 +5,6 @@ import time
 from argparse import ArgumentParser
 from pathlib import Path
 
-from jpype import JException
 from jpype.types import JInt
 
 import bfasst.utils.rw_helpers as rw
@@ -218,6 +217,7 @@ class RwPhysNetlist(PhysNetlist):
         logging.info("Cleaning up hanging pins on LUTs and LUTRAMs")
         cells_wired = set()  # (cell_name, logical_port_name)
         pins_to_remove = set()  # cell_name
+        log_str = ""
         for cell_name, conns in self.hanging_pins.items():
             cell = conns[0][1]
             ecell = self.phys_ecells.get((cell.getSiteName(), cell.getBELName()))
@@ -355,13 +355,7 @@ class RwPhysNetlist(PhysNetlist):
         )
         logging.info("  Setting INIT to 0")
         new_cell_inst.addProperty("INIT", JInt(0))
-
-        input_pins = {
-            "CK": ("G", self.vcc),
-            "CE": ("GE", self.vcc),
-            "SR": ("CLR", self.gnd),
-            "D": ("D", None),
-        }
+        input_pins = dict(self.ff_rt_pins.items())
         for drv, _, belpin in self.hanging_pins.pop(ff.getName(), []):
             logging.info("  Connecting hanging pin %s to %s", drv, belpin.getName())
             logp = input_pins[belpin.getName()][0]
@@ -372,12 +366,8 @@ class RwPhysNetlist(PhysNetlist):
             logging.info("  Connecting %s to %s (%s)", net, logp, physp)
             net.addPortInst(port)
 
-        physp = "D"
-        logp, net = input_pins[physp]
-        if net is not None:
-            net.createPortInst(new_cell_inst.getPort("D"), new_cell_inst)
-            self.phys_ecells[(site_inst.getSiteName(), ff.getBELName())] = new_cell_inst
-            return
+        logp, net = input_pins["D"]
+        assert net is None
 
         # Make the rt ff drive the logical net
         edif_net = site_inst.getNetFromSiteWire(ff.getName()[-2:]).getLogicalNet()
@@ -385,22 +375,7 @@ class RwPhysNetlist(PhysNetlist):
             src = edif_net.getSourcePortInsts(True)
             assert len(src) == 1
             src = src[0]
-            # Currently assumes src is in the same site as ff
-            # If this fails, use getSitePIP(BELPin) to then traverse pips to sink
-            cells_gen = (c.getEDIFCellInst() for c in site_inst.getCells())
-            src_name = src.getCellInst().getName()
-            if src_name not in {c.getName() for c in cells_gen if c is not None}:
-                for location, cell in self.phys_ecells.items():
-                    if cell.getName() == src_name:
-                        if location[0] != site_inst.getSiteName():
-                            raise PhysNetlistTransformError(
-                                f"Source {src_name} not found in sink site {site_inst.getName()}"
-                            )
-                        break
-                else:
-                    raise PhysNetlistTransformError(
-                        f"Source {src} not found in sink site {site_inst.getName()}"
-                    )
+            rw.check_ff_routethru_src(site_inst, src, self.phys_ecells)
             logging.info("  Switch driver on net %s from %s to routethru ff Q", edif_net, src)
             edif_net.removePortInst(src)
         edif_net.createPortInst(new_cell_inst.getPort("Q"), new_cell_inst)
@@ -592,12 +567,9 @@ class RwPhysNetlist(PhysNetlist):
             ntp = {}  # See DesignTools.getConnectionPIPs()
             for pip in old_net.getPIPs():
                 src = pip.getStartNode()
-                if src not in ntp:
-                    ntp[src] = [pip]
-                else:
-                    ntp[src].append(pip)
+                ntp.setdefault(src, []).append(pip)
                 if pip.isBidirectional():
-                    assert False  # Currently Unexpected/Handled
+                    raise PhysNetlistTransformError  # Currently Unexpected/Handled
             self.const_net_nd_to_pip[old_net.getName()] = ntp
         ntp = self.const_net_nd_to_pip[old_net.getName()]
         sink_pips = []
@@ -618,7 +590,7 @@ class RwPhysNetlist(PhysNetlist):
                 if cell.getEDIFCellInst() is not None:
                     if "LUT" in cell.getBELName():
                         logging.info("Adding hanging pin %s to %s:%s", src_pin, cell, pin)
-                        self.hanging_pins.setdefault(cell.getName(), list()).append(
+                        self.hanging_pins.setdefault(cell.getName(), []).append(
                             (src_pin, cell, pin)
                         )
                         continue
@@ -626,9 +598,7 @@ class RwPhysNetlist(PhysNetlist):
                         valid_cells.append((cell, pin))
                 else:
                     logging.info("Adding hanging pin %s to %s:%s", src_pin, cell, pin)
-                    self.hanging_pins.setdefault(cell.getName(), list()).append(
-                        (src_pin, cell, pin)
-                    )
+                    self.hanging_pins.setdefault(cell.getName(), []).append((src_pin, cell, pin))
         return valid_cells
 
     def __process_lut_const_net(
@@ -851,9 +821,6 @@ class RwPhysNetlist(PhysNetlist):
         for logical_pin, physical_pin in lut5.getPinMappingsL2P().items():
             assert len(physical_pin) == 1
             physical_pin = list(physical_pin)[0]
-
-            port_inst = lut5_edif_cell_inst.getPortInst(logical_pin)
-            assert port_inst
 
             rw.lut_move_net_to_new_cell(
                 (lut5_edif_cell_inst, new_cell_inst), logical_pin, physical_pin

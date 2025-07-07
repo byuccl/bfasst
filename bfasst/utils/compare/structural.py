@@ -13,21 +13,20 @@ import spydrnet as sdn
 from bidict import bidict
 
 from bfasst import jpype_jvm
-from bfasst.utils import convert_verilog_literal_to_int
-from bfasst.utils.general import get_size, log_with_banner
+from bfasst.utils import convert_verilog_literal_to_int, get_size, log_with_banner
+from bfasst.utils.compare.structural_helpers import count_num_const, create_cell_props
 from bfasst.utils.sdn_helpers import (
     SdnInstanceWrapper,
     SdnNet,
     SdnNetlistWrapper,
     SdnPinWrapper,
 )
-from bfasst.utils.structural_helpers import count_num_const, create_cell_props
 
-# pylint: disable=wrong-import-order
+# pylint: disable=wrong-import-order, wrong-import-position
 jpype_jvm.start()
 from com.xilinx.rapidwright.design import Design
 
-# pylint: enable=wrong-import-order
+# pylint: enable=wrong-import-order, wrong-import-position
 
 
 class StructuralCompareError(Exception):

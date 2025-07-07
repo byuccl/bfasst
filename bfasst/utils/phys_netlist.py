@@ -49,7 +49,7 @@ class PhysNetlist:
         self.cells_to_remove = []
         self.visited_cells = set()
         # EDIFCellInsts part of the post-edited design
-        self.phys_ecells = {}  # dict((SiteName, bel_name): EDIFCellInst)
+        self.phys_ecells: rw.DesignCells = {}
 
         super().__init__(**kwargs)
 
