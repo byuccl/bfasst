@@ -4,15 +4,14 @@ import random
 
 from bfasst.flows.flow import Flow
 from bfasst.flows.vivado_phys_netlist import VivadoPhysNetlist
-from bfasst.tools.impl.vivado_impl import VivadoImpl
+from bfasst.paths import FLOWS_PATH
 from bfasst.tools.compare.structural.structural import Structural
+from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.tools.rev_bit.xray import Xray
+from bfasst.tools.synth.vivado_synth import VivadoSynth
 from bfasst.tools.transform.error_injector import ErrorInjector
 from bfasst.tools.transform.phys_netlist import PhysNetlist
-from bfasst.paths import FLOWS_PATH
-from bfasst.tools.synth.vivado_synth import VivadoSynth
-
-from bfasst.utils.error_injector import ErrorType
+from bfasst.utils.transform.error_injector import ErrorType
 
 
 class VivadoStructuralErrorInjection(Flow):
@@ -63,6 +62,7 @@ class VivadoStructuralErrorInjection(Flow):
         random_seed_multiplier = 1
         for error in ErrorType:
             for i in range(1, self.num_runs + 1):
+
                 error_injector_tool = ErrorInjector(
                     self,
                     self.design,
@@ -72,7 +72,6 @@ class VivadoStructuralErrorInjection(Flow):
                     reversed_netlist=self.xrev_tool.outputs["rev_netlist"],
                     logging_level=self.logging_level,
                 )
-
                 error_injector_tool.create_build_snippets()
 
                 Structural(
