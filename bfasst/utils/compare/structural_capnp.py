@@ -91,21 +91,23 @@ class StructuralCapnp(RwPhysNetlist, F2BDesign):
             datefmt="%Y%m%d%H%M%S",
             force=True,
         )
-
         comp_start_time = time.time()
+        self.compare_designs()
+        end_time = time.time()
+        logging.info("Total Comparison Time: %s seconds", end_time - comp_start_time)
+        logging.info("Total Transformation and Comparison Time: %s seconds", end_time - start_time)
+        with open(self.cmp_stage_dir / "cmp_time.txt", "w") as f:
+            f.write(f"{end_time - start_time:2f}\n")
+
+    def compare_designs(self) -> None:
+        """Compare the transformed design with the reversed design."""
         for (site, bel_name), ecell in self.phys_ecells.items():
             self._compare_cell(ecell, site, bel_name)
 
         # Sort vcc/gnd ports insts after fixing dps/bufgctrl cells
         self.rev_design.getGndNet().getLogicalNet().getPortInsts().reSortList()
         self.rev_design.getVccNet().getLogicalNet().getPortInsts().reSortList()
-
         self._check_nets()
-        end_time = time.time()
-        logging.info("Total Comparison Time: %s seconds", end_time - comp_start_time)
-        logging.info("Total Transformation and Comparison Time: %s seconds", end_time - start_time)
-        with open(self.cmp_stage_dir / "cmp_time.txt", "w") as f:
-            f.write(f"{end_time - start_time:2f}\n")
 
     def get_properties_for_type(self, cell_type: str) -> tuple[str]:
         """Return the list of properties that must match for a given cell type
