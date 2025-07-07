@@ -2,4 +2,4 @@ top: NPU
 
 clocks:
   - name: clk
-    period:  14.000
+    period:  12.0

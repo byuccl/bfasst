@@ -1,5 +1,5 @@
-top: myproject
+top: prj
 
 clocks:
-  - name: ap_clk
-    period:  12.000
+  - name: clk
+    period:  10.055

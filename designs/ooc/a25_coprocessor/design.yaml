@@ -2,4 +2,4 @@ top: a25_coprocessor
 
 clocks:
   - name: i_clk
-    period: 2.000
+    period:  1.21

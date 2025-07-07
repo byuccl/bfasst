@@ -40,23 +40,22 @@ for path in ["/usr/local/include", "/usr/include"]:
         SEARCH_PATH.append(path)
 
 
+class CapnpException(Exception):
+    """Custom exception for Capnp related errors."""
+
+
 class CapnpCells:
     """Helper class for retrieving capnp cells"""
 
     def __init__(self, phys_capnp_f: Path, log_capnp_f: Path) -> None:
-        self.phys_cells = {}
-        self.log_cells = {}
-
         self.phys_capnp = self.read_phys_capnp(phys_capnp_f)
         self.log_capnp = self.read_log_capnp(log_capnp_f)
 
-        for cell in self.phys_capnp.placements:
-            cell_name = self.phys_capnp.strList[cell.cellName]
-            self.phys_cells[cell_name] = cell
+        self.phys_strs = self.phys_capnp.strList
+        self.log_strs = self.log_capnp.strList
 
-        for cell in self.log_capnp.instList:
-            cell_name = self.log_capnp.strList[cell.name]
-            self.log_cells[cell_name] = cell
+        self.phys_cells = {self.phys_strs[c.cellName]: c for c in self.phys_capnp.placements}
+        self.log_cells = {self.log_strs[c.name]: c for c in self.log_capnp.instList}
 
     @staticmethod
     def _read_capnp_file(

@@ -2,4 +2,4 @@ top: bwave_small_random
 
 clocks:
   - name: clk
-    period:  9.000
+    period:  8.0

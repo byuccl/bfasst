@@ -5,22 +5,23 @@ set clock_port {{ name }}
 set clock_name {{ name }}_gen
 {{/clocks}}
 set slack [get_property SLACK [lindex [get_timing_paths] 0]]
-set new_period [expr $period - ceil($slack)]
+if {[catch {set new_period [expr $period - ceil($slack)]}]} {
+    set slack [get_property DATAPATH_DELAY [lindex [get_timing_paths] 0]]
+    set new_period [expr ceil($slack)]
+}
 create_clock -period $new_period -name $clock_name [get_ports $clock_port]
 while {1} {
     if { [ catch {
         place_design
+        phys_opt_design
         route_design
         set slack [get_property SLACK [lindex [get_timing_paths] 0]]
         if {$slack < 0} {break}
+        if {$slack == 0} {set slack 1}
         set new_period [expr $new_period - ceil($slack)]
+        puts "New period: $new_period"
         create_clock -period $new_period -name $clock_name [get_ports $clock_port]
     } ] } {
         break
     }
 }
-place_design -unplace
-route_design -unroute
-place_design {{clock_crank.place_design}}
-phys_opt_design {{clock_crank.phys_opt_design}}
-route_design {{clock_crank.route_design}}

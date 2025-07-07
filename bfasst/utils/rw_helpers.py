@@ -1,10 +1,12 @@
 """Helper functions for interacting with RapidWright"""
 
-from collections.abc import MutableMapping
 from fnmatch import fnmatch
 import logging
 from os.path import commonprefix
+from pathlib import Path
 import re
+import time
+from typing import Optional
 
 from bidict import bidict
 import spydrnet as sdn
@@ -14,24 +16,93 @@ from bfasst import jpype_jvm
 from bfasst.config import PART
 
 jpype_jvm.start()
-from com.xilinx.rapidwright.device import BELPin
+from com.xilinx.rapidwright.device import BELPin, Device, Series
 from com.xilinx.rapidwright.design import Cell, Design, SiteInst, SitePinInst, Unisim
 from com.xilinx.rapidwright.design.DesignTools import getConnectionPIPs
 from com.xilinx.rapidwright.design.tools import LUTTools
 from com.xilinx.rapidwright.edif import EDIFDirection as RwDirection
+from com.xilinx.rapidwright.edif import EDIFNetlist
 from com.xilinx.rapidwright.edif import EDIFCellInst, EDIFHierPortInst, EDIFPortInst, EDIFNet
 from java.util import ArrayList as JArrayList
-from java.lang import IllegalArgumentException
 
 # pylint: enable=wrong-import-position,wrong-import-order
+
+
+def load_design(
+    impl_dcp: Path, impl_edf: Path, series: Series = Device.getDevice(PART).getSeries()
+) -> tuple[Design, EDIFNetlist]:
+    """Load the designs from the given paths"""
+    logging.info("Loading vivado dcp and edf files: %s, %s", str(impl_dcp), str(impl_edf))
+    start_time = time.time()
+    vivado_design = Design.readCheckpoint(impl_dcp, impl_edf)
+    vivado_netlist = vivado_design.getNetlist()
+    vivado_design.flattenDesign()
+    vivado_netlist.expandMacroUnisims(series)
+    logging.info("Loading vivado netlist took %s seconds.", time.time() - start_time)
+    return vivado_design, vivado_netlist
 
 
 class RapidwrightException(Exception):
     pass
 
 
+class _RWStaticNets:
+    """Cache RW static nets. Expects nets' srcs to not change in between calls."""
+
+    vcc_nets = set()
+    gnd_nets = set()
+    processed = set()
+
+
+def is_vcc(net: EDIFNet) -> bool:
+    """Check if the net is a VCC net."""
+    name = net.getName()
+    if name in _RWStaticNets.vcc_nets:
+        return True
+    if name in _RWStaticNets.processed:
+        return False
+    _RWStaticNets.processed.add(name)
+    if net.isVCC():
+        _RWStaticNets.vcc_nets.add(name)
+        return True
+    if net.isGND():
+        _RWStaticNets.gnd_nets.add(name)
+        return False
+    return False
+
+
+def is_gnd(net: EDIFNet) -> bool:
+    """Check if the net is a GND net."""
+    name = net.getName()
+    if name in _RWStaticNets.gnd_nets:
+        return True
+    if name in _RWStaticNets.processed:
+        return False
+    _RWStaticNets.processed.add(name)
+    if net.isGND():
+        _RWStaticNets.gnd_nets.add(name)
+        return True
+    if net.isVCC():
+        _RWStaticNets.vcc_nets.add(name)
+        return False
+    return False
+
+
 def is_static_net(net: EDIFNet) -> bool:
-    return net.isGND() or net.isVCC()
+    """Check if the net is a static net (VCC or GND)"""
+    name = net.getName()
+    if name in (_RWStaticNets.vcc_nets | _RWStaticNets.gnd_nets):
+        return True
+    if name in _RWStaticNets.processed:
+        return False
+    _RWStaticNets.processed.add(name)
+    if net.isVCC():
+        _RWStaticNets.vcc_nets.add(name)
+        return True
+    if net.isGND():
+        _RWStaticNets.gnd_nets.add(name)
+        return True
+    return False
 
 
 def cell_is_6lut(cell):
@@ -69,9 +140,9 @@ def generate_lut62_name(lut6_edif_cell_inst, lut6_cell, lut5_cell):
 
 
 def generate_const_lut_name(site_inst, pins):
-    suffix = ""
-    for pin, is_gnd in pins:
-        suffix += f"{pin}.{'GND' if is_gnd else 'VCC'}"
+    suffix = "_"
+    for pin, gnd in pins:
+        suffix += f"{pin}.{'GND' if gnd else 'VCC'}"
     return str(site_inst.getName()) + suffix
 
 
@@ -329,9 +400,9 @@ def process_lut_eqn(cell, is_lut5, log=logging.info):
     return eqn
 
 
-def process_shared_gnd_lut_eqn(lut5, gnd_pin, new_cell_inst, is_gnd, log=logging.info):
+def process_shared_gnd_lut_eqn(lut5, gnd_pin, new_cell_inst, gnd, log=logging.info):
     lut5_eqn = process_lut_eqn(lut5, True, log)
-    const_str = "00000000" if is_gnd else "FFFFFFFF"
+    const_str = "00000000" if gnd else "FFFFFFFF"
     if gnd_pin.endswith("O5"):
         init_str = "64'h" + LUTTools.getLUTInitFromEquation(lut5_eqn, 5)[4:].zfill(8) + const_str
     else:
@@ -402,28 +473,32 @@ def get_sdn_direction_for_unisim(unisim, port_name):
 
 
 def flip_const_port_signal(
-    design: Design, ecell: EDIFCellInst, port_name: str, idx=-1, log=logging.info
+    design: Design, ecell: EDIFCellInst, port_name: str, idx=-1, defer_sort=False
 ):
     """Flip the constant port signal for a given port in an EDIF cell instance."""
     port_inst = ecell.getPortInst(port_name)
     if port_inst is None:
-        log("Port %s disconnected... Assuming gnd and flipping to vcc", port_name)
-        EDIFPortInst(ecell.getPort(port_name), design.getVccNet().getLogicalNet(), idx, ecell)
+        logging.info("Port %s disconnected... Assuming gnd and flipping to vcc", port_name)
+        EDIFPortInst(
+            ecell.getPort(port_name), design.getVccNet().getLogicalNet(), idx, ecell, defer_sort
+        )
         return
     old_net = port_inst.getNet()
-    if old_net.isGND():
-        log("\tSetting %s to VCC (was GND)", str(port_inst))
+    if is_gnd(old_net):
+        logging.info("\tSetting %s to VCC (was GND)", str(port_inst))
         old_net.removePortInst(port_inst)
-        design.getVccNet().getLogicalNet().addPortInst(port_inst)
-    elif old_net.isVCC():
-        log("\tSetting %s to GND (was VCC)", str(port_inst))
+        design.getVccNet().getLogicalNet().addPortInst(port_inst, defer_sort)
+    elif is_vcc(old_net):
+        logging.info("\tSetting %s to GND (was VCC)", str(port_inst))
         old_net.removePortInst(port_inst)
-        design.getGndNet().getLogicalNet().addPortInst(port_inst)
+        design.getGndNet().getLogicalNet().addPortInst(port_inst, defer_sort)
     else:
         logging.info("F2B marked non static port %s inverted, no action taken", str(port_inst))
 
 
-def create_lut_routethru_net(cell: Cell, is_lut5: bool, new_lut_cell: EDIFCellInst) -> None:
+def create_lut_routethru_net(
+    cell: Cell, is_lut5: bool, new_lut_cell: EDIFCellInst
+) -> Optional[tuple[Cell, EDIFNet]]:
     """
     Extra processing for LUT route through.  Need to create a new net
     connecting from the new LUT6_2 instance to the FF
@@ -470,6 +545,26 @@ def create_lut_routethru_net(cell: Cell, is_lut5: bool, new_lut_cell: EDIFCellIn
 
     logging.info("  Connecting new net to BEL %s, port %s", routed_to_cell.getBELName(), dest_port)
     new_net.addPortInst(dest_port_inst)
+    if cell.getType() == "CARRY4":
+        return check_lut_rt_ff(cell, is_lut5, new_net)
+
+
+def check_lut_rt_ff(cell: Cell, is_lut5: bool, new_net: EDIFNet) -> Optional[tuple[Cell, EDIFNet]]:
+    site_inst = cell.getSiteInst()
+    bel_name = f"{cell.getBELName()[0]}{5 if is_lut5 else ""}FF"
+    ff = site_inst.getCell(bel_name)
+    if ff is None:
+        return
+    bel_name = bel_name + "MUX_OUT"
+    site_pin = bel_name[0] + list(list(cell.getPinMappingsL2P().values())[0])[0][1]
+    ff_net = site_inst.getNetFromSiteWire(bel_name).getName()
+    lut_net = site_inst.getSitePinInst(site_pin).getNet().getName()
+    if ff_net == lut_net:
+        if ff.isRoutethru():
+            return ff, new_net
+        ff_port = ff.getEDIFCellInst().getPortInst("D")
+        ff_port.getNet().removePortInst(ff_port)
+        new_net.addPortInst(ff_port)
 
 
 def get_cells_from_site_pin(
@@ -507,8 +602,6 @@ class _PinMapping:
     Check default pin mappings for unisim types.
     """
 
-    # TODO see if this can be pulled out of rw.
-    # Maybe place an UNISIM cell and then check the l2p port mapping?
     CELL_PIN_MAP = {
         "MUXF7": bidict(
             {
@@ -619,98 +712,11 @@ class _PinMapping:
                 net.createPortInst(new_port, edif_cell_inst)
 
 
-class _PinMap(MutableMapping):
-    """
-    {str: bidict} -> {unisim cell name: logical to physical pin mapping}
-    Currently only intended for UNISIM cells with a 1 to 1 logical to physical
-    mapping.  If an unisim cell does not have eligble placement sites, it can
-    be manually added in the __init__ method.
-
-    getCompatiblePlacements doesnt seem to support LUT6_2, BUFG,
-    """
-
-    def __init__(self, *args, **kwargs):
-        self.store = {}
-        self.update(dict(*args, **kwargs))
-        self.design = Design("empty", PART)
-        self.device = self.design.getDevice()
-        self.store["LUT6_2"] = self._get_mapping("LUT6")
-
-    def _assert_len(self, pins):
-        assert len(pins) == 1
-        return True
-
-    def _get_mapping(self, unisim):
-        cell_name = f"{unisim}_tmp"
-        try:
-            unisim_cell = self.design.createCell(cell_name, Unisim.valueOf(unisim))
-        except IllegalArgumentException as e:
-            self.design.getTopEDIFCell().removeCellInst(cell_name)
-            self.design.removeCell(cell_name)
-            raise KeyError(f"Unisim cell {unisim} not found.") from e
-        placements = unisim_cell.getCompatiblePlacements()
-        assert placements
-        sites = {k: self.device.getAllCompatibleSites(k) for k in placements}
-        mappings = []
-        for site_type, bels in placements.items():
-            site = sites[site_type][0]
-            for bel in bels:
-                assert self.design.placeCell(unisim_cell, site, site.getBEL(bel))
-                l2p = unisim_cell.getPinMappingsL2P()
-                mappings.append({k: set(v).pop() for k, v in l2p.items() if self._assert_len(v)})
-                unisim_cell.unplace()
-        for mapping in mappings:
-            assert mapping == mappings[0]
-        self.design.getTopEDIFCell().removeCellInst(cell_name)
-        self.design.removeCell(cell_name)
-        return bidict(mappings[0])
-
-    def __getitem__(self, key):
-        key = self._keytransform(key)
-        if key not in self.store:
-            self.store[key] = self._get_mapping(key)
-        return self.store[key]
-
-    def __setitem__(self, key, value):
-        self.store[self._keytransform(key)] = value
-
-    def __delitem__(self, key):
-        del self.store[self._keytransform(key)]
-
-    def __iter__(self):
-        return iter(self.store)
-
-    def __len__(self):
-        return len(self.store)
-
-    def _keytransform(self, key):
-        return key
-
-    def cell_is_default_mapping(self, cell):
-        """
-        This checks whether the cell is using the default logical to physical mappings.
-
-        Parameters:
-            cell (rapidwright.Cell)
-        """
-        type_name = cell.getEDIFCellInst().getCellType().getName()
-        l2p = {k: frozenset(v) for k, v in cell.getPinMappingsL2P().items()}
-
-        for logical, physical in self[type_name].items():
-            if logical in l2p and set(l2p[logical]) != set(physical):
-                print(set(l2p[logical]), "<>", set(physical))
-                return False
-
-        return True
-
-
 PinMap = _PinMapping()
 
 
 def is_connected(port_inst: EDIFHierPortInst) -> bool:
-    """
-    A net is considered connected if it's connected to more than 1 port
-    """
+    """A net is considered connected if it's connected to more than 1 port"""
     net = port_inst.getHierarchicalNet()
     if net is None:
         return False

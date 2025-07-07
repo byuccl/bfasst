@@ -2,4 +2,4 @@ top: softmax_random
 
 clocks:
   - name: clk
-    period:  5.000
+    period:  4.292

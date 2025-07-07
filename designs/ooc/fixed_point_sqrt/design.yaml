@@ -3,4 +3,4 @@ top_architecture: rtl
 
 clocks:
   - name: clk
-    period:  20.000
+    period:  17.0
