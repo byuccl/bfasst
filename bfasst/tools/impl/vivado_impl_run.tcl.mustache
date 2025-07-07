@@ -9,7 +9,6 @@ place_design
 set period {{period}}
 set clock_port {{ name }}
 set clock_name {{ name }}_gen
-{{/clocks}}
 set slack [get_property SLACK [lindex [get_timing_paths] 0]]
 # phys_opt does nothing if slack is postitive
 if {$slack >= 0} {
@@ -22,11 +21,13 @@ if {$slack >= 0} {
 phys_opt_design
 report_phys_opt -file {{ outputs.phys_opt}}_postplace.rpt
 write_iphys_opt_tcl -place {{ outputs.phys_opt }}_postplace.tcl
+{{/clocks}}
 {{/phys_opt_design}}
 
 route_design
 
 {{#phys_opt_design}}
+{{#clocks}}
 set slack [get_property SLACK [lindex [get_timing_paths] 0]]
 # adjust clock period so 0.0. > slack > -0.2, see UG904 pg. 97, Annotated *IMPORTANT
 if {$slack >= 0} {
@@ -39,4 +40,5 @@ if {$slack >= 0} {
 phys_opt_design -retime
 report_phys_opt -file {{ outputs.phys_opt}}_postroute.rpt
 write_iphys_opt_tcl -place {{ outputs.phys_opt }}_postroute.tcl
+{{/clocks}}
 {{/phys_opt_design}}
