@@ -3,12 +3,9 @@
 import json
 
 import chevron
+
+from bfasst.paths import BFASST_UTILS_PATH, NINJA_BUILD_PATH, NINJA_TRANSFORM_TOOLS_PATH
 from bfasst.tools.tool import Tool
-from bfasst.paths import (
-    NINJA_BUILD_PATH,
-    NINJA_TRANSFORM_TOOLS_PATH,
-    BFASST_UTILS_PATH,
-)
 from bfasst.utils import compare_json
 
 
@@ -75,7 +72,7 @@ class PhysNetlist(Tool):
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
-        deps.append(BFASST_UTILS_PATH / "rw_phys_netlist.py")
+        deps.append(BFASST_UTILS_PATH / "transform" / "rw_phys_netlist.py")
         deps.append(BFASST_UTILS_PATH / "general.py")
         deps.append(BFASST_UTILS_PATH / "rw_helpers.py")
         deps.append(NINJA_TRANSFORM_TOOLS_PATH / "phys_netlist_rules.ninja.mustache")

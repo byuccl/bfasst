@@ -8,6 +8,6 @@ read_xdc {{ . }}
 {{/inputs.xdc}}
 
 {{#clocks}}
-create_clock -period {{period}} -name {{ name }}_gen {{#waveform}} -waveform { {{.}} } {{/waveform}} [get_ports {{ name }}]
+create_clock -period {{period }} -name {{ name }}_gen {{#waveform}} -waveform { {{.}} } {{/waveform}} [get_ports {{ name }}]
 {{/clocks}}
 

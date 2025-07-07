@@ -58,4 +58,4 @@ verilog_files:
 
 clocks:
   - name: clk
-    period: 100.000
+    period:  8.0

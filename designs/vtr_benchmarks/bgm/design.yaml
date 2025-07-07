@@ -1,3 +1,7 @@
 top: bgm_random
 
 include_all_verilog_files: yes
+
+clocks:
+  - name: clk
+    period:  15.281

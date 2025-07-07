@@ -2,4 +2,4 @@ top: UpDownButtonCount
 
 clocks:
   - name: clk
-    period: 4.000
+    period:  3.072

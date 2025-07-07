@@ -1,4 +1,4 @@
-""" Types used across BFASST """
+"""Types used across BFASST"""
 
 from enum import Enum, auto
 

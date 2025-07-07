@@ -2,4 +2,4 @@ top: rx
 
 clocks:
   - name: clk
-    period: 3.000
+    period:  3.0

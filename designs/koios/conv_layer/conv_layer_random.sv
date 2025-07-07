@@ -33,7 +33,6 @@ Random inputs to conv layer
 
 module conv_layer_random(
   input logic clk,
-  input logic clk_mem,
   input logic resetn,
   input logic pe_resetn,
   input logic start,
@@ -41,6 +40,9 @@ module conv_layer_random(
   input  logic [7:0] bram_select,
   output logic [`MAT_MUL_SIZE*`DWIDTH-1:0] bram_rdata_ext
 );
+
+logic clk_mem;
+assign clk_mem = clk;
 
 logic [`AWIDTH-1:0] bram_addr_ext;
 RandomNumberGenerator #(

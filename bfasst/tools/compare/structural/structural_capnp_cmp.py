@@ -3,13 +3,14 @@
 import json
 
 import chevron
-from bfasst.tools.tool import Tool
+
 from bfasst.paths import (
-    NINJA_BUILD_PATH,
-    COMPARE_TOOLS_PATH,
     BFASST_UTILS_PATH,
+    COMPARE_TOOLS_PATH,
+    NINJA_BUILD_PATH,
     NINJA_TRANSFORM_TOOLS_PATH,
 )
+from bfasst.tools.tool import Tool
 from bfasst.utils import compare_json
 
 
@@ -56,6 +57,7 @@ class StructuralCapnpCmp(Tool):
         checkpoint_to_v = {
             "phys_netlist_verilog_path": str(self.outputs["viv_impl_physical_v"]),
             "phys_netlist_checkpoint": str(self.outputs["phys_capnp_checkpoint"]),
+            "cmp_time": str(self.outputs["cmp_time"]),
         }
         checkpoint_to_v_json = json.dumps(checkpoint_to_v, indent=4)
         json_equivalent = compare_json(self.outputs["checkpoint_to_v_json"], checkpoint_to_v_json)
@@ -73,6 +75,7 @@ class StructuralCapnpCmp(Tool):
             "impl_edf": self.impl_edf,
             "phys_capnp": self.phys_capnp,
             "edf_capnp": self.edf_capnp,
+            "design": f"{self.design_build_path.parent.name}/{self.design_build_path.name}",
         }
         build_dict.update({k: str(v) for k, v in self.outputs.items()})
         with open(COMPARE_TOOLS_PATH / "structural" / "structural_capnp_build.ninja.mustache") as f:
@@ -91,12 +94,12 @@ class StructuralCapnpCmp(Tool):
         self.outputs["checkpoint_to_v_json"] = phys_net_dir / "checkpoint_to_v.json"
         self.outputs["rapidwright_log"] = self.build_path / "rapidwright_stdout.log"
         self.outputs["interchange"] = phys_net_dir / "phys_logical_netlist.capnp"
+        self.outputs["cmp_time"] = self.build_path / "cmp_time.txt"
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
-        deps.append(BFASST_UTILS_PATH / "rw_phys_netlist.py")
+        deps.append(BFASST_UTILS_PATH / "transform" / "rw_phys_netlist.py")
         deps.append(BFASST_UTILS_PATH / "rw_helpers.py")
-        deps.append(BFASST_UTILS_PATH / "structural_capnp.py")
+        deps.append(BFASST_UTILS_PATH / "compare" / "structural_capnp.py")
         deps.append(BFASST_UTILS_PATH / "capnp_cells.py")
         deps.append(BFASST_UTILS_PATH / "general.py")
-        deps.append(NINJA_TRANSFORM_TOOLS_PATH / "checkpoint_to_v.tcl.mustache")

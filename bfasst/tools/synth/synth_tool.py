@@ -1,4 +1,4 @@
-""" Base class for synthesis tools """
+"""Base class for synthesis tools"""
 
 import pathlib
 
