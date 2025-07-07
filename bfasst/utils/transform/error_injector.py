@@ -1,15 +1,15 @@
 """Inject errors into a xrev netlist"""
 
-from argparse import ArgumentParser
-from enum import Enum
 import logging
 import random
+from argparse import ArgumentParser
+from enum import Enum
 from pathlib import Path
 
 import spydrnet as sdn
 
-from bfasst.utils.rw_helpers import get_sdn_direction_for_unisim, get_unisim_inputs
 from bfasst.utils import convert_verilog_literal_to_int
+from bfasst.utils.rw_helpers import get_sdn_direction_for_unisim, get_unisim_inputs
 
 
 class ErrorType(Enum):
@@ -26,6 +26,7 @@ class ErrorInjectorException(Exception):
 class ErrorInjector:
     """Inject errors into an xrev netlist"""
 
+    # pylint: disable=too-many-positional-arguments
     def __init__(
         self, build_dir, log_path, seed, error_type, reversed_netlist, logging_level=logging.DEBUG
     ):
@@ -55,6 +56,8 @@ class ErrorInjector:
 
         self.injector = self.__get_injection_function(ErrorType[error_type.upper()])
         self.injector()
+
+    # pylint: enable=too-many-positional-arguments
 
     def __get_injection_function(self, error_type):
         """Injects an error into the netlist of the given type"""
