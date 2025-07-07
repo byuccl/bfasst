@@ -46,15 +46,15 @@ class StructuralCapnp(RwPhysNetlist, F2BDesign):
         self,
         build_dir: str,
         impl_checkpoint: tuple[Path, Path],
-        phys_capnp: Path,
-        edf_capnp: Path,
-        logging_level: str,
-        log_name: str,
+        capnp: tuple[Path, Path],
+        loggging_info: tuple[str, str],
     ) -> None:
+        phys_capnp, edf_capnp = capnp
+        logging_level, log_name = loggging_info
         self.cmp_stage_dir = Path(build_dir) / "capnp_cmp"
         self.cmp_stage_dir.mkdir(parents=True, exist_ok=True)
         rw_log = str(self.cmp_stage_dir / "rapidwright_stdout.log")
-        super().__init__(  # Python analyzes named args to pass to the appropriate parent constructor
+        super().__init__(
             build_dir=build_dir,
             impl_checkpoint=impl_checkpoint,
             logging_level=logging_level,
@@ -129,8 +129,7 @@ class StructuralCapnp(RwPhysNetlist, F2BDesign):
         except AttributeError:
             # Sometimes F2B misses a LUT GND generator directly driving the O6 site pin output.
             assert "LUT" in bel_name, f"F2B missing cells for {site}:{bel_name}"
-            init = ecell.getProperty("INIT").getValue()
-            assert utils.convert_verilog_literal_to_int(init) == 0
+            assert utils.convert_verilog_literal_to_int(ecell.getProperty("INIT").getValue()) == 0
             logging.warning("F2B missed lut gnd gen at %s:%s", site, bel_name)
             self.lut_gnd_net.add(ecell.getPortInst("O6").getNet().getName())
             return
@@ -141,8 +140,8 @@ class StructuralCapnp(RwPhysNetlist, F2BDesign):
             cell_type = rev_hcell.getCellType().getName()
         elif cell_type in ("IBUF", "OBUF") and rev_hcell.getParent().getParent() is not None:
             rev_hcell = rev_hcell.getParent()
-            cell = self.vivado_design.getSiteInstFromSiteName(site).getCell(bel_name)
-            ecell = cell.getEDIFHierCellInst().getParent().getInst()
+            ecell = self.vivado_design.getSiteInstFromSiteName(site).getCell(bel_name)
+            ecell = ecell.getEDIFHierCellInst().getParent().getInst()
             cell_type = rev_hcell.getCellType().getName()
         elif cell_type == "DSP48E1":
             self.fix_rev_dsp(rev_cell, ecell, True)
@@ -335,10 +334,8 @@ if __name__ == "__main__":
     copmarator = StructuralCapnp(
         args.build_dir,
         (args.impl_dcp, args.impl_edf),
-        args.phys_capnp,
-        args.edf_capnp,
-        args.logging_level,
-        args.log_name,
+        (args.phys_capnp, args.edf_capnp),
+        (args.logging_level, args.log_name),
     )
     copmarator.run()
     # except StructuralCompareError as err:

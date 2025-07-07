@@ -5,7 +5,6 @@ with statuses and utilization data for each design.
 
 import csv
 from argparse import ArgumentParser
-from enum import Enum
 from pathlib import Path
 
 import xlsxwriter
@@ -15,6 +14,8 @@ from bfasst.paths import BUILD_PATH
 
 
 class TransformStats:
+    """Class to hold timing transformation summary data."""
+
     categories = (
         "lut_comb",
         "retime",
