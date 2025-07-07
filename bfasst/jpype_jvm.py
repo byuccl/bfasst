@@ -1,4 +1,4 @@
-""" Handles starting the JPype JVM used for Rapidwright"""
+"""Handles starting the JPype JVM used for Rapidwright"""
 
 import jpype
 import jpype.imports

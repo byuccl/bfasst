@@ -1,4 +1,4 @@
-""" Purge INIT values for all LUTs in a synthesized design and replace them with dummy values"""
+"""Purge INIT values for all LUTs in a synthesized design and replace them with dummy values"""
 
 from bfasst.tools.tool import Tool
 from bfasst.paths import NINJA_TRANSFORM_TOOLS_PATH, BFASST_UTILS_PATH

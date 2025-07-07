@@ -1,4 +1,4 @@
-""" Any multiprocessing locks used by tools can be located here"""
+"""Any multiprocessing locks used by tools can be located here"""
 
 import multiprocessing
 

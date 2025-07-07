@@ -1,6 +1,6 @@
 setuptools
 bidict
-black==24.3.0
+black==25.1.0
 chevron
 cmake
 cryptography

@@ -1,4 +1,4 @@
-""" Track a BFASST experiment configuration (flow with multiple designs)"""
+"""Track a BFASST experiment configuration (flow with multiple designs)"""
 
 import datetime
 import pathlib
