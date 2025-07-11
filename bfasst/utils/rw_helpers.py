@@ -4,9 +4,9 @@ import builtins
 import logging
 import re
 import time
+from collections import namedtuple
 from fnmatch import fnmatch
 from os.path import commonprefix
-from pathlib import Path
 from typing import Optional, TypeAlias
 
 import spydrnet as sdn
@@ -35,20 +35,22 @@ from com.xilinx.rapidwright.edif import (
 # pylint: enable=wrong-import-position,wrong-import-order
 
 DesignCells: TypeAlias = dict[tuple[str, str], EDIFCellInst]  # (site_name, bel_name): EDIFCellInst
+VivadoCheckpoint = namedtuple("VivadoCheckpoint", ["dcp", "edf"])
+RWObject = namedtuple("RWObject", ["design", "netlist"])
 
 
 def load_design(
-    impl_dcp: Path, impl_edf: Path, series: Series = Device.getDevice(PART).getSeries()
+    checkpt: VivadoCheckpoint, series: Series = Device.getDevice(PART).getSeries()
 ) -> tuple[Design, EDIFNetlist]:
     """Load the designs from the given paths"""
-    logging.info("Loading vivado dcp and edf files: %s, %s", str(impl_dcp), str(impl_edf))
+    logging.info("Loading vivado dcp and edf files: %s, %s", str(checkpt.dcp), str(checkpt.edf))
     start_time = time.time()
-    vivado_design = Design.readCheckpoint(impl_dcp, impl_edf)
-    vivado_netlist = vivado_design.getNetlist()
-    vivado_design.flattenDesign()
-    vivado_netlist.expandMacroUnisims(series)
+    design = Design.readCheckpoint(checkpt.dcp, checkpt.edf)
+    netlist = design.getNetlist()
+    design.flattenDesign()
+    netlist.expandMacroUnisims(series)
     logging.info("Loading vivado netlist took %s seconds.", time.time() - start_time)
-    return vivado_design, vivado_netlist
+    return RWObject(design=design, netlist=netlist)
 
 
 class RapidwrightException(Exception):

@@ -9,6 +9,7 @@ from jpype.types import JInt
 
 import bfasst.utils.rw_helpers as rw
 from bfasst import jpype_jvm, utils
+from bfasst.utils.compare.phys_opt_cmp import PhysOptCmp
 from bfasst.utils.phys_netlist import PhysNetlist, PhysNetlistTransformError
 from bfasst.utils.transform.lutram_transformer import LUTRAMTransformer
 
@@ -31,10 +32,12 @@ from com.xilinx.rapidwright.interchange import LogNetlistWriter, PhysNetlistWrit
 class RwPhysNetlist(PhysNetlist):
     """Creates a xilinx netlist that has only physical primitives"""
 
+    # pylint: disable=too-many-positional-arguments
     def __init__(
         self,
         build_dir: str,
-        impl_checkpoint: tuple[Path, Path],
+        synth_checkpoint: rw.VivadoCheckpoint,
+        impl_checkpoint: rw.VivadoCheckpoint,
         logging_level: str,
         log_name: str,
         **kwargs,
@@ -54,6 +57,10 @@ class RwPhysNetlist(PhysNetlist):
         )
         rapidwright_log_path = str(self.stage_dir / "rapidwright_stdout.log")
         super().__init__(rapidwright_log_path, impl_checkpoint, **kwargs)
+        self.synth = rw.load_design(synth_checkpoint)
+        self.phys_opt_cmp = PhysOptCmp(
+            self.synth, rw.RWObject(self.vivado_design, self.vivado_netlist)
+        )
         self.lutram_handler = LUTRAMTransformer(
             self.vivado_netlist, self.visited_cells, self.phys_ecells, self.cells_to_remove
         )
@@ -81,6 +88,8 @@ class RwPhysNetlist(PhysNetlist):
 
         self.hanging_pins = {}  # Cell name: list(tuple(driving SitePinInst, cell, sink BELPin))
         self.site_pin_to_net = {}  # SitePinInst: EDIFNet
+
+    # pylint: enable=too-many-positional-arguments
 
     def run(self) -> None:
         """Transform the logical netlist into a netlist with only physical primitives"""
@@ -113,11 +122,18 @@ class RwPhysNetlist(PhysNetlist):
 
     def run_rapidwright(self) -> None:
         """Do all rapidwright related processing on the netlist"""
+        (self.stage_dir / "transformation_time.txt").unlink(missing_ok=True)
+        (self.stage_dir / "phys_opt_cmp_time.txt").unlink(missing_ok=True)
+        logging.info("Starting comparions of physical optimizations")
+        fun_start_time = time.time()
+        self.phys_opt_cmp.compare()
+        ttime = time.time() - fun_start_time
+        logging.info("Physical optimization comparison took %s seconds", f"{ttime:0.2f}")
+        with open(self.stage_dir / "phys_opt_cmp_time.txt", "w") as fp:
+            fp.write(f"{ttime:.2f}\n")
         logging.info("Starting logical to physical netlist conversion for %s", self.build_dir.name)
-
         # First loop through all sites and deal with LUTs.  We can't the later loop that iterates
         # over Design.getCells() as it does not return LUT routethru objects.
-        (self.stage_dir / "transformation_time.txt").unlink(missing_ok=True)
         fun_start_time = time.time()
         self.__process_all_clbs()
         logging.info("Finished processing CLBs in %s seconds", time.time() - fun_start_time)
@@ -857,9 +873,12 @@ class RwPhysNetlist(PhysNetlist):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
+    utils.add_path_arg(parser, "--synth_dcp", "The synthesis dcp file to use for the netlist.")
+    utils.add_path_arg(parser, "--synth_edf", "The synthesis edf file to use for the netlist.")
     utils.add_path_arg(parser, "--impl_dcp", "The implementation dcp file to use for the netlist.")
     utils.add_path_arg(parser, "--impl_edf", "The implementation edf file to use for the netlist.")
     utils.add_standard_args(parser)
     args = parser.parse_args()
-    impl_files = (args.impl_dcp, args.impl_edf)
-    RwPhysNetlist(args.build_dir, impl_files, args.logging_level, args.log_name).run()
+    impl_files = rw.VivadoCheckpoint(dcp=args.impl_dcp, edf=args.impl_edf)
+    synth_files = rw.VivadoCheckpoint(dcp=args.synth_dcp, edf=args.synth_edf)
+    RwPhysNetlist(args.build_dir, synth_files, impl_files, args.logging_level, args.log_name).run()

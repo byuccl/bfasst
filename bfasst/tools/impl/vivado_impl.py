@@ -47,6 +47,13 @@ class VivadoImpl(ImplTool):
         self._init_outputs()
         self.inputs_str = {"xdc": self.constraints_file, "synth_edf": str(self.synth_edf)}
         self.outputs_str = {k: str(v) for k, v in self.outputs.items()}
+        tcl_sources = [
+            self.outputs_str["setup_tcl"],
+            self.outputs_str["impl_tcl"],
+            self.outputs_str["reports_tcl"],
+        ]
+        if self.design_props is not None and hasattr(self.design_props, "pre_impl_tcl"):
+            tcl_sources.insert(1, str(design / self.design_props.pre_impl_tcl))
         self.impl_build = {
             "part": self.flow.part,
             "impl_output": str(self.build_path),
@@ -57,11 +64,7 @@ class VivadoImpl(ImplTool):
             "outputs": self.outputs_str,
             "opt_design": self.opt_design,
             "phys_opt_design": self.phys_opt_design,
-            "tcl_sources": [
-                self.outputs_str["setup_tcl"],
-                self.outputs_str["impl_tcl"],
-                self.outputs_str["reports_tcl"],
-            ],
+            "tcl_sources": tcl_sources,
             "inputs": self.inputs_str,
         }
         if impl_options:
