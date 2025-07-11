@@ -53,7 +53,7 @@ class ImplObfuscate(Flow):
             synth_edf=self.netlist_obfuscate.outputs["transformed_synth_edf"],
             build_path="vivado_reimpl",
             opt_design=False,
-            phys_opt_design=True,
+            phys_opt_design=False,
             constraints_files=self.vivado_synth.outputs["synth_constraints"],
         )
 
