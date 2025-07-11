@@ -132,7 +132,7 @@ def log_netlist_diffs(netlist_comparator):
             elif shown == MAX_TO_SHOW:
                 logging.info("Stopped printing after %d diffs", MAX_TO_SHOW)
                 shown += 1
-        
+
         logging.info("Total meaningful %s diffs found: %d\n", diff_type, diff_list.size() - skipped)
         if skipped:
             logging.info("Skipped %d non-essential properties\n", skipped)
@@ -148,17 +148,17 @@ def log_layout_diffs(design_comparator):
 
 def compare_all(golden, test, log_path: str, log_level: str):
     """
-     read checkpoints
-     compare placement / routing
-     compare EDIF netlists
-     compare bitstreams
+    read checkpoints
+    compare placement / routing
+    compare EDIF netlists
+    compare bitstreams
     """
 
     setup_logging(log_path, log_level)
 
     logging.info("Reading design checkpoints")
     d1 = Design.readCheckpoint(golden.dcp, golden.edf)
-    d2 = Design.readCheckpoint(test.dcp,    test.edf)
+    d2 = Design.readCheckpoint(test.dcp, test.edf)
 
     layout_cmp = DesignComparator()
     layout_cmp.setComparePlacement(True)
@@ -168,7 +168,7 @@ def compare_all(golden, test, log_path: str, log_level: str):
 
     netlist_cmp = EDIFNetlistComparator()
     netlist_cmp.compareNetlists(d1.getNetlist(), d2.getNetlist())
-    
+
     num_layout_diffs = log_layout_diffs(layout_cmp)
     num_netlist_diffs = log_netlist_diffs(netlist_cmp)
 

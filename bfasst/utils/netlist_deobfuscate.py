@@ -270,13 +270,15 @@ def init_literal_to_bits(init_literal: str, width_bits: int) -> list[int]:
     bits = int(str(init_literal).split("'h")[1], 16)
     return [(bits >> i) & 1 for i in range(1 << width_bits)]
 
+
 def pack_bits_to_init(bits: list[int]) -> str:
     """Pack LSB-first bit list into canonical hex INIT literal."""
     value = 0
     for i, b in enumerate(bits):
         value |= (b & 1) << i
-    hex_chars = (len(bits) + 3) // 4          # 4 bits per hex digit
+    hex_chars = (len(bits) + 3) // 4  # 4 bits per hex digit
     return f"{len(bits)}'h{value:0{hex_chars}X}"
+
 
 def eval_parent_subset(parent_bits, parent_width, subset, perm, sigma):
     """Evaluate parent LUT on a restricted, permuted, possibly inverted subset."""
@@ -287,27 +289,33 @@ def eval_parent_subset(parent_bits, parent_width, subset, perm, sigma):
         for i, pin in enumerate(subset):
             bit = (x >> perm[i]) & 1
             if sigma[i]:
-                bit ^= 1                      # input inversion
+                bit ^= 1  # input inversion
             addr |= bit << pin
         tbl.append(parent_bits[addr])
     return tbl
+
 
 def derive_comp_init(parent_entry: dict, comp_cell) -> str | None:
     """
     Returns a canonical INIT literal for comp_cell derived only from its
     parent's INIT. Does NOT look at the (obfuscated) child INIT.
     """
-    parent_init = next((it["value"] for it in
-                        parent_entry.get("modified_properties", [])
-                        if it["identifier"] == "INIT"), None)
+    parent_init = next(
+        (
+            it["value"]
+            for it in parent_entry.get("modified_properties", [])
+            if it["identifier"] == "INIT"
+        ),
+        None,
+    )
     if parent_init is None:
         return None
 
     parent_width = int(parent_init.split("'h")[0]) // 4
-    parent_bits  = init_literal_to_bits(parent_init, parent_width)
+    parent_bits = init_literal_to_bits(parent_init, parent_width)
 
-    child_width  = LUTTools.getLUTSize(comp_cell)
-    if child_width == 0:                      # not a LUT
+    child_width = LUTTools.getLUTSize(comp_cell)
+    if child_width == 0:  # not a LUT
         return None
 
     pins = list(range(parent_width))
@@ -317,8 +325,7 @@ def derive_comp_init(parent_entry: dict, comp_cell) -> str | None:
     for subset in combinations(pins, child_width):
         for perm in permutations(range(child_width)):
             for sigma in product([0, 1], repeat=child_width):
-                tbl = eval_parent_subset(parent_bits, parent_width,
-                                         subset, perm, sigma)
+                tbl = eval_parent_subset(parent_bits, parent_width, subset, perm, sigma)
                 tbl_inv = [1 - b for b in tbl]
 
                 # Choose lexicographically-smallest truth table (canonical)
@@ -336,13 +343,14 @@ def derive_comp_init(parent_entry: dict, comp_cell) -> str | None:
 # Main restore function (drop-in)
 # -------------------------------------------------------------------------
 
+
 def restore_all_properties(design: Design, json_db: dict[str, dict], inversion_roots: set):
     """
     Restores all properties to the cells in a design based on json_db.
     Added logic: if hname ends with "_comp", derive its INIT from the
     non-_comp twin's INIT using derive_comp_init().
     """
-    netlist  = design.getNetlist()
+    netlist = design.getNetlist()
     hier_map = EDIFTools.createCellInstanceMap(netlist)
 
     for lib_map in hier_map.values():
@@ -356,34 +364,31 @@ def restore_all_properties(design: Design, json_db: dict[str, dict], inversion_r
                     cell = h_inst.getInst()
                     tag_prop = cell.getPropertiesMap().get(TAG_PROP)
                     if tag_prop:
-                        tag   = tag_prop.getValue()
-                        entry = next((e for e in json_db.values()
-                                      if e.get("tag") == tag), None)
+                        tag = tag_prop.getValue()
+                        entry = next((e for e in json_db.values() if e.get("tag") == tag), None)
 
-                # Fallback #2 – handle "_comp" twin
-                if entry is None and hname.endsWith("_comp"):
-                    base_hname = hname[:-5]                       # strip "_comp"
-                    base_entry = json_db.get(base_hname)
-                    if base_entry is not None:
-                        logging.info("[_comp] matched %s → %s", hname, base_hname)
-                        new_init = derive_comp_init(base_entry, h_inst.getInst())
-                        if new_init:
-                            logging.info("[_comp] derived INIT %s", new_init)
-                            entry = {"modified_properties": [{
-                                         "identifier": "INIT",
-                                         "value":      new_init,
-                                         "type":       "STRING"}]}
-                        else:
-                            logging.warning("[_comp] could not derive INIT for %s", hname)
+                # # Fallback #2 – handle "_comp" twin
+                # if entry is None and hname.endsWith("_comp"):
+                #     base_hname = hname[:-5]                       # strip "_comp"
+                #     base_entry = json_db.get(base_hname)
+                #     if base_entry is not None:
+                #         logging.info("[_comp] matched %s → %s", hname, base_hname)
+                #         new_init = derive_comp_init(base_entry, h_inst.getInst())
+                #         if new_init:
+                #             logging.info("[_comp] derived INIT %s", new_init)
+                #             entry = {"modified_properties": [{
+                #                          "identifier": "INIT",
+                #                          "value":      new_init,
+                #                          "type":       "STRING"}]}
+                #         else:
+                #             logging.warning("[_comp] could not derive INIT for %s", hname)
 
                 # No match – skip
                 if entry is None:
                     logging.warning("No tag or _comp twin for %s; skipping", hname)
                     continue
 
-                restore_properties_for_cell(
-                    h_inst.getInst(), entry, hname, inversion_roots
-                )
+                restore_properties_for_cell(h_inst.getInst(), entry, hname, inversion_roots)
 
 
 def apply_properties(design: Design, json_db: dict[str, dict]):
@@ -397,8 +402,8 @@ def apply_properties(design: Design, json_db: dict[str, dict]):
 
     restore_all_properties(design, json_db, inversion_roots)
 
-    flips = propagate_inversions(design, inversion_roots)
-    logging.info("Propagated inversions across %d tagged LUTs", flips)
+    # flips = propagate_inversions(design, inversion_roots)
+    # logging.info("Propagated inversions across %d tagged LUTs", flips)
 
 
 def main():

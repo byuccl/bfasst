@@ -48,8 +48,8 @@ def _shuffle_init_same_pins(init: int, lut_size: int) -> int:
             for off in range(step):
                 a = base | off
                 b = a | step  # index that differs only by <pin>
-                if bits[a] ^ bits[b]:      # exactly one is 1
-                    if rng(2):             # 50 % probability – random
+                if bits[a] ^ bits[b]:  # exactly one is 1
+                    if rng(2):  # 50 % probability – random
                         bits[a], bits[b] = bits[b], bits[a]
 
     # Reassemble integer
@@ -62,13 +62,13 @@ def _shuffle_init_same_pins(init: int, lut_size: int) -> int:
 def shuffle_preserve_bucket(init, size):
     pins = _active_pins(init, size)
     # 1. Partition minterms by the *fastest* pin
-    fastest = max(pins)           # e.g. 5 for LUT6
+    fastest = max(pins)  # e.g. 5 for LUT6
     half = 1 << fastest
     # Each pair (m, m^half) must still differ after shuffle
     bits = [(init >> i) & 1 for i in range(1 << size)]
     pairs = [(i, i ^ half) for i in range(half)]
     ones_in_fast = sum(bits[a] ^ bits[b] for a, b in pairs)
-    for a, b in random.sample(pairs, len(pairs)):   # random order
+    for a, b in random.sample(pairs, len(pairs)):  # random order
         if bits[a] ^ bits[b]:
             # swap with 50 % chance but keep the same (#pairs with diff)
             if random.getrandbits(1):
@@ -113,4 +113,3 @@ def get_masking_init(orig_init: str, lut_size: int) -> str:
 #     width = 1 << lut_size  # 4,8,16,32,64
 #     # logging.info("Old INIT: %s; New INIT: %s", orig_init, f"{width:02d}'h{new_value:0{width//4}X}")
 #     return f"{width:02d}'h{new_value:0{width//4}X}"
-

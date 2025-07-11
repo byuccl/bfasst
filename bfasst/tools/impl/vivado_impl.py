@@ -19,6 +19,7 @@ class VivadoImpl(ImplTool):
         build_path=None,
         opt_design=True,
         phys_opt_design=False,
+        read_iphys_opt_tcl_file=None,
         constraints_files="",
         ooc=False,
         impl_options="",
@@ -42,6 +43,8 @@ class VivadoImpl(ImplTool):
 
         self.opt_design = opt_design
         self.phys_opt_design = phys_opt_design
+        self.read_iphys_opt_tcl_file = str(read_iphys_opt_tcl_file)
+        self.read_iphys_opt_tcl = True if read_iphys_opt_tcl_file is not None else False
 
         self._init_outputs()
         self.inputs_str = {"xdc": self.constraints_file, "synth_edf": str(self.synth_edf)}
@@ -61,6 +64,8 @@ class VivadoImpl(ImplTool):
             "outputs": self.outputs_str,
             "opt_design": self.opt_design,
             "phys_opt_design": self.phys_opt_design,
+            "read_iphys_opt_tcl": self.read_iphys_opt_tcl,
+            "read_iphys_opt_tcl_file": self.read_iphys_opt_tcl_file,
             "tcl_sources": [
                 self.outputs_str["setup_tcl"],
                 self.outputs_str["impl_tcl"],
@@ -109,6 +114,7 @@ class VivadoImpl(ImplTool):
         self.outputs["impl_dcp"] = self.build_path / "impl.dcp"
         self.outputs["post_place_dcp"] = self.build_path / "post_place.dcp"
         self.outputs["post_phys_opt_dcp"] = self.build_path / "post_phys_opt.dcp"
+        self.outputs["write_iphys_opt_tcl_file"] = self.build_path / "iphys_opt.tcl"
         self.outputs["utilization"] = self.build_path / "utilization.txt"
         self.outputs["timing"] = self.build_path / "timing_summary.txt"
         self.outputs["journal"] = self.build_path / "vivado.jou"

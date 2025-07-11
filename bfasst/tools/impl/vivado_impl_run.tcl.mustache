@@ -2,15 +2,20 @@
 opt_design
 {{/opt_design}}
 
-place_design
-# -no_timing_driven
-write_checkpoint -file {{outputs.post_place_dcp}}
+place_design -no_timing_driven
+write_checkpoint -force -file {{outputs.post_place_dcp}}
+
+{{#read_iphys_opt_tcl}}
+read_iphys_opt_tcl -placement_opt {{read_iphys_opt_tcl_file}}
+{{/read_iphys_opt_tcl}}
 
 {{#phys_opt_design}}
 phys_opt_design
 report_phys_opt
-write_checkpoint -file {{outputs.post_phys_opt_dcp}}
+
+write_iphys_opt_tcl -place {{outputs.write_iphys_opt_tcl_file}}
+
+write_checkpoint -force -file {{outputs.post_phys_opt_dcp}}
 {{/phys_opt_design}}
 
-route_design 
-# -no_timing_driven
+route_design -no_timing_driven

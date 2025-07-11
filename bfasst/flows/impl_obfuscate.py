@@ -20,6 +20,7 @@ from bfasst.utils.physcmp_data_types import ImplReports
 from bfasst.paths import FLOWS_PATH
 from bfasst.yaml_parser import DesignParser
 
+
 class ImplObfuscate(Flow):
     """Tool to synthesize, implement, reimplement, and compare designs"""
 
@@ -46,15 +47,6 @@ class ImplObfuscate(Flow):
             log_file="netlist_obfuscate.log",
         )
 
-        self.impl_orig = VivadoImpl(
-            self,
-            design,
-            synth_edf=self.netlist_obfuscate.outputs["untransformed_synth_edf"],
-            opt_design=False,
-            phys_opt_design=True,
-            constraints_files=self.vivado_synth.outputs["synth_constraints"],
-        )
-
         self.impl_transform = VivadoImpl(
             self,
             design,
@@ -62,6 +54,16 @@ class ImplObfuscate(Flow):
             build_path="vivado_reimpl",
             opt_design=False,
             phys_opt_design=True,
+            constraints_files=self.vivado_synth.outputs["synth_constraints"],
+        )
+
+        self.impl_orig = VivadoImpl(
+            self,
+            design,
+            synth_edf=self.netlist_obfuscate.outputs["untransformed_synth_edf"],
+            opt_design=False,
+            phys_opt_design=False,
+            read_iphys_opt_tcl_file=self.impl_transform.outputs["write_iphys_opt_tcl_file"],
             constraints_files=self.vivado_synth.outputs["synth_constraints"],
         )
 
@@ -81,7 +83,7 @@ class ImplObfuscate(Flow):
             impl_dcp=self.netlist_deobfuscate.outputs["unmodified_deobf_dcp"],
             tag="orig",
         )
-        
+
         self.impl_detailed_reports_transform = ImplDetailedReports(
             self, design, impl_dcp=self.netlist_deobfuscate.outputs["deobf_dcp"], tag="transform"
         )
@@ -108,22 +110,22 @@ class ImplObfuscate(Flow):
             bitstream=self.impl_detailed_reports_transform.outputs["bitstream"],
         )
 
-        self.conformal = Conformal(
-            self,
-            design,
-            golden_netlist=self.netlist_deobfuscate.outputs["unmodified_deobf_edf"],
-            rev_netlist=self.netlist_deobfuscate.outputs["deobf_edf"],
-            vendor=Vendor.LATTICE.name,
-        )
-
-        # self.physcmp = PhysCmp(
+        # self.conformal = Conformal(
         #     self,
         #     design,
-        #     golden=golden,
-        #     test=test,
-        #     log_name="physcmp.log",
-        #     logging_level="DEBUG",
+        #     golden_netlist=self.netlist_deobfuscate.outputs["unmodified_deobf_edf"],
+        #     rev_netlist=self.netlist_deobfuscate.outputs["deobf_edf"],
+        #     vendor=Vendor.LATTICE.name,
         # )
+
+        self.physcmp = PhysCmp(
+            self,
+            design,
+            golden=golden,
+            test=test,
+            log_name="physcmp.log",
+            logging_level="DEBUG",
+        )
 
         self.tools = [
             self.vivado_synth,
@@ -133,8 +135,8 @@ class ImplObfuscate(Flow):
             self.netlist_deobfuscate,
             self.impl_detailed_reports_orig,
             self.impl_detailed_reports_transform,
-            self.conformal,
-            # self.physcmp,
+            # self.conformal,
+            self.physcmp,
         ]
 
     def create_build_snippets(self):
@@ -145,8 +147,8 @@ class ImplObfuscate(Flow):
         self.netlist_deobfuscate.create_build_snippets()
         self.impl_detailed_reports_orig.create_build_snippets()
         self.impl_detailed_reports_transform.create_build_snippets()
-        self.conformal.create_build_snippets()
-        # self.physcmp.create_build_snippets()
+        # self.conformal.create_build_snippets()
+        self.physcmp.create_build_snippets()
 
     def get_top_level_flow_path(self):
         return FLOWS_PATH / "impl_obfuscate.py"
