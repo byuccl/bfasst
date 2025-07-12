@@ -17,7 +17,7 @@ set period {{period}}
 set clock_port {{ name }}
 set clock_name {{ name }}_gen
 set slack [get_property SLACK [lindex [get_timing_paths] 0]]
-# phys_opt does nothing if slack is postitive
+# phys_opt does nothing if slack is positive
 if {$slack >= 0} {
     set new_period [expr $period - $slack - 0.45]
     create_clock -period $new_period -name $clock_name [get_ports $clock_port]

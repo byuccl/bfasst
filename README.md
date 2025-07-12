@@ -12,11 +12,13 @@ Example designs are located in the `designs/` directory.
 Before running any bfasst flows, always make sure you have activated the BFASST environment:
 ```. .venv/bin/activate``` (ran in the bfasst root directory).
 
-To run bfasst, use `python scripts/run.py` as follows:
+Also, make sure to run `source ~/.bashrc` after installation
+
+To run bfasst, use `run_flow` as follows:
 
 ```
 Usage: 
-  run_design.py [-h] [--flow_arguments FLOW_ARGUMENTS] flow_name_or_yaml_path [design ...]
+  run_flow [-h] [--flow_arguments FLOW_ARGUMENTS] flow_name_or_yaml_path [design ...]
 
 positional arguments:
   flow_name_or_yaml_path              Name of the desired flow or path to a yaml file with a list of designs and the flow.
@@ -25,7 +27,7 @@ positional arguments:
 options:
   -h, --help                          Show this help message and exit
   --flow_arguments FLOW_ARGUMENTS     Arguments to pass to the flow, as python dict (e.g. "{'num_runs': 10}" for error_injection flow)
-  -j --jobs INT                       Specifies the number of jobs ninja can run in parallel (e.g. "python scripts/run.py basic/and3 -j 4")
+  -j --jobs INT                       Specifies the number of jobs ninja can run in parallel (e.g. "run_flow basic/and3 -j 4")
 ```
 
 Note that if a yaml file is specified, neither a design nor flow should be specified. Flow arguments and the jobs argument are optional; flows will always run with valid default arguments.
@@ -42,6 +44,7 @@ Note that if a yaml file is specified, neither a design nor flow should be speci
 ### Install BFASST
 * Install the Python virtual environment, activate, and install packages:
   * `make install`
+  * Remember to restart your terminal or run `source ~/.bashrc` so autocompletion works correctly
 
 ## Tools
 BFASST can be used to compose different CAD flows from severals tools.  These tools are installed with BFASST.
