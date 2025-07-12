@@ -21,7 +21,10 @@ jpype_jvm.start()
 
 # pylint: disable=wrong-import-position, wrong-import-order
 from java.lang import System
+<<<<<<< HEAD
 from java.util import ArrayList
+=======
+>>>>>>> origin/retime
 from java.io import PrintStream, FileOutputStream
 from com.xilinx.rapidwright.design import Design
 from com.xilinx.rapidwright.design.tools import LUTTools
@@ -66,7 +69,11 @@ def obfuscate_lut(inst, counts) -> tuple[bool, list[dict[str, str]]]:
         return False, []
 
     old_init = str(props_map.get("INIT").getValue())
+<<<<<<< HEAD
     new_init = get_masking_init(str(old_init), lut_size)
+=======
+    new_init = get_masking_init(lut_size)
+>>>>>>> origin/retime
 
     inst.getInst().addProperty("INIT", new_init)
 

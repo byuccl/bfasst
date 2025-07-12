@@ -3,7 +3,7 @@
 from argparse import Namespace
 
 from bfasst.tools.tool import Tool
-from bfasst.paths import BFASST_UTILS_PATH, COMPARE_TOOLS_PATH, BFASST_PATH
+from bfasst.paths import BFASST_UTILS_PATH, COMPARE_TOOLS_PATH
 from bfasst.utils.physcmp_data_types import ImplReports
 
 
@@ -53,7 +53,6 @@ class PhysCmp(Tool):
             "test_bitstream": str(self.test.bitstream),
             "log_path": str(self.outputs["physcmp_log"]),
             "logging_level": f"--logging_level {self.logging_level}",
-            "bfasst_path": str(BFASST_PATH),
         }
 
     def _init_outputs(self):

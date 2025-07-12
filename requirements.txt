@@ -5,10 +5,12 @@ chevron
 cmake
 cryptography
 in_place
+isort
 JPype1
 matplotlib
 numpy
 paramiko
+pycapnp
 pylint
 pyyaml
 requests

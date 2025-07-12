@@ -1,13 +1,20 @@
 """Utility functions"""
 
+from argparse import ArgumentParser
+import atexit
+import code
 import json
 import logging
+import os
 from pathlib import Path
 import re
+import readline
+import rlcompleter
 import sys
 import shutil
 import enum
 
+from jpype.types import JString
 from bfasst.paths import DESIGNS_PATH
 from bfasst.config import BUILD
 
@@ -97,8 +104,11 @@ def convert_verilog_literal_to_int(prop):
     >>> convert_verilog_literal_to_int("32'hdeadbeef")
     3735928559
     """
+    # For rapidwright compatibility
+    if isinstance(prop, JString):
+        prop = str(prop)
     # Not a string? just return the prop
-    if not isinstance(prop, str):
+    elif not isinstance(prop, str):
         return prop
 
     # Try to convert to int
@@ -108,20 +118,20 @@ def convert_verilog_literal_to_int(prop):
     except ValueError:
         pass
 
-    # Decimal literal
-    matches = re.match(r"\d+'d(\d+)", prop)
-    if matches:
-        return int(matches.group(1))
+    regex_nums = (  # Regex patterns for different verilog number formats.
+        (r"\d+'d(\d+)", 10),
+        (r"\d+'b([01]+)", 2),
+        (r"\d+'h([0-9a-fA-F]+)", 16),
+    )
+    for regex, base in regex_nums:
+        matches = re.match(regex, prop)
+        if matches:
+            return int(matches.group(1), base)
 
-    # Binary literal
-    matches = re.match(r"\d+'b([01]+)", prop)
-    if matches:
-        return int(matches.group(1), 2)
-
-    # Hex literal
-    matches = re.match(r"\d+'h([0-9a-fA-F]+)", prop)
-    if matches:
-        return int(matches.group(1), 16)
+    if prop.upper() == "TRUE":
+        return True
+    if prop.upper() == "FALSE":
+        return False
 
     return prop
 
@@ -232,3 +242,70 @@ def get_family_from_part(part):
     will have to be changed if we start supporting more part families
     """
     return "kintex7" if part[3] == "k" else "artix7"
+
+
+def get_size(obj, seen=None):
+    """Recursively finds size of objects using generators."""
+    size = sys.getsizeof(obj)
+    if seen is None:
+        seen = set()
+    obj_id = id(obj)
+    if obj_id in seen:
+        return 0
+    seen.add(obj_id)
+    if isinstance(obj, dict):
+        size += sum(get_size(v, seen) for v in obj.values())
+        size += sum(get_size(k, seen) for k in obj.keys())
+    elif hasattr(obj, "__dict__"):
+        size += get_size(obj.__dict__, seen)
+    elif hasattr(obj, "__iter__") and not isinstance(obj, (str, bytes, bytearray)):
+        size += sum(get_size(i, seen) for i in obj)
+    return size
+
+
+def add_path_arg(p: ArgumentParser, arg: str, help_msg: str):
+    p.add_argument(arg, type=Path, required=True, help=help_msg)
+
+
+def add_standard_args(p: ArgumentParser):
+    p.add_argument(
+        "--build_dir",
+        type=str,
+        required=True,
+        help="The build directory",
+    )
+    p.add_argument("--logging_level", default="INFO", help="Decides what levels of logs to display")
+    p.add_argument(
+        "--log_name", type=str, default="log.txt", help="The log file path to use as output"
+    )
+
+
+def interpreter(local=None):
+    """Start an interactive Python interpreter with the given locals. UNIX ONLY"""
+    if local is None:
+        local = globals().copy()
+    else:
+        local.update(globals())
+
+    completer = rlcompleter.Completer(local)
+
+    # Enable tab completion
+    # Define the history file path
+    history_file = os.path.join(os.path.expanduser("~"), ".python_history")
+
+    # Read existing history if available
+    try:
+        readline.read_history_file(history_file)
+    except FileNotFoundError:
+        pass
+
+    # Set the maximum number of lines in the history file
+    readline.set_history_length(50)
+
+    # Register a function to write the history on exit
+    atexit.register(readline.write_history_file, history_file)
+
+    # Enable tab completion
+    readline.set_completer(completer.complete)
+    readline.parse_and_bind("tab: complete")
+    code.interact(local=local)

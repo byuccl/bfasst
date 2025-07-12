@@ -8,8 +8,10 @@ import sys
 
 from bfasst import external_tools
 from bfasst.flows.ninja_flow_manager import NinjaFlowManager
+from bfasst.utils import ensure_tuple, error
 from bfasst.yaml_parser import FlowDescriptionParser, RunParser
-from bfasst.utils import error, ensure_tuple
+
+DEFAULT_PROCS = 6  # Save some for Vivado
 
 
 class ApplicationRunner:
@@ -30,7 +32,7 @@ class ApplicationRunner:
         *,
         flow_arguments="",
         check_tools=True,
-        num_threads=1,
+        num_threads=DEFAULT_PROCS,
         ignore_errors=False,
     ):
         """Run one ore more designs with a given flow."""
@@ -46,7 +48,9 @@ class ApplicationRunner:
             self.flow_arguments = ast.literal_eval(flow_arguments)
         self.__run_ninja()
 
-    def run_yaml(self, yaml_path, *, check_tools=True, num_threads=1, ignore_errors=False):
+    def run_yaml(
+        self, yaml_path, *, check_tools=True, num_threads=DEFAULT_PROCS, ignore_errors=False
+    ):
         """Run using a yaml configuration file"""
 
         run_config = RunParser(yaml_path)

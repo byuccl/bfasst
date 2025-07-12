@@ -1,27 +1,32 @@
-""" Structural Comparison and Mapping tool """
+"""Structural Comparison and Mapping tool"""
 
-from argparse import ArgumentParser
-from collections import defaultdict
+import difflib
 import logging
+import os
 import pickle
 import sys
 import time
-import os
-import difflib
-from bidict import bidict
-import spydrnet as sdn
+from argparse import ArgumentParser
+from collections import defaultdict
 
+import spydrnet as sdn
+from bidict import bidict
 
 from bfasst import jpype_jvm
-from bfasst.utils import convert_verilog_literal_to_int
-from bfasst.utils.structural_helpers import create_cell_props, count_num_const
-from bfasst.utils.general import log_with_banner
-from bfasst.utils.sdn_helpers import SdnNetlistWrapper, SdnInstanceWrapper, SdnNet, SdnPinWrapper
+from bfasst.utils import convert_verilog_literal_to_int, get_size, log_with_banner
+from bfasst.utils.compare.structural_helpers import count_num_const, create_cell_props
+from bfasst.utils.sdn_helpers import (
+    SdnInstanceWrapper,
+    SdnNet,
+    SdnNetlistWrapper,
+    SdnPinWrapper,
+)
 
-# pylint: disable=wrong-import-order
+# pylint: disable=wrong-import-order, wrong-import-position
+jpype_jvm.start()
 from com.xilinx.rapidwright.design import Design
 
-# pylint: enable=wrong-import-order
+# pylint: enable=wrong-import-order, wrong-import-position
 
 
 class StructuralCompareError(Exception):
@@ -79,6 +84,10 @@ class StructuralCompare:
         self.comparison_time_log = (
             str(log_path).split("_cmp.log", maxsplit=1)[0] + "_comparison_time.txt"
         )
+        self.mem_dump_log = (
+            str(log_path).split("_cmp.log", maxsplit=1)[0] + "_comparison_mem_dump.txt"
+        )
+        self.mem = 0
 
         self.block_mapping = bidict()
         self.net_mapping = bidict()
@@ -90,8 +99,6 @@ class StructuralCompare:
 
         self.start_time = 0
         self.end_time = 0
-
-        jpype_jvm.start()
 
     def reset_mappings(self) -> None:
         self.block_mapping = bidict()
@@ -251,6 +258,8 @@ class StructuralCompare:
         logging.info(total_time_msg)
         with open(self.comparison_time_log, "w") as f:
             f.write(f"{self.end_time - self.start_time}\n")
+        with open(self.mem_dump_log, "w") as f:
+            f.write(f"{self.mem}\n")
 
     def map_ports(self) -> None:
         """Map top-level ports"""
@@ -289,24 +298,21 @@ class StructuralCompare:
 
             grouped_by_cell_type = defaultdict(list)
             grouped_by_cell_type_and_const = defaultdict(list)
-            for instance in self.reversed_netlist.instances:
+            for idx, instance in enumerate(self.reversed_netlist.instances):
                 if instance.cell_type.startswith("SD"):
                     continue
 
                 num_const = count_num_const(instance.pins)
-                properties = set()
-                for prop in self.get_properties_for_type(instance.cell_type):
-                    properties.add(
-                        f"{prop}{convert_verilog_literal_to_int(instance.properties[prop])}"
-                    )
+                properties = {
+                    f"{prop}{convert_verilog_literal_to_int(instance.properties[prop])}"
+                    for prop in self.get_properties_for_type(instance.cell_type)
+                }
 
                 grouped_by_cell_type_and_const[
                     (instance.cell_type, hash(frozenset(properties)), num_const)
-                ].append(self.reversed_netlist.instances.index(instance))
+                ].append(idx)
 
-                grouped_by_cell_type[(instance.cell_type, hash(frozenset(properties)))].append(
-                    self.reversed_netlist.instances.index(instance)
-                )
+                grouped_by_cell_type[(instance.cell_type, hash(frozenset(properties)))].append(idx)
 
             for instance_name, _ in self.named_netlist.instances_to_map:
                 ###############################################################
@@ -316,11 +322,10 @@ class StructuralCompare:
                 # Compute a hash of this instance's properties
                 instance = self.named_instance_map[instance_name]
                 num_const = count_num_const(instance.pins)
-                properties = set()
-                for prop in self.get_properties_for_type(instance.cell_type):
-                    properties.add(
-                        f"{prop}{convert_verilog_literal_to_int(instance.properties[prop])}"
-                    )
+                properties = {
+                    f"{prop}{convert_verilog_literal_to_int(instance.properties[prop])}"
+                    for prop in self.get_properties_for_type(instance.cell_type)
+                }
                 my_hash = hash(frozenset(properties))
 
                 instances_matching = grouped_by_cell_type_and_const[
@@ -345,6 +350,8 @@ class StructuralCompare:
                 self.possible_matches[instance_name] = set(instances_matching)
             with open(self.possible_matches_cache_path, "wb") as f:
                 pickle.dump(self.possible_matches, f)
+        self.mem = get_size(self.possible_matches)
+        logging.info("The size of the possible_matches dict is %d", self.mem)
 
     def potential_mapping_wrapper(self, instance_tuple: tuple) -> bool:
         """Wrap check_for_potential_mapping some inital checks/postprocessing"""
@@ -656,12 +663,12 @@ class StructuralCompare:
             expected_properties = (
                 named_instance.properties["RAM_EXTENSION_A"] == '"NONE"'
                 and named_instance.properties["RAM_EXTENSION_B"] == '"NONE"'
-                and named_instance.get_pin("ADDRARDADDR", 15).net.is_vdd
-                and named_instance.get_pin("ADDRBWRADDR", 15).net.is_vdd
-                and named_instance.get_pin("CASCADEINA", 0).net.is_vdd
-                and named_instance.get_pin("CASCADEINB", 0).net.is_vdd
-                and named_instance.get_pin("CASCADEOUTA", 0).net.is_gnd
-                and named_instance.get_pin("CASCADEOUTB", 0).net.is_gnd
+                and named_instance.get_pin("ADDRARDADDR", 15).net.is_const
+                and named_instance.get_pin("ADDRBWRADDR", 15).net.is_const
+                and named_instance.get_pin("CASCADEINA", 0).net.is_const
+                and named_instance.get_pin("CASCADEINB", 0).net.is_const
+                and named_instance.get_pin("CASCADEOUTA", 0).net.is_const
+                and named_instance.get_pin("CASCADEOUTB", 0).net.is_const
             )
 
             if not expected_properties:
@@ -739,6 +746,11 @@ class StructuralCompare:
         instance = self.named_instance_map[instance_name]
 
         instances_matching_connections = self.eliminate_redundant_matches(instance_name)
+
+        logging.info(
+            "  %s instance(s) after elimating matched instances",
+            len(instances_matching_connections),
+        )
 
         for pin in instance.pins:
             if pin.net not in self.net_mapping:

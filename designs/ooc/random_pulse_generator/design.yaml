@@ -2,4 +2,4 @@ top: random_pulse_generator
 
 clocks:
   - name: clk
-    period:  2.000
+    period:  1.325

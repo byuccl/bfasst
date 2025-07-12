@@ -1,2 +1,6 @@
 top: fixed_point_sqrt
 top_architecture: rtl
+
+clocks:
+  - name: clk
+    period:  17.0

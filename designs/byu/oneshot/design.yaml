@@ -2,4 +2,4 @@ top: oneshot
 
 clocks:
   - name: clk
-    period: 100
+    period:  1.0

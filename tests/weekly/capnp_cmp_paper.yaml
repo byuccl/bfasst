@@ -1,0 +1,94 @@
+designs:
+  # - byu/alu # No clock in logic
+  - byu/buttoncount 
+  - byu/calc 
+  - byu/counter 
+  - byu/counters 
+  - byu/debouncer 
+  - byu/lightWave 
+  # - byu/mux8to1 # No clock in logic
+  - byu/oneshot 
+  - byu/regfile 
+  - byu/riscvSimpleDatapath 
+  - byu/riscv_final 
+  - byu/rx 
+  # - byu/seven_segment # No clock in logic
+  - byu/shiftReg 
+  - byu/Sout_reg 
+  - byu/stopwatch 
+  - byu/tx 
+  - byu/uart 
+  - byu/uart_debouncer 
+  - byu/uart_rx 
+  - byu/uart_ssc 
+  - byu/uart_tx 
+  - byu/UpDownButtonCount 
+  # - ooc/aes128 # Adjust f2b bram_models combining brams before running
+  # - ooc/EX_stage # No clock in logic
+  - ooc/ID_stage 
+  - ooc/IF_stage 
+  - ooc/MEM_stage 
+  # - ooc/WB_stage # No clock in logic
+  - ooc/a25_coprocessor 
+  - ooc/a25_decode 
+  # - ooc/a25_write_back # No clock in logic
+  - ooc/a25_wishbone 
+  - ooc/basicrsa  
+  - ooc/bcd_adder  
+  - ooc/bubblesort 
+  - ooc/control_unit 
+  - ooc/cpu8080 
+  - ooc/data_path 
+  - ooc/hight 
+  - ooc/median 
+  - ooc/mips_16 
+  - ooc/natalius_processor 
+  - ooc/pci_mini 
+  - ooc/pic 
+  - ooc/pid 
+  - ooc/quadratic_func 
+  - ooc/random_pulse_generator 
+  - ooc/simon_core 
+  - ooc/tiny_encryption_algorithm 
+  - ooc/uart2spi 
+  - ooc/wb_lcd 
+  - vtr_benchmarks/mkPktMerge 
+  - vtr_benchmarks/mkSMAdapter4B 
+  - vtr_benchmarks/raygentop
+  - vtr_benchmarks/sha
+  - vtr_benchmarks/stereovision1
+  - vtr_benchmarks/stereovision2
+  - vtr_benchmarks/stereovision3
+
+  # New designs since paper
+  - ooc/atahost
+  - ooc/a25_execute
+  - ooc/fixed_point_sqrt
+  - ooc/fm_3d_core
+  - ooc/graphiti
+  - ooc/jpegencode
+  - ooc/mpeg2fpga
+  - ooc/pwm
+  - ooc/vga
+
+  - vtr_benchmarks/bgm
+  - vtr_benchmarks/LU8PEEng
+  - vtr_benchmarks/mkDelayWorker32B
+
+  - koios/bwave_like.fixed.small
+  - koios/bwave_like.float.small
+  - koios/conv_layer
+  - koios/eltwise_layer
+  - koios/lenet
+  - koios/lstm 
+  - koios/reduction_layer
+  - koios/robot_rl
+  - koios/softmax
+  - koios/test
+  - koios/tpu_like.large.os         # Run Time 127.9s. Utilization 108k LUTs, 328 LUTRAMs, 32 RAM18, 0 DSP, 14.7k CARRY4, 77.7k FFs
+
+flow: VivadoPhysCapnp
+
+
+synth_options:
+  synth_design: "-flatten_hierarchy full"

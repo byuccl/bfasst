@@ -1,3 +1,6 @@
 top: fm_3d_core
 
 include_all_verilog_files: True
+clocks:
+  - name: clk_i
+    period:  12.487

@@ -1,7 +1,7 @@
 [submodule "third_party/fasm2bels"]
 	path = third_party/fasm2bels
 	url = https://github.com/byuccl/f4pga-xc-fasm2bels.git
-	branch = bfasst-new
+	branch = bfasst
 [submodule "third_party/yosys"]
 	path = third_party/yosys
 	url = https://github.com/YosysHQ/yosys.git
@@ -11,9 +11,9 @@
 [submodule "third_party/RapidWright"]
 	path = third_party/RapidWright
 	url = https://github.com/Xilinx/RapidWright.git
-[submodule "third_party/gmt_tools"]
-	path = third_party/gmt_tools
-	url = git@github.com:byuccl/gmt_tools.git
 [submodule "third_party/icestorm"]
 	path = third_party/icestorm
 	url = https://github.com/YosysHQ/icestorm.git
+[submodule "third_party/rand_soc"]
+	path = third_party/rand_soc
+	url = https://github.com/byuccl/rand_soc.git

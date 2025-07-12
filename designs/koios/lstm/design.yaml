@@ -1,1 +1,5 @@
 top: lstm_random
+
+clocks:
+  - name: clk
+    period:  13.0

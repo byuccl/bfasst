@@ -23,6 +23,8 @@ class NetlistCleaner:
 
         self.log_path = self.build_path / "log.txt"
         self.log_path.unlink(missing_ok=True)
+        self.start_time = time.perf_counter()
+        self.cleanup_time_log = self.build_path / "cleanup_time.txt"
 
         logging.basicConfig(
             filename=self.log_path,
@@ -97,6 +99,9 @@ class NetlistCleaner:
         t_begin = time.perf_counter()
         sdn.compose(netlist_ir, self.netlist_out, write_blackbox=False)
         logging.info("Total time to write out netlist: %s", time.perf_counter() - t_begin)
+        logging.info("Total time to clean netlist: %s", time.perf_counter() - self.start_time)
+        with open(self.cleanup_time_log, "w") as f:
+            f.write(f"{time.perf_counter() - self.start_time}\n")
 
 
 if __name__ == "__main__":

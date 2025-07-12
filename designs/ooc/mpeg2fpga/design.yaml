@@ -55,3 +55,7 @@ verilog_files:
   - xilinx_fifo.v
   - yuv2rgb.v
   # - zigzag_table.v
+
+clocks:
+  - name: clk
+    period:  8.0

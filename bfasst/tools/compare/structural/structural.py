@@ -39,7 +39,7 @@ class Structural(Tool):
                 "netlist_a": str(self.golden_netlist),
                 "netlist_b": str(self.rev_netlist),
                 "log_path": str(self.outputs["structural_log"]),
-                "compare_script_path": str(BFASST_UTILS_PATH / "structural.py"),
+                "compare_script_path": str(BFASST_UTILS_PATH / "compare" / "structural.py"),
                 "expect_fail": "--expect_fail" if self.expect_fail else "",
                 "debug": "--debug" if self.debug else "",
                 "logging_level": f"--logging_level {self.logging_level}",
@@ -51,4 +51,6 @@ class Structural(Tool):
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
-        deps.append(BFASST_UTILS_PATH / "structural.py")
+        deps.append(BFASST_UTILS_PATH / "compare" / "structural.py")
+        deps.append(BFASST_UTILS_PATH / "compare" / "structural_helpers.py")
+        deps.append(BFASST_UTILS_PATH / "sdn_helpers.py")

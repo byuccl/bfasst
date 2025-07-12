@@ -1,1 +1,5 @@
 top: eltwise_layer
+
+clocks:
+  - name: clk
+    period:  5.434

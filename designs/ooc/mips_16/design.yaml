@@ -4,4 +4,4 @@ include_all_verilog_files: True
 
 clocks:
   - name: clk
-    period: 100
+    period:  1.335

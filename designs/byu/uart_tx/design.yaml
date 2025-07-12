@@ -2,4 +2,4 @@ top: tx
 
 clocks:
   - name: clk
-    period:  4.000
+    period:  4.0

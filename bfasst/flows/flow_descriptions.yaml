@@ -22,6 +22,15 @@ flows:
   - rapidwright
   - fasm2bels
 
+- name: VivadoPhysCapnp
+  description: Reverse bitstream and use location data to compare to netlist
+  module: vivado_phys_capnp
+  class: VivadoPhysCapnp
+  external_tools:
+  - vivado
+  - rapidwright
+  - fasm2bels
+
 - name: VivadoPhysNetlistCmp
   description: Reverse bitstream and compare to netlist
   module: vivado_phys_netlist_cmp
@@ -70,7 +79,6 @@ flows:
   - vivado
   - rapidwright
   - fasm2bels
-  - gmt_tools
 
 - name: VivadoBitToNetlist
   description: Reverse bitstream into a phys netlist
@@ -96,7 +104,7 @@ flows:
   class: RandSoc
   external_tools:
   - vivado
-  - gmt_tools
+  - rand_soc
 
 - name: RandSocDumped
   description: Dump random block design(s)
@@ -104,7 +112,7 @@ flows:
   class: RandSocDumped
   external_tools:
   - vivado
-  - gmt_tools
+  - rand_soc
 
 - name: VivadoWafove
   description: Verify netlist equivalence with Wafove

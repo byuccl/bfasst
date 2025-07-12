@@ -2,6 +2,7 @@
 Helpers and constants for netlist obfuscation/deobfuscation
 """
 
+<<<<<<< HEAD
 import random
 import logging
 from typing import List
@@ -90,12 +91,29 @@ SENTINEL_VALUES = {
 
 
 def get_masking_init(orig_init: str, lut_size: int) -> str:
+=======
+TAG_PROP = "OBF_TAG"
+
+# Strings to obfuscate LUTs
+# All are unique under rotation and inversion
+SENTINEL_VALUES = {
+    2: "4'hD",
+    3: "8'hCA",
+    4: "16'hC96A",
+    5: "32'hD7314A6E",
+    6: "64'hD7314A6E96B3C58A",
+}
+
+
+def get_masking_init(lut_size: int) -> str:
+>>>>>>> origin/retime
     """
     Return an INIT string from SENTINEL_VALUES
     """
     if lut_size not in SENTINEL_VALUES:
         raise ValueError(f"No parity mask for LUT{lut_size}")
     return SENTINEL_VALUES[lut_size]
+<<<<<<< HEAD
 
 
 # def get_masking_init(orig_init: str, lut_size: int) -> str:
@@ -113,3 +131,5 @@ def get_masking_init(orig_init: str, lut_size: int) -> str:
 #     width = 1 << lut_size  # 4,8,16,32,64
 #     # logging.info("Old INIT: %s; New INIT: %s", orig_init, f"{width:02d}'h{new_value:0{width//4}X}")
 #     return f"{width:02d}'h{new_value:0{width//4}X}"
+=======
+>>>>>>> origin/retime

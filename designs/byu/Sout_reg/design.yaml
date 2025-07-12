@@ -1,4 +1,4 @@
 top: Sout_reg
 clocks:
   - name: clk
-    period: 100
+    period:  1.159

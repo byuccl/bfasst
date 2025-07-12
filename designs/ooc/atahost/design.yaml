@@ -2,3 +2,6 @@ top: atahost
 top_architecture: structural
 
 include_all_vhdl_files: True
+clocks:
+  - name: wb_clk_i
+    period:  3.0

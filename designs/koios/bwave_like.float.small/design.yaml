@@ -1,1 +1,5 @@
 top: NPU
+
+clocks:
+  - name: clk
+    period:  12.0

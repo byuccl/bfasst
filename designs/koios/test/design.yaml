@@ -1,1 +1,5 @@
 top: top
+
+clocks:
+  - name: clk
+    period:  6.0
