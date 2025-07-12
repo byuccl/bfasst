@@ -6,16 +6,6 @@ Read timing_sumamry.txt from ClockCrank flow to update design.yaml with the
 new clock period.
 """
 
-<<<<<<< HEAD
-from argparse import ArgumentParser
-import re
-
-from bfasst.paths import DESIGNS_PATH
-from bfasst.paths import BUILD_PATH
-
-
-def update_clock(d: list[str]):
-=======
 import re
 from argparse import ArgumentParser
 
@@ -41,7 +31,6 @@ def get_clock_wns(timing_summary: str) -> tuple[float, float]:
 
 
 def update_clock(designs: list[str]):
->>>>>>> origin/retime
     """Update clock period based on timing_summary.txt."""
     for d in designs:
         src_dir = DESIGNS_PATH / d
@@ -53,24 +42,12 @@ def update_clock(designs: list[str]):
             continue
 
         # Extract clock period from timing summary
-<<<<<<< HEAD
-        clock_period = None
-        with open(timing_summary, "r") as f:
-            for line in f:
-                if line.strip().startswith("Requirement:"):
-                    line = line.strip().split()[1]
-                    clock_period = re.match(r"\d+\.?\d*|-?\.\d+", line)
-                    break
-=======
         clock_period, neg_slack = get_clock_wns(timing_summary)
->>>>>>> origin/retime
 
         if clock_period is None:
             print(f"No clock period found in timing summary for design {d}. Skipping update.")
             continue
 
-<<<<<<< HEAD
-=======
         clk = float(clock_period.group(0))
         if neg_slack is not None:
             neg_slack = float(neg_slack.group(0))
@@ -78,14 +55,10 @@ def update_clock(designs: list[str]):
                 neg_slack += 0.49
                 clk = clk + abs(neg_slack)
 
->>>>>>> origin/retime
         new_lines = []
         with open(design_config, "r") as f:
             for ln in f:
                 if "period" in ln:
-<<<<<<< HEAD
-                    new_lines.append(f"    period:  {clock_period.group(0)}\n")
-=======
                     fix = ln.find("include_all")
                     if fix != -1:
                         tmp = ln[:fix]
@@ -95,18 +68,13 @@ def update_clock(designs: list[str]):
                     if fix != -1:
                         new_lines.append("\n")
                         new_lines.append(fix)
->>>>>>> origin/retime
                 else:
                     new_lines.append(ln)
         with open(design_config, "w") as f:
             f.writelines(new_lines)
 
 
-<<<<<<< HEAD
-def init_clock(d: list[str], clock_name: str = "clk", period: int = 100):
-=======
 def init_clock(designs: list[str], clock_name: str = "clk", period: int = 100):
->>>>>>> origin/retime
     """Add defualt clock signal and period to design.yaml if not already defined."""
     for d in designs:
         src_dir = DESIGNS_PATH / d
@@ -141,18 +109,6 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-<<<<<<< HEAD
-    designs = []
-    with open(args.flow_file, "r") as f:
-        gen = (ln.strip() for ln in f if ln and ln.strip().startswith("-"))
-        designs = [ln.split(" ")[1] for ln in gen]
-
-    if args.init:
-        init_clock(designs)
-
-    if args.update:
-        update_clock(designs)
-=======
     design_list = []
     with open(args.flow_file, "r") as ff:
         gen = (ln.strip() for ln in ff if ln and ln.strip().startswith("-"))
@@ -163,4 +119,3 @@ if __name__ == "__main__":
 
     if args.update:
         update_clock(design_list)
->>>>>>> origin/retime

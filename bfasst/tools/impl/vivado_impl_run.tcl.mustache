@@ -2,11 +2,12 @@
 opt_design
 {{/opt_design}}
 
-place_design {{#read_iphys_opt_tcl}} -no_psip {{/read_iphys_opt_tcl}}
 {{#read_iphys_opt_tcl}}
 read_iphys_opt_tcl -placement_opt {{read_iphys_opt_tcl_file}}
 {{/read_iphys_opt_tcl}}
 
+place_design 
+# -no_timing_driven {{#read_iphys_opt_tcl}} -no_psip {{/read_iphys_opt_tcl}}
 write_iphys_opt_tcl -place {{outputs.write_iphys_opt_tcl_file}}
 write_checkpoint -force -file {{outputs.post_place_dcp}}
 
@@ -25,8 +26,9 @@ if {$slack >= 0} {
     create_clock -period $new_period -name $clock_name [get_ports $clock_port]
 }
 phys_opt_design
-report_phys_opt -file {{ outputs.phys_opt}}_postplace.rpt
+report_phys_opt -file {{ outputs.phys_opt }}_postplace.rpt
 write_iphys_opt_tcl -place {{ outputs.phys_opt }}_postplace.tcl
+write_checkpoint -force -file {{outputs.post_phys_opt_dcp}}
 {{/clocks}}
 {{/phys_opt_design}}
 
@@ -44,8 +46,7 @@ if {$slack >= 0} {
     create_clock -period $new_period -name $clock_name [get_ports $clock_port]
 }
 phys_opt_design -retime
-report_phys_opt -file {{ outputs.phys_opt}}_postroute.rpt
+report_phys_opt -file {{ outputs.phys_opt }}_postroute.rpt
 write_iphys_opt_tcl -place {{ outputs.phys_opt }}_postroute.tcl
 {{/clocks}}
 {{/phys_opt_design}}
-
