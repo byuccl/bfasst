@@ -115,6 +115,7 @@ class VivadoImpl(ImplTool):
         self.outputs["impl_dcp"] = self.build_path / "impl.dcp"
         self.outputs["post_place_dcp"] = self.build_path / "post_place.dcp"
         self.outputs["post_phys_opt_dcp"] = self.build_path / "post_phys_opt.dcp"
+        self.outputs["write_iphys_opt_tcl_file"] = self.build_path / "iphys_opt.tcl"
         self.outputs["phys_opt"] = self.build_path / "phys_opt"
         self.outputs["utilization"] = self.build_path / "utilization.txt"
         self.outputs["timing"] = self.build_path / "timing_summary.txt"

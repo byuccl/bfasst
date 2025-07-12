@@ -9,10 +9,6 @@ import logging
 import re
 from argparse import ArgumentParser
 from pathlib import Path
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/retime
 from bfasst import jpype_jvm
 from bfasst.utils.physcmp_data_types import ImplReports, PhyscmpException
 
@@ -46,11 +42,7 @@ def setup_logging(log_path: str, level_str: str):
 
 
 def compare_bitstreams(golden_path: Path, test_path: Path, ignore_bytes: int = 200) -> bool:
-<<<<<<< HEAD
     """Compare two bitstreams, ignoring the first ignore_bytes bytes."""
-=======
-    """Compare two bitstreams, ignoring the first `ignore_bytes` bytes."""
->>>>>>> origin/retime
     with open(golden_path, "rb") as f1, open(test_path, "rb") as f2:
         golden_data = f1.read()
         test_data = f2.read()
@@ -62,11 +54,7 @@ def compare_bitstreams(golden_path: Path, test_path: Path, ignore_bytes: int = 2
         return True
 
     differences = 0
-<<<<<<< HEAD
     # We skip the first bytes because it's just a header and timestamps mess up the comparison
-=======
-    # We skip the first bytes because that's just a header and timestamps mess up the comparison
->>>>>>> origin/retime
     for i in range(ignore_bytes, len(golden_data)):
         if golden_data[i] != test_data[i]:
             logging.debug(
@@ -88,7 +76,6 @@ def compare_bitstreams(golden_path: Path, test_path: Path, ignore_bytes: int = 2
     return False
 
 
-<<<<<<< HEAD
 def _capture_report_lines(comparator):
     """Run printDiffReport and return the list of lines."""
     baos, ps = ByteArrayOutputStream(), PrintStream(ByteArrayOutputStream())
@@ -132,27 +119,6 @@ def log_netlist_diffs(netlist_comparator):
         for diff in diff_list:
             property_key = diff.getPropertyKey()
             key_str = property_key if property_key is not None else ""
-=======
-def compare_cells(d1: Design, d2: Design) -> int:
-    """
-    Compare all cells between two designs
-    Really just to help see where INIT values differ
-    """
-    diffs = 0
-
-    cells_a = {cell.getName(): cell for cell in d1.getCells()}
-    cells_b = {cell.getName(): cell for cell in d2.getCells()}
-
-    common_names = set(cells_a.keys()) & set(cells_b.keys())
-    for name in common_names:
-        cell_a = cells_a[name]
-        cell_b = cells_b[name]
-
-        if cell_a.getProperty("INIT") != cell_b.getProperty("INIT"):
-            if diffs < 10:
-                logging.debug("INIT values differ for %s", name)
-            diffs += 1
->>>>>>> origin/retime
 
             if any(skip_str in key_str for skip_str in skip_substrings):
                 skipped += 1
@@ -174,7 +140,6 @@ def compare_cells(d1: Design, d2: Design) -> int:
     return count
 
 
-<<<<<<< HEAD
 def log_layout_diffs(design_comparator):
     diff_map = design_comparator.getDiffMap()
     logging.info(_capture_report_lines(design_comparator))
@@ -187,51 +152,6 @@ def compare_all(golden, test, log_path: str, log_level: str):
     compare placement / routing
     compare EDIF netlists
     compare bitstreams
-=======
-def log_diff_summary(layout_comparator, netlist_comparator, layout_lines=30, netlist_lines=50):
-    """
-    Function to log all the differences found by the RW design and netlist comparators
-    """
-    # Layout comparator output
-    layout_baos = ByteArrayOutputStream()
-    layout_ps = PrintStream(layout_baos)
-    layout_comparator.printDiffReport(layout_ps)
-    layout_ps.flush()
-    layout_report_str = str(layout_baos.toString())
-    layout_report_lines = layout_report_str.splitlines()
-    truncated_layout = "\n".join(layout_report_lines[:layout_lines])
-    if len(layout_report_lines) > layout_lines:
-        truncated_layout += f"\n... (truncated, total {len(layout_report_lines)} lines)"
-
-    # Netlist comparator output
-    netlist_baos = ByteArrayOutputStream()
-    netlist_ps = PrintStream(netlist_baos)
-    netlist_comparator.printDiffReport(netlist_ps)
-    netlist_ps.flush()
-    netlist_report_str = str(netlist_baos.toString())
-    netlist_report_lines = netlist_report_str.splitlines()
-    truncated_netlist = "\n".join(netlist_report_lines[:netlist_lines])
-    if len(netlist_report_lines) > netlist_lines:
-        truncated_netlist += f"\n... (truncated, total {len(netlist_report_lines)} lines)"
-
-    # Combine and log
-    logging.info("Layout diff report (first %d lines):\n%s", layout_lines, truncated_layout)
-    logging.info("Netlist diff report (first %d lines):\n%s", netlist_lines, truncated_netlist)
-
-
-def compare_all(
-    golden: ImplReports,
-    test: ImplReports,
-    log_path: str,
-    log_level: str,
-):
-    """
-    1) setup logging
-    2) read checkpoints
-    3) design comparison
-    4) netlist comparison
-    5) bitstream comparison
->>>>>>> origin/retime
     """
 
     setup_logging(log_path, log_level)
@@ -240,7 +160,6 @@ def compare_all(
     d1 = Design.readCheckpoint(golden.dcp, golden.edf)
     d2 = Design.readCheckpoint(test.dcp, test.edf)
 
-<<<<<<< HEAD
     layout_cmp = DesignComparator()
     layout_cmp.setComparePlacement(True)
     layout_cmp.setComparePIPs(True)
@@ -264,31 +183,6 @@ def compare_all(
         # raise PhyscmpException
     else:
         logging.info("\033[32mNo differences found in bitstream comparison.\033[0m")
-=======
-    layout_comparator = DesignComparator()
-    layout_comparator.setComparePlacement(True)
-    layout_comparator.setComparePIPs(True)
-    layout_comparator.setComparePIPFlags(True)
-    num_diffs = layout_comparator.compareDesigns(d1, d2)
-
-    netlist_comparator = EDIFNetlistComparator()
-    netlist1 = d1.getNetlist()
-    netlist2 = d2.getNetlist()
-    num_diffs += netlist_comparator.compareNetlists(netlist1, netlist2)
-
-    num_diffs += compare_cells(d1, d2)
-
-    logging.info("Total layout/logic differences between designs: %d", num_diffs)
-    log_diff_summary(layout_comparator, netlist_comparator)
-
-    logging.info("Comparing bitstreams...")
-    bitstream_diff = compare_bitstreams(golden.bitstream, test.bitstream)
-    if bitstream_diff:
-        logging.error("\033[31mFound differences in bitstream comparison.\033[0m")
-        raise PhyscmpException
-
-    logging.info("\033[32mNo differences found in bitstream comparison.\033[0m")
->>>>>>> origin/retime
 
 
 if __name__ == "__main__":

@@ -235,10 +235,7 @@ def find_inversion_roots(netlist, json_db) -> list[str]:
                         SENTINEL_VALUES[lut_size], cur_init
                     ):
                         roots.append(hname)
-<<<<<<< HEAD
                         logging.debug("Found inversion root")
-=======
->>>>>>> origin/retime
                 else:
                     base_init = next(
                         (
@@ -261,20 +258,14 @@ def restore_properties_for_cell(cell, entry: dict, hname: str, inversion_roots: 
         val = item["value"]
         typ = EDIFValueType.valueOf(item.get("type"))
 
-<<<<<<< HEAD
         if key == "INIT":
             if hname in inversion_roots:
                 val = invert_init_literal(val)
             val = re.sub(r"(h)([0-9a-fA-F]+)", lambda m: m.group(1) + m.group(2).upper(), val)
-=======
-        if key == "INIT" and hname in inversion_roots:
-            val = invert_init_literal(val)
->>>>>>> origin/retime
 
         cell.addProperty(key, val, typ)
 
 
-<<<<<<< HEAD
 def init_literal_to_bits(init_literal: str, width_bits: int) -> list[int]:
     """Return a list of bit-values (LSB first) for the given INIT literal."""
     bits = int(str(init_literal).split("'h")[1], 16)
@@ -357,11 +348,6 @@ def restore_all_properties(design: Design, json_db: dict[str, dict], inversion_r
     Restores all properties to the cells in a design based on json_db.
     Added logic: if hname ends with "_comp", derive its INIT from the
     non-_comp twin's INIT using derive_comp_init().
-=======
-def restore_all_properties(design: Design, json_db: dict[str, dict], inversion_roots: set):
-    """
-    Restores all properties to the cells in a design based on json_db
->>>>>>> origin/retime
     """
     netlist = design.getNetlist()
     hier_map = EDIFTools.createCellInstanceMap(netlist)
@@ -371,7 +357,6 @@ def restore_all_properties(design: Design, json_db: dict[str, dict], inversion_r
             for h_inst in inst_list:
                 hname = h_inst.getFullHierarchicalInstName()
                 entry = json_db.get(hname)
-<<<<<<< HEAD
 
                 # Fallback #1 – tag matching
                 if entry is None:
@@ -403,11 +388,6 @@ def restore_all_properties(design: Design, json_db: dict[str, dict], inversion_r
                     logging.warning("No tag or _comp twin for %s; skipping", hname)
                     continue
                 
-=======
-                if entry is None:
-                    logging.warning("Hierarchical name %s not found in JSON file", hname)
-                    continue
->>>>>>> origin/retime
                 restore_properties_for_cell(h_inst.getInst(), entry, hname, inversion_roots)
 
 
@@ -422,13 +402,8 @@ def apply_properties(design: Design, json_db: dict[str, dict]):
 
     restore_all_properties(design, json_db, inversion_roots)
 
-<<<<<<< HEAD
     # flips = propagate_inversions(design, inversion_roots)
     # logging.info("Propagated inversions across %d tagged LUTs", flips)
-=======
-    flips = propagate_inversions(design, inversion_roots)
-    logging.info("Propagated inversions across %d tagged LUTs", flips)
->>>>>>> origin/retime
 
 
 def main():

@@ -27,7 +27,6 @@ class ImplObfuscate(Flow):
     def __init__(self, design):
         super().__init__(design)
 
-<<<<<<< HEAD
         self.synth_opts = {"synth_design": "-flatten_hierarchy full"}
         # self.synth_opts = {"synth_design": ""}
         self.vivado_synth = VivadoSynth(
@@ -36,12 +35,6 @@ class ImplObfuscate(Flow):
         parser = DesignParser(self.design_path / "design.yaml")
         if parser.clocks is None:
             print("Warning: No clocks found in yaml file")
-=======
-        self.synth_opts = {"synth_design": ""}
-        self.vivado_synth = VivadoSynth(
-            self, design, opt_design=True, synth_options=self.synth_opts
-        )
->>>>>>> origin/retime
 
         self.netlist_obfuscate = NetlistObfuscate(
             self,
@@ -54,18 +47,6 @@ class ImplObfuscate(Flow):
             log_file="netlist_obfuscate.log",
         )
 
-<<<<<<< HEAD
-=======
-        self.impl_orig = VivadoImpl(
-            self,
-            design,
-            synth_edf=self.netlist_obfuscate.outputs["untransformed_synth_edf"],
-            opt_design=False,
-            phys_opt_design=True,
-            constraints_files=self.vivado_synth.outputs["synth_constraints"],
-        )
-
->>>>>>> origin/retime
         self.impl_transform = VivadoImpl(
             self,
             design,
@@ -73,7 +54,6 @@ class ImplObfuscate(Flow):
             build_path="vivado_reimpl",
             opt_design=False,
             phys_opt_design=True,
-<<<<<<< HEAD
             constraints_files=self.vivado_synth.outputs["synth_constraints"],
         )
 
@@ -84,8 +64,6 @@ class ImplObfuscate(Flow):
             opt_design=False,
             phys_opt_design=True,
             read_iphys_opt_tcl_file=self.impl_transform.outputs["write_iphys_opt_tcl_file"],
-=======
->>>>>>> origin/retime
             constraints_files=self.vivado_synth.outputs["synth_constraints"],
         )
 
