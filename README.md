@@ -12,8 +12,6 @@ Example designs are located in the `designs/` directory.
 Before running any bfasst flows, always make sure you have activated the BFASST environment:
 ```. .venv/bin/activate``` (ran in the bfasst root directory).
 
-Also, make sure to run `source ~/.bashrc` after installation
-
 To run bfasst, use `run_flow` as follows:
 
 ```
@@ -44,7 +42,6 @@ Note that if a yaml file is specified, neither a design nor flow should be speci
 ### Install BFASST
 * Install the Python virtual environment, activate, and install packages:
   * `make install`
-  * Remember to restart your terminal or run `source ~/.bashrc` so autocompletion works correctly
 
 ## Tools
 BFASST can be used to compose different CAD flows from severals tools.  These tools are installed with BFASST.
