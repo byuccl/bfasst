@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# scripts/setup_autocomplete.sh
 
 REPO_ROOT="$(cd -- "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 VENV_ACTIVATE="$REPO_ROOT/.venv/bin/activate"
