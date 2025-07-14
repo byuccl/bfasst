@@ -23,7 +23,7 @@ cat >"$AUTOCOMP_SCRIPT" <<EOF
 RUN_PY="$RUN_PY"
 PY="$VENV_PYTHON"
 
-flow_run() { "$(command -v python)" "$RUN_PY" "$@"; }
+flow_run() { "\$PY" "\$RUN_PY" "\$@"; }
 
 _bfasst_ac() {
     local cur
@@ -54,4 +54,3 @@ add_if_missing ""
 add_if_missing "source ~/.bfasst_autocomplete.sh"
 
 echo "Autocomplete installed.  Run 'source ~/.bashrc' or open a new shell."
-
