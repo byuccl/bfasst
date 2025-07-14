@@ -6,8 +6,7 @@ opt_design
 read_iphys_opt_tcl -placement_opt {{read_iphys_opt_tcl_file}}
 {{/read_iphys_opt_tcl}}
 
-place_design 
-# -no_timing_driven {{#read_iphys_opt_tcl}} -no_psip {{/read_iphys_opt_tcl}}
+place_design -no_timing_driven {{#read_iphys_opt_tcl}} -no_psip {{/read_iphys_opt_tcl}}
 write_iphys_opt_tcl -place {{outputs.write_iphys_opt_tcl_file}}
 write_checkpoint -force -file {{outputs.post_place_dcp}}
 
