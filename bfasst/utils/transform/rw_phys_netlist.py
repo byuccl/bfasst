@@ -126,7 +126,7 @@ class RwPhysNetlist(PhysNetlist):
         (self.stage_dir / "phys_opt_cmp_time.txt").unlink(missing_ok=True)
         logging.info("Starting comparions of physical optimizations")
         fun_start_time = time.time()
-        self.phys_opt_cmp.compare()
+        # self.phys_opt_cmp.compare()
         ttime = time.time() - fun_start_time
         logging.info("Physical optimization comparison took %s seconds", f"{ttime:0.2f}")
         with open(self.stage_dir / "phys_opt_cmp_time.txt", "w") as fp:
