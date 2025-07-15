@@ -14,7 +14,7 @@ PUBLIC_SUBMODULES = \
 
 include external_tools.mk
 
-install: submodules venv install_cmake python_packages install_rapidwright env install_fasm2bels install_yosys install_wafove
+install: submodules venv install_cmake python_packages install_rapidwright env install_fasm2bels install_yosys install_wafove setup_autocomplete
 
 venv:
 ifneq "$(PYTHON312)" ""
@@ -71,3 +71,6 @@ unittest:
 
 unittest_failfast:
 	$(IN_ENV) python -m unittest -f
+
+setup_autocomplete:
+	./scripts/setup_autocomplete.sh 

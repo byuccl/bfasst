@@ -13,6 +13,11 @@ from bfasst.yaml_parser import FlowDescriptionParser, RunParser
 
 DEFAULT_PROCS = 6  # Save some for Vivado
 
+# Used for tab completion
+if "--list-flows" in sys.argv:
+    print(" ".join(FlowDescriptionParser().get_flow_names()))
+    sys.exit(0)
+
 
 class ApplicationRunner:
     """Runs a given flow on one or more designs using Ninja."""
