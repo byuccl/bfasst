@@ -1,6 +1,7 @@
 """Manage installation of external tools"""
 
 import argparse
+import os
 import socket
 import subprocess
 import sys
@@ -63,9 +64,11 @@ def check_conformal():
 
 
 def check_rapidwright():
-    return (RAPIDWRIGHT_PATH / "build" / "libs" / "rapidwright.jar").is_file() and (
-        RAPIDWRIGHT_PATH / "interchange" / "schema" / "capnp" / "java.capnp"
-    ).is_file()
+    return (
+        (RAPIDWRIGHT_PATH / "build" / "libs" / "rapidwright.jar").is_file()
+        and (RAPIDWRIGHT_PATH / "interchange" / "schema" / "capnp" / "java.capnp").is_file()
+        and os.environ.get("INTERCHANGE_SCHEMA_PATH") is not None
+    )
 
 
 def check_yosys():
