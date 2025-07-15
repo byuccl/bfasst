@@ -53,7 +53,7 @@ class ImplObfuscate(Flow):
             synth_edf=self.netlist_obfuscate.outputs["transformed_synth_edf"],
             build_path="vivado_reimpl",
             opt_design=False,
-            phys_opt_design=False,
+            phys_opt_design=True,
             constraints_files=self.vivado_synth.outputs["synth_constraints"],
         )
 
@@ -63,7 +63,12 @@ class ImplObfuscate(Flow):
             synth_edf=self.netlist_obfuscate.outputs["untransformed_synth_edf"],
             opt_design=False,
             phys_opt_design=False,
-            read_iphys_opt_tcl_file=self.impl_transform.outputs["write_iphys_opt_tcl_file"],
+            place_opt_tcl_file=self.impl_transform.outputs["phys_opt"].with_name(
+                self.impl_transform.outputs["phys_opt"].name + "_first.tcl"
+            ),
+            phys_opt_tcl_file=self.impl_transform.outputs["phys_opt"].with_name(
+                self.impl_transform.outputs["phys_opt"].name + "_postplace.tcl"
+            ),
             constraints_files=self.vivado_synth.outputs["synth_constraints"],
         )
 

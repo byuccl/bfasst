@@ -19,7 +19,8 @@ class VivadoImpl(ImplTool):
         build_path=None,
         opt_design=True,
         phys_opt_design=False,
-        read_iphys_opt_tcl_file=None,
+        place_opt_tcl_file=None,
+        phys_opt_tcl_file=None,
         constraints_files="",
         ooc=False,
         impl_options="",
@@ -44,8 +45,11 @@ class VivadoImpl(ImplTool):
         self.opt_design = opt_design
         self.phys_opt_design = phys_opt_design
 
-        self.read_iphys_opt_tcl_file = str(read_iphys_opt_tcl_file)
-        self.read_iphys_opt_tcl = True if read_iphys_opt_tcl_file is not None else False
+        self.place_opt_tcl_file = str(place_opt_tcl_file)
+        self.place_opt_tcl = True if place_opt_tcl_file is not None else False
+    
+        self.phys_opt_tcl_file = str(phys_opt_tcl_file)
+        self.phys_opt_tcl = True if phys_opt_tcl_file is not None else False
 
         self._init_outputs()
         self.inputs_str = {"xdc": self.constraints_file, "synth_edf": str(self.synth_edf)}
@@ -65,8 +69,10 @@ class VivadoImpl(ImplTool):
             "outputs": self.outputs_str,
             "opt_design": self.opt_design,
             "phys_opt_design": self.phys_opt_design,
-            "read_iphys_opt_tcl": self.read_iphys_opt_tcl,
-            "read_iphys_opt_tcl_file": self.read_iphys_opt_tcl_file,
+            "place_opt_tcl": self.place_opt_tcl,
+            "place_opt_tcl_file": self.place_opt_tcl_file,
+            "phys_opt_tcl": self.phys_opt_tcl,
+            "phys_opt_tcl_file": self.phys_opt_tcl_file,
             "tcl_sources": [
                 self.outputs_str["setup_tcl"],
                 self.outputs_str["impl_tcl"],

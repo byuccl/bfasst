@@ -2,13 +2,21 @@
 opt_design
 {{/opt_design}}
 
-{{#read_iphys_opt_tcl}}
-read_iphys_opt_tcl -placement_opt {{read_iphys_opt_tcl_file}}
-{{/read_iphys_opt_tcl}}
+{{#place_opt_tcl}}
+read_iphys_opt_tcl {{place_opt_tcl_file}}
+{{/place_opt_tcl}}
 
-place_design -no_timing_driven {{#read_iphys_opt_tcl}} -no_psip {{/read_iphys_opt_tcl}}
-write_iphys_opt_tcl -place {{outputs.write_iphys_opt_tcl_file}}
+place_design -no_timing_driven {{#place_opt_tcl}} -no_psip {{/place_opt_tcl}}
+write_iphys_opt_tcl -place {{outputs.phys_opt}}_first.tcl
 write_checkpoint -force -file {{outputs.post_place_dcp}}
+write_edif -force -file {{outputs.post_place_dcp}}.edf
+
+{{#phys_opt_tcl}}
+read_iphys_opt_tcl {{phys_opt_tcl_file}}
+{{/phys_opt_tcl}}
+
+write_checkpoint -force -file {{outputs.post_phys_opt_dcp}}_iphys.dcp
+write_edif -force -file {{outputs.post_phys_opt_dcp}}_iphys.edf
 
 {{#phys_opt_design}}
 {{#clocks}}
@@ -27,9 +35,10 @@ if {$slack >= 0} {
 phys_opt_design
 report_phys_opt -file {{ outputs.phys_opt }}_postplace.rpt
 write_iphys_opt_tcl -place {{ outputs.phys_opt }}_postplace.tcl
-write_checkpoint -force -file {{outputs.post_phys_opt_dcp}}
 {{/clocks}}
 {{/phys_opt_design}}
+write_checkpoint -force -file {{outputs.post_phys_opt_dcp}}
+write_edif -force -file {{outputs.post_phys_opt_dcp}}.edf
 
 route_design
 
