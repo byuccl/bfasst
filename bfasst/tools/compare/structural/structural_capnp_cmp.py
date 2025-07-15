@@ -17,6 +17,7 @@ from bfasst.utils import compare_json
 class StructuralCapnpCmp(Tool):
     """Create rule and build snippets for phys netlist creation."""
 
+    # pylint: disable=too-many-positional-arguments
     def __init__(
         self,
         flow,
@@ -51,6 +52,8 @@ class StructuralCapnpCmp(Tool):
             "phys_capnp": self.phys_capnp,
             "edf_capnp": self.edf_capnp,
         }
+
+    # pylint: enable=too-many-positional-arguments
 
     def create_build_snippets(self):
         self.__write_json_file()

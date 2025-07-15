@@ -12,6 +12,7 @@ from bfasst.utils import json_write_if_changed
 class PhysNetlist(Tool):
     """Create rule and build snippets for phys netlist creation."""
 
+    # pylint: disable=too-many-positional-arguments
     def __init__(
         self,
         flow,
@@ -35,6 +36,8 @@ class PhysNetlist(Tool):
 
         self._init_outputs()
         self.rule_snippet_path = NINJA_TRANSFORM_TOOLS_PATH / "phys_netlist_rules.ninja.mustache"
+
+    # pylint: enable=too-many-positional-arguments
 
     def create_build_snippets(self):
         self.__write_json_file()

@@ -3,7 +3,6 @@ Init Constants for Physical Netlist object
 """
 
 import logging
-from pathlib import Path
 
 from bfasst import jpype_jvm
 from bfasst.config import PART
