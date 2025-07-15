@@ -53,7 +53,7 @@ class VivadoImpl(ImplTool):
             self.outputs_str["reports_tcl"],
         ]
         if self.design_props is not None and hasattr(self.design_props, "pre_impl_tcl"):
-            tcl_sources.insert(1, str(design / self.design_props.pre_impl_tcl))
+            tcl_sources.insert(1, str(design / getattr(self.design_props, "pre_impl_tcl")))
         self.impl_build = {
             "part": self.flow.part,
             "impl_output": str(self.build_path),
