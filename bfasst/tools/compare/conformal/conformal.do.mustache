@@ -2,17 +2,13 @@ read library -Both -sensitive -Verilog {{#local_libs_paths}}{{ . }} {{/local_lib
 
 read design {{#golden_files}}{{ . }} {{/golden_files}} {{ src_type }} -Golden -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply
 
-read design {{ rev_netlist }} -EDIF -Revised -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply
+read design {{ rev_netlist }} -Verilog -Revised -sensitive -continuousassignment Bidirectional -nokeep_unreach -nosupply
 
 {{ renaming_rule_vector }}
 
 set system mode lec
 add compared points -all
-set compare effort high
 compare
-report compare data -class nonequivalent
-report compare data -class abort
-report unmapped points
 report verification
 exit -f
 

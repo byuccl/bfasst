@@ -160,7 +160,7 @@ def classify_and_obfuscate(inst, ref_type, counts) -> tuple[bool, dict, str]:
                 "FDPE",
             ]
         ):
-            changed, mods = False, None # obfuscate_all(inst, None, counts)
+            changed, mods = obfuscate_all(inst, None, counts)
 
     if changed:
         tag = add_tag(inst)

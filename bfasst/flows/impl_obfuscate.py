@@ -62,15 +62,33 @@ class ImplObfuscate(Flow):
             design,
             synth_edf=self.netlist_obfuscate.outputs["untransformed_synth_edf"],
             opt_design=False,
-            phys_opt_design=False,
-            place_opt_tcl_file=self.impl_transform.outputs["phys_opt"].with_name(
-                self.impl_transform.outputs["phys_opt"].name + "_first.tcl"
-            ),
-            phys_opt_tcl_file=self.impl_transform.outputs["phys_opt"].with_name(
-                self.impl_transform.outputs["phys_opt"].name + "_postplace.tcl"
-            ),
+            phys_opt_design=True,
             constraints_files=self.vivado_synth.outputs["synth_constraints"],
         )
+
+        self.impl_transform.outputs["clock_crank_tcl"] = (
+            self.impl_transform.build_path / "clock_crank.tcl"
+        )
+        self.impl_transform.outputs_str["clock_crank_tcl"] = str(
+            self.impl_transform.outputs["clock_crank_tcl"]
+        )
+        self.impl_transform.impl_build["tcl_sources"] = [
+            self.impl_transform.outputs_str["setup_tcl"],
+            self.impl_transform.outputs_str["clock_crank_tcl"],
+            self.impl_transform.outputs_str["reports_tcl"],
+        ]
+
+        self.impl_orig.outputs["clock_crank_tcl"] = (
+            self.impl_orig.build_path / "clock_crank.tcl"
+        )
+        self.impl_orig.outputs_str["clock_crank_tcl"] = str(
+            self.impl_orig.outputs["clock_crank_tcl"]
+        )
+        self.impl_orig.impl_build["tcl_sources"] = [
+            self.impl_orig.outputs_str["setup_tcl"],
+            self.impl_orig.outputs_str["clock_crank_tcl"],
+            self.impl_orig.outputs_str["reports_tcl"],
+        ]
 
         self.netlist_deobfuscate = NetlistDeobfuscate(
             self,

@@ -1,27 +1,45 @@
-{{#clocks}}
-if {[info exists clock_name]} {error "Too many clocks in design for clock crank. Designed for one clock only."}
-set period {{period}}
-set clock_port {{ name }}
-set clock_name {{ name }}_gen
-{{/clocks}}
+{{#opt_design}}
+opt_design
+{{/opt_design}}
+place_design
 set slack [get_property SLACK [lindex [get_timing_paths] 0]]
-if {[catch {set new_period [expr $period - ceil($slack)]}]} {
+if {[catch {
+        if {$slack >= 0} {
+            set new_period [expr $period - $slack - 0.45]
+        } elseif {$slack < -0.5} {
+            set new_period [expr $period - $slack - 0.45]
+        }
+    } ] } {
     set slack [get_property DATAPATH_DELAY [lindex [get_timing_paths] 0]]
     set new_period [expr ceil($slack)]
 }
 create_clock -period $new_period -name $clock_name [get_ports $clock_port]
 while {1} {
     if { [ catch {
-        place_design
         phys_opt_design
-        route_design
         set slack [get_property SLACK [lindex [get_timing_paths] 0]]
         if {$slack < 0} {break}
-        if {$slack == 0} {set slack 1}
-        set new_period [expr $new_period - ceil($slack)]
-        puts "New period: $new_period"
+        set new_period [expr $new_period - $slack - 0.45]
         create_clock -period $new_period -name $clock_name [get_ports $clock_port]
+        puts "New period: $new_period"
     } ] } {
         break
     }
+} 
+route_design
+set slack [get_property SLACK [lindex [get_timing_paths] 0]]
+while {1} {
+    # adjust clock period so 0.0. > slack > -0.2, see UG904 pg. 97, Annotated *IMPORTANT
+    if {$slack >= 0} {
+        set new_period [expr $period - $slack - 0.15]
+        create_clock -period $new_period -name $clock_name [get_ports $clock_port]
+        puts "New period: $new_period"
+    } elseif {$slack < -0.2} {
+        set new_period [expr $period - $slack - 0.15]
+        create_clock -period $new_period -name $clock_name [get_ports $clock_port]
+        puts "New period: $new_period"
+    }
+    phys_opt_design -directive AddRetime
+    set slack [get_property SLACK [lindex [get_timing_paths] 0]]
+    if {$slack < 0 } {break}
 }

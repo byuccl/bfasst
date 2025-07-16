@@ -35,7 +35,6 @@ class ClockCrank(Flow):
         )
         self.vivado_impl_tool.impl_build["tcl_sources"] = [
             self.vivado_impl_tool.outputs_str["setup_tcl"],
-            self.vivado_impl_tool.outputs_str["impl_tcl"],
             self.vivado_impl_tool.outputs_str["clock_crank_tcl"],
             self.vivado_impl_tool.outputs_str["reports_tcl"],
         ]

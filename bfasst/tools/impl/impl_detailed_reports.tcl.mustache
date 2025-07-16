@@ -1,5 +1,13 @@
 open_checkpoint {{ impl_dcp }}
 
+foreach clk [get_clocks *] {
+    set src_ports [get_ports -of [get_clocks $clk]]
+    foreach port $src_ports {
+        # Override clock by redefining it with a fixed period
+        create_clock -name fixed_$clk -period 10.0 [get_ports $port]
+    }
+}
+
 report_timing_summary -file {{ outputs.timing_summary }}
 report_timing -setup -max_paths 1000 -sort_by group -path_type full -file {{ outputs.setup_timing }}
 report_timing -hold -max_paths 1000 -sort_by group -path_type full -file {{ outputs.hold_timing }}

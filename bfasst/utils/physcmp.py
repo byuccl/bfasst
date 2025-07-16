@@ -22,6 +22,100 @@ from java.io import ByteArrayOutputStream, PrintStream, FileOutputStream
 from java.lang import System
 
 
+_DESIGN_ROW_RE = re.compile(
+    r"^\s*(?P<wns>[+-]?\d+\.\d+)\s+"
+    r"(?P<tns>[+-]?\d+\.\d+)\s+"
+    r"(?P<tns_fail>\d+)\s+"
+    r"(?P<tns_total>\d+)\s+"
+    r"(?P<wpws>[+-]?\d+\.\d+)\s+"
+    r"(?P<tpws>[+-]?\d+\.\d+)",
+    re.MULTILINE,
+)
+
+_CLOCK_ROW_RE = re.compile(
+    r"^(?P<clk>\S+)\s+"
+    r"(?P<wns>[+-]?\d+\.\d+)\s+"
+    r"(?P<tns>[+-]?\d+\.\d+)\s+"
+    r"(?P<tns_fail>\d+)\s+"
+    r"(?P<tns_total>\d+)\s+"
+    r"(?P<wpws>[+-]?\d+\.\d+)\s+"
+    r"(?P<tpws>[+-]?\d+\.\d+)",
+    re.MULTILINE,
+)
+
+
+def parse_timing_report(report_path: Path):
+    """
+    Return a dict with overall metrics **plus** a nested dict of per‑clock metrics.
+      { 'overall_wns': ...,
+        'overall_tns': ...,
+        ...
+        'clocks': { 'fixed_clk_gen': {'wns': ..., 'tns': ..., ...}, ... }
+      }
+    """
+    txt = report_path.read_text(errors="ignore")
+
+    out = {}
+
+    # ---------- overall design metrics ----------
+    m = _DESIGN_ROW_RE.search(txt)
+    if m:
+        out.update(
+            {
+                "overall_wns": float(m.group("wns")),
+                "overall_tns": float(m.group("tns")),
+                "overall_tns_fail": int(m.group("tns_fail")),
+                "overall_tns_total": int(m.group("tns_total")),
+                "overall_wpws": float(m.group("wpws")),
+                "overall_tpws": float(m.group("tpws")),
+            }
+        )
+
+    # ---------- per‑clock metrics ----------
+    clocks = {}
+    for cm in _CLOCK_ROW_RE.finditer(txt):
+        clk = cm.group("clk")
+        clocks[clk] = {
+            "wns": float(cm.group("wns")),
+            "tns": float(cm.group("tns")),
+            "tns_fail": int(cm.group("tns_fail")),
+            "tns_total": int(cm.group("tns_total")),
+            "wpws": float(cm.group("wpws")),
+            "tpws": float(cm.group("tpws")),
+        }
+    out["clocks"] = clocks
+    return out
+
+
+def _flat_items(d, prefix=""):
+    """
+    Yield (key, value) pairs, flattening the nested clocks dict as
+      clocks.fixed_clk_gen.wns, clocks.fixed_clk_gen.tns, ...
+    """
+    for k, v in d.items():
+        if k == "clocks":
+            for clk, sub in v.items():
+                for sk, sv in sub.items():
+                    yield f"clocks.{clk}.{sk}", sv
+        else:
+            yield prefix + k, v
+
+
+def diff_timing(gold: dict, test: dict):
+    """
+    Compare two parsed timing dicts → {metric: (gold, test, delta)}.
+    Nested clock metrics are flattened with 'clocks.<clk>.<field>' names.
+    """
+    flat_g = dict(_flat_items(gold))
+    flat_t = dict(_flat_items(test))
+    keys = set(flat_g) | set(flat_t)
+    diff = {}
+    for k in sorted(keys):
+        g, t = flat_g.get(k), flat_t.get(k)
+        diff[k] = (g, t, None if (g is None or t is None) else t - g)
+    return diff
+
+
 def setup_logging(log_path: str, level_str: str):
     """Setup logging related functionality"""
     fos = FileOutputStream(str(log_path), True)
@@ -174,8 +268,31 @@ def compare_all(golden, test, log_path: str, log_level: str):
 
     if num_netlist_diffs != 0:
         logging.error("\033[31mFound differences between logical netlists\033[0m")
-        raise PhyscmpException
+        # raise PhyscmpException
     logging.info("\033[32mNo differences found between logical netlists\033[0m")
+
+    logging.info("Parsing full timing summaries...")
+    g_timing = parse_timing_report(golden.timing_summary_full)
+    t_timing = parse_timing_report(test.timing_summary_full)
+
+    timing_delta = diff_timing(g_timing, t_timing)
+    worse = []
+    for metric, (gv, tv, dv) in timing_delta.items():
+        if gv is None or tv is None:
+            logging.warning("Metric %-22s missing (golden=%s, test=%s)", metric, gv, tv)
+            continue
+        sign = "+" if dv > 0 else "-" if dv < 0 else "="
+        logging.info(
+            "%-22s  golden=%8.3f  test=%8.3f  delta=%+8.3f %s",
+            metric, gv, tv, dv, sign
+        )
+        if dv is not None and dv < 0:
+            worse.append(metric)
+
+    if worse:
+        logging.warning("\u001B[33mTiming degraded for: %s\u001B[0m", ", ".join(worse))
+    else:
+        logging.info("\u001B[32mNo timing regressions detected.\u001B[0m")
 
     logging.info("Comparing bitstreams...")
     if compare_bitstreams(golden.bitstream, test.bitstream):

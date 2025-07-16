@@ -1,0 +1,13 @@
+design,metric,delta,golden,test
+byu/riscv_final,clocks.fixed_clk_gen.tns,-53.454,0.0,-53.454
+byu/riscv_final,clocks.fixed_clk_gen.tns_fail,55.0,0.0,55.0
+byu/riscv_final,clocks.fixed_clk_gen.tns_total,-4.0,2633.0,2629.0
+byu/riscv_final,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
+byu/riscv_final,clocks.fixed_clk_gen.wns,-2.92,0.414,-2.506
+byu/riscv_final,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
+byu/riscv_final,overall_tns,-53.454,0.0,-53.454
+byu/riscv_final,overall_tns_fail,55.0,0.0,55.0
+byu/riscv_final,overall_tns_total,-4.0,2633.0,2629.0
+byu/riscv_final,overall_tpws,0.0,0.0,0.0
+byu/riscv_final,overall_wns,-2.92,0.414,-2.506
+byu/riscv_final,overall_wpws,0.0,4.5,4.5
