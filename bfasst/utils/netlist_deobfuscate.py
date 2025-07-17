@@ -99,13 +99,13 @@ def derive_comp_init(parent_entry: dict, comp_cell) -> str | None:
 
     if parent_bits == bits_needed:
         new_lit = format_init(bits_needed, parent_val)
-        logging.info("derive_comp_init: %s width match %d bits.", comp_cell.getName(), bits_needed)
+        logging.info("derive_comp_init: %s widths match %d bits.", comp_cell.getName(), bits_needed)
         return new_lit
 
     if parent_bits > bits_needed:
         # Keep LSBs (Vivado bit0 aligns with lowest address)
         new_val = parent_val & ((1 << bits_needed) - 1)
-        logging.info("derive_comp_init: %s trunc %d->%d bits.", comp_cell.getName(),
+        logging.info("derive_comp_init: %s truncated %d->%d bits.", comp_cell.getName(),
                      parent_bits, bits_needed)
     else:
         tile = (bits_needed + parent_bits - 1) // parent_bits
@@ -116,7 +116,7 @@ def derive_comp_init(parent_entry: dict, comp_cell) -> str | None:
             new_val |= (parent_val & mask) << shift
             shift += parent_bits
         new_val &= (1 << bits_needed) - 1
-        logging.info("derive_comp_init: %s repeat %d->%d bits.", comp_cell.getName(),
+        logging.info("derive_comp_init: %s tiled %d->%d bits.", comp_cell.getName(),
                      parent_bits, bits_needed)
 
     return format_init(bits_needed, new_val)
@@ -161,6 +161,9 @@ def restore_all_properties(design: Design, json_db: dict[str, dict], inversion_r
                             else:
                                 logging.warning("No tag or modified twin for %s; skipping", hname)
                                 continue
+                        else:
+                            logging.warning("No tag found for %s", hname)
+                            continue
                 
                 new_init = derive_comp_init(entry, h_inst.getInst())
                 if new_init:
