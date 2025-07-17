@@ -314,7 +314,7 @@ def derive_comp_init(parent_entry: dict, comp_cell) -> str | None:
         return None
 
     # Clean and normalize hex
-    init_str = parent_init.strip().lower().replace("32'h", "")
+    init_str = parent_init.strip().lower().replace("32'h", "").replace("64'h", "").replace("16'h", "").replace("8'h", "").replace("4'h", "")
     init_bin = bin(int(init_str, 16))[2:]  # remove '0b'
     init_bin = init_bin.zfill(((len(init_bin) + 3) // 4) * 4)  # round to full hex digits
 
