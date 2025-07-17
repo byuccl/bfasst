@@ -15,7 +15,7 @@ import time
 import re
 from itertools import combinations, permutations, product
 
-from bfasst.utils.netlist_obfuscate_helpers import TAG_PROP, SENTINEL_VALUES
+from bfasst.utils.netlist_obfuscate_helpers import TAG_PROP, SENTINEL_VALUES, parse_init, format_init
 from bfasst import jpype_jvm
 
 jpype_jvm.start()
@@ -46,213 +46,8 @@ def setup_logging(log_path: pathlib.Path, level_str: str):
     logging.info("Logging at %s", level_str)
 
 
-def invert_init_literal(lit: str) -> str:
-    """
-    Bitwise invert an arbitrary INIT literal string "64'h0123AB…" of the proper width.
-    """
-    width_str, hexstr = lit.split("'h")
-    width = int(width_str)
-    mask = (1 << width) - 1
-    val = int(hexstr, 16)
-    inv = (~val) & mask
-    inv_str = f"{width}'h{inv:0{width//4}X}"
-    # logging.debug("new string for lit %s: %s", lit, inv_str)
-    return inv_str
-
-
-def toggle_token(token: str) -> str:
-    """Toggle a token by adding or removing a leading !"""
-    return token[1:] if token.startswith("!") else f"!{token}"
-
-
-def toggle_input_in_equation(eq, logical_pin: str) -> str:
-    """
-    Changes a boolean equation to have one of its inputs toggled.
-    """
-    pattern = rf"(!?{re.escape(logical_pin)})"
-    py_eq = str(eq.toString())
-    return re.sub(pattern, lambda m: toggle_token(m.group(1)), py_eq)
-
-
-_HEX_RE = re.compile(r"^(\d+)'h([0-9a-fA-F]+)$")
-
-
-def parse_init(lit: str) -> tuple[int, int]:
-    """
-    Parse \"<W>'h<HEX>\"  →  (width, value)
-    Return **None** if the string is not a hex literal.
-    """
-    m = _HEX_RE.fullmatch(lit.strip())
-    if not m:
-        return None
-    width = int(m.group(1))
-    value = int(m.group(2), 16)
-    return width, value
-
-
-def is_bitwise_invert(a: str, b: str) -> bool:
-    """
-    True iff INIT string *b* is exactly the bitwise-NOT of *a*.
-    Safely returns False if either literal is not hex form.
-    """
-    pa = parse_init(a)
-    pb = parse_init(b)
-    if pa is None or pb is None:
-        return False
-
-    w_a, v_a = pa
-    w_b, v_b = pb
-    if w_a != w_b:
-        return False
-
-    mask = (1 << w_a) - 1
-    return v_b == (~v_a & mask)
-
-
-def resolve_logical_pin(cell, bel_pin_name: str, wire: str) -> str:
-    lp = cell.getLogicalPinMapping(bel_pin_name)
-    if lp is not None:
-        return lp
-
-    for e in cell.getPinMappingsL2P().entrySet():
-        if wire in e.getValue():
-            return e.getKey()
-    return None
-
-
-def process_lut(site, bel_pin, wire, visited: set) -> tuple[bool, str, str]:
-    """
-    Helper function to propagate signal inversions through a LUT
-    """
-    cell = site.getCell(bel_pin.getBEL().getName())
-    if cell is None or not LUTTools.isCellALUT(cell) or cell in visited:
-        return False, None, None
-    visited.add(cell)
-
-    if not cell_is_obfuscated(cell):
-        return False, None, None
-
-    lp = resolve_logical_pin(cell, bel_pin.getName(), wire)
-    if lp is None:
-        return False, None, None
-
-    eq = LUTTools.getLUTEquation(cell)
-    new_eq = toggle_input_in_equation(eq, lp)
-    if new_eq != eq:
-        LUTTools.configureLUT(cell, new_eq)
-        return True, cell, site
-    return False, None, None
-
-
-def cell_is_obfuscated(cell) -> bool:
-    """
-    Returns true if a cell was obfuscated before implementation
-    """
-    props = cell.getEDIFCellInst().getPropertiesMap()
-    return props is not None and props.containsKey(TAG_PROP)
-
-
-def process_site_wire(site, wire, visited: set) -> tuple[list["Net"], int]:
-    """
-    Process all bel_pins for a given site+wire and return new nets to enqueue + count of flips.
-    """
-    new_nets = []
-    flips = 0
-
-    for bel_pin in site.getSiteWirePins(wire):
-        updated, cell, site_inst = process_lut(site, bel_pin, wire, visited)
-        if not updated or cell is None:
-            continue
-
-        bel_o = LUTTools.getLUTOutputPin(cell.getBEL())
-        spi_o = site_inst.getSitePinInst(bel_o.getName())
-        if spi_o is not None and spi_o.getNet() is not None:
-            new_nets.append(spi_o.getNet())
-            flips += 1
-
-    return new_nets, flips
-
-
-def propagate_inversions(design: Design, roots: list[str]) -> int:
-    """
-    After fixing LUT inversions post-implementation, propagate inversion
-    downstream by flipping inputs to connected LUTs marked as obfuscated.
-    """
-    flips = 0
-    empty = ArrayList()
-
-    for hier_name in roots:
-        root = design.getCell(hier_name)
-        if root is None:
-            continue
-
-        out_spi = root.getSitePinFromLogicalPin("O", empty)
-        if out_spi is None or out_spi.getNet() is None:
-            continue
-
-        queue = [out_spi.getNet()]
-        visited = set()
-
-        while queue:
-            net = queue.pop()
-            for sink in net.getSinkPins():
-                site = sink.getSiteInst()
-                wire = sink.getSiteWireName()
-
-                new_nets, new_flips = process_site_wire(site, wire, visited)
-                queue.extend(new_nets)
-                flips += new_flips
-
-    return flips
-
-
-def find_inversion_roots(netlist, json_db) -> list[str]:
-    """
-    Return hierarchical names of LUTs whose INIT was complemented
-    during obfuscation (i.e. current INIT is bitwise-inverted sentinel).
-    """
-    hier_map = EDIFTools.createCellInstanceMap(netlist)
-    roots = []
-
-    for lib_map in hier_map.values():
-        for inst_list in lib_map.values():
-            for h_inst in inst_list:
-                hname = h_inst.getFullHierarchicalInstName()
-                entry = json_db.get(hname)
-                if entry is None:
-                    continue
-                cell = h_inst.getInst()
-                lut_size = LUTTools.getLUTSize(cell)
-                props = cell.getPropertiesMap()
-                init_prop = props.get("INIT")
-                if init_prop is None:
-                    continue
-
-                cur_init = str(init_prop.getValue())
-
-                if "tag" in entry:
-                    if lut_size in SENTINEL_VALUES and is_bitwise_invert(
-                        SENTINEL_VALUES[lut_size], cur_init
-                    ):
-                        roots.append(hname)
-                        logging.debug("Found inversion root")
-                else:
-                    base_init = next(
-                        (
-                            p["value"]
-                            for p in entry["baseline_properties"]
-                            if p["identifier"] == "INIT"
-                        ),
-                        None,
-                    )
-                    if base_init and is_bitwise_invert(base_init, cur_init):
-                        logging.debug("Found nonobfuscated cell that was inverted")
-                        roots.append(hname)
-
-    return roots
-
-
 def restore_properties_for_cell(cell, entry: dict, hname: str, inversion_roots: set):
+    count = 0
     for item in entry.get("modified_properties", []):
         key = item["identifier"]
         val = item["value"]
@@ -263,45 +58,19 @@ def restore_properties_for_cell(cell, entry: dict, hname: str, inversion_roots: 
                 val = invert_init_literal(val)
             val = re.sub(r"(h)([0-9a-fA-F]+)", lambda m: m.group(1) + m.group(2).upper(), val)
 
+        count += 1
         cell.addProperty(key, val, typ)
 
-
-def init_literal_to_bits(init_literal: str, width_bits: int) -> list[int]:
-    """Return a list of bit-values (LSB first) for the given INIT literal."""
-    bits = int(str(init_literal).split("'h")[1], 16)
-    return [(bits >> i) & 1 for i in range(1 << width_bits)]
-
-
-def pack_bits_to_init(bits: list[int]) -> str:
-    """Pack LSB-first bit list into canonical hex INIT literal."""
-    value = 0
-    for i, b in enumerate(bits):
-        value |= (b & 1) << i
-    hex_chars = (len(bits) + 3) // 4  # 4 bits per hex digit
-    return f"{len(bits)}'h{value:0{hex_chars}X}"
-
-
-def eval_parent_subset(parent_bits, parent_width, subset, perm, sigma):
-    """Evaluate parent LUT on a restricted, permuted, possibly inverted subset."""
-    m = len(subset)
-    tbl = []
-    for x in range(1 << m):
-        addr = 0
-        for i, pin in enumerate(subset):
-            bit = (x >> perm[i]) & 1
-            if sigma[i]:
-                bit ^= 1  # input inversion
-            addr |= bit << pin
-        tbl.append(parent_bits[addr])
-    return tbl
-
+    if count:
+        return 1
+    else:
+        return 0
 
 def derive_comp_init(parent_entry: dict, comp_cell) -> str | None:
     """
-    Returns a canonical INIT literal for comp_cell derived only from its
-    parent's INIT. Does NOT look at the (obfuscated) child INIT.
+    Resize parent's INIT to match the logical LUT width of comp_cell.
+    Uses only the LUT type size (no pin counting).
     """
-    logging.debug("derive_comp_init")
     parent_init = next(
         (
             it["value"]
@@ -313,31 +82,44 @@ def derive_comp_init(parent_entry: dict, comp_cell) -> str | None:
     if parent_init is None:
         return None
 
-    # Clean and normalize hex
-    init_str = parent_init.strip().lower().replace("32'h", "").replace("64'h", "").replace("16'h", "").replace("8'h", "").replace("4'h", "")
-    init_bin = bin(int(init_str, 16))[2:]  # remove '0b'
-    init_bin = init_bin.zfill(((len(init_bin) + 3) // 4) * 4)  # round to full hex digits
+    parsed = parse_init(parent_init)
+    if parsed is None:
+        logging.warning("derive_comp_init: can't parse parent INIT '%s'; returning unchanged.",
+                        parent_init)
+        return parent_init
+    parent_bits, parent_val = parsed
 
-    try:
-        bel_width = int(str(comp_cell.getCellName()).strip("ABCDEGLUT"))  # e.g., A6LUT → 6
-    except ValueError:
-        logging.warning("not able to find name of comp_cell or something")
+    child_w = LUTTools.getLUTSize(comp_cell)
+    if child_w is None:
+        logging.warning("derive_comp_init: can't infer LUT width for %s; returning parent INIT.",
+                        comp_cell.getName())
         return parent_init
 
-    expected_bits = 1 << bel_width
-    current_bits = len(init_bin)
+    bits_needed = 1 << child_w
 
-    if current_bits == expected_bits:
-        return f"{int(init_bin, 2):0{expected_bits//4}X}"
-    elif current_bits > expected_bits:
-        # truncate if too long
-        init_bin = init_bin[:expected_bits]
+    if parent_bits == bits_needed:
+        new_lit = format_init(bits_needed, parent_val)
+        logging.info("derive_comp_init: %s width match %d bits.", comp_cell.getName(), bits_needed)
+        return new_lit
+
+    if parent_bits > bits_needed:
+        # Keep LSBs (Vivado bit0 aligns with lowest address)
+        new_val = parent_val & ((1 << bits_needed) - 1)
+        logging.info("derive_comp_init: %s trunc %d->%d bits.", comp_cell.getName(),
+                     parent_bits, bits_needed)
     else:
-        # repeat pattern to fill
-        times = expected_bits // current_bits
-        init_bin = (init_bin * times)[:expected_bits]
+        tile = (bits_needed + parent_bits - 1) // parent_bits
+        mask = (1 << parent_bits) - 1
+        new_val = 0
+        shift = 0
+        for _ in range(tile):
+            new_val |= (parent_val & mask) << shift
+            shift += parent_bits
+        new_val &= (1 << bits_needed) - 1
+        logging.info("derive_comp_init: %s repeat %d->%d bits.", comp_cell.getName(),
+                     parent_bits, bits_needed)
 
-    return f"{int(init_bin, 2):0{expected_bits//4}X}".upper()
+    return format_init(bits_needed, new_val)
 
 
 def restore_all_properties(design: Design, json_db: dict[str, dict], inversion_roots: set):
@@ -349,54 +131,55 @@ def restore_all_properties(design: Design, json_db: dict[str, dict], inversion_r
     netlist = design.getNetlist()
     hier_map = EDIFTools.createCellInstanceMap(netlist)
 
+    count = 0
     for lib_map in hier_map.values():
         for inst_list in lib_map.values():
             for h_inst in inst_list:
                 hname = h_inst.getFullHierarchicalInstName()
                 entry = json_db.get(hname)
+                if entry:
+                    logging.debug("Successfully found entry for %s", hname)
+                else:
+                    logging.info("No entry found for %s", hname)
 
-                # Fallback #1 – tag matching
-                if entry is None:
-                    cell = h_inst.getInst()
-                    tag_prop = cell.getPropertiesMap().get(TAG_PROP)
-                    if tag_prop:
-                        tag = tag_prop.getValue()
-                        entry = next((e for e in json_db.values() if e.get("tag") == tag), None)
-
-                # Fallback #2 – handle "_comp" twin
-                if entry is None and hname.endsWith("_comp"):
-                    base_hname = hname[:-5]
-                    base_entry = json_db.get(base_hname)
-                    if base_entry is not None:
-                        logging.info("[_comp] matched %s -> %s", hname, base_hname)
-                        new_init = derive_comp_init(base_entry, h_inst.getInst())
-                        if new_init:
-                            logging.info("[_comp] derived INIT %s", new_init)
-                            entry = {"modified_properties": [{
-                                         "identifier": "INIT",
-                                         "value":      new_init,
-                                         "type":       "STRING"}]}
+                    orig_cell_name = h_inst.getInst().getPropertiesMap().get("ORIG_CELL_NAME")
+                    logging.info("Using original cell name %s", orig_cell_name)
+                    entry = json_db.get(orig_cell_name)
+                    if entry:
+                        logging.info("Successfully found entry for %s", orig_cell_name)
                     else:
-                        logging.warning("[_comp] could not derive INIT for %s", hname)
-                        logging.info("Checking for *_rewire...")
-                        new_base_hname = base_hname[:-7]
-                        base_entry = json_db.get(new_base_hname)
-                        if base_entry is not None:
-                            logging.info("[_rewire_comp] matched %s -> %s", hname, new_base_hname)
-                            new_init = derive_comp_init(base_entry, h_inst.getInst())
-                            if new_init:
-                                logging.info("[_rewire_comp] derived INIT %s", new_init)
-                                entry = {"modified_properties": [{
-                                        "identifier": "INIT",
-                                         "value": new_init,
-                                         "type": "STRING"}]}
-
-                # No match – skip
-                if entry is None:
-                    logging.warning("No tag or _comp twin for %s; skipping", hname)
-                    continue
+                        logging.info("Failed to find entry for %s", orig_cell_name)
+                        logging.info("Falling back to tag matching")
+                        cell = h_inst.getInst()
+                        tag_prop = cell.getPropertiesMap().get(TAG_PROP)
+                        if tag_prop:
+                            tag = tag_prop.getValue()
+                            entry = next((e for e in json_db.values() if e.get("tag") == tag), None)
+                            
+                            if entry:
+                                logging.info("Successfully matched tag for %s", hname)
+                            else:
+                                logging.warning("No tag or modified twin for %s; skipping", hname)
+                                continue
                 
-                restore_properties_for_cell(h_inst.getInst(), entry, hname, inversion_roots)
+                new_init = derive_comp_init(entry, h_inst.getInst())
+                if new_init:
+                    found = False
+                    for prop in entry.get("modified_properties", []):
+                        if prop.get("identifier") == "INIT":
+                            prop["value"] = new_init
+                            found = True
+                            break
+                    if not found:
+                        entry.setdefault("modified_properties", []).append({
+                            "identifier": "INIT",
+                            "value": new_init,
+                            "type": "STRING"
+                        })
+
+                count += restore_properties_for_cell(h_inst.getInst(), entry, hname, inversion_roots)
+
+    logging.info("Restored %d cells", count)
 
 
 def apply_properties(design: Design, json_db: dict[str, dict]):
@@ -406,12 +189,9 @@ def apply_properties(design: Design, json_db: dict[str, dict]):
     2. Propagating inversion corrections through connected LUTs
     """
     logging.info("Building tag->properties map from JSON...")
-    inversion_roots = set(find_inversion_roots(design.getNetlist(), json_db))
+    inversion_roots = [] # set(find_inversion_roots(design.getNetlist(), json_db))
 
     restore_all_properties(design, json_db, inversion_roots)
-
-    # flips = propagate_inversions(design, inversion_roots)
-    # logging.info("Propagated inversions across %d tagged LUTs", flips)
 
 
 def main():

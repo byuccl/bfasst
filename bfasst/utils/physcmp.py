@@ -57,7 +57,6 @@ def parse_timing_report(report_path: Path):
 
     out = {}
 
-    # ---------- overall design metrics ----------
     m = _DESIGN_ROW_RE.search(txt)
     if m:
         out.update(
@@ -71,7 +70,6 @@ def parse_timing_report(report_path: Path):
             }
         )
 
-    # ---------- per‑clock metrics ----------
     clocks = {}
     for cm in _CLOCK_ROW_RE.finditer(txt):
         clk = cm.group("clk")
@@ -253,6 +251,8 @@ def compare_all(golden, test, log_path: str, log_level: str):
     logging.info("Reading design checkpoints")
     d1 = Design.readCheckpoint(golden.dcp, golden.edf)
     d2 = Design.readCheckpoint(test.dcp, test.edf)
+    logging.info(d1)
+    logging.info(d2)
 
     layout_cmp = DesignComparator()
     layout_cmp.setComparePlacement(True)
@@ -261,6 +261,8 @@ def compare_all(golden, test, log_path: str, log_level: str):
     layout_cmp.compareDesigns(d1, d2)
 
     netlist_cmp = EDIFNetlistComparator()
+    logging.info(d1.getNetlist())
+    logging.info(d2.getNetlist())
     netlist_cmp.compareNetlists(d1.getNetlist(), d2.getNetlist())
 
     num_layout_diffs = log_layout_diffs(layout_cmp)
@@ -269,7 +271,8 @@ def compare_all(golden, test, log_path: str, log_level: str):
     if num_netlist_diffs != 0:
         logging.error("\033[31mFound differences between logical netlists\033[0m")
         # raise PhyscmpException
-    logging.info("\033[32mNo differences found between logical netlists\033[0m")
+    else:
+        logging.info("\033[32mNo differences found between logical netlists\033[0m")
 
     logging.info("Parsing full timing summaries...")
     g_timing = parse_timing_report(golden.timing_summary_full)

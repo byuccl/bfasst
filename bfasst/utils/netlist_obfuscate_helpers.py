@@ -3,10 +3,42 @@ Helpers and constants for netlist obfuscation/deobfuscation
 """
 
 import random
+import re
 import logging
 from typing import List
 
 TAG_PROP = "OBF_TAG"
+
+
+_INIT_RE = re.compile(r"^(\d+)'([hb])([0-9a-fA-F]+)$", re.IGNORECASE)
+def parse_init(lit: str) -> tuple[int, int] | None:
+    """
+    Parse "<W>'h<HEX>" or "<W>'b<BIN>" → (width, value).
+    Return None if not matched.
+    """
+    m = _INIT_RE.fullmatch(lit.strip())
+    if not m:
+        return None
+    width = int(m.group(1))
+    base = m.group(2).lower()
+    digits = m.group(3)
+    if base == 'h':
+        value = int(digits, 16)
+    elif base == 'b':
+        value = int(digits, 2)
+    else:
+        return None  # unsupported base
+    return width, value
+
+
+def format_init(width_bits: int, value_int: int) -> str:
+    value_masked = value_int & ((1 << width_bits) - 1)
+
+    if width_bits == 1:
+        return f"1'b{value_masked}"
+    
+    hex_digits = (width_bits + 3) // 4
+    return f"{width_bits}'h{value_masked:0{hex_digits}X}"
 
 
 def _active_pins(init: int, lut_size: int) -> List[int]:
@@ -97,19 +129,3 @@ def get_masking_init(orig_init: str, lut_size: int) -> str:
         raise ValueError(f"No parity mask for LUT{lut_size}")
     return SENTINEL_VALUES[lut_size]
 
-
-# def get_masking_init(orig_init: str, lut_size: int) -> str:
-#     """
-#     Given the *string* INIT from an EDIF/Verilog property (e.g. "64'h699696..."),
-#     return a different INIT string that is timing-equivalent but unpredictable.
-#     """
-#     if lut_size == 1:
-#         return orig_init  # leave LUT1 untouched
-
-#     # parse the incoming hex literal  int
-#     value = int(orig_init.split("'h")[1], 16)
-#     new_value = shuffle_preserve_bucket(value, lut_size)
-
-#     width = 1 << lut_size  # 4,8,16,32,64
-#     # logging.info("Old INIT: %s; New INIT: %s", orig_init, f"{width:02d}'h{new_value:0{width//4}X}")
-#     return f"{width:02d}'h{new_value:0{width//4}X}"
