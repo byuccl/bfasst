@@ -66,29 +66,33 @@ class ImplObfuscate(Flow):
             constraints_files=self.vivado_synth.outputs["synth_constraints"],
         )
 
-        self.impl_transform.outputs["clock_crank_tcl"] = (
-            self.impl_transform.build_path / "clock_crank.tcl"
-        )
-        self.impl_transform.outputs_str["clock_crank_tcl"] = str(
-            self.impl_transform.outputs["clock_crank_tcl"]
-        )
-        self.impl_transform.impl_build["tcl_sources"] = [
-            self.impl_transform.outputs_str["setup_tcl"],
-            self.impl_transform.outputs_str["clock_crank_tcl"],
-            self.impl_transform.outputs_str["reports_tcl"],
-        ]
+        if self.impl_orig.impl_build["clocks"] is not "":
+            print("Clocks found in design - running clock crank for ", str(design.build_dir))
+            self.impl_transform.outputs["clock_crank_tcl"] = (
+                self.impl_transform.build_path / "clock_crank.tcl"
+            )
+            self.impl_transform.outputs_str["clock_crank_tcl"] = str(
+                self.impl_transform.outputs["clock_crank_tcl"]
+            )
+            self.impl_transform.impl_build["tcl_sources"] = [
+                self.impl_transform.outputs_str["setup_tcl"],
+                self.impl_transform.outputs_str["clock_crank_tcl"],
+                self.impl_transform.outputs_str["reports_tcl"],
+            ]
 
-        self.impl_orig.outputs["clock_crank_tcl"] = (
-            self.impl_orig.build_path / "clock_crank.tcl"
-        )
-        self.impl_orig.outputs_str["clock_crank_tcl"] = str(
-            self.impl_orig.outputs["clock_crank_tcl"]
-        )
-        self.impl_orig.impl_build["tcl_sources"] = [
-            self.impl_orig.outputs_str["setup_tcl"],
-            self.impl_orig.outputs_str["clock_crank_tcl"],
-            self.impl_orig.outputs_str["reports_tcl"],
-        ]
+            self.impl_orig.outputs["clock_crank_tcl"] = (
+                self.impl_orig.build_path / "clock_crank.tcl"
+            )
+            self.impl_orig.outputs_str["clock_crank_tcl"] = str(
+                self.impl_orig.outputs["clock_crank_tcl"]
+            )
+            self.impl_orig.impl_build["tcl_sources"] = [
+                self.impl_orig.outputs_str["setup_tcl"],
+                self.impl_orig.outputs_str["clock_crank_tcl"],
+                self.impl_orig.outputs_str["reports_tcl"],
+            ]
+        else:
+            print("No clocks found in design - running normal implementation for ", str(design.build_dir))
 
         self.netlist_deobfuscate = NetlistDeobfuscate(
             self,
