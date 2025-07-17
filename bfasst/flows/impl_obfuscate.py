@@ -66,7 +66,8 @@ class ImplObfuscate(Flow):
             constraints_files=self.vivado_synth.outputs["synth_constraints"],
         )
 
-        if self.impl_orig.impl_build["clocks"] != "":
+        
+        if self.impl_orig.impl_build["clocks"] not in ("", {}):
             print("Clocks found in design - running clock crank for ", str(design))
             print("Clocks: ", self.impl_orig.impl_build["clocks"])
             self.impl_transform.outputs["clock_crank_tcl"] = (
