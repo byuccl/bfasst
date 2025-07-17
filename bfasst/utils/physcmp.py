@@ -65,7 +65,7 @@ def parse_timing_report(report_path: Path):
                 "overall_wns": float(m.group("wns")),
                 "overall_tns": float(m.group("tns")),
                 "overall_tns_fail": int(m.group("tns_fail")),
-                "overall_tns_total": int(m.group("tns_total")),
+                "overall_tns_endpoints": int(m.group("tns_total")),
                 "overall_wpws": float(m.group("wpws")),
                 "overall_tpws": float(m.group("tpws")),
             }
@@ -79,7 +79,7 @@ def parse_timing_report(report_path: Path):
             "wns": float(cm.group("wns")),
             "tns": float(cm.group("tns")),
             "tns_fail": int(cm.group("tns_fail")),
-            "tns_total": int(cm.group("tns_total")),
+            "tns_endpoints": int(cm.group("tns_total")),
             "wpws": float(cm.group("wpws")),
             "tpws": float(cm.group("tpws")),
         }

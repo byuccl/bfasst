@@ -1,19 +1,27 @@
 {{#opt_design}}
 opt_design
 {{/opt_design}}
+
 place_design
-set slack [get_property SLACK [lindex [get_timing_paths] 0]]
+
+set new_period $period
 if {[catch {
-        if {$slack >= 0} {
-            set new_period [expr $period - $slack - 0.45]
-        } elseif {$slack < -0.5} {
-            set new_period [expr $period - $slack - 0.45]
-        }
-    } ] } {
-    set slack [get_property DATAPATH_DELAY [lindex [get_timing_paths] 0]]
-    set new_period [expr ceil($slack)]
+    set slack [get_property SLACK [lindex [get_timing_paths] 0]]
+    if {$slack >= 0 || $slack < -0.5} {
+        set new_period [expr {$period - $slack - 0.45}]
+    }
+}]} {
+    catch {
+        set slack [get_property DATAPATH_DELAY [lindex [get_timing_paths] 0]]
+        set new_period [expr {ceil($slack)}]
+    }
 }
+if {![info exists new_period]} {
+    error "Failed to compute new_period - check timing report or variable setup"
+}
+
 create_clock -period $new_period -name $clock_name [get_ports $clock_port]
+
 while {1} {
     if { [ catch {
         phys_opt_design
