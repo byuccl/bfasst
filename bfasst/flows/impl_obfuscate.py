@@ -68,8 +68,6 @@ class ImplObfuscate(Flow):
 
         
         if self.impl_orig.impl_build["clocks"] not in ("", {}):
-            print("Clocks found in design - running clock crank for ", str(design))
-            print("Clocks: ", self.impl_orig.impl_build["clocks"])
             self.impl_transform.outputs["clock_crank_tcl"] = (
                 self.impl_transform.build_path / "clock_crank.tcl"
             )
@@ -93,8 +91,6 @@ class ImplObfuscate(Flow):
                 self.impl_orig.outputs_str["clock_crank_tcl"],
                 self.impl_orig.outputs_str["reports_tcl"],
             ]
-        else:
-            print("No clocks found in design - running normal implementation for ", str(design))
 
         self.netlist_deobfuscate = NetlistDeobfuscate(
             self,

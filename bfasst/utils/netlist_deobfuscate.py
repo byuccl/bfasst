@@ -313,34 +313,31 @@ def derive_comp_init(parent_entry: dict, comp_cell) -> str | None:
     if parent_init is None:
         return None
 
-    bit_len = int(parent_init.split("'h")[0])
-    parent_width = int(math.log2(bit_len)) 
-    parent_bits = init_literal_to_bits(parent_init, parent_width)
-    child_width = LUTTools.getLUTSize(comp_cell)
-    if child_width == 0:  # not a LUT
-        return None
+    # Clean and normalize hex
+    init_str = parent_init.strip().lower().replace("32'h", "")
+    init_bin = bin(int(init_str, 16))[2:]  # remove '0b'
+    init_bin = init_bin.zfill(((len(init_bin) + 3) // 4) * 4)  # round to full hex digits
 
-    pins = list(range(parent_width))
-    best_bits = None
+    try:
+        bel_width = int(str(comp_cell.getCellName()).strip("ABCDEGLUT"))  # e.g., A6LUT → 6
+    except ValueError:
+        logging.warning("not able to find name of comp_cell or something")
+        return parent_init
 
-    # Enumerate all subset/perm/sigma combos
-    if parent_width > 4:
-        logging.warning("Parent width is too wide. Skipping")
-        return None 
+    expected_bits = 1 << bel_width
+    current_bits = len(init_bin)
 
-    for subset in combinations(pins, child_width):
-        for perm in permutations(range(child_width)):
-            for sigma in product([0, 1], repeat=child_width):
-                tbl = eval_parent_subset(parent_bits, parent_width, subset, perm, sigma)
-                tbl_inv = [1 - b for b in tbl]
-                # Choose lexicographically-smallest truth table (canonical)
-                for candidate in (tbl, tbl_inv):
-                    if (best_bits is None) or (candidate < best_bits):
-                        best_bits = candidate
+    if current_bits == expected_bits:
+        return f"{int(init_bin, 2):0{expected_bits//4}X}"
+    elif current_bits > expected_bits:
+        # truncate if too long
+        init_bin = init_bin[:expected_bits]
+    else:
+        # repeat pattern to fill
+        times = expected_bits // current_bits
+        init_bin = (init_bin * times)[:expected_bits]
 
-    if best_bits is None:
-        return None
-    return pack_bits_to_init(best_bits)
+    return f"{int(init_bin, 2):0{expected_bits//4}X}".upper()
 
 
 def restore_all_properties(design: Design, json_db: dict[str, dict], inversion_roots: set):
@@ -368,20 +365,31 @@ def restore_all_properties(design: Design, json_db: dict[str, dict], inversion_r
 
                 # Fallback #2 – handle "_comp" twin
                 if entry is None and hname.endsWith("_comp"):
-                    base_hname = hname[:-5]                       # strip "_comp"
+                    base_hname = hname[:-5]
                     base_entry = json_db.get(base_hname)
                     if base_entry is not None:
                         logging.info("[_comp] matched %s -> %s", hname, base_hname)
                         new_init = derive_comp_init(base_entry, h_inst.getInst())
-                        logging.info("made it past derive_comp_init")
                         if new_init:
                             logging.info("[_comp] derived INIT %s", new_init)
                             entry = {"modified_properties": [{
                                          "identifier": "INIT",
                                          "value":      new_init,
                                          "type":       "STRING"}]}
-                        else:
-                            logging.warning("[_comp] could not derive INIT for %s", hname)
+                    else:
+                        logging.warning("[_comp] could not derive INIT for %s", hname)
+                        logging.info("Checking for *_rewire...")
+                        new_base_hname = base_hname[:-7]
+                        base_entry = json_db.get(new_base_hname)
+                        if base_entry is not None:
+                            logging.info("[_rewire_comp] matched %s -> %s", hname, new_base_hname)
+                            new_init = derive_comp_init(base_entry, h_inst.getInst())
+                            if new_init:
+                                logging.info("[_rewire_comp] derived INIT %s", new_init)
+                                entry = {"modified_properties": [{
+                                        "identifier": "INIT",
+                                         "value": new_init,
+                                         "type": "STRING"}]}
 
                 # No match – skip
                 if entry is None:
