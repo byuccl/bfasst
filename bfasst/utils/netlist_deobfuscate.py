@@ -97,16 +97,23 @@ def derive_comp_init(parent_entry: dict, comp_cell) -> str | None:
 
     bits_needed = 1 << child_w
 
+    orig_comp_init = str(comp_cell.getPropertiesMap().get("INIT"))
+
+    truncated = False
     if parent_bits == bits_needed:
+        force_binary = "'b" in orig_comp_init.lower()
+        logging.debug("force_binary: %s", force_binary)
+
         new_lit = format_init(bits_needed, parent_val)
         logging.info("derive_comp_init: %s widths match %d bits.", comp_cell.getName(), bits_needed)
-        return new_lit
+        
+        return new_lit 
 
     if parent_bits > bits_needed:
-        # Keep LSBs (Vivado bit0 aligns with lowest address)
         new_val = parent_val & ((1 << bits_needed) - 1)
         logging.info("derive_comp_init: %s truncated %d->%d bits.", comp_cell.getName(),
                      parent_bits, bits_needed)
+        truncated = True
     else:
         tile = (bits_needed + parent_bits - 1) // parent_bits
         mask = (1 << parent_bits) - 1
@@ -118,8 +125,13 @@ def derive_comp_init(parent_entry: dict, comp_cell) -> str | None:
         new_val &= (1 << bits_needed) - 1
         logging.info("derive_comp_init: %s tiled %d->%d bits.", comp_cell.getName(),
                      parent_bits, bits_needed)
+    
+    if comp_cell.getName() == "datapath/bit_counter_reg[0]":
+        logging.info("found datapath/bit_counter_reg[0]")
 
-    return format_init(bits_needed, new_val)
+    force_binary = "'b" in orig_comp_init.lower()
+    logging.debug("force_binary: %s", force_binary)
+    return format_init(bits_needed, new_val, False)
 
 
 def restore_all_properties(design: Design, json_db: dict[str, dict], inversion_roots: set):

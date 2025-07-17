@@ -45,7 +45,7 @@ no_data = 0
 for design in designs:
     log_path = BUILD_ROOT / design / "physcmp" / "physcmp.log"
     if not log_path.is_file():
-        print(f"WARNING: no physcmp.log for {design}", file=sys.stderr)
+        print(f"\033[33mWARNING: no physcmp.log for {design}\033[0m", file=sys.stderr)
         missing += 1
         continue
 
@@ -64,7 +64,7 @@ for design in designs:
                 }
             )
     if not found_metric:
-        print(f"WARNING: no timing‑delta lines in {log_path}", file=sys.stderr)
+        print(f"INFO: no timing‑delta lines in {log_path}", file=sys.stderr)
         no_data += 1
 
 if rows:
