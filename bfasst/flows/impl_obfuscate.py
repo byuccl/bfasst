@@ -68,6 +68,7 @@ class ImplObfuscate(Flow):
 
         if self.impl_orig.impl_build["clocks"] != "":
             print("Clocks found in design - running clock crank for ", str(design))
+            print("Clocks: ", self.impl_orig.impl_build["clocks"])
             self.impl_transform.outputs["clock_crank_tcl"] = (
                 self.impl_transform.build_path / "clock_crank.tcl"
             )
