@@ -35,7 +35,7 @@ def format_init(width_bits: int, value_int: int) -> str:
     value_masked = value_int & ((1 << width_bits) - 1)
 
     if width_bits == 1:
-        return f"1'b{value_masked}"
+        return f"1'h{value_masked}"
     
     hex_digits = (width_bits + 3) // 4
     return f"{width_bits}'h{value_masked:0{hex_digits}X}"
