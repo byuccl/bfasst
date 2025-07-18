@@ -3,4 +3,4 @@ top: a25_execute_random
 include_all_verilog_files: yes
 clocks:
   - name: clk
-    period:  10.000
+    period:  8.166

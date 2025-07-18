@@ -2,4 +2,4 @@ top: eltwise_layer
 
 clocks:
   - name: clk
-    period:  6.000
+    period:  5.434

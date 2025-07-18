@@ -2,4 +2,4 @@ top: ssc
 
 clocks:
   - name: clk
-    period: 2.000
+    period:  2.0

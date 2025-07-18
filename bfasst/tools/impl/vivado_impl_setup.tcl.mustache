@@ -8,6 +8,10 @@ read_xdc {{ . }}
 {{/inputs.xdc}}
 
 {{#clocks}}
-create_clock -period {{period}} -name {{ name }}_gen {{#waveform}} -waveform { {{.}} } {{/waveform}} [get_ports {{ name }}]
+if {[info exists clock_name]} {error "Too many clocks in design. BFASST vivado tcl scripts are currently for one clock only."}
+set period {{period}}
+set clock_port {{ name }}
+set clock_name {{ name }}_gen
+create_clock -period $period -name $clock_name {{#waveform}} -waveform { {{.}} } {{/waveform}} [get_ports $clock_port]
 {{/clocks}}
 

@@ -2,4 +2,4 @@ top: tpu_random
 
 clocks:
   - name: clk
-    period: 13.000
+    period:  10.0

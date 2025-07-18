@@ -1,6 +1,7 @@
 top: LU8PEEng
 
 include_all_verilog_files: yes
+pre_impl_tcl: impl_setup.tcl
 clocks:
   - name: clk
-    period:  97.000
+    period:  78.00

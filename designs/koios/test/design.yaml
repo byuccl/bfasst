@@ -2,4 +2,4 @@ top: top
 
 clocks:
   - name: clk
-    period:  7.000
+    period:  6.0
