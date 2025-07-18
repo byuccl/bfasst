@@ -1,4 +1,4 @@
-build {{ log_path }} {{ do_path }} {{ gui_path }}: conformal {{#hdl_srcs}}{{ . }} {{/hdl_srcs}} | {{ conformal_script_path }} {{ rev_netlist }}
+build {{ log_path }} {{ do_path }} {{ gui_path }} : conformal {{#hdl_srcs}}{{ . }} {{/hdl_srcs}} | {{ conformal_script_path }} {{ rev_netlist }} 
     build_dir = {{ build_dir }}
     vendor = {{ vendor }}
     rev_netlist = {{ rev_netlist }}

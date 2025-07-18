@@ -2,7 +2,7 @@ write_checkpoint -force -file {{ outputs.impl_dcp }}
 write_edif -force -file {{ outputs.impl_edf }}
 write_verilog -force -file {{ outputs.impl_verilog }}
 report_utilization -file {{ outputs.utilization }}
-report_timing -file {{ outputs.timing }}
+report_timing_summary -delay_type max -report_unconstrained -check_timing_verbose -file {{ outputs.timing }}
 report_qor_suggestions -name retarget -report_all_suggestions -file retarget.rpt
 {{#outputs.bitstream}}
 write_bitstream -force {{ . }}

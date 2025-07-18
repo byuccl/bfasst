@@ -121,6 +121,7 @@ class ConformalCompare:
         return do_file_path
 
     def __get_hdl_src_type_flag(self):
+        # TODO: Make this actually work instead of hardcoding
         return "-EDIF"
         hdl_type = get_hdl_src_types(self.hdl_srcs)
         if hdl_type == HdlType.VERILOG:
@@ -199,15 +200,20 @@ class ConformalCompare:
 
         scp_client.close()
 
-    def __run_conformal(self, client):
-        """Run the conformal tool on the remote server"""
-        cmd = (
-            f"source {bfasst.config.CONFORMAL_REMOTE_SOURCE_SCRIPT};"
-            f"cd {bfasst.config.CONFORMAL_REMOTE_WORK_DIR};"
-            f"{bfasst.config.CONFORMAL_REMOTE_PATH} -Dofile {self.DO_FILE_NAME} "
-            f" -Logfile {self.LOG_FILE_NAME} -NOGui"
-        )
-
+    def __run_conformal(self, client, use_gui=False):
+        if use_gui:
+            cmd = (
+                f"source {bfasst.config.CONFORMAL_REMOTE_SOURCE_SCRIPT};"
+                f"cd {bfasst.config.CONFORMAL_REMOTE_WORK_DIR};"
+                f"{bfasst.config.CONFORMAL_REMOTE_PATH} &"
+            )
+        else:
+            cmd = (
+                f"source {bfasst.config.CONFORMAL_REMOTE_SOURCE_SCRIPT};"
+                f"cd {bfasst.config.CONFORMAL_REMOTE_WORK_DIR};"
+                f"{bfasst.config.CONFORMAL_REMOTE_PATH} -Dofile {self.DO_FILE_NAME} "
+                f" -Logfile {self.LOG_FILE_NAME} -NOGui"
+            )
         (stdin, stdout, stderr) = client.exec_command(cmd, timeout=bfasst.config.CONFORMAL_TIMEOUT)
 
         stdin.write("yes\n")

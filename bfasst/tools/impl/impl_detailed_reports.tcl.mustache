@@ -16,5 +16,6 @@ report_timing_summary -delay_type max -report_unconstrained -check_timing_verbos
 # report_power -verbose -file {{ outputs.power_summary }}
 report_clocks -file {{ outputs.clocks }}
 report_drc -file {{ outputs.drc }}
+write_verilog -mode funcsim -force {{ outputs.verilog }}
 write_bitstream -force -file {{ outputs.bitstream }}
 

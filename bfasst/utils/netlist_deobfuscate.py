@@ -99,21 +99,15 @@ def derive_comp_init(parent_entry: dict, comp_cell) -> str | None:
 
     orig_comp_init = str(comp_cell.getPropertiesMap().get("INIT"))
 
-    truncated = False
     if parent_bits == bits_needed:
         force_binary = "'b" in orig_comp_init.lower()
-        logging.debug("force_binary: %s", force_binary)
-
         new_lit = format_init(bits_needed, parent_val)
-        logging.info("derive_comp_init: %s widths match %d bits.", comp_cell.getName(), bits_needed)
-        
         return new_lit 
 
     if parent_bits > bits_needed:
         new_val = parent_val & ((1 << bits_needed) - 1)
         logging.info("derive_comp_init: %s truncated %d->%d bits.", comp_cell.getName(),
                      parent_bits, bits_needed)
-        truncated = True
     else:
         tile = (bits_needed + parent_bits - 1) // parent_bits
         mask = (1 << parent_bits) - 1
@@ -130,71 +124,148 @@ def derive_comp_init(parent_entry: dict, comp_cell) -> str | None:
         logging.info("found datapath/bit_counter_reg[0]")
 
     force_binary = "'b" in orig_comp_init.lower()
-    logging.debug("force_binary: %s", force_binary)
     return format_init(bits_needed, new_val, False)
 
 
-def restore_all_properties(design: Design, json_db: dict[str, dict], inversion_roots: set):
-    """
-    Restores all properties to the cells in a design based on json_db.
-    Added logic: if hname ends with "_comp", derive its INIT from the
-    non-_comp twin's INIT using derive_comp_init().
-    """
+def strip_suffixes_lookup(name: str, json_db: dict[str, dict]) -> tuple[str, dict] | None:
+    # Try the full name first
+    if name in json_db:
+        return name, json_db[name]
+
+    _SUFFIX_TOKENS = [
+        "_comp",
+        "_rewire",
+        "_replica",
+        "_rep",
+        "_1",
+        "_2",
+        "_3",
+        "_4",
+        "_5",
+        "_6",
+        "_7",
+        "_8",
+        "_9",
+        "_0",
+    ]
+
+    tokens = sorted(_SUFFIX_TOKENS, key=len, reverse=True)
+    cur = str(name)
+    seen = set()
+
+    for _ in range(50):
+        if cur in json_db:
+            return cur, json_db[cur]
+
+        if cur in seen:
+            break
+        seen.add(cur)
+
+        matched = False
+        for tok in tokens:
+            if cur.endswith(tok):
+                cur = cur[: -len(tok)]
+                matched = True
+                break
+
+        if not matched:
+            break
+
+        if not cur:
+            break
+
+    return None
+
+
+def _find_entry_for_instance(
+    h_inst, hname: str, json_db: dict[str, dict]
+) -> dict | None:
+    entry = json_db.get(hname)
+    if entry:
+        return entry
+
+    logging.info("No entry found for %s", hname)
+
+    orig_cell_name_prop = h_inst.getInst().getPropertiesMap().get("ORIG_CELL_NAME")
+    if orig_cell_name_prop:
+        orig_cell_name = orig_cell_name_prop
+        logging.info("Using original cell name %s", orig_cell_name)
+        entry = json_db.get(orig_cell_name)
+        if entry:
+            logging.info("Successfully found entry for %s", orig_cell_name)
+            return entry
+        logging.info("Failed to find entry for %s", orig_cell_name)
+    else:
+        logging.info("No ORIG_CELL_NAME property for %s", hname)
+
+    cell = h_inst.getInst()
+    tag_prop = cell.getPropertiesMap().get(TAG_PROP)
+    if tag_prop:
+        tag = tag_prop.getValue()
+        entry = next((e for e in json_db.values() if e.get("tag") == tag), None)
+        if entry:
+            logging.info("Successfully matched tag for %s", hname)
+            return entry
+        logging.info("Tag did not match any entry for %s", hname)
+    else:
+        logging.info("No tag property for %s", hname)
+
+    stripped = strip_suffixes_lookup(hname, json_db)
+    if stripped:
+        base_name, entry = stripped
+        logging.info("Recovered base name %s from %s", base_name, hname)
+        return entry
+
+    logging.warning("No match (name/orig/tag/suffix) for %s; skipping", hname)
+    return None
+
+
+def _maybe_patch_init(entry: dict, h_inst):
+    # Derive new INIT (returns None if not applicable)
+    new_init = derive_comp_init(entry, h_inst.getInst())
+    if not new_init:
+        return
+
+    if "LUT" not in h_inst.getCellName():
+        logging.info(
+            "Skipping INIT operations on non-LUT cell %s", h_inst.getCellName()
+        )
+        return
+
+    props = entry.setdefault("modified_properties", [])
+    for prop in props:
+        if prop.get("identifier") == "INIT":
+            prop["value"] = new_init
+            return
+
+    props.append({"identifier": "INIT", "value": new_init, "type": "STRING"})
+
+
+def restore_all_properties(
+    design: Design,
+    json_db: dict[str, dict],
+    inversion_roots: set,
+):
     netlist = design.getNetlist()
     hier_map = EDIFTools.createCellInstanceMap(netlist)
 
-    count = 0
+    restored_count = 0
+
     for lib_map in hier_map.values():
         for inst_list in lib_map.values():
             for h_inst in inst_list:
                 hname = h_inst.getFullHierarchicalInstName()
-                entry = json_db.get(hname)
-                if entry:
-                    logging.debug("Successfully found entry for %s", hname)
-                else:
-                    logging.info("No entry found for %s", hname)
+                entry = _find_entry_for_instance(h_inst, hname, json_db)
+                if not entry:
+                    continue
 
-                    orig_cell_name = h_inst.getInst().getPropertiesMap().get("ORIG_CELL_NAME")
-                    logging.info("Using original cell name %s", orig_cell_name)
-                    entry = json_db.get(orig_cell_name)
-                    if entry:
-                        logging.info("Successfully found entry for %s", orig_cell_name)
-                    else:
-                        logging.info("Failed to find entry for %s", orig_cell_name)
-                        logging.info("Falling back to tag matching")
-                        cell = h_inst.getInst()
-                        tag_prop = cell.getPropertiesMap().get(TAG_PROP)
-                        if tag_prop:
-                            tag = tag_prop.getValue()
-                            entry = next((e for e in json_db.values() if e.get("tag") == tag), None)
-                            
-                            if entry:
-                                logging.info("Successfully matched tag for %s", hname)
-                            else:
-                                logging.warning("No tag or modified twin for %s; skipping", hname)
-                                continue
-                        else:
-                            logging.warning("No tag found for %s", hname)
-                            continue
-                
-                new_init = derive_comp_init(entry, h_inst.getInst())
-                if new_init:
-                    found = False
-                    for prop in entry.get("modified_properties", []):
-                        if prop.get("identifier") == "INIT":
-                            prop["value"] = new_init
-                            found = True
-                            break
-                    if not found:
-                        entry.setdefault("modified_properties", []).append({
-                            "identifier": "INIT",
-                            "value": new_init,
-                            "type": "STRING"
-                        })
+                _maybe_patch_init(entry, h_inst)
 
-                count += restore_properties_for_cell(h_inst.getInst(), entry, hname, inversion_roots)
+                restored_count += restore_properties_for_cell(
+                    h_inst.getInst(), entry, hname, inversion_roots
+                )
 
-    logging.info("Restored %d cells", count)
+    logging.info("Restored %d cells", restored_count)
 
 
 def apply_properties(design: Design, json_db: dict[str, dict]):
