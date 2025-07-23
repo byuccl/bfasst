@@ -5,7 +5,7 @@ REPO_ROOT="$(cd -- "$SCRIPT_DIR/.." && pwd -P)"
 RUN_PY="$REPO_ROOT/scripts/run.py"
 VENV_PY="$REPO_ROOT/.venv/bin/python"
 
-flow_run() { "$VENV_PY" "$RUN_PY" "$@"; }
+bfasst() { "$VENV_PY" "$RUN_PY" "$@"; }
 
 _bfasst_ac() {
     local cur; _get_comp_words_by_ref -n =: cur
@@ -18,10 +18,22 @@ _bfasst_ac() {
     done
 
     if (( ! seen )); then
-        COMPREPLY=( $(compgen -W "$flows" -- "$cur") )
+        # Combine flows and file paths, handle directories
+        local files
+        files=$(compgen -f -- "$cur")
+        local suggestions=()
+        for f in $files; do
+            if [[ -d $f ]]; then
+                suggestions+=("$f/")
+            else
+                suggestions+=("$f")
+            fi
+        done
+        COMPREPLY=( $(compgen -W "$flows" -- "$cur") "${suggestions[@]}" )
+        # Prevent space after directory completion
+        compopt -o nospace
     else
         compopt -o default
     fi
 }
-complete -F _bfasst_ac flow_run
-
+complete -F _bfasst_ac bfasst

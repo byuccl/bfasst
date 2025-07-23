@@ -16,7 +16,7 @@ from bfasst.tools.impl.impl_detailed_reports import ImplDetailedReports
 from bfasst.tools.transform.netlist_deobfuscate import NetlistDeobfuscate
 from bfasst.tools.compare.conformal.conformal import Conformal
 from bfasst.types import Vendor
-from bfasst.utils.physcmp_data_types import ImplReports
+from bfasst.utils.compare.physcmp_data_types import ImplReports
 from bfasst.paths import FLOWS_PATH
 from bfasst.yaml_parser import DesignParser
 
@@ -138,13 +138,13 @@ class ImplObfuscate(Flow):
             bitstream=self.impl_detailed_reports_transform.outputs["bitstream"],
         )
 
-        self.conformal = Conformal(
-            self,
-            design,
-            golden_netlist=self.impl_detailed_reports_orig.outputs["verilog"],
-            rev_netlist=self.impl_detailed_reports_transform.outputs["verilog"],
-            vendor=Vendor.XILINX.name,
-        )
+        # self.conformal = Conformal(
+        #     self,
+        #     design,
+        #     golden_netlist=self.impl_detailed_reports_orig.outputs["verilog"],
+        #     rev_netlist=self.impl_detailed_reports_transform.outputs["verilog"],
+        #     vendor=Vendor.XILINX.name,
+        # )
 
         self.physcmp = PhysCmp(
             self,
@@ -163,7 +163,7 @@ class ImplObfuscate(Flow):
             self.netlist_deobfuscate,
             self.impl_detailed_reports_orig,
             self.impl_detailed_reports_transform,
-            self.conformal,
+            # self.conformal,
             self.physcmp,
         ]
 
@@ -175,7 +175,7 @@ class ImplObfuscate(Flow):
         self.netlist_deobfuscate.create_build_snippets()
         self.impl_detailed_reports_orig.create_build_snippets()
         self.impl_detailed_reports_transform.create_build_snippets()
-        self.conformal.create_build_snippets()
+        # self.conformal.create_build_snippets()
         self.physcmp.create_build_snippets()
 
     def get_top_level_flow_path(self):

@@ -147,7 +147,6 @@ class ConformalCompare:
                         bfasst.config.CONFORMAL_REMOTE_WORK_DIR / self.rev_netlist.name
                     ),
                     "renaming_rule_vector": (
-                        "add renaming rule wildcard %s_replica* @1 -Both -map\n"
                         "add renaming rule vector_expand %s\\[%d\\] @1_@2 -Both -map\n"
                     ),
                 },

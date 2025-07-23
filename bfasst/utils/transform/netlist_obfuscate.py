@@ -13,7 +13,7 @@ import uuid
 from collections import defaultdict
 from bfasst.config import PART
 from bfasst.utils.general import json_write_if_changed
-from bfasst.utils.netlist_obfuscate_helpers import TAG_PROP, get_masking_init
+from bfasst.utils.transform.netlist_obfuscate_helpers import TAG_PROP, get_masking_init
 
 from bfasst import jpype_jvm
 
@@ -225,6 +225,7 @@ def obfuscate_cell_properties(netlist: EDIFNetlist, out_path: str) -> int:
             for inst in inst_list:
                 ref_type = str(inst.getCellType().getName())
                 full_name = str(inst.getFullHierarchicalInstName())
+                
                 counts_all[ref_type] += 1
 
                 entry, changed = process_cell(inst, ref_type, counts)

@@ -26,6 +26,7 @@ while {1} {
     if { [ catch {
         phys_opt_design
         set slack [get_property SLACK [lindex [get_timing_paths] 0]]
+        # break
         if {$slack < 0} {break}
         set new_period [expr $new_period - $slack - 0.45]
         create_clock -period $new_period -name $clock_name [get_ports $clock_port]
@@ -47,7 +48,9 @@ while {1} {
         create_clock -period $new_period -name $clock_name [get_ports $clock_port]
         puts "New period: $new_period"
     }
-    phys_opt_design -directive AddRetime
+    phys_opt_design
+    # -directive AddRetime
     set slack [get_property SLACK [lindex [get_timing_paths] 0]]
+    # break
     if {$slack < 0 } {break}
 }

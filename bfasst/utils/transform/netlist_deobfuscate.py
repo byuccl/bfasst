@@ -12,10 +12,12 @@ import logging
 import pathlib
 import json
 import time
+import copy
 import re
 from itertools import combinations, permutations, product
 
-from bfasst.utils.netlist_obfuscate_helpers import TAG_PROP, SENTINEL_VALUES, parse_init, format_init
+from bfasst.utils.transform.netlist_obfuscate_helpers import TAG_PROP, SENTINEL_VALUES, parse_init, format_init, get_masking_init
+from bfasst.utils.transform.init_restoration_helpers import apply_transforms, derive_init_transform
 from bfasst import jpype_jvm
 
 jpype_jvm.start()
@@ -66,64 +68,52 @@ def restore_properties_for_cell(cell, entry: dict, hname: str, inversion_roots: 
     else:
         return 0
 
-def derive_comp_init(parent_entry: dict, comp_cell) -> str | None:
+
+transforms_not_found = 0
+def derive_modified_init(json_entry: dict, obfuscated_cell) -> str | None:
     """
-    Resize parent's INIT to match the logical LUT width of comp_cell.
+    Resize json db entry's INIT to match the logical LUT width of an optimized cell.
     Uses only the LUT type size (no pin counting).
     """
-    parent_init = next(
+    global transforms_not_found
+    json_init_str = next(
         (
             it["value"]
-            for it in parent_entry.get("modified_properties", [])
+            for it in json_entry.get("modified_properties", [])
             if it["identifier"] == "INIT"
         ),
         None,
     )
-    if parent_init is None:
+    if json_init_str is None:
         return None
+    
+    json_bits, json_val = parse_init(json_init_str)
 
-    parsed = parse_init(parent_init)
-    if parsed is None:
-        logging.warning("derive_comp_init: can't parse parent INIT '%s'; returning unchanged.",
-                        parent_init)
-        return parent_init
-    parent_bits, parent_val = parsed
-
-    child_w = LUTTools.getLUTSize(comp_cell)
-    if child_w is None:
-        logging.warning("derive_comp_init: can't infer LUT width for %s; returning parent INIT.",
-                        comp_cell.getName())
-        return parent_init
-
+    child_w = LUTTools.getLUTSize(obfuscated_cell)
     bits_needed = 1 << child_w
 
-    orig_comp_init = str(comp_cell.getPropertiesMap().get("INIT"))
+    sentinel_init_str = get_masking_init(None, math.log2(json_bits))
+    _, sentinel_init_val = parse_init(sentinel_init_str)
+    obfuscated_init_str = str(obfuscated_cell.getPropertiesMap().get("INIT").getValue())
+    _, obfuscated_init_val = parse_init(obfuscated_init_str)
 
-    if parent_bits == bits_needed:
-        force_binary = "'b" in orig_comp_init.lower()
-        new_lit = format_init(bits_needed, parent_val)
-        return new_lit 
-
-    if parent_bits > bits_needed:
-        new_val = parent_val & ((1 << bits_needed) - 1)
-        logging.info("derive_comp_init: %s truncated %d->%d bits.", comp_cell.getName(),
-                     parent_bits, bits_needed)
+    if sentinel_init_val != obfuscated_init_val:
+        logging.info("Found non equivalent init strings in cell %s. Deriving transformation %s -> %s", obfuscated_cell.getName(), sentinel_init_str, obfuscated_init_str)
+        transforms = derive_init_transform(sentinel_init_val, obfuscated_init_val)
+        if transforms:
+            logging.info("Found transforms...")
+            for t in transforms:
+                logging.info(t)
+            new_val = apply_transforms(json_val, transforms)
+            new_init = format_init(bits_needed, new_val, False)
+            logging.info("json_init_str: %s, new_init: %s", json_init_str, new_init)
+        else:
+            transforms_not_found += 1
+            logging.warning("Not able to find transforms from %s to %s", sentinel_init_str, obfuscated_init_str) 
+            new_val = json_val
     else:
-        tile = (bits_needed + parent_bits - 1) // parent_bits
-        mask = (1 << parent_bits) - 1
-        new_val = 0
-        shift = 0
-        for _ in range(tile):
-            new_val |= (parent_val & mask) << shift
-            shift += parent_bits
-        new_val &= (1 << bits_needed) - 1
-        logging.info("derive_comp_init: %s tiled %d->%d bits.", comp_cell.getName(),
-                     parent_bits, bits_needed)
-    
-    if comp_cell.getName() == "datapath/bit_counter_reg[0]":
-        logging.info("found datapath/bit_counter_reg[0]")
+        new_val = json_val
 
-    force_binary = "'b" in orig_comp_init.lower()
     return format_init(bits_needed, new_val, False)
 
 
@@ -184,19 +174,20 @@ def _find_entry_for_instance(
     if entry:
         return entry
 
-    logging.info("No entry found for %s", hname)
+    # logging.info("No entry found for %s", hname)
 
     orig_cell_name_prop = h_inst.getInst().getPropertiesMap().get("ORIG_CELL_NAME")
     if orig_cell_name_prop:
         orig_cell_name = orig_cell_name_prop
-        logging.info("Using original cell name %s", orig_cell_name)
+        # logging.info("Using original cell name %s", orig_cell_name)
         entry = json_db.get(orig_cell_name)
         if entry:
-            logging.info("Successfully found entry for %s", orig_cell_name)
+            # logging.info("Successfully found entry for %s", orig_cell_name)
             return entry
-        logging.info("Failed to find entry for %s", orig_cell_name)
+        # logging.info("Failed to find entry for %s", orig_cell_name)
     else:
-        logging.info("No ORIG_CELL_NAME property for %s", hname)
+        pass
+        # logging.info("No ORIG_CELL_NAME property for %s", hname)
 
     cell = h_inst.getInst()
     tag_prop = cell.getPropertiesMap().get(TAG_PROP)
@@ -204,16 +195,17 @@ def _find_entry_for_instance(
         tag = tag_prop.getValue()
         entry = next((e for e in json_db.values() if e.get("tag") == tag), None)
         if entry:
-            logging.info("Successfully matched tag for %s", hname)
+            # logging.info("Successfully matched tag for %s", hname)
             return entry
-        logging.info("Tag did not match any entry for %s", hname)
+        # logging.info("Tag did not match any entry for %s", hname)
     else:
-        logging.info("No tag property for %s", hname)
+        pass
+        # logging.info("No tag property for %s", hname)
 
     stripped = strip_suffixes_lookup(hname, json_db)
     if stripped:
         base_name, entry = stripped
-        logging.info("Recovered base name %s from %s", base_name, hname)
+        # logging.info("Recovered base name %s from %s", base_name, hname)
         return entry
 
     logging.warning("No match (name/orig/tag/suffix) for %s; skipping", hname)
@@ -222,10 +214,9 @@ def _find_entry_for_instance(
 
 def _maybe_patch_init(entry: dict, h_inst):
     # Derive new INIT (returns None if not applicable)
-    new_init = derive_comp_init(entry, h_inst.getInst())
+    new_init =derive_modified_init(entry, h_inst.getInst())
     if not new_init:
         return
-
     if "LUT" not in h_inst.getCellName():
         logging.info(
             "Skipping INIT operations on non-LUT cell %s", h_inst.getCellName()
@@ -250,22 +241,28 @@ def restore_all_properties(
     hier_map = EDIFTools.createCellInstanceMap(netlist)
 
     restored_count = 0
+    count = 0
 
     for lib_map in hier_map.values():
         for inst_list in lib_map.values():
             for h_inst in inst_list:
                 hname = h_inst.getFullHierarchicalInstName()
-                entry = _find_entry_for_instance(h_inst, hname, json_db)
-                if not entry:
+                if "FD" in h_inst.getCellName():
+                    # logging.info("FF Found")
+                    count += 1
+                entry_in_db = _find_entry_for_instance(h_inst, hname, json_db)
+                if not entry_in_db:
                     continue
 
+                entry = copy.deepcopy(entry_in_db)
                 _maybe_patch_init(entry, h_inst)
 
                 restored_count += restore_properties_for_cell(
                     h_inst.getInst(), entry, hname, inversion_roots
                 )
-
+    logging.info("%d FFs found", count)
     logging.info("Restored %d cells", restored_count)
+    logging.warning("Failed to find %d INIT string mappings", transforms_not_found)
 
 
 def apply_properties(design: Design, json_db: dict[str, dict]):

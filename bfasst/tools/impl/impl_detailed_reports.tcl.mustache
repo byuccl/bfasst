@@ -1,6 +1,8 @@
 open_checkpoint {{ impl_dcp }}
 
 foreach clk [get_clocks *] {
+    set period [get_property PERIOD $clk]
+    puts "CLOCK: $clk, PERIOD: $period"
     set src_ports [get_ports -of [get_clocks $clk]]
     foreach port $src_ports {
         # Override clock by redefining it with a fixed period

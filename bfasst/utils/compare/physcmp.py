@@ -10,7 +10,7 @@ import re
 from argparse import ArgumentParser
 from pathlib import Path
 from bfasst import jpype_jvm
-from bfasst.utils.physcmp_data_types import ImplReports, PhyscmpException
+from bfasst.utils.compare.physcmp_data_types import ImplReports, PhyscmpException
 
 jpype_jvm.start()
 
@@ -197,7 +197,13 @@ def log_netlist_diffs(netlist_comparator):
     diff_map = netlist_comparator.getDiffMap()
     logging.info(_capture_report_lines(netlist_comparator))
 
-    skip_substrings = {"HOLD_DETOUR", "ECO_CHECKSUM"}
+    skip_substrings = {
+        "HOLD_DETOUR", 
+        "ECO_CHECKSUM", 
+        "PHYS_OPT_MODIFIED",
+        "PHYS_OPT_SKIPPED",
+        "OPT_MODIFIED",
+    }
 
     count = 0
     for entry in diff_map.entrySet():
@@ -217,7 +223,7 @@ def log_netlist_diffs(netlist_comparator):
                 continue
 
             count += 1
-            MAX_TO_SHOW = 2
+            MAX_TO_SHOW = 4
             if shown < MAX_TO_SHOW:
                 printDiff(diff)
                 shown += 1

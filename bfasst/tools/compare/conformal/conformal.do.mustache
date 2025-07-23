@@ -1,24 +1,25 @@
 read library -Verilog {{#local_libs_paths}}{{ . }} {{/local_libs_paths}} -nooptimize -Both -replace
 
-read design {{#golden_files}}{{ . }} {{/golden_files}} -Verilog -Golden -continuousassignment Bidirectional -nokeep_unreach -nosupply
+read design {{#golden_files}}{{ . }} {{/golden_files}} -Verilog -Golden -continuousassignment Bidirectional -nosupply
 
-read design {{ rev_netlist }} -Verilog -Revised -continuousassignment Bidirectional -nokeep_unreach -nosupply
+read design {{ rev_netlist }} -Verilog -Revised -continuousassignment Bidirectional -nosupply
 
 {{ renaming_rule_vector }}
 
-set system mode lec
 set compare effort high
 set mapping effort high
+
+set system mode lec
+
+report unmapped points
 
 add compared points -all
 compare
 
 report black box
 report verification
-report compare data
+report compare data -class noneq
 
-diagnose -summary
-diagnose 427
+diagnose -noneq -group
 
 exit -f
-
