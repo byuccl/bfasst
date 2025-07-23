@@ -262,7 +262,8 @@ def restore_all_properties(
                 )
     logging.info("%d FFs found", count)
     logging.info("Restored %d cells", restored_count)
-    logging.warning("Failed to find %d INIT string mappings", transforms_not_found)
+    if transforms_not_found:
+        logging.warning("Failed to find %d INIT string mappings", transforms_not_found)
 
 
 def apply_properties(design: Design, json_db: dict[str, dict]):
