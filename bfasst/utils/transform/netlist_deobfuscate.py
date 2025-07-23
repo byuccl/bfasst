@@ -214,7 +214,18 @@ def _find_entry_for_instance(
 
 def _maybe_patch_init(entry: dict, h_inst):
     # Derive new INIT (returns None if not applicable)
-    new_init =derive_modified_init(entry, h_inst.getInst())
+    if "LUT" in h_inst.getCellName():
+        new_init = derive_modified_init(entry, h_inst.getInst())
+    else:
+        new_init = next(
+            (
+                it["value"]
+                for it in entry.get("modified_properties", [])
+                if it["identifier"] == "INIT"
+            ),
+            None,
+        )
+
     if not new_init:
         return
     if "LUT" not in h_inst.getCellName():
