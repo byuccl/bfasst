@@ -138,13 +138,13 @@ class ImplObfuscate(Flow):
             bitstream=self.impl_detailed_reports_transform.outputs["bitstream"],
         )
 
-        # self.conformal = Conformal(
-        #     self,
-        #     design,
-        #     golden_netlist=self.impl_detailed_reports_orig.outputs["verilog"],
-        #     rev_netlist=self.impl_detailed_reports_transform.outputs["verilog"],
-        #     vendor=Vendor.XILINX.name,
-        # )
+#         self.conformal = Conformal(
+#             self,
+#             design,
+#             golden_netlist=self.impl_detailed_reports_orig.outputs["verilog"],
+#             rev_netlist=self.impl_detailed_reports_transform.outputs["verilog"],
+#             vendor=Vendor.XILINX.name,
+#         )
 
         self.physcmp = PhysCmp(
             self,
