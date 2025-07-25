@@ -37,16 +37,13 @@ while {1} {
 } 
 route_design
 set slack [get_property SLACK [lindex [get_timing_paths] 0]]
+set new_period $period
 while {1} {
     # adjust clock period so 0.0. > slack > -0.2, see UG904 pg. 97, Annotated *IMPORTANT
-    if {$slack >= 0} {
-        set new_period [expr $period - $slack - 0.15]
+    if {$slack >= 0 || $slack < -0.2} {
+        set new_period [expr {$new_period - $slack - 0.15}]
         create_clock -period $new_period -name $clock_name [get_ports $clock_port]
-        puts "New period: $new_period"
-    } elseif {$slack < -0.2} {
-        set new_period [expr $period - $slack - 0.15]
-        create_clock -period $new_period -name $clock_name [get_ports $clock_port]
-        puts "New period: $new_period"
+        puts "Adjusted clock period to: $new_period"
     }
     phys_opt_design -routing_opt -casc_opt -cell_group_opt -critical_cell_opt -critical_pin_opt -clock_opt -memory_rewire_opt
     # -directive AddRetime
