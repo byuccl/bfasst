@@ -229,9 +229,9 @@ def _maybe_patch_init(entry: dict, h_inst):
     if not new_init:
         return
     if "LUT" not in h_inst.getCellName():
-        logging.info(
-            "Skipping INIT operations on non-LUT cell %s", h_inst.getCellName()
-        )
+        # logging.info(
+        #     "Skipping INIT operations on non-LUT cell %s", h_inst.getCellName()
+        # )
         return
 
     props = entry.setdefault("modified_properties", [])
