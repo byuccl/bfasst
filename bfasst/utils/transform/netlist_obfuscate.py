@@ -49,9 +49,9 @@ def add_tag(inst):
 def obfuscate_lut(inst, counts) -> tuple[bool, list[dict[str, str]]]:
     """
     Obfuscate a single LUT instance.
-    • Replaces INIT with a masking literal.
-    • Adds a unique TAG_PROP so we can reverse later.
-    • Bumps the per-type counter in `counts`.
+     Replaces INIT with a masking literal.
+     Adds a unique TAG_PROP so we can reverse later.
+     Bumps the per-type counter in `counts`.
 
     Returns
     -------
@@ -95,6 +95,22 @@ def obfuscate_bram(inst, counts):
         "SRVAL_B",
     ]
 
+    return obfuscate_all(inst, skip_props, counts)
+
+def obfuscate_dsp(inst, counts):
+    """
+    Obfuscate DSP48E1 parameters as much as possible while preserving implementation behavior.
+    """
+    skip_props = [
+        "AREG",
+        "ACASCREG",
+        "BREG",
+        "BCASCREG",
+        "INMODEREG",
+        "MREG",
+        "OPMODEREG",
+        "PREG",
+    ]
     return obfuscate_all(inst, skip_props, counts)
 
 
@@ -145,6 +161,8 @@ def classify_and_obfuscate(inst, ref_type, counts) -> tuple[bool, dict, str]:
             changed, mods = obfuscate_lut(inst, counts)
         case _ if "RAMB" in ref_type:
             changed, mods = obfuscate_bram(inst, counts)
+        case _ if "DSP" in ref_type:
+            changed, mods = obfuscate_dsp(inst, counts)
         case _ if any(
             sub in ref_type
             for sub in [
@@ -153,7 +171,7 @@ def classify_and_obfuscate(inst, ref_type, counts) -> tuple[bool, dict, str]:
                 "RAM32X1D",
                 "SRL16E",
                 "RAMS",
-                "DSP",
+                # "DSP",
                 "IBUF",
                 "OBUF",
                 "FDRE",

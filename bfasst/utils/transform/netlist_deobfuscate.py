@@ -252,15 +252,15 @@ def restore_all_properties(
     hier_map = EDIFTools.createCellInstanceMap(netlist)
 
     restored_count = 0
-    count = 0
+    counts = {}
 
     for lib_map in hier_map.values():
         for inst_list in lib_map.values():
             for h_inst in inst_list:
                 hname = h_inst.getFullHierarchicalInstName()
-                if "FD" in h_inst.getCellName():
-                    # logging.info("FF Found")
-                    count += 1
+                type = h_inst.getCellName()
+                counts[type] = counts.get(type, 0) + 1
+
                 entry_in_db = _find_entry_for_instance(h_inst, hname, json_db)
                 if not entry_in_db:
                     continue
@@ -271,8 +271,11 @@ def restore_all_properties(
                 restored_count += restore_properties_for_cell(
                     h_inst.getInst(), entry, hname, inversion_roots
                 )
-    logging.info("%d FFs found", count)
+
     logging.info("Restored %d cells", restored_count)
+    for type, count in counts.items():
+        logging.info("   %s: %d", type, count)
+
     if transforms_not_found:
         logging.warning("Failed to find %d INIT string mappings", transforms_not_found)
 
