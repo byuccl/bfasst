@@ -141,8 +141,8 @@ def classify_and_obfuscate(inst, ref_type, counts) -> tuple[bool, dict, str]:
     match True:
         case _ if LUTTools.isCellALUT(inst.getInst()):
             changed, mods = obfuscate_lut(inst, counts)
-        case _ if "RAMB" in ref_type:
-            changed, mods = obfuscate_bram(inst, counts)
+        # case _ if "RAMB" in ref_type:
+        #     changed, mods = obfuscate_bram(inst, counts)
         # case _ if any(
         #     sub in ref_type
         #     for sub in [
