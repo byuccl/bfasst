@@ -91,6 +91,8 @@ def obfuscate_bram(inst, counts):
         "DOB_REG",
         "RSTREG_PRIORITY_A",
         "RSTREG_PRIORITY_B",
+        "SRVAL_A",
+        "SRVAL_B",
     ]
 
     return obfuscate_all(inst, skip_props, counts)
@@ -141,8 +143,8 @@ def classify_and_obfuscate(inst, ref_type, counts) -> tuple[bool, dict, str]:
     match True:
         case _ if LUTTools.isCellALUT(inst.getInst()):
             changed, mods = obfuscate_lut(inst, counts)
-        # case _ if "RAMB" in ref_type:
-        #     changed, mods = obfuscate_bram(inst, counts)
+        case _ if "RAMB" in ref_type:
+            changed, mods = obfuscate_bram(inst, counts)
         # case _ if any(
         #     sub in ref_type
         #     for sub in [
