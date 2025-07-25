@@ -276,6 +276,7 @@ def compare_all(golden, test, log_path: str, log_level: str):
 
     if num_netlist_diffs != 0:
         logging.error("\033[31mFound differences between logical netlists\033[0m")
+        print("Found differences between logical netlists for design: ", design.getName())
         # raise PhyscmpException
     else:
         logging.info("\033[32mNo differences found between logical netlists\033[0m")
@@ -306,6 +307,7 @@ def compare_all(golden, test, log_path: str, log_level: str):
     logging.info("Comparing bitstreams...")
     if compare_bitstreams(golden.bitstream, test.bitstream):
         logging.error("\033[33mFound differences in bitstream comparison.\033[0m")
+        print("Found differences in bitstream comparison for design: ", design.getName())
         # raise PhyscmpException
     else:
         logging.info("\033[32mNo differences found in bitstream comparison.\033[0m")
