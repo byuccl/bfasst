@@ -182,8 +182,8 @@ def classify_and_obfuscate(inst, ref_type, counts) -> tuple[bool, dict, str]:
             changed, mods = obfuscate_lut(inst, counts)
         case _ if "RAMB" in ref_type:
             changed, mods = obfuscate_bram(inst, counts)
-        # case _ if "DSP" in ref_type:
-        #     changed, mods = obfuscate_dsp(inst, counts)
+        case _ if "DSP" in ref_type:
+            changed, mods = obfuscate_dsp(inst, counts)
         case _ if any(
             sub in ref_type
             for sub in [
