@@ -117,11 +117,7 @@ def obfuscate_dsp(inst, counts):
         "OPMODEREG",
         "PREG",
 
-        # "A_INPUT",
-        # "B_INPUT",
-
-        # Functional usage
-        "USE_DPORT",
+        # "USE_DPORT",
         "USE_MULT",
         "USE_PATTERN_DETECT",
         "USE_SIMD",
