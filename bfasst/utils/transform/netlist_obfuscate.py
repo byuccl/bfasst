@@ -117,14 +117,8 @@ def obfuscate_dsp(inst, counts):
         "OPMODEREG",
         "PREG",
 
-        "A_INPUT",
-        "B_INPUT",
-
-        # Bit-level functional config
-        # "MASK",
-        # "PATTERN",
-        # "SEL_MASK",
-        # "SEL_PATTERN",
+        # "A_INPUT",
+        # "B_INPUT",
 
         # Functional usage
         "USE_DPORT",
