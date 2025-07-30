@@ -1,4 +1,4 @@
-VIVADO_PATH := "/tools/Xilinx/Vivado/2024.2/bin/vivado"
+VIVADO_PATH := "/tools/Xilinx/2025.1/Vivado/bin/vivado"
 IN_ENV = if [ -e .venv/bin/activate ]; then . .venv/bin/activate; fi;
 CAPNPJ := $(shell which capnpc-java)
 PYTHON311 := $(shell which python3.11)

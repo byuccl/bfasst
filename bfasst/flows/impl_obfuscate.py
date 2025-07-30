@@ -45,7 +45,7 @@ class ImplObfuscate(Flow):
             orig_edf_path=self.vivado_synth.outputs["synth_edf"],
             logging_level="DEBUG",
             log_file="netlist_obfuscate.log",
-        )
+       )
 
         self.impl_transform = VivadoImpl(
             self,
