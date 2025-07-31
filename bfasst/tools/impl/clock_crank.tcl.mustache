@@ -24,7 +24,8 @@ create_clock -period $new_period -name $clock_name [get_ports $clock_port]
 
 while {1} {
     if { [ catch {
-        phys_opt_design -fanout_opt -placement_opt -casc_opt -cell_group_opt -critical_cell_opt -dsp_register_opt -bram_register_opt -bram_enable_opt -shift_register_opt -force_replication_on_nets -critical_pin_opt -memory_rewire_opt
+        phys_opt_design -directive AddRetime 
+# -fanout_opt -placement_opt -casc_opt -cell_group_opt -critical_cell_opt -dsp_register_opt -bram_register_opt -bram_enable_opt -shift_register_opt -force_replication_on_nets -critical_pin_opt -memory_rewire_opt -lut_opt -restruct_opt -retime -insert_negative_edge_ffs -uram_register_opt -equ_drivers_opt -interconnect_retime
         report_phys_opt
         set slack [get_property SLACK [lindex [get_timing_paths] 0]]
         # break
@@ -57,7 +58,7 @@ while {1} {
         puts "Adjusted clock period to: $new_period"
     }
 
-    phys_opt_design -routing_opt -casc_opt -cell_group_opt -critical_cell_opt -critical_pin_opt -clock_opt -memory_rewire_opt
+    phys_opt_design -routing_opt -casc_opt -cell_group_opt -critical_cell_opt -critical_pin_opt -clock_opt -memory_rewire_opt 
     report_phys_opt
 
     # Re-fetch slack after optimization
