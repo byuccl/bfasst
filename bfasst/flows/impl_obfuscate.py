@@ -163,7 +163,7 @@ class ImplObfuscate(Flow):
             self.netlist_deobfuscate,
             self.impl_detailed_reports_orig,
             self.impl_detailed_reports_transform,
-#             self.conformal,
+#            self.conformal,
             self.physcmp,
         ]
 
@@ -175,7 +175,7 @@ class ImplObfuscate(Flow):
         self.netlist_deobfuscate.create_build_snippets()
         self.impl_detailed_reports_orig.create_build_snippets()
         self.impl_detailed_reports_transform.create_build_snippets()
-#         self.conformal.create_build_snippets()
+#        self.conformal.create_build_snippets()
         self.physcmp.create_build_snippets()
 
     def get_top_level_flow_path(self):

@@ -97,6 +97,7 @@ def derive_modified_init(json_entry: dict, obfuscated_cell) -> str | None:
     obfuscated_init_str = str(obfuscated_cell.getPropertiesMap().get("INIT").getValue())
     _, obfuscated_init_val = parse_init(obfuscated_init_str)
 
+    return format_init(bits_needed, json_val, False)
     if sentinel_init_val != obfuscated_init_val:
         logging.info("Found non equivalent init strings in cell %s. Deriving transformation %s -> %s", obfuscated_cell.getName(), sentinel_init_str, obfuscated_init_str)
         transforms = derive_init_transform(sentinel_init_val, obfuscated_init_val)
