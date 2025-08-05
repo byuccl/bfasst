@@ -24,7 +24,7 @@ create_clock -period $new_period -name $clock_name [get_ports $clock_port]
 
 while {1} {
     if { [ catch {
-        phys_opt_design -fanout_opt -placement_opt -casc_opt -cell_group_opt -critical_cell_opt -dsp_register_opt -bram_register_opt -bram_enable_opt -shift_register_opt -force_replication_on_nets -critical_pin_opt -memory_rewire_opt
+        phys_opt_design -fanout_opt -placement_opt -casc_opt -cell_group_opt -critical_cell_opt -dsp_register_opt -bram_register_opt -bram_enable_opt -shift_register_opt -force_replication_on_nets -critical_pin_opt -memory_rewire_opt -lut_opt -retime -equ_drivers_opt -restruct_opt
         report_phys_opt
         set slack [get_property SLACK [lindex [get_timing_paths] 0]]
         # break
