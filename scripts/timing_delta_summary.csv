@@ -1,17 +1,10 @@
 design,metric,delta,golden,test
 ooc/pic,clocks.fixed_CLK_I_gen.tns,0.0,0.0,0.0
-ooc/pic,clocks.fixed_CLK_I_gen.tns_endpoints,3.0,148.0,151.0
+ooc/pic,clocks.fixed_CLK_I_gen.tns_endpoints,0.0,144.0,144.0
 ooc/pic,clocks.fixed_CLK_I_gen.tns_fail,0.0,0.0,0.0
 ooc/pic,clocks.fixed_CLK_I_gen.tpws,0.0,0.0,0.0
-ooc/pic,clocks.fixed_CLK_I_gen.wns,-0.878,6.297,5.419
+ooc/pic,clocks.fixed_CLK_I_gen.wns,0.0,6.121,6.121
 ooc/pic,clocks.fixed_CLK_I_gen.wpws,0.0,4.5,4.5
-<<<<<<< Updated upstream
-ooc/a25_decode,clocks.fixed_clk_gen.tns,-1714.386,-248.939,-1963.325
-ooc/jpegencode,clocks.fixed_clk_gen.tns,-822.28,0.0,-822.28
-byu/riscv_final,clocks.fixed_clk_gen.tns,-53.454,0.0,-53.454
-ooc/median,clocks.fixed_clk_gen.tns,-46.353,-4.211,-50.564
-=======
->>>>>>> Stashed changes
 byu/Sout_reg,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
 byu/UpDownButtonCount,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
 byu/buttoncount,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
@@ -21,11 +14,9 @@ byu/counters,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
 byu/debouncer,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
 byu/lightWave,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
 byu/oneshot,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
-<<<<<<< Updated upstream
 byu/regfile,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
 byu/riscvSimpleDatapath,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
-=======
->>>>>>> Stashed changes
+byu/riscv_final,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
 byu/rx,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
 byu/shiftReg,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
 byu/stopwatch,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
@@ -38,7 +29,7 @@ byu/uart_tx,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
 ooc/ID_stage,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
 ooc/IF_stage,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
 ooc/MEM_stage,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
-<<<<<<< Updated upstream
+ooc/a25_decode,clocks.fixed_clk_gen.tns,0.0,-269.175,-269.175
 ooc/a25_wishbone,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
 ooc/aes128,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
 ooc/basicrsa,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
@@ -46,6 +37,8 @@ ooc/bubblesort,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
 ooc/control_unit,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
 ooc/data_path,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
 ooc/hight,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
+ooc/jpegencode,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
+ooc/median,clocks.fixed_clk_gen.tns,0.0,-8.46,-8.46
 ooc/mips_16,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
 ooc/natalius_processor,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
 ooc/pci_mini,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
@@ -56,79 +49,50 @@ vtr_benchmarks/mkPktMerge,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
 vtr_benchmarks/mkSMAdapter4B,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
 vtr_benchmarks/raygentop,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
 vtr_benchmarks/stereovision2,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
-ooc/quadratic_func,clocks.fixed_clk_gen.tns_endpoints,-16.0,142.0,126.0
-byu/riscv_final,clocks.fixed_clk_gen.tns_endpoints,-4.0,2633.0,2629.0
-byu/tx,clocks.fixed_clk_gen.tns_endpoints,-2.0,38.0,36.0
-ooc/data_path,clocks.fixed_clk_gen.tns_endpoints,-2.0,437.0,435.0
-=======
-ooc/basicrsa,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
-ooc/control_unit,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
-ooc/hight,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
-ooc/mips_16,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
-ooc/natalius_processor,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
-ooc/quadratic_func,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
-ooc/random_pulse_generator,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
-vtr_benchmarks/mkPktMerge,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
-vtr_benchmarks/stereovision2,clocks.fixed_clk_gen.tns,0.0,0.0,0.0
-ooc/quadratic_func,clocks.fixed_clk_gen.tns_endpoints,-16.0,142.0,126.0
-byu/tx,clocks.fixed_clk_gen.tns_endpoints,-2.0,38.0,36.0
->>>>>>> Stashed changes
-ooc/random_pulse_generator,clocks.fixed_clk_gen.tns_endpoints,-1.0,34.0,33.0
 byu/Sout_reg,clocks.fixed_clk_gen.tns_endpoints,0.0,1.0,1.0
-byu/UpDownButtonCount,clocks.fixed_clk_gen.tns_endpoints,0.0,39.0,39.0
+byu/UpDownButtonCount,clocks.fixed_clk_gen.tns_endpoints,0.0,36.0,36.0
 byu/buttoncount,clocks.fixed_clk_gen.tns_endpoints,0.0,36.0,36.0
 byu/calc,clocks.fixed_clk_gen.tns_endpoints,0.0,35.0,35.0
 byu/counter,clocks.fixed_clk_gen.tns_endpoints,0.0,3.0,3.0
-byu/counters,clocks.fixed_clk_gen.tns_endpoints,0.0,31.0,31.0
+byu/counters,clocks.fixed_clk_gen.tns_endpoints,0.0,29.0,29.0
 byu/debouncer,clocks.fixed_clk_gen.tns_endpoints,0.0,40.0,40.0
 byu/lightWave,clocks.fixed_clk_gen.tns_endpoints,0.0,4.0,4.0
 byu/oneshot,clocks.fixed_clk_gen.tns_endpoints,0.0,3.0,3.0
-<<<<<<< Updated upstream
 byu/regfile,clocks.fixed_clk_gen.tns_endpoints,0.0,64.0,64.0
-=======
->>>>>>> Stashed changes
+byu/riscvSimpleDatapath,clocks.fixed_clk_gen.tns_endpoints,0.0,63.0,63.0
+byu/riscv_final,clocks.fixed_clk_gen.tns_endpoints,0.0,2622.0,2622.0
+byu/rx,clocks.fixed_clk_gen.tns_endpoints,0.0,93.0,93.0
 byu/shiftReg,clocks.fixed_clk_gen.tns_endpoints,0.0,38.0,38.0
+byu/stopwatch,clocks.fixed_clk_gen.tns_endpoints,0.0,96.0,96.0
+byu/tx,clocks.fixed_clk_gen.tns_endpoints,0.0,36.0,36.0
+byu/uart,clocks.fixed_clk_gen.tns_endpoints,0.0,254.0,254.0
 byu/uart_debouncer,clocks.fixed_clk_gen.tns_endpoints,0.0,40.0,40.0
+byu/uart_rx,clocks.fixed_clk_gen.tns_endpoints,0.0,93.0,93.0
 byu/uart_ssc,clocks.fixed_clk_gen.tns_endpoints,0.0,17.0,17.0
 byu/uart_tx,clocks.fixed_clk_gen.tns_endpoints,0.0,36.0,36.0
 ooc/ID_stage,clocks.fixed_clk_gen.tns_endpoints,0.0,25.0,25.0
 ooc/IF_stage,clocks.fixed_clk_gen.tns_endpoints,0.0,8.0,8.0
 ooc/MEM_stage,clocks.fixed_clk_gen.tns_endpoints,0.0,16.0,16.0
-<<<<<<< Updated upstream
-ooc/a25_decode,clocks.fixed_clk_gen.tns_endpoints,0.0,912.0,912.0
+ooc/a25_decode,clocks.fixed_clk_gen.tns_endpoints,0.0,910.0,910.0
+ooc/a25_wishbone,clocks.fixed_clk_gen.tns_endpoints,0.0,1158.0,1158.0
 ooc/aes128,clocks.fixed_clk_gen.tns_endpoints,0.0,7232.0,7232.0
 ooc/basicrsa,clocks.fixed_clk_gen.tns_endpoints,0.0,952.0,952.0
 ooc/bubblesort,clocks.fixed_clk_gen.tns_endpoints,0.0,882.0,882.0
-ooc/hight,clocks.fixed_clk_gen.tns_endpoints,0.0,203.0,203.0
+ooc/control_unit,clocks.fixed_clk_gen.tns_endpoints,0.0,10.0,10.0
+ooc/data_path,clocks.fixed_clk_gen.tns_endpoints,0.0,434.0,434.0
+ooc/hight,clocks.fixed_clk_gen.tns_endpoints,0.0,198.0,198.0
+ooc/jpegencode,clocks.fixed_clk_gen.tns_endpoints,0.0,93149.0,93149.0
 ooc/median,clocks.fixed_clk_gen.tns_endpoints,0.0,71.0,71.0
 ooc/mips_16,clocks.fixed_clk_gen.tns_endpoints,0.0,8.0,8.0
 ooc/natalius_processor,clocks.fixed_clk_gen.tns_endpoints,0.0,14.0,14.0
+ooc/pci_mini,clocks.fixed_clk_gen.tns_endpoints,0.0,492.0,492.0
+ooc/quadratic_func,clocks.fixed_clk_gen.tns_endpoints,0.0,142.0,142.0
+ooc/random_pulse_generator,clocks.fixed_clk_gen.tns_endpoints,0.0,35.0,35.0
+ooc/simon_core,clocks.fixed_clk_gen.tns_endpoints,0.0,49.0,49.0
 vtr_benchmarks/mkPktMerge,clocks.fixed_clk_gen.tns_endpoints,0.0,14.0,14.0
+vtr_benchmarks/mkSMAdapter4B,clocks.fixed_clk_gen.tns_endpoints,0.0,2074.0,2074.0
 vtr_benchmarks/raygentop,clocks.fixed_clk_gen.tns_endpoints,0.0,151.0,151.0
 vtr_benchmarks/stereovision2,clocks.fixed_clk_gen.tns_endpoints,0.0,12.0,12.0
-byu/stopwatch,clocks.fixed_clk_gen.tns_endpoints,2.0,96.0,98.0
-ooc/a25_wishbone,clocks.fixed_clk_gen.tns_endpoints,2.0,1158.0,1160.0
-vtr_benchmarks/mkSMAdapter4B,clocks.fixed_clk_gen.tns_endpoints,3.0,2074.0,2077.0
-=======
-ooc/basicrsa,clocks.fixed_clk_gen.tns_endpoints,0.0,952.0,952.0
-ooc/hight,clocks.fixed_clk_gen.tns_endpoints,0.0,203.0,203.0
-ooc/mips_16,clocks.fixed_clk_gen.tns_endpoints,0.0,8.0,8.0
-ooc/natalius_processor,clocks.fixed_clk_gen.tns_endpoints,0.0,14.0,14.0
-vtr_benchmarks/mkPktMerge,clocks.fixed_clk_gen.tns_endpoints,0.0,14.0,14.0
-vtr_benchmarks/stereovision2,clocks.fixed_clk_gen.tns_endpoints,0.0,12.0,12.0
-byu/stopwatch,clocks.fixed_clk_gen.tns_endpoints,2.0,96.0,98.0
->>>>>>> Stashed changes
-byu/rx,clocks.fixed_clk_gen.tns_endpoints,4.0,93.0,97.0
-byu/uart,clocks.fixed_clk_gen.tns_endpoints,4.0,258.0,262.0
-byu/uart_rx,clocks.fixed_clk_gen.tns_endpoints,4.0,93.0,97.0
-ooc/control_unit,clocks.fixed_clk_gen.tns_endpoints,4.0,10.0,14.0
-<<<<<<< Updated upstream
-byu/riscvSimpleDatapath,clocks.fixed_clk_gen.tns_endpoints,6.0,64.0,70.0
-ooc/pci_mini,clocks.fixed_clk_gen.tns_endpoints,9.0,494.0,503.0
-ooc/simon_core,clocks.fixed_clk_gen.tns_endpoints,9.0,51.0,60.0
-ooc/jpegencode,clocks.fixed_clk_gen.tns_endpoints,160.0,93202.0,93362.0
-=======
->>>>>>> Stashed changes
 byu/Sout_reg,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
 byu/UpDownButtonCount,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
 byu/buttoncount,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
@@ -138,11 +102,9 @@ byu/counters,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
 byu/debouncer,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
 byu/lightWave,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
 byu/oneshot,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
-<<<<<<< Updated upstream
 byu/regfile,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
 byu/riscvSimpleDatapath,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
-=======
->>>>>>> Stashed changes
+byu/riscv_final,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
 byu/rx,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
 byu/shiftReg,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
 byu/stopwatch,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
@@ -155,7 +117,7 @@ byu/uart_tx,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
 ooc/ID_stage,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
 ooc/IF_stage,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
 ooc/MEM_stage,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
-<<<<<<< Updated upstream
+ooc/a25_decode,clocks.fixed_clk_gen.tns_fail,0.0,325.0,325.0
 ooc/a25_wishbone,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
 ooc/aes128,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
 ooc/basicrsa,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
@@ -163,6 +125,7 @@ ooc/bubblesort,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
 ooc/control_unit,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
 ooc/data_path,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
 ooc/hight,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
+ooc/jpegencode,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
 ooc/median,clocks.fixed_clk_gen.tns_fail,0.0,8.0,8.0
 ooc/mips_16,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
 ooc/natalius_processor,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
@@ -174,20 +137,6 @@ vtr_benchmarks/mkPktMerge,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
 vtr_benchmarks/mkSMAdapter4B,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
 vtr_benchmarks/raygentop,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
 vtr_benchmarks/stereovision2,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
-byu/riscv_final,clocks.fixed_clk_gen.tns_fail,55.0,0.0,55.0
-ooc/a25_decode,clocks.fixed_clk_gen.tns_fail,71.0,320.0,391.0
-ooc/jpegencode,clocks.fixed_clk_gen.tns_fail,1197.0,0.0,1197.0
-=======
-ooc/basicrsa,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
-ooc/control_unit,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
-ooc/hight,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
-ooc/mips_16,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
-ooc/natalius_processor,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
-ooc/quadratic_func,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
-ooc/random_pulse_generator,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
-vtr_benchmarks/mkPktMerge,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
-vtr_benchmarks/stereovision2,clocks.fixed_clk_gen.tns_fail,0.0,0.0,0.0
->>>>>>> Stashed changes
 byu/Sout_reg,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
 byu/UpDownButtonCount,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
 byu/buttoncount,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
@@ -197,12 +146,9 @@ byu/counters,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
 byu/debouncer,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
 byu/lightWave,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
 byu/oneshot,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
-<<<<<<< Updated upstream
 byu/regfile,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
 byu/riscvSimpleDatapath,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
 byu/riscv_final,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
-=======
->>>>>>> Stashed changes
 byu/rx,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
 byu/shiftReg,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
 byu/stopwatch,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
@@ -215,7 +161,6 @@ byu/uart_tx,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
 ooc/ID_stage,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
 ooc/IF_stage,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
 ooc/MEM_stage,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
-<<<<<<< Updated upstream
 ooc/a25_decode,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
 ooc/a25_wishbone,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
 ooc/aes128,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
@@ -236,78 +181,50 @@ vtr_benchmarks/mkPktMerge,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
 vtr_benchmarks/mkSMAdapter4B,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
 vtr_benchmarks/raygentop,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
 vtr_benchmarks/stereovision2,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
-ooc/a25_decode,clocks.fixed_clk_gen.wns,-9.103,-1.618,-10.721
-ooc/median,clocks.fixed_clk_gen.wns,-6.037,-0.635,-6.672
-ooc/quadratic_func,clocks.fixed_clk_gen.wns,-4.421,4.795,0.374
-vtr_benchmarks/mkSMAdapter4B,clocks.fixed_clk_gen.wns,-3.231,3.342,0.111
-ooc/jpegencode,clocks.fixed_clk_gen.wns,-3.011,0.331,-2.68
-byu/riscv_final,clocks.fixed_clk_gen.wns,-2.92,0.414,-2.506
-ooc/pci_mini,clocks.fixed_clk_gen.wns,-2.605,6.536,3.931
-ooc/a25_wishbone,clocks.fixed_clk_gen.wns,-1.953,6.475,4.522
-ooc/hight,clocks.fixed_clk_gen.wns,-1.327,3.313,1.986
-byu/stopwatch,clocks.fixed_clk_gen.wns,-1.307,6.198,4.891
-ooc/aes128,clocks.fixed_clk_gen.wns,-1.272,5.488,4.216
-byu/uart,clocks.fixed_clk_gen.wns,-0.989,6.645,5.656
-byu/calc,clocks.fixed_clk_gen.wns,-0.984,6.582,5.598
-byu/tx,clocks.fixed_clk_gen.wns,-0.932,7.181,6.249
-byu/regfile,clocks.fixed_clk_gen.wns,-0.822,7.298,6.476
-ooc/ID_stage,clocks.fixed_clk_gen.wns,-0.752,8.192,7.44
-byu/rx,clocks.fixed_clk_gen.wns,-0.658,6.966,6.308
-ooc/simon_core,clocks.fixed_clk_gen.wns,-0.63,7.128,6.498
-byu/riscvSimpleDatapath,clocks.fixed_clk_gen.wns,-0.603,4.809,4.206
-=======
-ooc/basicrsa,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
-ooc/control_unit,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
-ooc/hight,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
-ooc/mips_16,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
-ooc/natalius_processor,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
-ooc/quadratic_func,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
-ooc/random_pulse_generator,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
-vtr_benchmarks/mkPktMerge,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
-vtr_benchmarks/stereovision2,clocks.fixed_clk_gen.tpws,0.0,0.0,0.0
-ooc/quadratic_func,clocks.fixed_clk_gen.wns,-4.421,4.795,0.374
-ooc/hight,clocks.fixed_clk_gen.wns,-1.327,3.313,1.986
-byu/stopwatch,clocks.fixed_clk_gen.wns,-1.307,6.198,4.891
-byu/uart,clocks.fixed_clk_gen.wns,-0.989,6.645,5.656
-byu/calc,clocks.fixed_clk_gen.wns,-0.984,6.582,5.598
-byu/tx,clocks.fixed_clk_gen.wns,-0.932,7.181,6.249
-ooc/ID_stage,clocks.fixed_clk_gen.wns,-0.752,8.192,7.44
-byu/rx,clocks.fixed_clk_gen.wns,-0.658,6.966,6.308
->>>>>>> Stashed changes
-byu/shiftReg,clocks.fixed_clk_gen.wns,-0.493,8.665,8.172
-vtr_benchmarks/mkPktMerge,clocks.fixed_clk_gen.wns,-0.459,7.947,7.488
-byu/uart_rx,clocks.fixed_clk_gen.wns,-0.28,6.87,6.59
-byu/uart_tx,clocks.fixed_clk_gen.wns,-0.263,7.162,6.899
-<<<<<<< Updated upstream
-ooc/data_path,clocks.fixed_clk_gen.wns,-0.213,3.674,3.461
-=======
->>>>>>> Stashed changes
-byu/Sout_reg,clocks.fixed_clk_gen.wns,-0.063,8.351,8.288
+byu/Sout_reg,clocks.fixed_clk_gen.wns,0.0,8.171,8.171
 byu/UpDownButtonCount,clocks.fixed_clk_gen.wns,0.0,7.617,7.617
 byu/buttoncount,clocks.fixed_clk_gen.wns,0.0,7.984,7.984
+byu/calc,clocks.fixed_clk_gen.wns,0.0,6.418,6.418
 byu/counter,clocks.fixed_clk_gen.wns,0.0,8.75,8.75
-byu/debouncer,clocks.fixed_clk_gen.wns,0.0,6.693,6.693
+byu/counters,clocks.fixed_clk_gen.wns,0.0,6.524,6.524
+byu/debouncer,clocks.fixed_clk_gen.wns,0.0,5.9,5.9
 byu/lightWave,clocks.fixed_clk_gen.wns,0.0,8.754,8.754
 byu/oneshot,clocks.fixed_clk_gen.wns,0.0,8.751,8.751
-byu/uart_debouncer,clocks.fixed_clk_gen.wns,0.0,6.626,6.626
-byu/uart_ssc,clocks.fixed_clk_gen.wns,0.0,7.951,7.951
+byu/regfile,clocks.fixed_clk_gen.wns,0.0,7.271,7.271
+byu/riscvSimpleDatapath,clocks.fixed_clk_gen.wns,0.0,4.732,4.732
+byu/riscv_final,clocks.fixed_clk_gen.wns,0.0,0.255,0.255
+byu/rx,clocks.fixed_clk_gen.wns,0.0,6.872,6.872
+byu/shiftReg,clocks.fixed_clk_gen.wns,0.0,8.665,8.665
+byu/stopwatch,clocks.fixed_clk_gen.wns,0.0,6.181,6.181
+byu/tx,clocks.fixed_clk_gen.wns,0.0,6.736,6.736
+byu/uart,clocks.fixed_clk_gen.wns,0.0,6.301,6.301
+byu/uart_debouncer,clocks.fixed_clk_gen.wns,0.0,6.341,6.341
+byu/uart_rx,clocks.fixed_clk_gen.wns,0.0,6.898,6.898
+byu/uart_ssc,clocks.fixed_clk_gen.wns,0.0,7.937,7.937
+byu/uart_tx,clocks.fixed_clk_gen.wns,0.0,6.6,6.6
+ooc/ID_stage,clocks.fixed_clk_gen.wns,0.0,8.205,8.205
 ooc/IF_stage,clocks.fixed_clk_gen.wns,0.0,8.168,8.168
 ooc/MEM_stage,clocks.fixed_clk_gen.wns,0.0,8.419,8.419
-<<<<<<< Updated upstream
-ooc/bubblesort,clocks.fixed_clk_gen.wns,0.0,8.356,8.356
-=======
->>>>>>> Stashed changes
+ooc/a25_decode,clocks.fixed_clk_gen.wns,0.0,-1.959,-1.959
+ooc/a25_wishbone,clocks.fixed_clk_gen.wns,0.0,6.335,6.335
+ooc/aes128,clocks.fixed_clk_gen.wns,0.0,5.456,5.456
+ooc/basicrsa,clocks.fixed_clk_gen.wns,0.0,2.934,2.934
+ooc/bubblesort,clocks.fixed_clk_gen.wns,0.0,8.327,8.327
+ooc/control_unit,clocks.fixed_clk_gen.wns,0.0,7.849,7.849
+ooc/data_path,clocks.fixed_clk_gen.wns,0.0,3.347,3.347
+ooc/hight,clocks.fixed_clk_gen.wns,0.0,3.312,3.312
+ooc/jpegencode,clocks.fixed_clk_gen.wns,0.0,0.366,0.366
+ooc/median,clocks.fixed_clk_gen.wns,0.0,-1.166,-1.166
 ooc/mips_16,clocks.fixed_clk_gen.wns,0.0,8.175,8.175
 ooc/natalius_processor,clocks.fixed_clk_gen.wns,0.0,8.267,8.267
+ooc/pci_mini,clocks.fixed_clk_gen.wns,0.0,6.633,6.633
+ooc/quadratic_func,clocks.fixed_clk_gen.wns,0.0,4.891,4.891
+ooc/random_pulse_generator,clocks.fixed_clk_gen.wns,0.0,8.175,8.175
+ooc/simon_core,clocks.fixed_clk_gen.wns,0.0,7.019,7.019
+vtr_benchmarks/mkPktMerge,clocks.fixed_clk_gen.wns,0.0,7.947,7.947
+vtr_benchmarks/mkSMAdapter4B,clocks.fixed_clk_gen.wns,0.0,2.844,2.844
+vtr_benchmarks/raygentop,clocks.fixed_clk_gen.wns,0.0,8.284,8.284
 vtr_benchmarks/stereovision2,clocks.fixed_clk_gen.wns,0.0,8.705,8.705
-ooc/basicrsa,clocks.fixed_clk_gen.wns,0.025,2.82,2.845
-<<<<<<< Updated upstream
-vtr_benchmarks/raygentop,clocks.fixed_clk_gen.wns,0.071,8.295,8.366
-=======
->>>>>>> Stashed changes
-ooc/random_pulse_generator,clocks.fixed_clk_gen.wns,0.084,8.175,8.259
-ooc/control_unit,clocks.fixed_clk_gen.wns,0.143,7.817,7.96
-byu/counters,clocks.fixed_clk_gen.wns,0.195,6.882,7.077
 byu/Sout_reg,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
 byu/UpDownButtonCount,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
 byu/buttoncount,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
@@ -317,12 +234,9 @@ byu/counters,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
 byu/debouncer,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
 byu/lightWave,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
 byu/oneshot,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
-<<<<<<< Updated upstream
 byu/regfile,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
 byu/riscvSimpleDatapath,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
 byu/riscv_final,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
-=======
->>>>>>> Stashed changes
 byu/rx,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
 byu/shiftReg,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
 byu/stopwatch,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
@@ -335,7 +249,6 @@ byu/uart_tx,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
 ooc/ID_stage,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
 ooc/IF_stage,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
 ooc/MEM_stage,clocks.fixed_clk_gen.wpws,0.0,3.75,3.75
-<<<<<<< Updated upstream
 ooc/a25_decode,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
 ooc/a25_wishbone,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
 ooc/aes128,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
@@ -355,109 +268,67 @@ ooc/simon_core,clocks.fixed_clk_gen.wpws,0.0,4.02,4.02
 vtr_benchmarks/mkPktMerge,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
 vtr_benchmarks/mkSMAdapter4B,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
 vtr_benchmarks/raygentop,clocks.fixed_clk_gen.wpws,0.0,4.02,4.02
-=======
-ooc/basicrsa,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
-ooc/control_unit,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
-ooc/hight,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
-ooc/mips_16,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
-ooc/natalius_processor,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
-ooc/quadratic_func,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
-ooc/random_pulse_generator,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
-vtr_benchmarks/mkPktMerge,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
->>>>>>> Stashed changes
 vtr_benchmarks/stereovision2,clocks.fixed_clk_gen.wpws,0.0,4.5,4.5
-vtr_benchmarks/sha,clocks.fixed_clk_i_gen.tns,-0.101,0.0,-0.101
 ooc/bcd_adder,clocks.fixed_clk_i_gen.tns,0.0,0.0,0.0
+vtr_benchmarks/sha,clocks.fixed_clk_i_gen.tns,0.0,0.0,0.0
 ooc/bcd_adder,clocks.fixed_clk_i_gen.tns_endpoints,0.0,17.0,17.0
-vtr_benchmarks/sha,clocks.fixed_clk_i_gen.tns_endpoints,5.0,1788.0,1793.0
+vtr_benchmarks/sha,clocks.fixed_clk_i_gen.tns_endpoints,0.0,1787.0,1787.0
 ooc/bcd_adder,clocks.fixed_clk_i_gen.tns_fail,0.0,0.0,0.0
-vtr_benchmarks/sha,clocks.fixed_clk_i_gen.tns_fail,1.0,0.0,1.0
+vtr_benchmarks/sha,clocks.fixed_clk_i_gen.tns_fail,0.0,0.0,0.0
 ooc/bcd_adder,clocks.fixed_clk_i_gen.tpws,0.0,0.0,0.0
 vtr_benchmarks/sha,clocks.fixed_clk_i_gen.tpws,0.0,0.0,0.0
-vtr_benchmarks/sha,clocks.fixed_clk_i_gen.wns,-1.98,1.879,-0.101
-ooc/bcd_adder,clocks.fixed_clk_i_gen.wns,-0.043,6.647,6.604
+ooc/bcd_adder,clocks.fixed_clk_i_gen.wns,0.0,6.619,6.619
+vtr_benchmarks/sha,clocks.fixed_clk_i_gen.wns,0.0,1.718,1.718
 ooc/bcd_adder,clocks.fixed_clk_i_gen.wpws,0.0,4.5,4.5
 vtr_benchmarks/sha,clocks.fixed_clk_i_gen.wpws,0.0,4.5,4.5
-<<<<<<< Updated upstream
 ooc/cpu8080,clocks.fixed_clock_gen.tns,0.0,0.0,0.0
 ooc/tiny_encryption_algorithm,clocks.fixed_clock_gen.tns,0.0,0.0,0.0
-ooc/tiny_encryption_algorithm,clocks.fixed_clock_gen.tns_endpoints,0.0,336.0,336.0
-ooc/cpu8080,clocks.fixed_clock_gen.tns_endpoints,8.0,454.0,462.0
+ooc/cpu8080,clocks.fixed_clock_gen.tns_endpoints,0.0,452.0,452.0
+ooc/tiny_encryption_algorithm,clocks.fixed_clock_gen.tns_endpoints,0.0,335.0,335.0
 ooc/cpu8080,clocks.fixed_clock_gen.tns_fail,0.0,0.0,0.0
 ooc/tiny_encryption_algorithm,clocks.fixed_clock_gen.tns_fail,0.0,0.0,0.0
 ooc/cpu8080,clocks.fixed_clock_gen.tpws,0.0,0.0,0.0
 ooc/tiny_encryption_algorithm,clocks.fixed_clock_gen.tpws,0.0,0.0,0.0
-ooc/cpu8080,clocks.fixed_clock_gen.wns,-2.294,4.694,2.4
-ooc/tiny_encryption_algorithm,clocks.fixed_clock_gen.wns,0.174,4.143,4.317
+ooc/cpu8080,clocks.fixed_clock_gen.wns,0.0,4.395,4.395
+ooc/tiny_encryption_algorithm,clocks.fixed_clock_gen.wns,0.0,4.253,4.253
 ooc/cpu8080,clocks.fixed_clock_gen.wpws,0.0,4.5,4.5
 ooc/tiny_encryption_algorithm,clocks.fixed_clock_gen.wpws,0.0,4.5,4.5
-ooc/pid,clocks.fixed_i_clk_gen.tns,-2.044,0.0,-2.044
 ooc/a25_coprocessor,clocks.fixed_i_clk_gen.tns,0.0,0.0,0.0
+ooc/pid,clocks.fixed_i_clk_gen.tns,0.0,0.0,0.0
 ooc/a25_coprocessor,clocks.fixed_i_clk_gen.tns_endpoints,0.0,32.0,32.0
-ooc/pid,clocks.fixed_i_clk_gen.tns_endpoints,18.0,752.0,770.0
+ooc/pid,clocks.fixed_i_clk_gen.tns_endpoints,0.0,750.0,750.0
 ooc/a25_coprocessor,clocks.fixed_i_clk_gen.tns_fail,0.0,0.0,0.0
-ooc/pid,clocks.fixed_i_clk_gen.tns_fail,1.0,0.0,1.0
+ooc/pid,clocks.fixed_i_clk_gen.tns_fail,0.0,0.0,0.0
 ooc/a25_coprocessor,clocks.fixed_i_clk_gen.tpws,0.0,0.0,0.0
 ooc/pid,clocks.fixed_i_clk_gen.tpws,0.0,0.0,0.0
-ooc/pid,clocks.fixed_i_clk_gen.wns,-6.822,4.778,-2.044
-ooc/a25_coprocessor,clocks.fixed_i_clk_gen.wns,0.189,8.482,8.671
+ooc/a25_coprocessor,clocks.fixed_i_clk_gen.wns,0.0,8.337,8.337
+ooc/pid,clocks.fixed_i_clk_gen.wns,0.0,4.746,4.746
 ooc/a25_coprocessor,clocks.fixed_i_clk_gen.wpws,0.0,4.5,4.5
 ooc/pid,clocks.fixed_i_clk_gen.wpws,0.0,4.5,4.5
-=======
-ooc/tiny_encryption_algorithm,clocks.fixed_clock_gen.tns,0.0,0.0,0.0
-ooc/tiny_encryption_algorithm,clocks.fixed_clock_gen.tns_endpoints,0.0,336.0,336.0
-ooc/tiny_encryption_algorithm,clocks.fixed_clock_gen.tns_fail,0.0,0.0,0.0
-ooc/tiny_encryption_algorithm,clocks.fixed_clock_gen.tpws,0.0,0.0,0.0
-ooc/tiny_encryption_algorithm,clocks.fixed_clock_gen.wns,0.174,4.143,4.317
-ooc/tiny_encryption_algorithm,clocks.fixed_clock_gen.wpws,0.0,4.5,4.5
-ooc/a25_coprocessor,clocks.fixed_i_clk_gen.tns,0.0,0.0,0.0
-ooc/a25_coprocessor,clocks.fixed_i_clk_gen.tns_endpoints,0.0,32.0,32.0
-ooc/a25_coprocessor,clocks.fixed_i_clk_gen.tns_fail,0.0,0.0,0.0
-ooc/a25_coprocessor,clocks.fixed_i_clk_gen.tpws,0.0,0.0,0.0
-ooc/a25_coprocessor,clocks.fixed_i_clk_gen.wns,0.189,8.482,8.671
-ooc/a25_coprocessor,clocks.fixed_i_clk_gen.wpws,0.0,4.5,4.5
->>>>>>> Stashed changes
 ooc/uart2spi,clocks.fixed_line_clk_gen.tns,0.0,0.0,0.0
 ooc/uart2spi,clocks.fixed_line_clk_gen.tns_endpoints,0.0,45.0,45.0
 ooc/uart2spi,clocks.fixed_line_clk_gen.tns_fail,0.0,0.0,0.0
 ooc/uart2spi,clocks.fixed_line_clk_gen.tpws,0.0,0.0,0.0
-ooc/uart2spi,clocks.fixed_line_clk_gen.wns,0.0,6.528,6.528
+ooc/uart2spi,clocks.fixed_line_clk_gen.wns,0.0,6.443,6.443
 ooc/uart2spi,clocks.fixed_line_clk_gen.wpws,0.0,4.5,4.5
-<<<<<<< Updated upstream
 vtr_benchmarks/stereovision1,clocks.fixed_tm3_clk_v0_gen.tns,0.0,0.0,0.0
 vtr_benchmarks/stereovision3,clocks.fixed_tm3_clk_v0_gen.tns,0.0,0.0,0.0
-vtr_benchmarks/stereovision1,clocks.fixed_tm3_clk_v0_gen.tns_endpoints,-67.0,19144.0,19077.0
+vtr_benchmarks/stereovision1,clocks.fixed_tm3_clk_v0_gen.tns_endpoints,0.0,18960.0,18960.0
 vtr_benchmarks/stereovision3,clocks.fixed_tm3_clk_v0_gen.tns_endpoints,0.0,105.0,105.0
 vtr_benchmarks/stereovision1,clocks.fixed_tm3_clk_v0_gen.tns_fail,0.0,0.0,0.0
 vtr_benchmarks/stereovision3,clocks.fixed_tm3_clk_v0_gen.tns_fail,0.0,0.0,0.0
 vtr_benchmarks/stereovision1,clocks.fixed_tm3_clk_v0_gen.tpws,0.0,0.0,0.0
 vtr_benchmarks/stereovision3,clocks.fixed_tm3_clk_v0_gen.tpws,0.0,0.0,0.0
-vtr_benchmarks/stereovision1,clocks.fixed_tm3_clk_v0_gen.wns,-2.657,3.347,0.69
-vtr_benchmarks/stereovision3,clocks.fixed_tm3_clk_v0_gen.wns,-0.168,7.589,7.421
+vtr_benchmarks/stereovision1,clocks.fixed_tm3_clk_v0_gen.wns,0.0,3.282,3.282
+vtr_benchmarks/stereovision3,clocks.fixed_tm3_clk_v0_gen.wns,0.0,7.575,7.575
 vtr_benchmarks/stereovision1,clocks.fixed_tm3_clk_v0_gen.wpws,0.0,4.5,4.5
-=======
-vtr_benchmarks/stereovision3,clocks.fixed_tm3_clk_v0_gen.tns,0.0,0.0,0.0
-vtr_benchmarks/stereovision3,clocks.fixed_tm3_clk_v0_gen.tns_endpoints,0.0,105.0,105.0
-vtr_benchmarks/stereovision3,clocks.fixed_tm3_clk_v0_gen.tns_fail,0.0,0.0,0.0
-vtr_benchmarks/stereovision3,clocks.fixed_tm3_clk_v0_gen.tpws,0.0,0.0,0.0
-vtr_benchmarks/stereovision3,clocks.fixed_tm3_clk_v0_gen.wns,-0.168,7.589,7.421
->>>>>>> Stashed changes
 vtr_benchmarks/stereovision3,clocks.fixed_tm3_clk_v0_gen.wpws,0.0,4.5,4.5
 ooc/wb_lcd,clocks.fixed_wb_clk_i_gen.tns,0.0,0.0,0.0
-ooc/wb_lcd,clocks.fixed_wb_clk_i_gen.tns_endpoints,-2.0,104.0,102.0
+ooc/wb_lcd,clocks.fixed_wb_clk_i_gen.tns_endpoints,0.0,104.0,104.0
 ooc/wb_lcd,clocks.fixed_wb_clk_i_gen.tns_fail,0.0,0.0,0.0
 ooc/wb_lcd,clocks.fixed_wb_clk_i_gen.tpws,0.0,0.0,0.0
-ooc/wb_lcd,clocks.fixed_wb_clk_i_gen.wns,-0.474,6.784,6.31
+ooc/wb_lcd,clocks.fixed_wb_clk_i_gen.wns,0.0,6.762,6.762
 ooc/wb_lcd,clocks.fixed_wb_clk_i_gen.wpws,0.0,4.5,4.5
-<<<<<<< Updated upstream
-ooc/a25_decode,overall_tns,-1714.386,-248.939,-1963.325
-ooc/jpegencode,overall_tns,-822.28,0.0,-822.28
-byu/riscv_final,overall_tns,-53.454,0.0,-53.454
-ooc/median,overall_tns,-46.353,-4.211,-50.564
-ooc/pid,overall_tns,-2.044,0.0,-2.044
-=======
->>>>>>> Stashed changes
-vtr_benchmarks/sha,overall_tns,-0.101,0.0,-0.101
 byu/Sout_reg,overall_tns,0.0,0.0,0.0
 byu/UpDownButtonCount,overall_tns,0.0,0.0,0.0
 byu/buttoncount,overall_tns,0.0,0.0,0.0
@@ -467,11 +338,9 @@ byu/counters,overall_tns,0.0,0.0,0.0
 byu/debouncer,overall_tns,0.0,0.0,0.0
 byu/lightWave,overall_tns,0.0,0.0,0.0
 byu/oneshot,overall_tns,0.0,0.0,0.0
-<<<<<<< Updated upstream
 byu/regfile,overall_tns,0.0,0.0,0.0
 byu/riscvSimpleDatapath,overall_tns,0.0,0.0,0.0
-=======
->>>>>>> Stashed changes
+byu/riscv_final,overall_tns,0.0,0.0,0.0
 byu/rx,overall_tns,0.0,0.0,0.0
 byu/shiftReg,overall_tns,0.0,0.0,0.0
 byu/stopwatch,overall_tns,0.0,0.0,0.0
@@ -485,7 +354,7 @@ ooc/ID_stage,overall_tns,0.0,0.0,0.0
 ooc/IF_stage,overall_tns,0.0,0.0,0.0
 ooc/MEM_stage,overall_tns,0.0,0.0,0.0
 ooc/a25_coprocessor,overall_tns,0.0,0.0,0.0
-<<<<<<< Updated upstream
+ooc/a25_decode,overall_tns,0.0,-269.175,-269.175
 ooc/a25_wishbone,overall_tns,0.0,0.0,0.0
 ooc/aes128,overall_tns,0.0,0.0,0.0
 ooc/basicrsa,overall_tns,0.0,0.0,0.0
@@ -495,114 +364,81 @@ ooc/control_unit,overall_tns,0.0,0.0,0.0
 ooc/cpu8080,overall_tns,0.0,0.0,0.0
 ooc/data_path,overall_tns,0.0,0.0,0.0
 ooc/hight,overall_tns,0.0,0.0,0.0
+ooc/jpegencode,overall_tns,0.0,0.0,0.0
+ooc/median,overall_tns,0.0,-8.46,-8.46
 ooc/mips_16,overall_tns,0.0,0.0,0.0
 ooc/natalius_processor,overall_tns,0.0,0.0,0.0
 ooc/pci_mini,overall_tns,0.0,0.0,0.0
 ooc/pic,overall_tns,0.0,0.0,0.0
+ooc/pid,overall_tns,0.0,0.0,0.0
 ooc/quadratic_func,overall_tns,0.0,0.0,0.0
 ooc/random_pulse_generator,overall_tns,0.0,0.0,0.0
 ooc/simon_core,overall_tns,0.0,0.0,0.0
-=======
-ooc/basicrsa,overall_tns,0.0,0.0,0.0
-ooc/bcd_adder,overall_tns,0.0,0.0,0.0
-ooc/control_unit,overall_tns,0.0,0.0,0.0
-ooc/hight,overall_tns,0.0,0.0,0.0
-ooc/mips_16,overall_tns,0.0,0.0,0.0
-ooc/natalius_processor,overall_tns,0.0,0.0,0.0
-ooc/pic,overall_tns,0.0,0.0,0.0
-ooc/quadratic_func,overall_tns,0.0,0.0,0.0
-ooc/random_pulse_generator,overall_tns,0.0,0.0,0.0
->>>>>>> Stashed changes
 ooc/tiny_encryption_algorithm,overall_tns,0.0,0.0,0.0
 ooc/uart2spi,overall_tns,0.0,0.0,0.0
 ooc/wb_lcd,overall_tns,0.0,0.0,0.0
 vtr_benchmarks/mkPktMerge,overall_tns,0.0,0.0,0.0
-<<<<<<< Updated upstream
 vtr_benchmarks/mkSMAdapter4B,overall_tns,0.0,0.0,0.0
 vtr_benchmarks/raygentop,overall_tns,0.0,0.0,0.0
+vtr_benchmarks/sha,overall_tns,0.0,0.0,0.0
 vtr_benchmarks/stereovision1,overall_tns,0.0,0.0,0.0
 vtr_benchmarks/stereovision2,overall_tns,0.0,0.0,0.0
 vtr_benchmarks/stereovision3,overall_tns,0.0,0.0,0.0
-vtr_benchmarks/stereovision1,overall_tns_endpoints,-67.0,19144.0,19077.0
-ooc/quadratic_func,overall_tns_endpoints,-16.0,142.0,126.0
-byu/riscv_final,overall_tns_endpoints,-4.0,2633.0,2629.0
-byu/tx,overall_tns_endpoints,-2.0,38.0,36.0
-ooc/data_path,overall_tns_endpoints,-2.0,437.0,435.0
-=======
-vtr_benchmarks/stereovision2,overall_tns,0.0,0.0,0.0
-vtr_benchmarks/stereovision3,overall_tns,0.0,0.0,0.0
-ooc/quadratic_func,overall_tns_endpoints,-16.0,142.0,126.0
-byu/tx,overall_tns_endpoints,-2.0,38.0,36.0
->>>>>>> Stashed changes
-ooc/wb_lcd,overall_tns_endpoints,-2.0,104.0,102.0
-ooc/random_pulse_generator,overall_tns_endpoints,-1.0,34.0,33.0
 byu/Sout_reg,overall_tns_endpoints,0.0,1.0,1.0
-byu/UpDownButtonCount,overall_tns_endpoints,0.0,39.0,39.0
+byu/UpDownButtonCount,overall_tns_endpoints,0.0,36.0,36.0
 byu/buttoncount,overall_tns_endpoints,0.0,36.0,36.0
 byu/calc,overall_tns_endpoints,0.0,35.0,35.0
 byu/counter,overall_tns_endpoints,0.0,3.0,3.0
-byu/counters,overall_tns_endpoints,0.0,31.0,31.0
+byu/counters,overall_tns_endpoints,0.0,29.0,29.0
 byu/debouncer,overall_tns_endpoints,0.0,40.0,40.0
 byu/lightWave,overall_tns_endpoints,0.0,4.0,4.0
 byu/oneshot,overall_tns_endpoints,0.0,3.0,3.0
-<<<<<<< Updated upstream
 byu/regfile,overall_tns_endpoints,0.0,64.0,64.0
-=======
->>>>>>> Stashed changes
+byu/riscvSimpleDatapath,overall_tns_endpoints,0.0,63.0,63.0
+byu/riscv_final,overall_tns_endpoints,0.0,2622.0,2622.0
+byu/rx,overall_tns_endpoints,0.0,93.0,93.0
 byu/shiftReg,overall_tns_endpoints,0.0,38.0,38.0
+byu/stopwatch,overall_tns_endpoints,0.0,96.0,96.0
+byu/tx,overall_tns_endpoints,0.0,36.0,36.0
+byu/uart,overall_tns_endpoints,0.0,254.0,254.0
 byu/uart_debouncer,overall_tns_endpoints,0.0,40.0,40.0
+byu/uart_rx,overall_tns_endpoints,0.0,93.0,93.0
 byu/uart_ssc,overall_tns_endpoints,0.0,17.0,17.0
 byu/uart_tx,overall_tns_endpoints,0.0,36.0,36.0
 ooc/ID_stage,overall_tns_endpoints,0.0,25.0,25.0
 ooc/IF_stage,overall_tns_endpoints,0.0,8.0,8.0
 ooc/MEM_stage,overall_tns_endpoints,0.0,16.0,16.0
 ooc/a25_coprocessor,overall_tns_endpoints,0.0,32.0,32.0
-<<<<<<< Updated upstream
-ooc/a25_decode,overall_tns_endpoints,0.0,912.0,912.0
+ooc/a25_decode,overall_tns_endpoints,0.0,910.0,910.0
+ooc/a25_wishbone,overall_tns_endpoints,0.0,1158.0,1158.0
 ooc/aes128,overall_tns_endpoints,0.0,7232.0,7232.0
 ooc/basicrsa,overall_tns_endpoints,0.0,952.0,952.0
 ooc/bcd_adder,overall_tns_endpoints,0.0,17.0,17.0
 ooc/bubblesort,overall_tns_endpoints,0.0,882.0,882.0
-ooc/hight,overall_tns_endpoints,0.0,203.0,203.0
+ooc/control_unit,overall_tns_endpoints,0.0,10.0,10.0
+ooc/cpu8080,overall_tns_endpoints,0.0,452.0,452.0
+ooc/data_path,overall_tns_endpoints,0.0,434.0,434.0
+ooc/hight,overall_tns_endpoints,0.0,198.0,198.0
+ooc/jpegencode,overall_tns_endpoints,0.0,93149.0,93149.0
 ooc/median,overall_tns_endpoints,0.0,71.0,71.0
-=======
-ooc/basicrsa,overall_tns_endpoints,0.0,952.0,952.0
-ooc/bcd_adder,overall_tns_endpoints,0.0,17.0,17.0
-ooc/hight,overall_tns_endpoints,0.0,203.0,203.0
->>>>>>> Stashed changes
 ooc/mips_16,overall_tns_endpoints,0.0,8.0,8.0
 ooc/natalius_processor,overall_tns_endpoints,0.0,14.0,14.0
-ooc/tiny_encryption_algorithm,overall_tns_endpoints,0.0,336.0,336.0
+ooc/pci_mini,overall_tns_endpoints,0.0,492.0,492.0
+ooc/pic,overall_tns_endpoints,0.0,144.0,144.0
+ooc/pid,overall_tns_endpoints,0.0,750.0,750.0
+ooc/quadratic_func,overall_tns_endpoints,0.0,142.0,142.0
+ooc/random_pulse_generator,overall_tns_endpoints,0.0,35.0,35.0
+ooc/simon_core,overall_tns_endpoints,0.0,49.0,49.0
+ooc/tiny_encryption_algorithm,overall_tns_endpoints,0.0,335.0,335.0
 ooc/uart2spi,overall_tns_endpoints,0.0,45.0,45.0
+ooc/wb_lcd,overall_tns_endpoints,0.0,104.0,104.0
 vtr_benchmarks/mkPktMerge,overall_tns_endpoints,0.0,14.0,14.0
-<<<<<<< Updated upstream
+vtr_benchmarks/mkSMAdapter4B,overall_tns_endpoints,0.0,2074.0,2074.0
 vtr_benchmarks/raygentop,overall_tns_endpoints,0.0,151.0,151.0
+vtr_benchmarks/sha,overall_tns_endpoints,0.0,1787.0,1787.0
+vtr_benchmarks/stereovision1,overall_tns_endpoints,0.0,18960.0,18960.0
 vtr_benchmarks/stereovision2,overall_tns_endpoints,0.0,12.0,12.0
 vtr_benchmarks/stereovision3,overall_tns_endpoints,0.0,105.0,105.0
-byu/stopwatch,overall_tns_endpoints,2.0,96.0,98.0
-ooc/a25_wishbone,overall_tns_endpoints,2.0,1158.0,1160.0
-ooc/pic,overall_tns_endpoints,3.0,148.0,151.0
-vtr_benchmarks/mkSMAdapter4B,overall_tns_endpoints,3.0,2074.0,2077.0
-=======
-vtr_benchmarks/stereovision2,overall_tns_endpoints,0.0,12.0,12.0
-vtr_benchmarks/stereovision3,overall_tns_endpoints,0.0,105.0,105.0
-byu/stopwatch,overall_tns_endpoints,2.0,96.0,98.0
-ooc/pic,overall_tns_endpoints,3.0,148.0,151.0
->>>>>>> Stashed changes
-byu/rx,overall_tns_endpoints,4.0,93.0,97.0
-byu/uart,overall_tns_endpoints,4.0,258.0,262.0
-byu/uart_rx,overall_tns_endpoints,4.0,93.0,97.0
-ooc/control_unit,overall_tns_endpoints,4.0,10.0,14.0
-vtr_benchmarks/sha,overall_tns_endpoints,5.0,1788.0,1793.0
-<<<<<<< Updated upstream
-byu/riscvSimpleDatapath,overall_tns_endpoints,6.0,64.0,70.0
-ooc/cpu8080,overall_tns_endpoints,8.0,454.0,462.0
-ooc/pci_mini,overall_tns_endpoints,9.0,494.0,503.0
-ooc/simon_core,overall_tns_endpoints,9.0,51.0,60.0
-ooc/pid,overall_tns_endpoints,18.0,752.0,770.0
-ooc/jpegencode,overall_tns_endpoints,160.0,93202.0,93362.0
-=======
->>>>>>> Stashed changes
 byu/Sout_reg,overall_tns_fail,0.0,0.0,0.0
 byu/UpDownButtonCount,overall_tns_fail,0.0,0.0,0.0
 byu/buttoncount,overall_tns_fail,0.0,0.0,0.0
@@ -612,11 +448,9 @@ byu/counters,overall_tns_fail,0.0,0.0,0.0
 byu/debouncer,overall_tns_fail,0.0,0.0,0.0
 byu/lightWave,overall_tns_fail,0.0,0.0,0.0
 byu/oneshot,overall_tns_fail,0.0,0.0,0.0
-<<<<<<< Updated upstream
 byu/regfile,overall_tns_fail,0.0,0.0,0.0
 byu/riscvSimpleDatapath,overall_tns_fail,0.0,0.0,0.0
-=======
->>>>>>> Stashed changes
+byu/riscv_final,overall_tns_fail,0.0,0.0,0.0
 byu/rx,overall_tns_fail,0.0,0.0,0.0
 byu/shiftReg,overall_tns_fail,0.0,0.0,0.0
 byu/stopwatch,overall_tns_fail,0.0,0.0,0.0
@@ -630,7 +464,7 @@ ooc/ID_stage,overall_tns_fail,0.0,0.0,0.0
 ooc/IF_stage,overall_tns_fail,0.0,0.0,0.0
 ooc/MEM_stage,overall_tns_fail,0.0,0.0,0.0
 ooc/a25_coprocessor,overall_tns_fail,0.0,0.0,0.0
-<<<<<<< Updated upstream
+ooc/a25_decode,overall_tns_fail,0.0,325.0,325.0
 ooc/a25_wishbone,overall_tns_fail,0.0,0.0,0.0
 ooc/aes128,overall_tns_fail,0.0,0.0,0.0
 ooc/basicrsa,overall_tns_fail,0.0,0.0,0.0
@@ -640,45 +474,26 @@ ooc/control_unit,overall_tns_fail,0.0,0.0,0.0
 ooc/cpu8080,overall_tns_fail,0.0,0.0,0.0
 ooc/data_path,overall_tns_fail,0.0,0.0,0.0
 ooc/hight,overall_tns_fail,0.0,0.0,0.0
+ooc/jpegencode,overall_tns_fail,0.0,0.0,0.0
 ooc/median,overall_tns_fail,0.0,8.0,8.0
 ooc/mips_16,overall_tns_fail,0.0,0.0,0.0
 ooc/natalius_processor,overall_tns_fail,0.0,0.0,0.0
 ooc/pci_mini,overall_tns_fail,0.0,0.0,0.0
 ooc/pic,overall_tns_fail,0.0,0.0,0.0
+ooc/pid,overall_tns_fail,0.0,0.0,0.0
 ooc/quadratic_func,overall_tns_fail,0.0,0.0,0.0
 ooc/random_pulse_generator,overall_tns_fail,0.0,0.0,0.0
 ooc/simon_core,overall_tns_fail,0.0,0.0,0.0
-=======
-ooc/basicrsa,overall_tns_fail,0.0,0.0,0.0
-ooc/bcd_adder,overall_tns_fail,0.0,0.0,0.0
-ooc/control_unit,overall_tns_fail,0.0,0.0,0.0
-ooc/hight,overall_tns_fail,0.0,0.0,0.0
-ooc/mips_16,overall_tns_fail,0.0,0.0,0.0
-ooc/natalius_processor,overall_tns_fail,0.0,0.0,0.0
-ooc/pic,overall_tns_fail,0.0,0.0,0.0
-ooc/quadratic_func,overall_tns_fail,0.0,0.0,0.0
-ooc/random_pulse_generator,overall_tns_fail,0.0,0.0,0.0
->>>>>>> Stashed changes
 ooc/tiny_encryption_algorithm,overall_tns_fail,0.0,0.0,0.0
 ooc/uart2spi,overall_tns_fail,0.0,0.0,0.0
 ooc/wb_lcd,overall_tns_fail,0.0,0.0,0.0
 vtr_benchmarks/mkPktMerge,overall_tns_fail,0.0,0.0,0.0
-<<<<<<< Updated upstream
 vtr_benchmarks/mkSMAdapter4B,overall_tns_fail,0.0,0.0,0.0
 vtr_benchmarks/raygentop,overall_tns_fail,0.0,0.0,0.0
+vtr_benchmarks/sha,overall_tns_fail,0.0,0.0,0.0
 vtr_benchmarks/stereovision1,overall_tns_fail,0.0,0.0,0.0
 vtr_benchmarks/stereovision2,overall_tns_fail,0.0,0.0,0.0
 vtr_benchmarks/stereovision3,overall_tns_fail,0.0,0.0,0.0
-ooc/pid,overall_tns_fail,1.0,0.0,1.0
-vtr_benchmarks/sha,overall_tns_fail,1.0,0.0,1.0
-byu/riscv_final,overall_tns_fail,55.0,0.0,55.0
-ooc/a25_decode,overall_tns_fail,71.0,320.0,391.0
-ooc/jpegencode,overall_tns_fail,1197.0,0.0,1197.0
-=======
-vtr_benchmarks/stereovision2,overall_tns_fail,0.0,0.0,0.0
-vtr_benchmarks/stereovision3,overall_tns_fail,0.0,0.0,0.0
-vtr_benchmarks/sha,overall_tns_fail,1.0,0.0,1.0
->>>>>>> Stashed changes
 byu/Sout_reg,overall_tpws,0.0,0.0,0.0
 byu/UpDownButtonCount,overall_tpws,0.0,0.0,0.0
 byu/buttoncount,overall_tpws,0.0,0.0,0.0
@@ -688,12 +503,9 @@ byu/counters,overall_tpws,0.0,0.0,0.0
 byu/debouncer,overall_tpws,0.0,0.0,0.0
 byu/lightWave,overall_tpws,0.0,0.0,0.0
 byu/oneshot,overall_tpws,0.0,0.0,0.0
-<<<<<<< Updated upstream
 byu/regfile,overall_tpws,0.0,0.0,0.0
 byu/riscvSimpleDatapath,overall_tpws,0.0,0.0,0.0
 byu/riscv_final,overall_tpws,0.0,0.0,0.0
-=======
->>>>>>> Stashed changes
 byu/rx,overall_tpws,0.0,0.0,0.0
 byu/shiftReg,overall_tpws,0.0,0.0,0.0
 byu/stopwatch,overall_tpws,0.0,0.0,0.0
@@ -707,7 +519,6 @@ ooc/ID_stage,overall_tpws,0.0,0.0,0.0
 ooc/IF_stage,overall_tpws,0.0,0.0,0.0
 ooc/MEM_stage,overall_tpws,0.0,0.0,0.0
 ooc/a25_coprocessor,overall_tpws,0.0,0.0,0.0
-<<<<<<< Updated upstream
 ooc/a25_decode,overall_tpws,0.0,0.0,0.0
 ooc/a25_wishbone,overall_tpws,0.0,0.0,0.0
 ooc/aes128,overall_tpws,0.0,0.0,0.0
@@ -728,106 +539,71 @@ ooc/pid,overall_tpws,0.0,0.0,0.0
 ooc/quadratic_func,overall_tpws,0.0,0.0,0.0
 ooc/random_pulse_generator,overall_tpws,0.0,0.0,0.0
 ooc/simon_core,overall_tpws,0.0,0.0,0.0
-=======
-ooc/basicrsa,overall_tpws,0.0,0.0,0.0
-ooc/bcd_adder,overall_tpws,0.0,0.0,0.0
-ooc/control_unit,overall_tpws,0.0,0.0,0.0
-ooc/hight,overall_tpws,0.0,0.0,0.0
-ooc/mips_16,overall_tpws,0.0,0.0,0.0
-ooc/natalius_processor,overall_tpws,0.0,0.0,0.0
-ooc/pic,overall_tpws,0.0,0.0,0.0
-ooc/quadratic_func,overall_tpws,0.0,0.0,0.0
-ooc/random_pulse_generator,overall_tpws,0.0,0.0,0.0
->>>>>>> Stashed changes
 ooc/tiny_encryption_algorithm,overall_tpws,0.0,0.0,0.0
 ooc/uart2spi,overall_tpws,0.0,0.0,0.0
 ooc/wb_lcd,overall_tpws,0.0,0.0,0.0
 vtr_benchmarks/mkPktMerge,overall_tpws,0.0,0.0,0.0
-<<<<<<< Updated upstream
 vtr_benchmarks/mkSMAdapter4B,overall_tpws,0.0,0.0,0.0
 vtr_benchmarks/raygentop,overall_tpws,0.0,0.0,0.0
 vtr_benchmarks/sha,overall_tpws,0.0,0.0,0.0
 vtr_benchmarks/stereovision1,overall_tpws,0.0,0.0,0.0
 vtr_benchmarks/stereovision2,overall_tpws,0.0,0.0,0.0
 vtr_benchmarks/stereovision3,overall_tpws,0.0,0.0,0.0
-ooc/a25_decode,overall_wns,-9.103,-1.618,-10.721
-ooc/pid,overall_wns,-6.822,4.778,-2.044
-ooc/median,overall_wns,-6.037,-0.635,-6.672
-ooc/quadratic_func,overall_wns,-4.421,4.795,0.374
-vtr_benchmarks/mkSMAdapter4B,overall_wns,-3.231,3.342,0.111
-ooc/jpegencode,overall_wns,-3.011,0.331,-2.68
-byu/riscv_final,overall_wns,-2.92,0.414,-2.506
-vtr_benchmarks/stereovision1,overall_wns,-2.657,3.347,0.69
-ooc/pci_mini,overall_wns,-2.605,6.536,3.931
-ooc/cpu8080,overall_wns,-2.294,4.694,2.4
-vtr_benchmarks/sha,overall_wns,-1.98,1.879,-0.101
-ooc/a25_wishbone,overall_wns,-1.953,6.475,4.522
-ooc/hight,overall_wns,-1.327,3.313,1.986
-byu/stopwatch,overall_wns,-1.307,6.198,4.891
-ooc/aes128,overall_wns,-1.272,5.488,4.216
-=======
-vtr_benchmarks/sha,overall_tpws,0.0,0.0,0.0
-vtr_benchmarks/stereovision2,overall_tpws,0.0,0.0,0.0
-vtr_benchmarks/stereovision3,overall_tpws,0.0,0.0,0.0
-ooc/quadratic_func,overall_wns,-4.421,4.795,0.374
-vtr_benchmarks/sha,overall_wns,-1.98,1.879,-0.101
-ooc/hight,overall_wns,-1.327,3.313,1.986
-byu/stopwatch,overall_wns,-1.307,6.198,4.891
->>>>>>> Stashed changes
-byu/uart,overall_wns,-0.989,6.645,5.656
-byu/calc,overall_wns,-0.984,6.582,5.598
-byu/tx,overall_wns,-0.932,7.181,6.249
-ooc/pic,overall_wns,-0.878,6.297,5.419
-<<<<<<< Updated upstream
-byu/regfile,overall_wns,-0.822,7.298,6.476
-ooc/ID_stage,overall_wns,-0.752,8.192,7.44
-byu/rx,overall_wns,-0.658,6.966,6.308
-ooc/simon_core,overall_wns,-0.63,7.128,6.498
-byu/riscvSimpleDatapath,overall_wns,-0.603,4.809,4.206
-=======
-ooc/ID_stage,overall_wns,-0.752,8.192,7.44
-byu/rx,overall_wns,-0.658,6.966,6.308
->>>>>>> Stashed changes
-byu/shiftReg,overall_wns,-0.493,8.665,8.172
-ooc/wb_lcd,overall_wns,-0.474,6.784,6.31
-vtr_benchmarks/mkPktMerge,overall_wns,-0.459,7.947,7.488
-byu/uart_rx,overall_wns,-0.28,6.87,6.59
-byu/uart_tx,overall_wns,-0.263,7.162,6.899
-<<<<<<< Updated upstream
-ooc/data_path,overall_wns,-0.213,3.674,3.461
-=======
->>>>>>> Stashed changes
-vtr_benchmarks/stereovision3,overall_wns,-0.168,7.589,7.421
-byu/Sout_reg,overall_wns,-0.063,8.351,8.288
-ooc/bcd_adder,overall_wns,-0.043,6.647,6.604
+byu/Sout_reg,overall_wns,0.0,8.171,8.171
 byu/UpDownButtonCount,overall_wns,0.0,7.617,7.617
 byu/buttoncount,overall_wns,0.0,7.984,7.984
+byu/calc,overall_wns,0.0,6.418,6.418
 byu/counter,overall_wns,0.0,8.75,8.75
-byu/debouncer,overall_wns,0.0,6.693,6.693
+byu/counters,overall_wns,0.0,6.524,6.524
+byu/debouncer,overall_wns,0.0,5.9,5.9
 byu/lightWave,overall_wns,0.0,8.754,8.754
 byu/oneshot,overall_wns,0.0,8.751,8.751
-byu/uart_debouncer,overall_wns,0.0,6.626,6.626
-byu/uart_ssc,overall_wns,0.0,7.951,7.951
+byu/regfile,overall_wns,0.0,7.271,7.271
+byu/riscvSimpleDatapath,overall_wns,0.0,4.732,4.732
+byu/riscv_final,overall_wns,0.0,0.255,0.255
+byu/rx,overall_wns,0.0,6.872,6.872
+byu/shiftReg,overall_wns,0.0,8.665,8.665
+byu/stopwatch,overall_wns,0.0,6.181,6.181
+byu/tx,overall_wns,0.0,6.736,6.736
+byu/uart,overall_wns,0.0,6.301,6.301
+byu/uart_debouncer,overall_wns,0.0,6.341,6.341
+byu/uart_rx,overall_wns,0.0,6.898,6.898
+byu/uart_ssc,overall_wns,0.0,7.937,7.937
+byu/uart_tx,overall_wns,0.0,6.6,6.6
+ooc/ID_stage,overall_wns,0.0,8.205,8.205
 ooc/IF_stage,overall_wns,0.0,8.168,8.168
 ooc/MEM_stage,overall_wns,0.0,8.419,8.419
-<<<<<<< Updated upstream
-ooc/bubblesort,overall_wns,0.0,8.356,8.356
-=======
->>>>>>> Stashed changes
+ooc/a25_coprocessor,overall_wns,0.0,8.337,8.337
+ooc/a25_decode,overall_wns,0.0,-1.959,-1.959
+ooc/a25_wishbone,overall_wns,0.0,6.335,6.335
+ooc/aes128,overall_wns,0.0,5.456,5.456
+ooc/basicrsa,overall_wns,0.0,2.934,2.934
+ooc/bcd_adder,overall_wns,0.0,6.619,6.619
+ooc/bubblesort,overall_wns,0.0,8.327,8.327
+ooc/control_unit,overall_wns,0.0,7.849,7.849
+ooc/cpu8080,overall_wns,0.0,4.395,4.395
+ooc/data_path,overall_wns,0.0,3.347,3.347
+ooc/hight,overall_wns,0.0,3.312,3.312
+ooc/jpegencode,overall_wns,0.0,0.366,0.366
+ooc/median,overall_wns,0.0,-1.166,-1.166
 ooc/mips_16,overall_wns,0.0,8.175,8.175
 ooc/natalius_processor,overall_wns,0.0,8.267,8.267
-ooc/uart2spi,overall_wns,0.0,6.528,6.528
+ooc/pci_mini,overall_wns,0.0,6.633,6.633
+ooc/pic,overall_wns,0.0,6.121,6.121
+ooc/pid,overall_wns,0.0,4.746,4.746
+ooc/quadratic_func,overall_wns,0.0,4.891,4.891
+ooc/random_pulse_generator,overall_wns,0.0,8.175,8.175
+ooc/simon_core,overall_wns,0.0,7.019,7.019
+ooc/tiny_encryption_algorithm,overall_wns,0.0,4.253,4.253
+ooc/uart2spi,overall_wns,0.0,6.443,6.443
+ooc/wb_lcd,overall_wns,0.0,6.762,6.762
+vtr_benchmarks/mkPktMerge,overall_wns,0.0,7.947,7.947
+vtr_benchmarks/mkSMAdapter4B,overall_wns,0.0,2.844,2.844
+vtr_benchmarks/raygentop,overall_wns,0.0,8.284,8.284
+vtr_benchmarks/sha,overall_wns,0.0,1.718,1.718
+vtr_benchmarks/stereovision1,overall_wns,0.0,3.282,3.282
 vtr_benchmarks/stereovision2,overall_wns,0.0,8.705,8.705
-ooc/basicrsa,overall_wns,0.025,2.82,2.845
-<<<<<<< Updated upstream
-vtr_benchmarks/raygentop,overall_wns,0.071,8.295,8.366
-=======
->>>>>>> Stashed changes
-ooc/random_pulse_generator,overall_wns,0.084,8.175,8.259
-ooc/control_unit,overall_wns,0.143,7.817,7.96
-ooc/tiny_encryption_algorithm,overall_wns,0.174,4.143,4.317
-ooc/a25_coprocessor,overall_wns,0.189,8.482,8.671
-byu/counters,overall_wns,0.195,6.882,7.077
+vtr_benchmarks/stereovision3,overall_wns,0.0,7.575,7.575
 byu/Sout_reg,overall_wpws,0.0,4.5,4.5
 byu/UpDownButtonCount,overall_wpws,0.0,4.5,4.5
 byu/buttoncount,overall_wpws,0.0,4.5,4.5
@@ -837,12 +613,9 @@ byu/counters,overall_wpws,0.0,4.5,4.5
 byu/debouncer,overall_wpws,0.0,4.5,4.5
 byu/lightWave,overall_wpws,0.0,4.5,4.5
 byu/oneshot,overall_wpws,0.0,4.5,4.5
-<<<<<<< Updated upstream
 byu/regfile,overall_wpws,0.0,4.5,4.5
 byu/riscvSimpleDatapath,overall_wpws,0.0,4.5,4.5
 byu/riscv_final,overall_wpws,0.0,4.5,4.5
-=======
->>>>>>> Stashed changes
 byu/rx,overall_wpws,0.0,4.5,4.5
 byu/shiftReg,overall_wpws,0.0,4.5,4.5
 byu/stopwatch,overall_wpws,0.0,4.5,4.5
@@ -856,7 +629,6 @@ ooc/ID_stage,overall_wpws,0.0,4.5,4.5
 ooc/IF_stage,overall_wpws,0.0,4.5,4.5
 ooc/MEM_stage,overall_wpws,0.0,3.75,3.75
 ooc/a25_coprocessor,overall_wpws,0.0,4.5,4.5
-<<<<<<< Updated upstream
 ooc/a25_decode,overall_wpws,0.0,4.5,4.5
 ooc/a25_wishbone,overall_wpws,0.0,4.5,4.5
 ooc/aes128,overall_wpws,0.0,4.5,4.5
@@ -877,28 +649,13 @@ ooc/pid,overall_wpws,0.0,4.5,4.5
 ooc/quadratic_func,overall_wpws,0.0,4.5,4.5
 ooc/random_pulse_generator,overall_wpws,0.0,4.5,4.5
 ooc/simon_core,overall_wpws,0.0,4.02,4.02
-=======
-ooc/basicrsa,overall_wpws,0.0,4.5,4.5
-ooc/bcd_adder,overall_wpws,0.0,4.5,4.5
-ooc/control_unit,overall_wpws,0.0,4.5,4.5
-ooc/hight,overall_wpws,0.0,4.5,4.5
-ooc/mips_16,overall_wpws,0.0,4.5,4.5
-ooc/natalius_processor,overall_wpws,0.0,4.5,4.5
-ooc/pic,overall_wpws,0.0,4.5,4.5
-ooc/quadratic_func,overall_wpws,0.0,4.5,4.5
-ooc/random_pulse_generator,overall_wpws,0.0,4.5,4.5
->>>>>>> Stashed changes
 ooc/tiny_encryption_algorithm,overall_wpws,0.0,4.5,4.5
 ooc/uart2spi,overall_wpws,0.0,4.5,4.5
 ooc/wb_lcd,overall_wpws,0.0,4.5,4.5
 vtr_benchmarks/mkPktMerge,overall_wpws,0.0,4.5,4.5
-<<<<<<< Updated upstream
 vtr_benchmarks/mkSMAdapter4B,overall_wpws,0.0,4.5,4.5
 vtr_benchmarks/raygentop,overall_wpws,0.0,4.02,4.02
 vtr_benchmarks/sha,overall_wpws,0.0,4.5,4.5
 vtr_benchmarks/stereovision1,overall_wpws,0.0,4.5,4.5
-=======
-vtr_benchmarks/sha,overall_wpws,0.0,4.5,4.5
->>>>>>> Stashed changes
 vtr_benchmarks/stereovision2,overall_wpws,0.0,4.5,4.5
 vtr_benchmarks/stereovision3,overall_wpws,0.0,4.5,4.5
