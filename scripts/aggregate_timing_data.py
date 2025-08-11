@@ -28,17 +28,35 @@ TIMING_LINE_RE = re.compile(
     r"delta=\s*(?P<delta>[+-]?\d+\.\d+)"
 )
 
+
 def parse_args() -> argparse.Namespace:
-    p = argparse.ArgumentParser(description="Aggregate timing deltas from golden vs obfuscated builds.")
-    p.add_argument("--batch-yaml", default="../tests/weekly/impl_obfuscate.yaml", type=Path,
-                   help="Path to BFASST batch YAML listing designs.")
-    p.add_argument("--golden-build", default="../build", type=Path,
-                   help="Root of the GOLDEN (non-obfuscated) build tree.")
-    p.add_argument("--obf-build", "--obfuscated-build", default="../build_obfuscated", type=Path,
-                   help="Root of the OBFUSCATED (test) build tree.")
-    p.add_argument("--output", default="timing_delta_summary.csv", type=Path,
-                   help="Output CSV path.")
+    p = argparse.ArgumentParser(
+        description="Aggregate timing deltas from golden vs obfuscated builds."
+    )
+    p.add_argument(
+        "--batch-yaml",
+        default="../tests/weekly/impl_obfuscate.yaml",
+        type=Path,
+        help="Path to BFASST batch YAML listing designs.",
+    )
+    p.add_argument(
+        "--golden-build",
+        default="../build",
+        type=Path,
+        help="Root of the GOLDEN (non-obfuscated) build tree.",
+    )
+    p.add_argument(
+        "--obf-build",
+        "--obfuscated-build",
+        default="../build_obfuscated",
+        type=Path,
+        help="Root of the OBFUSCATED (test) build tree.",
+    )
+    p.add_argument(
+        "--output", default="timing_delta_summary.csv", type=Path, help="Output CSV path."
+    )
     return p.parse_args()
+
 
 def extract_field_from_log(
     log_path: Path,
@@ -67,8 +85,10 @@ def extract_field_from_log(
         values[(metric, idx)] = val
     return values
 
+
 def metric_label(metric: str, idx: int) -> str:
     return metric if idx == 1 else f"{metric}#{idx}"
+
 
 def main() -> None:
     args = parse_args()
@@ -86,16 +106,22 @@ def main() -> None:
 
     for design in designs:
         golden_log = args.golden_build / design / "physcmp" / "physcmp.log"
-        obf_log    = args.obf_build    / design / "physcmp" / "physcmp.log"
+        obf_log = args.obf_build / design / "physcmp" / "physcmp.log"
 
         golden_map = extract_field_from_log(golden_log, "golden")
-        obf_map    = extract_field_from_log(obf_log, "test")
+        obf_map = extract_field_from_log(obf_log, "test")
 
         if not golden_log.is_file():
-            print(f"\033[33mWARNING: no golden physcmp.log for {design}: {golden_log}\033[0m", file=sys.stderr)
+            print(
+                f"\033[33mWARNING: no golden physcmp.log for {design}: {golden_log}\033[0m",
+                file=sys.stderr,
+            )
             missing_golden_logs += 1
         if not obf_log.is_file():
-            print(f"\033[33mWARNING: no obfuscated physcmp.log for {design}: {obf_log}\033[0m", file=sys.stderr)
+            print(
+                f"\033[33mWARNING: no obfuscated physcmp.log for {design}: {obf_log}\033[0m",
+                file=sys.stderr,
+            )
             missing_obf_logs += 1
 
         if not golden_map:
@@ -107,29 +133,37 @@ def main() -> None:
 
         # Join by (metric, occurrence index). Only output rows when both sides exist.
         all_keys = set(golden_map.keys()) | set(obf_map.keys())
-        for (metric, idx) in sorted(all_keys):
+        for metric, idx in sorted(all_keys):
             if (metric, idx) not in golden_map or (metric, idx) not in obf_map:
                 unmatched_pairs += 1
                 # Be verbose to help debugging mismatches.
                 if (metric, idx) in golden_map and (metric, idx) not in obf_map:
-                    print(f"\033[33mWARNING: {design} {metric_label(metric, idx)}: "
-                          f"golden present, obfuscated missing\033[0m", file=sys.stderr)
+                    print(
+                        f"\033[33mWARNING: {design} {metric_label(metric, idx)}: "
+                        f"golden present, obfuscated missing\033[0m",
+                        file=sys.stderr,
+                    )
                 elif (metric, idx) in obf_map and (metric, idx) not in golden_map:
-                    print(f"\033[33mWARNING: {design} {metric_label(metric, idx)}: "
-                          f"obfuscated present, golden missing\033[0m", file=sys.stderr)
+                    print(
+                        f"\033[33mWARNING: {design} {metric_label(metric, idx)}: "
+                        f"obfuscated present, golden missing\033[0m",
+                        file=sys.stderr,
+                    )
                 continue
 
             golden = golden_map[(metric, idx)]
-            test   = obf_map[(metric, idx)]
-            delta  = test - golden
+            test = obf_map[(metric, idx)]
+            delta = test - golden
 
-            rows.append({
-                "design": design,
-                "metric": metric_label(metric, idx),
-                "delta":  delta,
-                "golden": golden,
-                "test":   test,
-            })
+            rows.append(
+                {
+                    "design": design,
+                    "metric": metric_label(metric, idx),
+                    "delta": delta,
+                    "golden": golden,
+                    "test": test,
+                }
+            )
 
     if rows:
         args.output.parent.mkdir(parents=True, exist_ok=True)
@@ -150,6 +184,6 @@ def main() -> None:
         f"Unmatched metric occurrences skipped: {unmatched_pairs}."
     )
 
+
 if __name__ == "__main__":
     main()
-

@@ -198,8 +198,8 @@ def log_netlist_diffs(netlist_comparator):
     logging.info(_capture_report_lines(netlist_comparator))
 
     skip_substrings = {
-        "HOLD_DETOUR", 
-        "ECO_CHECKSUM", 
+        "HOLD_DETOUR",
+        "ECO_CHECKSUM",
         "PHYS_OPT_MODIFIED",
         "PHYS_OPT_SKIPPED",
         "OPT_MODIFIED",
@@ -292,10 +292,7 @@ def compare_all(golden, test, log_path: str, log_level: str):
             logging.warning("Metric %-22s missing (golden=%s, test=%s)", metric, gv, tv)
             continue
         sign = "+" if dv > 0 else "-" if dv < 0 else "="
-        logging.info(
-            "%-22s  golden=%8.3f  test=%8.3f  delta=%+8.3f %s",
-            metric, gv, tv, dv, sign
-        )
+        logging.info("%-22s  golden=%8.3f  test=%8.3f  delta=%+8.3f %s", metric, gv, tv, dv, sign)
         if dv is not None and dv < 0:
             worse.append(metric)
 

@@ -16,7 +16,13 @@ import copy
 import re
 from itertools import combinations, permutations, product
 
-from bfasst.utils.transform.netlist_obfuscate_helpers import TAG_PROP, SENTINEL_VALUES, parse_init, format_init, get_masking_init
+from bfasst.utils.transform.netlist_obfuscate_helpers import (
+    TAG_PROP,
+    SENTINEL_VALUES,
+    parse_init,
+    format_init,
+    get_masking_init,
+)
 from bfasst.utils.transform.init_restoration_helpers import apply_transforms, derive_init_transform
 from bfasst import jpype_jvm
 
@@ -56,8 +62,6 @@ def restore_properties_for_cell(cell, entry: dict, hname: str, inversion_roots: 
         typ = EDIFValueType.valueOf(item.get("type"))
 
         if key == "INIT":
-            if hname in inversion_roots:
-                val = invert_init_literal(val)
             val = re.sub(r"(h)([0-9a-fA-F]+)", lambda m: m.group(1) + m.group(2).upper(), val)
 
         count += 1
@@ -70,7 +74,9 @@ def restore_properties_for_cell(cell, entry: dict, hname: str, inversion_roots: 
 
 
 transforms_not_found = 0
-def derive_modified_init(json_entry: dict, obfuscated_cell) -> str | None:
+
+
+def derive_modified_init(json_entry: dict, obfuscated_cell):
     """
     Resize json db entry's INIT to match the logical LUT width of an optimized cell.
     Uses only the LUT type size (no pin counting).
@@ -86,7 +92,7 @@ def derive_modified_init(json_entry: dict, obfuscated_cell) -> str | None:
     )
     if json_init_str is None:
         return None
-    
+
     json_bits, json_val = parse_init(json_init_str)
 
     child_w = LUTTools.getLUTSize(obfuscated_cell)
@@ -97,9 +103,14 @@ def derive_modified_init(json_entry: dict, obfuscated_cell) -> str | None:
     obfuscated_init_str = str(obfuscated_cell.getPropertiesMap().get("INIT").getValue())
     _, obfuscated_init_val = parse_init(obfuscated_init_str)
 
-    #return format_init(bits_needed, json_val, False)
+    # return format_init(bits_needed, json_val, False)
     if sentinel_init_val != obfuscated_init_val:
-        logging.info("Found non equivalent init strings in cell %s. Deriving transformation %s -> %s", obfuscated_cell.getName(), sentinel_init_str, obfuscated_init_str)
+        logging.info(
+            "Found non equivalent init strings in cell %s. Deriving transformation %s -> %s",
+            obfuscated_cell.getName(),
+            sentinel_init_str,
+            obfuscated_init_str,
+        )
         transforms = derive_init_transform(sentinel_init_val, obfuscated_init_val)
         if transforms:
             logging.info("Found transforms...")
@@ -110,7 +121,9 @@ def derive_modified_init(json_entry: dict, obfuscated_cell) -> str | None:
             logging.info("json_init_str: %s, new_init: %s", json_init_str, new_init)
         else:
             transforms_not_found += 1
-            logging.warning("Not able to find transforms from %s to %s", sentinel_init_str, obfuscated_init_str) 
+            logging.warning(
+                "Not able to find transforms from %s to %s", sentinel_init_str, obfuscated_init_str
+            )
             new_val = json_val
     else:
         new_val = json_val
@@ -118,7 +131,7 @@ def derive_modified_init(json_entry: dict, obfuscated_cell) -> str | None:
     return format_init(bits_needed, new_val, False)
 
 
-def strip_suffixes_lookup(name: str, json_db: dict[str, dict]) -> tuple[str, dict] | None:
+def strip_suffixes_lookup(name: str, json_db: dict[str, dict]):
     # Try the full name first
     if name in json_db:
         return name, json_db[name]
@@ -168,9 +181,7 @@ def strip_suffixes_lookup(name: str, json_db: dict[str, dict]) -> tuple[str, dic
     return None
 
 
-def _find_entry_for_instance(
-    h_inst, hname: str, json_db: dict[str, dict]
-) -> dict | None:
+def _find_entry_for_instance(h_inst, hname: str, json_db: dict[str, dict]):
     entry = json_db.get(hname)
     if entry:
         return entry
@@ -288,7 +299,7 @@ def apply_properties(design: Design, json_db: dict[str, dict]):
     2. Propagating inversion corrections through connected LUTs
     """
     logging.info("Building tag->properties map from JSON...")
-    inversion_roots = [] # set(find_inversion_roots(design.getNetlist(), json_db))
+    inversion_roots = []  # set(find_inversion_roots(design.getNetlist(), json_db))
 
     restore_all_properties(design, json_db, inversion_roots)
 

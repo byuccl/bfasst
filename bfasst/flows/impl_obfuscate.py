@@ -45,7 +45,7 @@ class ImplObfuscate(Flow):
             orig_edf_path=self.vivado_synth.outputs["synth_edf"],
             logging_level="DEBUG",
             log_file="netlist_obfuscate.log",
-       )
+        )
 
         self.impl_transform = VivadoImpl(
             self,
@@ -66,7 +66,6 @@ class ImplObfuscate(Flow):
             constraints_files=self.vivado_synth.outputs["synth_constraints"],
         )
 
-        
         if self.impl_orig.impl_build["clocks"] not in ("", {}):
             self.impl_transform.outputs["clock_crank_tcl"] = (
                 self.impl_transform.build_path / "clock_crank.tcl"
@@ -110,10 +109,7 @@ class ImplObfuscate(Flow):
         )
 
         self.impl_detailed_reports_transform = ImplDetailedReports(
-            self, 
-            design, 
-            impl_dcp=self.netlist_deobfuscate.outputs["deobf_dcp"], 
-            tag="transform"
+            self, design, impl_dcp=self.netlist_deobfuscate.outputs["deobf_dcp"], tag="transform"
         )
 
         golden = ImplReports(
@@ -138,13 +134,13 @@ class ImplObfuscate(Flow):
             bitstream=self.impl_detailed_reports_transform.outputs["bitstream"],
         )
 
-#        self.conformal = Conformal(
-#            self,
-#            design,
-#            golden_netlist=self.impl_detailed_reports_orig.outputs["verilog"],
-#            rev_netlist=self.impl_detailed_reports_transform.outputs["verilog"],
-#            vendor=Vendor.XILINX.name,
-#        )
+        #        self.conformal = Conformal(
+        #            self,
+        #            design,
+        #            golden_netlist=self.impl_detailed_reports_orig.outputs["verilog"],
+        #            rev_netlist=self.impl_detailed_reports_transform.outputs["verilog"],
+        #            vendor=Vendor.XILINX.name,
+        #        )
 
         self.physcmp = PhysCmp(
             self,
@@ -163,7 +159,7 @@ class ImplObfuscate(Flow):
             self.netlist_deobfuscate,
             self.impl_detailed_reports_orig,
             self.impl_detailed_reports_transform,
-#            self.conformal,
+            #            self.conformal,
             self.physcmp,
         ]
 
@@ -175,7 +171,7 @@ class ImplObfuscate(Flow):
         self.netlist_deobfuscate.create_build_snippets()
         self.impl_detailed_reports_orig.create_build_snippets()
         self.impl_detailed_reports_transform.create_build_snippets()
-#        self.conformal.create_build_snippets()
+        #        self.conformal.create_build_snippets()
         self.physcmp.create_build_snippets()
 
     def get_top_level_flow_path(self):

@@ -22,10 +22,12 @@ from typing import List, Optional
 
 # ---------------- Core data ---------------- #
 
+
 @dataclass(frozen=True)
 class PinTag:
-    id: int          # stable logical ID
-    survivor: bool   # True if it existed AFTER all FixPins (on shrink side)
+    id: int  # stable logical ID
+    survivor: bool  # True if it existed AFTER all FixPins (on shrink side)
+
 
 @dataclass
 class Ctx:
@@ -55,27 +57,40 @@ def _init_ctx(word: int) -> Ctx:
 
 # ---------------- Base class ---------------- #
 
+
 class INITTransform:
-    def apply(self, ctx: Ctx) -> Ctx: raise NotImplementedError
-    def inverse(self) -> "INITTransform": raise NotImplementedError
+    def apply(self, ctx: Ctx) -> Ctx:
+        raise NotImplementedError
+
+    def inverse(self) -> "INITTransform":
+        raise NotImplementedError
 
 
 # ---------------- Primitive transforms ---------------- #
 
+
 class InvertOutput(INITTransform):
-    def __repr__(self): return "InvertOutput()"
+    def __repr__(self):
+        return "InvertOutput()"
+
     def apply(self, ctx: Ctx) -> Ctx:
         mask = (1 << ctx.size) - 1
         return Ctx((~ctx.word) & mask, ctx.pins)
-    def inverse(self) -> "InvertOutput": return InvertOutput()
+
+    def inverse(self) -> "InvertOutput":
+        return InvertOutput()
 
 
 class BitReverse(INITTransform):
-    def __repr__(self): return "BitReverse()"
+    def __repr__(self):
+        return "BitReverse()"
+
     def apply(self, ctx: Ctx) -> Ctx:
         s = f"{ctx.word:0{ctx.size}b}"
         return Ctx(int(s[::-1], 2), ctx.pins)
-    def inverse(self) -> "BitReverse": return BitReverse()
+
+    def inverse(self) -> "BitReverse":
+        return BitReverse()
 
 
 class InvertInputPins(INITTransform):
@@ -83,10 +98,12 @@ class InvertInputPins(INITTransform):
     XOR selected input pins (by logical ID) with 1.
     ids: logical pin IDs to invert.
     """
+
     def __init__(self, ids: List[int]):
         self.ids = tuple(ids)
 
-    def __repr__(self): return f"InvertInputPins(ids={self.ids})"
+    def __repr__(self):
+        return f"InvertInputPins(ids={self.ids})"
 
     def apply(self, ctx: Ctx) -> Ctx:
         if not self.ids:
@@ -111,10 +128,13 @@ class InvertInputPins(INITTransform):
 
 class FixPin(INITTransform):
     """Clamp pin, keep rows where pin==val, shrink by 1 bit."""
+
     def __init__(self, pin: int, val: int):
         self.pin = pin
         self.val = val & 1
-    def __repr__(self): return f"FixPin(pin={self.pin}, val={self.val})"
+
+    def __repr__(self):
+        return f"FixPin(pin={self.pin}, val={self.val})"
 
     def apply(self, ctx: Ctx) -> Ctx:
         if not (0 <= self.pin < ctx.nbits):
@@ -140,10 +160,13 @@ class FixPin(INITTransform):
 
 class InsertPin(INITTransform):
     """Inverse of FixPin: duplicate rows inserting a fixed bit."""
+
     def __init__(self, pin: int, val: int):
         self.pin = pin
         self.val = val & 1
-    def __repr__(self): return f"InsertPin(pin={self.pin}, val={self.val})"
+
+    def __repr__(self):
+        return f"InsertPin(pin={self.pin}, val={self.val})"
 
     def apply(self, ctx: Ctx) -> Ctx:
         out = 0
@@ -151,12 +174,12 @@ class InsertPin(INITTransform):
             bit = (ctx.word >> old_addr) & 1
             lower = old_addr & ((1 << self.pin) - 1)
             upper = old_addr >> self.pin
-            addr0 = lower | (upper << (self.pin + 1))          # inserted bit = 0
-            addr1 = addr0 | (1 << self.pin)                    # inserted bit = 1
+            addr0 = lower | (upper << (self.pin + 1))  # inserted bit = 0
+            addr1 = addr0 | (1 << self.pin)  # inserted bit = 1
             out |= bit << (addr1 if self.val else addr0)
-        new_id = (max((p.id for p in ctx.pins), default=-1) + 1)
+        new_id = max((p.id for p in ctx.pins), default=-1) + 1
         new_pin = PinTag(new_id, False)
-        new_pins = ctx.pins[:self.pin] + (new_pin,) + ctx.pins[self.pin:]
+        new_pins = ctx.pins[: self.pin] + (new_pin,) + ctx.pins[self.pin :]
         return Ctx(out, new_pins)
 
     def inverse(self) -> "FixPin":
@@ -170,8 +193,9 @@ class PartialPermute(INITTransform):
     Pins not listed keep their relative order.
     Missing pins are dropped from perm automatically (no-op for them).
     """
+
     def __init__(self, ids: List[int], perm: List[int]):
-        self.ids  = tuple(ids)
+        self.ids = tuple(ids)
         self.perm = tuple(perm)
 
     def __repr__(self):
@@ -181,7 +205,7 @@ class PartialPermute(INITTransform):
         id2idx = {p.id: i for i, p in enumerate(ctx.pins)}
 
         # Which IDs are present now?
-        present_ids  = [pid for pid in self.ids if pid in id2idx]
+        present_ids = [pid for pid in self.ids if pid in id2idx]
         if len(present_ids) <= 2:
             return ctx  # nothing to permute
 
@@ -191,13 +215,15 @@ class PartialPermute(INITTransform):
         shrink_to_present = {}
         present_order_ids = [pid for pid in self.ids if pid in id2idx]
         for present_loc, shrink_loc in enumerate(
-                [i for i, pid in enumerate(self.ids) if pid in id2idx]):
+            [i for i, pid in enumerate(self.ids) if pid in id2idx]
+        ):
             shrink_to_present[shrink_loc] = present_loc
 
         # Build reduced perm over the survivors
         reduced = []
         for new_loc_present, shrink_loc in enumerate(
-                [i for i, pid in enumerate(self.ids) if pid in id2idx]):
+            [i for i, pid in enumerate(self.ids) if pid in id2idx]
+        ):
             old_loc_shrink = self.perm[shrink_loc]
             if old_loc_shrink in shrink_to_present:
                 reduced.append(shrink_to_present[old_loc_shrink])
@@ -232,6 +258,7 @@ class PartialPermute(INITTransform):
 
 # ---------------- Chain helpers ---------------- #
 
+
 def apply_chain(word: int, chain: List[INITTransform]) -> int:
     ctx = _init_ctx(word)
     for t in chain:
@@ -241,11 +268,11 @@ def apply_chain(word: int, chain: List[INITTransform]) -> int:
 
 def invert_chain(chain: List[INITTransform]) -> List[INITTransform]:
     """Grow first, then reorder/inverts. Size-changing ops must align."""
-    inv_inv  : List[INITTransform] = []
-    inv_rev  : List[INITTransform] = []
-    inv_ins  : List[INITTransform] = []
-    inv_perm : Optional[INITTransform] = None
-    inv_inpins : List[INITTransform] = []
+    inv_inv: List[INITTransform] = []
+    inv_rev: List[INITTransform] = []
+    inv_ins: List[INITTransform] = []
+    inv_perm: Optional[INITTransform] = None
+    inv_inpins: List[INITTransform] = []
 
     for t in reversed(chain):
         if isinstance(t, InvertOutput):
@@ -266,14 +293,15 @@ def invert_chain(chain: List[INITTransform]) -> List[INITTransform]:
     out: List[INITTransform] = []
     out.extend(inv_inv)
     out.extend(inv_rev)
-    out.extend(inv_ins)          # grow first
+    out.extend(inv_ins)  # grow first
     if inv_perm:
         out.append(inv_perm)
-    out.extend(inv_inpins)       # input inversions don't change size/order
+    out.extend(inv_inpins)  # input inversions don't change size/order
     return out
 
 
 # ---------------- Derivation ---------------- #
+
 
 def _derive_init_transform_shrink(orig: int, derived: int):
     """
@@ -296,7 +324,7 @@ def _derive_init_transform_shrink(orig: int, derived: int):
             for fixed_vals in range(1 << k):
 
                 # Build chain: FixPin(s) + PartialPermute (survivors)
-                current_order = list(range(n))   # logical ids
+                current_order = list(range(n))  # logical ids
                 chain: List[INITTransform] = []
                 survivors = [True] * n
 
@@ -321,8 +349,10 @@ def _derive_init_transform_shrink(orig: int, derived: int):
 
                     for rev, inv_out in product((False, True), (False, True)):
                         full = chain2.copy()
-                        if rev:     full.append(BitReverse())
-                        if inv_out: full.append(InvertOutput())
+                        if rev:
+                            full.append(BitReverse())
+                        if inv_out:
+                            full.append(InvertOutput())
                         try:
                             if apply_chain(orig, full) == derived:
                                 return full
@@ -333,21 +363,19 @@ def _derive_init_transform_shrink(orig: int, derived: int):
 
 def _derive_init_transform_grow(orig: int, derived: int):
     # orig has m bits, derived has n bits, n = m+1 assumed here
-    ctx_o = _init_ctx(orig); ctx_d = _init_ctx(derived)
+    ctx_o = _init_ctx(orig)
+    ctx_d = _init_ctx(derived)
     if ctx_d.nbits - ctx_o.nbits != 1:  # handle multiple too if needed
         return None
 
     m, n = ctx_o.nbits, ctx_d.nbits
-    for pin in range(n):          # where inserted
+    for pin in range(n):  # where inserted
         for val in (0, 1):
             # Try to shrink derived back
             try_chain = [FixPin(pin, val)]
             shrunk = apply_chain(derived, try_chain)
             # Now solve width-equal affine mapping:
             chain_eq = _derive_equal_width(shrunk, orig)
-            if chain_eq is not None:
-                # combine: grow = inverse(FixPin) is InsertPin
-                return chain_eq_inverse(chain_eq)  # not needed if you want forward
     return None
 
 
@@ -356,14 +384,16 @@ def _derive_equal_width(a: int, b: int):
     ids = list(range(n))
     for perm in permutations(ids):
         for mask in range(1 << n):
-            for inv_out in (0,1):
-                for rev in (0,1):
+            for inv_out in (0, 1):
+                for rev in (0, 1):
                     chain = [PartialPermute(ids, list(perm))]
                     if mask:
-                        inv_ids = [ids[i] for i in range(n) if (mask>>i)&1]
+                        inv_ids = [ids[i] for i in range(n) if (mask >> i) & 1]
                         chain.append(InvertInputPins(inv_ids))
-                    if rev:  chain.append(BitReverse())
-                    if inv_out: chain.append(InvertOutput())
+                    if rev:
+                        chain.append(BitReverse())
+                    if inv_out:
+                        chain.append(InvertOutput())
                     try:
                         if apply_chain(a, chain) == b:
                             return chain
@@ -393,9 +423,8 @@ def derive_init_transform(orig: int, derived: int):
 
 # ---------------- Public wrapper ---------------- #
 
+
 def apply_transforms(word: int, transforms: Optional[List[INITTransform]]) -> int:
     if not transforms:
         return word
     return apply_chain(word, transforms)
-
-

@@ -97,6 +97,7 @@ def obfuscate_bram(inst, counts):
 
     return obfuscate_all(inst, skip_props, counts)
 
+
 def obfuscate_dsp(inst, counts):
     """
     Obfuscate DSP48E1 parameters as much as possible while preserving implementation behavior.
@@ -116,7 +117,6 @@ def obfuscate_dsp(inst, counts):
         "MREG",
         "OPMODEREG",
         "PREG",
-
         # "USE_DPORT",
         "USE_MULT",
         "USE_PATTERN_DETECT",
@@ -256,7 +256,7 @@ def obfuscate_cell_properties(netlist: EDIFNetlist, out_path: str) -> int:
             for inst in inst_list:
                 ref_type = str(inst.getCellType().getName())
                 full_name = str(inst.getFullHierarchicalInstName())
-                
+
                 counts_all[ref_type] += 1
 
                 entry, changed = process_cell(inst, ref_type, counts)

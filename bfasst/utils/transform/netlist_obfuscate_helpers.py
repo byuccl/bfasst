@@ -28,7 +28,9 @@ SENTINEL_VALUES = {
 
 
 _INIT_RE = re.compile(r"^(\d+)'([hb])([0-9a-fA-F]+)$", re.IGNORECASE)
-def parse_init(lit: str) -> tuple[int, int] | None:
+
+
+def parse_init(lit: str):
     """
     Parse "<W>'h<HEX>" or "<W>'b<BIN>" -> (width, value).
     Return None if not matched.
@@ -39,9 +41,9 @@ def parse_init(lit: str) -> tuple[int, int] | None:
     width = int(m.group(1))
     base = m.group(2).lower()
     digits = m.group(3)
-    if base == 'h':
+    if base == "h":
         value = int(digits, 16)
-    elif base == 'b':
+    elif base == "b":
         value = int(digits, 2)
     else:
         return None
@@ -66,4 +68,3 @@ def get_masking_init(orig_init: str, lut_size: int) -> str:
     if lut_size not in SENTINEL_VALUES:
         raise ValueError(f"No parity mask for LUT{lut_size}")
     return SENTINEL_VALUES[lut_size]
-
