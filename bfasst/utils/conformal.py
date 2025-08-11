@@ -121,14 +121,12 @@ class ConformalCompare:
         return do_file_path
 
     def __get_hdl_src_type_flag(self):
-        # TODO: Make this actually work instead of hardcoding
-        return "-EDIF"
         hdl_type = get_hdl_src_types(self.hdl_srcs)
         if hdl_type == HdlType.VERILOG:
             return "-Verilog"
         if hdl_type == HdlType.VHDL:
             return "-Vhdl"
-        return "-EDIF"
+        return None
 
     def __template_do_file(self, gold_src_type):
         with open(paths.CONFORMAL_TOOLS_PATH / "conformal.do.mustache", "r") as f:
@@ -146,9 +144,8 @@ class ConformalCompare:
                     "rev_netlist": str(
                         bfasst.config.CONFORMAL_REMOTE_WORK_DIR / self.rev_netlist.name
                     ),
-                    "renaming_rule_vector": (
-                        "add renaming rule vector_expand %s\\[%d\\] @1_@2 -Both -map\n"
-                    ),
+                    "renaming_rule_vector": "add renaming rule"
+                    + r" vector_expand %s\[%d\] @1_@2 -Both -map",
                 },
             )
         return do_text
@@ -199,20 +196,15 @@ class ConformalCompare:
 
         scp_client.close()
 
-    def __run_conformal(self, client, use_gui=False):
-        if use_gui:
-            cmd = (
-                f"source {bfasst.config.CONFORMAL_REMOTE_SOURCE_SCRIPT};"
-                f"cd {bfasst.config.CONFORMAL_REMOTE_WORK_DIR};"
-                f"{bfasst.config.CONFORMAL_REMOTE_PATH} &"
-            )
-        else:
-            cmd = (
-                f"source {bfasst.config.CONFORMAL_REMOTE_SOURCE_SCRIPT};"
-                f"cd {bfasst.config.CONFORMAL_REMOTE_WORK_DIR};"
-                f"{bfasst.config.CONFORMAL_REMOTE_PATH} -Dofile {self.DO_FILE_NAME} "
-                f" -Logfile {self.LOG_FILE_NAME} -NOGui"
-            )
+    def __run_conformal(self, client):
+        """Run the conformal tool on the remote server"""
+        cmd = (
+            f"source {bfasst.config.CONFORMAL_REMOTE_SOURCE_SCRIPT};"
+            f"cd {bfasst.config.CONFORMAL_REMOTE_WORK_DIR};"
+            f"{bfasst.config.CONFORMAL_REMOTE_PATH} -Dofile {self.DO_FILE_NAME} "
+            f" -Logfile {self.LOG_FILE_NAME} -NOGui"
+        )
+
         (stdin, stdout, stderr) = client.exec_command(cmd, timeout=bfasst.config.CONFORMAL_TIMEOUT)
 
         stdin.write("yes\n")
