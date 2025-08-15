@@ -1,0 +1,2 @@
+rows,delta_sum,delta_mean,abs_delta_mean,num_regressions (delta<0),num_improvements (delta>0),num_no_change (delta==0)
+660,-2947.124,-4.465339393939393,4.830963636363636,118,40,502

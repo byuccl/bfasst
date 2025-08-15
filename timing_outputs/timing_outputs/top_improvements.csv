@@ -1,0 +1,11 @@
+design,metric,delta,golden,test
+ooc/a25_decode,clocks.fixed_clk_gen.tns_fail,44.0,277.0,321.0
+ooc/a25_decode,overall_tns_fail,44.0,277.0,321.0
+ooc/median,clocks.fixed_clk_gen.tns_fail,8.0,0.0,8.0
+ooc/median,overall_tns_fail,8.0,0.0,8.0
+byu/uart,clocks.fixed_clk_gen.tns_endpoints,4.0,260.0,264.0
+byu/uart,overall_tns_endpoints,4.0,260.0,264.0
+ooc/data_path,clocks.fixed_clk_gen.tns_endpoints,3.0,435.0,438.0
+ooc/data_path,overall_tns_endpoints,3.0,435.0,438.0
+ooc/a25_decode,clocks.fixed_clk_gen.wns,0.2450000000000001,-1.788,-1.543
+ooc/a25_decode,overall_wns,0.2450000000000001,-1.788,-1.543

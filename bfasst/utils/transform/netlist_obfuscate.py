@@ -26,8 +26,8 @@ from java.io import PrintStream, FileOutputStream
 from com.xilinx.rapidwright.design import Design
 from com.xilinx.rapidwright.design.tools import LUTTools
 from com.xilinx.rapidwright.device import Device
-from com.xilinx.rapidwright.edif import EDIFTools, EDIFNetlist, EDIFHierCellInst, EDIFValueType
-
+from com.xilinx.rapidwright.edif import EDIFTools, EDIFNetlist, EDIFHierCellInst, EDIFValueType, EDIFDirection, EDIFCell, EDIFCellInst
+from com.xilinx.rapidwright.eco import ECOTools
 
 def _json_entry(prop_name: str, prop_val: "EDIFPropertyValue") -> dict[str, str]:
     """

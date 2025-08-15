@@ -1,0 +1,11 @@
+design,metric,delta,golden,test
+vtr_benchmarks/stereovision1,clocks.fixed_tm3_clk_v0_gen.tns_endpoints,-964.0,20128.0,19164.0
+vtr_benchmarks/stereovision1,overall_tns_endpoints,-964.0,20128.0,19164.0
+ooc/jpegencode,clocks.fixed_clk_gen.tns_endpoints,-361.0,93563.0,93202.0
+ooc/jpegencode,overall_tns_endpoints,-361.0,93563.0,93202.0
+ooc/pid,clocks.fixed_i_clk_gen.tns_endpoints,-40.0,792.0,752.0
+ooc/pid,overall_tns_endpoints,-40.0,792.0,752.0
+ooc/a25_decode,clocks.fixed_clk_gen.tns,-25.37800000000001,-201.19,-226.568
+ooc/a25_decode,overall_tns,-25.37800000000001,-201.19,-226.568
+vtr_benchmarks/mkSMAdapter4B,clocks.fixed_clk_gen.tns_endpoints,-16.0,2076.0,2060.0
+vtr_benchmarks/mkSMAdapter4B,overall_tns_endpoints,-16.0,2076.0,2060.0

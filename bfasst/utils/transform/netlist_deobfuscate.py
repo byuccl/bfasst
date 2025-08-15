@@ -116,7 +116,7 @@ def derive_modified_init(json_entry: dict, obfuscated_cell):
             logging.info("Found transforms...")
             for t in transforms:
                 logging.info(t)
-            new_val = apply_transforms(json_val, transforms)
+            new_val = apply_transforms(json_val, transforms, None)
             new_init = format_init(bits_needed, new_val, False)
             logging.info("json_init_str: %s, new_init: %s", json_init_str, new_init)
         else:
