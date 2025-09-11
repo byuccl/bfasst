@@ -17,12 +17,15 @@ from bfasst.utils import compare_json
 class StructuralCapnpCmp(Tool):
     """Create rule and build snippets for phys netlist creation."""
 
+    # pylint: disable=too-many-positional-arguments
     def __init__(
         self,
         flow,
         design,
         impl_checkpoint,
         impl_edf,
+        synth_checkpoint,
+        synth_edf,
         *,
         log_name="log.txt",
         phys_capnp=None,
@@ -30,7 +33,8 @@ class StructuralCapnpCmp(Tool):
         logging_level="INFO",
     ):
         super().__init__(flow, design)
-
+        self.synth_checkpoint = synth_checkpoint
+        self.synth_edf = synth_edf
         self.impl_checkpoint = impl_checkpoint
         self.impl_edf = impl_edf
         self.phys_capnp = phys_capnp
@@ -48,6 +52,8 @@ class StructuralCapnpCmp(Tool):
             "phys_capnp": self.phys_capnp,
             "edf_capnp": self.edf_capnp,
         }
+
+    # pylint: enable=too-many-positional-arguments
 
     def create_build_snippets(self):
         self.__write_json_file()
@@ -67,10 +73,13 @@ class StructuralCapnpCmp(Tool):
 
     def __append_build_snippets(self):
         build_dict = {
+            "utils_path": str(BFASST_UTILS_PATH),
             "phys_capnp_output": self.build_path,
             "transform_library": NINJA_TRANSFORM_TOOLS_PATH,
             "build_dir": self.build_path.parent,
             "logging_level": self.logging_level,
+            "synth_dcp": self.synth_checkpoint,
+            "synth_edf": self.synth_edf,
             "impl_dcp": self.impl_checkpoint,
             "impl_edf": self.impl_edf,
             "phys_capnp": self.phys_capnp,

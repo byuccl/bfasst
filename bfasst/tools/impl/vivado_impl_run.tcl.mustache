@@ -3,12 +3,14 @@ opt_design
 {{/opt_design}}
 
 place_design
+{{#clocks}}
+# Capture reports of physical optimizations done during placement
+report_phys_opt -file {{ outputs.phys_opt }}_place.rpt
+write_iphys_opt_tcl -place {{ outputs.phys_opt }}_place.tcl
+{{/clocks}}
 
 {{#phys_opt_design}}
 {{#clocks}}
-set period {{period}}
-set clock_port {{ name }}
-set clock_name {{ name }}_gen
 set slack [get_property SLACK [lindex [get_timing_paths] 0]]
 # phys_opt does nothing if slack is postitive
 if {$slack >= 0} {
@@ -18,7 +20,7 @@ if {$slack >= 0} {
     set new_period [expr $period - $slack - 0.45]
     create_clock -period $new_period -name $clock_name [get_ports $clock_port]
 }
-phys_opt_design
+phys_opt_design -directive AddRetime
 report_phys_opt -file {{ outputs.phys_opt}}_postplace.rpt
 write_iphys_opt_tcl -place {{ outputs.phys_opt }}_postplace.tcl
 {{/clocks}}
@@ -37,7 +39,7 @@ if {$slack >= 0} {
     set new_period [expr $period - $slack - 0.15]
     create_clock -period $new_period -name $clock_name [get_ports $clock_port]
 }
-phys_opt_design -retime
+phys_opt_design -directive AddRetime
 report_phys_opt -file {{ outputs.phys_opt}}_postroute.rpt
 write_iphys_opt_tcl -place {{ outputs.phys_opt }}_postroute.tcl
 {{/clocks}}

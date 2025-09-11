@@ -1,4 +1,4 @@
 rule phys_netlist
-    command = python {{ bfasst_path }}/bfasst/utils/transform/rw_phys_netlist.py --build_dir $build_dir --impl_dcp $impl_dcp --impl_edf $impl_edf $logging_level
+    command = python {{ bfasst_path }}/bfasst/utils/transform/rw_phys_netlist.py --build_dir $build_dir --synth_dcp $synth_dcp --synth_edf $synth_edf --impl_dcp $impl_dcp --impl_edf $impl_edf $logging_level
     description = generate physical netlist for $build_dir
 

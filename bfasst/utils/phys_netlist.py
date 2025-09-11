@@ -3,7 +3,6 @@ Init Constants for Physical Netlist object
 """
 
 import logging
-from pathlib import Path
 
 from bfasst import jpype_jvm
 from bfasst.config import PART
@@ -30,13 +29,13 @@ class PhysNetlist:
     Physical Netlist object to hold the physical netlist data.
     """
 
-    def __init__(self, rw_log: str, impl_checkpoint: tuple[Path, Path], **kwargs):
+    def __init__(self, rw_log: str, impl_checkpoint: rw.VivadoCheckpoint, **kwargs):
         """Init constants for RW Netlist processing"""
         System.setOut(PrintStream(File(rw_log)))
         System.setErr(PrintStream(File(rw_log)))
         self.device = Device.getDevice(PART)
         # Rapidwright design / netlist
-        self.vivado_design, self.vivado_netlist = rw.load_design(*impl_checkpoint)
+        self.vivado_design, self.vivado_netlist = rw.load_design(impl_checkpoint)
 
         # Const nets
         self.vcc, self.gnd = None, None

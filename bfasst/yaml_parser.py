@@ -1,15 +1,15 @@
 """Parse a yaml file to obtain a flow and a list of target designs"""
 
 from abc import ABC
-from pathlib import Path
 from importlib import import_module
-from typing import Optional
+from pathlib import Path
 from types import ModuleType
+from typing import Optional
+
 import yaml
 
+from bfasst import config, paths
 from bfasst.utils import error
-from bfasst import config
-from bfasst import paths
 
 
 class YamlParser(ABC):
@@ -88,6 +88,7 @@ class DesignParser(YamlParser):
     """Parses a design yaml file"""
 
     def __init__(self, yaml_path=None):
+        # These are standard props, but a yaml can have additional
         self.top = None
         self.vhdl_libs = None
         self.verilog_files = None
@@ -102,25 +103,27 @@ class DesignParser(YamlParser):
         super().__init__(yaml_path)
 
         props = YamlParser(yaml_path).props
-        self.top = props["top"]
-        if "part" in props:
-            self.part = props["part"]
+        for key, value in props.items():
+            setattr(self, key, value)
+        # self.top = props["top"]
+        # if "part" in props:
+        #     self.part = props["part"]
 
-        if "vhdl_libs" in props:
-            self.vhdl_libs = props["vhdl_libs"]
+        # if "vhdl_libs" in props:
+        #     self.vhdl_libs = props["vhdl_libs"]
 
-        # [{name: "clk", period: int (ns), waveform: "0.000 5.000"}] - Waveform is optional
-        if "clocks" in props:
-            self.clocks = props["clocks"]
+        # # [{name: "clk", period: int (ns), waveform: "0.000 5.000"}] - Waveform is optional
+        # if "clocks" in props:
+        #     self.clocks = props["clocks"]
 
-        if "verilog_files" in props:
-            self.verilog_files = props["verilog_files"]
+        # if "verilog_files" in props:
+        #     self.verilog_files = props["verilog_files"]
 
-        if "system_verilog_files" in props:
-            self.system_verilog_files = props["system_verilog_files"]
+        # if "system_verilog_files" in props:
+        #     self.system_verilog_files = props["system_verilog_files"]
 
-        if "other_sources" in props:
-            self.other_sources = props["other_sources"]
+        # if "other_sources" in props:
+        #     self.other_sources = props["other_sources"]
 
 
 class FlowDescriptionParser(YamlParser):

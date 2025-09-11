@@ -42,15 +42,17 @@ class StructuralCapnp(RwPhysNetlist, F2BDesign):
     Runs RWPhysNetlist to adjust for transformations that occur during implementation.
     """
 
+    # pylint: disable=too-many-positional-arguments
     def __init__(
         self,
         build_dir: str,
-        impl_checkpoint: tuple[Path, Path],
+        synth_checkpoint: rw.VivadoCheckpoint,
+        impl_checkpoint: rw.VivadoCheckpoint,
         capnp: tuple[Path, Path],
-        loggging_info: tuple[str, str],
+        logging_info: tuple[str, str],
     ) -> None:
         phys_capnp, edf_capnp = capnp
-        logging_level, log_name = loggging_info
+        logging_level, log_name = logging_info
         self.cmp_stage_dir = Path(build_dir) / "capnp_cmp"
         self.cmp_stage_dir.mkdir(parents=True, exist_ok=True)
         rw_log = str(self.cmp_stage_dir / "rapidwright_stdout.log")
@@ -62,8 +64,9 @@ class StructuralCapnp(RwPhysNetlist, F2BDesign):
             impl_capnp=phys_capnp,
             edf_capnp=edf_capnp,
             f2b_rw_log=rw_log,
+            synth_checkpoint=synth_checkpoint,
         )
-        self.cmp_log_path = self.cmp_stage_dir / log_name.split("/")[-1]
+        self.cmp_log_path = self.cmp_stage_dir / log_name.rsplit("/", 1)[-1]
         self.logging_level = logging_level
 
         self._cell_props = create_cell_props()
@@ -75,6 +78,8 @@ class StructuralCapnp(RwPhysNetlist, F2BDesign):
         self.rev_net_cache = set()  # Set to avoid reprocessing nets
         self.rev_driver_cache = {}  # EDIFHierPortInst: driver_full_name_str
         self.lut_gnd_net = set()
+
+    # pylint: enable=too-many-positional-arguments
 
     def run(self):
         """Adjust for implementation transformations and then compare design with capnp netlist."""
@@ -97,7 +102,7 @@ class StructuralCapnp(RwPhysNetlist, F2BDesign):
         logging.info("Total Comparison Time: %s seconds", end_time - comp_start_time)
         logging.info("Total Transformation and Comparison Time: %s seconds", end_time - start_time)
         with open(self.cmp_stage_dir / "cmp_time.txt", "w") as f:
-            f.write(f"{end_time - start_time:2f}\n")
+            f.write(f"{end_time - comp_start_time:2f}\n")
 
     def compare_designs(self) -> None:
         """Compare the transformed design with the reversed design."""
@@ -322,6 +327,8 @@ class StructuralCapnp(RwPhysNetlist, F2BDesign):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
+    utils.add_path_arg(parser, "--synth_dcp", "The synthesis dcp file to use for the netlist.")
+    utils.add_path_arg(parser, "--synth_edf", "The synthesis edf file to use for the netlist.")
     utils.add_path_arg(parser, "--impl_edf", "The implementation edf file to use for the netlist.")
     utils.add_path_arg(parser, "--impl_dcp", "The implementation dcp file to use for the netlist.")
     utils.add_path_arg(
@@ -333,13 +340,14 @@ if __name__ == "__main__":
     utils.add_standard_args(parser)
 
     args = parser.parse_args()
-    copmarator = StructuralCapnp(
+    comparator = StructuralCapnp(
         args.build_dir,
-        (args.impl_dcp, args.impl_edf),
+        rw.VivadoCheckpoint(dcp=args.synth_dcp, edf=args.synth_edf),
+        rw.VivadoCheckpoint(dcp=args.impl_dcp, edf=args.impl_edf),
         (args.phys_capnp, args.edf_capnp),
         (args.logging_level, args.log_name),
     )
-    copmarator.run()
+    comparator.run()
     # except StructuralCompareError as err:
     #     logging.error("Structural comparison failed: %s", err)
     #     exit(0)

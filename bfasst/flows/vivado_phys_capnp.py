@@ -1,7 +1,7 @@
 """Structural Comparison of physical netlist and reversed netlist"""
 
-from bfasst.flows.vivado_phys_netlist import VivadoPhysNetlist
 from bfasst.flows.vivado_bit_to_netlist import VivadoBitToNetlist
+from bfasst.flows.vivado_phys_netlist import VivadoPhysNetlist
 from bfasst.paths import FLOWS_PATH
 from bfasst.tools.compare.structural.structural_capnp_cmp import StructuralCapnpCmp
 
@@ -17,6 +17,8 @@ class VivadoPhysCapnp(VivadoBitToNetlist):
         self.capnp_cmp_tool = StructuralCapnpCmp(
             self,
             design,
+            synth_checkpoint=self.vivado_synth_tool.outputs["synth_dcp"],
+            synth_edf=self.vivado_synth_tool.outputs["synth_edf"],
             impl_checkpoint=self.vivado_impl_tool.outputs["impl_dcp"],
             impl_edf=self.vivado_impl_tool.outputs["impl_edf"],
             phys_capnp=self.xrev_tool.outputs["phys_capnp"],
