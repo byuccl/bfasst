@@ -1,4 +1,4 @@
-""" Base class for implementation tools """
+"""Base class for implementation tools"""
 
 from bfasst.tools.tool import Tool
 

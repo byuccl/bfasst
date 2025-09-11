@@ -1,4 +1,4 @@
-""" IceCube2 Implementation tool"""
+"""IceCube2 Implementation tool"""
 
 import shutil
 import subprocess

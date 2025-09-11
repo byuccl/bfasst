@@ -1,4 +1,4 @@
-""" Run Synplify logic optimization"""
+"""Run Synplify logic optimization"""
 
 import shutil
 import re

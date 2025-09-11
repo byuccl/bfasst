@@ -1,4 +1,4 @@
-""" Base class for bitstream to netlist tools"""
+"""Base class for bitstream to netlist tools"""
 
 import abc
 

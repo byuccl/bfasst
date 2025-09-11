@@ -1,4 +1,4 @@
-""" Clean up a netlist 
+"""Clean up a netlist
 (tested primarily on post-fasm2bels netlists)
 """
 
