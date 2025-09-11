@@ -27,6 +27,8 @@ class VivadoPhysNetlist(Flow):
         self.phys_netlist_tool = PhysNetlist(
             self,
             design,
+            synth_checkpoint=self.vivado_synth_tool.outputs["synth_dcp"],
+            synth_edf=self.vivado_synth_tool.outputs["synth_edf"],
             impl_checkpoint=self.vivado_impl_tool.outputs["impl_dcp"],
             impl_edf=self.vivado_impl_tool.outputs["impl_edf"],
             logging_level=self.logging_level,

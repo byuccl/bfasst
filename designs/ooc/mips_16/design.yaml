@@ -1,3 +1,7 @@
 top: mips_16
 
 include_all_verilog_files: True
+
+clocks:
+  - name: clk
+    period:  1.335

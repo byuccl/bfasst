@@ -4,4 +4,4 @@ top_architecture: dataflow
 include_all_vhdl_files: True
 clocks:
   - name: CLK_I
-    period:  4.000
+    period:  3.582

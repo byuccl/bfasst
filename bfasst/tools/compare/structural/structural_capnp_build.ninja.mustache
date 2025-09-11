@@ -1,15 +1,11 @@
-build {{viv_impl_physical_edf}} {{ phys_capnp_checkpoint }} {{ phys_capnp_log }} {{ rapidwright_log }}: phys_capnp_cmp | bfasst/utils/structural_capnp.py {{ impl_edf }} {{ impl_dcp }} {{ phys_capnp }} {{ edf_capnp }}
+build {{cmp_time}} {{ phys_capnp_log }} {{ rapidwright_log }}: phys_capnp_cmp | {{synth_edf}} {{synth_dcp}} {{ impl_edf }} {{ impl_dcp }} {{ phys_capnp }} {{ edf_capnp }}  {{ utils_path }}/compare/structural_capnp.py  {{ utils_path }}/general.py  {{ utils_path }}/rw_helpers.py  {{ utils_path }}/transform/f2b_design.py  {{ utils_path }}/transform/rw_phys_netlist.py  {{ utils_path }}/transform/lutram_transformer.py  {{ utils_path }}/compare/phys_opt_cmp.py  {{ utils_path }}/compare/structural_helpers.py
     logging_level = {{ logging_level }}
+    synth_dcp = {{ synth_dcp }}
+    synth_edf = {{ synth_edf }}
     impl_dcp = {{ impl_dcp }}
     impl_edf = {{ impl_edf }}
     log_name = {{ phys_capnp_log }}
     phys_capnp = {{ phys_capnp }} 
     edf_capnp = {{ edf_capnp }} 
     build_dir = {{ build_dir }} 
-
-# Uncomment to gnerate the transformed verilog file
-# build {{ checkpoint_to_v_tcl }}: template {{ checkpoint_to_v_json }} {{ transform_library }}/checkpoint_to_v.tcl.mustache
-
-# build {{ viv_impl_physical_v }}: vivado {{ checkpoint_to_v_tcl }} | {{ viv_impl_physical_edf }} {{ phys_capnp_checkpoint }} 
-#     journal = {{ phys_capnp_output }}/vivado_checkpoint_to_v.jou
-#     log = {{ phys_capnp_output }}/vivado_checkpoint_to_v.log
+    design = {{ design }}

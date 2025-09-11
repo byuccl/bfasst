@@ -2,9 +2,10 @@
 
 import json
 import pathlib
+
 from bfasst import config
+from bfasst.paths import BFASST_UTILS_PATH, COMMON_TOOLS_PATH
 from bfasst.tools.impl.impl_tool import ImplTool
-from bfasst.paths import COMMON_TOOLS_PATH, BFASST_UTILS_PATH
 from bfasst.utils.general import ensure_tuple, json_write_if_changed
 
 
@@ -18,7 +19,7 @@ class VivadoImpl(ImplTool):
         synth_edf,
         build_path=None,
         opt_design=True,
-        phys_opt_design=False,
+        phys_opt_design=True,
         constraints_files="",
         ooc=False,
         impl_options="",
@@ -46,25 +47,24 @@ class VivadoImpl(ImplTool):
         self._init_outputs()
         self.inputs_str = {"xdc": self.constraints_file, "synth_edf": str(self.synth_edf)}
         self.outputs_str = {k: str(v) for k, v in self.outputs.items()}
+        tcl_sources = [
+            self.outputs_str["setup_tcl"],
+            self.outputs_str["impl_tcl"],
+            self.outputs_str["reports_tcl"],
+        ]
+        if self.design_props is not None and hasattr(self.design_props, "pre_impl_tcl"):
+            tcl_sources.insert(1, str(design / getattr(self.design_props, "pre_impl_tcl")))
         self.impl_build = {
             "part": self.flow.part,
             "impl_output": str(self.build_path),
             "synth_output": str(
                 self.build_path.parent / ("synth" if not self.ooc else "synth_ooc")
             ),
-            "clocks": (
-                self.design_props.clocks
-                if self.design_props is not None and type(self.flow).__name__ == "ClockCrank"
-                else ""
-            ),
+            "clocks": self.design_props.clocks if self.design_props is not None else "",
             "outputs": self.outputs_str,
             "opt_design": self.opt_design,
             "phys_opt_design": self.phys_opt_design,
-            "tcl_sources": [
-                self.outputs_str["setup_tcl"],
-                self.outputs_str["impl_tcl"],
-                self.outputs_str["reports_tcl"],
-            ],
+            "tcl_sources": tcl_sources,
             "inputs": self.inputs_str,
         }
         if impl_options:
@@ -110,6 +110,7 @@ class VivadoImpl(ImplTool):
         self.outputs["timing"] = self.build_path / "timing_summary.txt"
         self.outputs["journal"] = self.build_path / "vivado.jou"
         self.outputs["log"] = self.build_path / "vivado.log"
+        self.outputs["phys_opt"] = self.build_path / "phys_opt"
         self.outputs["bitstream"] = self.build_path / "design.bit" if not self.ooc else ""
 
     def add_ninja_deps(self, deps):

@@ -2,9 +2,10 @@
 
 import json
 import pathlib
+
 from bfasst import config
+from bfasst.paths import BFASST_UTILS_PATH, COMMON_TOOLS_PATH
 from bfasst.tools.synth.synth_tool import SynthTool
-from bfasst.paths import COMMON_TOOLS_PATH, BFASST_UTILS_PATH
 from bfasst.utils.general import json_write_if_changed
 
 
@@ -99,6 +100,7 @@ class VivadoSynth(SynthTool):
         self.outputs["synth_dcp"] = self.build_path / "synth.dcp"
         self.outputs["journal"] = self.build_path / "vivado.jou"
         self.outputs["log"] = self.build_path / "vivado.log"
+        self.outputs["verilog"] = self.build_path / "viv_synth.v"
 
         if not self.ooc:
             self.outputs["io_report"] = self.build_path / "report_io.txt"

@@ -2,13 +2,13 @@
 
 from bfasst.flows.flow import Flow
 from bfasst.flows.vivado_phys_netlist import VivadoPhysNetlist
-from bfasst.tools.impl.vivado_impl import VivadoImpl
+from bfasst.paths import FLOWS_PATH
 from bfasst.tools.compare.structural.structural import Structural
+from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.tools.rev_bit.xray import Xray
+from bfasst.tools.synth.vivado_synth import VivadoSynth
 from bfasst.tools.transform.netlist_cleanup import NetlistCleanup
 from bfasst.tools.transform.phys_netlist import PhysNetlist
-from bfasst.paths import FLOWS_PATH
-from bfasst.tools.synth.vivado_synth import VivadoSynth
 
 
 class VivadoPhysNetlistCmp(Flow):
@@ -37,6 +37,8 @@ class VivadoPhysNetlistCmp(Flow):
         self.phys_netlist_tool = PhysNetlist(
             self,
             design,
+            synth_checkpoint=self.vivado_synth_tool.outputs["synth_dcp"],
+            synth_edf=self.vivado_synth_tool.outputs["synth_edf"],
             impl_edf=self.vivado_impl_tool.outputs["impl_edf"],
             impl_checkpoint=self.vivado_impl_tool.outputs["impl_dcp"],
             logging_level=self.logging_level,

@@ -1,1 +1,5 @@
 top: robot_high_level
+
+clocks:
+  - name: clk
+    period:  6.355

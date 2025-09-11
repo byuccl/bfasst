@@ -1,5 +1,6 @@
 write_edif -force {{ outputs.synth_edf }}
 write_checkpoint -force -file {{ outputs.synth_dcp }}
+write_verilog -force -file {{ outputs.verilog }}
 
 {{#io}}
 report_io -force -file {{ . }}

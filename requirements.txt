@@ -5,6 +5,7 @@ chevron
 cmake
 cryptography
 in_place
+isort
 JPype1
 matplotlib
 numpy

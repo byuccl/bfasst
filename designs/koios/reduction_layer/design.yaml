@@ -2,4 +2,4 @@ top: reduction_layer
 
 clocks:
   - name: clk
-    period:  9.000
+    period:  6.107

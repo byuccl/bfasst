@@ -267,6 +267,19 @@ def add_path_arg(p: ArgumentParser, arg: str, help_msg: str):
     p.add_argument(arg, type=Path, required=True, help=help_msg)
 
 
+def add_standard_args(p: ArgumentParser):
+    p.add_argument(
+        "--build_dir",
+        type=str,
+        required=True,
+        help="The build directory",
+    )
+    p.add_argument("--logging_level", default="INFO", help="Decides what levels of logs to display")
+    p.add_argument(
+        "--log_name", type=str, default="log.txt", help="The log file path to use as output"
+    )
+
+
 def interpreter(local=None):
     """Start an interactive Python interpreter with the given locals. UNIX ONLY"""
     if local is None:

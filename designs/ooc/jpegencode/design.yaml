@@ -22,4 +22,4 @@ verilog_files:
   - jpegencode.v
 clocks:
   - name: clk
-    period:  11.000
+    period:  10.0
