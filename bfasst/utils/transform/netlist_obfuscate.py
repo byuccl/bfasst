@@ -21,7 +21,6 @@ jpype_jvm.start()
 
 # pylint: disable=wrong-import-position, wrong-import-order
 from java.lang import System
-from java.util import ArrayList
 from java.io import PrintStream, FileOutputStream
 from com.xilinx.rapidwright.design import Design
 from com.xilinx.rapidwright.design.tools import LUTTools
@@ -31,11 +30,7 @@ from com.xilinx.rapidwright.edif import (
     EDIFNetlist,
     EDIFHierCellInst,
     EDIFValueType,
-    EDIFDirection,
-    EDIFCell,
-    EDIFCellInst,
 )
-from com.xilinx.rapidwright.eco import ECOTools
 
 
 def _json_entry(prop_name: str, prop_val: "EDIFPropertyValue") -> dict[str, str]:
@@ -191,7 +186,6 @@ def classify_and_obfuscate(inst, ref_type, counts) -> tuple[bool, dict, str]:
                 "RAM32X1D",
                 "SRL16E",
                 "RAMS",
-                # "DSP",
                 "IBUF",
                 "OBUF",
                 "FDRE",

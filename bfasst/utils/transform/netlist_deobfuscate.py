@@ -43,15 +43,15 @@ def setup_logging(log_path: pathlib.Path, level_str: str) -> None:
     logging.info("Logging at %s", level_str)
 
 
-def _safe_value_type(type_str: str | None):
+def _safe_value_type(type_str):
     """Map json type string to EDIFValueType, defaulting to STRING on error/None."""
-    if not type_str:
+    edif_value_names = {e.name() for e in EDIFValueType.values()}
+    if not isinstance(type_str, str) or not type_str:
         return EDIFValueType.STRING
-    try:
+    if type_str in edif_value_names:
         return EDIFValueType.valueOf(type_str)
-    except Exception:
-        logging.warning("Unknown EDIFValueType '%s'; defaulting to STRING", type_str)
-        return EDIFValueType.STRING
+    logging.warning("Unknown EDIFValueType '%s'; defaulting to STRING", type_str)
+    return EDIFValueType.STRING
 
 
 def restore_properties_for_cell(cell, entry: dict, hname: str) -> int:
@@ -111,6 +111,7 @@ def restore_all_properties(design: Design, json_db: dict[str, dict]) -> None:
 
 
 def main():
+    """Netlist Restoration Runner"""
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--build_path", required=True, type=pathlib.Path, help="Dir for logs/outputs")
 
@@ -168,7 +169,6 @@ def main():
     logging.info("Loaded properties for %d entries", len(props_db))
 
     # Load obfuscated design
-    logging.info("Loading obfuscated design (DCP/EDIF)")
     t0 = time.perf_counter()
     design_obf = Design.readCheckpoint(args.dcp_in, args.edf_in)
     logging.info("Obfuscated design loaded in %.2f s", time.perf_counter() - t0)
@@ -180,12 +180,10 @@ def main():
     logging.info("Restoration complete in %.2f s", time.perf_counter() - t1)
 
     # Write de-obfuscated outputs
-    logging.info("Writing de-obfuscated DCP")
     t2 = time.perf_counter()
     design_obf.writeCheckpoint(args.out_dcp)
     logging.info("Wrote de-obfuscated DCP in %.2f s", time.perf_counter() - t2)
 
-    logging.info("Writing de-obfuscated EDIF")
     t3 = time.perf_counter()
     design_obf.getNetlist().exportEDIF(args.out_edf)
     logging.info("Wrote de-obfuscated EDIF in %.2f s", time.perf_counter() - t3)
@@ -196,12 +194,10 @@ def main():
     design_unmod = Design.readCheckpoint(args.unmodified_dcp_in, args.unmodified_edf_in)
     logging.info("Unmodified design loaded in %.2f s", time.perf_counter() - t4)
 
-    logging.info("Writing unmodified DCP (pass-through)")
     t5 = time.perf_counter()
     design_unmod.writeCheckpoint(args.unmodified_out_dcp)
     logging.info("Wrote unmodified DCP in %.2f s", time.perf_counter() - t5)
 
-    logging.info("Writing unmodified EDIF (pass-through)")
     t6 = time.perf_counter()
     design_unmod.getNetlist().exportEDIF(args.unmodified_out_edf)
     logging.info("Wrote unmodified EDIF in %.2f s", time.perf_counter() - t6)
