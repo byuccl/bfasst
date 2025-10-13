@@ -177,7 +177,8 @@ def _capture_report_lines(comparator):
     return "\n" + str(baos.toString())
 
 
-def printDiff(diff):
+def print_diff(diff):
+    "Print a diff found from a comparator"
     logging.info("Diff found: %s", diff.toString())
     source_inst = diff.getSourceInst()
     if source_inst is not None:
@@ -194,6 +195,7 @@ def printDiff(diff):
 
 
 def log_netlist_diffs(netlist_comparator):
+    """Log all meningful netlist differences found during comparison"""
     diff_map = netlist_comparator.getDiffMap()
     logging.info(_capture_report_lines(netlist_comparator))
 
@@ -210,7 +212,7 @@ def log_netlist_diffs(netlist_comparator):
         diff_type = entry.getKey()
         diff_list = entry.getValue()
 
-        logging.info("\u001B[1mDiff Type: %s\u001B[0m", diff_type)
+        logging.info("\u001b[1mDiff Type: %s\u001b[0m", diff_type)
 
         shown = 0
         skipped = 0
@@ -223,12 +225,12 @@ def log_netlist_diffs(netlist_comparator):
                 continue
 
             count += 1
-            MAX_TO_SHOW = 4
-            if shown < MAX_TO_SHOW:
-                printDiff(diff)
+            max_to_show = 4
+            if shown < max_to_show:
+                print_diff(diff)
                 shown += 1
-            elif shown == MAX_TO_SHOW:
-                logging.info("Stopped printing after %d diffs", MAX_TO_SHOW)
+            elif shown == max_to_show:
+                logging.info("Stopped printing after %d diffs", max_to_show)
                 shown += 1
 
         logging.info("Total meaningful %s diffs found: %d\n", diff_type, diff_list.size() - skipped)
@@ -239,7 +241,7 @@ def log_netlist_diffs(netlist_comparator):
 
 
 def log_layout_diffs(design_comparator):
-    diff_map = design_comparator.getDiffMap()
+    # diff_map = design_comparator.getDiffMap()
     logging.info(_capture_report_lines(design_comparator))
     return design_comparator.getDiffCount()
 
@@ -271,43 +273,23 @@ def compare_all(golden, test, log_path: str, log_level: str):
     logging.info(d2.getNetlist())
     netlist_cmp.compareNetlists(d1.getNetlist(), d2.getNetlist())
 
-    num_layout_diffs = log_layout_diffs(layout_cmp)
+    _ = log_layout_diffs(layout_cmp)
     num_netlist_diffs = log_netlist_diffs(netlist_cmp)
 
     if num_netlist_diffs != 0:
         logging.error("\033[31mFound differences between logical netlists\033[0m")
         print("Found differences between logical netlists for design: ", d1.getName())
-        # raise PhyscmpException
-    else:
-        logging.info("\033[32mNo differences found between logical netlists\033[0m")
+        raise PhyscmpException
 
-    logging.info("Parsing full timing summaries...")
-    g_timing = parse_timing_report(golden.timing_summary_full)
-    t_timing = parse_timing_report(test.timing_summary_full)
-
-    timing_delta = diff_timing(g_timing, t_timing)
-    worse = []
-    for metric, (gv, tv, dv) in timing_delta.items():
-        if gv is None or tv is None:
-            logging.warning("Metric %-22s missing (golden=%s, test=%s)", metric, gv, tv)
-            continue
-        sign = "+" if dv > 0 else "-" if dv < 0 else "="
-        logging.info("%-22s  golden=%8.3f  test=%8.3f  delta=%+8.3f %s", metric, gv, tv, dv, sign)
-        if dv is not None and dv < 0:
-            worse.append(metric)
-
-    if worse:
-        logging.warning("\u001B[33mTiming degraded for: %s\u001B[0m", ", ".join(worse))
-    else:
-        logging.info("\u001B[32mNo timing regressions detected.\u001B[0m")
+    logging.info("\033[32mNo differences found between logical netlists\033[0m")
 
     logging.info("Comparing bitstreams...")
     if compare_bitstreams(golden.bitstream, test.bitstream):
         logging.error("\033[33mFound differences in bitstream comparison.\033[0m")
         print("Found differences in bitstream comparison for design: ", d1.getName())
-        # raise PhyscmpException
-    else:
-        logging.info("\033[32mNo differences found in bitstream comparison.\033[0m")
+        raise PhyscmpException
+
+    logging.info("\033[32mNo differences found in bitstream comparison.\033[0m")
 
 
 if __name__ == "__main__":
