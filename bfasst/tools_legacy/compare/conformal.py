@@ -1,4 +1,4 @@
-""" Run confomal comparison tool"""
+"""Run confomal comparison tool"""
 
 # Supress pylint similarity in legacy tools
 # pylint: disable=duplicate-code
@@ -33,6 +33,7 @@ class ConformalCompareTool(CompareTool):
     GUI_FILE_NAME = "run_conformal_gui.sh"
     MAPPED_POINTS_FILE_NAME = "mapped_points.txt"
 
+    # pylint: disable=too-many-positional-arguments
     def __init__(self, cwd, design, gold_netlist, rev_netlist, flow_args, vendor):
         super().__init__(cwd, design, gold_netlist, rev_netlist, flow_args)
 
@@ -41,6 +42,8 @@ class ConformalCompareTool(CompareTool):
 
         self.remote_libs_dir_path = None
         self.local_libs_paths = None
+
+    # pylint: enable=too-many-positional-arguments
 
     def compare_netlists(self):
         self.launch()

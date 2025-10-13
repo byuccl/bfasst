@@ -1,4 +1,4 @@
-""" Base synthesis tool class"""
+"""Base synthesis tool class"""
 
 import abc
 

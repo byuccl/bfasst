@@ -1,4 +1,4 @@
-""" Base class for implementation tools """
+"""Base class for implementation tools"""
 
 import abc
 import pathlib

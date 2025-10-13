@@ -1,4 +1,4 @@
-""" Tool to clean up a netlist 
+"""Tool to clean up a netlist
 (tested primarily on post-fasm2bels netlists)
 """
 

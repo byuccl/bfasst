@@ -1,4 +1,4 @@
-"""Stand-alone script to take an icestorm reversed netlist and count 
+"""Stand-alone script to take an icestorm reversed netlist and count
 LUTS, FFs, Carries, and RAM40Ks"""
 
 import argparse

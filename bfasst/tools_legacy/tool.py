@@ -1,4 +1,4 @@
-""" Base class for all tools used in BFASST """
+"""Base class for all tools used in BFASST"""
 
 import abc
 import argparse
@@ -144,6 +144,7 @@ class Tool(abc.ABC):
         # Tool does not need to be rerun
         return False
 
+    # pylint: disable=too-many-positional-arguments
     def exec_and_log(self, cmd, cwd=None, fp=None, fp_err=None, env=None, timeout=None):
         """Run a command using Popen and log the output, return the process handle"""
 
@@ -187,6 +188,8 @@ class Tool(abc.ABC):
 
         proc.communicate(timeout=timeout)
         return proc
+
+    # pylint: enable=too-many-positional-arguments
 
 
 class ToolArgParser(argparse.ArgumentParser):

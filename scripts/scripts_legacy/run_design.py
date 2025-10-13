@@ -1,4 +1,4 @@
-""" Run a design through a given flow """
+"""Run a design through a given flow"""
 
 from argparse import ArgumentParser
 from collections import defaultdict

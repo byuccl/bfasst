@@ -1,7 +1,6 @@
-""" Run experiment which runs multiple designs/flows in parallel """
+"""Run experiment which runs multiple designs/flows in parallel"""
 
-from argparse import ArgumentParser
-from collections import Counter
+import concurrent.futures
 import datetime
 import json
 import multiprocessing
@@ -9,10 +8,11 @@ import os
 import pathlib
 import signal
 import sys
-import traceback
 import threading
 import time
-import concurrent.futures
+import traceback
+from argparse import ArgumentParser
+from collections import Counter
 
 from bfasst.experiment import Experiment
 from bfasst.output_cntrl import enable_proxy
@@ -151,6 +151,7 @@ def print_running_list(running_list):
     sys.stdout.flush()
 
 
+# pylint: disable=too-many-positional-arguments
 def run_job(print_lock, running_list, job, statuses, experiment, jobs):
     """Run a single job and update running_list"""
     with print_lock:
@@ -176,6 +177,9 @@ def run_job(print_lock, running_list, job, statuses, experiment, jobs):
     check_design_statuses(jobs, job, running_list)
 
     return status
+
+
+# pylint: enable=too-many-positional-arguments
 
 
 def clean_jobs(jobs, future, statuses, job_results, print_lock):

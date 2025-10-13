@@ -1,4 +1,4 @@
-""" Base class for logic optimization tools"""
+"""Base class for logic optimization tools"""
 
 import abc
 

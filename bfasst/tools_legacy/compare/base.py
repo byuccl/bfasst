@@ -1,4 +1,4 @@
-""" Base class for comparison tools"""
+"""Base class for comparison tools"""
 
 import abc
 import pathlib
@@ -16,11 +16,14 @@ class CompareTool(Tool):
 
     LOG_FILE_NAME = "log.txt"
 
+    # pylint: disable=too-many-positional-arguments
     def __init__(self, cwd, design, gold_netlist, rev_netlist, flow_args="") -> None:
         super().__init__(cwd, design)
         self.flow_args = flow_args
         self.gold_netlist = gold_netlist
         self.rev_netlist = rev_netlist
+
+    # pylint: enable=too-many-positional-arguments
 
     def launch(self):
         """Perform setup for the tool to begin running"""
