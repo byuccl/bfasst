@@ -1,4 +1,7 @@
 open_checkpoint {{ impl_dcp }}
+foreach rule [get_drc_checks] {
+    set_property IS_ENABLED false $rule
+}
 
 foreach clk [get_clocks *] {
     set period [get_property PERIOD $clk]

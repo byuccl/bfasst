@@ -117,7 +117,7 @@ def obfuscate_dsp(inst, counts):
         "MREG",
         "OPMODEREG",
         "PREG",
-        # "USE_DPORT",
+        "USE_DPORT",
         "USE_MULT",
         "USE_PATTERN_DETECT",
         "USE_SIMD",
@@ -358,7 +358,7 @@ def main():
     numeric_level = getattr(logging, args.logging_level.upper(), logging.INFO)
     logging.basicConfig(
         filename=log_path,
-        format="%(asctime)s %(levelname)s %(message)s",
+        format="%(asctime)s.%(msecs)03d %(levelname)s %(message)s",
         level=numeric_level,
         datefmt="%Y-%m-%d %H:%M:%S",
     )

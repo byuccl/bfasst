@@ -47,7 +47,7 @@ def setup_logging(log_path: pathlib.Path, level_str: str):
     logging.basicConfig(
         filename=log_path,
         level=level,
-        format="%(asctime)s %(levelname)s: %(message)s",
+        format="%(asctime)s.%(msecs)03d %(levelname)s: %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
