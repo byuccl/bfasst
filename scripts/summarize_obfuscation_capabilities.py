@@ -11,6 +11,7 @@ OBF_START_RE = re.compile(r"\bObfuscated\s+\d+\s+cells:")
 # Inventory lines often look like: "INFO    LUT6: 972" or "INFO:    LUT6, 972"
 INV_LINE_RE = re.compile(r"INFO[:\s]+([A-Z0-9_]+)[,:]\s+(\d+)")
 
+
 def parse_obf_log(log_path: Path):
     """
     Returns:
@@ -40,6 +41,7 @@ def parse_obf_log(log_path: Path):
                     break
 
     return obf_counts
+
 
 def parse_original_cell_props(json_path: Path):
     """
@@ -90,6 +92,7 @@ def parse_original_cell_props(json_path: Path):
 
     return props_by_cell, insts_by_cell
 
+
 def walk_designs(root: Path):
     """
     Yields (collection, design, obf_log_path, json_path) for each design that has at least the obfuscate dir.
@@ -100,9 +103,14 @@ def walk_designs(root: Path):
         json_path = design_dir / "netlist_obfuscate" / "original_cell_props.json"
         yield (collection_dir.name, design_dir.name, obf_log, json_path)
 
+
 def main():
-    ap = argparse.ArgumentParser(description="Summarize obfuscated cell types and modified properties across designs.")
-    ap.add_argument("--root", default="../build_custom_vtr_new", help="Root directory containing designs")
+    ap = argparse.ArgumentParser(
+        description="Summarize obfuscated cell types and modified properties across designs."
+    )
+    ap.add_argument(
+        "--root", default="../build_custom_vtr_new", help="Root directory containing designs"
+    )
     ap.add_argument("--out_dir", default="physopt_compare_out", help="Directory to write outputs")
     args = ap.parse_args()
 
@@ -111,10 +119,12 @@ def main():
     out_dir.mkdir(parents=True, exist_ok=True)
 
     # Aggregates across all designs
-    total_obf_counts = defaultdict(int)          # from logs: cell_type -> total count obfuscated
-    json_insts_by_cell = defaultdict(int)        # from JSON: cell_type -> number of instances with modified props
+    total_obf_counts = defaultdict(int)  # from logs: cell_type -> total count obfuscated
+    json_insts_by_cell = defaultdict(
+        int
+    )  # from JSON: cell_type -> number of instances with modified props
     props_by_cell_agg = defaultdict(lambda: defaultdict(int))  # cell_type -> prop -> total count
-    designs_with_type = defaultdict(set)         # cell_type -> set of (collection/design)
+    designs_with_type = defaultdict(set)  # cell_type -> set of (collection/design)
 
     # Walk designs
     design_seen = 0
@@ -141,15 +151,24 @@ def main():
     summary_csv = out_dir / "obf_cell_types_summary.csv"
     with summary_csv.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
-        w.writerow(["cell_type", "obfuscated_instances_from_logs", "json_modified_instances", "designs_seen"])
+        w.writerow(
+            [
+                "cell_type",
+                "obfuscated_instances_from_logs",
+                "json_modified_instances",
+                "designs_seen",
+            ]
+        )
         all_cell_types = set(total_obf_counts.keys()) | set(json_insts_by_cell.keys())
         for ctype in sorted(all_cell_types):
-            w.writerow([
-                ctype,
-                total_obf_counts.get(ctype, 0),
-                json_insts_by_cell.get(ctype, 0),
-                len(designs_with_type.get(ctype, set())),
-            ])
+            w.writerow(
+                [
+                    ctype,
+                    total_obf_counts.get(ctype, 0),
+                    json_insts_by_cell.get(ctype, 0),
+                    len(designs_with_type.get(ctype, set())),
+                ]
+            )
 
     # Write CSV: properties per cell type
     props_csv = out_dir / "obf_properties_by_cell_type.csv"
@@ -165,7 +184,9 @@ def main():
     with md_path.open("w", encoding="utf-8") as f:
         f.write("# Obfuscation Capability Summary\n\n")
         f.write(f"- Designs scanned under `{root}`: {design_seen}\n")
-        f.write("- The following cell types were obfuscated and their commonly modified properties:\n\n")
+        f.write(
+            "- The following cell types were obfuscated and their commonly modified properties:\n\n"
+        )
         all_cell_types = set(total_obf_counts.keys()) | set(json_insts_by_cell.keys())
         for ctype in sorted(all_cell_types):
             log_cnt = total_obf_counts.get(ctype, 0)
@@ -184,6 +205,6 @@ def main():
 
     print(f"Wrote:\n  - {summary_csv}\n  - {props_csv}\n  - {md_path}")
 
+
 if __name__ == "__main__":
     main()
-

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Timing degradation by design (percent change) for WNS and TNS.
 
@@ -19,30 +18,32 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+
 def load_df(path: Path) -> pd.DataFrame:
     df = pd.read_csv(path)
-    for c in ("delta","golden","test"):
+    for c in ("delta", "golden", "test"):
         df[c] = pd.to_numeric(df[c], errors="coerce")
     return df
+
 
 def pick_rows(df: pd.DataFrame, exact_metric: str, fallback_suffix: str) -> pd.DataFrame:
     # Prefer exact metric per design
     exact = df[df["metric"] == exact_metric].copy()
     if len(exact):
         # If multiple rows per design, keep first; customize if you need an agg
-        return (exact.sort_values(["design","metric"])
-                     .groupby("design", as_index=False).first())
+        return exact.sort_values(["design", "metric"]).groupby("design", as_index=False).first()
     # Fallback: use any metric that ends with the suffix; keep first per design
     fb = df[df["metric"].str.endswith(fallback_suffix, na=False)].copy()
     if len(fb):
-        return (fb.sort_values(["design","metric"])
-                 .groupby("design", as_index=False).first())
+        return fb.sort_values(["design", "metric"]).groupby("design", as_index=False).first()
     return exact  # empty
+
 
 def percent_change_wns(golden: pd.Series, test: pd.Series) -> pd.Series:
     # WNS higher is better → negative % = worse
     denom = np.maximum(np.abs(golden), 1e-12)
     return (test - golden) / denom * 100.0
+
 
 def percent_change_tns(golden: pd.Series, test: pd.Series) -> pd.Series:
     # TNS lower is better; 0 is ideal.
@@ -50,12 +51,15 @@ def percent_change_tns(golden: pd.Series, test: pd.Series) -> pd.Series:
     # golden==0 & test==0 => 0%
     out = pd.Series(np.zeros(len(golden)), index=golden.index, dtype=float)
     both_zero = (golden == 0) & (test == 0)
-    pos_reg   = (golden == 0) & (test > 0)
-    normal    = ~(both_zero | pos_reg)
+    pos_reg = (golden == 0) & (test > 0)
+    normal = ~(both_zero | pos_reg)
     out[both_zero] = 0.0
-    out[pos_reg]   = np.inf
-    out[normal]    = (test[normal] - golden[normal]) / np.maximum(np.abs(golden[normal]), 1e-12) * 100.0
+    out[pos_reg] = np.inf
+    out[normal] = (
+        (test[normal] - golden[normal]) / np.maximum(np.abs(golden[normal]), 1e-12) * 100.0
+    )
     return out
+
 
 def save_barh(df: pd.DataFrame, xcol: str, ycol: str, title: str, xlabel: str, path: Path):
     plt.figure(figsize=(10, max(4, 0.3 * len(df))))
@@ -65,6 +69,7 @@ def save_barh(df: pd.DataFrame, xcol: str, ycol: str, title: str, xlabel: str, p
     plt.tight_layout()
     plt.savefig(path)
     plt.close()
+
 
 def main():
     ap = argparse.ArgumentParser()
@@ -83,8 +88,9 @@ def main():
     if len(wns):
         wns["percent_change"] = percent_change_wns(wns["golden"], wns["test"])
         # Most degraded first (more negative)
-        wns_sorted = (wns.loc[:, ["design","metric","golden","test","percent_change"]]
-                         .sort_values("percent_change", ascending=True))
+        wns_sorted = wns.loc[
+            :, ["design", "metric", "golden", "test", "percent_change"]
+        ].sort_values("percent_change", ascending=True)
         wns_sorted.to_csv(args.outdir / "wns_degradation_summary.csv", index=False)
         save_barh(
             wns_sorted,
@@ -99,9 +105,9 @@ def main():
     if len(tns):
         tns["percent_change"] = percent_change_tns(tns["golden"], tns["test"])
         # Sort with +inf at top (worst). Use a key to substitute inf for sorting only.
-        tns_sorted = (tns.loc[:, ["design","metric","golden","test","percent_change"]]
-                         .sort_values("percent_change", ascending=False,
-                                      key=lambda s: s.replace(np.inf, 1e12)))
+        tns_sorted = tns.loc[
+            :, ["design", "metric", "golden", "test", "percent_change"]
+        ].sort_values("percent_change", ascending=False, key=lambda s: s.replace(np.inf, 1e12))
         tns_sorted.to_csv(args.outdir / "tns_degradation_summary.csv", index=False)
 
         # Cap inf at 1000% for plotting to keep axes reasonable (CSV still has inf)
@@ -118,6 +124,6 @@ def main():
 
     print(f"Done. Outputs in: {args.outdir.resolve()}")
 
+
 if __name__ == "__main__":
     main()
-

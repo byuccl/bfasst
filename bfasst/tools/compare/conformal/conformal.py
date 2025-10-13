@@ -51,4 +51,4 @@ class Conformal(Tool):
         self._add_ninja_deps_default(deps, __file__)
         deps.append(CONFORMAL_TOOLS_PATH / "conformal.do.mustache")
         deps.append(CONFORMAL_TOOLS_PATH / "conformal.gui.mustache")
-        deps.append(BFASST_UTILS_PATH / "conformal.py")
+        deps.append(BFASST_UTILS_PATH / "compare/conformal.py")

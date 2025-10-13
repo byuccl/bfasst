@@ -13,6 +13,7 @@ CELL_INVENTORY_RE = re.compile(r"INFO[: ]+\s*([A-Z0-9_]+)[,:]\s+(\d+)")
 OBF_DONE_RE = re.compile(r"NetlistObfuscate done")
 DEOBF_DONE_RE = re.compile(r"NetlistDeobfuscate complete")
 
+
 def parse_ts(line: str) -> Optional[dt.datetime]:
     m = TS_RE.match(line)
     if not m:
@@ -25,7 +26,10 @@ def parse_ts(line: str) -> Optional[dt.datetime]:
             pass
     return None
 
-def scan_log(log_path: Path, mode: str) -> Tuple[Optional[float], Optional[int], Optional[int], Optional[int], bool]:
+
+def scan_log(
+    log_path: Path, mode: str
+) -> Tuple[Optional[float], Optional[int], Optional[int], Optional[int], bool]:
     """
     mode: 'obf' or 'deobf'
     Returns:
@@ -104,6 +108,7 @@ def scan_log(log_path: Path, mode: str) -> Tuple[Optional[float], Optional[int],
     ff_count = ff_sum if saw_inventory else None
     return runtime_ms, total_cells, lut_count, ff_count, saw_inventory
 
+
 def collect(root: Path) -> Dict[str, Dict]:
     """
     Walks <root>/**/netlist_obfuscate|netlist_deobfuscate and collects per-design stats.
@@ -118,16 +123,19 @@ def collect(root: Path) -> Dict[str, Dict]:
         if not design_dir.is_dir() or not coll_dir.is_dir():
             continue
         key = f"{coll_dir.name}/{design_dir.name}"
-        row = rows.setdefault(key, {
-            "key": key,
-            "collection": coll_dir.name,
-            "design": design_dir.name,
-            "obf_runtime_ms": None,
-            "deobf_runtime_ms": None,
-            "total_cells": None,
-            "lut_count": None,
-            "ff_count": None,
-        })
+        row = rows.setdefault(
+            key,
+            {
+                "key": key,
+                "collection": coll_dir.name,
+                "design": design_dir.name,
+                "obf_runtime_ms": None,
+                "deobf_runtime_ms": None,
+                "total_cells": None,
+                "lut_count": None,
+                "ff_count": None,
+            },
+        )
         rt, tc, lut, ff, inv = scan_log(obf, mode="obf")
         if rt is not None:
             row["obf_runtime_ms"] = rt
@@ -144,16 +152,19 @@ def collect(root: Path) -> Dict[str, Dict]:
         if not design_dir.is_dir() or not coll_dir.is_dir():
             continue
         key = f"{coll_dir.name}/{design_dir.name}"
-        row = rows.setdefault(key, {
-            "key": key,
-            "collection": coll_dir.name,
-            "design": design_dir.name,
-            "obf_runtime_ms": None,
-            "deobf_runtime_ms": None,
-            "total_cells": None,
-            "lut_count": None,
-            "ff_count": None,
-        })
+        row = rows.setdefault(
+            key,
+            {
+                "key": key,
+                "collection": coll_dir.name,
+                "design": design_dir.name,
+                "obf_runtime_ms": None,
+                "deobf_runtime_ms": None,
+                "total_cells": None,
+                "lut_count": None,
+                "ff_count": None,
+            },
+        )
         rt, tc, lut, ff, inv = scan_log(deobf, mode="deobf")
         if rt is not None:
             row["deobf_runtime_ms"] = rt
@@ -165,10 +176,19 @@ def collect(root: Path) -> Dict[str, Dict]:
 
     return rows
 
+
 def main():
-    ap = argparse.ArgumentParser(description="Parse obfuscation/deobfuscation runtimes and cell counts from logs.")
-    ap.add_argument("--root", default="../build_default_vtr_new", help="Root directory to scan (e.g., build_custom_phys_opt)")
-    ap.add_argument("--out", default="physopt_compare_out/obf_deobf_timings.csv", help="Output CSV path")
+    ap = argparse.ArgumentParser(
+        description="Parse obfuscation/deobfuscation runtimes and cell counts from logs."
+    )
+    ap.add_argument(
+        "--root",
+        default="../build_default_vtr_new",
+        help="Root directory to scan (e.g., build_custom_phys_opt)",
+    )
+    ap.add_argument(
+        "--out", default="physopt_compare_out/obf_deobf_timings.csv", help="Output CSV path"
+    )
     args = ap.parse_args()
 
     root = Path(args.root).resolve()
@@ -181,9 +201,14 @@ def main():
         writer = csv.DictWriter(
             f,
             fieldnames=[
-                "key","collection","design",
-                "obf_runtime_ms","deobf_runtime_ms",
-                "total_cells","lut_count","ff_count",
+                "key",
+                "collection",
+                "design",
+                "obf_runtime_ms",
+                "deobf_runtime_ms",
+                "total_cells",
+                "lut_count",
+                "ff_count",
             ],
         )
         writer.writeheader()
@@ -192,6 +217,6 @@ def main():
 
     print(f"Wrote {len(rows)} rows to {out}")
 
+
 if __name__ == "__main__":
     main()
-

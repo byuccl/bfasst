@@ -21,7 +21,7 @@ from bfasst.paths import (
     FASM2BELS_PATH,
     DESIGNS_PATH,
 )
-from bfasst.utils.conformal import ConformalCompare
+from bfasst.utils.compare.conformal import ConformalCompare
 from bfasst.utils.general import error
 from bfasst.yaml_parser import FlowDescriptionParser
 
