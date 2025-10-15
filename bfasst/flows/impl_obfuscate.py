@@ -14,8 +14,6 @@ from bfasst.tools.compare.physcmp.physcmp import PhysCmp
 from bfasst.tools.transform.netlist_obfuscate import NetlistObfuscate
 from bfasst.tools.impl.impl_detailed_reports import ImplDetailedReports
 from bfasst.tools.transform.netlist_deobfuscate import NetlistDeobfuscate
-from bfasst.tools.compare.conformal.conformal import Conformal
-from bfasst.types import Vendor
 from bfasst.utils.compare.physcmp_data_types import ImplReports
 from bfasst.paths import FLOWS_PATH
 from bfasst.yaml_parser import DesignParser

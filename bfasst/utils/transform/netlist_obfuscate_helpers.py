@@ -2,11 +2,7 @@
 Helpers and constants for netlist obfuscation/deobfuscation
 """
 
-import random
 import re
-import logging
-from typing import List
-
 
 TAG_PROP = "OBF_TAG"
 
@@ -61,6 +57,7 @@ def format_init(width_bits: int, value_int: int, force_binary: bool = False) -> 
     return f"{width_bits}'h{value_masked:0{hex_digits}X}"
 
 
+# pylint: disable=unused-argument
 def get_masking_init(orig_init: str, lut_size: int) -> str:
     """
     Return an INIT string from SENTINEL_VALUES

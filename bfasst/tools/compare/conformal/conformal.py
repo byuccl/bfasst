@@ -8,6 +8,7 @@ from bfasst.paths import NINJA_BUILD_PATH, CONFORMAL_TOOLS_PATH, BFASST_UTILS_PA
 class Conformal(Tool):
     """Create the rule and build snippets for conformal comparison."""
 
+    # pylint: disable=too-many-positional-arguments
     def __init__(self, flow, design, golden_netlist, rev_netlist, vendor):
         super().__init__(flow, design)
 
