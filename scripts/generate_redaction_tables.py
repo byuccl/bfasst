@@ -41,19 +41,23 @@ Usage:
 
 Requires: Python 3.8+; stdlib. (Optional) numpy, pandas, matplotlib for plots.
 """
-from __future__ import annotations
-
-import argparse
-import csv
-import json
 import math
+from datetime import datetime
+import json
 import re
-import sys
-from collections import defaultdict
+import csv
+import argparse
 from dataclasses import dataclass
-from pathlib import Path
+from collections import defaultdict
 from statistics import mean, median
-from typing import Dict, Iterable, List, Optional, Tuple
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+_HAS_PLOTS = True
 
 # -------------------------------
 # Regexes and constants
@@ -105,6 +109,8 @@ DEFAULT_REF_PERIOD_NS = 10.0
 # -------------------------------
 @dataclass
 class DesignKey:
+    """Helper class to find designs in the file structure"""
+
     collection: str
     design: str
 
@@ -124,6 +130,7 @@ class DesignKey:
 
 
 def find_physcmp_logs(root: Path) -> Dict[str, Path]:
+    """Helper function to find physcmp logs"""
     mapping: Dict[str, Path] = {}
     if not root.exists():
         return mapping
@@ -139,6 +146,7 @@ def find_physcmp_logs(root: Path) -> Dict[str, Path]:
 
 
 def parse_physcmp_golden_metrics(log_path: Path) -> Dict[str, float]:
+    """Helper function to parse the timing metrics from physcmp"""
     metrics: Dict[str, float] = {}
     try:
         with log_path.open("r", encoding="utf-8", errors="ignore") as f:
@@ -159,7 +167,7 @@ def parse_physcmp_golden_metrics(log_path: Path) -> Dict[str, float]:
 def safe_float(x: object, default: Optional[float] = None) -> Optional[float]:
     try:
         return float(x)  # type: ignore[arg-type]
-    except Exception:
+    except (ValueError, KeyError, TypeError):
         return default
 
 
@@ -167,12 +175,15 @@ def safe_float(x: object, default: Optional[float] = None) -> Optional[float]:
 # Phase 1: Timing comparison & summaries
 # -------------------------------
 
+
+# pylint: disable=too-many-locals
 def compare_design_metrics(
     key: str,
     default_log: Path,
     custom_log: Path,
     ref_period_ns: float,
 ) -> Tuple[List[Dict], Dict[str, float]]:
+    """Compare metrics between a golden and test design"""
     default_metrics = parse_physcmp_golden_metrics(default_log)
     custom_metrics = parse_physcmp_golden_metrics(custom_log)
     common = sorted(set(default_metrics) & set(custom_metrics))
@@ -206,7 +217,7 @@ def compare_design_metrics(
             better = cfg["better"]
             degradation = max(0.0, -diff) if better == "higher" else max(0.0, diff)
             denom = abs(d) if abs(d) > EPS else float("nan")
-            pct_deg = (degradation / denom) if denom == denom else float("nan")
+            pct_deg = (degradation / denom) if not math.isnan(denom) else float("nan")
             summary[mname + "_default"] = d
             summary[mname + "_custom"] = c
             summary[mname + "_diff"] = diff
@@ -243,7 +254,8 @@ def emit_timing_artifacts(
     per_design_summary: Dict[str, Dict[str, float]],
     ref_period_ns: float,
 ) -> None:
-    # Detailed rows
+    """Helper to output timing related tables"""
+    # pylint: disable=too-many-statements
     detailed_csv = outdir / "physopt_timing_diffs_detailed.csv"
     with detailed_csv.open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(
@@ -282,31 +294,41 @@ def emit_timing_artifacts(
         json.dump(per_design_summary, f, indent=2)
 
     # Rankings
-    rankings: Dict[str, List[Dict]] = {k: [] for k in [
-        "wns_worst", "wns_best", "pmin_worst", "pmin_best", "fmax_worst", "fmax_best"
-    ]}
+    rankings: Dict[str, List[Dict]] = {
+        k: []
+        for k in ["wns_worst", "wns_best", "pmin_worst", "pmin_best", "fmax_worst", "fmax_best"]
+    }
     for key, s in per_design_summary.items():
         coll, dsgn = key.split("/", 1) if "/" in key else ("", key)
         if all(k in s for k in ["overall_wns_diff", "overall_wns_default", "overall_wns_custom"]):
             rec = {
-                "key": key, "collection": coll, "design": dsgn,
-                "default": s["overall_wns_default"], "custom": s["overall_wns_custom"],
+                "key": key,
+                "collection": coll,
+                "design": dsgn,
+                "default": s["overall_wns_default"],
+                "custom": s["overall_wns_custom"],
                 "diff": s["overall_wns_diff"],
             }
             rankings["wns_worst"].append(rec)
             rankings["wns_best"].append(rec)
         if "pmin_diff_ns" in s:
             rec = {
-                "key": key, "collection": coll, "design": dsgn,
-                "default": s.get("pmin_default_ns"), "custom": s.get("pmin_custom_ns"),
+                "key": key,
+                "collection": coll,
+                "design": dsgn,
+                "default": s.get("pmin_default_ns"),
+                "custom": s.get("pmin_custom_ns"),
                 "diff": s["pmin_diff_ns"],
             }
             rankings["pmin_worst"].append(rec)
             rankings["pmin_best"].append(rec)
         if "fmax_diff_GHz" in s:
             rec = {
-                "key": key, "collection": coll, "design": dsgn,
-                "default": s.get("fmax_default_GHz"), "custom": s.get("fmax_custom_GHz"),
+                "key": key,
+                "collection": coll,
+                "design": dsgn,
+                "default": s.get("fmax_default_GHz"),
+                "custom": s.get("fmax_custom_GHz"),
                 "diff": s["fmax_diff_GHz"],
             }
             rankings["fmax_worst"].append(rec)
@@ -328,7 +350,9 @@ def emit_timing_artifacts(
             writer.writerows(rows)
 
     # Summary stats
-    wns_diffs = [s["overall_wns_diff"] for s in per_design_summary.values() if "overall_wns_diff" in s]
+    wns_diffs = [
+        s["overall_wns_diff"] for s in per_design_summary.values() if "overall_wns_diff" in s
+    ]
     pmin_diffs = [s["pmin_diff_ns"] for s in per_design_summary.values() if "pmin_diff_ns" in s]
     fmax_diffs = [s["fmax_diff_GHz"] for s in per_design_summary.values() if "fmax_diff_GHz" in s]
 
@@ -431,13 +455,21 @@ def emit_timing_artifacts(
         wns_cus = s.get("overall_wns_custom")
         period_def = ref_period_ns - wns_def if wns_def is not None else None
         period_cus = ref_period_ns - wns_cus if wns_cus is not None else None
-        f_def = (1000.0 / period_def) if (period_def is not None and period_def > 0) else (
-            float("inf") if period_def is not None else None
+        f_def = (
+            (1000.0 / period_def)
+            if (period_def is not None and period_def > 0)
+            else (float("inf") if period_def is not None else None)
         )
-        f_cus = (1000.0 / period_cus) if (period_cus is not None and period_cus > 0) else (
-            float("inf") if period_cus is not None else None
+        f_cus = (
+            (1000.0 / period_cus)
+            if (period_cus is not None and period_cus > 0)
+            else (float("inf") if period_cus is not None else None)
         )
-        delta = (f_cus - f_def) if (f_def is not None and f_cus is not None and math.isfinite(f_def)) else None
+        delta = (
+            (f_cus - f_def)
+            if (f_def is not None and f_cus is not None and math.isfinite(f_def))
+            else None
+        )
         pct = ((delta / abs(f_def)) * 100.0) if (delta is not None and abs(f_def) > EPS) else None
         fmax_rows.append(
             {
@@ -480,13 +512,12 @@ def emit_timing_artifacts(
 # Phase 2: Obfuscation runtimes & inventory (from a single root, typically custom)
 # -------------------------------
 
+
 def _parse_ts(line: str) -> Optional[float]:
     m = TS_RE.match(line)
     if not m:
         return None
     s = m.group("ts")
-    # YYYY-mm-dd HH:MM:SS[.mmm]
-    from datetime import datetime
 
     for fmt in ("%Y-%m-%d %H:%M:%S.%f", "%Y-%m-%d %H:%M:%S"):
         try:
@@ -496,11 +527,14 @@ def _parse_ts(line: str) -> Optional[float]:
     return None
 
 
-def scan_obf_deobf_log(log_path: Path, mode: str) -> Tuple[Optional[float], Optional[int], Optional[int], Optional[int], bool]:
+def scan_obf_deobf_log(
+    log_path: Path, mode: str
+) -> Tuple[Optional[float], Optional[int], Optional[int], Optional[int], bool]:
     """
     mode in {"obf", "deobf"}
     Returns: (runtime_ms, total_cells, lut_count, ff_count, saw_inventory)
     """
+    # pylint: disable=too-many-branches
     if not log_path.exists():
         return None, None, None, None, False
 
@@ -563,6 +597,7 @@ def scan_obf_deobf_log(log_path: Path, mode: str) -> Tuple[Optional[float], Opti
 
 
 def parse_obf_block_counts(obf_log: Path) -> Dict[str, int]:
+    """Helper to parse redaction logs"""
     counts = defaultdict(int)
     if not obf_log.exists():
         return counts
@@ -582,6 +617,7 @@ def parse_obf_block_counts(obf_log: Path) -> Dict[str, int]:
 
 
 def parse_original_cell_props(json_path: Path) -> Tuple[Dict[str, Dict[str, int]], Dict[str, int]]:
+    """Helper to parse the original cell properties in a json file"""
     props_by_cell = defaultdict(lambda: defaultdict(int))
     insts_by_cell = defaultdict(int)
     if not json_path.exists():
@@ -589,7 +625,7 @@ def parse_original_cell_props(json_path: Path) -> Tuple[Dict[str, Dict[str, int]
 
     try:
         data = json.loads(json_path.read_text(encoding="utf-8", errors="ignore"))
-    except Exception:
+    except Exception:  # pylint: disable=broad-exception-caught
         # Attempt to recover newline-delimited fragments by bracing
         try:
             text = json_path.read_text(encoding="utf-8", errors="ignore").strip()
@@ -598,7 +634,7 @@ def parse_original_cell_props(json_path: Path) -> Tuple[Dict[str, Dict[str, int]
             if not text.endswith("}"):
                 text = text + "\n}"
             data = json.loads(text)
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
             return props_by_cell, insts_by_cell
 
     if not isinstance(data, dict):
@@ -621,7 +657,8 @@ def parse_original_cell_props(json_path: Path) -> Tuple[Dict[str, Dict[str, int]
 
 
 def gather_obf_summaries(obf_root: Path, outdir: Path) -> None:
-    # 2a) Runtimes & inventories
+    """Helper to get summaries for redacted designs"""
+    # pylint: disable=too-many-statements, too-many-branches
     rows: Dict[str, Dict[str, Optional[float]]] = {}
 
     for log in obf_root.rglob("netlist_obfuscate/netlist_obfuscate.log"):
@@ -727,12 +764,14 @@ def gather_obf_summaries(obf_root: Path, outdir: Path) -> None:
     summary_csv = outdir / "obf_cell_types_summary.csv"
     with summary_csv.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
-        w.writerow([
-            "cell_type",
-            "obfuscated_instances_from_logs",
-            "json_modified_instances",
-            "designs_seen",
-        ])
+        w.writerow(
+            [
+                "cell_type",
+                "obfuscated_instances_from_logs",
+                "json_modified_instances",
+                "designs_seen",
+            ]
+        )
         all_cell_types = set(total_obf_counts.keys()) | set(json_insts_by_cell.keys())
         for ctype in sorted(all_cell_types):
             w.writerow(
@@ -756,7 +795,9 @@ def gather_obf_summaries(obf_root: Path, outdir: Path) -> None:
     with md_path.open("w", encoding="utf-8") as f:
         f.write("# Obfuscation Capability Summary\n\n")
         f.write(f"- Designs scanned under `{obf_root}`: {design_seen}\n")
-        f.write("- The following cell types were obfuscated and their commonly modified properties:\n\n")
+        f.write(
+            "- The following cell types were obfuscated and their commonly modified properties:\n\n"
+        )
         all_cell_types = set(total_obf_counts.keys()) | set(json_insts_by_cell.keys())
         for ctype in sorted(all_cell_types):
             log_cnt = total_obf_counts.get(ctype, 0)
@@ -778,14 +819,9 @@ def gather_obf_summaries(obf_root: Path, outdir: Path) -> None:
 # Optional: WNS/TNS degradation CSVs and plots (like create_timing_summary)
 # -------------------------------
 
+
 def optional_degradation_outputs(outdir: Path) -> None:
-    try:
-        import numpy as np  # type: ignore
-        import pandas as pd  # type: ignore
-        import matplotlib.pyplot as plt  # type: ignore
-    except Exception:
-        # Dependencies not installed; silently skip plots but keep going
-        return
+    """Create csv files of timing degradations"""
 
     csv_path = outdir / "physopt_timing_diffs_detailed.csv"
     if not csv_path.exists():
@@ -819,7 +855,9 @@ def optional_degradation_outputs(outdir: Path) -> None:
         normal = ~(both_zero | pos_reg)
         out[both_zero] = 0.0
         out[pos_reg] = np.inf
-        out[normal] = (custom[normal] - golden[normal]) / np.maximum(np.abs(golden[normal]), 1e-12) * 100.0
+        out[normal] = (
+            (custom[normal] - golden[normal]) / np.maximum(np.abs(golden[normal]), 1e-12) * 100.0
+        )
         return out
 
     out_timing = outdir / "timing_outputs"
@@ -827,7 +865,9 @@ def optional_degradation_outputs(outdir: Path) -> None:
 
     if len(wns):
         wns["percent_change"] = percent_change_wns(wns["default_golden"], wns["custom_golden"])
-        wns_sorted = wns.loc[:, ["design", "metric", "default_golden", "custom_golden", "percent_change"]].sort_values("percent_change", ascending=True)
+        wns_sorted = wns.loc[
+            :, ["design", "metric", "default_golden", "custom_golden", "percent_change"]
+        ].sort_values("percent_change", ascending=True)
         wns_sorted.to_csv(out_timing / "wns_degradation_summary.csv", index=False)
         plt.figure(figsize=(10, max(4, 0.3 * len(wns_sorted))))
         plt.barh(wns_sorted["design"], wns_sorted["percent_change"])  # no explicit colors/styles
@@ -839,9 +879,9 @@ def optional_degradation_outputs(outdir: Path) -> None:
 
     if len(tns):
         tns["percent_change"] = percent_change_tns(tns["default_golden"], tns["custom_golden"])
-        tns_sorted = tns.loc[:, ["design", "metric", "default_golden", "custom_golden", "percent_change"]].sort_values(
-            "percent_change", ascending=False, key=lambda s: s.replace(np.inf, 1e12)
-        )
+        tns_sorted = tns.loc[
+            :, ["design", "metric", "default_golden", "custom_golden", "percent_change"]
+        ].sort_values("percent_change", ascending=False, key=lambda s: s.replace(np.inf, 1e12))
         tns_sorted.to_csv(out_timing / "tns_degradation_summary.csv", index=False)
         plot_df = tns_sorted.copy()
         plot_df["plot_percent_change"] = plot_df["percent_change"].replace(np.inf, 1000.0)
@@ -858,14 +898,44 @@ def optional_degradation_outputs(outdir: Path) -> None:
 # Main
 # -------------------------------
 
+
 def main() -> None:
-    ap = argparse.ArgumentParser(description="Generate all timing/obfuscation artifacts from two builds.")
-    ap.add_argument("--default", type=Path, default=Path("../build_default_vtr_new"), help="Default/reference build root")
-    ap.add_argument("--custom", type=Path, default=Path("../build_custom_vtr_new"), help="Custom/test build root")
-    ap.add_argument("--obf-root", type=Path, default=None, help="Root to scan for obfuscation logs (defaults to --custom)")
-    ap.add_argument("--outdir", type=Path, default=Path("physopt_compare_out"), help="Directory for outputs")
-    ap.add_argument("--constraint-ns", type=float, default=DEFAULT_REF_PERIOD_NS, help="Reference constraint period (ns) for Pmin/Fmax derivation")
-    ap.add_argument("--skip-plots", action="store_true", help="Skip optional degradation plots even if deps are installed")
+    """Script to generate artifacts for the netlist redaction paper"""
+    ap = argparse.ArgumentParser(
+        description="Generate all timing/obfuscation artifacts from two builds."
+    )
+    ap.add_argument(
+        "--default",
+        type=Path,
+        default=Path("../build_default_vtr_new"),
+        help="Default/reference build root",
+    )
+    ap.add_argument(
+        "--custom",
+        type=Path,
+        default=Path("../build_custom_vtr_new"),
+        help="Custom/test build root",
+    )
+    ap.add_argument(
+        "--obf-root",
+        type=Path,
+        default=None,
+        help="Root to scan for obfuscation logs (defaults to --custom)",
+    )
+    ap.add_argument(
+        "--outdir", type=Path, default=Path("physopt_compare_out"), help="Directory for outputs"
+    )
+    ap.add_argument(
+        "--constraint-ns",
+        type=float,
+        default=DEFAULT_REF_PERIOD_NS,
+        help="Reference constraint period (ns) for Pmin/Fmax derivation",
+    )
+    ap.add_argument(
+        "--skip-plots",
+        action="store_true",
+        help="Skip optional degradation plots even if deps are installed",
+    )
     args = ap.parse_args()
 
     args.outdir.mkdir(parents=True, exist_ok=True)
@@ -879,10 +949,12 @@ def main() -> None:
     per_design_summary: Dict[str, Dict[str, float]] = {}
 
     if not common_keys:
-        print(f"[WARN] No overlapping designs with physcmp logs.\n  default={args.default}\n  custom ={args.custom}")
+        print(f"[WARN] No overlapping designs.\n default={args.default}\n  custom ={args.custom}")
     else:
         for key in common_keys:
-            rows, summary = compare_design_metrics(key, default_logs[key], custom_logs[key], args.constraint_ns)
+            rows, summary = compare_design_metrics(
+                key, default_logs[key], custom_logs[key], args.constraint_ns
+            )
             per_design_rows.extend(rows)
             per_design_summary[key] = summary
         emit_timing_artifacts(args.outdir, per_design_rows, per_design_summary, args.constraint_ns)
@@ -900,4 +972,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
