@@ -1,22 +1,24 @@
 """
-Netlist De-obfuscation (paper-aligned, minimal)
+Netlist De-obfuscation (paper-aligned, minimal with name fallbacks)
 
-- Reads obfuscated DCP/EDIF and restores properties by exact full
-  hierarchical instance name lookup from JSON (no transforms/heuristics).
+- Reads obfuscated DCP/EDIF and restores properties by looking up entries in JSON.
+- Lookup order: exact full hierarchical name -> ORIG_CELL_NAME -> tag (TAG_PROP) -> suffix stripping.
 - Reads UNMODIFIED DCP/EDIF and writes them back out unchanged (paper artifact).
 - Writes de-obfuscated DCP/EDIF and the unmodified DCP/EDIF.
 
-This intentionally omits transform inference, INIT reshaping, tag/suffix
-fallbacks, etc., to match the paper’s methodology.
+Intentionally omits INIT transform inference, INIT reshaping, and other heuristics.
 """
 
 import argparse
 import json
 import logging
 import pathlib
+import re
 import time
+from typing import Dict, Tuple, Optional
 
 from bfasst import jpype_jvm
+from bfasst.utils.transform.netlist_obfuscate_helpers import TAG_PROP  # tag property key
 
 jpype_jvm.start()
 
@@ -27,6 +29,7 @@ from java.lang import System
 from java.io import PrintStream, FileOutputStream
 
 
+# ----------------- Logging -----------------
 def setup_logging(log_path: pathlib.Path, level_str: str) -> None:
     """Route stdout to a file and configure Python logging."""
     fos = FileOutputStream(str(log_path), True)
@@ -43,21 +46,109 @@ def setup_logging(log_path: pathlib.Path, level_str: str) -> None:
     logging.info("Logging at %s", level_str)
 
 
-def _safe_value_type(type_str):
-    """Map json type string to EDIFValueType, defaulting to STRING on error/None."""
-    edif_value_names = {e.name() for e in EDIFValueType.values()}
-    if not isinstance(type_str, str) or not type_str:
-        return EDIFValueType.STRING
-    if type_str in edif_value_names:
-        return EDIFValueType.valueOf(type_str)
-    logging.warning("Unknown EDIFValueType '%s'; defaulting to STRING", type_str)
+# ----------------- Helpers -----------------
+def _safe_value_type(type_str) -> EDIFValueType:
+    """Map JSON type string to EDIFValueType, defaulting to STRING on error/None."""
+    try:
+        if isinstance(type_str, str) and type_str:
+            return EDIFValueType.valueOf(type_str)
+    except Exception:
+        pass
     return EDIFValueType.STRING
 
 
+# Common uniquification/replication suffix patterns to strip iteratively.
+_SUFFIX_PATTERNS = [
+    r"\[\d+\]$",          # array-like indices: [5]
+    r"_replica\d*$",      # _replica, _replica3
+    r"_inst\d*$",         # _inst, _inst12
+    r"_rewire\d*$",       # _rewire, _rewire2
+    r"_comp\d*$",         # _comp, _comp7
+    r"_rep\d*$",          # _rep, _rep4
+    r"_[0-9]+$",          # _1, _2, ...
+]
+_SUFFIX_RE = re.compile("(?:%s)" % "|".join(_SUFFIX_PATTERNS))
+
+
+def _strip_suffixes_lookup(name: str, json_db: Dict[str, dict]) -> Optional[Tuple[str, dict]]:
+    """
+    Iteratively strip common replication/uniquification suffixes from `name`
+    and try to find an entry in json_db. Returns (matched_key, entry) or None.
+    """
+    cur = str(name)
+    seen = set()
+    for _ in range(64):  # guard against pathological loops
+        if cur in json_db:
+            return cur, json_db[cur]
+        if cur in seen:
+            break
+        seen.add(cur)
+        new = _SUFFIX_RE.sub("", cur)
+        if new == cur or not new:
+            break
+        cur = new
+    return None
+
+
+def _get_prop_value(obj_map, key: str):
+    """
+    RapidWright property map can return either a value object with getValue()
+    or the raw string; normalize to plain string if present.
+    """
+    try:
+        prop = obj_map.get(key)
+        if prop is None:
+            return None
+        # Try to call getValue() if available.
+        try:
+            return prop.getValue()
+        except Exception:
+            return str(prop)
+    except Exception:
+        return None
+
+
+def _find_entry_for_instance(h_inst, hname: str, json_db: Dict[str, dict]) -> Optional[dict]:
+    """
+    Lookup order:
+      1) exact full hierarchical name
+      2) ORIG_CELL_NAME property (if present)
+      3) tag match via TAG_PROP (if present in both)
+      4) suffix-stripping fallback
+    Returns the JSON entry dict or None.
+    """
+    # 1) Exact match on full hierarchical instance name
+    entry = json_db.get(hname)
+    if entry:
+        return entry
+
+    # 2) ORIG_CELL_NAME (if present)
+    ocn = _get_prop_value(h_inst.getInst().getPropertiesMap(), "ORIG_CELL_NAME")
+    if ocn and ocn in json_db:
+        return json_db[ocn]
+
+    # 3) Tag match via TAG_PROP
+    tag_val = _get_prop_value(h_inst.getInst().getPropertiesMap(), TAG_PROP)
+    if tag_val is not None:
+        # Linear scan; avoids building extra indices and keeps file minimal.
+        for v in json_db.values():
+            if v.get("tag") == tag_val:
+                return v
+
+    # 4) Suffix-stripping fallback on hierarchical name
+    stripped = _strip_suffixes_lookup(hname, json_db)
+    if stripped:
+        _, entry = stripped
+        return entry
+
+    return None
+
+
+# ----------------- Core Restore -----------------
 def restore_properties_for_cell(cell, entry: dict, hname: str) -> int:
     """
     Reapply properties exactly as stored in JSON for a given cell.
-    Returns number of properties restored.
+    Returns number of properties restored (>=1 => treated as restored).
     """
     props = entry.get("modified_properties", [])
     count = 0
@@ -68,16 +159,16 @@ def restore_properties_for_cell(cell, entry: dict, hname: str) -> int:
         if key is None or val is None:
             logging.warning("Skipping malformed property on %s: %s", hname, item)
             continue
-        # Keep value as-is; no INIT reformatting or transform logic.
+        # Keep value as-is (no INIT transform or reshaping).
         cell.addProperty(key, val, typ)
         count += 1
     return count
 
 
-def restore_all_properties(design: Design, json_db: dict[str, dict]) -> None:
+def restore_all_properties(design: Design, json_db: Dict[str, dict]) -> None:
     """
-    Iterate hierarchical instances and restore properties by exact full
-    hierarchical instance name match (paper methodology).
+    Iterate hierarchical instances and restore properties using the
+    fallback chain (exact -> ORIG_CELL_NAME -> TAG_PROP -> suffix-strip).
     """
     netlist = design.getNetlist()
     hier_map = EDIFTools.createCellInstanceMap(netlist)
@@ -92,10 +183,12 @@ def restore_all_properties(design: Design, json_db: dict[str, dict]) -> None:
             for h_inst in inst_list:
                 total_instances += 1
                 hname = h_inst.getFullHierarchicalInstName()
-                entry = json_db.get(hname)
+
+                entry = _find_entry_for_instance(h_inst, hname, json_db)
                 if not entry:
                     missing += 1
                     continue
+
                 added = restore_properties_for_cell(h_inst.getInst(), entry, hname)
                 if added:
                     restored_instances += 1
@@ -110,8 +203,9 @@ def restore_all_properties(design: Design, json_db: dict[str, dict]) -> None:
     )
 
 
+# ----------------- CLI Runner -----------------
 def main():
-    """Netlist Restoration Runner"""
+    """Netlist Restoration Runner (paper-aligned with name fallbacks)."""
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--build_path", required=True, type=pathlib.Path, help="Dir for logs/outputs")
 
@@ -144,9 +238,7 @@ def main():
         "--unmodified_out_edf", required=True, type=pathlib.Path, help="Output unmodified EDIF path"
     )
 
-    p.add_argument(
-        "--log", default="netlist_deobfuscate.log", help="Log filename (inside build_path)"
-    )
+    p.add_argument("--log", default="netlist_deobfuscate.log", help="Log filename (inside build_path)")
     p.add_argument(
         "--logging_level",
         default="INFO",
@@ -173,8 +265,8 @@ def main():
     design_obf = Design.readCheckpoint(args.dcp_in, args.edf_in)
     logging.info("Obfuscated design loaded in %.2f s", time.perf_counter() - t0)
 
-    # Restore properties (exact match only)
-    logging.info("Restoring properties on obfuscated design (exact name match)")
+    # Restore properties (with fallback matching)
+    logging.info("Restoring properties on obfuscated design (with name fallbacks)")
     t1 = time.perf_counter()
     restore_all_properties(design_obf, props_db)
     logging.info("Restoration complete in %.2f s", time.perf_counter() - t1)
@@ -202,8 +294,9 @@ def main():
     design_unmod.getNetlist().exportEDIF(args.unmodified_out_edf)
     logging.info("Wrote unmodified EDIF in %.2f s", time.perf_counter() - t6)
 
-    logging.info("NetlistDeobfuscate (paper-aligned) complete")
+    logging.info("NetlistDeobfuscate (paper-aligned with fallbacks) complete")
 
 
 if __name__ == "__main__":
     main()
+
