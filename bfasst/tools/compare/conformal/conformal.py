@@ -33,7 +33,7 @@ class Conformal(Tool):
                     "gui_path": str(self.outputs["conformal_gui"]),
                     "hdl_srcs": self.golden_netlist,
                     "rev_netlist": self.rev_netlist,
-                    "conformal_script_path": str(BFASST_UTILS_PATH / "conformal.py"),
+                    "conformal_script_path": str(BFASST_UTILS_PATH / "compare/conformal.py"),
                     "build_dir": self.build_path.parent,
                     "vendor": self.vendor,
                 },
