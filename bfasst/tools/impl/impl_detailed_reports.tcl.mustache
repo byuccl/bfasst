@@ -17,8 +17,8 @@ report_timing_summary -file {{ outputs.timing_summary }}
 report_timing -setup -max_paths 1000 -sort_by group -path_type full -file {{ outputs.setup_timing }}
 report_timing -hold -max_paths 1000 -sort_by group -path_type full -file {{ outputs.hold_timing }}
 report_timing_summary -delay_type max -report_unconstrained -check_timing_verbose -file {{ outputs.full_timing_summary }}
-# report_utilization -hierarchical -file {{ outputs.utilization }}
-# report_power -verbose -file {{ outputs.power_summary }}
+report_utilization -hierarchical -file {{ outputs.utilization }}
+report_power -verbose -file {{ outputs.power_summary }}
 report_clocks -file {{ outputs.clocks }}
 report_drc -file {{ outputs.drc }}
 write_verilog -mode funcsim -force {{ outputs.verilog }}
