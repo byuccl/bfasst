@@ -1,12 +1,10 @@
 """
-Netlist De-obfuscation (paper-aligned, minimal with name fallbacks)
+Netlist de-obfuscation runner (paper-aligned, lean).
 
-- Reads obfuscated DCP/EDIF and restores properties by looking up entries in JSON.
-- Lookup order: exact full hierarchical name -> ORIG_CELL_NAME -> tag (TAG_PROP) -> suffix stripping.
-- Reads UNMODIFIED DCP/EDIF and writes them back out unchanged (paper artifact).
-- Writes de-obfuscated DCP/EDIF and the unmodified DCP/EDIF.
-
-Intentionally omits INIT transform inference, INIT reshaping, and other heuristics.
+- Reads an obfuscated DCP/EDIF and restores properties from a JSON DB.
+- Match order: full hier name → ORIG_CELL_NAME → tag (TAG_PROP) → suffix stripping.
+- Also writes an "unmodified" pass-through DCP/EDIF for the artifact bundle.
+- Intentionally no INIT transform heuristics.
 """
 
 import argparse
@@ -31,7 +29,7 @@ from java.io import PrintStream, FileOutputStream
 
 # ----------------- Logging -----------------
 def setup_logging(log_path: pathlib.Path, level_str: str) -> None:
-    """Route stdout to a file and configure Python logging."""
+    """Send stdout to a file and configure Python logging."""
     fos = FileOutputStream(str(log_path), True)
     ps = PrintStream(fos, True)
     System.setOut(ps)
@@ -47,37 +45,39 @@ def setup_logging(log_path: pathlib.Path, level_str: str) -> None:
 
 
 # ----------------- Helpers -----------------
-def _safe_value_type(type_str) -> EDIFValueType:
-    """Map JSON type string to EDIFValueType, defaulting to STRING on error/None."""
-    try:
-        if isinstance(type_str, str) and type_str:
-            return EDIFValueType.valueOf(type_str)
-    except Exception:
-        pass
+def _safe_value_type(t: object) -> EDIFValueType:
+    """
+    Map a JSON 'type' field to EDIFValueType.
+    Avoids broad try/except by matching against enum names directly.
+    """
+    if isinstance(t, str) and t:
+        for v in EDIFValueType.values():
+            if v.name() == t:
+                return v
     return EDIFValueType.STRING
 
 
-# Common uniquification/replication suffix patterns to strip iteratively.
+# Patterns for common uniquification/replication suffixes.
 _SUFFIX_PATTERNS = [
-    r"\[\d+\]$",          # array-like indices: [5]
-    r"_replica\d*$",      # _replica, _replica3
-    r"_inst\d*$",         # _inst, _inst12
-    r"_rewire\d*$",       # _rewire, _rewire2
-    r"_comp\d*$",         # _comp, _comp7
-    r"_rep\d*$",          # _rep, _rep4
-    r"_[0-9]+$",          # _1, _2, ...
+    r"\[\d+\]$",  # [5]
+    r"_replica\d*$",  # _replica, _replica3
+    r"_inst\d*$",  # _inst, _inst12
+    r"_rewire\d*$",  # _rewire, _rewire2
+    r"_comp\d*$",  # _comp, _comp7
+    r"_rep\d*$",  # _rep, _rep4
+    r"_[0-9]+$",  # _1, _2, ...
 ]
-_SUFFIX_RE = re.compile("(?:%s)" % "|".join(_SUFFIX_PATTERNS))
+_SUFFIX_RE = re.compile(f"(?:{'|'.join(_SUFFIX_PATTERNS)})")
 
 
 def _strip_suffixes_lookup(name: str, json_db: Dict[str, dict]) -> Optional[Tuple[str, dict]]:
     """
-    Iteratively strip common replication/uniquification suffixes from `name`
-    and try to find an entry in json_db. Returns (matched_key, entry) or None.
+    Iteratively strip common suffixes from `name` and look for a JSON entry.
+    Returns (matched_key, entry) or None.
     """
     cur = str(name)
     seen = set()
-    for _ in range(64):  # guard against pathological loops
+    for _ in range(64):  # guard against pathologies
         if cur in json_db:
             return cur, json_db[cur]
         if cur in seen:
@@ -90,22 +90,22 @@ def _strip_suffixes_lookup(name: str, json_db: Dict[str, dict]) -> Optional[Tupl
     return None
 
 
-def _get_prop_value(obj_map, key: str):
+def _get_prop_value(prop_map, key: str):
     """
-    RapidWright property map can return either a value object with getValue()
-    or the raw string; normalize to plain string if present.
+    RapidWright property maps can hold objects with getValue() or a raw string.
+    Normalize to a plain Python value without broad exception handling.
     """
-    try:
-        prop = obj_map.get(key)
-        if prop is None:
-            return None
-        # Try to call getValue() if available.
-        try:
-            return prop.getValue()
-        except Exception:
-            return str(prop)
-    except Exception:
+    if prop_map is None:
         return None
+    prop = prop_map.get(key)
+    if prop is None:
+        return None
+
+    getter = getattr(prop, "getValue", None)
+    if callable(getter):
+        # getValue() on EDIFProperty-like objects should be safe
+        return getter()
+    return str(prop)
 
 
 def _find_entry_for_instance(h_inst, hname: str, json_db: Dict[str, dict]) -> Optional[dict]:
@@ -115,27 +115,26 @@ def _find_entry_for_instance(h_inst, hname: str, json_db: Dict[str, dict]) -> Op
       2) ORIG_CELL_NAME property (if present)
       3) tag match via TAG_PROP (if present in both)
       4) suffix-stripping fallback
-    Returns the JSON entry dict or None.
     """
-    # 1) Exact match on full hierarchical instance name
+    # 1) Exact match
     entry = json_db.get(hname)
     if entry:
         return entry
 
-    # 2) ORIG_CELL_NAME (if present)
+    # 2) ORIG_CELL_NAME
     ocn = _get_prop_value(h_inst.getInst().getPropertiesMap(), "ORIG_CELL_NAME")
     if ocn and ocn in json_db:
         return json_db[ocn]
 
-    # 3) Tag match via TAG_PROP
+    # 3) TAG_PROP
     tag_val = _get_prop_value(h_inst.getInst().getPropertiesMap(), TAG_PROP)
     if tag_val is not None:
-        # Linear scan; avoids building extra indices and keeps file minimal.
+        # Linear scan keeps this minimal; DB is small for artifact purposes.
         for v in json_db.values():
             if v.get("tag") == tag_val:
                 return v
 
-    # 4) Suffix-stripping fallback on hierarchical name
+    # 4) Suffix strip on hier name
     stripped = _strip_suffixes_lookup(hname, json_db)
     if stripped:
         _, entry = stripped
@@ -148,7 +147,7 @@ def _find_entry_for_instance(h_inst, hname: str, json_db: Dict[str, dict]) -> Op
 def restore_properties_for_cell(cell, entry: dict, hname: str) -> int:
     """
     Reapply properties exactly as stored in JSON for a given cell.
-    Returns number of properties restored (>=1 => treated as restored).
+    Returns count of properties restored.
     """
     props = entry.get("modified_properties", [])
     count = 0
@@ -159,7 +158,7 @@ def restore_properties_for_cell(cell, entry: dict, hname: str) -> int:
         if key is None or val is None:
             logging.warning("Skipping malformed property on %s: %s", hname, item)
             continue
-        # Keep value as-is (no INIT transform or reshaping).
+        # No INIT transform or reshaping here.
         cell.addProperty(key, val, typ)
         count += 1
     return count
@@ -168,7 +167,7 @@ def restore_properties_for_cell(cell, entry: dict, hname: str) -> int:
 def restore_all_properties(design: Design, json_db: Dict[str, dict]) -> None:
     """
     Iterate hierarchical instances and restore properties using the
-    fallback chain (exact -> ORIG_CELL_NAME -> TAG_PROP -> suffix-strip).
+    fallback chain (exact → ORIG_CELL_NAME → TAG_PROP → suffix-strip).
     """
     netlist = design.getNetlist()
     hier_map = EDIFTools.createCellInstanceMap(netlist)
@@ -195,7 +194,7 @@ def restore_all_properties(design: Design, json_db: Dict[str, dict]) -> None:
                     restored_props += added
 
     logging.info(
-        "Instances scanned: %d | instances restored: %d | props restored: %d | no-match: %d",
+        "Instances scanned: %d | restored: %d | props: %d | no-match: %d",
         total_instances,
         restored_instances,
         restored_props,
@@ -205,48 +204,48 @@ def restore_all_properties(design: Design, json_db: Dict[str, dict]) -> None:
 
 # ----------------- CLI Runner -----------------
 def main():
-    """Netlist Restoration Runner (paper-aligned with name fallbacks)."""
-    p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--build_path", required=True, type=pathlib.Path, help="Dir for logs/outputs")
+    """Entry point."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--build_path", required=True, type=pathlib.Path, help="Log/output dir")
 
     # Obfuscated design (apply properties here)
-    p.add_argument("--dcp_in", required=True, type=pathlib.Path, help="Input checkpoint (.dcp)")
-    p.add_argument("--edf_in", required=True, type=pathlib.Path, help="Input EDIF (.edf)")
-    p.add_argument(
+    parser.add_argument(
+        "--dcp_in", required=True, type=pathlib.Path, help="Input checkpoint (.dcp)"
+    )
+    parser.add_argument("--edf_in", required=True, type=pathlib.Path, help="Input EDIF (.edf)")
+    parser.add_argument(
         "--props_json",
         required=True,
         type=pathlib.Path,
-        help="JSON mapping: full hier inst name -> properties",
+        help="JSON: hier inst name → properties",
     )
-    p.add_argument("--out_dcp", required=True, type=pathlib.Path, help="Output de-obfuscated DCP")
-    p.add_argument("--out_edf", required=True, type=pathlib.Path, help="Output de-obfuscated EDIF")
+    parser.add_argument("--out_dcp", required=True, type=pathlib.Path, help="Output de-obf DCP")
+    parser.add_argument("--out_edf", required=True, type=pathlib.Path, help="Output de-obf EDIF")
 
-    # Unmodified design (pass-through; artifact includes this)
-    p.add_argument(
-        "--unmodified_dcp_in",
-        required=True,
-        type=pathlib.Path,
-        help="Input unmodified checkpoint (.dcp)",
+    # Unmodified design (pass-through; included in artifact)
+    parser.add_argument(
+        "--unmodified_dcp_in", required=True, type=pathlib.Path, help="Unmodified input .dcp"
     )
-    p.add_argument(
-        "--unmodified_edf_in", required=True, type=pathlib.Path, help="Input unmodified EDIF (.edf)"
+    parser.add_argument(
+        "--unmodified_edf_in", required=True, type=pathlib.Path, help="Unmodified input .edf"
     )
-    p.add_argument(
-        "--unmodified_out_dcp", required=True, type=pathlib.Path, help="Output unmodified DCP path"
+    parser.add_argument(
+        "--unmodified_out_dcp", required=True, type=pathlib.Path, help="Unmodified output .dcp"
     )
-    p.add_argument(
-        "--unmodified_out_edf", required=True, type=pathlib.Path, help="Output unmodified EDIF path"
+    parser.add_argument(
+        "--unmodified_out_edf", required=True, type=pathlib.Path, help="Unmodified output .edf"
     )
 
-    p.add_argument("--log", default="netlist_deobfuscate.log", help="Log filename (inside build_path)")
-    p.add_argument(
+    parser.add_argument(
+        "--log", default="netlist_deobfuscate.log", help="Log filename in build_path"
+    )
+    parser.add_argument(
         "--logging_level",
         default="INFO",
         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
-        help="Verbosity level",
     )
 
-    args = p.parse_args()
+    args = parser.parse_args()
 
     args.build_path.mkdir(parents=True, exist_ok=True)
     log_path = args.build_path / args.log
@@ -254,7 +253,7 @@ def main():
         log_path.unlink()
     setup_logging(log_path, args.logging_level)
 
-    # Load JSON properties db
+    # Load JSON properties DB
     logging.info("Reading JSON properties from %s", args.props_json)
     with open(args.props_json, "r", encoding="utf-8") as f:
         props_db = json.load(f)
@@ -294,9 +293,8 @@ def main():
     design_unmod.getNetlist().exportEDIF(args.unmodified_out_edf)
     logging.info("Wrote unmodified EDIF in %.2f s", time.perf_counter() - t6)
 
-    logging.info("NetlistDeobfuscate (paper-aligned with fallbacks) complete")
+    logging.info("Netlist de-obfuscation (paper-aligned with fallbacks) complete")
 
 
 if __name__ == "__main__":
     main()
-
