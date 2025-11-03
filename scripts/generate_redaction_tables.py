@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 All-in-one timing + obfuscation artifact generator.
 
