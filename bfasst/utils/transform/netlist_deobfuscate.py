@@ -59,13 +59,13 @@ def _safe_value_type(type_str) -> EDIFValueType:
 
 # Common uniquification/replication suffix patterns to strip iteratively.
 _SUFFIX_PATTERNS = [
-    r"\[\d+\]$",          # array-like indices: [5]
-    r"_replica\d*$",      # _replica, _replica3
-    r"_inst\d*$",         # _inst, _inst12
-    r"_rewire\d*$",       # _rewire, _rewire2
-    r"_comp\d*$",         # _comp, _comp7
-    r"_rep\d*$",          # _rep, _rep4
-    r"_[0-9]+$",          # _1, _2, ...
+    r"\[\d+\]$",  # array-like indices: [5]
+    r"_replica\d*$",  # _replica, _replica3
+    r"_inst\d*$",  # _inst, _inst12
+    r"_rewire\d*$",  # _rewire, _rewire2
+    r"_comp\d*$",  # _comp, _comp7
+    r"_rep\d*$",  # _rep, _rep4
+    r"_[0-9]+$",  # _1, _2, ...
 ]
 _SUFFIX_RE = re.compile("(?:%s)" % "|".join(_SUFFIX_PATTERNS))
 
@@ -238,7 +238,9 @@ def main():
         "--unmodified_out_edf", required=True, type=pathlib.Path, help="Output unmodified EDIF path"
     )
 
-    p.add_argument("--log", default="netlist_deobfuscate.log", help="Log filename (inside build_path)")
+    p.add_argument(
+        "--log", default="netlist_deobfuscate.log", help="Log filename (inside build_path)"
+    )
     p.add_argument(
         "--logging_level",
         default="INFO",
@@ -299,4 +301,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
