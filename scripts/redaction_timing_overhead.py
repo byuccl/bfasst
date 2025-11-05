@@ -11,10 +11,72 @@ from typing import Dict, Optional, Tuple, List
 # vivado_synth/, vivado_impl/ (or vivado_reimpl/), netlist_obfuscate/, etc.
 # =============================================================================
 BUILD_ROOTS: List[Path] = [
-    # Edit this list for your batch runs:
+    Path("../build/byu/alu"),
+    Path("../build/byu/buttoncount"),
+    Path("../build/byu/calc"),
+    Path("../build/byu/counter"),
+    Path("../build/byu/counters"),
+    Path("../build/byu/debouncer"),
+    Path("../build/byu/lightWave"),
+    Path("../build/byu/mux8to1"),
+    Path("../build/byu/oneshot"),
+    Path("../build/byu/regfile"),
+    Path("../build/byu/riscvSimpleDatapath"),
     Path("../build/byu/riscv_final"),
-    # Path("../build/ooc/jpegencode"),
+    Path("../build/byu/rx"),
+    Path("../build/byu/seven_segment"),
+    Path("../build/byu/shiftReg"),
+    Path("../build/byu/Sout_reg"),
+    Path("../build/byu/stopwatch"),
+    Path("../build/byu/tx"),
+    Path("../build/byu/uart"),
+    Path("../build/byu/uart_debouncer"),
+    Path("../build/byu/uart_rx"),
+    Path("../build/byu/uart_ssc"),
+    Path("../build/byu/uart_tx"),
+    Path("../build/byu/UpDownButtonCount"),
+
+    Path("../build/ooc/aes128"),
+    Path("../build/ooc/EX_stage"),
+    Path("../build/ooc/ID_stage"),
+    Path("../build/ooc/IF_stage"),
+    Path("../build/ooc/MEM_stage"),
+    Path("../build/ooc/WB_stage"),
+    Path("../build/ooc/a25_coprocessor"),
+    Path("../build/ooc/a25_decode"),
+    Path("../build/ooc/a25_write_back"),
+    Path("../build/ooc/a25_wishbone"),
+    Path("../build/ooc/basicrsa"),
+    Path("../build/ooc/bcd_adder"),
+    Path("../build/ooc/bubblesort"),
+    Path("../build/ooc/control_unit"),
+    Path("../build/ooc/cpu8080"),
+    Path("../build/ooc/data_path"),
+    Path("../build/ooc/hight"),
+    Path("../build/ooc/jpegencode"),
+    Path("../build/ooc/median"),
+    Path("../build/ooc/mips_16"),
+    Path("../build/ooc/natalius_processor"),
+    Path("../build/ooc/pci_mini"),
+    Path("../build/ooc/pic"),
+    Path("../build/ooc/pid"),
+    Path("../build/ooc/quadratic_func"),
+    Path("../build/ooc/random_pulse_generator"),
+    Path("../build/ooc/simon_core"),
+    Path("../build/ooc/tiny_encryption_algorithm"),
+    Path("../build/ooc/uart2spi"),
+    Path("../build/ooc/wb_lcd"),
+
+    Path("../build/vtr_benchmarks/mkPktMerge"),
+    Path("../build/vtr_benchmarks/mkSMAdapter4B"),
+    Path("../build/vtr_benchmarks/raygentop"),
+    Path("../build/vtr_benchmarks/sha"),
+    Path("../build/vtr_benchmarks/stereovision1"),
+    Path("../build/vtr_benchmarks/stereovision2"),
+    Path("../build/vtr_benchmarks/stereovision3"),
 ]
+
+
 
 
 # =============================================================================
@@ -438,7 +500,7 @@ if __name__ == "__main__":
         description="Collect per-entry times (ms) for golden/test across many designs, and emit CSV artifacts."
     )
     p.add_argument("--out", type=str, default="timing_artifacts", help="Output directory for CSVs")
-    p.add_argument("--pretty", action="store_true", help="Pretty-print a JSON summary to stdout")
+    p.add_argument("--pretty", default=True, action="store_true", help="Pretty-print a JSON summary to stdout")
     args = p.parse_args()
 
     summary = run_and_emit(BUILD_ROOTS, Path(args.out))
