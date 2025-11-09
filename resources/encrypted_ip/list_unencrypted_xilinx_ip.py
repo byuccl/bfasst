@@ -3,7 +3,6 @@
 import pathlib
 import re
 
-
 VIVADO_PATH = pathlib.Path("/tools/Xilinx/Vivado/2022.2")
 
 IP_PATH = VIVADO_PATH / "data" / "ip" / "xilinx"
@@ -34,16 +33,13 @@ def main():
             if file.suffix not in (".v", ".sv", ".vhd"):
                 continue
 
-            try:
-                txt = file.read_text(encoding="utf-8", errors="replace")
-            except UnicodeDecodeError as e:
-                print(f"\n{file} is not a text file")
-                raise e
-            #     continue
+            txt = file.read_text(encoding="utf-8", errors="replace")
 
             # Check if a line starts with `pragma protect
-            if re.search("^`pragma protect", txt, re.MULTILINE):
-                # print(f"\n{file} contains encrypted IP")
+            if re.search("^`pragma protect", txt, re.MULTILINE) or re.search(
+                "^`protect", txt, re.MULTILINE
+            ):
+                # print(f"\n{file} contains encrypted IP    ")
                 encrypted = True
                 break
 
