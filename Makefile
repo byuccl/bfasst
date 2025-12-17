@@ -35,7 +35,7 @@ python_packages:
 
 submodules:
 # Parallel init and update of all public submodules.
-	@$(foreach submodule,$(PUBLIC_SUBMODULES),git submodule update --init --recursive $(submodule) &); wait
+	@$(foreach submodule,$(PUBLIC_SUBMODULES),git submodule update --init --recursive $(submodule) &) wait
 
 env: venv python_packages
 	echo "\nexport VIVADO_PATH=$(VIVADO_PATH)" >> ".venv/bin/activate"
