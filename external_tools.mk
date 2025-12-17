@@ -16,11 +16,30 @@ install_rapidwright:
 	git submodule init third_party/RapidWright
 	git submodule update --init --recursive third_party/RapidWright
 
-	cd third_party/RapidWright && ./gradlew compileJava
-	cd third_party/RapidWright/interchange/ && make
+    # Find proper Java version. Currently 18 or 17.
+	if [ -z "$$JAVA_HOME" ]; then \
+		if type /usr/lib/jvm/java-18-openjdk-amd64/bin/java >/dev/null 2>&1; then \
+			export JAVA_HOME=/usr/lib/jvm/java-18-openjdk-amd64; \
+		elif type /usr/lib/jvm/java-17-openjdk-amd64/bin/java >/dev/null 2>&1; then \
+			export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64; \
+		else \
+			echo "Java 17 or 18 is required to build RapidWright. Please run 'sudo make packages' to install it." ; \
+			exit 1; \
+		fi; \
+	fi; \
+	echo "\n" >> ".venv/bin/activate"
+	echo "# Make sure the correct java binary is available for rapidwright">> ".venv/bin/activate"
+	echo "export JAVA_HOME=$$JAVA_HOME" >> ".venv/bin/activate"
+	echo "export PATH=$$JAVA_HOME/bin:\$$PATH" >> ".venv/bin/activate"
+	$(IN_ENV) cd third_party/RapidWright && ./gradlew compileJava
+	$(IN_ENV) make -C third_party/RapidWright/interchange/ || {\
+		echo "Interchange build failed. The error could possibly be related to apt upgrading capnproto, but capnproto-java requires manual upgrade. Rerun 'sudo make capnproto_java'"; \
+		exit 1; \
+	}
 	$(IN_ENV) cd third_party/RapidWright ; export PATH=`pwd`/bin:$$PATH ; \
 	rapidwright jython -c 'FileTools.ensureDataFilesAreStaticInstallFriendly("xc7a200t")'
-	echo >> ".venv/bin/activate"
+	echo "\n" >> ".venv/bin/activate"
+	echo "# Add RapidWright environment setup" >> ".venv/bin/activate"
 	echo "if [ -f \"`pwd`/third_party/rapidwright.sh\" ];then" >> ".venv/bin/activate" 	
 	echo ". `pwd`/third_party/rapidwright.sh" >> ".venv/bin/activate"
 	echo "fi" >> ".venv/bin/activate"
