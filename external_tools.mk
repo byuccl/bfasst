@@ -9,42 +9,63 @@ install_vivado:
 
 
 ################################################################################
+# Capnproto Java
+################################################################################
+capnproto_java:
+ifeq "$(CAPNPJ)" ""
+	$(eval TEMP_DIR := $(shell mktemp -d))
+	git clone https://github.com/capnproto/capnproto-java $(TEMP_DIR)/capnproto-java
+	make -C $(TEMP_DIR)/capnproto-java
+	make -C $(TEMP_DIR)/capnproto-java install
+	rm -rf $(TEMP_DIR)
+endif
+
+
+################################################################################
 # Rapidwright
 ################################################################################
 
-install_rapidwright:
-	git submodule init third_party/RapidWright
-	git submodule update --init --recursive third_party/RapidWright
+install_rapidwright: capnproto_java
+# 	git submodule init third_party/RapidWright
+# 	git submodule update --init --recursive third_party/RapidWright
 
     # Find proper Java version. Currently 18 or 17.
 	if [ -z "$$JAVA_HOME" ]; then \
 		if type /usr/lib/jvm/java-18-openjdk-amd64/bin/java >/dev/null 2>&1; then \
-			export JAVA_HOME=/usr/lib/jvm/java-18-openjdk-amd64; \
+			JAVA_HOME=/usr/lib/jvm/java-18-openjdk-amd64; \
 		elif type /usr/lib/jvm/java-17-openjdk-amd64/bin/java >/dev/null 2>&1; then \
-			export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64; \
+			JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64; \
 		else \
 			echo "Java 17 or 18 is required to build RapidWright. Please run 'sudo make packages' to install it." ; \
 			exit 1; \
 		fi; \
 	fi; \
-	echo "\n" >> ".venv/bin/activate"
-	echo "# Make sure the correct java binary is available for rapidwright">> ".venv/bin/activate"
+
+	echo "\n# Make sure the correct java binary is available for RapidWright">> ".venv/bin/activate"
 	echo "export JAVA_HOME=$$JAVA_HOME" >> ".venv/bin/activate"
+	echo "\nunset JAVA_HOME" >> ".venv/bin/deactivate"
 	echo "export PATH=$$JAVA_HOME/bin:\$$PATH" >> ".venv/bin/activate"
-	$(IN_ENV) cd third_party/RapidWright && ./gradlew compileJava
-	$(IN_ENV) make -C third_party/RapidWright/interchange/ || {\
-		echo "Interchange build failed. The error could possibly be related to apt upgrading capnproto, but capnproto-java requires manual upgrade. Rerun 'sudo make capnproto_java'"; \
-		exit 1; \
-	}
-	$(IN_ENV) cd third_party/RapidWright ; export PATH=`pwd`/bin:$$PATH ; \
-	rapidwright jython -c 'FileTools.ensureDataFilesAreStaticInstallFriendly("xc7a200t")'
-	echo "\n" >> ".venv/bin/activate"
-	echo "# Add RapidWright environment setup" >> ".venv/bin/activate"
-	echo "if [ -f \"`pwd`/third_party/rapidwright.sh\" ];then" >> ".venv/bin/activate" 	
-	echo ". `pwd`/third_party/rapidwright.sh" >> ".venv/bin/activate"
-	echo "fi" >> ".venv/bin/activate"
-	echo "export INTERCHANGE_SCHEMA_PATH=`pwd`/third_party/RapidWright/interchange/fpga-interchange-schema/interchange" >> ".venv/bin/activate"
+	parent_path=$(shell pwd)/third_party/RapidWright
+# 	$(IN_ENV) cd $parent_path && ./gradlew compileJava
+# 	$(IN_ENV) make -C $parent_path/interchange/ || {\
+# 		@echo "Interchange build failed. The error could possibly be related to apt upgrading capnproto, but capnproto-java requires manual upgrade. Rerun 'sudo make capnproto_java'"; \
+# 		exit 1; \
+# 	}
+	echo "\n# Add RapidWright/Interchange environment setup" >> ".venv/bin/activate"
+	echo "export PATH=$parent_path/bin:$$PATH" >> ".venv/bin/activate"
+	echo "export CLASSPATH=$parent_path/bin:$parent_path/jars/*" >> ".venv/bin/activate"
+	echo "export CAPNP_PATH=$parent_path/interchange/schema" >> ".venv/bin/activate"
+	echo "export INTERCHANGE_SCHEMA_PATH=$parent_path/interchange/fpga-interchange-schema/interchange" >> ".venv/bin/activate"
+
+	echo "\n# Unset RapidWright/Interchange environment setup" >> ".venv/bin/deactivate"
 	echo "unset INTERCHANGE_SCHEMA_PATH" >> ".venv/bin/deactivate"
+
+# 	$(IN_ENV) cd third_party/RapidWright; rapidwright jython -c 'FileTools.ensureDataFilesAreStaticInstallFriendly("xc7a200t")'
+
+update_rapidwright:
+	git submodule update --remote third_party/RapidWright
+	./gradlew updateJars
+	./gradlew compileJava
 
 
 ################################################################################

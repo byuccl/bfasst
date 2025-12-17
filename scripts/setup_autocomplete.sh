@@ -8,7 +8,13 @@ HELPER="$REPO_ROOT/scripts/flow_autocomplete.sh"
 [[ -f $VENV_ACTIVATE ]] || { echo "Create the venv first: python -m venv .venv" >&2; exit 1; }
 
 LINE="source \"$HELPER\"  # bfasst autocomplete"
-grep -Fxq "$LINE" "$VENV_ACTIVATE" || echo "$LINE" >> "$VENV_ACTIVATE"
+grep -Fxq "$LINE" "$VENV_ACTIVATE" || echo -e "\n$LINE" >> "$VENV_ACTIVATE"
 
-echo "Added autocomplete hook to .venv. Activate with: source .venv/bin/activate"
+if [[ "$VIRTUAL_ENV" == "$REPO_ROOT"* ]]; then
+    source "$VENV_ACTIVATE"
+    echo "Autocomplete added and active in current shell."
+else
+    echo "Added autocomplete hook to .venv. Activate with: source .venv/bin/activate"
+fi
+
 

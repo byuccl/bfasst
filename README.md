@@ -32,7 +32,7 @@ Note that if a yaml file is specified, neither a design nor flow should be speci
 
 ## Install
 ### Prerequisites
-* Install Vivado. Currently, flows should be supported with Vivado version 2024.2
+* Install Vivado. Currently, flows should be supported with Vivado version 2025.1
 * Clone this github repository. 
   * Update the first line of the Makefile and make sure the path points to your Vivado installation. 
 * Install necessary packages:

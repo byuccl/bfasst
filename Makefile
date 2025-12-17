@@ -1,4 +1,4 @@
-VIVADO_PATH := "/tools/Xilinx/Vivado/2024.1/bin/vivado"
+VIVADO_PATH := "/tools/Xilinx/2025.1/Vivado/bin/vivado"
 IN_ENV = if [ -e .venv/bin/activate ]; then . .venv/bin/activate; fi;
 CAPNPJ := $(shell which capnpc-java)
 PYTHON311 := $(shell which python3.11)
@@ -33,35 +33,23 @@ python_packages:
 	$(IN_ENV) python -m pip install -r requirements.txt
 	$(IN_ENV) python -m pip install -e .
 
-capnproto_java:
-ifeq "$(CAPNPJ)" ""
-	$(eval TEMP_DIR := $(shell mktemp -d))
-	git clone https://github.com/capnproto/capnproto-java $(TEMP_DIR)/capnproto-java
-	make -C $(TEMP_DIR)/capnproto-java
-	make -C $(TEMP_DIR)/capnproto-java install
-	rm -rf $(TEMP_DIR)
-endif
-
 submodules:
-	$(foreach submodule,$(PUBLIC_SUBMODULES),git submodule init $(submodule); git submodule update $(submodule);)
+# Parallel init and update of all public submodules.
+	@$(foreach submodule,$(PUBLIC_SUBMODULES),git submodule update --init --recursive $(submodule) &;) wait
 
-env: venv python_packages 
-	echo >> ".venv/bin/activate"
-	echo "export VIVADO_PATH=$(VIVADO_PATH)" >> ".venv/bin/activate"
+env: venv python_packages
+	echo "\nexport VIVADO_PATH=$(VIVADO_PATH)" >> ".venv/bin/activate"
 	echo "unset VIVADO_PATH" > ".venv/bin/deactivate"
 	echo "export PYTHONNOUSERSITE=1" >> ".venv/bin/activate"
 	echo "unset PYTHONNOUSERSITE" >> ".venv/bin/deactivate"
 
-
 format:
 	find ./scripts ./bfasst -iname "*.py" -exec black -q -l 100 {} \;
-
 
 pylint: format
 	git fetch
 	pylint --errors-only $$(git ls-files --directory scripts --directory bfasst | grep -e ".py$$")
 	pylint $$(git diff --name-only | grep -e ".py$$")
-
 
 doctest:
 	find bfasst -iname "*.py" -exec python -m doctest {} \;
