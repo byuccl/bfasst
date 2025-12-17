@@ -1,4 +1,4 @@
-VIVADO_PATH := "/tools/Xilinx/Vivado/2024.2/bin/vivado"
+VIVADO_PATH := "/tools/Xilinx/Vivado/2024.1/bin/vivado"
 IN_ENV = if [ -e .venv/bin/activate ]; then . .venv/bin/activate; fi;
 CAPNPJ := $(shell which capnpc-java)
 PYTHON311 := $(shell which python3.11)
@@ -36,9 +36,9 @@ python_packages:
 capnproto_java:
 ifeq "$(CAPNPJ)" ""
 	$(eval TEMP_DIR := $(shell mktemp -d))
-	cd $(TEMP_DIR) && git clone https://github.com/capnproto/capnproto-java
-	cd $(TEMP_DIR)/capnproto-java && make
-	cd $(TEMP_DIR)/capnproto-java && make install
+	git clone https://github.com/capnproto/capnproto-java $(TEMP_DIR)/capnproto-java
+	make -C $(TEMP_DIR)/capnproto-java
+	make -C $(TEMP_DIR)/capnproto-java install
 	rm -rf $(TEMP_DIR)
 endif
 

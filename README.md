@@ -32,7 +32,7 @@ Note that if a yaml file is specified, neither a design nor flow should be speci
 
 ## Install
 ### Prerequisites
-* Install Vivado 2022.2
+* Install Vivado. Currently, flows should be supported with Vivado version 2024.2
 * Clone this github repository. 
   * Update the first line of the Makefile and make sure the path points to your Vivado installation. 
 * Install necessary packages:
@@ -40,7 +40,7 @@ Note that if a yaml file is specified, neither a design nor flow should be speci
 * Install Capnproto Java
   * ```sudo make capnproto_java```
 ### Install BFASST
-* Install the Python virtual environment, activate, and install packages:
+* Install the Python virtual environment, activate, and install project submodules:
   * `make install`
 
 ## Tools
