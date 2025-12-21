@@ -9,7 +9,7 @@ import paramiko
 
 import yaml
 
-from bfasst.config import IC2_INSTALL_DIR, FAMILY, PART, VIVADO_BIN_PATH
+from bfasst.config import IC2_INSTALL_DIR, PART_FAMILY, PART, VIVADO_BIN_PATH
 from bfasst.paths import (
     ICEBOX_VLOG_PATH,
     ICEUNPACK_PATH,
@@ -51,7 +51,7 @@ def check_fasm2bels():
     if not (FASM2BELS_PATH / "env").is_dir():
         return False
     if not (FASM2BELS_PATH / f"{PART}_db").is_file():
-        proc = subprocess.run([f"{SCRIPTS_PATH}/database.sh", FAMILY, PART], cwd=ROOT_PATH)
+        proc = subprocess.run([f"{SCRIPTS_PATH}/database.sh", PART_FAMILY, PART], cwd=ROOT_PATH)
     return True
 
 
