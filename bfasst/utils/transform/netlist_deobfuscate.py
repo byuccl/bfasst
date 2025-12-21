@@ -1,8 +1,10 @@
 """
 Netlist De-obfuscation (paper-aligned, minimal with name fallbacks)
 
-- Reads obfuscated DCP/EDIF and restores properties by looking up entries in JSON.
-- Lookup order: exact full hierarchical name -> ORIG_CELL_NAME -> tag (TAG_PROP) -> suffix stripping.
+- Reads obfuscated DCP/EDIF and restores properties by looking up entries
+  in JSON.
+- Lookup order: exact full hierarchical name -> ORIG_CELL_NAME -> tag (TAG_PROP)
+  -> suffix stripping.
 - Reads UNMODIFIED DCP/EDIF and writes them back out unchanged (paper artifact).
 - Writes de-obfuscated DCP/EDIF and the unmodified DCP/EDIF.
 
@@ -52,22 +54,22 @@ def _safe_value_type(type_str) -> EDIFValueType:
     try:
         if isinstance(type_str, str) and type_str:
             return EDIFValueType.valueOf(type_str)
-    except Exception:
+    except (ValueError, AttributeError, TypeError):
         pass
     return EDIFValueType.STRING
 
 
 # Common uniquification/replication suffix patterns to strip iteratively.
 _SUFFIX_PATTERNS = [
-    r"\[\d+\]$",          # array-like indices: [5]
-    r"_replica\d*$",      # _replica, _replica3
-    r"_inst\d*$",         # _inst, _inst12
-    r"_rewire\d*$",       # _rewire, _rewire2
-    r"_comp\d*$",         # _comp, _comp7
-    r"_rep\d*$",          # _rep, _rep4
-    r"_[0-9]+$",          # _1, _2, ...
+    r"\[\d+\]$",  # array-like indices: [5]
+    r"_replica\d*$",  # _replica, _replica3
+    r"_inst\d*$",  # _inst, _inst12
+    r"_rewire\d*$",  # _rewire, _rewire2
+    r"_comp\d*$",  # _comp, _comp7
+    r"_rep\d*$",  # _rep, _rep4
+    r"_[0-9]+$",  # _1, _2, ...
 ]
-_SUFFIX_RE = re.compile("(?:%s)" % "|".join(_SUFFIX_PATTERNS))
+_SUFFIX_RE = re.compile(f"(?:{"|".join(_SUFFIX_PATTERNS)})")
 
 
 def _strip_suffixes_lookup(name: str, json_db: Dict[str, dict]) -> Optional[Tuple[str, dict]]:
@@ -102,9 +104,9 @@ def _get_prop_value(obj_map, key: str):
         # Try to call getValue() if available.
         try:
             return prop.getValue()
-        except Exception:
+        except AttributeError:
             return str(prop)
-    except Exception:
+    except (AttributeError, TypeError):
         return None
 
 
@@ -238,7 +240,9 @@ def main():
         "--unmodified_out_edf", required=True, type=pathlib.Path, help="Output unmodified EDIF path"
     )
 
-    p.add_argument("--log", default="netlist_deobfuscate.log", help="Log filename (inside build_path)")
+    p.add_argument(
+        "--log", default="netlist_deobfuscate.log", help="Log filename (inside build_path)"
+    )
     p.add_argument(
         "--logging_level",
         default="INFO",
@@ -299,4 +303,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

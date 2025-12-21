@@ -1,4 +1,5 @@
 """Parse Vivado and RapidWright logs to collect timing data for redaction overhead analysis."""
+
 import re
 import csv
 import json
@@ -222,9 +223,9 @@ def parse_rw_obfuscate_breakdown_ms(log_path: Path) -> Tuple[Dict[str, int], Dic
     golden["netlist_obfuscate.rapidwright_read_dcp"] = (
         _ms(first_read_total_sec) if first_read_total_sec is not None else 0
     )
-    test["netlist_obfuscate.rapidwright_read_dcp"] = (
-        golden["netlist_obfuscate.rapidwright_read_dcp"]
-    )
+    test["netlist_obfuscate.rapidwright_read_dcp"] = golden[
+        "netlist_obfuscate.rapidwright_read_dcp"
+    ]
 
     golden["netlist_obfuscate.rapidwright_write_dcp"] = _ms(write_totals["golden"])
     test["netlist_obfuscate.rapidwright_write_dcp"] = _ms(write_totals["test"])
