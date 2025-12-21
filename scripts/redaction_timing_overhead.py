@@ -1,3 +1,4 @@
+"""Parse Vivado and RapidWright logs to collect timing data for redaction overhead analysis."""
 import re
 import csv
 import json
@@ -13,6 +14,7 @@ from typing import Dict, Optional, Tuple, List
 BUILD_ROOTS: List[Path] = [
     Path("../build/byu/alu"),
     Path("../build/byu/buttoncount"),
+    Path("../build/koios/tpu_like.large.os"),
     Path("../build/byu/calc"),
     Path("../build/byu/counter"),
     Path("../build/byu/counters"),
@@ -35,7 +37,6 @@ BUILD_ROOTS: List[Path] = [
     Path("../build/byu/uart_ssc"),
     Path("../build/byu/uart_tx"),
     Path("../build/byu/UpDownButtonCount"),
-
     Path("../build/ooc/aes128"),
     Path("../build/ooc/EX_stage"),
     Path("../build/ooc/ID_stage"),
@@ -66,7 +67,6 @@ BUILD_ROOTS: List[Path] = [
     Path("../build/ooc/tiny_encryption_algorithm"),
     Path("../build/ooc/uart2spi"),
     Path("../build/ooc/wb_lcd"),
-
     Path("../build/vtr_benchmarks/mkPktMerge"),
     Path("../build/vtr_benchmarks/mkSMAdapter4B"),
     Path("../build/vtr_benchmarks/raygentop"),
@@ -75,8 +75,6 @@ BUILD_ROOTS: List[Path] = [
     Path("../build/vtr_benchmarks/stereovision2"),
     Path("../build/vtr_benchmarks/stereovision3"),
 ]
-
-
 
 
 # =============================================================================
@@ -91,16 +89,20 @@ _TIMELINE_WITH_CMD_RE = re.compile(
     r"^\s*([A-Za-z0-9_./:-]+)\s*:\s*Time\s*\(s\):.*?elapsed\s*=\s*([0-9:.]+)"
 )
 
+
 def _parse_hms_to_seconds(s: str) -> float:
     if ":" not in s:
         return float(s)
     hh, mm, ss = s.split(":")
     return int(hh) * 3600 + int(mm) * 60 + float(ss)
 
+
 def _normalize_cmd_name(raw: str) -> str:
     return raw.strip().split()[0]
 
+
 def parse_vivado_log_to_dict(log_path: Path) -> Dict[str, float]:
+    """Parse a Vivado log file and return command execution times in seconds."""
     results: Dict[str, float] = {}
     current_cmd: Optional[str] = None
     current_accum = 0.0
@@ -146,11 +148,15 @@ def parse_vivado_log_to_dict(log_path: Path) -> Dict[str, float]:
 
 _RW_SECTION_KIND_RE = re.compile(r"(Reading|Writing)\s+DCP:\s*(.+)", re.IGNORECASE)
 _RW_TOTAL_ANY_RE = re.compile(r"\*Total\*:\s*([0-9]+(?:\.[0-9]+)?)s", re.IGNORECASE)
-_RW_OBFUSCATION_RE = re.compile(r"Finished cell property obfuscation in\s+([0-9.]+)\s*s", re.IGNORECASE)
+_RW_OBFUSCATION_RE = re.compile(
+    r"Finished cell property obfuscation in\s+([0-9.]+)\s*s", re.IGNORECASE
+)
 _RW_RESTORATION_RE = re.compile(r"Restoration complete in\s+([0-9.]+)\s*s", re.IGNORECASE)
+
 
 def _ms(sec: float) -> int:
     return int(round(sec * 1000))
+
 
 def _match_section(line: str) -> Optional[Tuple[str, str]]:
     # Strip decorative framing "==== ==  Writing DCP: foo  == ===="
@@ -161,6 +167,7 @@ def _match_section(line: str) -> Optional[Tuple[str, str]]:
         return kind, m.group(2).strip()
     return None
 
+
 def _match_total_seconds(line: str) -> Optional[float]:
     m = _RW_TOTAL_ANY_RE.search(line)
     return float(m.group(1)) if m else None
@@ -170,8 +177,10 @@ def parse_rw_obfuscate_breakdown_ms(log_path: Path) -> Tuple[Dict[str, int], Dic
     """
     netlist_obfuscate.log -> (golden_dict, test_dict) with:
       - netlist_obfuscate.rapidwright_read_dcp      (use FIRST Reading DCP total for both)
-      - netlist_obfuscate.rapidwright_write_dcp     (untransformed_* -> golden, transformed_* -> test)
-      - netlist_obfuscate.obfuscation_time          (from "Finished cell property obfuscation ..."; test only)
+      - netlist_obfuscate.rapidwright_write_dcp
+            (untransformed_* -> golden, transformed_* -> test)
+      - netlist_obfuscate.obfuscation_time
+            (from "Finished cell property obfuscation ..."; test only)
     """
     golden: Dict[str, int] = {}
     test: Dict[str, int] = {}
@@ -199,11 +208,10 @@ def parse_rw_obfuscate_breakdown_ms(log_path: Path) -> Tuple[Dict[str, int], Dic
                     if first_read_total_sec is None:
                         first_read_total_sec = tot
                 elif current_kind == "write" and current_section_text:
-                    lower = current_section_text.lower()
                     # IMPORTANT: match golden first to avoid substring overlap
-                    if "untransformed_" in lower:
+                    if "untransformed_" in current_section_text.lower():
                         write_totals["golden"] += tot
-                    elif "transformed_" in lower:
+                    elif "transformed_" in current_section_text.lower():
                         write_totals["test"] += tot
                 continue
 
@@ -211,9 +219,12 @@ def parse_rw_obfuscate_breakdown_ms(log_path: Path) -> Tuple[Dict[str, int], Dic
             if m_obf:
                 obfuscation_time_sec += float(m_obf.group(1))
 
-    read_ms = _ms(first_read_total_sec) if first_read_total_sec is not None else 0
-    golden["netlist_obfuscate.rapidwright_read_dcp"] = read_ms
-    test["netlist_obfuscate.rapidwright_read_dcp"] = read_ms
+    golden["netlist_obfuscate.rapidwright_read_dcp"] = (
+        _ms(first_read_total_sec) if first_read_total_sec is not None else 0
+    )
+    test["netlist_obfuscate.rapidwright_read_dcp"] = (
+        golden["netlist_obfuscate.rapidwright_read_dcp"]
+    )
 
     golden["netlist_obfuscate.rapidwright_write_dcp"] = _ms(write_totals["golden"])
     test["netlist_obfuscate.rapidwright_write_dcp"] = _ms(write_totals["test"])
@@ -228,7 +239,8 @@ def parse_rw_deobfuscate_breakdown_ms(log_path: Path) -> Tuple[Dict[str, int], D
     """
     netlist_deobfuscate.log -> (golden_dict, test_dict) with:
       - netlist_deobfuscate.rapidwright_read_dcp   (first Reading total -> test; second -> golden)
-      - netlist_deobfuscate.rapidwright_write_dcp  (unmodified_impl_deobf.dcp -> golden; impl_deobf.dcp -> test)
+      - netlist_deobfuscate.rapidwright_write_dcp
+            (unmodified_impl_deobf.dcp -> golden; impl_deobf.dcp -> test)
       - netlist_deobfuscate.deobfuscation_time     (from 'Restoration complete in X s'; test only)
     """
     golden: Dict[str, int] = {}
@@ -268,13 +280,19 @@ def parse_rw_deobfuscate_breakdown_ms(log_path: Path) -> Tuple[Dict[str, int], D
             if m_rest:
                 deobf_time_sec += float(m_rest.group(1))
 
-    test["netlist_deobfuscate.rapidwright_read_dcp"] = _ms(read_totals[0]) if len(read_totals) >= 1 else 0
-    golden["netlist_deobfuscate.rapidwright_read_dcp"] = _ms(read_totals[1]) if len(read_totals) >= 2 else 0
+    test["netlist_deobfuscate.rapidwright_read_dcp"] = (
+        _ms(read_totals[0]) if len(read_totals) >= 1 else 0
+    )
+    golden["netlist_deobfuscate.rapidwright_read_dcp"] = (
+        _ms(read_totals[1]) if len(read_totals) >= 2 else 0
+    )
 
     test["netlist_deobfuscate.rapidwright_write_dcp"] = _ms(write_totals["test"])
     golden["netlist_deobfuscate.rapidwright_write_dcp"] = _ms(write_totals["golden"])
 
-    test["netlist_deobfuscate.deobfuscation_time"] = _ms(deobf_time_sec) if deobf_time_sec > 0 else 0
+    test["netlist_deobfuscate.deobfuscation_time"] = (
+        _ms(deobf_time_sec) if deobf_time_sec > 0 else 0
+    )
     golden["netlist_deobfuscate.deobfuscation_time"] = 0
 
     return golden, test
@@ -284,12 +302,15 @@ def parse_rw_deobfuscate_breakdown_ms(log_path: Path) -> Tuple[Dict[str, int], D
 # ------------------------------ Stage wrappers ------------------------------
 # =============================================================================
 
+
 def _namespace(prefix: str, breakdown_ms: Dict[str, int]) -> Dict[str, int]:
     return {f"{prefix}.{cmd}": ms for cmd, ms in breakdown_ms.items()}
+
 
 def _merge_add(dst: Dict[str, int], src: Dict[str, int]) -> None:
     for k, v in src.items():
         dst[k] = dst.get(k, 0) + v
+
 
 def _vivado_stage_breakdown_ms(log_path: Path) -> Dict[str, int]:
     cmd_secs = parse_vivado_log_to_dict(log_path)
@@ -301,18 +322,16 @@ def collect_flow_stage_times(build_root: Path) -> Tuple[Dict[str, int], Dict[str
     For one design root produce (golden_ms_dict, test_ms_dict) with only per-entry keys.
     Keys are namespaced as '<stage>.<entry>'.
     """
-    root = Path(build_root)
-
     # Vivado logs
-    vivado_synth_log = root / "vivado_synth" / "vivado.log"
-    vivado_impl_log = root / "vivado_impl" / "vivado.log"
-    vivado_reimpl_log = root / "vivado_reimpl" / "vivado.log"
-    impl_reports_orig_log = root / "impl_detailed_reports_orig" / "vivado.log"
-    impl_reports_transform_log = root / "impl_detailed_reports_transform" / "vivado.log"
+    vivado_synth_log = build_root / "vivado_synth" / "vivado.log"
+    vivado_impl_log = build_root / "vivado_impl" / "vivado.log"
+    vivado_reimpl_log = build_root / "vivado_reimpl" / "vivado.log"
+    impl_reports_orig_log = build_root / "impl_detailed_reports_orig" / "vivado.log"
+    impl_reports_transform_log = build_root / "impl_detailed_reports_transform" / "vivado.log"
 
     # RapidWright logs
-    obf_log = root / "netlist_obfuscate" / "netlist_obfuscate.log"
-    deobf_log = root / "netlist_deobfuscate" / "netlist_deobfuscate.log"
+    obf_log = build_root / "netlist_obfuscate" / "netlist_obfuscate.log"
+    deobf_log = build_root / "netlist_deobfuscate" / "netlist_deobfuscate.log"
 
     golden: Dict[str, int] = {}
     test: Dict[str, int] = {}
@@ -324,11 +343,20 @@ def collect_flow_stage_times(build_root: Path) -> Tuple[Dict[str, int], Dict[str
 
     # Vivado: golden impl / reports
     _merge_add(golden, _namespace("vivado_impl", _vivado_stage_breakdown_ms(vivado_impl_log)))
-    _merge_add(golden, _namespace("impl_detailed_reports_orig", _vivado_stage_breakdown_ms(impl_reports_orig_log)))
+    _merge_add(
+        golden,
+        _namespace("impl_detailed_reports_orig", _vivado_stage_breakdown_ms(impl_reports_orig_log)),
+    )
 
     # Vivado: test reimpl / reports
     _merge_add(test, _namespace("vivado_reimpl", _vivado_stage_breakdown_ms(vivado_reimpl_log)))
-    _merge_add(test, _namespace("impl_detailed_reports_transform", _vivado_stage_breakdown_ms(impl_reports_transform_log)))
+    _merge_add(
+        test,
+        _namespace(
+            "impl_detailed_reports_transform",
+            _vivado_stage_breakdown_ms(impl_reports_transform_log),
+        ),
+    )
 
     # RapidWright: obfuscate per-design
     obf_golden, obf_test = parse_rw_obfuscate_breakdown_ms(obf_log)
@@ -347,7 +375,10 @@ def collect_flow_stage_times(build_root: Path) -> Tuple[Dict[str, int], Dict[str
 # ------------------------------ Batch utilities -----------------------------
 # =============================================================================
 
-def collect_many(build_roots: List[Path]) -> Tuple[List[str], List[Dict[str, int]], List[Dict[str, int]]]:
+
+def collect_many(
+    build_roots: List[Path],
+) -> Tuple[List[str], List[Dict[str, int]], List[Dict[str, int]]]:
     """
     Run collection over many designs.
     Returns (design_names, golden_dicts, test_dicts)
@@ -372,7 +403,10 @@ def _all_keys(dicts: List[Dict[str, int]]) -> List[str]:
         s.update(d.keys())
     return sorted(s)
 
-def normalize_and_warn(kind: str, names: List[str], dicts: List[Dict[str, int]]) -> Tuple[List[Dict[str, int]], List[str]]:
+
+def normalize_and_warn(
+    kind: str, names: List[str], dicts: List[Dict[str, int]]
+) -> Tuple[List[Dict[str, int]], List[str]]:
     """
     Ensure all dicts share the same keys by inserting 0 for missing entries.
     Returns (normalized_dicts, warnings).
@@ -382,7 +416,10 @@ def normalize_and_warn(kind: str, names: List[str], dicts: List[Dict[str, int]])
     for name, d in zip(names, dicts):
         missing = [k for k in keys if k not in d]
         if missing:
-            warnings.append(f"[WARN] {kind} '{name}' missing {len(missing)} entries: {missing[:6]}{' ...' if len(missing)>6 else ''}")
+            warnings.append(
+                f"[WARN] {kind} '{name}' missing {len(missing)} entries: "
+                f"{missing[:6]}{' ...' if len(missing) > 6 else ''}"
+            )
             for k in missing:
                 d[k] = 0
     # Keep column order stable:
@@ -426,7 +463,9 @@ def mean_percentages(dicts: List[Dict[str, float]]) -> Dict[str, float]:
     return {k: acc[k] / n for k in keys}
 
 
-def write_overhead_csv(path: Path, names: List[str], golden_ms: List[Dict[str, int]], test_ms: List[Dict[str, int]]) -> None:
+def write_overhead_csv(
+    path: Path, names: List[str], golden_ms: List[Dict[str, int]], test_ms: List[Dict[str, int]]
+) -> None:
     """
     Overhead is defined as the sum of all netlist_obfuscate.* and netlist_deobfuscate.* entries.
     We report: overhead_ms and overhead_pct (of total per design), for golden and test.
@@ -434,30 +473,49 @@ def write_overhead_csv(path: Path, names: List[str], golden_ms: List[Dict[str, i
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
-        writer.writerow([
-            "design",
-            "golden_total_ms", "golden_overhead_ms", "golden_overhead_pct",
-            "test_total_ms",   "test_overhead_ms",   "test_overhead_pct",
-        ])
+        writer.writerow(
+            [
+                "design",
+                "golden_total_ms",
+                "golden_overhead_ms",
+                "golden_overhead_pct",
+                "test_total_ms",
+                "test_overhead_ms",
+                "test_overhead_pct",
+            ]
+        )
 
         for name, g, t in zip(names, golden_ms, test_ms):
             g_total = sum(g.values())
             t_total = sum(t.values())
-            g_over = sum(v for k, v in g.items() if k.startswith("netlist_obfuscate.") or k.startswith("netlist_deobfuscate."))
-            t_over = sum(v for k, v in t.items() if k.startswith("netlist_obfuscate.") or k.startswith("netlist_deobfuscate."))
+            g_over = sum(
+                v
+                for k, v in g.items()
+                if k.startswith("netlist_obfuscate.") or k.startswith("netlist_deobfuscate.")
+            )
+            t_over = sum(
+                v
+                for k, v in t.items()
+                if k.startswith("netlist_obfuscate.") or k.startswith("netlist_deobfuscate.")
+            )
             g_pct = (g_over / g_total * 100.0) if g_total > 0 else 0.0
             t_pct = (t_over / t_total * 100.0) if t_total > 0 else 0.0
-            writer.writerow([name, g_total, g_over, f"{g_pct:.4f}", t_total, t_over, f"{t_pct:.4f}"])
+            writer.writerow(
+                [name, g_total, g_over, f"{g_pct:.4f}", t_total, t_over, f"{t_pct:.4f}"]
+            )
 
 
 # =============================================================================
 # ------------------------------------ CLI -----------------------------------
 # =============================================================================
 
+
 def _as_json(obj) -> str:
     return json.dumps(obj, indent=2, sort_keys=True)
 
+
 def run_and_emit(build_roots: List[Path], out_dir: Path) -> Dict[str, object]:
+    """Collect timing data from all designs and write CSV reports."""
     names, golden_ms, test_ms = collect_many(build_roots)
 
     # Normalize and warn if inconsistent keys across designs
@@ -467,7 +525,7 @@ def run_and_emit(build_roots: List[Path], out_dir: Path) -> Dict[str, object]:
 
     # Percentages
     golden_pct = compute_percentages(golden_ms_norm)
-    test_pct   = compute_percentages(test_ms_norm)
+    test_pct = compute_percentages(test_ms_norm)
 
     # Write CSVs (percent per entry, by design)
     write_csv(out_dir / "golden_percent.csv", names, golden_pct)
@@ -475,7 +533,7 @@ def run_and_emit(build_roots: List[Path], out_dir: Path) -> Dict[str, object]:
 
     # Write average rows for convenience
     golden_avg = mean_percentages(golden_pct)
-    test_avg   = mean_percentages(test_pct)
+    test_avg = mean_percentages(test_pct)
     write_csv(out_dir / "golden_percent_avg.csv", ["AVERAGE"], [golden_avg] if golden_avg else [])
     write_csv(out_dir / "test_percent_avg.csv", ["AVERAGE"], [test_avg] if test_avg else [])
 
@@ -496,11 +554,17 @@ def run_and_emit(build_roots: List[Path], out_dir: Path) -> Dict[str, object]:
 
 if __name__ == "__main__":
     import argparse
+
     p = argparse.ArgumentParser(
-        description="Collect per-entry times (ms) for golden/test across many designs, and emit CSV artifacts."
+        description=(
+            "Collect per-entry times (ms) for golden/test across many designs, "
+            "and emit CSV artifacts."
+        )
     )
     p.add_argument("--out", type=str, default="timing_artifacts", help="Output directory for CSVs")
-    p.add_argument("--pretty", default=True, action="store_true", help="Pretty-print a JSON summary to stdout")
+    p.add_argument(
+        "--pretty", default=True, action="store_true", help="Pretty-print a JSON summary to stdout"
+    )
     args = p.parse_args()
 
     summary = run_and_emit(BUILD_ROOTS, Path(args.out))
@@ -508,4 +572,3 @@ if __name__ == "__main__":
         print(_as_json(summary))
     else:
         print(json.dumps({"csv_dir": summary["csv_dir"], "warnings": summary["warnings"]}))
-
