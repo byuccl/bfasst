@@ -1,3 +1,6 @@
 top: memory_controller
 
 include_all_verilog_files: yes
+clocks:
+  - name: clk
+    period: 100

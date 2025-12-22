@@ -1,1 +1,5 @@
 top: flip_flops
+
+clocks:
+  - name: clk
+    period: 3.000

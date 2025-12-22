@@ -32,7 +32,7 @@ class NetlistObfuscate(Tool):
         )
         self._init_outputs()
         self.rules_render_dict = {
-            "transform_script_path": str(BFASST_UTILS_PATH / "netlist_obfuscate.py"),
+            "transform_script_path": str(BFASST_UTILS_PATH / "transform" / "netlist_obfuscate.py"),
             "dcp_path": str(self.dcp_path),
             "edf_path": str(self.edf_path),
             "orig_dcp_path": str(self.orig_dcp_path),
@@ -64,7 +64,7 @@ class NetlistObfuscate(Tool):
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
-        deps.append(BFASST_UTILS_PATH / "netlist_obfuscate.py")
+        deps.append(BFASST_UTILS_PATH / "transform" / "netlist_obfuscate.py")
         deps.append(self.dcp_path)
         deps.append(self.edf_path)
         deps.append(self.orig_dcp_path)

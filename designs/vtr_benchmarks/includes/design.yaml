@@ -1,0 +1,4 @@
+
+clocks:
+  - name: clk
+    period: 100

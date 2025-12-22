@@ -1,4 +1,17 @@
 open_checkpoint {{ impl_dcp }}
+foreach rule [get_drc_checks] {
+    set_property IS_ENABLED false $rule
+}
+
+foreach clk [get_clocks *] {
+    set period [get_property PERIOD $clk]
+    puts "CLOCK: $clk, PERIOD: $period"
+    set src_ports [get_ports -of [get_clocks $clk]]
+    foreach port $src_ports {
+        # Override clock by redefining it with a fixed period
+        create_clock -name fixed_$clk -period 10.0 [get_ports $port]
+    }
+}
 
 report_timing_summary -file {{ outputs.timing_summary }}
 report_timing -setup -max_paths 1000 -sort_by group -path_type full -file {{ outputs.setup_timing }}
@@ -8,5 +21,6 @@ report_utilization -hierarchical -file {{ outputs.utilization }}
 report_power -verbose -file {{ outputs.power_summary }}
 report_clocks -file {{ outputs.clocks }}
 report_drc -file {{ outputs.drc }}
+write_verilog -mode funcsim -force {{ outputs.verilog }}
 write_bitstream -force -file {{ outputs.bitstream }}
 

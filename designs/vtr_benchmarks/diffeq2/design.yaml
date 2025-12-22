@@ -1,3 +1,6 @@
 top: diffeq_f_systemC
 
 include_all_verilog_files: yes
+clocks:
+  - name: clk
+    period: 100
