@@ -69,7 +69,8 @@ _SUFFIX_PATTERNS = [
     r"_rep\d*$",  # _rep, _rep4
     r"_[0-9]+$",  # _1, _2, ...
 ]
-_SUFFIX_RE = re.compile(f"(?:{"|".join(_SUFFIX_PATTERNS)})")
+_SUFFIX_PATTERN = "|".join(_SUFFIX_PATTERNS)
+_SUFFIX_RE = re.compile(f"(?:{_SUFFIX_PATTERN})")
 
 
 def _strip_suffixes_lookup(name: str, json_db: Dict[str, dict]) -> Optional[Tuple[str, dict]]:
