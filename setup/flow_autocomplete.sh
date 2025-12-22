@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 
-SCRIPT_DIR="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
-REPO_ROOT="$(cd -- "$SCRIPT_DIR/.." && pwd -P)"
-RUN_PY="$REPO_ROOT/scripts/run.py"
-VENV_PY="$REPO_ROOT/.venv/bin/python"
+RUN_PY="$BFASST_SCRIPTS/run.py"
+VENV_PY="$BFASST_ROOT/.venv/bin/python"
 
 bfasst() { "$VENV_PY" "$RUN_PY" "$@"; }
 

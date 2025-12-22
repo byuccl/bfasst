@@ -5,13 +5,13 @@ set -e
 source .venv/bin/activate
 
 # If not set, then set it
-if [ -z "${BFASST_PATH_FASM2BELS}" ] 
+if [ -z "${FASM2BELS_PATH}" ] 
 then
-    BFASST_PATH_FASM2BELS=third_party/fasm2bels
+    FASM2BELS_PATH=third_party/fasm2bels
 fi
 
 # Check if submodule path
-if [ "${BFASST_PATH_FASM2BELS}" == "third_party/fasm2bels" ]
+if [ "${FASM2BELS_PATH}" == "third_party/fasm2bels" ]
 then
     USE_SUBMODULE=true
     git submodule init third_party/fasm2bels
@@ -20,9 +20,9 @@ else
     USE_SUBMODULE=false
 fi
 
-if [ -z "${FASM2BELS_PYTHON_PATH}" ]
+if [ -z "${FASM2BELS_PYTHON}" ]
 then 
-    FASM2BELS_PYTHON_PATH="${BFASST_PATH_FASM2BELS}/env/conda/envs/f4pga_xc_fasm2bels/bin/python3"
+    FASM2BELS_PYTHON="${FASM2BELS_PATH}/env/conda/envs/f4pga_xc_fasm2bels/bin/python3"
 fi
 
 # Check if cache file matches current commit.  Will return "-" if submodule
@@ -36,22 +36,29 @@ fi
 FASM2BELS_URL=$(git config --file .gitmodules submodule.third_party/fasm2bels.url)
 echo "Need fasm2bels version: ${FASM2BELS_URL} ${FASM2BELS_COMMIT}"
     
-if [ -f "${BFASST_PATH_FASM2BELS}/fasm2bels_commit.txt" ] && [ "${FASM2BELS_COMMIT}" == "$(cat ${BFASST_PATH_FASM2BELS}/fasm2bels_commit.txt)" ] ; then
+if [ -f "${FASM2BELS_PATH}/fasm2bels_commit.txt" ] && [ "${FASM2BELS_COMMIT}" == "$(cat ${FASM2BELS_PATH}/fasm2bels_commit.txt)" ] ; then
     # Successful cache, do nothing
     echo "Found cached version of fasm2bels. No install required."
+    if [ ! -f ${FASM2BELS_PATH}/${part}_db ] ; then
+        echo "Part database not found, generating database for artix7 xc7a200tsbg484-1"
+        ./scripts/database.sh artix7 xc7a200tsbg484-1
+    fi
+    else 
+        echo "Part database found for ${part}, no need to regenerate."
+    fi
 else
-    echo "Installing new version of fasm2bels at ${BFASST_PATH_FASM2BELS}. This will be cached for future use."
-    rm -rf "${BFASST_PATH_FASM2BELS}/fasm2bels_commit.txt"
+    echo "Installing new version of fasm2bels at ${FASM2BELS_PATH}. This will be cached for future use."
+    rm -rf "${FASM2BELS_PATH}/fasm2bels_commit.txt"
     
     if [ "${USE_SUBMODULE}" = true ] ; then
         git submodule update --recursive third_party/fasm2bels
     else
-        rm -rf "${BFASST_PATH_FASM2BELS}"
-        git clone "${FASM2BELS_URL}" "${BFASST_PATH_FASM2BELS}"
-        cd "${BFASST_PATH_FASM2BELS}" && git reset --hard "${FASM2BELS_COMMIT}" && cd -
+        rm -rf "${FASM2BELS_PATH}"
+        git clone "${FASM2BELS_URL}" "${FASM2BELS_PATH}"
+        cd "${FASM2BELS_PATH}" && git reset --hard "${FASM2BELS_COMMIT}" && cd -
     fi
 
-    cd "${BFASST_PATH_FASM2BELS}"
+    cd "${FASM2BELS_PATH}"
     make env
     make build
     make test-py
@@ -61,5 +68,5 @@ else
     # If you need the database for another part, run the script below with the family and part as arguments
     ./scripts/database.sh artix7 xc7a200tsbg484-1
 
-    echo "${FASM2BELS_COMMIT}" > "${BFASST_PATH_FASM2BELS}/fasm2bels_commit.txt"
+    echo "${FASM2BELS_COMMIT}" > "${FASM2BELS_PATH}/fasm2bels_commit.txt"
 fi

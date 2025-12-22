@@ -29,7 +29,7 @@ __pycache__
 ic2/
 
 # Generated local environment
-env.sh
+bfasst.env
 
 # Xray Databases
 *_db
@@ -38,6 +38,3 @@ env.sh
 build.ninja
 .ninja_log
 .ninja_deps
-
-# Cmake installations
-third_party/cmake/*
