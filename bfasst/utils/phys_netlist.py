@@ -5,17 +5,16 @@ Init Constants for Physical Netlist object
 import logging
 
 from bfasst import jpype_jvm
-from bfasst.config import PART
+from bfasst.config import DEFAULT_PART
 from bfasst.utils import rw_helpers as rw
 
 # pylint: disable=wrong-import-position,wrong-import-order,import-error
 jpype_jvm.start()
-from java.io import File, PrintStream
-from java.lang import System
-
 from com.xilinx.rapidwright.design import Cell, Unisim
 from com.xilinx.rapidwright.device import Device
 from com.xilinx.rapidwright.edif import EDIFNet
+from java.io import File, PrintStream
+from java.lang import System
 
 # pylint: enable=wrong-import-position,wrong-import-order,import-error
 
@@ -33,7 +32,7 @@ class PhysNetlist:
         """Init constants for RW Netlist processing"""
         System.setOut(PrintStream(File(rw_log)))
         System.setErr(PrintStream(File(rw_log)))
-        self.device = Device.getDevice(PART)
+        self.device = Device.getDevice(DEFAULT_PART)
         # Rapidwright design / netlist
         self.vivado_design, self.vivado_netlist = rw.load_design(impl_checkpoint)
 

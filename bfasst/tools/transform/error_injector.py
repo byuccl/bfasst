@@ -2,7 +2,7 @@
 
 import chevron
 
-from bfasst.paths import BFASST_UTILS_PATH, NINJA_BUILD_PATH, NINJA_TRANSFORM_TOOLS_PATH
+from bfasst.paths import BFASST_UTILS, NINJA_BUILD_PATH, NINJA_TRANSFORM_TOOLS
 from bfasst.tools.tool import Tool
 
 
@@ -34,10 +34,10 @@ class ErrorInjector(Tool):
             self.injection_log = None
             self.corrupt_netlist = None
         self._init_outputs(self.injection_log, self.corrupt_netlist)
-        self.rule_snippet_path = NINJA_TRANSFORM_TOOLS_PATH / "error_injector_rules.ninja.mustache"
+        self.rule_snippet_path = NINJA_TRANSFORM_TOOLS / "error_injector_rules.ninja.mustache"
 
     def create_build_snippets(self):
-        with open(NINJA_TRANSFORM_TOOLS_PATH / "error_injector_build.ninja.mustache", "r") as f:
+        with open(NINJA_TRANSFORM_TOOLS / "error_injector_build.ninja.mustache", "r") as f:
             build = chevron.render(
                 f,
                 {
@@ -48,7 +48,7 @@ class ErrorInjector(Tool):
                     "top": self.design_props.top,
                     "seed": self.num * self.multiplier,
                     "error_injector_script_path": str(
-                        BFASST_UTILS_PATH / "transform" / "error_injector.py"
+                        BFASST_UTILS / "transform" / "error_injector.py"
                     ),
                     "reversed_netlist": self.reversed_netlist,
                     "logging_level": f"--logging_level {self.logging_level}",
@@ -64,4 +64,4 @@ class ErrorInjector(Tool):
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
-        deps.append(BFASST_UTILS_PATH / "transform" / "error_injector.py")
+        deps.append(BFASST_UTILS / "transform" / "error_injector.py")

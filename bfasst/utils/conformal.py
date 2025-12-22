@@ -1,18 +1,18 @@
 """Run conformal comparison tool"""
 
-from argparse import ArgumentParser
 import re
 import socket
+from argparse import ArgumentParser
 from pathlib import Path
-import chevron
 
+import chevron
 import paramiko
 import scp
 
 import bfasst
 from bfasst import paths
-from bfasst.types import Vendor
 from bfasst.locks import conformal_lock
+from bfasst.types import Vendor
 from bfasst.utils import error
 from bfasst.utils.general import HdlType, get_hdl_src_types
 
@@ -62,7 +62,7 @@ class ConformalCompare:
         elif self.vendor == Vendor.LATTICE:
             self.remote_libs_dir_path = bfasst.config.CONFORMAL_REMOTE_LIBS_DIR / "lattice"
             self.local_libs_paths = (
-                paths.RESOURCES_PATH / "conformal" / "libraries" / "lattice" / "sb_ice_syn.v",
+                paths.BFASST_RESOURCES / "conformal" / "libraries" / "lattice" / "sb_ice_syn.v",
             )
 
         else:
@@ -129,7 +129,7 @@ class ConformalCompare:
         return None
 
     def __template_do_file(self, gold_src_type):
-        with open(paths.CONFORMAL_TOOLS_PATH / "conformal.do.mustache", "r") as f:
+        with open(paths.CONFORMAL_TOOLS / "conformal.do.mustache", "r") as f:
             do_text = chevron.render(
                 f,
                 {
@@ -151,7 +151,7 @@ class ConformalCompare:
         return do_text
 
     def __template_gui_file(self):
-        with open(paths.CONFORMAL_TOOLS_PATH / "conformal.gui.mustache", "r") as f:
+        with open(paths.CONFORMAL_TOOLS / "conformal.gui.mustache", "r") as f:
             gui_text = chevron.render(
                 f,
                 {

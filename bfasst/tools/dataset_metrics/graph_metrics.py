@@ -2,8 +2,13 @@
 
 import chevron
 
+from bfasst.paths import (
+    BFASST_BUILD,
+    BFASST_UTILS,
+    DATASET_METRICS_TOOLS,
+    NINJA_BUILD_PATH,
+)
 from bfasst.tools.tool import ToolBase
-from bfasst.paths import BUILD_PATH, NINJA_BUILD_PATH, DATASET_METRICS_TOOLS_PATH, BFASST_UTILS_PATH
 
 
 class GraphMetrics(ToolBase):
@@ -18,20 +23,20 @@ class GraphMetrics(ToolBase):
         super().__init__(flow)
         self.graph = graph
         self.num = num
-        self.build_path = BUILD_PATH / "dataset_metrics"
+        self.build_path = BFASST_BUILD / "dataset_metrics"
         self.metrics_path = self.build_path / f"metrics_{num}.log"
 
         self._init_outputs()
-        self.rule_snippet_path = DATASET_METRICS_TOOLS_PATH / "process_graph_rules.ninja.mustache"
+        self.rule_snippet_path = DATASET_METRICS_TOOLS / "process_graph_rules.ninja.mustache"
 
     def create_build_snippets(self):
-        with open(DATASET_METRICS_TOOLS_PATH / "process_graph_build.ninja.mustache", "r") as f:
+        with open(DATASET_METRICS_TOOLS / "process_graph_build.ninja.mustache", "r") as f:
             build = chevron.render(
                 f,
                 {
                     "output": self.metrics_path,
                     "graph": self.graph,
-                    "process_graph_util": BFASST_UTILS_PATH / "process_graph.py",
+                    "process_graph_util": BFASST_UTILS / "process_graph.py",
                 },
             )
 
@@ -43,4 +48,4 @@ class GraphMetrics(ToolBase):
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
-        deps.append(BFASST_UTILS_PATH / "process_graph.py")
+        deps.append(BFASST_UTILS / "process_graph.py")

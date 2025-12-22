@@ -1,12 +1,13 @@
 """A class holding a design object, coordinating different parts of the flow"""
 
 import os
+
 import yaml
 
 import bfasst
 from bfasst import paths
 from bfasst.utils import error
-from bfasst.utils.general import get_hdl_src_types, HdlType
+from bfasst.utils.general import HdlType, get_hdl_src_types
 
 DESIGN_YAML_NAME = "design.yaml"
 
@@ -15,16 +16,16 @@ class Design:
     "class holding paths and other metadata for a given design" ""
 
     def __init__(self, dir_path, experiment_dir):
-        if not dir_path.is_dir() and (paths.DESIGNS_PATH / dir_path).is_dir():
-            dir_path = paths.DESIGNS_PATH / dir_path
+        if not dir_path.is_dir() and (paths.BFASST_DESIGNS / dir_path).is_dir():
+            dir_path = paths.BFASST_DESIGNS / dir_path
         dir_path = dir_path.absolute()
 
         if not dir_path.is_dir():
             error("Design folder", dir_path, " does not exist.")
 
         self.path = dir_path
-        if self.path.relative_to(paths.DESIGNS_PATH) is not None:
-            self.rel_path = self.path.relative_to(paths.DESIGNS_PATH)
+        if self.path.relative_to(paths.BFASST_DESIGNS) is not None:
+            self.rel_path = self.path.relative_to(paths.BFASST_DESIGNS)
         else:
             self.rel_path = self.path.resolve()
 

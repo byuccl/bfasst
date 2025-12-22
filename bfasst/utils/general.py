@@ -1,22 +1,23 @@
 """Utility functions"""
 
-from argparse import ArgumentParser
 import atexit
 import code
+import enum
 import json
 import logging
 import os
-from pathlib import Path
 import re
 import readline
 import rlcompleter
-import sys
 import shutil
-import enum
+import sys
+from argparse import ArgumentParser
+from pathlib import Path
 
 from jpype.types import JString
-from bfasst.paths import DESIGNS_PATH
+
 from bfasst.config import BUILD
+from bfasst.paths import BFASST_DESIGNS
 
 
 class TermColor:
@@ -76,7 +77,7 @@ def create_build_design_dir(build_dir, design_dir):
 
 def get_design_dir(design_name):
     """Return the design directory"""
-    return DESIGNS_PATH / design_name
+    return BFASST_DESIGNS / design_name
 
 
 def clean_folder(folder_path):

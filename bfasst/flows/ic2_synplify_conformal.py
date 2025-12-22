@@ -1,11 +1,10 @@
 """Ic2LseConformal flow"""
 
 from bfasst.flows.flow import Flow
-from bfasst.paths import FLOWS_PATH
-
+from bfasst.paths import BFASST_FLOWS
 from bfasst.tools.compare.conformal.conformal import Conformal
-from bfasst.tools.rev_bit.icestorm import IcestormRevBit
 from bfasst.tools.impl.ic2_impl import Ic2Impl
+from bfasst.tools.rev_bit.icestorm import IcestormRevBit
 from bfasst.tools.synth.ic2_synplify_synth import Ic2SynplifySynth
 from bfasst.types import Vendor
 
@@ -36,4 +35,4 @@ class Ic2SynplifyConformal(Flow):
         # pylint: enable=duplicate-code
 
     def get_top_level_flow_path(self):
-        return FLOWS_PATH / "ic2_synplify_conformal.py"
+        return BFASST_FLOWS / "ic2_synplify_conformal.py"

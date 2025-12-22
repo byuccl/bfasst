@@ -6,20 +6,19 @@ fasm2bels IS_..._INVERTED properties.
 import logging
 import time
 
-from bfasst import jpype_jvm
-from bfasst import utils
-from bfasst.config import PART
 import bfasst.utils.rw_helpers as rw
+from bfasst import jpype_jvm, utils
+from bfasst.config import DEFAULT_PART
 from bfasst.utils.capnp_cells import CapnpCells, CapnpException
 
 # pylint: disable=wrong-import-position,wrong-import-order,import-error
 jpype_jvm.start()
-from com.xilinx.rapidwright.device import Device
 from com.xilinx.rapidwright.design import Cell
+from com.xilinx.rapidwright.device import Device
 from com.xilinx.rapidwright.edif import EDIFCellInst, EDIFHierCellInst, EDIFHierPortInst
 from com.xilinx.rapidwright.interchange import LogNetlistReader, PhysNetlistReader
+from java.io import File, PrintStream
 from java.lang import System
-from java.io import PrintStream, File
 
 # pylint: enable=wrong-import-position,wrong-import-order,import-error
 
@@ -41,7 +40,7 @@ class F2BDesign:
         self.rev_netlist = LogNetlistReader.readLogNetlist(str(edf_capnp))
         self.rev_design = PhysNetlistReader.readPhysNetlist(str(impl_capnp), self.rev_netlist)
         self.rev_design.flattenDesign()
-        self.rev_netlist.expandMacroUnisims(Device.getDevice(PART).getSeries())
+        self.rev_netlist.expandMacroUnisims(Device.getDevice(DEFAULT_PART).getSeries())
         logging.info("Loading reversed capnp objects took %s seconds.", time.time() - start_time)
 
         self.capnp_cells = CapnpCells(impl_capnp, edf_capnp)

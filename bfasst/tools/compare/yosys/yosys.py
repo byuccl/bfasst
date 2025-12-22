@@ -1,8 +1,9 @@
 """Create the rule and build snippets for yosys comparison."""
 
 import json
+
+from bfasst.paths import BFASST_UTILS, YOSYS_TOOLS
 from bfasst.tools.tool import Tool
-from bfasst.paths import BFASST_UTILS_PATH, YOSYS_TOOLS_PATH
 from bfasst.utils.general import json_write_if_changed
 
 
@@ -16,10 +17,10 @@ class YosysCompare(Tool):
         self.rev_netlist = rev_netlist
 
         self.build_path = self.design_build_path / "yosys"
-        self.tcl_template = YOSYS_TOOLS_PATH / "yosys.tcl.mustache"
+        self.tcl_template = YOSYS_TOOLS / "yosys.tcl.mustache"
         self._init_outputs()
-        self.rule_snippet_path = YOSYS_TOOLS_PATH / "yosys_rules.ninja.mustache"
-        self.rules_render_dict = {"utils": str(BFASST_UTILS_PATH)}
+        self.rule_snippet_path = YOSYS_TOOLS / "yosys_rules.ninja.mustache"
+        self.rules_render_dict = {"utils": str(BFASST_UTILS)}
 
     def create_build_snippets(self):
         self.__write_json_file()

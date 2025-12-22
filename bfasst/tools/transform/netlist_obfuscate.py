@@ -1,7 +1,7 @@
 """Purge INIT values for all LUTs in a synthesized design and replace them with dummy values"""
 
+from bfasst.paths import BFASST_UTILS, NINJA_TRANSFORM_TOOLS
 from bfasst.tools.tool import Tool
-from bfasst.paths import NINJA_TRANSFORM_TOOLS_PATH, BFASST_UTILS_PATH
 
 
 class NetlistObfuscate(Tool):
@@ -27,12 +27,10 @@ class NetlistObfuscate(Tool):
         self.build_path = self.design_build_path / "netlist_obfuscate"
         self.logging_level = logging_level
         self.log_file = log_file
-        self.rule_snippet_path = (
-            NINJA_TRANSFORM_TOOLS_PATH / "netlist_obfuscate_rules.ninja.mustache"
-        )
+        self.rule_snippet_path = NINJA_TRANSFORM_TOOLS / "netlist_obfuscate_rules.ninja.mustache"
         self._init_outputs()
         self.rules_render_dict = {
-            "transform_script_path": str(BFASST_UTILS_PATH / "netlist_obfuscate.py"),
+            "transform_script_path": str(BFASST_UTILS / "netlist_obfuscate.py"),
             "dcp_path": str(self.dcp_path),
             "edf_path": str(self.edf_path),
             "orig_dcp_path": str(self.orig_dcp_path),
@@ -64,7 +62,7 @@ class NetlistObfuscate(Tool):
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
-        deps.append(BFASST_UTILS_PATH / "netlist_obfuscate.py")
+        deps.append(BFASST_UTILS / "netlist_obfuscate.py")
         deps.append(self.dcp_path)
         deps.append(self.edf_path)
         deps.append(self.orig_dcp_path)

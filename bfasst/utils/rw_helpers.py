@@ -14,11 +14,9 @@ from bidict import bidict
 
 # pylint: disable=wrong-import-position,wrong-import-order
 from bfasst import jpype_jvm
-from bfasst.config import PART
+from bfasst.config import DEFAULT_PART
 
 jpype_jvm.start()
-from java.util import ArrayList as JArrayList
-
 from com.xilinx.rapidwright.design import Cell, Design, SiteInst, SitePinInst, Unisim
 from com.xilinx.rapidwright.design.DesignTools import getConnectionPIPs
 from com.xilinx.rapidwright.design.tools import LUTTools
@@ -31,6 +29,7 @@ from com.xilinx.rapidwright.edif import (
     EDIFNetlist,
     EDIFPortInst,
 )
+from java.util import ArrayList as JArrayList
 
 # pylint: enable=wrong-import-position,wrong-import-order
 
@@ -40,7 +39,7 @@ RWObject = namedtuple("RWObject", ["design", "netlist"])
 
 
 def load_design(
-    checkpt: VivadoCheckpoint, series: Series = Device.getDevice(PART).getSeries()
+    checkpt: VivadoCheckpoint, series: Series = Device.getDevice(DEFAULT_PART).getSeries()
 ) -> tuple[Design, EDIFNetlist]:
     """Load the designs from the given paths"""
     logging.info("Loading vivado dcp and edf files: %s, %s", str(checkpt.dcp), str(checkpt.edf))

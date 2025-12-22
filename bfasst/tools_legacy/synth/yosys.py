@@ -59,7 +59,7 @@ class YosysTechSynthTool(SynthesisTool):
 
     def create_yosys_script(self, netlist_path):
         """Create the yosys script that generates the netlist"""
-        path_to_script_builder = paths.SCRIPTS_PATH / "yosys" / "createYosScript.py"
+        path_to_script_builder = paths.BFASST_SCRIPTS / "yosys" / "createYosScript.py"
         script_template_file = paths.YOSYS_RESOURCES / YOSYS_SCRIPT_TEMPLATE
         yosys_script_file = self.work_dir / YOSYS_SCRIPT_FILE
 

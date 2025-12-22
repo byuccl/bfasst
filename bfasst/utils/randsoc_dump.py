@@ -2,13 +2,13 @@
 One that lists all the bels, properties, and connections in a design,
 and one that lists which BEL belongs to which IP in a design."""
 
-import subprocess
-import pathlib
 import argparse
+import pathlib
 import shutil
-from bfasst.config import VIVADO_BIN_PATH
+import subprocess
 
-from bfasst.paths import BFASST_UTILS_PATH, BUILD_PATH
+from bfasst.config import VIVADO
+from bfasst.paths import BFASST_BUILD, BFASST_UTILS
 
 
 class NetlistDump:
@@ -18,14 +18,14 @@ class NetlistDump:
     which IP in the design."""
 
     # paths to isoblaze scripts, stored as class variables for convenience
-    ISOBLAZE_DUMP_PATH = BFASST_UTILS_PATH / "dump.tcl"
-    ISOBLAZE_DUMP_DCP_PATH = BFASST_UTILS_PATH / "dump-dcp.tcl"
-    ISOBLAZE_GOLDEN_PATH = BFASST_UTILS_PATH / "golden.tcl"
+    ISOBLAZE_DUMP_PATH = BFASST_UTILS / "dump.tcl"
+    ISOBLAZE_DUMP_DCP_PATH = BFASST_UTILS / "dump-dcp.tcl"
+    ISOBLAZE_GOLDEN_PATH = BFASST_UTILS / "golden.tcl"
 
     def __init__(self, design_checkpoint, dump_file):
         self.design_checkpoint = design_checkpoint
         self.dump_file = dump_file
-        self.build_path = pathlib.Path(BUILD_PATH / "randsoc_dump" / pathlib.Path(dump_file).stem)
+        self.build_path = pathlib.Path(BFASST_BUILD / "randsoc_dump" / pathlib.Path(dump_file).stem)
         self.build_path.mkdir(parents=True, exist_ok=True)
 
     def run(self) -> None:
@@ -45,7 +45,7 @@ class NetlistDump:
         """Dump the design's impl.dcp to isoblaze dumpfile format,
         and return the path to the dumpfile"""
         command = [
-            f"{VIVADO_BIN_PATH}",
+            f"{VIVADO}",
             "-mode",
             "batch",
             "-source",

@@ -34,7 +34,7 @@ python_packages:
 	$(IN_ENV) python -m pip install -e .
 
 submodules:
-# Parallel init and update of all public submodules.
+# 	Parallel init and update of all public submodules.
 	@$(foreach submodule,$(PUBLIC_SUBMODULES),git submodule update --init --recursive $(submodule) &) wait
 
 env: venv python_packages
@@ -42,6 +42,18 @@ env: venv python_packages
 	echo "unset VIVADO_PATH" > ".venv/bin/deactivate"
 	echo "export PYTHONNOUSERSITE=1" >> ".venv/bin/activate"
 	echo "unset PYTHONNOUSERSITE" >> ".venv/bin/deactivate"
+
+enable_pre_commit_hook:
+	@ hook_file=$$(git rev-parse --git-path hooks/pre-commit) && \
+	echo "#!/bin/bash" > $$hook_file && \
+	echo "make pre_commit" >> $$hook_file && \
+	chmod +x $$hook_file && \
+	echo "Enabled pre-commit hook at $$hook_file"
+
+setup_autocomplete:
+	./scripts/setup_autocomplete.sh 
+
+pre_commit: format pylint
 
 format:
 	find ./scripts ./bfasst -iname "*.py" -exec black -q -l 100 {} \;
@@ -59,6 +71,3 @@ unittest:
 
 unittest_failfast:
 	$(IN_ENV) python -m unittest -f
-
-setup_autocomplete:
-	./scripts/setup_autocomplete.sh 

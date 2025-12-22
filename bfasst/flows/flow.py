@@ -3,8 +3,8 @@
 import abc
 
 from bfasst import config
+from bfasst.paths import BFASST_BUILD, BFASST_DESIGNS
 from bfasst.yaml_parser import DesignParser
-from bfasst.paths import BUILD_PATH, DESIGNS_PATH
 
 
 class FlowBase(abc.ABC):
@@ -20,7 +20,7 @@ class FlowBase(abc.ABC):
         self.rule_paths = []
 
         # Part used for this flow - default to value in config.py
-        self.part = config.PART
+        self.part = config.DEFAULT_PART
 
     def create_rule_snippets(self):
         """Create the rule snippets for the flow and append them to build.ninja"""
@@ -62,7 +62,7 @@ class Flow(FlowBase):
     def __init__(self, design_path):
         super().__init__()
         self.design_path = design_path
-        self.design_build_path = BUILD_PATH / design_path.relative_to(DESIGNS_PATH)
+        self.design_build_path = BFASST_BUILD / design_path.relative_to(BFASST_DESIGNS)
         design_yaml = self.design_path / "design.yaml"
         parser = DesignParser(design_yaml)
         self.part = parser.part
