@@ -9,6 +9,7 @@ isort
 JPype1
 matplotlib
 numpy
+pandas
 paramiko
 pycapnp
 pylint

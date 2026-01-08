@@ -17,3 +17,6 @@
 [submodule "third_party/rand_soc"]
 	path = third_party/rand_soc
 	url = https://github.com/byuccl/rand_soc.git
+[submodule "designs/opentitan"]
+	path = designs/opentitan
+	url = https://github.com/lowRISC/opentitan.git
