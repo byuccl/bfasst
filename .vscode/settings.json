@@ -11,10 +11,9 @@
         "third_party/fasm2bels/fasm2bels"
     ],
     "git.enableCommitSigning": false,
-    "black-formatter.args": [
-        "--line-length",
-        "100"
-    ],
-    "isort.args":["--profile", "black"]
+    "makefile.configureOnOpen": false,
+    "files.exclude": {
+        "**/.bfasst_installed": true
+    }
 }
 

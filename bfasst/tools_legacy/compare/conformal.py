@@ -6,22 +6,22 @@
 import re
 import socket
 
-# Suppress paramiko warning
-# import warnings
-
-# warnings.filterwarnings(action="ignore", module=".*paramiko.*")
-
 import paramiko
 import scp
 
 import bfasst
 from bfasst import paths
 from bfasst.design import HdlType
-from bfasst.tools_legacy.tool import BfasstException
+from bfasst.locks import conformal_lock
 from bfasst.tools_legacy.compare.base import CompareException, CompareTool
+from bfasst.tools_legacy.tool import BfasstException
 from bfasst.types import Vendor
 from bfasst.utils import error
-from bfasst.locks import conformal_lock
+
+# Suppress paramiko warning
+# import warnings
+
+# warnings.filterwarnings(action="ignore", module=".*paramiko.*")
 
 
 class ConformalCompareTool(CompareTool):
@@ -65,7 +65,7 @@ class ConformalCompareTool(CompareTool):
         if self.vendor == Vendor.XILINX:
             self.remote_libs_dir_path = bfasst.config.CONFORMAL_REMOTE_LIBS_DIR / "xilinx"
             self.local_libs_paths = list(
-                (paths.RESOURCES_PATH / "conformal" / "libraries" / "xilinx").iterdir()
+                (paths.BFASST_RESOURCES / "conformal" / "libraries" / "xilinx").iterdir()
             )
 
             self.local_libs_paths = []
@@ -77,7 +77,7 @@ class ConformalCompareTool(CompareTool):
         elif self.vendor == Vendor.LATTICE:
             self.remote_libs_dir_path = bfasst.config.CONFORMAL_REMOTE_LIBS_DIR / "lattice"
             self.local_libs_paths = (
-                paths.RESOURCES_PATH / "conformal" / "libraries" / "lattice" / "sb_ice_syn.v",
+                paths.BFASST_RESOURCES / "conformal" / "libraries" / "lattice" / "sb_ice_syn.v",
             )
         else:
             assert False, self.vendor

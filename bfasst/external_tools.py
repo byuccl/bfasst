@@ -5,21 +5,21 @@ import socket
 import subprocess
 import sys
 import traceback
-import paramiko
 
+import paramiko
 import yaml
 
-from bfasst.config import IC2_INSTALL_DIR, PART, VIVADO_BIN_PATH
+from bfasst.config import DEFAULT_PART, IC2_INSTALL_DIR, VIVADO
 from bfasst.paths import (
+    BFASST_DESIGNS,
+    BFASST_EXTERNAL_TOOLS,
+    FASM2BELS_PATH,
     ICEBOX_VLOG_PATH,
     ICEUNPACK_PATH,
     RAPIDWRIGHT_PATH,
     ROOT_PATH,
-    THIRD_PARTY_PATH,
     WAFOVE_PATH,
     YOSYS_PATH,
-    FASM2BELS_PATH,
-    DESIGNS_PATH,
 )
 from bfasst.utils.conformal import ConformalCompare
 from bfasst.utils.general import error
@@ -31,11 +31,11 @@ from bfasst.yaml_parser import FlowDescriptionParser
 
 
 def check_rand_soc():
-    return (THIRD_PARTY_PATH / "rand_soc" / "requirements.txt").is_file()
+    return (BFASST_EXTERNAL_TOOLS / "rand_soc" / "requirements.txt").is_file()
 
 
 def check_vivado():
-    return VIVADO_BIN_PATH.is_file()
+    return VIVADO.is_file()
 
 
 def check_ic2():
@@ -47,7 +47,9 @@ def check_icestorm():
 
 
 def check_fasm2bels():
-    return (FASM2BELS_PATH / "env").is_dir() and (FASM2BELS_PATH / f"{PART}_db").is_file()
+    if not (FASM2BELS_PATH / "env").is_dir():
+        return False
+    return True
 
 
 def check_conformal():
@@ -77,7 +79,7 @@ def check_wafove():
 
 
 def check_opentitan():
-    return (DESIGNS_PATH / "opentitan").is_dir()
+    return (BFASST_DESIGNS / "opentitan").is_dir()
 
 
 ################################################################################

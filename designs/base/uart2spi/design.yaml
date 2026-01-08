@@ -1,7 +1,0 @@
-top: top
-
-vhdl_libs:
-  - lib/registers.v
-
-include_all_verilog_files: True
-

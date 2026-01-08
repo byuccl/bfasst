@@ -1,8 +1,8 @@
 """Flow to create Vivado synthesis and implementation ninja snippets."""
 
 from bfasst.flows.flow import Flow
+from bfasst.paths import BFASST_FLOWS
 from bfasst.tools.impl.vivado_impl import VivadoImpl
-from bfasst.paths import FLOWS_PATH
 from bfasst.tools.synth.vivado_synth import VivadoSynth
 
 
@@ -25,4 +25,4 @@ class Vivado(Flow):
         # pylint: enable=duplicate-code
 
     def get_top_level_flow_path(self):
-        return FLOWS_PATH / "vivado.py" if not self.ooc else FLOWS_PATH / "vivado_ooc.py"
+        return BFASST_FLOWS / "vivado.py" if not self.ooc else BFASST_FLOWS / "vivado_ooc.py"

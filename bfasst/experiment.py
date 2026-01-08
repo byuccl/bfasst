@@ -56,7 +56,7 @@ class Experiment:
 
         if "designs" in self.experiment_props:
             for design in self.experiment_props.pop("designs"):
-                design_path = paths.DESIGNS_PATH / design
+                design_path = paths.BFASST_DESIGNS / design
                 if not design_path.is_dir():
                     error("Provided design directory", design_path, "does not exist")
 
@@ -75,7 +75,7 @@ class Experiment:
 
         if "design_dirs" in self.experiment_props:
             for design_dir in self.experiment_props.pop("design_dirs"):
-                design_dir_path = paths.DESIGNS_PATH / design_dir
+                design_dir_path = paths.BFASST_DESIGNS / design_dir
                 if not design_dir_path.is_dir():
                     error(f"{design_dir_path} is not a directory")
 
@@ -100,7 +100,7 @@ class Experiment:
 
     def __create_design_objects(self):
         for design_path in self.design_paths:
-            design = Design(paths.DESIGNS_PATH / design_path, self.work_dir)
+            design = Design(paths.BFASST_DESIGNS / design_path, self.work_dir)
             self.designs.append(design)
 
     def __read_tool_types(self):

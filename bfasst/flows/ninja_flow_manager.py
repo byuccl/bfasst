@@ -8,7 +8,7 @@ import chevron
 
 from bfasst.flows.flow import FlowNoDesign
 from bfasst.flows.flow_utils import create_build_file
-from bfasst.paths import DESIGNS_PATH, NINJA_BUILD_PATH, FLOWS_PATH, ROOT_PATH
+from bfasst.paths import BFASST_DESIGNS, BFASST_FLOWS, NINJA_BUILD_PATH, ROOT_PATH
 from bfasst.utils import error
 from bfasst.yaml_parser import FlowDescriptionParser
 
@@ -56,8 +56,8 @@ class NinjaFlowManager:
             # and if not, look for it in the designs directory.
             for design in designs:
                 design_path = pathlib.Path(design).resolve()
-                if not (design_path.is_dir() and design_path.is_relative_to(DESIGNS_PATH)):
-                    design_path = DESIGNS_PATH / design
+                if not (design_path.is_dir() and design_path.is_relative_to(BFASST_DESIGNS)):
+                    design_path = BFASST_DESIGNS / design
                 if not design_path.is_dir():
                     error(
                         f"Design {design} cannot be found.  This must be a subdirectory of designs/"
@@ -100,7 +100,7 @@ class NinjaFlowManager:
             master_ninja = chevron.render(
                 f,
                 {
-                    "FLOWS_PATH": str(FLOWS_PATH),
+                    "BFASST_FLOWS": str(BFASST_FLOWS),
                     "designs": self.designs,
                     "deps": deps,
                     "flow": self.flow_name,

@@ -1,76 +1,109 @@
-VIVADO_PATH := "/tools/Xilinx/Vivado/2024.2/bin/vivado"
-IN_ENV = if [ -e .venv/bin/activate ]; then . .venv/bin/activate; fi;
-CAPNPJ := $(shell which capnpc-java)
-PYTHON311 := $(shell which python3.11)
-PYTHON312 := $(shell which python3.12)
+SHELL := /bin/bash
+.SHELLFLAGS := -e -o pipefail -c
+MAKEFLAGS += --no-builtin-rules
 
-PUBLIC_SUBMODULES = \
-	third_party/fasm2bels \
-	third_party/RapidWright \
-	third_party/yosys \
-	third_party/WaFoVe \
-	third_party/icestorm \
-	third_party/rand_soc
+BFASST_ROOT := $(realpath .)
+BFASST_EXTERNAL_TOOLS := $(BFASST_ROOT)/third_party
+BFASST_SETUP := $(BFASST_ROOT)/setup
+VENV_VARS := $(BFASST_ROOT)/bfasst.env
+INITIAL_VARS := $(BFASST_SETUP)/env/
+PYTHON := $(or $(shell command -v python3.12), $(shell command -v python3.11), python3.10)
+VENV_DIR := $(BFASST_ROOT)/.venv
+VENV_BIN := $(VENV_DIR)/bin
+VENV_ACTIVATE := $(VENV_BIN)/activate
 
-include external_tools.mk
+# Create a place to store timestamp files for build recipes
+SETUP_BUILD := $(BFASST_SETUP)/build
+STAMP_DIR := $(SETUP_BUILD)/stamps
+$(shell mkdir -p $(STAMP_DIR))
 
-install: submodules venv install_cmake python_packages install_rapidwright env install_fasm2bels install_yosys install_wafove setup_autocomplete
+export BASH_ENV=$(VENV_ACTIVATE)
 
-venv:
-ifneq "$(PYTHON312)" ""
-	python3.12 -m venv .venv
-else ifneq "$(PYTHON311)" ""
-	python3.11 -m venv .venv
+# Below also includes setup/helper_macros.mk
+include $(BFASST_SETUP)/external_tools.mk
+
+################################### Installation and Setup #########################################
+.DEFAULT_GOAL: install
+.PHONY: apt_packages install venv init_venv python_packages setup_autocomplete env_vars enable_pre_commit_hook
+install: venv setup_autocomplete all_submodules
+
+apt_packages:
+	$(BFASST_SETUP)/install_packages.sh
+
+clean: 
+ifndef FORCE_CLEAN
+	@echo "Are you sure? make clean will erase the $(notdir $(VENV_DIR)), $(notdir $(VENV_VARS)), \
+	pre_commit hook, and all submodules installed. Rerun 'make clean FORCE_CLEAN=1' to confirm." >&2
 else
-	python3.10 -m venv .venv
-endif
-	$(IN_ENV) python -m pip install -U pip
-
-packages:
-	./install_packages.sh
-	
-python_packages:
-	$(IN_ENV) python -m pip install -r requirements.txt
-	$(IN_ENV) python -m pip install -e .
-
-capnproto_java:
-ifeq "$(CAPNPJ)" ""
-	$(eval TEMP_DIR := $(shell mktemp -d))
-	cd $(TEMP_DIR) && git clone https://github.com/capnproto/capnproto-java
-	cd $(TEMP_DIR)/capnproto-java && make
-	cd $(TEMP_DIR)/capnproto-java && make install
-	rm -rf $(TEMP_DIR)
+	$(foreach installed, $(subst _updated, ,$(notdir $(SUBMOD_UPDATE_TARGETS))), \
+		rm -f $($(call TO_UPPER, $(installed))_PATH)/.bfasst_installed; \
+	)
+	rm -rf $(VENV_DIR) $(VENV_VARS) $(PRE_COMMIT_HOOK) $(SETUP_BUILD)
+	git submodule deinit -f --all
 endif
 
-submodules:
-	$(foreach submodule,$(PUBLIC_SUBMODULES),git submodule init $(submodule); git submodule update $(submodule);)
+.NOTPARALLEL: $(VENV_ACTIVATE) $(VENV_VARS)
 
-env: venv python_packages 
-	echo >> ".venv/bin/activate"
-	echo "export VIVADO_PATH=$(VIVADO_PATH)" >> ".venv/bin/activate"
-	echo "unset VIVADO_PATH" > ".venv/bin/deactivate"
-	echo "export PYTHONNOUSERSITE=1" >> ".venv/bin/activate"
-	echo "unset PYTHONNOUSERSITE" >> ".venv/bin/deactivate"
+init_venv: $(VENV_ACTIVATE)
+$(VENV_ACTIVATE) $(VENV_BIN):
+	$(PYTHON) -m venv $(VENV_DIR) --prompt bfasst
 
+python_packages: $(VENV_BIN)/cmake pyproject.toml
+	python -m pip install -U pip
+	python -m pip install -e .
+
+env_vars: $(VENV_VARS)
+$(VENV_VARS): | $(VENV_ACTIVATE)
+	cat $(INITIAL_VARS)/header.txt > $(VENV_VARS)
+	echo 'BFASST_ROOT=$(BFASST_ROOT)' >> $(VENV_VARS)
+	echo 'BFASST_EXTERNAL_TOOLS=$(BFASST_EXTERNAL_TOOLS)' >> $(VENV_VARS)
+	cat $(INITIAL_VARS)/general.env >>	$(VENV_VARS)
+ifndef _load_project_env_vars
+	echo 'BFASST_ENV_VARS=$(VENV_VARS)' > $(VENV_ACTIVATE).tmp
+	echo 'source $(BFASST_SETUP)/env_vars.sh' >>	$(VENV_ACTIVATE).tmp
+	sed 's/^deactivate () {/deactivate () {\n    _restore_project_env_vars "$${1:-}"/' $(VENV_ACTIVATE) >>	$(VENV_ACTIVATE).tmp
+	echo -e '\n_load_project_env_vars "$(VENV_VARS)"' >>	$(VENV_ACTIVATE).tmp
+	mv $(VENV_ACTIVATE).tmp $(VENV_ACTIVATE)
+endif
+
+venv: $(VENV_ACTIVATE) $(VENV_VARS) python_packages
+
+AUTO_COMPLETE := source $(BFASST_SETUP)/flow_autocomplete.sh
+setup_autocomplete: $(VENV_ACTIVATE)
+ifeq ($(shell grep -Fx "$(AUTO_COMPLETE)" "$(VENV_ACTIVATE)" 2>/dev/null),)
+	flock $(VENV_VARS) -c 'echo -e "\n$(AUTO_COMPLETE)" >> "$(VENV_ACTIVATE)"'
+endif
+
+PRE_COMMIT_HOOK = "$(BFASST_ROOT)/.git/hooks/pre-commit"
+enable_pre_commit_hook: $(PRE_COMMIT_HOOK)
+$(PRE_COMMIT_HOOK):
+	echo "#!/bin/bash" > $(PRE_COMMIT_HOOK)
+	echo "make pre_commit" >> $(PRE_COMMIT_HOOK)
+	chmod +x $(PRE_COMMIT_HOOK)
+	@echo "Enabled pre-commit hook at $(PRE_COMMIT_HOOK)"
+
+################################## Linting and Testing #############################################
+.PHONY: pre_commit format pylint doctest unittest unittest_failfast
+pre_commit:
 
 format:
+	$(info $(MAKEFLAGS))
 	find ./scripts ./bfasst -iname "*.py" -exec black -q -l 100 {} \;
 
-
 pylint: format
-	git fetch
+	git fetch origin main
 	pylint --errors-only $$(git ls-files --directory scripts --directory bfasst | grep -e ".py$$")
-	pylint $$(git diff --name-only | grep -e ".py$$")
-
+	pylint $$(git diff origin/main --diff-filter=AM --name-only | grep -e ".py$$")
 
 doctest:
 	find bfasst -iname "*.py" -exec python -m doctest {} \;
 
 unittest:
-	$(IN_ENV) python -m unittest
+	python -m unittest
 
 unittest_failfast:
-	$(IN_ENV) python -m unittest -f
+	python -m unittest -f
 
-setup_autocomplete:
-	./scripts/setup_autocomplete.sh 
+debug:
+	@echo "MAKEFLAGS: $(MAKEFLAGS)"
+	@echo "MAKECMDGOALS: $(MAKECMDGOALS)"

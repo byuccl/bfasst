@@ -1,7 +1,7 @@
 """Tool to convert a physical netlist to a logical netlist"""
 
+from bfasst.paths import BFASST_UTILS, NINJA_TRANSFORM_TOOLS
 from bfasst.tools.tool import Tool
-from bfasst.paths import BFASST_UTILS_PATH, NINJA_TRANSFORM_TOOLS_PATH
 
 
 class NetlistPhysToLogical(Tool):
@@ -15,7 +15,7 @@ class NetlistPhysToLogical(Tool):
         self.build_path = self.design_build_path / "netlist_phys_to_logical"
         self._init_outputs()
         self.rule_snippet_path = (
-            NINJA_TRANSFORM_TOOLS_PATH / "netlist_phys_to_logical_rules.ninja.mustache"
+            NINJA_TRANSFORM_TOOLS / "netlist_phys_to_logical_rules.ninja.mustache"
         )
 
     def _init_outputs(self):
@@ -25,8 +25,8 @@ class NetlistPhysToLogical(Tool):
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
-        deps.append(BFASST_UTILS_PATH / "netlist_phys_to_logical.py")
-        deps.append(BFASST_UTILS_PATH / "sdn_helpers.py")
+        deps.append(BFASST_UTILS / "netlist_phys_to_logical.py")
+        deps.append(BFASST_UTILS / "sdn_helpers.py")
 
     def create_build_snippets(self):
         self._append_build_snippets_default(

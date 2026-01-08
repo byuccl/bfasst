@@ -1,12 +1,12 @@
 """Run vivado, phys_netlist, reverse with xray, then compare with conformal."""
 
 from bfasst.flows.flow import Flow
-from bfasst.tools.impl.vivado_impl import VivadoImpl
+from bfasst.paths import BFASST_FLOWS
 from bfasst.tools.compare.conformal.conformal import Conformal
+from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.tools.rev_bit.xray import Xray
-from bfasst.paths import FLOWS_PATH
-from bfasst.types import Vendor
 from bfasst.tools.synth.vivado_synth import VivadoSynth
+from bfasst.types import Vendor
 
 
 class VivadoConformal(Flow):
@@ -38,4 +38,4 @@ class VivadoConformal(Flow):
         # pylint: enable=duplicate-code
 
     def get_top_level_flow_path(self) -> str:
-        return FLOWS_PATH / "vivado_conformal.py"
+        return BFASST_FLOWS / "vivado_conformal.py"
