@@ -59,6 +59,7 @@ class ImplDetailedReports(ImplTool):
         self.outputs["clocks"] = bp / "clocks.txt"
         self.outputs["journal"] = bp / "vivado.jou"
         self.outputs["drc"] = bp / "drc_report.txt"
+        self.outputs["verilog"] = bp / (str(self.impl_dcp) + ".v")
         self.outputs["bitstream"] = bp / "bitstream.bit"
         self.outputs["log"] = bp / "vivado.log"
 

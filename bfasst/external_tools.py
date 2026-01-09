@@ -9,10 +9,11 @@ import paramiko
 
 import yaml
 
-from bfasst.config import IC2_INSTALL_DIR, PART, VIVADO_BIN_PATH
+from bfasst.config import IC2_INSTALL_DIR, PART_FAMILY, PART, VIVADO_BIN_PATH
 from bfasst.paths import (
     ICEBOX_VLOG_PATH,
     ICEUNPACK_PATH,
+    SCRIPTS_PATH,
     RAPIDWRIGHT_PATH,
     ROOT_PATH,
     THIRD_PARTY_PATH,
@@ -21,7 +22,7 @@ from bfasst.paths import (
     FASM2BELS_PATH,
     DESIGNS_PATH,
 )
-from bfasst.utils.conformal import ConformalCompare
+from bfasst.utils.compare.conformal import ConformalCompare
 from bfasst.utils.general import error
 from bfasst.yaml_parser import FlowDescriptionParser
 
@@ -47,7 +48,11 @@ def check_icestorm():
 
 
 def check_fasm2bels():
-    return (FASM2BELS_PATH / "env").is_dir() and (FASM2BELS_PATH / f"{PART}_db").is_file()
+    if not (FASM2BELS_PATH / "env").is_dir():
+        return False
+    if not (FASM2BELS_PATH / f"{PART}_db").is_file():
+        subprocess.run([f"{SCRIPTS_PATH}/database.sh", PART_FAMILY, PART], cwd=ROOT_PATH)
+    return True
 
 
 def check_conformal():

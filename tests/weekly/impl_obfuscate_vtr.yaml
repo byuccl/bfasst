@@ -1,0 +1,10 @@
+designs:
+  - vtr_benchmarks/blob_merge
+  - vtr_benchmarks/boundtop
+  - vtr_benchmarks/ch_intrinsics
+  - vtr_benchmarks/diffeq1
+  - vtr_benchmarks/diffeq2
+  - vtr_benchmarks/or1200
+  - vtr_benchmarks/stereovision0
+
+flow: impl_obfuscate

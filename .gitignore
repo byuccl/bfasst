@@ -19,6 +19,7 @@ __pycache__
 *wire_swap*
 *bit_flip*
 *result*
+scripts/timing_artifacts/*
 
 # Vivado files
 .Xil
