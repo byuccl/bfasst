@@ -9,7 +9,7 @@ import paramiko
 
 import yaml
 
-from bfasst.config import IC2_INSTALL_DIR, PART_FAMILY, PART, VIVADO_BIN_PATH
+from bfasst.config import IC2_INSTALL_DIR, PART, VIVADO_BIN_PATH
 from bfasst.paths import (
     ICEBOX_VLOG_PATH,
     ICEUNPACK_PATH,
@@ -23,7 +23,7 @@ from bfasst.paths import (
     DESIGNS_PATH,
 )
 from bfasst.utils.compare.conformal import ConformalCompare
-from bfasst.utils.general import error
+from bfasst.utils.general import error, get_family_from_part
 from bfasst.yaml_parser import FlowDescriptionParser
 
 ################################################################################
@@ -51,7 +51,7 @@ def check_fasm2bels():
     if not (FASM2BELS_PATH / "env").is_dir():
         return False
     if not (FASM2BELS_PATH / f"{PART}_db").is_file():
-        subprocess.run([f"{SCRIPTS_PATH}/database.sh", PART_FAMILY, PART], cwd=ROOT_PATH)
+        subprocess.run([f"{SCRIPTS_PATH}/database.sh", get_family_from_part(PART), PART], cwd=ROOT_PATH)
     return True
 
 
