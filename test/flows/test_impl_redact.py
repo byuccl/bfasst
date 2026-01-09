@@ -1,22 +1,22 @@
-"""Unit tests for ImplObfuscate flow."""
+"""Unit tests for ImplRedact flow."""
 # pylint: disable=duplicate-code
 
 import unittest
 import os
 
 from bfasst.flows.flow_utils import create_build_file
-from bfasst.flows.impl_obfuscate import ImplObfuscate
+from bfasst.flows.impl_redact import ImplRedact
 from bfasst.paths import DESIGNS_PATH, NINJA_BUILD_PATH, FLOWS_PATH
 
 
-class TestImplObfuscate(unittest.TestCase):
-    """Unit tests for the ImplObfuscate flow."""
+class TestImplRedact(unittest.TestCase):
+    """Unit tests for the ImplRedact flow."""
 
     @classmethod
     def setUpClass(cls):
         create_build_file()
 
-        cls.flow = ImplObfuscate(DESIGNS_PATH / "byu/alu")
+        cls.flow = ImplRedact(DESIGNS_PATH / "byu/alu")
         cls.flow.create_tool_build_dirs()
         cls.flow.create_rule_snippets()
         cls.flow.create_build_snippets()
@@ -27,8 +27,8 @@ class TestImplObfuscate(unittest.TestCase):
         with open(NINJA_BUILD_PATH, "r") as f:
             ninja = f.read()
         self.assertIn("rule vivado", ninja)
-        self.assertIn("rule netlist_obfuscate", ninja)
-        self.assertIn("rule netlist_deobfuscate", ninja)
+        self.assertIn("rule netlist_redact", ninja)
+        self.assertIn("rule netlist_unredact", ninja)
         self.assertIn("rule physcmp", ninja)
 
 
@@ -39,15 +39,15 @@ class TestImplObfuscate(unittest.TestCase):
         self.assertIn("vivado_synth", ninja)
         self.assertIn("vivado_impl", ninja)
         self.assertIn("vivado_reimpl", ninja)
-        self.assertIn("netlist_obfuscate.log", ninja)
-        self.assertIn("netlist_deobfuscate.log", ninja)
+        self.assertIn("netlist_redact.log", ninja)
+        self.assertIn("netlist_unredact.log", ninja)
         self.assertIn("full_timing_summary.txt", ninja)
         self.assertIn("physcmp.log", ninja)
 
 
     def test_get_top_level_flow_path(self):
         """Ensure get_top_level_flow_path points at the correct file."""
-        expected = f"{FLOWS_PATH}/impl_obfuscate.py"
+        expected = f"{FLOWS_PATH}/impl_redact.py"
         self.assertEqual(str(self.flow.get_top_level_flow_path()), expected)
 
 

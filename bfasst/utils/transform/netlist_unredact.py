@@ -1,12 +1,12 @@
 """
-Netlist De-obfuscation (paper-aligned, minimal with name fallbacks)
+Netlist Unredaction (paper-aligned, minimal with name fallbacks)
 
-- Reads obfuscated DCP/EDIF and restores properties by looking up entries
+- Reads redacted DCP/EDIF and restores properties by looking up entries
   in JSON.
 - Lookup order: exact full hierarchical name -> ORIG_CELL_NAME -> tag (TAG_PROP)
   -> suffix stripping.
 - Reads UNMODIFIED DCP/EDIF and writes them back out unchanged (paper artifact).
-- Writes de-obfuscated DCP/EDIF and the unmodified DCP/EDIF.
+- Writes unredacted DCP/EDIF and the unmodified DCP/EDIF.
 
 Intentionally omits INIT transform inference, INIT reshaping, and other heuristics.
 """
@@ -20,7 +20,7 @@ import time
 from typing import Dict, Tuple, Optional
 
 from bfasst import jpype_jvm
-from bfasst.utils.transform.netlist_obfuscate_helpers import TAG_PROP  # tag property key
+from bfasst.utils.transform.netlist_redact_helpers import TAG_PROP  # tag property key
 
 jpype_jvm.start()
 
@@ -208,11 +208,11 @@ def restore_all_properties(design: Design, json_db: Dict[str, dict]) -> None:
 
 # ----------------- CLI Runner -----------------
 def main():
-    """Netlist Restoration Runner (paper-aligned with name fallbacks)."""
+    """Netlist Unredaction Runner (paper-aligned with name fallbacks)."""
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--build_path", required=True, type=pathlib.Path, help="Dir for logs/outputs")
 
-    # Obfuscated design (apply properties here)
+    # Redacted design (apply properties here)
     p.add_argument("--dcp_in", required=True, type=pathlib.Path, help="Input checkpoint (.dcp)")
     p.add_argument("--edf_in", required=True, type=pathlib.Path, help="Input EDIF (.edf)")
     p.add_argument(
@@ -221,8 +221,8 @@ def main():
         type=pathlib.Path,
         help="JSON mapping: full hier inst name -> properties",
     )
-    p.add_argument("--out_dcp", required=True, type=pathlib.Path, help="Output de-obfuscated DCP")
-    p.add_argument("--out_edf", required=True, type=pathlib.Path, help="Output de-obfuscated EDIF")
+    p.add_argument("--out_dcp", required=True, type=pathlib.Path, help="Output unredacted DCP")
+    p.add_argument("--out_edf", required=True, type=pathlib.Path, help="Output unredacted EDIF")
 
     # Unmodified design (pass-through; artifact includes this)
     p.add_argument(
@@ -242,7 +242,7 @@ def main():
     )
 
     p.add_argument(
-        "--log", default="netlist_deobfuscate.log", help="Log filename (inside build_path)"
+        "--log", default="netlist_unredact.log", help="Log filename (inside build_path)"
     )
     p.add_argument(
         "--logging_level",
@@ -265,25 +265,25 @@ def main():
         props_db = json.load(f)
     logging.info("Loaded properties for %d entries", len(props_db))
 
-    # Load obfuscated design
+    # Load redacted design
     t0 = time.perf_counter()
-    design_obf = Design.readCheckpoint(args.dcp_in, args.edf_in)
-    logging.info("Obfuscated design loaded in %.2f s", time.perf_counter() - t0)
+    design_redacted = Design.readCheckpoint(args.dcp_in, args.edf_in)
+    logging.info("Redacted design loaded in %.2f s", time.perf_counter() - t0)
 
     # Restore properties (with fallback matching)
-    logging.info("Restoring properties on obfuscated design (with name fallbacks)")
+    logging.info("Restoring properties on redacted design (with name fallbacks)")
     t1 = time.perf_counter()
-    restore_all_properties(design_obf, props_db)
+    restore_all_properties(design_redacted, props_db)
     logging.info("Restoration complete in %.2f s", time.perf_counter() - t1)
 
-    # Write de-obfuscated outputs
+    # Write unredacted outputs
     t2 = time.perf_counter()
-    design_obf.writeCheckpoint(args.out_dcp)
-    logging.info("Wrote de-obfuscated DCP in %.2f s", time.perf_counter() - t2)
+    design_redacted.writeCheckpoint(args.out_dcp)
+    logging.info("Wrote unredacted DCP in %.2f s", time.perf_counter() - t2)
 
     t3 = time.perf_counter()
-    design_obf.getNetlist().exportEDIF(args.out_edf)
-    logging.info("Wrote de-obfuscated EDIF in %.2f s", time.perf_counter() - t3)
+    design_redacted.getNetlist().exportEDIF(args.out_edf)
+    logging.info("Wrote unredacted EDIF in %.2f s", time.perf_counter() - t3)
 
     # Load unmodified design and write through (no changes)
     logging.info("Loading unmodified design (pass-through)")
@@ -299,7 +299,7 @@ def main():
     design_unmod.getNetlist().exportEDIF(args.unmodified_out_edf)
     logging.info("Wrote unmodified EDIF in %.2f s", time.perf_counter() - t6)
 
-    logging.info("NetlistDeobfuscate (paper-aligned with fallbacks) complete")
+    logging.info("NetlistUnredact (paper-aligned with fallbacks) complete")
 
 
 if __name__ == "__main__":

@@ -61,4 +61,4 @@ designs:
   - vtr_benchmarks/stereovision2
   - vtr_benchmarks/stereovision3
 
-flow: impl_obfuscate
+flow: impl_redact

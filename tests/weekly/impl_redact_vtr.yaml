@@ -7,4 +7,4 @@ designs:
   - vtr_benchmarks/or1200
   - vtr_benchmarks/stereovision0
 
-flow: impl_obfuscate
+flow: impl_redact

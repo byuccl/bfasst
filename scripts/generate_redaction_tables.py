@@ -1,5 +1,5 @@
 """
-All-in-one timing + obfuscation artifact generator.
+All-in-one timing + redaction artifact generator.
 
 Point this at two build directories ("default" and "custom") and it will:
   1) Find and parse *physcmp/physcmp.log* files in each tree.
@@ -17,16 +17,16 @@ Point this at two build directories ("default" and "custom") and it will:
          - overall_averages.csv
          - fmax_summary.csv (like the old fmax_from_physcmp.py)
 
-  2) Parse obfuscation-related logs in the *custom* tree (or a user-provided --obf-root):
-     - netlist_obfuscate/netlist_obfuscate.log and netlist_deobfuscate/netlist_deobfuscate.log
+  2) Parse redaction-related logs in the *custom* tree (or a user-provided --redact-root):
+     - netlist_redact/netlist_redact.log and netlist_unredact/netlist_unredact.log
      - Extract runtimes, total cells, LUT/FF inventory when present
-     - Summarize obfuscated cell types and modified properties from
-       netlist_obfuscate/original_cell_props.json when available
+     - Summarize redacted cell types and modified properties from
+       netlist_redact/original_cell_props.json when available
      - Emit:
-         - obf_deobf_timings.csv
-         - obf_cell_types_summary.csv
-         - obf_properties_by_cell_type.csv
-         - obf_summary_for_paper.md
+         - redact_unredact_timings.csv
+         - redact_cell_types_summary.csv
+         - redact_properties_by_cell_type.csv
+         - redact_summary_for_paper.md
 
 Optional plotting: if matplotlib and pandas/numpy are available, WNS/TNS degradation bar charts
 (written under outdir/timing_outputs). If not installed, CSVs are still produced.
@@ -84,11 +84,11 @@ GOLDEN_ONLY_METRIC_RE = re.compile(
 
 WNS_LINE_RE = re.compile(r"^.*overall_wns\s+golden=\s*([+-]?\d+(?:\.\d+)?)", re.IGNORECASE)
 
-# Obfuscation block parsing
-OBF_START_RE = re.compile(r"\bObfuscated\s+\d+\s+cells:")
+# Redaction block parsing
+REDACT_START_RE = re.compile(r"\bRedacted\s+\d+\s+cells:")
 INV_LINE_RE = re.compile(r"INFO[:\s]+([A-Z0-9_]+)[,:]\s+(\d+)")
-TOTAL_CELLS_OBF_RE = re.compile(r"Total cells in design:\s+(\d+)")
-TOTAL_CELLS_DEOBF_RE = re.compile(r"Loaded properties for\s+(\d+)\s+cells")
+TOTAL_CELLS_REDACT_RE = re.compile(r"Total cells in design:\s+(\d+)")
+TOTAL_CELLS_UNREDACT_RE = re.compile(r"Loaded properties for\s+(\d+)\s+cells")
 TS_RE = re.compile(r"^(?P<ts>\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}(?:\.\d{3})?)")
 
 METRICS_CONFIG = {
@@ -509,7 +509,7 @@ def emit_timing_artifacts(
 
 
 # -------------------------------
-# Phase 2: Obfuscation runtimes & inventory (from a single root, typically custom)
+# Phase 2: Redaction runtimes & inventory (from a single root, typically custom)
 # -------------------------------
 
 
@@ -527,11 +527,11 @@ def _parse_ts(line: str) -> Optional[float]:
     return None
 
 
-def scan_obf_deobf_log(
+def scan_obf_deredact_log(
     log_path: Path, mode: str
 ) -> Tuple[Optional[float], Optional[int], Optional[int], Optional[int], bool]:
     """
-    mode in {"obf", "deobf"}
+    mode in {"redact", "unredact"}
     Returns: (runtime_ms, total_cells, lut_count, ff_count, saw_inventory)
     """
     # pylint: disable=too-many-branches
@@ -541,8 +541,8 @@ def scan_obf_deobf_log(
     lines = log_path.read_text(encoding="utf-8", errors="ignore").splitlines()
     first_ts: Optional[float] = None
     end_ts: Optional[float] = None
-    total_cells_obf: Optional[int] = None
-    total_cells_deobf: Optional[int] = None
+    total_cells_redact: Optional[int] = None
+    total_cells_unredact: Optional[int] = None
     lut_sum = 0
     ff_sum = 0
     saw_inventory = False
@@ -556,19 +556,19 @@ def scan_obf_deobf_log(
 
     for ln in lines:
         t = _parse_ts(ln)
-        if mode == "obf" and "NetlistObfuscate done" in ln and t is not None:
+        if mode == "obf" and "NetlistRedact done" in ln and t is not None:
             end_ts = t
-        elif mode == "deobf" and "NetlistDeobfuscate complete" in ln and t is not None:
+        elif mode == "deobf" and "NetlistUnredact complete" in ln and t is not None:
             end_ts = t
 
-        if total_cells_obf is None:
-            m = TOTAL_CELLS_OBF_RE.search(ln)
+        if total_cells_redact is None:
+            m = TOTAL_CELLS_REDACT_RE.search(ln)
             if m:
-                total_cells_obf = int(m.group(1))
-        if total_cells_deobf is None:
-            m = TOTAL_CELLS_DEOBF_RE.search(ln)
+                total_cells_redact = int(m.group(1))
+        if total_cells_unredact is None:
+            m = TOTAL_CELLS_UNREDACT_RE.search(ln)
             if m:
-                total_cells_deobf = int(m.group(1))
+                total_cells_unredact = int(m.group(1))
 
         m = INV_LINE_RE.search(ln)
         if m:
@@ -590,21 +590,21 @@ def scan_obf_deobf_log(
     if first_ts is not None and end_ts is not None:
         runtime_ms = (end_ts - first_ts) * 1000.0
 
-    total_cells = total_cells_obf if total_cells_obf is not None else total_cells_deobf
+    total_cells = total_cells_redact if total_cells_redact is not None else total_cells_unredact
     lut_count = lut_sum if saw_inventory else None
     ff_count = ff_sum if saw_inventory else None
     return runtime_ms, total_cells, lut_count, ff_count, saw_inventory
 
 
-def parse_obf_block_counts(obf_log: Path) -> Dict[str, int]:
+def parse_redact_block_counts(redact_log: Path) -> Dict[str, int]:
     """Helper to parse redaction logs"""
     counts = defaultdict(int)
-    if not obf_log.exists():
+    if not redact_log.exists():
         return counts
     in_block = False
-    for line in obf_log.read_text(encoding="utf-8", errors="ignore").splitlines():
+    for line in redact_log.read_text(encoding="utf-8", errors="ignore").splitlines():
         if not in_block:
-            if OBF_START_RE.search(line):
+            if REDACT_START_RE.search(line):
                 in_block = True
             continue
         m = INV_LINE_RE.search(line)
@@ -656,64 +656,64 @@ def parse_original_cell_props(json_path: Path) -> Tuple[Dict[str, Dict[str, int]
     return props_by_cell, insts_by_cell
 
 
-def gather_obf_summaries(obf_root: Path, outdir: Path) -> None:
+def gather_redact_summaries(redact_root: Path, outdir: Path) -> None:
     """Helper to get summaries for redacted designs"""
     # pylint: disable=too-many-statements, too-many-branches
     rows: Dict[str, Dict[str, Optional[float]]] = {}
 
-    for log in obf_root.rglob("netlist_obfuscate/netlist_obfuscate.log"):
+    for log in redact_root.rglob("netlist_redact/netlist_redact.log"):
         design_dir = log.parent.parent
         coll_dir = design_dir.parent
         key = f"{coll_dir.name}/{design_dir.name}"
-        rt, tc, lut, ff, inv = scan_obf_deobf_log(log, mode="obf")
+        rt, tc, lut, ff, inv = scan_obf_deredact_log(log, mode="redact")
         row = rows.setdefault(
             key,
             {
                 "key": key,
                 "collection": coll_dir.name,
                 "design": design_dir.name,
-                "obf_runtime_ms": None,
-                "deobf_runtime_ms": None,
+                "redact_runtime_ms": None,
+                "deredact_runtime_ms": None,
                 "total_cells": None,
                 "lut_count": None,
                 "ff_count": None,
             },
         )
         if rt is not None:
-            row["obf_runtime_ms"] = rt
+            row["redact_runtime_ms"] = rt
         if tc is not None:
             row["total_cells"] = tc
         if inv:
             row["lut_count"] = lut
             row["ff_count"] = ff
 
-    for log in obf_root.rglob("netlist_deobfuscate/netlist_deobfuscate.log"):
+    for log in redact_root.rglob("netlist_unredact/netlist_unredact.log"):
         design_dir = log.parent.parent
         coll_dir = design_dir.parent
         key = f"{coll_dir.name}/{design_dir.name}"
-        rt, tc, lut, ff, inv = scan_obf_deobf_log(log, mode="deobf")
+        rt, tc, lut, ff, inv = scan_obf_deredact_log(log, mode="unredact")
         row = rows.setdefault(
             key,
             {
                 "key": key,
                 "collection": coll_dir.name,
                 "design": design_dir.name,
-                "obf_runtime_ms": None,
-                "deobf_runtime_ms": None,
+                "redact_runtime_ms": None,
+                "deredact_runtime_ms": None,
                 "total_cells": None,
                 "lut_count": None,
                 "ff_count": None,
             },
         )
         if rt is not None:
-            row["deobf_runtime_ms"] = rt
+            row["deredact_runtime_ms"] = rt
         if row.get("total_cells") is None and tc is not None:
             row["total_cells"] = tc
         if (row.get("lut_count") is None or row.get("ff_count") is None) and inv:
             row["lut_count"] = lut
             row["ff_count"] = ff
 
-    timings_csv = outdir / "obf_deobf_timings.csv"
+    timings_csv = outdir / "redact_unredact_timings.csv"
     with timings_csv.open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(
             f,
@@ -721,8 +721,8 @@ def gather_obf_summaries(obf_root: Path, outdir: Path) -> None:
                 "key",
                 "collection",
                 "design",
-                "obf_runtime_ms",
-                "deobf_runtime_ms",
+                "redact_runtime_ms",
+                "deredact_runtime_ms",
                 "total_cells",
                 "lut_count",
                 "ff_count",
@@ -733,26 +733,26 @@ def gather_obf_summaries(obf_root: Path, outdir: Path) -> None:
             writer.writerow(rows[key])
 
     # 2b) Cell-type and property summaries from logs + JSON
-    total_obf_counts = defaultdict(int)
+    total_redact_counts = defaultdict(int)
     json_insts_by_cell = defaultdict(int)
     props_by_cell_agg = defaultdict(lambda: defaultdict(int))
     designs_with_type = defaultdict(set)
     design_seen = 0
 
-    for obf_log in obf_root.rglob("netlist_obfuscate/netlist_obfuscate.log"):
+    for redact_log in redact_root.rglob("netlist_redact/netlist_redact.log"):
         design_seen += 1
-        design_dir = obf_log.parent.parent
+        design_dir = redact_log.parent.parent
         collection_dir = design_dir.parent
         key = f"{collection_dir.name}/{design_dir.name}"
 
         # From log block
-        obf_counts = parse_obf_block_counts(obf_log)
-        for cell_type, cnt in obf_counts.items():
-            total_obf_counts[cell_type] += cnt
+        redact_counts = parse_redact_block_counts(redact_log)
+        for cell_type, cnt in redact_counts.items():
+            total_redact_counts[cell_type] += cnt
             designs_with_type[cell_type].add(key)
 
         # From JSON
-        json_path = design_dir / "netlist_obfuscate" / "original_cell_props.json"
+        json_path = design_dir / "netlist_redact" / "original_cell_props.json"
         props_by_cell, insts_by_cell = parse_original_cell_props(json_path)
         for cell_type, inst_cnt in insts_by_cell.items():
             json_insts_by_cell[cell_type] += inst_cnt
@@ -761,29 +761,29 @@ def gather_obf_summaries(obf_root: Path, outdir: Path) -> None:
             for prop, cnt in prop_map.items():
                 props_by_cell_agg[cell_type][prop] += cnt
 
-    summary_csv = outdir / "obf_cell_types_summary.csv"
+    summary_csv = outdir / "redact_cell_types_summary.csv"
     with summary_csv.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(
             [
                 "cell_type",
-                "obfuscated_instances_from_logs",
+                "redacted_instances_from_logs",
                 "json_modified_instances",
                 "designs_seen",
             ]
         )
-        all_cell_types = set(total_obf_counts.keys()) | set(json_insts_by_cell.keys())
+        all_cell_types = set(total_redact_counts.keys()) | set(json_insts_by_cell.keys())
         for ctype in sorted(all_cell_types):
             w.writerow(
                 [
                     ctype,
-                    total_obf_counts.get(ctype, 0),
+                    total_redact_counts.get(ctype, 0),
                     json_insts_by_cell.get(ctype, 0),
                     len(designs_with_type.get(ctype, set())),
                 ]
             )
 
-    props_csv = outdir / "obf_properties_by_cell_type.csv"
+    props_csv = outdir / "redact_properties_by_cell_type.csv"
     with props_csv.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(["cell_type", "property_identifier", "count_instances_modified"])
@@ -791,19 +791,19 @@ def gather_obf_summaries(obf_root: Path, outdir: Path) -> None:
             for prop, cnt in sorted(props_by_cell_agg[ctype].items(), key=lambda x: (-x[1], x[0])):
                 w.writerow([ctype, prop, cnt])
 
-    md_path = outdir / "obf_summary_for_paper.md"
+    md_path = outdir / "redact_summary_for_paper.md"
     with md_path.open("w", encoding="utf-8") as f:
-        f.write("# Obfuscation Capability Summary\n\n")
-        f.write(f"- Designs scanned under `{obf_root}`: {design_seen}\n")
+        f.write("# Redaction Capability Summary\n\n")
+        f.write(f"- Designs scanned under `{redact_root}`: {design_seen}\n")
         f.write(
-            "- The following cell types were obfuscated and their commonly modified properties:\n\n"
+            "- The following cell types were redacted and their commonly modified properties:\n\n"
         )
-        all_cell_types = set(total_obf_counts.keys()) | set(json_insts_by_cell.keys())
+        all_cell_types = set(total_redact_counts.keys()) | set(json_insts_by_cell.keys())
         for ctype in sorted(all_cell_types):
-            log_cnt = total_obf_counts.get(ctype, 0)
+            log_cnt = total_redact_counts.get(ctype, 0)
             json_cnt = json_insts_by_cell.get(ctype, 0)
             f.write(f"## {ctype}\n")
-            f.write(f"- Instances obfuscated (logs): **{log_cnt}**\n")
+            f.write(f"- Instances redacted (logs): **{log_cnt}**\n")
             f.write(f"- Instances with modified properties (JSON): **{json_cnt}**\n")
             props = props_by_cell_agg.get(ctype, {})
             if props:
@@ -902,7 +902,7 @@ def optional_degradation_outputs(outdir: Path) -> None:
 def main() -> None:
     """Script to generate artifacts for the netlist redaction paper"""
     ap = argparse.ArgumentParser(
-        description="Generate all timing/obfuscation artifacts from two builds."
+        description="Generate all timing/redaction artifacts from two builds."
     )
     ap.add_argument(
         "--default",
@@ -917,10 +917,10 @@ def main() -> None:
         help="Custom/test build root",
     )
     ap.add_argument(
-        "--obf-root",
+        "--redact-root",
         type=Path,
         default=None,
-        help="Root to scan for obfuscation logs (defaults to --custom)",
+        help="Root to scan for redaction logs (defaults to --custom)",
     )
     ap.add_argument(
         "--outdir", type=Path, default=Path("physopt_compare_out"), help="Directory for outputs"
@@ -959,9 +959,9 @@ def main() -> None:
             per_design_summary[key] = summary
         emit_timing_artifacts(args.outdir, per_design_rows, per_design_summary, args.constraint_ns)
 
-    # Phase 2: obfuscation summaries (custom by default)
-    obf_root = args.obf_root or args.custom
-    gather_obf_summaries(obf_root, args.outdir)
+    # Phase 2: redaction summaries (custom by default)
+    redact_root = args.redact_root or args.custom
+    gather_redact_summaries(redact_root, args.outdir)
 
     # Optional plots
     if not args.skip_plots:

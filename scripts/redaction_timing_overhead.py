@@ -10,7 +10,7 @@ from typing import Dict, Optional, Tuple, List
 # =============================================================================
 # ---------- Configuration: put your build roots here ----------
 # Each entry should point to the top-level design directory that contains
-# vivado_synth/, vivado_impl/ (or vivado_reimpl/), netlist_obfuscate/, etc.
+# vivado_synth/, vivado_impl/ (or vivado_reimpl/), netlist_redact/, etc.
 # =============================================================================
 BUILD_ROOTS: List[Path] = [
     Path("../build/byu/alu"),
@@ -149,8 +149,8 @@ def parse_vivado_log_to_dict(log_path: Path) -> Dict[str, float]:
 
 _RW_SECTION_KIND_RE = re.compile(r"(Reading|Writing)\s+DCP:\s*(.+)", re.IGNORECASE)
 _RW_TOTAL_ANY_RE = re.compile(r"\*Total\*:\s*([0-9]+(?:\.[0-9]+)?)s", re.IGNORECASE)
-_RW_OBFUSCATION_RE = re.compile(
-    r"Finished cell property obfuscation in\s+([0-9.]+)\s*s", re.IGNORECASE
+_RW_REDACTION_RE = re.compile(
+    r"Finished cell property redaction in\s+([0-9.]+)\s*s", re.IGNORECASE
 )
 _RW_RESTORATION_RE = re.compile(r"Restoration complete in\s+([0-9.]+)\s*s", re.IGNORECASE)
 
@@ -174,14 +174,14 @@ def _match_total_seconds(line: str) -> Optional[float]:
     return float(m.group(1)) if m else None
 
 
-def parse_rw_obfuscate_breakdown_ms(log_path: Path) -> Tuple[Dict[str, int], Dict[str, int]]:
+def parse_rw_redact_breakdown_ms(log_path: Path) -> Tuple[Dict[str, int], Dict[str, int]]:
     """
-    netlist_obfuscate.log -> (golden_dict, test_dict) with:
-      - netlist_obfuscate.rapidwright_read_dcp      (use FIRST Reading DCP total for both)
-      - netlist_obfuscate.rapidwright_write_dcp
-            (untransformed_* -> golden, transformed_* -> test)
-      - netlist_obfuscate.obfuscation_time
-            (from "Finished cell property obfuscation ..."; test only)
+    netlist_redact.log -> (golden_dict, test_dict) with:
+      - netlist_redact.rapidwright_read_dcp      (use FIRST Reading DCP total for both)
+      - netlist_redact.rapidwright_write_dcp
+            (unredacted_* -> golden, redacted_* -> test)
+      - netlist_redact.redaction_time
+            (from "Finished cell property redaction ..."; test only)
     """
     golden: Dict[str, int] = {}
     test: Dict[str, int] = {}
@@ -192,7 +192,7 @@ def parse_rw_obfuscate_breakdown_ms(log_path: Path) -> Tuple[Dict[str, int], Dic
     current_section_text: Optional[str] = None
     first_read_total_sec: Optional[float] = None
     write_totals: Dict[str, float] = {"golden": 0.0, "test": 0.0}
-    obfuscation_time_sec: float = 0.0
+    redaction_time_sec: float = 0.0
 
     with log_path.open("r", encoding="utf-8", errors="ignore") as f:
         for raw in f:
@@ -210,39 +210,39 @@ def parse_rw_obfuscate_breakdown_ms(log_path: Path) -> Tuple[Dict[str, int], Dic
                         first_read_total_sec = tot
                 elif current_kind == "write" and current_section_text:
                     # IMPORTANT: match golden first to avoid substring overlap
-                    if "untransformed_" in current_section_text.lower():
+                    if "unredacted_" in current_section_text.lower():
                         write_totals["golden"] += tot
-                    elif "transformed_" in current_section_text.lower():
+                    elif "redacted_" in current_section_text.lower():
                         write_totals["test"] += tot
                 continue
 
-            m_obf = _RW_OBFUSCATION_RE.search(line)
-            if m_obf:
-                obfuscation_time_sec += float(m_obf.group(1))
+            m_redact = _RW_REDACTION_RE.search(line)
+            if m_redact:
+                redaction_time_sec += float(m_redact.group(1))
 
-    golden["netlist_obfuscate.rapidwright_read_dcp"] = (
+    golden["netlist_redact.rapidwright_read_dcp"] = (
         _ms(first_read_total_sec) if first_read_total_sec is not None else 0
     )
-    test["netlist_obfuscate.rapidwright_read_dcp"] = golden[
-        "netlist_obfuscate.rapidwright_read_dcp"
+    test["netlist_redact.rapidwright_read_dcp"] = golden[
+        "netlist_redact.rapidwright_read_dcp"
     ]
 
-    golden["netlist_obfuscate.rapidwright_write_dcp"] = _ms(write_totals["golden"])
-    test["netlist_obfuscate.rapidwright_write_dcp"] = _ms(write_totals["test"])
+    golden["netlist_redact.rapidwright_write_dcp"] = _ms(write_totals["golden"])
+    test["netlist_redact.rapidwright_write_dcp"] = _ms(write_totals["test"])
 
-    golden["netlist_obfuscate.obfuscation_time"] = 0
-    test["netlist_obfuscate.obfuscation_time"] = _ms(obfuscation_time_sec)
+    golden["netlist_redact.redaction_time"] = 0
+    test["netlist_redact.redaction_time"] = _ms(redaction_time_sec)
 
     return golden, test
 
 
-def parse_rw_deobfuscate_breakdown_ms(log_path: Path) -> Tuple[Dict[str, int], Dict[str, int]]:
+def parse_rw_unredact_breakdown_ms(log_path: Path) -> Tuple[Dict[str, int], Dict[str, int]]:
     """
-    netlist_deobfuscate.log -> (golden_dict, test_dict) with:
-      - netlist_deobfuscate.rapidwright_read_dcp   (first Reading total -> test; second -> golden)
-      - netlist_deobfuscate.rapidwright_write_dcp
-            (unmodified_impl_deobf.dcp -> golden; impl_deobf.dcp -> test)
-      - netlist_deobfuscate.deobfuscation_time     (from 'Restoration complete in X s'; test only)
+    netlist_unredact.log -> (golden_dict, test_dict) with:
+      - netlist_unredact.rapidwright_read_dcp   (first Reading total -> test; second -> golden)
+      - netlist_unredact.rapidwright_write_dcp
+            (unmodified_impl_unredact.dcp -> golden; impl_unredact.dcp -> test)
+      - netlist_unredact.unredaction_time     (from 'Restoration complete in X s'; test only)
     """
     golden: Dict[str, int] = {}
     test: Dict[str, int] = {}
@@ -253,7 +253,7 @@ def parse_rw_deobfuscate_breakdown_ms(log_path: Path) -> Tuple[Dict[str, int], D
     current_section_text: Optional[str] = None
     read_totals: List[float] = []
     write_totals: Dict[str, float] = {"golden": 0.0, "test": 0.0}
-    deobf_time_sec: float = 0.0
+    unredact_time_sec: float = 0.0
 
     with log_path.open("r", encoding="utf-8", errors="ignore") as f:
         for raw in f:
@@ -271,30 +271,30 @@ def parse_rw_deobfuscate_breakdown_ms(log_path: Path) -> Tuple[Dict[str, int], D
                 elif current_kind == "write" and current_section_text:
                     lower = current_section_text.lower()
                     # IMPORTANT: match golden first to avoid substring overlap
-                    if "unmodified_impl_deobf.dcp" in lower:
+                    if "unmodified_impl_unredact.dcp" in lower:
                         write_totals["golden"] += tot
-                    elif "impl_deobf.dcp" in lower:
+                    elif "impl_unredact.dcp" in lower:
                         write_totals["test"] += tot
                 continue
 
             m_rest = _RW_RESTORATION_RE.search(line)
             if m_rest:
-                deobf_time_sec += float(m_rest.group(1))
+                unredact_time_sec += float(m_rest.group(1))
 
-    test["netlist_deobfuscate.rapidwright_read_dcp"] = (
+    test["netlist_unredact.rapidwright_read_dcp"] = (
         _ms(read_totals[0]) if len(read_totals) >= 1 else 0
     )
-    golden["netlist_deobfuscate.rapidwright_read_dcp"] = (
+    golden["netlist_unredact.rapidwright_read_dcp"] = (
         _ms(read_totals[1]) if len(read_totals) >= 2 else 0
     )
 
-    test["netlist_deobfuscate.rapidwright_write_dcp"] = _ms(write_totals["test"])
-    golden["netlist_deobfuscate.rapidwright_write_dcp"] = _ms(write_totals["golden"])
+    test["netlist_unredact.rapidwright_write_dcp"] = _ms(write_totals["test"])
+    golden["netlist_unredact.rapidwright_write_dcp"] = _ms(write_totals["golden"])
 
-    test["netlist_deobfuscate.deobfuscation_time"] = (
-        _ms(deobf_time_sec) if deobf_time_sec > 0 else 0
+    test["netlist_unredact.unredaction_time"] = (
+        _ms(unredact_time_sec) if unredact_time_sec > 0 else 0
     )
-    golden["netlist_deobfuscate.deobfuscation_time"] = 0
+    golden["netlist_unredact.unredaction_time"] = 0
 
     return golden, test
 
@@ -328,11 +328,11 @@ def collect_flow_stage_times(build_root: Path) -> Tuple[Dict[str, int], Dict[str
     vivado_impl_log = build_root / "vivado_impl" / "vivado.log"
     vivado_reimpl_log = build_root / "vivado_reimpl" / "vivado.log"
     impl_reports_orig_log = build_root / "impl_detailed_reports_orig" / "vivado.log"
-    impl_reports_transform_log = build_root / "impl_detailed_reports_transform" / "vivado.log"
+    impl_reports_redacted_log = build_root / "impl_detailed_reports_redacted" / "vivado.log"
 
     # RapidWright logs
-    obf_log = build_root / "netlist_obfuscate" / "netlist_obfuscate.log"
-    deobf_log = build_root / "netlist_deobfuscate" / "netlist_deobfuscate.log"
+    redact_log = build_root / "netlist_redact" / "netlist_redact.log"
+    unredact_log = build_root / "netlist_unredact" / "netlist_unredact.log"
 
     golden: Dict[str, int] = {}
     test: Dict[str, int] = {}
@@ -354,20 +354,20 @@ def collect_flow_stage_times(build_root: Path) -> Tuple[Dict[str, int], Dict[str
     _merge_add(
         test,
         _namespace(
-            "impl_detailed_reports_transform",
-            _vivado_stage_breakdown_ms(impl_reports_transform_log),
+            "impl_detailed_reports_redacted",
+            _vivado_stage_breakdown_ms(impl_reports_redacted_log),
         ),
     )
 
-    # RapidWright: obfuscate per-design
-    obf_golden, obf_test = parse_rw_obfuscate_breakdown_ms(obf_log)
-    _merge_add(golden, obf_golden)
-    _merge_add(test, obf_test)
+    # RapidWright: redact per-design
+    redact_golden, redact_test = parse_rw_redact_breakdown_ms(redact_log)
+    _merge_add(golden, redact_golden)
+    _merge_add(test, redact_test)
 
-    # RapidWright: deobfuscate per-design
-    deobf_golden, deobf_test = parse_rw_deobfuscate_breakdown_ms(deobf_log)
-    _merge_add(golden, deobf_golden)
-    _merge_add(test, deobf_test)
+    # RapidWright: unredact per-design
+    unredact_golden, unredact_test = parse_rw_unredact_breakdown_ms(unredact_log)
+    _merge_add(golden, unredact_golden)
+    _merge_add(test, unredact_test)
 
     return golden, test
 
@@ -468,7 +468,7 @@ def write_overhead_csv(
     path: Path, names: List[str], golden_ms: List[Dict[str, int]], test_ms: List[Dict[str, int]]
 ) -> None:
     """
-    Overhead is defined as the sum of all netlist_obfuscate.* and netlist_deobfuscate.* entries.
+    Overhead is defined as the sum of all netlist_redact.* and netlist_unredact.* entries.
     We report: overhead_ms and overhead_pct (of total per design), for golden and test.
     """
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -492,12 +492,12 @@ def write_overhead_csv(
             g_over = sum(
                 v
                 for k, v in g.items()
-                if k.startswith("netlist_obfuscate.") or k.startswith("netlist_deobfuscate.")
+                if k.startswith("netlist_redact.") or k.startswith("netlist_unredact.")
             )
             t_over = sum(
                 v
                 for k, v in t.items()
-                if k.startswith("netlist_obfuscate.") or k.startswith("netlist_deobfuscate.")
+                if k.startswith("netlist_redact.") or k.startswith("netlist_unredact.")
             )
             g_pct = (g_over / g_total * 100.0) if g_total > 0 else 0.0
             t_pct = (t_over / t_total * 100.0) if t_total > 0 else 0.0
@@ -539,7 +539,7 @@ def run_and_emit(build_roots: List[Path], out_dir: Path) -> Dict[str, object]:
     write_csv(out_dir / "test_percent_avg.csv", ["AVERAGE"], [test_avg] if test_avg else [])
 
     # Write overhead summary
-    write_overhead_csv(out_dir / "obfuscation_overhead.csv", names, golden_ms_norm, test_ms_norm)
+    write_overhead_csv(out_dir / "redaction_overhead.csv", names, golden_ms_norm, test_ms_norm)
 
     return {
         "designs": names,

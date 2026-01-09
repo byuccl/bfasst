@@ -17,4 +17,4 @@ designs:
   - koios/gemm_layer
   - koios/dnnweaver
 
-flow: impl_obfuscate
+flow: impl_redact

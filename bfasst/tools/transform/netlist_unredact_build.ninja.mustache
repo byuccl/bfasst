@@ -1,5 +1,5 @@
-build {{out_dcp}} {{out_edf}} {{unmodified_out_dcp}} {{unmodified_out_edf}} : netlist_deobfuscate {{dcp_in}} {{edf_in}} {{unmodified_dcp_in}} {{unmodified_edf_in}}
-    script            = {{transform_script_path}}
+build {{out_dcp}} {{out_edf}} {{unmodified_out_dcp}} {{unmodified_out_edf}} : netlist_unredact {{dcp_in}} {{edf_in}} {{unmodified_dcp_in}} {{unmodified_edf_in}}
+    script            = {{unredact_script_path}}
     build_path        = {{build_path}}
     dcp_in            = {{dcp_in}}
     edf_in            = {{edf_in}}

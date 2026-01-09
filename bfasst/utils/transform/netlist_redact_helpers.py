@@ -1,10 +1,10 @@
 """
-Helpers and constants for netlist obfuscation/deobfuscation
+Helpers and constants for netlist redaction/unredaction
 """
 
 import re
 
-TAG_PROP = "OBF_TAG"
+TAG_PROP = "REDACT_TAG"
 
 # SENTINEL_VALUES = {
 #     2: "4'h9",

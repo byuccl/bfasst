@@ -1,5 +1,5 @@
 """
-Tool to perform obfuscation on a post-synthesis netlist.
+Tool to perform redaction on a post-synthesis netlist.
 Go through a bunch of different cell types and wipe their properties
 Then store the original properties in a JSON file for restoration later
 """
@@ -13,7 +13,7 @@ import uuid
 from collections import defaultdict
 from bfasst.config import PART
 from bfasst.utils.general import json_write_if_changed
-from bfasst.utils.transform.netlist_obfuscate_helpers import TAG_PROP, get_masking_init
+from bfasst.utils.transform.netlist_redact_helpers import TAG_PROP, get_masking_init
 
 from bfasst import jpype_jvm
 
@@ -50,9 +50,9 @@ def add_tag(inst):
     return tag
 
 
-def obfuscate_lut(inst, counts) -> tuple[bool, list[dict[str, str]]]:
+def redact_lut(inst, counts) -> tuple[bool, list[dict[str, str]]]:
     """
-    Obfuscate a single LUT instance.
+    Redact a single LUT instance.
      Replaces INIT with a masking literal.
      Adds a unique TAG_PROP so we can reverse later.
      Bumps the per-type counter in `counts`.
@@ -78,9 +78,9 @@ def obfuscate_lut(inst, counts) -> tuple[bool, list[dict[str, str]]]:
     return True, [{"identifier": "INIT", "value": old_init, "type": "STRING"}]
 
 
-def obfuscate_bram(inst, counts):
+def redact_bram(inst, counts):
     """
-    Obfuscate BRAM properties while preserving critical ones.
+    Redact BRAM properties while preserving critical ones.
     """
     skip_props = [
         "RAM_MODE",
@@ -99,12 +99,12 @@ def obfuscate_bram(inst, counts):
         "SRVAL_B",
     ]
 
-    return obfuscate_all(inst, skip_props, counts)
+    return redact_all(inst, skip_props, counts)
 
 
-def obfuscate_dsp(inst, counts):
+def redact_dsp(inst, counts):
     """
-    Obfuscate DSP48E1 parameters as much as possible while preserving implementation behavior.
+    Redact DSP48E1 parameters as much as possible while preserving implementation behavior.
     """
     skip_props = [
         "AREG",
@@ -126,14 +126,14 @@ def obfuscate_dsp(inst, counts):
         "USE_PATTERN_DETECT",
         "USE_SIMD",
     ]
-    return obfuscate_all(inst, skip_props, counts)
+    return redact_all(inst, skip_props, counts)
 
 
-def obfuscate_all(
+def redact_all(
     inst: EDIFHierCellInst, skip_props: set[str] = None, counts=None
 ) -> tuple[bool, list[dict[str, str]]]:
     """
-    Obfuscates all properties in a cell, excluding the ones in skip_props
+    Redacts all properties in a cell, excluding the ones in skip_props
     """
     skip_props = skip_props or set()
     changed = False
@@ -167,17 +167,17 @@ def obfuscate_all(
     return changed, mods
 
 
-def classify_and_obfuscate(inst, ref_type, counts) -> tuple[bool, dict, str]:
-    """Apply the appropriate obfuscation based on cell type."""
+def classify_and_redact(inst, ref_type, counts) -> tuple[bool, dict, str]:
+    """Apply the appropriate redaction based on cell type."""
     changed, mods, tag = False, None, None
 
     match True:
         case _ if LUTTools.isCellALUT(inst.getInst()):
-            changed, mods = obfuscate_lut(inst, counts)
+            changed, mods = redact_lut(inst, counts)
         case _ if "RAMB" in ref_type:
-            changed, mods = obfuscate_bram(inst, counts)
+            changed, mods = redact_bram(inst, counts)
         case _ if "DSP" in ref_type:
-            changed, mods = obfuscate_dsp(inst, counts)
+            changed, mods = redact_dsp(inst, counts)
         case _ if any(
             sub in ref_type
             for sub in [
@@ -194,7 +194,7 @@ def classify_and_obfuscate(inst, ref_type, counts) -> tuple[bool, dict, str]:
                 "FDPE",
             ]
         ):
-            changed, mods = obfuscate_all(inst, None, counts)
+            changed, mods = redact_all(inst, None, counts)
 
     if changed:
         tag = add_tag(inst)
@@ -218,13 +218,13 @@ def log_summary(counts_all, counts, no_changeable_parameters):
 
 
 def process_cell(inst, ref_type: str, counts) -> tuple[dict, bool]:
-    """Process a single cell: snapshot, attempt obfuscation, return JSON entry."""
+    """Process a single cell: snapshot, attempt redaction, return JSON entry."""
     entry = {
         "type": ref_type,
         "baseline_properties": snapshot_properties(inst),
     }
 
-    changed, mods, tag = classify_and_obfuscate(inst, ref_type, counts)
+    changed, mods, tag = classify_and_redact(inst, ref_type, counts)
     if changed:
         entry["tag"] = str(tag)
         entry["modified_properties"] = mods
@@ -232,19 +232,19 @@ def process_cell(inst, ref_type: str, counts) -> tuple[dict, bool]:
     return entry, changed
 
 
-def print_obfuscation_summary(counts_all, counts, obf_count: int):
+def print_redaction_summary(counts_all, counts, redact_count: int):
     logging.info("Total cells in design: %d", sum(counts_all.values()))
     log_summary(
         counts_all,
         counts,
         no_changeable_parameters=["GND", "VCC", "MUXF7", "MUXF8", "CARRY4", "BUFG"],
     )
-    logging.info("Obfuscated %d cells:", obf_count)
+    logging.info("Redacted %d cells:", redact_count)
     for k, v in counts.items():
         logging.info("\t%s: %d", k, v)
 
 
-def obfuscate_cell_properties(netlist: EDIFNetlist, out_path: str) -> int:
+def redact_cell_properties(netlist: EDIFNetlist, out_path: str) -> int:
     """
     Takes all cells in the netlist and wipes their properties
     Saves the original properties in a JSON file located at out_path
@@ -252,7 +252,7 @@ def obfuscate_cell_properties(netlist: EDIFNetlist, out_path: str) -> int:
     cells_json = {}
     counts = defaultdict(int)
     counts_all = defaultdict(int)
-    obf_count = 0
+    redact_count = 0
 
     for lib_map in EDIFTools.createCellInstanceMap(netlist).values():
         for inst_list in lib_map.values():
@@ -266,16 +266,16 @@ def obfuscate_cell_properties(netlist: EDIFNetlist, out_path: str) -> int:
                 cells_json[full_name] = entry
 
                 if changed:
-                    obf_count += 1
+                    redact_count += 1
 
-    print_obfuscation_summary(counts_all, counts, obf_count)
+    print_redaction_summary(counts_all, counts, redact_count)
     json_write_if_changed(out_path, json.dumps(cells_json, indent=2))
-    return obf_count
+    return redact_count
 
 
 def main():
     """
-    Tool to perform obfuscation on a post-synthesis netlist.
+    Tool to perform redaction on a post-synthesis netlist.
     Currently its only function is to purge INIT values for
     all LUTs in a synthesized design and replace them with dummy values
     """
@@ -316,22 +316,22 @@ def main():
         "--out_dcp",
         required=True,
         type=pathlib.Path,
-        help="Where to write the transformed checkpoint",
+        help="Where to write the redacted checkpoint",
     )
     parser.add_argument(
         "--out_edf",
         required=True,
         type=pathlib.Path,
-        help="Where to write the transformed EDIF",
+        help="Where to write the redacted EDIF",
     )
     parser.add_argument(
-        "--untransformed_out_dcp",
+        "--unredacted_out_dcp",
         required=True,
         type=pathlib.Path,
         help="Where to write the unmodified DCP",
     )
     parser.add_argument(
-        "--untransformed_out_edf",
+        "--unredacted_out_edf",
         required=True,
         type=pathlib.Path,
         help="Where to write the unmodified EDIF",
@@ -339,11 +339,11 @@ def main():
     parser.add_argument(
         "--original_cell_props",
         default="original_cell_props.json",
-        help="Location of original cell properties before obfuscation",
+        help="Location of original cell properties before redaction",
     )
     parser.add_argument(
         "--log",
-        default="netlist_transform.log",
+        default="netlist_redact.log",
         help="Log filename (inside build_path)",
     )
     parser.add_argument(
@@ -367,7 +367,7 @@ def main():
     )
     System.setOut(PrintStream(FileOutputStream(str(log_path), True), True))
 
-    logging.info("NetlistObfuscate start")
+    logging.info("NetlistRedact start")
 
     t0 = time.perf_counter()
     design1 = Design.readCheckpoint(args.dcp, args.edf)
@@ -383,24 +383,24 @@ def main():
     netlist2.expandMacroUnisims(device.getSeries())
 
     orig_cell_props = args.build_path / args.original_cell_props
-    count = obfuscate_cell_properties(netlist1, orig_cell_props)
+    count = redact_cell_properties(netlist1, orig_cell_props)
 
-    logging.debug("Finished cell property obfuscation in %.3f s", time.perf_counter() - t1)
+    logging.debug("Finished cell property redaction in %.3f s", time.perf_counter() - t1)
     logging.debug("%d properties changed", count)
 
     t2 = time.perf_counter()
     logging.info("Writing out new DCPs")
     design1.writeCheckpoint(args.out_dcp)
-    design2.writeCheckpoint(args.untransformed_out_dcp)
+    design2.writeCheckpoint(args.unredacted_out_dcp)
     logging.info("Wrote DCPs in %.3f s", time.perf_counter() - t2)
 
     t3 = time.perf_counter()
     logging.info("Writing out new EDFs")
     netlist1.exportEDIF(args.out_edf)
-    netlist2.exportEDIF(args.untransformed_out_edf)
+    netlist2.exportEDIF(args.unredacted_out_edf)
     logging.info("Wrote EDFs in %.3f s", time.perf_counter() - t3)
 
-    logging.info("NetlistObfuscate done in %.3f s", time.perf_counter() - t0)
+    logging.info("NetlistRedact done in %.3f s", time.perf_counter() - t0)
 
 
 if __name__ == "__main__":
