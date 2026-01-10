@@ -86,32 +86,27 @@ class MetricsComparison:
                 "lut": {
                     "golden": self.golden.resources.lut_used,
                     "test": self.test.resources.lut_used,
-                    "delta": self.test.resources.lut_used
-                    - self.golden.resources.lut_used,
+                    "delta": self.test.resources.lut_used - self.golden.resources.lut_used,
                 },
                 "ff": {
                     "golden": self.golden.resources.ff_used,
                     "test": self.test.resources.ff_used,
-                    "delta": self.test.resources.ff_used
-                    - self.golden.resources.ff_used,
+                    "delta": self.test.resources.ff_used - self.golden.resources.ff_used,
                 },
                 "bram36": {
                     "golden": self.golden.resources.bram36_used,
                     "test": self.test.resources.bram36_used,
-                    "delta": self.test.resources.bram36_used
-                    - self.golden.resources.bram36_used,
+                    "delta": self.test.resources.bram36_used - self.golden.resources.bram36_used,
                 },
                 "bram18": {
                     "golden": self.golden.resources.bram18_used,
                     "test": self.test.resources.bram18_used,
-                    "delta": self.test.resources.bram18_used
-                    - self.golden.resources.bram18_used,
+                    "delta": self.test.resources.bram18_used - self.golden.resources.bram18_used,
                 },
                 "dsp": {
                     "golden": self.golden.resources.dsp_used,
                     "test": self.test.resources.dsp_used,
-                    "delta": self.test.resources.dsp_used
-                    - self.golden.resources.dsp_used,
+                    "delta": self.test.resources.dsp_used - self.golden.resources.dsp_used,
                 },
             },
             "compilation": {

@@ -241,9 +241,7 @@ def main():
         "--unmodified_out_edf", required=True, type=pathlib.Path, help="Output unmodified EDIF path"
     )
 
-    p.add_argument(
-        "--log", default="netlist_unredact.log", help="Log filename (inside build_path)"
-    )
+    p.add_argument("--log", default="netlist_unredact.log", help="Log filename (inside build_path)")
     p.add_argument(
         "--logging_level",
         default="INFO",

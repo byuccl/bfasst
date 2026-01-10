@@ -27,9 +27,7 @@ class NetlistRedact(Tool):
         self.build_path = self.design_build_path / "netlist_redact"
         self.logging_level = logging_level
         self.log_file = log_file
-        self.rule_snippet_path = (
-            NINJA_TRANSFORM_TOOLS_PATH / "netlist_redact_rules.ninja.mustache"
-        )
+        self.rule_snippet_path = NINJA_TRANSFORM_TOOLS_PATH / "netlist_redact_rules.ninja.mustache"
         self._init_outputs()
         self.rules_render_dict = {
             "redact_script_path": str(BFASST_UTILS_PATH / "transform" / "netlist_redact.py"),

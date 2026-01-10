@@ -149,9 +149,7 @@ def parse_vivado_log_to_dict(log_path: Path) -> Dict[str, float]:
 
 _RW_SECTION_KIND_RE = re.compile(r"(Reading|Writing)\s+DCP:\s*(.+)", re.IGNORECASE)
 _RW_TOTAL_ANY_RE = re.compile(r"\*Total\*:\s*([0-9]+(?:\.[0-9]+)?)s", re.IGNORECASE)
-_RW_REDACTION_RE = re.compile(
-    r"Finished cell property redaction in\s+([0-9.]+)\s*s", re.IGNORECASE
-)
+_RW_REDACTION_RE = re.compile(r"Finished cell property redaction in\s+([0-9.]+)\s*s", re.IGNORECASE)
 _RW_RESTORATION_RE = re.compile(r"Restoration complete in\s+([0-9.]+)\s*s", re.IGNORECASE)
 
 
@@ -223,9 +221,7 @@ def parse_rw_redact_breakdown_ms(log_path: Path) -> Tuple[Dict[str, int], Dict[s
     golden["netlist_redact.rapidwright_read_dcp"] = (
         _ms(first_read_total_sec) if first_read_total_sec is not None else 0
     )
-    test["netlist_redact.rapidwright_read_dcp"] = golden[
-        "netlist_redact.rapidwright_read_dcp"
-    ]
+    test["netlist_redact.rapidwright_read_dcp"] = golden["netlist_redact.rapidwright_read_dcp"]
 
     golden["netlist_redact.rapidwright_write_dcp"] = _ms(write_totals["golden"])
     test["netlist_redact.rapidwright_write_dcp"] = _ms(write_totals["test"])

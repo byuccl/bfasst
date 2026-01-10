@@ -10,11 +10,14 @@ from bfasst.utils.compare.metrics_data_types import MetricsComparison
 
 
 def main():
+    """Compare metrics between golden and test implementations and output JSON."""
     parser = argparse.ArgumentParser(
         description="Compare metrics between golden and test implementations"
     )
     parser.add_argument("--golden_timing", required=True, help="Path to golden timing_summary.txt")
-    parser.add_argument("--golden_utilization", required=True, help="Path to golden utilization.txt")
+    parser.add_argument(
+        "--golden_utilization", required=True, help="Path to golden utilization.txt"
+    )
     parser.add_argument("--golden_log", required=True, help="Path to golden vivado.log")
     parser.add_argument("--test_timing", required=True, help="Path to test timing_summary.txt")
     parser.add_argument("--test_utilization", required=True, help="Path to test utilization.txt")

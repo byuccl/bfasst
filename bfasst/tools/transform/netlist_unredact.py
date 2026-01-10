@@ -35,9 +35,7 @@ class NetlistUnredact(Tool):
             NINJA_TRANSFORM_TOOLS_PATH / "netlist_unredact_rules.ninja.mustache"
         )
         self.rules_render_dict = {
-            "unredact_script_path": str(
-                BFASST_UTILS_PATH / "transform" / "netlist_unredact.py"
-            ),
+            "unredact_script_path": str(BFASST_UTILS_PATH / "transform" / "netlist_unredact.py"),
             "dcp_in": str(self.dcp_path),
             "edf_in": str(self.edf_path),
             "unmodified_dcp_in": str(self.unmodified_dcp_path),

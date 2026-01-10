@@ -51,7 +51,9 @@ def check_fasm2bels():
     if not (FASM2BELS_PATH / "env").is_dir():
         return False
     if not (FASM2BELS_PATH / f"{PART}_db").is_file():
-        subprocess.run([f"{SCRIPTS_PATH}/database.sh", get_family_from_part(PART), PART], cwd=ROOT_PATH)
+        subprocess.run(
+            [f"{SCRIPTS_PATH}/database.sh", get_family_from_part(PART), PART], cwd=ROOT_PATH
+        )
     return True
 
 

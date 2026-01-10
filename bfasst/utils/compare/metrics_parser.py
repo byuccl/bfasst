@@ -24,7 +24,10 @@ def parse_timing_summary(path: Path) -> TimingMetrics:
     #               6.390        0.000                      0  ...
 
     # Look for the data line after "Design Timing Summary"
-    pattern = r"Design Timing Summary.*?-{5,}.*?-{5,}.*?\n\s+([-\d.]+)\s+([-\d.]+)\s+(\d+)\s+\d+\s+([-\d.]+)\s+([-\d.]+)\s+(\d+)"
+    pattern = (
+        r"Design Timing Summary.*?-{5,}.*?-{5,}.*?\n\s+"
+        r"([-\d.]+)\s+([-\d.]+)\s+(\d+)\s+\d+\s+([-\d.]+)\s+([-\d.]+)\s+(\d+)"
+    )
     match = re.search(pattern, content, re.DOTALL)
 
     if match:
@@ -53,7 +56,8 @@ def parse_utilization(path: Path) -> ResourceMetrics:
     content = path.read_text()
 
     # Look for the table header and data row
-    # Format: | Instance | Module | Total LUTs | Logic LUTs | LUTRAMs | SRLs | FFs | RAMB36 | RAMB18 | DSP Blocks |
+    # Format: | Instance | Module | Total LUTs | Logic LUTs | LUTRAMs | SRLs |
+    #         | FFs | RAMB36 | RAMB18 | DSP Blocks |
     # Table rows are separated by | and values are in columns
 
     lut_used = 0
@@ -63,8 +67,11 @@ def parse_utilization(path: Path) -> ResourceMetrics:
     dsp_used = 0
 
     # Find the (top) row which has the total values
-    # Format: | counters |  (top) |          9 |          9 |       0 |    0 |  16 |      0 |      0 |          0 |
-    pattern = r"\|\s*\S+\s*\|\s*\(top\)\s*\|\s*(\d+)\s*\|\s*\d+\s*\|\s*\d+\s*\|\s*\d+\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|"
+    # Format: | counters | (top) | 9 | 9 | 0 | 0 | 16 | 0 | 0 | 0 |
+    pattern = (
+        r"\|\s*\S+\s*\|\s*\(top\)\s*\|\s*(\d+)\s*\|\s*\d+\s*\|\s*\d+\s*\|\s*\d+\s*\|"
+        r"\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|"
+    )
     match = re.search(pattern, content)
 
     if match:
@@ -111,17 +118,13 @@ def parse_vivado_log(path: Path) -> CompilationMetrics:
 
     # Look for place_design time
     # Format: place_design: Time (s): cpu = 00:00:44 ; elapsed = 00:00:47
-    place_match = re.search(
-        r"place_design: Time \(s\):.*?elapsed = ([\d:]+)", content
-    )
+    place_match = re.search(r"place_design: Time \(s\):.*?elapsed = ([\d:]+)", content)
     if place_match:
         place_time = _parse_time_to_seconds(place_match.group(1))
 
     # Look for route_design time
     # Format: route_design: Time (s): cpu = 00:00:59 ; elapsed = 00:01:26
-    route_match = re.search(
-        r"route_design: Time \(s\):.*?elapsed = ([\d:]+)", content
-    )
+    route_match = re.search(r"route_design: Time \(s\):.*?elapsed = ([\d:]+)", content)
     if route_match:
         route_time = _parse_time_to_seconds(route_match.group(1))
 
