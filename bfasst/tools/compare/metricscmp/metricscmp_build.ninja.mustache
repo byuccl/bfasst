@@ -1,0 +1,9 @@
+build {{output_json}} : metricscmp {{golden_timing}} {{test_timing}} {{golden_utilization}} {{test_utilization}} {{golden_log}} {{test_log}}
+    script               = {{compare_script_path}}
+    golden_timing        = {{golden_timing}}
+    golden_utilization   = {{golden_utilization}}
+    golden_log           = {{golden_log}}
+    test_timing          = {{test_timing}}
+    test_utilization     = {{test_utilization}}
+    test_log             = {{test_log}}
+    output               = {{output_json}}

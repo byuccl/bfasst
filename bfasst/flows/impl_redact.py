@@ -11,6 +11,7 @@ from bfasst.flows.flow import Flow
 from bfasst.tools.synth.vivado_synth import VivadoSynth
 from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.tools.compare.yosys.yosys import YosysCompare
+from bfasst.tools.compare.metricscmp.metricscmp import MetricsCmp
 from bfasst.tools.transform.netlist_redact import NetlistRedact
 from bfasst.tools.impl.impl_detailed_reports import ImplDetailedReports
 from bfasst.tools.transform.netlist_unredact import NetlistUnredact
@@ -117,6 +118,17 @@ class ImplRedact(Flow):
             rev_netlist=self.impl_detailed_reports_redacted.outputs["verilog"],
         )
 
+        self.metrics_cmp = MetricsCmp(
+            self,
+            design,
+            golden_timing=self.impl_detailed_reports_orig.outputs["timing_summary"],
+            golden_utilization=self.impl_detailed_reports_orig.outputs["utilization"],
+            golden_log=self.impl_orig.outputs["log"],
+            test_timing=self.impl_detailed_reports_redacted.outputs["timing_summary"],
+            test_utilization=self.impl_detailed_reports_redacted.outputs["utilization"],
+            test_log=self.impl_redacted.outputs["log"],
+        )
+
         self.tools = [
             self.vivado_synth,
             self.impl_orig,
@@ -126,6 +138,7 @@ class ImplRedact(Flow):
             self.impl_detailed_reports_orig,
             self.impl_detailed_reports_redacted,
             self.yosys_compare,
+            self.metrics_cmp,
         ]
 
     def create_build_snippets(self):
@@ -137,6 +150,7 @@ class ImplRedact(Flow):
         self.impl_detailed_reports_orig.create_build_snippets()
         self.impl_detailed_reports_redacted.create_build_snippets()
         self.yosys_compare.create_build_snippets()
+        self.metrics_cmp.create_build_snippets()
 
     def get_top_level_flow_path(self):
         return FLOWS_PATH / "impl_redact.py"
