@@ -21,6 +21,6 @@ report_utilization -hierarchical -file {{ outputs.utilization }}
 report_power -verbose -file {{ outputs.power_summary }}
 report_clocks -file {{ outputs.clocks }}
 report_drc -file {{ outputs.drc }}
-write_verilog -mode funcsim -force {{ outputs.verilog }}
+write_verilog -force {{ outputs.verilog }}
 write_bitstream -force -file {{ outputs.bitstream }}
 

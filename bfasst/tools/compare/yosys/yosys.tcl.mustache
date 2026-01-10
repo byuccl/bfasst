@@ -1,5 +1,7 @@
 read_verilog techlibs/xilinx/cells_sim.v; read_verilog {{ gold_netlist }}; prep -flatten; hierarchy -auto-top; rename -top gold; splitnets -ports;; design -stash gold
 read_verilog techlibs/xilinx/cells_sim.v; read_verilog {{ rev_netlist }}; prep -flatten; hierarchy -auto-top; rename -top gate; splitnets -ports;; design -stash gate
-design -copy-from gold -as gold gold; design -copy-from gate -as gate gate; equiv_make gold gate equiv; hierarchy -top equiv;; equiv_simple
+design -copy-from gold -as gold gold; design -copy-from gate -as gate gate; equiv_make gold gate equiv; hierarchy -top equiv
+equiv_struct
+equiv_simple
 equiv_induct
 equiv_status -assert

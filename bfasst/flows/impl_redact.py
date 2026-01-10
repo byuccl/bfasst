@@ -4,17 +4,16 @@ Flow that does the following:
     2. Runs Vivado implementation
     3. Redacts the synthesis netlist properties
     4. Runs Vivado implementation again on the redacted netlist
-    5. Compares the two implementations for physical differences
+    5. Compares the two implementations for logical equivalence using Yosys
 """
 
 from bfasst.flows.flow import Flow
 from bfasst.tools.synth.vivado_synth import VivadoSynth
 from bfasst.tools.impl.vivado_impl import VivadoImpl
-from bfasst.tools.compare.physcmp.physcmp import PhysCmp
+from bfasst.tools.compare.yosys.yosys import YosysCompare
 from bfasst.tools.transform.netlist_redact import NetlistRedact
 from bfasst.tools.impl.impl_detailed_reports import ImplDetailedReports
 from bfasst.tools.transform.netlist_unredact import NetlistUnredact
-from bfasst.utils.compare.physcmp_data_types import ImplReports
 from bfasst.paths import FLOWS_PATH
 from bfasst.yaml_parser import DesignParser
 
@@ -110,43 +109,11 @@ class ImplRedact(Flow):
             self, design, impl_dcp=self.netlist_unredact.outputs["unredact_dcp"], tag="redacted"
         )
 
-        golden = ImplReports(
-            dcp=self.netlist_unredact.outputs["unmodified_unredact_dcp"],
-            edf=self.netlist_unredact.outputs["unmodified_unredact_edf"],
-            setup_timing=self.impl_detailed_reports_orig.outputs["setup_timing"],
-            hold_timing=self.impl_detailed_reports_orig.outputs["hold_timing"],
-            timing_summary_full=self.impl_detailed_reports_orig.outputs["full_timing_summary"],
-            utilization=self.impl_detailed_reports_orig.outputs["utilization"],
-            power=self.impl_detailed_reports_orig.outputs["power_summary"],
-            bitstream=self.impl_detailed_reports_orig.outputs["bitstream"],
-        )
-
-        test = ImplReports(
-            dcp=self.netlist_unredact.outputs["unredact_dcp"],
-            edf=self.netlist_unredact.outputs["unredact_edf"],
-            setup_timing=self.impl_detailed_reports_redacted.outputs["setup_timing"],
-            hold_timing=self.impl_detailed_reports_redacted.outputs["hold_timing"],
-            timing_summary_full=self.impl_detailed_reports_redacted.outputs["full_timing_summary"],
-            utilization=self.impl_detailed_reports_redacted.outputs["utilization"],
-            power=self.impl_detailed_reports_redacted.outputs["power_summary"],
-            bitstream=self.impl_detailed_reports_redacted.outputs["bitstream"],
-        )
-
-        #        self.conformal = Conformal(
-        #           self,
-        #           design,
-        #           golden_netlist=self.impl_detailed_reports_orig.outputs["verilog"],
-        #           rev_netlist=self.impl_detailed_reports_redacted.outputs["verilog"],
-        #           vendor=Vendor.XILINX.name,
-        #        )
-
-        self.physcmp = PhysCmp(
+        self.yosys_compare = YosysCompare(
             self,
             design,
-            golden=golden,
-            test=test,
-            log_name="physcmp.log",
-            logging_level="DEBUG",
+            golden_netlist=self.impl_detailed_reports_orig.outputs["verilog"],
+            rev_netlist=self.impl_detailed_reports_redacted.outputs["verilog"],
         )
 
         self.tools = [
@@ -157,8 +124,7 @@ class ImplRedact(Flow):
             self.netlist_unredact,
             self.impl_detailed_reports_orig,
             self.impl_detailed_reports_redacted,
-            #            self.conformal,
-            self.physcmp,
+            self.yosys_compare,
         ]
 
     def create_build_snippets(self):
@@ -169,8 +135,7 @@ class ImplRedact(Flow):
         self.netlist_unredact.create_build_snippets()
         self.impl_detailed_reports_orig.create_build_snippets()
         self.impl_detailed_reports_redacted.create_build_snippets()
-        #        self.conformal.create_build_snippets()
-        self.physcmp.create_build_snippets()
+        self.yosys_compare.create_build_snippets()
 
     def get_top_level_flow_path(self):
         return FLOWS_PATH / "impl_redact.py"
