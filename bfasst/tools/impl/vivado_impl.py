@@ -23,6 +23,7 @@ class VivadoImpl(ImplTool):
         constraints_files="",
         ooc=False,
         impl_options="",
+        disable_drc=False,
     ):  # pylint: disable=too-many-positional-arguments
         super().__init__(flow, design)
         self.ooc = ooc
@@ -43,6 +44,7 @@ class VivadoImpl(ImplTool):
 
         self.opt_design = opt_design
         self.phys_opt_design = phys_opt_design
+        self.disable_drc = disable_drc
 
         self._init_outputs()
         self.inputs_str = {"xdc": self.constraints_file, "synth_edf": str(self.synth_edf)}
@@ -64,6 +66,7 @@ class VivadoImpl(ImplTool):
             "outputs": self.outputs_str,
             "opt_design": self.opt_design,
             "phys_opt_design": self.phys_opt_design,
+            "disable_drc": self.disable_drc,
             "tcl_sources": tcl_sources,
             "inputs": self.inputs_str,
         }

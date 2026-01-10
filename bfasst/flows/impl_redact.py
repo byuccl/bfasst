@@ -52,6 +52,7 @@ class ImplRedact(Flow):
             opt_design=False,
             phys_opt_design=True,
             constraints_files=self.vivado_synth.outputs["synth_constraints"],
+            disable_drc=True,
         )
 
         self.impl_orig = VivadoImpl(
