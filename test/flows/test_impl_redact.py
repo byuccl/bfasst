@@ -29,11 +29,11 @@ class TestImplRedact(unittest.TestCase):
         self.assertIn("rule vivado", ninja)
         self.assertIn("rule netlist_redact", ninja)
         self.assertIn("rule netlist_unredact", ninja)
-        self.assertIn("rule physcmp", ninja)
+        self.assertIn("rule metricscmp", ninja)
 
 
     def test_build_targets_exist(self):
-        """Verify that each stage (synth, impl, reimpl, transform, physcmp) appears."""
+        """Verify that each stage (synth, impl, reimpl, transform, metricscmp) appears."""
         with open(NINJA_BUILD_PATH, "r") as f:
             ninja = f.read()
         self.assertIn("vivado_synth", ninja)
@@ -42,7 +42,7 @@ class TestImplRedact(unittest.TestCase):
         self.assertIn("netlist_redact.log", ninja)
         self.assertIn("netlist_unredact.log", ninja)
         self.assertIn("full_timing_summary.txt", ninja)
-        self.assertIn("physcmp.log", ninja)
+        self.assertIn("metrics_comparison.json", ninja)
 
 
     def test_get_top_level_flow_path(self):
