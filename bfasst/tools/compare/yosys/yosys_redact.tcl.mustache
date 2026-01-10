@@ -1,0 +1,13 @@
+read_verilog techlibs/xilinx/cells_sim.v
+read_verilog {{ gold_netlist }}
+prep -flatten; async2sync
+delete t:RAMB* t:FIFO* t:DSP*
+hierarchy -auto-top; rename -top gold; design -stash gold
+read_verilog techlibs/xilinx/cells_sim.v
+read_verilog {{ rev_netlist }}
+prep -flatten; async2sync
+delete t:RAMB* t:FIFO* t:DSP*
+hierarchy -auto-top; rename -top gate; design -stash gate
+design -copy-from gold -as gold gold; design -copy-from gate -as gate gate
+miter -equiv -flatten -make_assert gold gate miter
+sat -verify -prove-asserts -seq 1 miter

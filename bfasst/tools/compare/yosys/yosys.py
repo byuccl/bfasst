@@ -9,14 +9,17 @@ from bfasst.utils.general import json_write_if_changed
 class YosysCompare(Tool):
     """Create the rule and build snippets for yosys comparison."""
 
-    def __init__(self, flow, design, golden_netlist, rev_netlist):
+    def __init__(self, flow, design, golden_netlist, rev_netlist, *, use_redact_script=False):
         super().__init__(flow, design)
 
         self.golden_netlist = golden_netlist
         self.rev_netlist = rev_netlist
 
         self.build_path = self.design_build_path / "yosys"
-        self.tcl_template = YOSYS_TOOLS_PATH / "yosys.tcl.mustache"
+        if use_redact_script:
+            self.tcl_template = YOSYS_TOOLS_PATH / "yosys_redact.tcl.mustache"
+        else:
+            self.tcl_template = YOSYS_TOOLS_PATH / "yosys.tcl.mustache"
         self._init_outputs()
         self.rule_snippet_path = YOSYS_TOOLS_PATH / "yosys_rules.ninja.mustache"
         self.rules_render_dict = {"utils": str(BFASST_UTILS_PATH)}

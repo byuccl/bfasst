@@ -116,6 +116,7 @@ class ImplRedact(Flow):
             design,
             golden_netlist=self.impl_detailed_reports_orig.outputs["verilog"],
             rev_netlist=self.impl_detailed_reports_redacted.outputs["verilog"],
+            use_redact_script=True,
         )
 
         self.metrics_cmp = MetricsCmp(
