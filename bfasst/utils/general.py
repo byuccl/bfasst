@@ -236,7 +236,10 @@ def json_write_if_changed(path, json_str):
 
 
 def get_family_from_part(part):
-    """Derive family name from Xilinx 7-series part number (e.g., 'xc7a200tsbg484-1' -> 'artix7')."""
+    """Derive family name from Xilinx 7-series part number.
+
+    Example: 'xc7a200tsbg484-1' -> 'artix7'
+    """
     family_map = {
         "a": "artix7",
         "k": "kintex7",

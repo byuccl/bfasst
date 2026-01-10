@@ -11,7 +11,7 @@ from bfasst.utils.general import json_write_if_changed
 class ImplDetailedReports(ImplTool):
     """Tool to generate every post‐implementation Vivado report."""
 
-    def __init__(self, flow, design, impl_dcp, tag="", disable_drc=False):
+    def __init__(self, flow, design, impl_dcp, *, tag="", disable_drc=False):
         super().__init__(flow, design)
         self.disable_drc = disable_drc
 
