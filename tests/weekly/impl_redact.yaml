@@ -1,64 +1,95 @@
 designs:
-  - byu/alu 
-  - byu/buttoncount 
-  - byu/calc 
-  - byu/counter 
-  - byu/counters 
-  - byu/debouncer 
-  - byu/lightWave 
-  - byu/mux8to1 
-  - byu/oneshot 
-  - byu/regfile 
-  - byu/riscvSimpleDatapath 
-  - byu/riscv_final 
-  - byu/rx 
-  - byu/seven_segment 
-  - byu/shiftReg 
-  - byu/Sout_reg 
-  - byu/stopwatch 
-  - byu/tx 
-  - byu/uart 
-  - byu/uart_debouncer 
-  - byu/uart_rx 
-  - byu/uart_ssc 
-  - byu/uart_tx 
-  - byu/UpDownButtonCount 
+  # BYU designs
+  - byu/alu
+  - byu/buttoncount
+  - byu/calc
+  - byu/counter
+  - byu/counters
+  - byu/debouncer
+  - byu/lightWave
+  - byu/mux8to1
+  - byu/oneshot
+  - byu/regfile
+  - byu/riscvSimpleDatapath
+  - byu/riscv_final
+  - byu/rx
+  - byu/seven_segment
+  - byu/shiftReg
+  - byu/Sout_reg
+  - byu/stopwatch
+  - byu/tx
+  - byu/uart
+  - byu/uart_debouncer
+  - byu/uart_rx
+  - byu/uart_ssc
+  - byu/uart_tx
+  - byu/UpDownButtonCount
+
+  # OOC designs
   - ooc/aes128
-  - ooc/EX_stage 
-  - ooc/ID_stage 
-  - ooc/IF_stage 
-  - ooc/MEM_stage 
-  - ooc/WB_stage 
-  - ooc/a25_coprocessor 
-  - ooc/a25_decode 
-  - ooc/a25_write_back 
-  - ooc/a25_wishbone 
-  - ooc/basicrsa  
-  - ooc/bcd_adder  
-  - ooc/bubblesort 
-  - ooc/control_unit 
-  - ooc/cpu8080 
-  - ooc/data_path 
+  - ooc/EX_stage
+  - ooc/ID_stage
+  - ooc/IF_stage
+  - ooc/MEM_stage
+  - ooc/WB_stage
+  - ooc/a25_coprocessor
+  - ooc/a25_decode
+  - ooc/a25_write_back
+  - ooc/a25_wishbone
+  - ooc/basicrsa
+  - ooc/bcd_adder
+  - ooc/bubblesort
+  - ooc/control_unit
+  - ooc/cpu8080
+  - ooc/data_path
   - ooc/hight
   - ooc/jpegencode
-  - ooc/median 
-  - ooc/mips_16 
-  - ooc/natalius_processor 
-  - ooc/pci_mini 
-  - ooc/pic 
-  - ooc/pid 
-  - ooc/quadratic_func 
-  - ooc/random_pulse_generator 
-  - ooc/simon_core 
-  - ooc/tiny_encryption_algorithm 
-  - ooc/uart2spi 
-  - ooc/wb_lcd 
-  - vtr_benchmarks/mkPktMerge 
-  - vtr_benchmarks/mkSMAdapter4B 
+  - ooc/median
+  - ooc/mips_16
+  - ooc/natalius_processor
+  - ooc/pci_mini
+  - ooc/pic
+  - ooc/pid
+  - ooc/quadratic_func
+  - ooc/random_pulse_generator
+  - ooc/simon_core
+  - ooc/tiny_encryption_algorithm
+  - ooc/uart2spi
+  - ooc/wb_lcd
+
+  # VTR benchmarks
+  - vtr_benchmarks/blob_merge
+  - vtr_benchmarks/boundtop
+  - vtr_benchmarks/ch_intrinsics
+  - vtr_benchmarks/diffeq1
+  - vtr_benchmarks/diffeq2
+  - vtr_benchmarks/mkPktMerge
+  - vtr_benchmarks/mkSMAdapter4B
+  - vtr_benchmarks/or1200
   - vtr_benchmarks/raygentop
   - vtr_benchmarks/sha
+  - vtr_benchmarks/stereovision0
   - vtr_benchmarks/stereovision1
   - vtr_benchmarks/stereovision2
   - vtr_benchmarks/stereovision3
+
+  # Koios designs
+  - koios/attention_layer
+  - koios/bnn
+  - koios/bwave_like.fixed.large
+  - koios/bwave_like.float.large
+  - koios/conv_layer
+  - koios/dla_like.medium
+  - koios/eltwise_layer
+  - koios/clstm_like.large
+  - koios/spmv
+  - koios/test
+  - koios/tpu_like.large.ws
+  - koios/robot_rl
+  - koios/softmax
+  - koios/lstm
+  - koios/reduction_layer
+  - koios/gemm_layer
+  - koios/dnnweaver
 
 flow: impl_redact
