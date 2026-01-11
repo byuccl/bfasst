@@ -29,7 +29,7 @@ create_clock -period $new_period -name $clock_name [get_ports $clock_port]
 set pre_route_iter 0
 while {1} {
     if { [ catch {
-        phys_opt_design -fanout_opt -placement_opt -casc_opt -cell_group_opt -critical_cell_opt -dsp_register_opt -bram_register_opt -bram_enable_opt -shift_register_opt -critical_pin_opt -memory_rewire_opt -hold_fix
+        phys_opt_design {{ phys_opt_flags_postplace }}
         report_phys_opt
 
         # Save intermediate checkpoint
@@ -70,7 +70,7 @@ while {1} {
         puts "Adjusted clock period to: $new_period"
     }
 
-    phys_opt_design -routing_opt -casc_opt -cell_group_opt -critical_cell_opt -critical_pin_opt -clock_opt -memory_rewire_opt -hold_fix
+    phys_opt_design {{ phys_opt_flags_postroute }}
     report_phys_opt
 
     # Save intermediate checkpoint

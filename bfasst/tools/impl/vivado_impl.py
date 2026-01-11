@@ -66,6 +66,8 @@ class VivadoImpl(ImplTool):
             "outputs": self.outputs_str,
             "opt_design": self.opt_design,
             "phys_opt_design": self.phys_opt_design,
+            "phys_opt_flags_postplace": "",
+            "phys_opt_flags_postroute": "",
             "disable_drc": self.disable_drc,
             "tcl_sources": tcl_sources,
             "inputs": self.inputs_str,
