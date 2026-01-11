@@ -47,8 +47,6 @@ def main():
     with open(output_path, "w") as f:
         json.dump(comparison.to_dict(), f, indent=2)
 
-    print(f"Metrics comparison written to {output_path}")
-
 
 if __name__ == "__main__":
     main()
