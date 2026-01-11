@@ -16,7 +16,7 @@ install_rapidwright:
 	git submodule init third_party/RapidWright
 	git submodule update --init --recursive third_party/RapidWright
 
-	cd third_party/RapidWright && ./gradlew compileJava
+	cd third_party/RapidWright && ./gradlew --no-daemon compileJava
 	cd third_party/RapidWright/interchange/ && make
 	$(IN_ENV) cd third_party/RapidWright ; export PATH=`pwd`/bin:$$PATH ; \
 	rapidwright jython -c 'FileTools.ensureDataFilesAreStaticInstallFriendly("xc7a200t")'
