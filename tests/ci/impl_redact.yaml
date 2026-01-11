@@ -1,5 +1,4 @@
 designs:
-  - byu/riscv_final
   - byu/debouncer
   - byu/alu
   - byu/counter

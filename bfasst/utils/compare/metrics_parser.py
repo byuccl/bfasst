@@ -24,11 +24,16 @@ def parse_timing_summary(path: Path) -> TimingMetrics:
     #               6.390        0.000                      0  ...
 
     # Look for the data line after "Design Timing Summary"
-    pattern = (
-        r"Design Timing Summary.*?-{5,}.*?-{5,}.*?\n\s+"
-        r"([-\d.]+)\s+([-\d.]+)\s+(\d+)\s+\d+\s+([-\d.]+)\s+([-\d.]+)\s+(\d+)"
-    )
-    match = re.search(pattern, content, re.DOTALL)
+    # First find the section, then parse line by line to avoid catastrophic backtracking
+    section_match = re.search(r"Design Timing Summary", content)
+    if not section_match:
+        return TimingMetrics(wns=0.0, tns=0.0, whs=0.0, ths=0.0, failing_endpoints=0)
+
+    # Get content after "Design Timing Summary" and find the data line
+    remaining = content[section_match.end() :]
+    # Look for a line with numeric timing values (skip header/separator lines)
+    pattern = r"^\s+([-\d.]+)\s+([-\d.]+)\s+(\d+)\s+\d+\s+([-\d.]+)\s+([-\d.]+)\s+(\d+)"
+    match = re.search(pattern, remaining, re.MULTILINE)
 
     if match:
         wns = float(match.group(1))

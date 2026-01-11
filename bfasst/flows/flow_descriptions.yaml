@@ -97,6 +97,7 @@ flows:
   - vivado
   - rapidwright
   - fasm2bels
+  - yosys
 
 - name: RandSoc
   description: Create random block design(s) in Vivado
