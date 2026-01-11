@@ -4,6 +4,10 @@ opt_design
 
 place_design
 
+# Create directories for intermediate checkpoints
+file mkdir {{ outputs.post_place_dir }}
+file mkdir {{ outputs.post_route_dir }}
+
 set new_period $period
 if {[catch {
     set slack [get_property SLACK [lindex [get_timing_paths] 0]]
@@ -22,10 +26,18 @@ if {![info exists new_period]} {
 
 create_clock -period $new_period -name $clock_name [get_ports $clock_port]
 
+set pre_route_iter 0
 while {1} {
     if { [ catch {
         phys_opt_design -fanout_opt -placement_opt -casc_opt -cell_group_opt -critical_cell_opt -dsp_register_opt -bram_register_opt -bram_enable_opt -shift_register_opt -critical_pin_opt -memory_rewire_opt -hold_fix
         report_phys_opt
+
+        # Save intermediate checkpoint
+        set iter_str [format "%03d" $pre_route_iter]
+        write_checkpoint -force {{ outputs.post_place_dir }}/${iter_str}.dcp
+        write_edif -force {{ outputs.post_place_dir }}/${iter_str}.edf
+        incr pre_route_iter
+
         set slack [get_property SLACK [lindex [get_timing_paths] 0]]
         # break
         if {$slack < 0} {break}
@@ -35,10 +47,11 @@ while {1} {
     } ] } {
         break
     }
-} 
+}
 route_design
 set new_period $period
 
+set post_route_iter 0
 while {1} {
     # Try to get slack safely
     set status [catch {
@@ -59,6 +72,12 @@ while {1} {
 
     phys_opt_design -routing_opt -casc_opt -cell_group_opt -critical_cell_opt -critical_pin_opt -clock_opt -memory_rewire_opt -hold_fix
     report_phys_opt
+
+    # Save intermediate checkpoint
+    set iter_str [format "%03d" $post_route_iter]
+    write_checkpoint -force {{ outputs.post_route_dir }}/${iter_str}.dcp
+    write_edif -force {{ outputs.post_route_dir }}/${iter_str}.edf
+    incr post_route_iter
 
     # Re-fetch slack after optimization
     set status [catch {
