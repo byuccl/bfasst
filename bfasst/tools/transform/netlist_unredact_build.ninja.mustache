@@ -11,3 +11,9 @@ build {{out_dcp}} {{out_edf}} {{unmodified_out_dcp}} {{unmodified_out_edf}} : ne
     unmod_out_dcp     = {{unmodified_out_dcp}}
     unmod_out_edf     = {{unmodified_out_edf}}
     log               = {{log_path}}
+{{#has_restruct_opt}}
+    restruct_args     = --pre_phys_opt_dcp {{pre_phys_opt_dcp}} --pre_phys_opt_edf {{pre_phys_opt_edf}} --post_place_dir {{post_place_dir}} --post_route_dir {{post_route_dir}}
+{{/has_restruct_opt}}
+{{^has_restruct_opt}}
+    restruct_args     =
+{{/has_restruct_opt}}

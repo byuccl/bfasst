@@ -8,6 +8,10 @@ place_design
 file mkdir {{ outputs.post_place_dir }}
 file mkdir {{ outputs.post_route_dir }}
 
+# Save checkpoint right after placement, before any phys_opt_design
+write_checkpoint -force {{ outputs.pre_phys_opt_dcp }}
+write_edif -force {{ outputs.pre_phys_opt_edf }}
+
 set new_period $period
 if {[catch {
     set slack [get_property SLACK [lindex [get_timing_paths] 0]]

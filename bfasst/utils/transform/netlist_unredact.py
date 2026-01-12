@@ -8,7 +8,8 @@ Netlist Unredaction (paper-aligned, minimal with name fallbacks)
 - Reads UNMODIFIED DCP/EDIF and writes them back out unchanged (paper artifact).
 - Writes unredacted DCP/EDIF and the unmodified DCP/EDIF.
 
-Intentionally omits INIT transform inference, INIT reshaping, and other heuristics.
+Optional: Handle RESTRUCT_OPT transformations by computing correct INITs using
+Ashenhurst-Curtis Decomposition (ACD) when pre-phys_opt checkpoints are provided.
 """
 
 import argparse
@@ -17,7 +18,7 @@ import logging
 import pathlib
 import re
 import time
-from typing import Dict, Tuple, Optional
+from typing import Dict, Tuple, Optional, List
 
 from bfasst import jpype_jvm
 from bfasst.utils.transform.netlist_redact_helpers import TAG_PROP  # tag property key
@@ -206,6 +207,103 @@ def restore_all_properties(design: Design, json_db: Dict[str, dict]) -> None:
     )
 
 
+# ----------------- RESTRUCT_OPT Handling -----------------
+def handle_restruct_opt(
+    design: Design,
+    json_db: Dict[str, dict],
+    pre_phys_opt_dcp: pathlib.Path,
+    pre_phys_opt_edf: pathlib.Path,
+    post_phys_opt_dcps: List[pathlib.Path],
+) -> int:
+    """
+    Handle RESTRUCT_OPT transformations by computing correct INITs.
+
+    Uses the restruct_transform module to:
+    1. Track transformations across phys_opt passes
+    2. Identify restructured cell groups
+    3. Compute correct INITs using ACD factorization
+    4. Apply the computed INITs to the design
+
+    Returns number of cells updated.
+    """
+    # Import here to avoid circular imports and keep import optional
+    from bfasst.utils.transform.restruct_transform import (
+        track_restruct_transforms,
+        build_composite_function,
+        compute_restruct_inits,
+        parse_edif_cells_rapidwright,
+    )
+
+    logging.info("Handling RESTRUCT_OPT transformations...")
+    logging.info("  Pre-phys_opt: %s", pre_phys_opt_dcp)
+    logging.info("  Post-phys_opt checkpoints: %d", len(post_phys_opt_dcps))
+
+    # Track transformations
+    transforms, dependencies, groups, final_netlist = track_restruct_transforms(
+        pre_phys_opt_dcp, pre_phys_opt_edf, post_phys_opt_dcps
+    )
+
+    if not groups:
+        logging.info("No RESTRUCT_OPT groups found")
+        return 0
+
+    logging.info("Found %d RESTRUCT_OPT groups", len(groups))
+
+    # Parse pre-netlist for composite function building
+    pre_netlist = parse_edif_cells_rapidwright(pre_phys_opt_dcp, pre_phys_opt_edf)
+
+    # Get cell instance map for the design
+    netlist = design.getNetlist()
+    hier_map = EDIFTools.createCellInstanceMap(netlist)
+
+    # Build name -> cell instance mapping
+    cell_by_name = {}
+    for lib_map in hier_map.values():
+        for inst_list in lib_map.values():
+            for h_inst in inst_list:
+                name = str(h_inst.getInst().getName())
+                cell_by_name[name] = h_inst.getInst()
+
+    cells_updated = 0
+
+    for group in groups:
+        logging.info("Processing group: output=%s, intermediates=%s",
+                     group.output_cell, group.intermediate_cells)
+
+        # Build composite function
+        composite_func = build_composite_function(group, json_db, pre_netlist)
+        if composite_func is None:
+            logging.warning("Could not build composite function for group %s", group.output_cell)
+            continue
+
+        # Compute correct INITs
+        computed_inits = compute_restruct_inits(group, final_netlist, composite_func)
+
+        # Apply computed INITs to the design
+        all_cells = [group.output_cell] + group.intermediate_cells
+        for cell_name in all_cells:
+            if cell_name not in cell_by_name:
+                logging.warning("Cell %s not found in design", cell_name)
+                continue
+
+            cell = cell_by_name[cell_name]
+            new_init = computed_inits.get(cell_name)
+            if new_init is None:
+                continue
+
+            # Format INIT value
+            cell_info = final_netlist[cell_name]
+            init_width = cell_info.init_width
+            init_str = f"{init_width}'h{new_init:X}"
+
+            logging.info("  Setting %s INIT = %s", cell_name, init_str)
+            cell.addProperty("INIT", init_str, EDIFValueType.STRING)
+            cells_updated += 1
+
+    logging.info("RESTRUCT_OPT handling complete: %d cells updated", cells_updated)
+    return cells_updated
+
+
 # ----------------- CLI Runner -----------------
 def main():
     """Netlist Unredaction Runner (paper-aligned with name fallbacks)."""
@@ -249,6 +347,28 @@ def main():
         help="Verbosity level",
     )
 
+    # Optional: RESTRUCT_OPT handling
+    p.add_argument(
+        "--pre_phys_opt_dcp",
+        type=pathlib.Path,
+        help="Pre-phys_opt checkpoint (for RESTRUCT_OPT handling)",
+    )
+    p.add_argument(
+        "--pre_phys_opt_edf",
+        type=pathlib.Path,
+        help="Pre-phys_opt EDIF (for RESTRUCT_OPT handling)",
+    )
+    p.add_argument(
+        "--post_place_dir",
+        type=pathlib.Path,
+        help="Directory containing post-place phys_opt checkpoints (*.dcp files)",
+    )
+    p.add_argument(
+        "--post_route_dir",
+        type=pathlib.Path,
+        help="Directory containing post-route phys_opt checkpoints (*.dcp files)",
+    )
+
     args = p.parse_args()
 
     args.build_path.mkdir(parents=True, exist_ok=True)
@@ -273,6 +393,41 @@ def main():
     t1 = time.perf_counter()
     restore_all_properties(design_redacted, props_db)
     logging.info("Restoration complete in %.2f s", time.perf_counter() - t1)
+
+    # Handle RESTRUCT_OPT transformations if checkpoints provided
+    if args.pre_phys_opt_dcp and args.pre_phys_opt_edf and args.post_place_dir:
+        # Collect checkpoints from both post_place and post_route directories
+        # Exclude pre_phys_opt.dcp since it's the starting point, not a phys_opt output
+        post_phys_opt_dcps = []
+
+        if args.post_place_dir.exists():
+            for dcp in sorted(args.post_place_dir.glob("*.dcp")):
+                if dcp.name != "pre_phys_opt.dcp":
+                    post_phys_opt_dcps.append(dcp)
+
+        if args.post_route_dir and args.post_route_dir.exists():
+            for dcp in sorted(args.post_route_dir.glob("*.dcp")):
+                post_phys_opt_dcps.append(dcp)
+
+        if post_phys_opt_dcps:
+            logging.info("Found %d phys_opt checkpoints", len(post_phys_opt_dcps))
+            t_restruct = time.perf_counter()
+            handle_restruct_opt(
+                design_redacted,
+                props_db,
+                args.pre_phys_opt_dcp,
+                args.pre_phys_opt_edf,
+                post_phys_opt_dcps,
+            )
+            logging.info("RESTRUCT_OPT handling took %.2f s", time.perf_counter() - t_restruct)
+        else:
+            logging.warning("No phys_opt DCP files found in %s or %s",
+                          args.post_place_dir, args.post_route_dir)
+    elif args.pre_phys_opt_dcp or args.pre_phys_opt_edf or args.post_place_dir:
+        logging.warning(
+            "RESTRUCT_OPT handling requires: --pre_phys_opt_dcp, "
+            "--pre_phys_opt_edf, and --post_place_dir"
+        )
 
     # Write unredacted outputs
     t2 = time.perf_counter()

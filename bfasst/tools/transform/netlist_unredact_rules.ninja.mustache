@@ -1,3 +1,3 @@
 rule netlist_unredact
-  command = python $script --build_path $build_path --dcp_in $dcp_in --edf_in $edf_in --unmodified_dcp_in $unmod_dcp_in --unmodified_edf_in $unmod_edf_in --props $props --out_dcp $out_dcp --out_edf $out_edf --unmodified_out_dcp $unmod_out_dcp --unmodified_out_edf $unmod_out_edf --log $log
+  command = python $script --build_path $build_path --dcp_in $dcp_in --edf_in $edf_in --unmodified_dcp_in $unmod_dcp_in --unmodified_edf_in $unmod_edf_in --props_json $props --out_dcp $out_dcp --out_edf $out_edf --unmodified_out_dcp $unmod_out_dcp --unmodified_out_edf $unmod_out_edf --log $log $restruct_args
   description = Unredact netlist: Apply saved properties

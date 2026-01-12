@@ -118,6 +118,8 @@ class VivadoImpl(ImplTool):
         self.outputs["phys_opt"] = self.build_path / "phys_opt"
         self.outputs["post_place_dir"] = self.build_path / "post_place"
         self.outputs["post_route_dir"] = self.build_path / "post_route"
+        self.outputs["pre_phys_opt_dcp"] = self.build_path / "post_place" / "pre_phys_opt.dcp"
+        self.outputs["pre_phys_opt_edf"] = self.build_path / "post_place" / "pre_phys_opt.edf"
         self.outputs["bitstream"] = self.build_path / "design.bit" if not self.ooc else ""
 
     def add_ninja_deps(self, deps):

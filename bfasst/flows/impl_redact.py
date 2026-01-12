@@ -46,14 +46,14 @@ class ImplRedact(Flow):
         )
 
         redacted_impl_options = {
-            "phys_opt_flags_postplace": (
-                "-fanout_opt -placement_opt -casc_opt -cell_group_opt -critical_cell_opt "
-                "-dsp_register_opt -bram_register_opt -bram_enable_opt -shift_register_opt "
-                "-critical_pin_opt -memory_rewire_opt -hold_fix"
+            "phys_opt_flags_postplace": (""
+#                "-fanout_opt -placement_opt -casc_opt -cell_group_opt -critical_cell_opt "
+#                "-dsp_register_opt -bram_register_opt -bram_enable_opt -shift_register_opt "
+#                "-critical_pin_opt -memory_rewire_opt -hold_fix"
             ),
-            "phys_opt_flags_postroute": (
-                "-routing_opt -casc_opt -cell_group_opt -critical_cell_opt "
-                "-critical_pin_opt -clock_opt -memory_rewire_opt -hold_fix"
+            "phys_opt_flags_postroute": (""
+#                "-routing_opt -casc_opt -cell_group_opt -critical_cell_opt "
+#                "-critical_pin_opt -clock_opt -memory_rewire_opt -hold_fix"
             ),
         }
         self.impl_redacted = VivadoImpl(
@@ -110,6 +110,10 @@ class ImplRedact(Flow):
             unmodified_dcp_path=self.impl_orig.outputs["impl_dcp"],
             unmodified_edf_path=self.impl_orig.outputs["impl_edf"],
             props_json=self.netlist_redact.outputs["original_cell_props"],
+            pre_phys_opt_dcp=self.impl_redacted.outputs["pre_phys_opt_dcp"],
+            pre_phys_opt_edf=self.impl_redacted.outputs["pre_phys_opt_edf"],
+            post_place_dir=self.impl_redacted.outputs["post_place_dir"],
+            post_route_dir=self.impl_redacted.outputs["post_route_dir"],
         )
 
         self.impl_detailed_reports_orig = ImplDetailedReports(
