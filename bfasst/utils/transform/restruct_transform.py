@@ -86,6 +86,7 @@ class ACDContext:
     output_to_cell: Dict[str, str]
     cell_free_vars: Dict[str, List[str]]
     h_sees: Set[str]  # Primary inputs seen by output cell
+    inter_deps: Dict[str, Set[str]]  # Intermediate cell -> set of intermediates it depends on
 
 
 # =============================================================================
@@ -593,6 +594,41 @@ def _compute_cell_addr(cell: CellInfo, values: Dict[str, int]) -> int:
     return addr
 
 
+def _topological_sort_intermediates(
+    intermediates: List[str],
+    inter_deps: Dict[str, Set[str]],
+) -> List[str]:
+    """
+    Sort intermediate cells so producers come before consumers.
+
+    Args:
+        intermediates: List of intermediate cell names
+        inter_deps: Map from cell name to set of intermediate cells it depends on
+
+    Returns:
+        Topologically sorted list of intermediate cell names
+    """
+    result = []
+    remaining = set(intermediates)
+
+    while remaining:
+        # Find cells with no unprocessed dependencies
+        ready = [c for c in remaining if not (inter_deps.get(c, set()) & remaining)]
+        if not ready:
+            # Cycle detected - fall back to original order
+            logger.warning(
+                "Cycle in intermediate dependencies, using original order: %s",
+                remaining,
+            )
+            result.extend(sorted(remaining))
+            break
+        for c in sorted(ready):  # sorted for determinism
+            result.append(c)
+            remaining.remove(c)
+
+    return result
+
+
 def _build_truth_table(
     primary_inputs: List[str], composite_func: callable
 ) -> Dict[tuple, int]:
@@ -681,6 +717,120 @@ def _check_outputs_differ(
         if len(outputs) > 1:
             return True
     return False
+
+
+def _find_primary_combos_for_addr(
+    ctx: ACDContext,
+    cell: CellInfo,
+    target_addr: int,
+    nets: List[str],
+    computed_inits: Dict[str, int],
+) -> List[Dict[str, int]]:
+    """
+    Find all primary input combinations that produce a given cell address.
+
+    For cells with intermediate dependencies, evaluates the intermediate outputs
+    using already-computed INITs to determine the effective address.
+
+    Args:
+        ctx: ACD context with cells_info, primary_inputs, output_to_cell
+        cell: The cell we're computing address for
+        target_addr: The address we're looking for
+        nets: The cell's input nets in order (I0, I1, ...)
+        computed_inits: Already-computed INITs for producer intermediates
+
+    Returns:
+        List of primary input value dictionaries that produce target_addr
+    """
+    valid_combos = []
+
+    for primary_addr in range(1 << len(ctx.primary_inputs)):
+        values = {net: (primary_addr >> i) & 1 for i, net in enumerate(ctx.primary_inputs)}
+
+        # Compute this cell's address given primary values + intermediate outputs
+        addr = 0
+        for i, net in enumerate(nets):
+            if net in ctx.primary_inputs:
+                addr |= values[net] << i
+            else:
+                # This is an intermediate input - evaluate producer
+                producer = ctx.output_to_cell.get(net)
+                if producer and producer in computed_inits:
+                    producer_cell = ctx.cells_info[producer]
+                    producer_addr = _compute_cell_addr(producer_cell, values)
+                    inter_out = (computed_inits[producer] >> producer_addr) & 1
+                    addr |= inter_out << i
+
+        if addr == target_addr:
+            valid_combos.append(values)
+
+    return valid_combos
+
+
+def _compute_intermediate_init_with_deps(
+    ctx: ACDContext,
+    cell_name: str,
+    computed_inits: Dict[str, int],
+) -> int:
+    """
+    Compute INIT for an intermediate cell that depends on other intermediates.
+
+    This extends the standard ACD logic to handle chains where one intermediate's
+    input comes from another intermediate's output rather than a primary input.
+
+    Args:
+        ctx: ACD context
+        cell_name: Name of the intermediate cell to compute INIT for
+        computed_inits: Already-computed INITs for producer intermediates
+
+    Returns:
+        The computed INIT value for this cell
+    """
+    cell = ctx.cells_info[cell_name]
+    nets = _get_cell_input_nets(cell)
+    init_width = 1 << len(cell.inputs)
+
+    # Bound primary = primary inputs directly connected to this cell
+    bound_primary = set(nets) & set(ctx.primary_inputs)
+    free_vars = sorted(set(ctx.primary_inputs) - bound_primary)
+    free_seen_by_h = [v for v in free_vars if v in ctx.h_sees]
+    free_not_seen_by_h = [v for v in free_vars if v not in ctx.h_sees]
+
+    logger.debug(
+        "Cell %s (with deps): bound_primary=%s, free_seen_by_h=%s, free_not_seen=%s",
+        cell_name,
+        bound_primary,
+        free_seen_by_h,
+        free_not_seen_by_h,
+    )
+
+    new_init = 0
+    for addr in range(init_width):
+        # Find all primary combos that produce this address
+        valid_combos = _find_primary_combos_for_addr(
+            ctx, cell, addr, nets, computed_inits
+        )
+
+        if not valid_combos:
+            continue
+
+        # Collect truth table outputs for valid combos
+        outputs = set()
+        for values in valid_combos:
+            key = tuple(sorted(values.items()))
+            outputs.add(ctx.truth_table[key])
+
+        # Apply correct ACD rule based on free variable visibility
+        if free_not_seen_by_h:
+            # ANY rule: if any combo produces 1, set 1
+            if 1 in outputs:
+                new_init |= 1 << addr
+        else:
+            # DIFFERS rule: set 1 only if outputs differ
+            if len(outputs) > 1:
+                new_init |= 1 << addr
+
+    return new_init
 
 
 def _compute_output_cell_init(
@@ -863,6 +1013,18 @@ def _build_acd_context(
         bound = set(_get_cell_input_nets(cell)) & set(primary_inputs)
         cell_free_vars[cell_name] = sorted(set(primary_inputs) - bound)
 
+    # Compute inter-dependencies: which intermediates consume other intermediates' outputs
+    inter_deps: Dict[str, Set[str]] = {}
+    intermediate_set = set(group.intermediate_cells)
+    for cell_name in group.intermediate_cells:
+        cell = cells_info[cell_name]
+        deps = set()
+        for input_net in cell.inputs.values():
+            producer = output_to_cell.get(input_net)
+            if producer and producer in intermediate_set:
+                deps.add(producer)
+        inter_deps[cell_name] = deps
+
     return ACDContext(
         cells_info=cells_info,
         primary_inputs=primary_inputs,
@@ -870,6 +1032,7 @@ def _build_acd_context(
         output_to_cell=output_to_cell,
         cell_free_vars=cell_free_vars,
         h_sees=h_sees,
+        inter_deps=inter_deps,
     )
 
 
@@ -880,25 +1043,48 @@ def compute_restruct_inits(
     Compute correct INITs for all cells in a restructure group.
 
     Uses Ashenhurst-Curtis Decomposition (ACD) with constraint propagation.
+    Handles both star topology (all intermediates only see primary inputs) and
+    chain topology (some intermediates consume other intermediates' outputs).
+
     Returns dict mapping cell_name -> new_init.
     """
     ctx = _build_acd_context(group, final_netlist, composite_func)
 
-    logger.info(
-        "Computing INITs: %d primary inputs, %d cells",
-        len(ctx.primary_inputs), len(group.intermediate_cells) + 1
+    # Log if any intermediates have dependencies on other intermediates
+    cells_with_deps = [c for c in group.intermediate_cells if ctx.inter_deps.get(c)]
+    if cells_with_deps:
+        logger.info(
+            "Detected %d intermediates with inter-dependencies: %s",
+            len(cells_with_deps),
+            cells_with_deps,
+        )
+
+    # Sort intermediates topologically (producers before consumers)
+    sorted_inter = _topological_sort_intermediates(
+        group.intermediate_cells, ctx.inter_deps
     )
 
-    # Sort intermediate cells by number of free variables (fewest first)
-    sorted_inter = sorted(
-        group.intermediate_cells, key=lambda c: len(ctx.cell_free_vars[c])
+    logger.info(
+        "Computing INITs: %d primary inputs, %d cells (topo order: %s)",
+        len(ctx.primary_inputs),
+        len(group.intermediate_cells) + 1,
+        sorted_inter,
     )
 
     result_inits = {}
 
-    # Process intermediate cells
+    # Process intermediate cells in dependency order
     for cell_name in sorted_inter:
-        new_init = _compute_intermediate_init(ctx, cell_name)
+        has_inter_deps = bool(ctx.inter_deps.get(cell_name))
+
+        if has_inter_deps:
+            # Use new method that evaluates intermediate inputs
+            new_init = _compute_intermediate_init_with_deps(ctx, cell_name, result_inits)
+            logger.debug("Cell %s: computed with dependency resolution", cell_name)
+        else:
+            # Use existing ACD method (only primary inputs)
+            new_init = _compute_intermediate_init(ctx, cell_name)
+
         result_inits[cell_name] = new_init
         cell = ctx.cells_info[cell_name]
         init_width = 1 << len(cell.inputs)
