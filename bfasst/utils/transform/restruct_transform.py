@@ -16,7 +16,9 @@ Algorithm:
 3. Build transitive dependency graph to original cells
 4. For each _comp cell group, compute correct INITs from original functions
 """
+# pylint: disable=too-many-lines
 
+import json
 import re
 import logging
 from dataclasses import dataclass, field
@@ -30,9 +32,11 @@ logger = logging.getLogger(__name__)
 # Data Structures
 # =============================================================================
 
+
 @dataclass
 class CellInfo:
     """Information about a single cell in the netlist."""
+
     name: str
     cell_type: str  # LUT2, LUT3, LUT4, LUT5, LUT6, FDRE, etc.
     init: Optional[int]  # INIT value as integer, None if not a LUT
@@ -47,6 +51,7 @@ class CellInfo:
 @dataclass
 class RestructTransform:
     """A single RESTRUCT_OPT transformation between two netlists."""
+
     pass_number: int
     deleted_cells: List[str]  # Cells that existed before, gone after (had REDACT_TAG)
     created_cells: List[str]  # Cells created with RESTRUCT_OPT (no REDACT_TAG)
@@ -55,6 +60,7 @@ class RestructTransform:
 @dataclass
 class DependencyNode:
     """Tracks what original cells a _comp cell depends on."""
+
     cell_name: str
     original_cells: Set[str] = field(default_factory=set)  # Transitive closure
     direct_parents: Set[str] = field(default_factory=set)  # Immediate predecessors
@@ -63,15 +69,29 @@ class DependencyNode:
 @dataclass
 class RestructureGroup:
     """A group of _comp cells that form a single restructured unit."""
+
     output_cell: str  # The final output cell (e.g., h)
     intermediate_cells: List[str]  # Helper cells (e.g., comp, comp_1)
     original_cells: Set[str]  # All original cells this group derives from
     primary_inputs: Set[str]  # Signal names that are inputs to this group
 
 
+@dataclass
+class ACDContext:
+    """Context for Ashenhurst-Curtis Decomposition INIT computation."""
+
+    cells_info: Dict[str, "CellInfo"]
+    primary_inputs: List[str]
+    truth_table: Dict[tuple, int]
+    output_to_cell: Dict[str, str]
+    cell_free_vars: Dict[str, List[str]]
+    h_sees: Set[str]  # Primary inputs seen by output cell
+
+
 # =============================================================================
 # EDIF Parsing using RapidWright
 # =============================================================================
+
 
 def parse_init_string(init_str: str) -> Tuple[int, int]:
     """
@@ -88,7 +108,7 @@ def parse_init_string(init_str: str) -> Tuple[int, int]:
         base = match.group(2).lower()
         value_str = match.group(3)
 
-        if base == 'h':
+        if base == "h":
             value = int(value_str, 16)
         else:  # binary
             value = int(value_str, 2)
@@ -112,6 +132,38 @@ def _get_property_value(props_map, key: str) -> Optional[str]:
         return None
 
 
+def _build_cell_info_from_inst(cell_inst) -> CellInfo:
+    """Build CellInfo from a RapidWright cell instance."""
+    name = str(cell_inst.getName())
+    props_map = cell_inst.getPropertiesMap()
+
+    init_str = _get_property_value(props_map, "INIT")
+    init_val, init_width = parse_init_string(init_str) if init_str else (None, 0)
+
+    cell_info = CellInfo(
+        name=name,
+        cell_type=str(cell_inst.getCellType().getName()),
+        init=init_val,
+        init_width=init_width,
+        redact_tag=_get_property_value(props_map, "REDACT_TAG"),
+        phys_opt_modified=_get_property_value(props_map, "PHYS_OPT_MODIFIED"),
+        orig_cell_name=_get_property_value(props_map, "ORIG_CELL_NAME"),
+    )
+
+    # Get input/output connectivity
+    for port_inst in cell_inst.getPortInsts():
+        port_name = str(port_inst.getName())
+        net = port_inst.getNet()
+        if net:
+            net_name = str(net.getName())
+            if port_name == "O":
+                cell_info.output_net = net_name
+            elif port_name.startswith("I"):
+                cell_info.inputs[port_name] = net_name
+
+    return cell_info
+
+
 def parse_edif_cells_rapidwright(dcp_path: Path, edf_path: Path = None) -> Dict[str, CellInfo]:
     """
     Parse a design using RapidWright and extract cell information.
@@ -122,6 +174,7 @@ def parse_edif_cells_rapidwright(dcp_path: Path, edf_path: Path = None) -> Dict[
 
     Returns dict mapping cell_name -> CellInfo.
     """
+    # pylint: disable=import-outside-toplevel
     from com.xilinx.rapidwright.design import Design
     from com.xilinx.rapidwright.edif import EDIFTools
 
@@ -129,7 +182,7 @@ def parse_edif_cells_rapidwright(dcp_path: Path, edf_path: Path = None) -> Dict[
 
     # Derive EDF path if not provided
     if edf_path is None:
-        edf_path = dcp_path.with_suffix('.edf')
+        edf_path = dcp_path.with_suffix(".edf")
 
     # Load design using RapidWright
     design = Design.readCheckpoint(str(dcp_path), str(edf_path))
@@ -141,42 +194,8 @@ def parse_edif_cells_rapidwright(dcp_path: Path, edf_path: Path = None) -> Dict[
     for lib_map in hier_map.values():
         for inst_list in lib_map.values():
             for h_inst in inst_list:
-                cell_inst = h_inst.getInst()
-                name = str(cell_inst.getName())
-                cell_type = str(cell_inst.getCellType().getName())
-                props_map = cell_inst.getPropertiesMap()
-
-                # Get INIT value
-                init_str = _get_property_value(props_map, "INIT")
-                init_val, init_width = parse_init_string(init_str) if init_str else (None, 0)
-
-                # Get other properties
-                redact_tag = _get_property_value(props_map, "REDACT_TAG")
-                phys_opt_modified = _get_property_value(props_map, "PHYS_OPT_MODIFIED")
-                orig_cell_name = _get_property_value(props_map, "ORIG_CELL_NAME")
-
-                cell_info = CellInfo(
-                    name=name,
-                    cell_type=cell_type,
-                    init=init_val,
-                    init_width=init_width,
-                    redact_tag=redact_tag,
-                    phys_opt_modified=phys_opt_modified,
-                    orig_cell_name=orig_cell_name,
-                )
-
-                # Get input/output connectivity
-                for port_inst in cell_inst.getPortInsts():
-                    port_name = str(port_inst.getName())
-                    net = port_inst.getNet()
-                    if net:
-                        net_name = str(net.getName())
-                        if port_name == "O":
-                            cell_info.output_net = net_name
-                        elif port_name.startswith("I"):
-                            cell_info.inputs[port_name] = net_name
-
-                cells[name] = cell_info
+                cell_info = _build_cell_info_from_inst(h_inst.getInst())
+                cells[cell_info.name] = cell_info
 
     return cells
 
@@ -185,9 +204,10 @@ def parse_edif_cells_rapidwright(dcp_path: Path, edf_path: Path = None) -> Dict[
 # Transformation Detection
 # =============================================================================
 
-def diff_netlists(before: Dict[str, CellInfo],
-                  after: Dict[str, CellInfo],
-                  pass_number: int) -> RestructTransform:
+
+def diff_netlists(
+    before: Dict[str, CellInfo], after: Dict[str, CellInfo], pass_number: int
+) -> RestructTransform:
     """
     Find RESTRUCT_OPT changes between consecutive netlists.
 
@@ -212,11 +232,7 @@ def diff_netlists(before: Dict[str, CellInfo],
                 created.append(name)
                 logger.debug("Pass %d: Created cell %s (RESTRUCT_OPT)", pass_number, name)
 
-    return RestructTransform(
-        pass_number=pass_number,
-        deleted_cells=deleted,
-        created_cells=created
-    )
+    return RestructTransform(pass_number=pass_number, deleted_cells=deleted, created_cells=created)
 
 
 # =============================================================================
@@ -227,12 +243,12 @@ def diff_netlists(before: Dict[str, CellInfo],
 # Be careful: _[0-9]+$ can match parts of original names like _i_5
 # So we only use specific known suffixes
 _SUFFIX_PATTERNS = [
-    r"_comp_\d+$",     # _comp_1, _comp_2, etc.
-    r"_comp$",          # _comp
-    r"_replica_\d+$",   # _replica_1, etc.
-    r"_replica$",       # _replica
-    r"_repN_\d+$",      # _repN_1, etc.
-    r"_repN$",          # _repN
+    r"_comp_\d+$",  # _comp_1, _comp_2, etc.
+    r"_comp$",  # _comp
+    r"_replica_\d+$",  # _replica_1, etc.
+    r"_replica$",  # _replica
+    r"_repN_\d+$",  # _repN_1, etc.
+    r"_repN$",  # _repN
 ]
 _SUFFIX_RE = re.compile("|".join(_SUFFIX_PATTERNS))
 
@@ -252,9 +268,9 @@ def strip_comp_suffix(name: str) -> str:
     return result
 
 
-def find_parent_cells(created_cell: str,
-                      deleted_cells: List[str],
-                      before_cells: Dict[str, CellInfo]) -> Set[str]:
+def find_parent_cells(
+    created_cell: str, deleted_cells: List[str], before_cells: Dict[str, CellInfo]
+) -> Set[str]:
     """
     Determine which original cells a created cell derives from.
 
@@ -290,7 +306,7 @@ def find_parent_cells(created_cell: str,
     # Also check for helper cells (_comp_1) pattern
     if not parents:
         # INTR_O_i_1_comp_1 -> INTR_O_i_1
-        base_without_number = re.sub(r'_comp_\d+$', '_comp', created_cell)
+        base_without_number = re.sub(r"_comp_\d+$", "_comp", created_cell)
         base_without_number = strip_comp_suffix(base_without_number)
 
         for deleted in deleted_cells:
@@ -306,8 +322,9 @@ def find_parent_cells(created_cell: str,
     return parents
 
 
-def build_dependency_graph(transforms: List[RestructTransform],
-                           all_netlists: List[Dict[str, CellInfo]]) -> Dict[str, DependencyNode]:
+def build_dependency_graph(
+    transforms: List[RestructTransform], all_netlists: List[Dict[str, CellInfo]]
+) -> Dict[str, DependencyNode]:
     """
     Build a dependency graph mapping each _comp cell to its original cells.
 
@@ -336,9 +353,7 @@ def build_dependency_graph(transforms: List[RestructTransform],
                     original_cells.add(parent)
 
             dependencies[created] = DependencyNode(
-                cell_name=created,
-                original_cells=original_cells,
-                direct_parents=parents
+                cell_name=created, original_cells=original_cells, direct_parents=parents
             )
 
             logger.debug("Cell %s depends on originals: %s", created, original_cells)
@@ -350,13 +365,16 @@ def build_dependency_graph(transforms: List[RestructTransform],
 # Restructure Group Identification
 # =============================================================================
 
-def identify_restructure_groups(final_netlist: Dict[str, CellInfo],
-                                dependencies: Dict[str, DependencyNode]) -> List[RestructureGroup]:
+
+def identify_restructure_groups(
+    final_netlist: Dict[str, CellInfo], dependencies: Dict[str, DependencyNode]
+) -> List[RestructureGroup]:
     """
     Group related _comp cells that form a single restructured unit.
 
     Uses connectivity analysis: cells form a group if one's output feeds another's input.
     """
+    # pylint: disable=too-many-locals,too-many-branches
     groups = []
     processed = set()
 
@@ -408,7 +426,6 @@ def identify_restructure_groups(final_netlist: Dict[str, CellInfo],
         group_cells = find_connected_group(cell)
 
         # Determine output cell (the one whose output is NOT consumed by other group cells)
-        group_output_nets = {final_netlist[c].output_net for c in group_cells}
         group_input_nets = set()
         for c in group_cells:
             group_input_nets |= set(final_netlist[c].inputs.values())
@@ -424,11 +441,10 @@ def identify_restructure_groups(final_netlist: Dict[str, CellInfo],
         # Fallback: smallest LUT or one with plain _comp suffix
         if not output_cell:
             sorted_cells = sorted(
-                group_cells,
-                key=lambda c: final_netlist[c].init_width if c in final_netlist else 64
+                group_cells, key=lambda c: final_netlist[c].init_width if c in final_netlist else 64
             )
             for c in sorted_cells:
-                if re.search(r'_comp$', c) and not re.search(r'_comp_\d+$', c):
+                if re.search(r"_comp$", c) and not re.search(r"_comp_\d+$", c):
                     output_cell = c
                     break
             if not output_cell:
@@ -445,13 +461,17 @@ def identify_restructure_groups(final_netlist: Dict[str, CellInfo],
             output_cell=output_cell,
             intermediate_cells=intermediates,
             original_cells=all_originals,
-            primary_inputs=set()  # Will be computed later
+            primary_inputs=set(),  # Will be computed later
         )
         groups.append(group)
         processed |= group_cells
 
-        logger.info("Restructure group: output=%s, intermediates=%s, originals=%s",
-                   output_cell, intermediates, all_originals)
+        logger.info(
+            "Restructure group: output=%s, intermediates=%s, originals=%s",
+            output_cell,
+            intermediates,
+            all_originals,
+        )
 
     return groups
 
@@ -460,8 +480,10 @@ def identify_restructure_groups(final_netlist: Dict[str, CellInfo],
 # Primary Input Identification
 # =============================================================================
 
-def identify_primary_inputs(group: RestructureGroup,
-                           final_netlist: Dict[str, CellInfo]) -> Set[str]:
+
+def identify_primary_inputs(
+    group: RestructureGroup, final_netlist: Dict[str, CellInfo]
+) -> Set[str]:
     """
     Identify the primary input signals to a restructure group.
 
@@ -495,27 +517,39 @@ def identify_primary_inputs(group: RestructureGroup,
 # INIT Computation for Restructured Cells
 # =============================================================================
 
+
 def load_original_cell_props(json_path: Path) -> Dict[str, dict]:
     """Load original cell properties from JSON file."""
-    import json
-    with open(json_path) as f:
+    with open(json_path, encoding="utf-8") as f:
         return json.load(f)
+
+
+def _extract_init_from_entry(cell_data: dict) -> Optional[Tuple[int, int]]:
+    """Extract INIT value from a cell's JSON entry."""
+    baseline = cell_data.get("baseline_properties", [])
+    for prop in baseline:
+        if prop.get("identifier") == "INIT":
+            return parse_init_string(prop.get("value", ""))
+    return None
 
 
 def get_original_init(cell_name: str, original_props: Dict[str, dict]) -> Optional[Tuple[int, int]]:
     """
     Get the original INIT value for a cell from original_cell_props.json.
     Returns (init_value, bit_width) or None if not found.
+
+    Uses suffix stripping to handle cells created by other optimizations
+    (e.g., REPLICATE_OPT creates _replica cells from original cells).
     """
-    if cell_name not in original_props:
-        return None
+    # Try exact match first
+    if cell_name in original_props:
+        return _extract_init_from_entry(original_props[cell_name])
 
-    cell_data = original_props[cell_name]
-    baseline = cell_data.get("baseline_properties", [])
-
-    for prop in baseline:
-        if prop.get("identifier") == "INIT":
-            return parse_init_string(prop.get("value", ""))
+    # Try with suffix stripping (handles _replica, _repN, etc.)
+    base_name = strip_comp_suffix(cell_name)
+    if base_name != cell_name and base_name in original_props:
+        logger.debug("Resolved %s -> %s via suffix stripping", cell_name, base_name)
+        return _extract_init_from_entry(original_props[base_name])
 
     return None
 
@@ -535,14 +569,178 @@ def evaluate_lut(init: int, inputs: List[int], num_inputs: int) -> int:
     # Build the address from inputs: I0 is LSB, I(n-1) is MSB
     addr = 0
     for i, val in enumerate(inputs[:num_inputs]):
-        addr |= (val << i)
+        addr |= val << i
     return (init >> addr) & 1
 
 
-def build_composite_function(
+# =============================================================================
+# ACD Helper Functions
+# =============================================================================
+
+
+def _get_cell_input_nets(cell: CellInfo) -> List[str]:
+    """Get input nets for a cell in order I0, I1, I2..."""
+    return [cell.inputs.get(f"I{i}", "") for i in range(len(cell.inputs))]
+
+
+def _compute_cell_addr(cell: CellInfo, values: Dict[str, int]) -> int:
+    """Compute the LUT address for a cell given signal values."""
+    nets = _get_cell_input_nets(cell)
+    addr = 0
+    for i, net in enumerate(nets):
+        if net in values:
+            addr |= values[net] << i
+    return addr
+
+
+def _build_truth_table(
+    primary_inputs: List[str], composite_func: callable
+) -> Dict[tuple, int]:
+    """Build truth table mapping input combinations to outputs."""
+    truth_table = {}
+    for primary_addr in range(1 << len(primary_inputs)):
+        values = {}
+        for i, net in enumerate(primary_inputs):
+            values[net] = (primary_addr >> i) & 1
+        key = tuple(sorted(values.items()))
+        truth_table[key] = composite_func(values)
+    return truth_table
+
+
+def _compute_intermediate_init(ctx: ACDContext, cell_name: str) -> int:
+    """Compute INIT for a single intermediate cell using ACD rules."""
+    cell = ctx.cells_info[cell_name]
+    free_vars = ctx.cell_free_vars[cell_name]
+    init_width = 1 << len(cell.inputs)
+    nets = _get_cell_input_nets(cell)
+
+    free_seen_by_h = [v for v in free_vars if v in ctx.h_sees]
+    free_not_seen_by_h = [v for v in free_vars if v not in ctx.h_sees]
+
+    logger.debug(
+        "Cell %s: free_seen_by_h=%s, free_not_seen=%s",
+        cell_name, free_seen_by_h, free_not_seen_by_h,
+    )
+
+    new_init = 0
+    for addr in range(init_width):
+        # Decode bound variable values from address
+        bound_values = {}
+        for i, net in enumerate(nets):
+            if net in ctx.primary_inputs:
+                bound_values[net] = (addr >> i) & 1
+
+        if free_not_seen_by_h:
+            # Use "ANY" rule - set bit if any free var combo produces output=1
+            if _check_any_produces_one(
+                bound_values, free_seen_by_h, free_not_seen_by_h, ctx.truth_table
+            ):
+                new_init |= 1 << addr
+        else:
+            # Use "differs" rule - set bit if outputs differ across free vars
+            if _check_outputs_differ(bound_values, free_vars, ctx.truth_table):
+                new_init |= 1 << addr
+
+    return new_init
+
+
+def _check_any_produces_one(
+    bound_values: Dict[str, int],
+    free_seen_by_h: List[str],
+    free_not_seen_by_h: List[str],
+    truth_table: Dict[tuple, int],
+) -> bool:
+    """Check if ANY free variable combination produces output=1."""
+    for h_seen_addr in range(1 << len(free_seen_by_h)):
+        for unseen_addr in range(1 << len(free_not_seen_by_h)):
+            test_values = dict(bound_values)
+            for j, net in enumerate(free_seen_by_h):
+                test_values[net] = (h_seen_addr >> j) & 1
+            for j, net in enumerate(free_not_seen_by_h):
+                test_values[net] = (unseen_addr >> j) & 1
+
+            key = tuple(sorted(test_values.items()))
+            if truth_table[key] == 1:
+                return True
+    return False
+
+
+def _check_outputs_differ(
+    bound_values: Dict[str, int],
+    free_vars: List[str],
+    truth_table: Dict[tuple, int],
+) -> bool:
+    """Check if outputs differ across free variable combinations."""
+    outputs = set()
+    for free_addr in range(1 << len(free_vars)):
+        test_values = dict(bound_values)
+        for j, net in enumerate(free_vars):
+            test_values[net] = (free_addr >> j) & 1
+        key = tuple(sorted(test_values.items()))
+        outputs.add(truth_table[key])
+        if len(outputs) > 1:
+            return True
+    return False
+
+
+def _compute_output_cell_init(
+    ctx: ACDContext,
     group: RestructureGroup,
-    original_props: Dict[str, dict],
-    pre_netlist: Dict[str, CellInfo]
+    result_inits: Dict[str, int],
+) -> Tuple[int, int]:
+    """Compute INIT for the output cell. Returns (init_value, inconsistency_count)."""
+    # pylint: disable=too-many-locals
+    output_cell = group.output_cell
+    output_cell_info = ctx.cells_info[output_cell]
+    output_nets = _get_cell_input_nets(output_cell_info)
+    output_init_width = 1 << len(output_cell_info.inputs)
+
+    # Build constraints: for each output cell address, collect required outputs
+    h_constraints: Dict[int, Set[int]] = {}
+
+    for primary_addr in range(1 << len(ctx.primary_inputs)):
+        values = {net: (primary_addr >> i) & 1 for i, net in enumerate(ctx.primary_inputs)}
+
+        # Compute intermediate outputs
+        inter_outputs = {}
+        for cell_name in group.intermediate_cells:
+            cell = ctx.cells_info[cell_name]
+            cell_addr = _compute_cell_addr(cell, values)
+            inter_outputs[cell.output_net] = (result_inits[cell_name] >> cell_addr) & 1
+
+        # Compute output cell address
+        output_addr = 0
+        for i, net in enumerate(output_nets):
+            if net in inter_outputs:
+                output_addr |= inter_outputs[net] << i
+            elif net in values:
+                output_addr |= values[net] << i
+
+        # Record required output
+        key = tuple(sorted(values.items()))
+        required = ctx.truth_table[key]
+        if output_addr not in h_constraints:
+            h_constraints[output_addr] = set()
+        h_constraints[output_addr].add(required)
+
+    # Build INIT from constraints
+    output_init = 0
+    inconsistent = 0
+    for addr in range(output_init_width):
+        if addr in h_constraints:
+            outputs = h_constraints[addr]
+            if len(outputs) == 1:
+                if 1 in outputs:
+                    output_init |= 1 << addr
+            else:
+                logger.warning("Inconsistent at output addr %d: %s", addr, outputs)
+                inconsistent += 1
+
+    return output_init, inconsistent
+
+
+def build_composite_function(
+    group: RestructureGroup, original_props: Dict[str, dict], pre_netlist: Dict[str, CellInfo]
 ) -> Optional[callable]:
     """
     Build the original composite function for a restructure group.
@@ -607,7 +805,6 @@ def build_composite_function(
             return 0
 
         # Find the output cell - it's the one whose output is NOT consumed by other original cells
-        original_output_nets = {c.output_net for c in original_cells_info.values() if c.output_net}
         original_input_nets = set()
         for c in original_cells_info.values():
             original_input_nets |= set(c.inputs.values())
@@ -629,22 +826,11 @@ def build_composite_function(
     return evaluate
 
 
-def compute_restruct_inits(
-    group: RestructureGroup,
-    final_netlist: Dict[str, CellInfo],
-    composite_func: callable
-) -> Dict[str, int]:
-    """
-    Compute correct INITs for all cells in a restructure group.
-
-    Uses Ashenhurst-Curtis Decomposition (ACD) with constraint propagation:
-    1. Identify "bound" and "free" variables for each intermediate cell
-    2. For each intermediate cell address, set bit=1 only when needed to
-       differentiate between free variable combinations that have different outputs
-    3. Compute output cell INIT from the resulting factorization
-
-    Returns dict mapping cell_name -> new_init.
-    """
+def _build_acd_context(
+    group: RestructureGroup, final_netlist: Dict[str, CellInfo], composite_func: callable
+) -> ACDContext:
+    """Build the ACD computation context from group and netlist."""
+    # pylint: disable=too-many-locals
     all_cells = [group.output_cell] + group.intermediate_cells
     cells_info = {name: final_netlist[name] for name in all_cells}
 
@@ -655,220 +841,78 @@ def compute_restruct_inits(
             output_to_cell[cell.output_net] = name
 
     # Identify primary inputs (from outside the group)
-    all_inputs = set()
+    all_inputs: Set[str] = set()
     for cell in cells_info.values():
         all_inputs |= set(cell.inputs.values())
     group_outputs = set(output_to_cell.keys())
     primary_inputs = sorted(all_inputs - group_outputs)
 
-    logger.info("Computing INITs: %d primary inputs, %d cells", len(primary_inputs), len(all_cells))
+    # Build truth table
+    truth_table = _build_truth_table(primary_inputs, composite_func)
 
-    # For each cell, determine which primary inputs it sees (bound variables)
-    def get_input_nets(cell_name):
-        cell = cells_info[cell_name]
-        return [cell.inputs.get(f'I{i}', '') for i in range(len(cell.inputs))]
+    # Identify output cell's primary inputs (h_sees)
+    output_cell_info = cells_info[group.output_cell]
+    output_nets = _get_cell_input_nets(output_cell_info)
+    output_primary_nets = [net for net in output_nets if net in primary_inputs]
+    h_sees = set(output_primary_nets)
 
-    def get_bound_variables(cell_name):
-        """Get the set of primary input nets this cell sees."""
-        return set(get_input_nets(cell_name)) & set(primary_inputs)
-
-    def compute_cell_addr(cell_name, values):
-        """Compute the address for a cell given signal values."""
-        nets = get_input_nets(cell_name)
-        addr = 0
-        for i, net in enumerate(nets):
-            if net in values:
-                addr |= (values[net] << i)
-        return addr
-
-    output_cell = group.output_cell
-    output_nets = get_input_nets(output_cell)
-
-    # Identify which output cell inputs are intermediate outputs vs primary
-    inter_input_nets = {}  # net -> cell_name that produces it
-    output_primary_nets = []  # primary input nets seen by output cell
-    for net in output_nets:
-        if net in group_outputs:
-            for cell_name, cell in cells_info.items():
-                if cell.output_net == net:
-                    inter_input_nets[net] = cell_name
-        elif net in primary_inputs:
-            output_primary_nets.append(net)
-
-    # Free variables for output cell: primary inputs NOT seen by output cell
-    output_free_vars = sorted(set(primary_inputs) - set(output_primary_nets))
-    logger.debug("Output cell free variables: %s", output_free_vars)
-
-    # For each intermediate cell, identify its free variables
-    # Free vars = primary inputs not in this cell's bound set
+    # Compute free variables for each intermediate cell
     cell_free_vars = {}
     for cell_name in group.intermediate_cells:
-        bound = get_bound_variables(cell_name)
-        free = sorted(set(primary_inputs) - bound)
-        cell_free_vars[cell_name] = free
-        logger.debug("Cell %s free variables: %s", cell_name, free)
+        cell = cells_info[cell_name]
+        bound = set(_get_cell_input_nets(cell)) & set(primary_inputs)
+        cell_free_vars[cell_name] = sorted(set(primary_inputs) - bound)
 
-    # Build truth table: for each primary input combination, store the required output
-    truth_table = {}  # tuple of (net, value) pairs -> output
-    for primary_addr in range(1 << len(primary_inputs)):
-        values = {}
-        for i, net in enumerate(primary_inputs):
-            values[net] = (primary_addr >> i) & 1
-        key = tuple(sorted(values.items()))
-        truth_table[key] = composite_func(values)
+    return ACDContext(
+        cells_info=cells_info,
+        primary_inputs=primary_inputs,
+        truth_table=truth_table,
+        output_to_cell=output_to_cell,
+        cell_free_vars=cell_free_vars,
+        h_sees=h_sees,
+    )
+
+
+def compute_restruct_inits(
+    group: RestructureGroup, final_netlist: Dict[str, CellInfo], composite_func: callable
+) -> Dict[str, int]:
+    """
+    Compute correct INITs for all cells in a restructure group.
+
+    Uses Ashenhurst-Curtis Decomposition (ACD) with constraint propagation.
+    Returns dict mapping cell_name -> new_init.
+    """
+    ctx = _build_acd_context(group, final_netlist, composite_func)
+
+    logger.info(
+        "Computing INITs: %d primary inputs, %d cells",
+        len(ctx.primary_inputs), len(group.intermediate_cells) + 1
+    )
 
     # Sort intermediate cells by number of free variables (fewest first)
-    # Cells with fewer free vars are easier to determine
-    sorted_inter = sorted(group.intermediate_cells,
-                          key=lambda c: len(cell_free_vars[c]))
+    sorted_inter = sorted(
+        group.intermediate_cells, key=lambda c: len(ctx.cell_free_vars[c])
+    )
 
     result_inits = {}
 
-    # Identify which free variables are seen by the output cell (h)
-    # These are the primary inputs that h directly receives
-    h_sees = set(output_primary_nets)
-
     # Process intermediate cells
     for cell_name in sorted_inter:
-        cell = cells_info[cell_name]
-        init_width = 1 << len(cell.inputs)
-        bound_vars = get_bound_variables(cell_name)
-        free_vars = cell_free_vars[cell_name]
-
-        # Partition free vars into those seen by h and those not seen by h
-        free_seen_by_h = [v for v in free_vars if v in h_sees]
-        free_not_seen_by_h = [v for v in free_vars if v not in h_sees]
-
-        logger.debug("Cell %s: free_seen_by_h=%s, free_not_seen=%s",
-                     cell_name, free_seen_by_h, free_not_seen_by_h)
-
-        new_init = 0
-
-        # For each address (bound variable combination)
-        for addr in range(init_width):
-            # Decode the bound variable values from this address
-            bound_values = {}
-            nets = get_input_nets(cell_name)
-            for i, net in enumerate(nets):
-                if net in primary_inputs:
-                    bound_values[net] = (addr >> i) & 1
-
-            # Strategy depends on what h can and cannot see:
-            #
-            # For free vars NOT seen by h: use "ANY" rule
-            #   Set bit=1 if there EXISTS any combination of these vars that produces output=1
-            #   This is because h cannot distinguish between these combinations
-            #
-            # For free vars seen by h: use "differs" rule
-            #   Set bit=1 if the output pattern differs across these vars
-            #   This allows h to use this cell's output to distinguish
-
-            if free_not_seen_by_h:
-                # There are free vars h can't see - use "ANY" rule for those
-                # For each combination of free vars h CAN see, check if ANY
-                # combination of vars h CAN'T see produces output=1
-                any_produces_1 = False
-
-                for h_seen_addr in range(1 << len(free_seen_by_h)):
-                    for unseen_addr in range(1 << len(free_not_seen_by_h)):
-                        test_values = dict(bound_values)
-                        for j, net in enumerate(free_seen_by_h):
-                            test_values[net] = (h_seen_addr >> j) & 1
-                        for j, net in enumerate(free_not_seen_by_h):
-                            test_values[net] = (unseen_addr >> j) & 1
-
-                        key = tuple(sorted(test_values.items()))
-                        if truth_table[key] == 1:
-                            any_produces_1 = True
-                            break
-                    if any_produces_1:
-                        break
-
-                if any_produces_1:
-                    new_init |= (1 << addr)
-
-            else:
-                # All free vars are seen by h - use "differs" rule
-                outputs_by_free = {}
-                for free_addr in range(1 << len(free_vars)):
-                    test_values = dict(bound_values)
-                    free_tuple = []
-                    for j, net in enumerate(free_vars):
-                        val = (free_addr >> j) & 1
-                        test_values[net] = val
-                        free_tuple.append((net, val))
-                    free_tuple = tuple(free_tuple)
-
-                    key = tuple(sorted(test_values.items()))
-                    outputs_by_free[free_tuple] = truth_table[key]
-
-                # Reference: free vars all 0
-                ref_free = tuple((net, 0) for net in free_vars)
-                ref_output = outputs_by_free.get(ref_free, 0)
-
-                # Check if any free var combination produces a different output
-                differs = False
-                for free_tuple, out in outputs_by_free.items():
-                    if out != ref_output:
-                        differs = True
-                        break
-
-                if differs:
-                    new_init |= (1 << addr)
-
+        new_init = _compute_intermediate_init(ctx, cell_name)
         result_inits[cell_name] = new_init
+        cell = ctx.cells_info[cell_name]
+        init_width = 1 << len(cell.inputs)
         logger.info("Cell %s: INIT = %d'h%X", cell_name, init_width, new_init)
 
     # Compute output cell INIT
-    output_cell_info = cells_info[output_cell]
+    output_init, inconsistent = _compute_output_cell_init(ctx, group, result_inits)
+    result_inits[group.output_cell] = output_init
+    output_cell_info = ctx.cells_info[group.output_cell]
     output_init_width = 1 << len(output_cell_info.inputs)
-    output_init = 0
-
-    # Build h constraints: for each output cell address, collect required outputs
-    h_constraints = {}  # output_addr -> set of required outputs
-
-    for primary_addr in range(1 << len(primary_inputs)):
-        values = {}
-        for i, net in enumerate(primary_inputs):
-            values[net] = (primary_addr >> i) & 1
-
-        # Compute intermediate outputs
-        inter_outputs = {}
-        for cell_name in group.intermediate_cells:
-            cell_addr = compute_cell_addr(cell_name, values)
-            inter_outputs[cells_info[cell_name].output_net] = \
-                (result_inits[cell_name] >> cell_addr) & 1
-
-        # Compute output cell address
-        output_addr = 0
-        for i, net in enumerate(output_nets):
-            if net in inter_outputs:
-                output_addr |= (inter_outputs[net] << i)
-            elif net in values:
-                output_addr |= (values[net] << i)
-
-        # Record required output
-        key = tuple(sorted(values.items()))
-        required = truth_table[key]
-        if output_addr not in h_constraints:
-            h_constraints[output_addr] = set()
-        h_constraints[output_addr].add(required)
-
-    # Build h INIT from constraints
-    inconsistent = 0
-    for addr in range(output_init_width):
-        if addr in h_constraints:
-            outputs = h_constraints[addr]
-            if len(outputs) == 1:
-                if 1 in outputs:
-                    output_init |= (1 << addr)
-            else:
-                logger.warning("Inconsistent at output addr %d: %s", addr, outputs)
-                inconsistent += 1
-
-    result_inits[output_cell] = output_init
-    logger.info("Output cell %s: INIT = %d'h%X (inconsistencies: %d)",
-                output_cell, output_init_width, output_init, inconsistent)
+    logger.info(
+        "Output cell %s: INIT = %d'h%X (inconsistencies: %d)",
+        group.output_cell, output_init_width, output_init, inconsistent,
+    )
 
     return result_inits
 
@@ -877,13 +921,12 @@ def compute_restruct_inits(
 # Main Tracking Function
 # =============================================================================
 
-def track_restruct_transforms(pre_phys_opt_dcp: Path,
-                              pre_phys_opt_edf: Path,
-                              post_phys_opt_dcps: List[Path]) -> Tuple[
-                                  List[RestructTransform],
-                                  Dict[str, DependencyNode],
-                                  List[RestructureGroup],
-                                  Dict[str, CellInfo]]:
+
+def track_restruct_transforms(
+    pre_phys_opt_dcp: Path, pre_phys_opt_edf: Path, post_phys_opt_dcps: List[Path]
+) -> Tuple[
+    List[RestructTransform], Dict[str, DependencyNode], List[RestructureGroup], Dict[str, CellInfo]
+]:
     """
     Main entry point: track all RESTRUCT_OPT transformations across phys_opt passes.
 
@@ -898,8 +941,9 @@ def track_restruct_transforms(pre_phys_opt_dcp: Path,
         - groups: List of RestructureGroup for INIT computation
         - final_netlist: The final netlist (last checkpoint)
     """
-    logger.info("Tracking RESTRUCT_OPT transforms across %d phys_opt passes",
-               len(post_phys_opt_dcps))
+    logger.info(
+        "Tracking RESTRUCT_OPT transforms across %d phys_opt passes", len(post_phys_opt_dcps)
+    )
 
     # Parse all netlists using RapidWright
     all_netlists = []
@@ -922,8 +966,12 @@ def track_restruct_transforms(pre_phys_opt_dcp: Path,
         transforms.append(transform)
 
         if transform.deleted_cells or transform.created_cells:
-            logger.info("Pass %d: %d deleted, %d created",
-                       i, len(transform.deleted_cells), len(transform.created_cells))
+            logger.info(
+                "Pass %d: %d deleted, %d created",
+                i,
+                len(transform.deleted_cells),
+                len(transform.created_cells),
+            )
 
     # Build dependency graph
     dependencies = build_dependency_graph(transforms, all_netlists)
@@ -936,8 +984,7 @@ def track_restruct_transforms(pre_phys_opt_dcp: Path,
     # Compute primary inputs for each group
     for group in groups:
         group.primary_inputs = identify_primary_inputs(group, final_netlist)
-        logger.info("Group %s has %d primary inputs",
-                   group.output_cell, len(group.primary_inputs))
+        logger.info("Group %s has %d primary inputs", group.output_cell, len(group.primary_inputs))
 
     return transforms, dependencies, groups, final_netlist
 
@@ -946,8 +993,10 @@ def track_restruct_transforms(pre_phys_opt_dcp: Path,
 # Testing / CLI
 # =============================================================================
 
+
 def main():
     """Test the transformation tracking on a design."""
+    # pylint: disable=import-outside-toplevel
     import argparse
     import sys
 
@@ -958,22 +1007,28 @@ def main():
 
     # Initialize JVM for RapidWright
     from bfasst import jpype_jvm
+
     jpype_jvm.start()
 
     parser = argparse.ArgumentParser(description="Track RESTRUCT_OPT transformations")
     parser.add_argument("--pre-dcp", required=True, type=Path, help="Pre-phys_opt DCP")
     parser.add_argument("--pre-edf", required=True, type=Path, help="Pre-phys_opt EDF")
-    parser.add_argument("--post", required=True, type=Path, nargs="+", help="Post-phys_opt DCPs (EDF assumed same name)")
+    parser.add_argument(
+        "--post",
+        required=True,
+        type=Path,
+        nargs="+",
+        help="Post-phys_opt DCPs (EDF assumed same name)",
+    )
     parser.add_argument("-v", "--verbose", action="store_true", help="Verbose output")
 
     args = parser.parse_args()
 
     logging.basicConfig(
-        level=logging.DEBUG if args.verbose else logging.INFO,
-        format="%(levelname)s: %(message)s"
+        level=logging.DEBUG if args.verbose else logging.INFO, format="%(levelname)s: %(message)s"
     )
 
-    transforms, dependencies, groups, final_netlist = track_restruct_transforms(
+    transforms, dependencies, groups, _ = track_restruct_transforms(
         args.pre_dcp, args.pre_edf, args.post
     )
 

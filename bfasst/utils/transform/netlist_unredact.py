@@ -208,6 +208,7 @@ def restore_all_properties(design: Design, json_db: Dict[str, dict]) -> None:
 
 
 # ----------------- RESTRUCT_OPT Handling -----------------
+# pylint: disable=too-many-locals
 def handle_restruct_opt(
     design: Design,
     json_db: Dict[str, dict],
@@ -227,6 +228,7 @@ def handle_restruct_opt(
     Returns number of cells updated.
     """
     # Import here to avoid circular imports and keep import optional
+    # pylint: disable=import-outside-toplevel
     from bfasst.utils.transform.restruct_transform import (
         track_restruct_transforms,
         build_composite_function,
@@ -239,7 +241,7 @@ def handle_restruct_opt(
     logging.info("  Post-phys_opt checkpoints: %d", len(post_phys_opt_dcps))
 
     # Track transformations
-    transforms, dependencies, groups, final_netlist = track_restruct_transforms(
+    _, _, groups, final_netlist = track_restruct_transforms(
         pre_phys_opt_dcp, pre_phys_opt_edf, post_phys_opt_dcps
     )
 
@@ -267,8 +269,11 @@ def handle_restruct_opt(
     cells_updated = 0
 
     for group in groups:
-        logging.info("Processing group: output=%s, intermediates=%s",
-                     group.output_cell, group.intermediate_cells)
+        logging.info(
+            "Processing group: output=%s, intermediates=%s",
+            group.output_cell,
+            group.intermediate_cells,
+        )
 
         # Build composite function
         composite_func = build_composite_function(group, json_db, pre_netlist)
@@ -305,6 +310,7 @@ def handle_restruct_opt(
 
 
 # ----------------- CLI Runner -----------------
+# pylint: disable=too-many-locals,too-many-statements
 def main():
     """Netlist Unredaction Runner (paper-aligned with name fallbacks)."""
     p = argparse.ArgumentParser(description=__doc__)
@@ -421,8 +427,9 @@ def main():
             )
             logging.info("RESTRUCT_OPT handling took %.2f s", time.perf_counter() - t_restruct)
         else:
-            logging.warning("No phys_opt DCP files found in %s or %s",
-                          args.post_place_dir, args.post_route_dir)
+            logging.warning(
+                "No phys_opt DCP files found in %s or %s", args.post_place_dir, args.post_route_dir
+            )
     elif args.pre_phys_opt_dcp or args.pre_phys_opt_edf or args.post_place_dir:
         logging.warning(
             "RESTRUCT_OPT handling requires: --pre_phys_opt_dcp, "
