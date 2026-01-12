@@ -25,22 +25,22 @@ include $(BFASST_SETUP)/external_tools.mk
 ################################### Installation and Setup #########################################
 .DEFAULT_GOAL: install
 .PHONY: apt_packages install venv init_venv python_packages setup_autocomplete env_vars enable_pre_commit_hook
-install: venv setup_autocomplete all_submodules
+install: venv all_submodules
 
 apt_packages:
 	$(BFASST_SETUP)/install_packages.sh
 
 clean: 
-ifndef FORCE_CLEAN
-	@echo "Are you sure? make clean will erase the $(notdir $(VENV_DIR)), $(notdir $(VENV_VARS)), \
-	pre_commit hook, and all submodules installed. Rerun 'make clean FORCE_CLEAN=1' to confirm." >&2
-else
+# ifndef FORCE_CLEAN
+# 	@echo "Are you sure? make clean will erase the $(notdir $(VENV_DIR)), $(notdir $(VENV_VARS)), \
+# 	pre_commit hook, and all submodules installed. Rerun 'make clean FORCE_CLEAN=1' to confirm." >&2
+# else
 	$(foreach installed, $(subst _updated, ,$(notdir $(SUBMOD_UPDATE_TARGETS))), \
 		rm -f $($(call TO_UPPER, $(installed))_PATH)/.bfasst_installed; \
 	)
 	rm -rf $(VENV_DIR) $(VENV_VARS) $(PRE_COMMIT_HOOK) $(SETUP_BUILD)
 	git submodule deinit -f --all
-endif
+# endif
 
 .NOTPARALLEL: $(VENV_ACTIVATE) $(VENV_VARS)
 
@@ -66,7 +66,7 @@ ifndef _load_project_env_vars
 	mv $(VENV_ACTIVATE).tmp $(VENV_ACTIVATE)
 endif
 
-venv: $(VENV_ACTIVATE) $(VENV_VARS) python_packages
+venv: $(VENV_ACTIVATE) $(VENV_VARS) python_packages setup_autocomplete
 
 AUTO_COMPLETE := source $(BFASST_SETUP)/flow_autocomplete.sh
 setup_autocomplete: $(VENV_ACTIVATE)

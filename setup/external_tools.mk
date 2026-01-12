@@ -105,9 +105,9 @@ $(CAPNP_JAVA): $(shell command -v capnproto)
 	  exit 1;
 	@rm -rf $(TEMP_DIR)
 #   Update env variable for capnp schema, if it not already present
-# ifeq ($(shell grep -Fx "export JAVA_SCHEMA=$(PREFIX)/include/capnp/" "$(VENV_VARS)" 2>/dev/null),)
-# 	flock $(VENV_VARS) -c 'echo -e "\n# Capnproto Java Schema Path\nexport JAVA_SCHEMA=$(PREFIX)/include/capnp/" >> "$(VENV_VARS)"'
-# endif
+	ifeq ($(shell grep -Fx "export JAVA_SCHEMA=$(PREFIX)/include/capnp/" "$(VENV_VARS)" 2>/dev/null),)
+		flock $(VENV_VARS) -c 'echo -e "\n# Capnproto Java Schema Path\nJAVA_SCHEMA=$(PREFIX)/include/capnp/" >> "$(VENV_VARS)"'
+	endif
 
 ####################################################################################################
 # Rapidwright
@@ -153,7 +153,7 @@ endif
 		echo "CLASS_PATH=$(RAPIDWRIGHT_PATH)/bin:$(shell echo $(RAPIDWRIGHT_PATH)/jars/*.jar | tr ' ' ':')"; \
 	, $(VENV_VARS) )
 	cd $(RAPIDWRIGHT_PATH) && ./gradlew compileJava
-	$(MAKE) -C $(RAPIDWRIGHT_PATH)/interchange $(RAPIDWRIGHT_PATH)/interchange/schema/capnp/java.capnp
+# $(MAKE) -C $(RAPIDWRIGHT_PATH)/interchange $(RAPIDWRIGHT_PATH)/interchange/schema/capnp/java.capnp
 	$(call APPEND_MT, \
 		echo -e "\n# Make sure the correct java binary is available for RapidWright\n"; \
 		echo "export PATH=$(JAVA_HOME)/bin:\$$PATH"; \

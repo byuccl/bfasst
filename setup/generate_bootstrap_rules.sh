@@ -63,7 +63,8 @@ ${configured_path}/.git:
 		git clone --recurse-submodules "\$\$URL" "\$\$CONFIGURED_PATH"; \\
 		git -C "\$\$CONFIGURED_PATH" checkout --recurse-submodules --force "\$\$EXPECTED"; \\
 	fi
-    touch ${STAMP_DIR}/${submod_name}_checkout
+	touch ${STAMP_DIR}/${submod_name}_checkout
+
 EOF
 done
 
