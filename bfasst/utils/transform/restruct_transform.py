@@ -16,6 +16,7 @@ Algorithm:
 3. Build transitive dependency graph to original cells
 4. For each _comp cell group, compute correct INITs from original functions
 """
+
 # pylint: disable=too-many-lines
 
 import json
@@ -613,7 +614,7 @@ def _topological_sort_intermediates(
 
     while remaining:
         # Find cells with no unprocessed dependencies
-        ready = [c for c in remaining if not (inter_deps.get(c, set()) & remaining)]
+        ready = [c for c in remaining if not inter_deps.get(c, set()) & remaining]
         if not ready:
             # Cycle detected - fall back to original order
             logger.warning(
@@ -629,9 +630,7 @@ def _topological_sort_intermediates(
     return result
 
 
-def _build_truth_table(
-    primary_inputs: List[str], composite_func: callable
-) -> Dict[tuple, int]:
+def _build_truth_table(primary_inputs: List[str], composite_func: callable) -> Dict[tuple, int]:
     """Build truth table mapping input combinations to outputs."""
     truth_table = {}
     for primary_addr in range(1 << len(primary_inputs)):
@@ -655,7 +654,9 @@ def _compute_intermediate_init(ctx: ACDContext, cell_name: str) -> int:
 
     logger.debug(
         "Cell %s: free_seen_by_h=%s, free_not_seen=%s",
-        cell_name, free_seen_by_h, free_not_seen_by_h,
+        cell_name,
+        free_seen_by_h,
+        free_not_seen_by_h,
     )
 
     new_init = 0
@@ -721,7 +722,6 @@ def _check_outputs_differ(
 
 def _find_primary_combos_for_addr(
     ctx: ACDContext,
-    cell: CellInfo,
     target_addr: int,
     nets: List[str],
     computed_inits: Dict[str, int],
@@ -734,7 +734,6 @@ def _find_primary_combos_for_addr(
 
     Args:
         ctx: ACD context with cells_info, primary_inputs, output_to_cell
-        cell: The cell we're computing address for
         target_addr: The address we're looking for
         nets: The cell's input nets in order (I0, I1, ...)
         computed_inits: Already-computed INITs for producer intermediates
@@ -772,6 +771,7 @@ def _compute_intermediate_init_with_deps(
     cell_name: str,
     computed_inits: Dict[str, int],
 ) -> int:
+    # pylint: disable=too-many-locals
     """
     Compute INIT for an intermediate cell that depends on other intermediates.
 
@@ -807,9 +807,7 @@ def _compute_intermediate_init_with_deps(
     new_init = 0
     for addr in range(init_width):
         # Find all primary combos that produce this address
-        valid_combos = _find_primary_combos_for_addr(
-            ctx, cell, addr, nets, computed_inits
-        )
+        valid_combos = _find_primary_combos_for_addr(ctx, addr, nets, computed_inits)
 
         if not valid_combos:
             continue
@@ -1039,6 +1037,7 @@ def _build_acd_context(
 def compute_restruct_inits(
     group: RestructureGroup, final_netlist: Dict[str, CellInfo], composite_func: callable
 ) -> Dict[str, int]:
+    # pylint: disable=too-many-locals
     """
     Compute correct INITs for all cells in a restructure group.
 
@@ -1060,9 +1059,7 @@ def compute_restruct_inits(
         )
 
     # Sort intermediates topologically (producers before consumers)
-    sorted_inter = _topological_sort_intermediates(
-        group.intermediate_cells, ctx.inter_deps
-    )
+    sorted_inter = _topological_sort_intermediates(group.intermediate_cells, ctx.inter_deps)
 
     logger.info(
         "Computing INITs: %d primary inputs, %d cells (topo order: %s)",
@@ -1097,7 +1094,10 @@ def compute_restruct_inits(
     output_init_width = 1 << len(output_cell_info.inputs)
     logger.info(
         "Output cell %s: INIT = %d'h%X (inconsistencies: %d)",
-        group.output_cell, output_init_width, output_init, inconsistent,
+        group.output_cell,
+        output_init_width,
+        output_init,
+        inconsistent,
     )
 
     return result_inits
