@@ -58,12 +58,12 @@ class ImplRedact(Flow):
 
         impl_options = {
             "phys_opt_flags_postplace": (
-                "-fanout_opt -placement_opt -casc_opt -cell_group_opt -critical_cell_opt "
+                "-fanout_opt -placement_opt -casc_opt -cell_group_opt "
                 "-dsp_register_opt -bram_register_opt -bram_enable_opt -shift_register_opt "
                 "-critical_pin_opt -memory_rewire_opt -hold_fix"
             ),
             "phys_opt_flags_postroute": (
-                "-routing_opt -casc_opt -cell_group_opt -critical_cell_opt "
+                "-routing_opt -casc_opt -cell_group_opt "
                 "-critical_pin_opt -clock_opt -memory_rewire_opt -hold_fix"
             ),
         }
@@ -189,9 +189,15 @@ class ImplRedact(Flow):
             "golden_timing": self.impl_detailed_reports_orig.outputs["timing_summary"],
             "golden_utilization": self.impl_detailed_reports_orig.outputs["utilization"],
             "golden_log": self.impl_orig.outputs["log"],
+            "golden_congestion": self.impl_detailed_reports_orig.outputs["congestion"],
             "test_timing": self.impl_detailed_reports_redacted.outputs["timing_summary"],
             "test_utilization": self.impl_detailed_reports_redacted.outputs["utilization"],
             "test_log": self.impl_redacted.outputs["log"],
+            "test_congestion": self.impl_detailed_reports_redacted.outputs["congestion"],
+            # Additional logs for detailed timing
+            "synth_log": self.vivado_synth.outputs["log"],
+            "redact_log": self.netlist_redact.outputs["log_file"],
+            "unredact_log": self.netlist_unredact.outputs["log_file"],
         }
         if self.impl_detailed_reports_super_golden:
             metrics_cmp_kwargs["baseline_timing"] = self.impl_detailed_reports_super_golden.outputs[
@@ -201,6 +207,9 @@ class ImplRedact(Flow):
                 self.impl_detailed_reports_super_golden.outputs["utilization"]
             )
             metrics_cmp_kwargs["baseline_log"] = self.impl_super_golden.outputs["log"]
+            metrics_cmp_kwargs["baseline_congestion"] = (
+                self.impl_detailed_reports_super_golden.outputs["congestion"]
+            )
 
         self.metrics_cmp = MetricsCmp(self, design, **metrics_cmp_kwargs)
 

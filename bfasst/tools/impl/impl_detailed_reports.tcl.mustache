@@ -22,6 +22,7 @@ report_timing_summary -delay_type max -report_unconstrained -check_timing_verbos
 report_utilization -hierarchical -file {{ outputs.utilization }}
 report_power -verbose -file {{ outputs.power_summary }}
 report_clocks -file {{ outputs.clocks }}
+report_design_analysis -congestion -file {{ outputs.congestion }}
 report_drc -file {{ outputs.drc }}
 write_verilog -force {{ outputs.verilog }}
 write_bitstream -force -file {{ outputs.bitstream }}
