@@ -18,10 +18,6 @@ class NetlistUnredact(Tool):
         unmodified_dcp_path,
         unmodified_edf_path,
         props_json,
-        pre_phys_opt_dcp=None,
-        pre_phys_opt_edf=None,
-        post_place_dir=None,
-        post_route_dir=None,
         log_file="netlist_unredact.log",
     ):
         super().__init__(flow, design)
@@ -31,10 +27,6 @@ class NetlistUnredact(Tool):
         self.unmodified_dcp_path = pathlib.Path(unmodified_dcp_path)
         self.unmodified_edf_path = pathlib.Path(unmodified_edf_path)
         self.props_json = pathlib.Path(props_json)
-        self.pre_phys_opt_dcp = pathlib.Path(pre_phys_opt_dcp) if pre_phys_opt_dcp else None
-        self.pre_phys_opt_edf = pathlib.Path(pre_phys_opt_edf) if pre_phys_opt_edf else None
-        self.post_place_dir = pathlib.Path(post_place_dir) if post_place_dir else None
-        self.post_route_dir = pathlib.Path(post_route_dir) if post_route_dir else None
         self.log_file = log_file
         self.build_path = self.design_build_path / "netlist_unredact"
         self._init_outputs()
@@ -55,11 +47,6 @@ class NetlistUnredact(Tool):
             "unmodified_out_edf": str(self.outputs["unmodified_unredact_edf"]),
             "log_path": str(self.outputs["log_file"]),
             "build_path": str(self.build_path),
-            "has_restruct_opt": self.pre_phys_opt_dcp is not None,
-            "pre_phys_opt_dcp": str(self.pre_phys_opt_dcp) if self.pre_phys_opt_dcp else "",
-            "pre_phys_opt_edf": str(self.pre_phys_opt_edf) if self.pre_phys_opt_edf else "",
-            "post_place_dir": str(self.post_place_dir) if self.post_place_dir else "",
-            "post_route_dir": str(self.post_route_dir) if self.post_route_dir else "",
         }
 
     def _init_outputs(self):
@@ -81,7 +68,3 @@ class NetlistUnredact(Tool):
         deps.append(self.unmodified_dcp_path)
         deps.append(self.unmodified_edf_path)
         deps.append(self.props_json)
-        if self.pre_phys_opt_dcp:
-            deps.append(BFASST_UTILS_PATH / "transform" / "restruct_transform.py")
-            deps.append(self.pre_phys_opt_dcp)
-            deps.append(self.pre_phys_opt_edf)
