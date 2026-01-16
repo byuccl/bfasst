@@ -1,17 +1,12 @@
-#!/usr/bin/env python3
 """Command-line script for comparing metrics between implementations."""
 
-from __future__ import annotations
-
 import argparse
-import filecmp
 import json
 import re
 from dataclasses import dataclass
 from pathlib import Path
 
 
-# --- Data Types ---
 
 
 @dataclass
