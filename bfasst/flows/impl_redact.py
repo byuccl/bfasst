@@ -58,12 +58,12 @@ class ImplRedact(Flow):
 
         impl_options = {
             "phys_opt_flags_postplace": (
-                "-fanout_opt -placement_opt -casc_opt -cell_group_opt -critical_cell_opt "
+                "-fanout_opt -placement_opt -casc_opt -cell_group_opt "
                 "-dsp_register_opt -bram_register_opt -bram_enable_opt -shift_register_opt "
                 "-critical_pin_opt -memory_rewire_opt -hold_fix"
             ),
             "phys_opt_flags_postroute": (
-                "-routing_opt -casc_opt -cell_group_opt -critical_cell_opt "
+                "-routing_opt -casc_opt -cell_group_opt "
                 "-critical_pin_opt -clock_opt -memory_rewire_opt -hold_fix"
             ),
         }
