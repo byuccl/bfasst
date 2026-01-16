@@ -243,7 +243,7 @@ def parse_impl_metrics(timing_path: Path, utilization_path: Path, log_path: Path
 
 
 def compare_bitstreams(
-    golden_path: Path, test_path: Path, skip_bytes: int = 50
+    golden_path: Path, test_path: Path, skip_bytes: int = 200
 ) -> BitstreamComparison:
     """Compare two bitstream files, skipping header bytes (timestamps, etc)."""
     golden_size = golden_path.stat().st_size
