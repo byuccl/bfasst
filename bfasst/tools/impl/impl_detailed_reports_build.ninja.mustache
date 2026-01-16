@@ -1,6 +1,6 @@
 build {{ outputs.reports_tcl }}: template {{ impl_output }}/reports.json {{ impl_library }}/impl_detailed_reports.tcl.mustache
 
-build {{outputs.verilog}} {{ outputs.timing_summary }} {{ outputs.setup_timing }} {{ outputs.hold_timing }} {{ outputs.full_timing_summary }} {{ outputs.utilization }} {{ outputs.power_summary }} {{outputs.bitstream}} {{ outputs.clocks }} : vivado {{ outputs.reports_tcl }} | {{ inputs.dcp }}
+build {{outputs.verilog}} {{ outputs.timing_summary }} {{ outputs.setup_timing }} {{ outputs.hold_timing }} {{ outputs.full_timing_summary }} {{ outputs.utilization }} {{ outputs.power_summary }} {{outputs.bitstream}} {{ outputs.clocks }} {{ outputs.congestion }} : vivado {{ outputs.reports_tcl }} | {{ inputs.dcp }}
     journal = {{ outputs.journal }}
     log     = {{ outputs.log }}
 

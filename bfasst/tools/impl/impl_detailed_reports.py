@@ -60,6 +60,7 @@ class ImplDetailedReports(ImplTool):
         self.outputs["power_summary"] = bp / "power_summary.txt"
         self.outputs["clocks"] = bp / "clocks.txt"
         self.outputs["journal"] = bp / "vivado.jou"
+        self.outputs["congestion"] = bp / "congestion.txt"
         self.outputs["drc"] = bp / "drc_report.txt"
         self.outputs["verilog"] = bp / (str(self.impl_dcp) + ".v")
         self.outputs["bitstream"] = bp / "bitstream.bit"
