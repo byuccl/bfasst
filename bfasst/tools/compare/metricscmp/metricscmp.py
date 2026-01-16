@@ -7,26 +7,41 @@ from bfasst.paths import BFASST_UTILS_PATH, COMPARE_TOOLS_PATH
 
 
 class MetricsCmp(Tool):
-    """Compare timing, resource, and compilation metrics between implementations."""
+    """Compare timing, resource, and compilation metrics between implementations.
+
+    Supports two comparison modes:
+    1. Standard: golden vs test for both bitstream and metrics
+    2. Super golden: golden vs test for bitstream, baseline (super golden) vs test for metrics
+    """
 
     def __init__(
         self,
         flow,
         design,
         *,
+        golden_bitstream: Path,
+        test_bitstream: Path,
         golden_timing: Path,
         golden_utilization: Path,
         golden_log: Path,
         test_timing: Path,
         test_utilization: Path,
         test_log: Path,
+        baseline_timing: Path = None,
+        baseline_utilization: Path = None,
+        baseline_log: Path = None,
     ):
         super().__init__(flow, design)
         self.build_path = self.design_build_path / "metricscmp"
 
-        self.golden_timing = golden_timing
-        self.golden_utilization = golden_utilization
-        self.golden_log = golden_log
+        # Bitstream comparison is always golden vs test
+        self.golden_bitstream = golden_bitstream
+        self.test_bitstream = test_bitstream
+
+        # Metrics comparison uses baseline if provided, otherwise golden
+        self.baseline_timing = baseline_timing or golden_timing
+        self.baseline_utilization = baseline_utilization or golden_utilization
+        self.baseline_log = baseline_log or golden_log
         self.test_timing = test_timing
         self.test_utilization = test_utilization
         self.test_log = test_log
@@ -39,9 +54,11 @@ class MetricsCmp(Tool):
 
         self.rules_render_dict = {
             "compare_script_path": str(BFASST_UTILS_PATH / "compare" / "metricscmp.py"),
-            "golden_timing": str(self.golden_timing),
-            "golden_utilization": str(self.golden_utilization),
-            "golden_log": str(self.golden_log),
+            "golden_bitstream": str(self.golden_bitstream),
+            "test_bitstream": str(self.test_bitstream),
+            "baseline_timing": str(self.baseline_timing),
+            "baseline_utilization": str(self.baseline_utilization),
+            "baseline_log": str(self.baseline_log),
             "test_timing": str(self.test_timing),
             "test_utilization": str(self.test_utilization),
             "test_log": str(self.test_log),
@@ -57,5 +74,3 @@ class MetricsCmp(Tool):
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
         deps.append(BFASST_UTILS_PATH / "compare" / "metricscmp.py")
-        deps.append(BFASST_UTILS_PATH / "compare" / "metrics_parser.py")
-        deps.append(BFASST_UTILS_PATH / "compare" / "metrics_data_types.py")

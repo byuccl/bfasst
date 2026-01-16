@@ -1,3 +1,3 @@
 rule metricscmp
-  command = python $script --golden_timing $golden_timing --golden_utilization $golden_utilization --golden_log $golden_log --test_timing $test_timing --test_utilization $test_utilization --test_log $test_log --output $output
-  description = Compare metrics between golden and test implementations
+  command = python $script --golden_bitstream $golden_bitstream --test_bitstream $test_bitstream --baseline_timing $baseline_timing --baseline_utilization $baseline_utilization --baseline_log $baseline_log --test_timing $test_timing --test_utilization $test_utilization --test_log $test_log --output $output
+  description = Compare metrics between baseline and test implementations

@@ -1,8 +1,10 @@
-build {{output_json}} : metricscmp {{golden_timing}} {{test_timing}} {{golden_utilization}} {{test_utilization}} {{golden_log}} {{test_log}}
+build {{output_json}} : metricscmp {{golden_bitstream}} {{test_bitstream}} {{baseline_timing}} {{test_timing}} {{baseline_utilization}} {{test_utilization}} {{baseline_log}} {{test_log}}
     script               = {{compare_script_path}}
-    golden_timing        = {{golden_timing}}
-    golden_utilization   = {{golden_utilization}}
-    golden_log           = {{golden_log}}
+    golden_bitstream     = {{golden_bitstream}}
+    test_bitstream       = {{test_bitstream}}
+    baseline_timing      = {{baseline_timing}}
+    baseline_utilization = {{baseline_utilization}}
+    baseline_log         = {{baseline_log}}
     test_timing          = {{test_timing}}
     test_utilization     = {{test_utilization}}
     test_log             = {{test_log}}
