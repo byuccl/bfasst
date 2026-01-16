@@ -5,8 +5,7 @@ import json
 import re
 from dataclasses import dataclass
 from pathlib import Path
-
-
+from typing import Optional
 
 
 @dataclass
@@ -64,7 +63,7 @@ class MetricsComparison:
 
     baseline: ImplMetrics
     test: ImplMetrics
-    bitstream: BitstreamComparison | None = None
+    bitstream: Optional[BitstreamComparison] = None
 
     def to_dict(self) -> dict:
         """Convert comparison to dictionary for JSON output."""
