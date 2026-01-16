@@ -11,6 +11,7 @@ Flow that does the following:
 from bfasst.flows.flow import Flow
 from bfasst.tools.synth.vivado_synth import VivadoSynth
 from bfasst.tools.impl.vivado_impl import VivadoImpl
+
 # from bfasst.tools.compare.yosys.yosys import YosysCompare
 from bfasst.tools.compare.metricscmp.metricscmp import MetricsCmp
 from bfasst.tools.transform.netlist_redact import NetlistRedact
@@ -28,7 +29,8 @@ class ImplRedact(Flow):
 
         self.use_super_golden = use_super_golden
         if super_golden_impl_options is None:
-            # Default: empty phys_opt flags for super_golden (still runs phys_opt in clock crank loop)
+            # Default: empty phys_opt flags for super_golden
+            # (still runs phys_opt in clock crank loop)
             super_golden_impl_options = {
                 "phys_opt_flags_postplace": "",
                 "phys_opt_flags_postroute": "",
@@ -164,7 +166,10 @@ class ImplRedact(Flow):
 
         if self.impl_super_golden:
             self.impl_detailed_reports_super_golden = ImplDetailedReports(
-                self, design, impl_dcp=self.impl_super_golden.outputs["impl_dcp"], tag="super_golden"
+                self,
+                design,
+                impl_dcp=self.impl_super_golden.outputs["impl_dcp"],
+                tag="super_golden",
             )
 
         # self.yosys_compare = YosysCompare(
@@ -189,9 +194,9 @@ class ImplRedact(Flow):
             "test_log": self.impl_redacted.outputs["log"],
         }
         if self.impl_detailed_reports_super_golden:
-            metrics_cmp_kwargs["baseline_timing"] = (
-                self.impl_detailed_reports_super_golden.outputs["timing_summary"]
-            )
+            metrics_cmp_kwargs["baseline_timing"] = self.impl_detailed_reports_super_golden.outputs[
+                "timing_summary"
+            ]
             metrics_cmp_kwargs["baseline_utilization"] = (
                 self.impl_detailed_reports_super_golden.outputs["utilization"]
             )
