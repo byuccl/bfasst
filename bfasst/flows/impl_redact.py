@@ -45,7 +45,7 @@ class ImplRedact(Flow):
             log_file="netlist_redact.log",
         )
 
-        redacted_impl_options = {
+        impl_options = {
             "phys_opt_flags_postplace": (
                 "-fanout_opt -placement_opt -casc_opt -cell_group_opt -critical_cell_opt "
                 "-dsp_register_opt -bram_register_opt -bram_enable_opt -shift_register_opt "
@@ -65,7 +65,7 @@ class ImplRedact(Flow):
             phys_opt_design=True,
             constraints_files=self.vivado_synth.outputs["synth_constraints"],
             disable_drc=True,
-            impl_options=redacted_impl_options,
+            impl_options=impl_options,
         )
 
         self.impl_orig = VivadoImpl(
@@ -75,6 +75,7 @@ class ImplRedact(Flow):
             opt_design=False,
             phys_opt_design=True,
             constraints_files=self.vivado_synth.outputs["synth_constraints"],
+            impl_options=impl_options,
         )
 
         if self.impl_orig.impl_build["clocks"] not in ("", {}):
