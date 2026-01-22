@@ -5,30 +5,32 @@ Then store the original properties in a JSON file for restoration later
 """
 
 import argparse
+import json
 import logging
 import pathlib
 import time
-import json
 import uuid
 from collections import defaultdict
+
+from bfasst import jpype_jvm
 from bfasst.config import PART
 from bfasst.utils.general import json_write_if_changed
 from bfasst.utils.transform.netlist_redact_helpers import TAG_PROP, get_masking_init
 
-from bfasst import jpype_jvm
-
 jpype_jvm.start()
+
+from java.io import FileOutputStream, PrintStream
 
 # pylint: disable=wrong-import-position, wrong-import-order
 from java.lang import System
-from java.io import PrintStream, FileOutputStream
+
 from com.xilinx.rapidwright.design import Design
 from com.xilinx.rapidwright.design.tools import LUTTools
 from com.xilinx.rapidwright.device import Device
 from com.xilinx.rapidwright.edif import (
-    EDIFTools,
-    EDIFNetlist,
     EDIFHierCellInst,
+    EDIFNetlist,
+    EDIFTools,
     EDIFValueType,
 )
 
@@ -97,6 +99,8 @@ def redact_bram(inst, counts):
         "RSTREG_PRIORITY_B",
         "SRVAL_A",
         "SRVAL_B",
+        "RAM_EXTENSION _A",
+        "RAM_EXTENSION _B",
     ]
 
     return redact_all(inst, skip_props, counts)
@@ -125,6 +129,8 @@ def redact_dsp(inst, counts):
         "USE_MULT",
         "USE_PATTERN_DETECT",
         "USE_SIMD",
+        "A_INPUT",
+        "B_INPUT",
     ]
     return redact_all(inst, skip_props, counts)
 
@@ -366,6 +372,7 @@ def main():
         datefmt="%Y-%m-%d %H:%M:%S",
     )
     System.setOut(PrintStream(FileOutputStream(str(log_path), True), True))
+    System.setErr(PrintStream(FileOutputStream(str(log_path), True), True))
 
     logging.info("NetlistRedact start")
 

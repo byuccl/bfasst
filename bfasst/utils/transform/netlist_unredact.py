@@ -15,18 +15,19 @@ import logging
 import pathlib
 import re
 import time
-from typing import Dict, Tuple, Optional
+from typing import Dict, Optional, Tuple
 
 from bfasst import jpype_jvm
 from bfasst.utils.transform.netlist_redact_helpers import TAG_PROP  # tag property key
 
 jpype_jvm.start()
 
+from java.io import FileOutputStream, PrintStream
+from java.lang import System
+
 # pylint: disable=wrong-import-position, wrong-import-order
 from com.xilinx.rapidwright.design import Design
 from com.xilinx.rapidwright.edif import EDIFTools, EDIFValueType
-from java.lang import System
-from java.io import PrintStream, FileOutputStream
 
 
 # ----------------- Logging -----------------
@@ -35,6 +36,7 @@ def setup_logging(log_path: pathlib.Path, level_str: str) -> None:
     fos = FileOutputStream(str(log_path), True)
     ps = PrintStream(fos, True)
     System.setOut(ps)
+    System.setErr(ps)
 
     level = getattr(logging, level_str.upper(), logging.INFO)
     logging.basicConfig(

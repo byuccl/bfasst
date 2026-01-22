@@ -1,5 +1,5 @@
 top: tpu_random
 
 clocks:
-  - name: logicclk
+  - name: clk
     period: 10.0

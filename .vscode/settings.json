@@ -15,6 +15,10 @@
         "--line-length",
         "100"
     ],
-    "isort.args":["--profile", "black"]
+    "isort.args": [
+        "--profile",
+        "black"
+    ],
+    "makefile.configureOnOpen": false
 }
 

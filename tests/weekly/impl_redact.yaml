@@ -25,8 +25,7 @@ designs:
   - byu/uart_tx
   - byu/UpDownButtonCount
 
-  # OOC designs
-  - ooc/aes128
+  # # OOC designs
   - ooc/EX_stage
   - ooc/ID_stage
   - ooc/IF_stage
@@ -34,8 +33,9 @@ designs:
   - ooc/WB_stage
   - ooc/a25_coprocessor
   - ooc/a25_decode
-  - ooc/a25_write_back
   - ooc/a25_wishbone
+  - ooc/a25_write_back
+  - ooc/aes128
   - ooc/basicrsa
   - ooc/bcd_adder
   - ooc/bubblesort
@@ -56,13 +56,20 @@ designs:
   - ooc/tiny_encryption_algorithm
   - ooc/uart2spi
   - ooc/wb_lcd
+  - ooc/mpeg2fpga
 
-  # VTR benchmarks
+  # # VTR benchmarks
+  - vtr_benchmarks/LU32PEEng
+  - vtr_benchmarks/LU64PEEng
+  - vtr_benchmarks/LU8PEEng
+  - vtr_benchmarks/bgm
   - vtr_benchmarks/blob_merge
   - vtr_benchmarks/boundtop
   - vtr_benchmarks/ch_intrinsics
   - vtr_benchmarks/diffeq1
   - vtr_benchmarks/diffeq2
+  - vtr_benchmarks/mcml
+  - vtr_benchmarks/mkDelayWorker32B
   - vtr_benchmarks/mkPktMerge
   - vtr_benchmarks/mkSMAdapter4B
   - vtr_benchmarks/or1200
@@ -73,23 +80,26 @@ designs:
   - vtr_benchmarks/stereovision2
   - vtr_benchmarks/stereovision3
 
-  # Koios designs
+  # # Koios designs
   - koios/attention_layer
   - koios/bnn
   - koios/bwave_like.fixed.large
   - koios/bwave_like.float.large
+  - koios/bwave_like.float.small
+  - koios/clstm_like.large
   - koios/conv_layer
   - koios/dla_like.medium
+  - koios/dnnweaver
   - koios/eltwise_layer
-  - koios/clstm_like.large
-  - koios/spmv
-  - koios/test
-  - koios/tpu_like.large.ws
-  - koios/robot_rl
-  - koios/softmax
+  - koios/gemm_layer
+  - koios/lenet
   - koios/lstm
   - koios/reduction_layer
-  - koios/gemm_layer
-  - koios/dnnweaver
+  - koios/robot_rl
+  - koios/softmax
+  - koios/spmv
+  - koios/test
+  - koios/tpu_like.large.os
+  - koios/tpu_like.large.ws
 
 flow: impl_redact
