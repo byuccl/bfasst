@@ -12,29 +12,26 @@ import time
 import uuid
 from collections import defaultdict
 
-from bfasst import jpype_jvm
-from bfasst.config import DEFAULT_PART
-from bfasst.utils.general import json_write_if_changed
-from bfasst.utils.netlist_obfuscate_helpers import TAG_PROP, get_masking_init
-
-jpype_jvm.start()
-
+import rapidwright as _
 from com.xilinx.rapidwright.design import Design
 from com.xilinx.rapidwright.design.tools import LUTTools
 from com.xilinx.rapidwright.device import Device
 from com.xilinx.rapidwright.edif import (
     EDIFHierCellInst,
     EDIFNetlist,
+    EDIFPropertyValue,
     EDIFTools,
     EDIFValueType,
 )
 from java.io import FileOutputStream, PrintStream
-
-# pylint: disable=wrong-import-position, wrong-import-order
 from java.lang import System
 
+from bfasst.config import DEFAULT_PART
+from bfasst.utils import json_write_if_changed
+from bfasst.utils.netlist_obfuscate_helpers import TAG_PROP, get_masking_init
 
-def _json_entry(prop_name: str, prop_val: "EDIFPropertyValue") -> dict[str, str]:
+
+def _json_entry(prop_name: str, prop_val: EDIFPropertyValue) -> dict[str, str]:
     """
     Returns a json entry with the correct type based on a property's name and value
     """

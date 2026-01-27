@@ -7,24 +7,21 @@ de-obfuscated checkpoint and EDIF for downstream reporting.
 """
 
 import argparse
+import json
 import logging
 import pathlib
-import json
-import time
 import re
+import time
 
-from bfasst.utils.netlist_obfuscate_helpers import TAG_PROP, SENTINEL_VALUES
-from bfasst import jpype_jvm
-
-jpype_jvm.start()
-
-# pylint: disable=wrong-import-position, wrong-import-order
-from com.xilinx.rapidwright.design import Design
-from com.xilinx.rapidwright.edif import EDIFTools, EDIFValueType
+import rapidwright as _
+from com.xilinx.rapidwright.design import Design, Net
 from com.xilinx.rapidwright.design.tools import LUTTools
-from java.util import ArrayList
+from com.xilinx.rapidwright.edif import EDIFTools, EDIFValueType
+from java.io import FileOutputStream, PrintStream
 from java.lang import System
-from java.io import PrintStream, FileOutputStream
+from java.util import ArrayList
+
+from .netlist_obfuscate_helpers import SENTINEL_VALUES, TAG_PROP
 
 
 def setup_logging(log_path: pathlib.Path, level_str: str):
@@ -150,7 +147,7 @@ def cell_is_obfuscated(cell) -> bool:
     return props is not None and props.containsKey(TAG_PROP)
 
 
-def process_site_wire(site, wire, visited: set) -> tuple[list["Net"], int]:
+def process_site_wire(site, wire, visited: set) -> tuple[list[Net], int]:
     """
     Process all bel_pins for a given site+wire and return new nets to enqueue + count of flips.
     """

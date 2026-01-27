@@ -5,16 +5,7 @@ import time
 from argparse import ArgumentParser
 from pathlib import Path
 
-from jpype.types import JInt
-
-import bfasst.utils.rw_helpers as rw
-from bfasst import jpype_jvm, utils
-from bfasst.utils.compare.phys_opt_cmp import PhysOptCmp
-from bfasst.utils.phys_netlist import PhysNetlist, PhysNetlistTransformError
-from bfasst.utils.transform.lutram_transformer import LUTRAMTransformer
-
-# pylint: disable=wrong-import-position,wrong-import-order,import-error
-jpype_jvm.start()
+import rapidwright as _
 from com.xilinx.rapidwright.design import Cell, SiteInst, SitePinInst, Unisim
 from com.xilinx.rapidwright.device import BELPin
 from com.xilinx.rapidwright.device.SiteTypeEnum import SLICEL, SLICEM
@@ -25,8 +16,13 @@ from com.xilinx.rapidwright.edif import (
     EDIFValueType,
 )
 from com.xilinx.rapidwright.interchange import LogNetlistWriter, PhysNetlistWriter
+from jpype.types import JInt
 
-# pylint: enable=wrong-import-position,wrong-import-order,import-error
+import bfasst.utils.rw_helpers as rw
+from bfasst.utils import add_path_arg, add_standard_args
+from bfasst.utils.compare.phys_opt_cmp import PhysOptCmp
+from bfasst.utils.phys_netlist import PhysNetlist, PhysNetlistTransformError
+from bfasst.utils.transform.lutram_transformer import LUTRAMTransformer
 
 
 class RwPhysNetlist(PhysNetlist):
@@ -873,11 +869,11 @@ class RwPhysNetlist(PhysNetlist):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    utils.add_path_arg(parser, "--synth_dcp", "The synthesis dcp file to use for the netlist.")
-    utils.add_path_arg(parser, "--synth_edf", "The synthesis edf file to use for the netlist.")
-    utils.add_path_arg(parser, "--impl_dcp", "The implementation dcp file to use for the netlist.")
-    utils.add_path_arg(parser, "--impl_edf", "The implementation edf file to use for the netlist.")
-    utils.add_standard_args(parser)
+    add_path_arg(parser, "--synth_dcp", "The synthesis dcp file to use for the netlist.")
+    add_path_arg(parser, "--synth_edf", "The synthesis edf file to use for the netlist.")
+    add_path_arg(parser, "--impl_dcp", "The implementation dcp file to use for the netlist.")
+    add_path_arg(parser, "--impl_edf", "The implementation edf file to use for the netlist.")
+    add_standard_args(parser)
     args = parser.parse_args()
     impl_files = rw.VivadoCheckpoint(dcp=args.impl_dcp, edf=args.impl_edf)
     synth_files = rw.VivadoCheckpoint(dcp=args.synth_dcp, edf=args.synth_edf)

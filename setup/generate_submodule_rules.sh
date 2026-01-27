@@ -102,7 +102,7 @@ sed -i -e "s|RELPATH|$rel_path|g" \
 # Add dependency rules that link install/update to checkout
 cat >> "$OUTPUT_FILE" << EOF
 
-# Install depends on checkout being done
+# Install depends on checkout being done.
 $STAMP_DIR/${submod_name}_installed: | $STAMP_DIR/${submod_name}_checkout ${configured_path}/.bfasst_installed
 
 # Update depends on checkout with git deps, and install being done

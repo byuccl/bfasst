@@ -38,8 +38,12 @@ ${upper_name}_UPDATED := ${STAMP_DIR}/${submod_name}_updated
 .PHONY: ${submod_name} update_${submod_name}
 
 # Main install target - lazy: generate rule file if needed, then build
+ifeq (\$(realpath ${SUBMODULE_RULES_DIR}/${submod_name}.mk),)
 ${submod_name}: | ${SUBMODULE_RULES_DIR}/${submod_name}.mk
 	\$(MAKE) --no-print-directory \$(${upper_name}_INSTALLED)
+else
+${submod_name}: \$(${upper_name}_INSTALLED) | ${SUBMODULE_RULES_DIR}/${submod_name}.mk
+endif
 
 # Internal target to generate rule file (triggers checkout if needed)
 ${SUBMODULE_RULES_DIR}/${submod_name}.mk: | ${configured_path}/.git

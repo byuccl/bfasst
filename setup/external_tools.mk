@@ -1,5 +1,5 @@
 # DO NOT DIRECTLY CALL THIS FILE. Depends on vars in top level Makefile.
-# When adding new tools, append PATH variable $(ACTIVATE_SCRIPT) and append environment variables to $(VENV_VARS)
+# When adding new tools, make PATH variable ajustments to $(ACTIVATE_SCRIPT) and append environment variables to $(VENV_VARS)
 # Tool location paths here, other tool varialbes group with tool recipe or in setup/tools_vars/*.env
 # The environment is activated with every shell line, so variables added to $(VENV_VARS) are available for all future shell lines.
 # Keep tool recipes multithreading safe by using APPEND_MT macro or flock command when writing to shared files like $(VENV_VARS) and $(VENV_ACTIVATE)
@@ -106,7 +106,7 @@ $(CAPNP_JAVA): $(shell command -v capnproto)
 	@rm -rf $(TEMP_DIR)
 #   Update env variable for capnp schema, if it not already present
 	ifeq ($(shell grep -Fx "export JAVA_SCHEMA=$(PREFIX)/include/capnp/" "$(VENV_VARS)" 2>/dev/null),)
-		flock $(VENV_VARS) -c 'echo -e "\n# Capnproto Java Schema Path\nJAVA_SCHEMA=$(PREFIX)/include/capnp/" >> "$(VENV_VARS)"'
+		flock $(VENV_VARS) -c 'printf "\n%s\n" "# Capnproto Java Schema Path\nJAVA_SCHEMA=$(PREFIX)/include/capnp/" >> "$(VENV_VARS)"'
 	endif
 
 ####################################################################################################
@@ -140,28 +140,22 @@ $(RW_PART_CACHE): $(RAPIDWRIGHT_INSTALLED)
 	cd $(RAPIDWRIGHT_PATH); rapidwright jython -c 'FileTools.ensureDataFilesAreStaticInstallFriendly("$(RW_PART)")'
 	@echo "Cached RapidWright database for part $(RW_PART). To cache other parts, run make cache_rw_part RW_PART=<part>"
 
+RW_PATH := $(RAPIDWRIGHT_PATH)
+CLASSPATH = $(RAPIDWRIGHT_PATH)/bin:$$(echo $(RAPIDWRIGHT_PATH)/jars/*.jar | tr ' ' ':')
 $(RAPIDWRIGHT_INSTALLED): | $(CAPNP_JAVA) $(VIVADO_BIN)
 ifndef JAVA_HOME
 	@echo "Java 17 or 18 is required to build RapidWright. Please run 'sudo make packages' to install it."
 	@exit 1
-endif
-	$(call APPEND_MT, \
-		echo -e "\n# RapidWright Environment Variables"; \
-		echo "RAPIDWRIGHT_PATH=$(RAPIDWRIGHT_PATH)"; \
-		cat $(TOOL_VARS)/rapidwright.env; \
-		echo "JAVA_HOME=$(JAVA_HOME)"; \
-		echo "CLASS_PATH=$(RAPIDWRIGHT_PATH)/bin:$(shell echo $(RAPIDWRIGHT_PATH)/jars/*.jar | tr ' ' ':')"; \
-	, $(VENV_VARS) )
-	cd $(RAPIDWRIGHT_PATH) && ./gradlew compileJava
-# $(MAKE) -C $(RAPIDWRIGHT_PATH)/interchange $(RAPIDWRIGHT_PATH)/interchange/schema/capnp/java.capnp
-	$(call APPEND_MT, \
-		echo -e "\n# Make sure the correct java binary is available for RapidWright\n"; \
-		echo "export PATH=$(JAVA_HOME)/bin:\$$PATH"; \
-		echo -e "\n# Add RapidWright binaries to PATH"; \
-		echo "export PATH=$(RAPIDWRIGHT_PATH)/bin:\$$PATH"; \
-	, $(VENV_ACTIVATE) )
+else
+	cd $(RAPIDWRIGHT_PATH) && JAVA_HOME=$(JAVA_HOME) ./gradlew compileJava
+	@$(call ADD_ENV_VARS,rapidwright,$(INITIAL_VARS)/rapidwright.env,$(VENV_VARS),RW_PATH JAVA_HOME CLASSPATH)
+	@$(call ADD_ENV_VARS,rapidwright,$(INITIAL_VARS)/rapidwright.paths,$(VENV_ACTIVATE))
+	@mkdir -p $(RAPIDWRIGHT_PATH)/stubs
+	@echo "Generating Java stubs for RapidWright at $(RAPIDWRIGHT_PATH)/stubs"
+	@python $(BFASST_SETUP)/generate_java_stubs.py $(RAPIDWRIGHT_PATH)/stubs > /dev/null 2>&1 &
 	touch $@
 	touch $(RAPIDWRIGHT_UPDATED)
+endif
 
 # Inject interchange is only needed if custom modifications have been made.
 # RW installs with the generated files matching its interchange submodule by default.
@@ -170,9 +164,27 @@ ifneq ($(wildcard $(RAPIDWRIGHT_PATH)/interchange/fpga-interchange-schema/),)
   ifneq ($(shell cd $(RAPIDWRIGHT_PATH)/interchange/fpga-interchange-schema/ && git status --porcelain),)
 	@echo "Injecting updated FPGA Interchange schema into RapidWright"
 	$(MAKE) -C $(RAPIDWRIGHT_PATH)/interchange/
+	cd $(RAPIDWRIGHT_PATH) && ./gradlew compileJava
+	touch $(RAPIDWRIGHT_UPDATED)
   endif
 endif
 
+
+JAVA_STUBS := $(SETUP_BUILD)/stubs
+ifneq ($(realpath $(RAPIDWRIGHT_PATH)/bin/com),)
+  $(shell rm -rf $(JAVA_STUBS))
+  JAVA_STUBS := $(RAPIDWRIGHT_PATH)/stubs
+  $(JAVA_STUBS): $(RAPIDWRIGHT_INSTALLED) $(RAPIDWRIGHT_UPDATED)
+endif
+
+$(JAVA_STUBS):
+	@rm -rf $(JAVA_STUBS)
+	@mkdir -p $(JAVA_STUBS)
+	@echo "Generating Java stubs for RapidWright at $(JAVA_STUBS)"
+	@python $(BFASST_SETUP)/generate_java_stubs.py $(JAVA_STUBS) > /dev/null 2>&1
+	touch $@
+	
+update_rapidwright: $(JAVA_STUBS)
 $(RAPIDWRIGHT_UPDATED):
 	cd $(RAPIDWRIGHT_PATH) && ./gradlew updateJars
 	cd $(RAPIDWRIGHT_PATH) && ./gradlew compileJava
@@ -186,26 +198,20 @@ fasm2bels: init_f2b_db
 
 # f2b env is NOT parallel friendly, so for now do not use $(MAKE) for env target
 define F2B_BUILD
-	make -C $(FASM2BELS_PATH) env &; $(MAKE) -C $(FASM2BELS_PATH) build ; wait
+	make -C $(FASM2BELS_PATH) env & $(MAKE) -C $(FASM2BELS_PATH) build ; wait
 	$(MAKE) -C $(FASM2BELS_PATH) test-py
-	touch $$@
+	touch $1
 endef
 
 export VIVADO_PATH ?= $(VIVADO_BIN)
-$(FASM2BELS_PATH)/.bfasst_installed: | $(VIVADO_BIN)
-	$(F2B_BUILD)
-
-$(FASM2BELS_INSTALLED): | $(RAPIDWRIGHT_INSTALLED)
-	$(call APPEND_MT, \
-		echo -e "\n# Fasm2bels Environment Variables"; \
-		echo "FASM2BELS_PATH=$(FASM2BELS_PATH)"; \
-		cat $(TOOL_VARS)/fasm2bels.env; \
-	, $(VENV_VARS) )
+F2B_PATH := $(FASM2BELS_PATH)
+$(FASM2BELS_INSTALLED): $(RAPIDWRIGHT_INSTALLED) $(VIVADO_BIN)
+	$(call ADD_ENV_VARS,fasm2bels,$(INITIAL_VARS)/fasm2bels.env,$(VENV_VARS),F2B_PATH)
+	$(call F2B_BUILD,$@)
 	touch $(FASM2BELS_UPDATED)
-	touch $@
 
 $(FASM2BELS_UPDATED):
-	$(F2B_BUILD)
+	$(call F2B_BUILD,$@)
 
 F2B_PART ?= $(DEFAULT_PART)
 F2B_FAMILY ?= $(DEFAULT_PART_FAMILY)
@@ -223,13 +229,12 @@ $(FASM2BELS_PATH)/$(F2B_PART)_db: $(FASM2BELS_INSTALLED)
 # rand_soc
 #####################################################################################################
 $(RAND_SOC_INSTALLED):
-	flock $(VENV_VARS) -c 'echo -e "\n# RandSoc Variables\nRAND_SOC_PATH=$(RAND_SOC_PATH)" >> $(VENV_VARS)'
-	pip install -r $(RAND_SOC_PATH)/requirements.txt
+	cd $(RAND_SOC_PATH) && pip install -r requirements.txt
 	touch $@
 	touch $(RAND_SOC_UPDATED)
 
 $(RAND_SOC_UPDATED):
-	pip install -r $(RAND_SOC_PATH)/requirements.txt
+	cd $(RAND_SOC_PATH) && pip install -r requirements.txt
 	touch $@
 
 #####################################################################################################
@@ -249,23 +254,17 @@ $(CONFROMAL_BIN):
 #####################################################################################################
 define YOSYS_BUILD
 	make -C $(YOSYS_PATH)
-	touch $$@
+	touch $1
 endef
 
-$(YOSYS_PATH)/.bfasst_installed:
-	$(YOSYS_BUILD)
-
+YO_PATH := $(YOSYS_PATH)
 $(YOSYS_INSTALLED): 
-	$(call APPEND_MT, \
-		echo -e "\n# Yosys Environment Variables"; \
-		echo "YOSYS_PATH=$(YOSYS_PATH)"; \
-		cat $(TOOL_VARS)/yosys.env; \
-	, $(VENV_VARS) )
-	touch $@
+	$(call ADD_ENV_VARS,yosys,$(INITIAL_VARS)/yosys.env,$(VENV_VARS),YO_PATH)
+	$(call YOSYS_BUILD,$@)
 	touch $(YOSYS_UPDATED)
 
 $(YOSYS_UPDATED):
-	$(YOSYS_BUILD)
+	$(call YOSYS_BUILD,$@)
 
 #####################################################################################################
 # Wafove
@@ -288,13 +287,10 @@ $(WAFOVE_UPDATED):
 # https://github.com/cseed/arachne-pnr.git
 # The following packages are not installed by make apt_packages, and may be needed: python-xdot mercurial
 
+ICESTORM_HOME := $(ISCESTORM_PATH)
 $(ICESTORM_INSTALLED): 
 	$(MAKE) -C $(ICESTORM_PATH) && $(MAKE) install PREFIX=../; exit 1;
-	$(call APPEND_MT, \
-		echo -e "\n# IceStorm Environment Variables"; \
-		echo "ICESTORM_PATH=$(ICESTORM_PATH)"; \
-		cat $(TOOL_VARS)/icestorm.env; \
-	, $(VENV_VARS) )
+	$(call ADD_ENV_VARS,icestorm,$(INITIAL_VARS)/icestorm.env,$(VENV_VARS),ICESTORM_HOME)
 	touch $@
 	touch $(ICESTORM_UPDATED)
 
@@ -305,8 +301,8 @@ $(ICESTORM_UPDATED):
 #####################################################################################################
 # OpenTitan
 #####################################################################################################
-FUSESOC_CMD := --cores-root . run --build-root $(BUILD_PATH)/opentitan --flag=fileset_top --target=synth --no-export --setup lowrisc:systems:chip_earlgrey_cw310
-FINAL_TCL := $(BUILD_PATH)/opentitan/synth-vivado/lowrisc_systems_chip_earlgrey_cw310_0.1.tcl
+FUSESOC_CMD := --cores-root . run --build-root $(BFASST_BUILD)/opentitan --flag=fileset_top --target=synth --no-export --setup lowrisc:systems:chip_earlgrey_cw310
+FINAL_TCL := $(BFASST_BUILD)/opentitan/synth-vivado/lowrisc_systems_chip_earlgrey_cw310_0.1.tcl
 $(OPENTITAN_INSTALLED): | vivado
 ifeq ($(shell command -v rustc),)
 	@echo "Rust compiler is required to build OpenTitan. https://rustup.rs/"; exit 1;
@@ -337,7 +333,7 @@ $(OPENTITAN_UPDATED):
 .PHONY: icecube2
 icecube2: $(IC2_PATH)
 	$(call APPEND_MT, \
-		echo -e "\n# iCEcube2 Environment Variables"; \
+		printf "\n%s\n" "# iCEcube2 Environment Variables"; \
 		echo "IC2_PATH=$(IC2_PATH)"; \
 		cat $(TOOL_VARS)/iCEcube2.env; \
 	, $(VENV_VARS) )

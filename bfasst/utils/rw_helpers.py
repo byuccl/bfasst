@@ -12,11 +12,7 @@ from typing import Optional, TypeAlias
 import spydrnet as sdn
 from bidict import bidict
 
-# pylint: disable=wrong-import-position,wrong-import-order
-from bfasst import jpype_jvm
-from bfasst.config import DEFAULT_PART
-
-jpype_jvm.start()
+import rapidwright as _
 from com.xilinx.rapidwright.design import Cell, Design, SiteInst, SitePinInst, Unisim
 from com.xilinx.rapidwright.design.DesignTools import getConnectionPIPs
 from com.xilinx.rapidwright.design.tools import LUTTools
@@ -31,7 +27,7 @@ from com.xilinx.rapidwright.edif import (
 )
 from java.util import ArrayList as JArrayList
 
-# pylint: enable=wrong-import-position,wrong-import-order
+from bfasst.config import DEFAULT_PART
 
 DesignCells: TypeAlias = dict[tuple[str, str], EDIFCellInst]  # (site_name, bel_name): EDIFCellInst
 VivadoCheckpoint = namedtuple("VivadoCheckpoint", ["dcp", "edf"])

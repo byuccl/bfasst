@@ -9,17 +9,14 @@ import logging
 from argparse import ArgumentParser
 from pathlib import Path
 
-from bfasst import jpype_jvm
-from bfasst.utils.physcmp_data_types import ImplReports, PhyscmpException
-
-jpype_jvm.start()
-
-# pylint: disable=wrong-import-position, wrong-import-order
+import rapidwright as _
 from com.xilinx.rapidwright.design import Design
 from com.xilinx.rapidwright.design.compare import DesignComparator
 from com.xilinx.rapidwright.edif.compare import EDIFNetlistComparator
-from java.io import ByteArrayOutputStream, PrintStream, FileOutputStream
+from java.io import ByteArrayOutputStream, FileOutputStream, PrintStream
 from java.lang import System
+
+from bfasst.utils.physcmp_data_types import ImplReports, PhyscmpException
 
 
 def setup_logging(log_path: str, level_str: str):

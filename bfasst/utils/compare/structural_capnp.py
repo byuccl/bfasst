@@ -7,18 +7,7 @@ import time
 from argparse import ArgumentParser
 from pathlib import Path
 
-# pylint: disable=no-name-in-module
-from jpype import JException
-
-# pylint: enable=no-name-in-module
-import bfasst.utils.rw_helpers as rw
-from bfasst import jpype_jvm, utils
-from bfasst.utils.compare.structural_helpers import create_cell_props
-from bfasst.utils.transform.f2b_design import F2BDesign
-from bfasst.utils.transform.rw_phys_netlist import RwPhysNetlist
-
-# pylint: disable=wrong-import-position,wrong-import-order,import-error
-jpype_jvm.start()
+import rapidwright as _
 from com.xilinx.rapidwright.design import Cell
 from com.xilinx.rapidwright.edif import (
     EDIFCellInst,
@@ -27,8 +16,12 @@ from com.xilinx.rapidwright.edif import (
     EDIFHierPortInst,
     EDIFPortInst,
 )
+from jpype import JException
 
-# pylint: enable=wrong-import-position,wrong-import-order,import-error
+import bfasst.utils.rw_helpers as rw
+from bfasst.utils.compare.structural_helpers import create_cell_props
+from bfasst.utils.transform.f2b_design import F2BDesign
+from bfasst.utils.transform.rw_phys_netlist import RwPhysNetlist
 
 
 class StructuralCompareError(Exception):

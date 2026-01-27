@@ -5,16 +5,12 @@ import logging
 import pathlib
 
 import boolean
-
 import spydrnet as sdn
-from bfasst.utils.sdn_helpers import SdnInstanceWrapper, SdnNetlistWrapper
 
-from bfasst import jpype_jvm
-
-jpype_jvm.start()
-
-# pylint: disable=wrong-import-position, wrong-import-order
+import rapidwright as _
 from com.xilinx.rapidwright.design.tools import LUTTools
+
+from bfasst.utils.sdn_helpers import SdnInstanceWrapper, SdnNetlistWrapper
 
 
 class NetlistPhysToLogical:

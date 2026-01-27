@@ -79,7 +79,8 @@ Information found here: <https://github.com/chipsalliance/f4pga-xc-fasm2bels/blo
 
 ### RapidWright
 Information found here: <https://github.com/Xilinx/RapidWright/blob/master/README.md>
-Rapidwright can cache data files for commonly used parts. Run `make cache_rw_part RW_PART=<part>` to do this. If you write a github action unittest with a different part, make sure to update the test caches the part, or else it may run unreliably. 
+Rapidwright can cache data files for commonly used parts. Run `make cache_rw_part RW_PART=<part>` to do this. If you write a github action unittest with a different part, make sure to update the test to cache the part, or else it may run unreliably.
+Rapidwright can be used in Python, facilitated by a Python-Java bridge project: jpype. Although you interact with RapidWright in Python files, and using Python syntax, you still need to treat them as Java objects. For instance, private/public members is enforced. For performance reasons, Java functions that return strings are not automatically cast to Python strings. Use java.lang.String functions when possible, but you can explicitly cast to a Python string using str(my_java_string) if needed.
 
 ### FPGA Interchange
 Interchange is installed with RapidWright and is a third-party format used to store FPGA objects in a binary, language-agnostic format. With interchange, you could create an object describing an FPGA netlist in Java, and then write a Python script that updates it, without having to worry about how to hand off between the two. The binary format means that disk utilization for the objects is reduced and there is no text parsing when reading or writing the file. Interchange uses [CapnProto](https://capnproto.org/) to facilitate this. 

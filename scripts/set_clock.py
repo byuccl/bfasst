@@ -9,7 +9,7 @@ new clock period.
 import re
 from argparse import ArgumentParser
 
-from bfasst.paths import BUILD_PATH, DESIGNS_PATH
+from bfasst.paths import BFASST_BUILD, DESIGNS_PATH
 
 
 def get_clock_wns(timing_summary: str) -> tuple[float, float]:
@@ -35,7 +35,7 @@ def update_clock(designs: list[str]):
     for d in designs:
         src_dir = DESIGNS_PATH / d
         design_config = src_dir / "design.yaml"
-        timing_summary = BUILD_PATH / d / "vivado_impl/timing_summary.txt"
+        timing_summary = BFASST_BUILD / d / "vivado_impl/timing_summary.txt"
 
         if not timing_summary.exists():
             print(f"Timing summary file not found for design {d}. Skipping update.")

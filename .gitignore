@@ -32,6 +32,7 @@ ic2/
 bfasst.env
 setup/submodule_rules.mk
 **/.bfasst_installed
+**/stubs/**
 
 # Xray Databases
 *_db

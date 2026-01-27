@@ -6,7 +6,7 @@ BFASST_ROOT := $(realpath .)
 BFASST_EXTERNAL_TOOLS := $(BFASST_ROOT)/third_party
 BFASST_SETUP := $(BFASST_ROOT)/setup
 VENV_VARS := $(BFASST_ROOT)/bfasst.env
-INITIAL_VARS := $(BFASST_SETUP)/env/
+INITIAL_VARS := $(BFASST_SETUP)/env
 PYTHON := $(or $(shell command -v python3.12), $(shell command -v python3.11), python3.10)
 VENV_DIR := $(BFASST_ROOT)/.venv
 VENV_BIN := $(VENV_DIR)/bin
@@ -39,6 +39,7 @@ clean:
 		rm -f $($(call TO_UPPER, $(installed))_PATH)/.bfasst_installed; \
 	)
 	rm -rf $(VENV_DIR) $(VENV_VARS) $(PRE_COMMIT_HOOK) $(SETUP_BUILD)
+	rm -rf $(JAVA_STUBS)
 	git submodule deinit -f --all
 # endif
 
@@ -52,17 +53,16 @@ python_packages: $(VENV_BIN)/cmake pyproject.toml
 	python -m pip install -U pip
 	python -m pip install -e .
 
+MAKEFILE_ROOT := $(BFASST_ROOT)
 env_vars: $(VENV_VARS)
 $(VENV_VARS): | $(VENV_ACTIVATE)
-	cat $(INITIAL_VARS)/header.txt > $(VENV_VARS)
-	echo 'BFASST_ROOT=$(BFASST_ROOT)' >> $(VENV_VARS)
-	echo 'BFASST_EXTERNAL_TOOLS=$(BFASST_EXTERNAL_TOOLS)' >> $(VENV_VARS)
-	cat $(INITIAL_VARS)/general.env >>	$(VENV_VARS)
+	export MAKEFILE_ROOT=$(MAKEFILE_ROOT); \
+	envsubst '$$MAKEFILE_ROOT' < $(INITIAL_VARS)/general.env > $(VENV_VARS)
 ifndef _load_project_env_vars
 	echo 'BFASST_ENV_VARS=$(VENV_VARS)' > $(VENV_ACTIVATE).tmp
-	echo 'source $(BFASST_SETUP)/env_vars.sh' >>	$(VENV_ACTIVATE).tmp
-	sed 's/^deactivate () {/deactivate () {\n    _restore_project_env_vars "$${1:-}"/' $(VENV_ACTIVATE) >>	$(VENV_ACTIVATE).tmp
-	echo -e '\n_load_project_env_vars "$(VENV_VARS)"' >>	$(VENV_ACTIVATE).tmp
+	echo 'source $(BFASST_SETUP)/env_vars.sh' >> $(VENV_ACTIVATE).tmp
+	sed 's/^deactivate () {/deactivate () {\n    _restore_project_env_vars "$${1:-}"/' $(VENV_ACTIVATE) >> $(VENV_ACTIVATE).tmp
+	echo -e '\n_load_project_env_vars "$(VENV_VARS)"' >> $(VENV_ACTIVATE).tmp
 	mv $(VENV_ACTIVATE).tmp $(VENV_ACTIVATE)
 endif
 
@@ -84,16 +84,15 @@ $(PRE_COMMIT_HOOK):
 
 ################################## Linting and Testing #############################################
 .PHONY: pre_commit format pylint doctest unittest unittest_failfast
-pre_commit:
+pre_commit: format doctest pylint
 
 format:
-	$(info $(MAKEFLAGS))
 	find ./scripts ./bfasst -iname "*.py" -exec black -q -l 100 {} \;
 
-pylint: format
+pylint: format $(JAVA_STUBS)
 	git fetch origin main
-	pylint --errors-only $$(git ls-files --directory scripts --directory bfasst | grep -e ".py$$")
-	pylint $$(git diff origin/main --diff-filter=AM --name-only | grep -e ".py$$")
+	pylint -j 8 --errors-only $$(git ls-files --directory scripts --directory bfasst | grep -e ".py$$")
+	pylint -j 8 $$(git diff origin/main --diff-filter=AM --name-only | grep -e ".py$$")
 
 doctest:
 	find bfasst -iname "*.py" -exec python -m doctest {} \;

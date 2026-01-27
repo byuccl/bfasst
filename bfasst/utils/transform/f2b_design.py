@@ -6,13 +6,7 @@ fasm2bels IS_..._INVERTED properties.
 import logging
 import time
 
-import bfasst.utils.rw_helpers as rw
-from bfasst import jpype_jvm, utils
-from bfasst.config import DEFAULT_PART
-from bfasst.utils.capnp_cells import CapnpCells, CapnpException
-
-# pylint: disable=wrong-import-position,wrong-import-order,import-error
-jpype_jvm.start()
+import rapidwright as _
 from com.xilinx.rapidwright.design import Cell
 from com.xilinx.rapidwright.device import Device
 from com.xilinx.rapidwright.edif import EDIFCellInst, EDIFHierCellInst, EDIFHierPortInst
@@ -20,7 +14,10 @@ from com.xilinx.rapidwright.interchange import LogNetlistReader, PhysNetlistRead
 from java.io import File, PrintStream
 from java.lang import System
 
-# pylint: enable=wrong-import-position,wrong-import-order,import-error
+import bfasst.utils.rw_helpers as rw
+from bfasst import utils
+from bfasst.config import DEFAULT_PART
+from bfasst.utils.capnp_cells import CapnpCells, CapnpException
 
 
 class F2BDesign:
