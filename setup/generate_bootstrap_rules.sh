@@ -33,16 +33,19 @@ for mapping in "$@"; do
     upper_name=$(echo "$submod_name" | tr '[:lower:]' '[:upper:]')
     cat >> "$OUTPUT_FILE" << EOF
 ${upper_name}_PATH ?= ${configured_path}
+${upper_name}_BUILT := ${configured_path}/.bfasst_installed
 ${upper_name}_INSTALLED := ${STAMP_DIR}/${submod_name}_installed
 ${upper_name}_UPDATED := ${STAMP_DIR}/${submod_name}_updated
-.PHONY: ${submod_name} update_${submod_name}
+.PHONY: ${submod_name} update_${submod_name} ${submod_name}_post_install
+
+${submod_name}_post_install:	;
 
 # Main install target - lazy: generate rule file if needed, then build
 ifeq (\$(realpath ${SUBMODULE_RULES_DIR}/${submod_name}.mk),)
 ${submod_name}: | ${SUBMODULE_RULES_DIR}/${submod_name}.mk
-	\$(MAKE) --no-print-directory \$(${upper_name}_INSTALLED)
+	\$(MAKE) --no-print-directory \$(${upper_name}_INSTALLED) ${submod_name}_post_install 
 else
-${submod_name}: \$(${upper_name}_INSTALLED) | ${SUBMODULE_RULES_DIR}/${submod_name}.mk
+${submod_name}: ${submod_name}_post_install | ${SUBMODULE_RULES_DIR}/${submod_name}.mk
 endif
 
 # Internal target to generate rule file (triggers checkout if needed)

@@ -130,5 +130,5 @@ clean_%:
 
 INSTALL_RECIPES := $(notdir $(SUBMODULES))
 SUBMOD_MAKEFILES := $(foreach submodule,$(SUBMODULES),$(SUBMODULE_RULES_DIR)/$(notdir $(submodule)).mk)
-SUBMOD_INSTALL_TARGETS := $(foreach submodule,$(SUBMODULES), $(STAMP_DIR)/$(notdir $(submodule))_installed)
-SUBMOD_UPDATE_TARGETS := $(foreach target,$(SUBMOD_INSTALL_TARGETS),$(patsubst %_installed,%_updated, $(wildcard $(target))))
+SUBMOD_INSTALL_TARGETS := $(foreach submodule,$(SUBMODULES), $(submodule)_post_install)
+SUBMOD_UPDATE_TARGETS := $(foreach target,$(SUBMODULES),$(patsubst %_installed,%_updated, $(wildcard $(STAMP_DIR)/$(notdir $(target))_installed)))

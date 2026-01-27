@@ -19,7 +19,9 @@ IC2_PATH ?= /tools/lscc/iCEcube2.2020.12
 # Dependency chain: (auto generated)
 #    PHONY COMMAND                ACTUAL TARGET             	DEPENDENCIES
 #  update_<submodule>	$(STAMP_DIR)/<submodule>_updated		$(STAMP_DIR)/<submodule>_checkout | $(STAMP_DIR)/<submodule>_installed
-#         <submodule>	$(STAMP_DIR)/<submodule>_installed		<none> | $(SUBMODULE_RULES_DIR)/<submodule>.mk $(STAMP_DIR)/<submodule>_checkout $(<SUBMODULE>_PATH)/.bfasst_installed
+#         <submodule>	<submodule>_post_install
+#  *_post_install		None									$(STAMP_DIR)/<submodule>_installed
+#						$(STAMP_DIR)/<submodule>_installed		<none> | $(SUBMODULE_RULES_DIR)/<submodule>.mk $(STAMP_DIR)/<submodule>_checkout $(<SUBMODULE>_PATH)/.bfasst_installed
 #						$(STAMP_DIR)/<submodule>_checkout		.git metadata files that change when submodule commit changes or bfasst expects a new commit | <none>
 #			            $(SUBMODULE_RULES_DIR)/<submodule>.mk	<none> | $(<SUBMODULE>_PATH)/.git
 #
@@ -32,7 +34,10 @@ IC2_PATH ?= /tools/lscc/iCEcube2.2020.12
 # 1) Add the submodule using git submodule add <repo_url> <path
 # 2) Optionally create a $(SUBMODULE_PATH)/.bfasst_installed: rule to perfom any build steps done INSIDE the submodule repo.
 # 3) Optionally create a $(SUBMODULE_INSTALLED): rule to perfom any build steps done in the BFASST repo (edit $(VENV_VARS), etc)
-# 4) Optionally create a $(SUBMODULE_UPDATED): rule to perform any rebuild steps when a new commit is checked out.
+# 4) Optionally add dependencies to <submodule>_post_install to do other actions (cache part db, etc).
+# 5) Optionally create a $(SUBMODULE_UPDATED): rule to perform any rebuild steps when a new commit is checked out.
+# Do not add dependencies to <submodule> that acutally depend on <submodule>_installed, they will not be built in the correct order.
+# 		Instead, add the deps to <submodule>_post_install, which is run after install is complete.
 # No-op rules are predefined to fill in for any you do not need.
 
 
@@ -134,7 +139,7 @@ else
   RW_PART_CACHE := $(RAPIDWRIGHT_PATH)/data/devices/$(RW_FAMILY)/$(RW_PART)_db_cache.dat
 endif
 
-rapidwright: $(RW_PART_CACHE)
+rapidwright_post_install: $(RW_PART_CACHE)
 cache_rw_part: $(RW_PART_CACHE)
 $(RW_PART_CACHE): $(RAPIDWRIGHT_INSTALLED)
 	cd $(RAPIDWRIGHT_PATH); rapidwright jython -c 'FileTools.ensureDataFilesAreStaticInstallFriendly("$(RW_PART)")'
@@ -142,12 +147,15 @@ $(RW_PART_CACHE): $(RAPIDWRIGHT_INSTALLED)
 
 RW_PATH := $(RAPIDWRIGHT_PATH)
 CLASSPATH = $(RAPIDWRIGHT_PATH)/bin:$$(echo $(RAPIDWRIGHT_PATH)/jars/*.jar | tr ' ' ':')
-$(RAPIDWRIGHT_INSTALLED): | $(CAPNP_JAVA) $(VIVADO_BIN)
+$(RAPIDWRIGHT_BUILT): 
 ifndef JAVA_HOME
 	@echo "Java 17 or 18 is required to build RapidWright. Please run 'sudo make packages' to install it."
 	@exit 1
 else
 	cd $(RAPIDWRIGHT_PATH) && JAVA_HOME=$(JAVA_HOME) ./gradlew compileJava
+	touch $@
+
+$(RAPIDWRIGHT_INSTALLED): | $(CAPNP_JAVA) $(VIVADO_BIN)
 	@$(call ADD_ENV_VARS,rapidwright,$(INITIAL_VARS)/rapidwright.env,$(VENV_VARS),RW_PATH JAVA_HOME CLASSPATH)
 	@$(call ADD_ENV_VARS,rapidwright,$(INITIAL_VARS)/rapidwright.paths,$(VENV_ACTIVATE))
 	@mkdir -p $(RAPIDWRIGHT_PATH)/stubs
@@ -194,7 +202,7 @@ $(RAPIDWRIGHT_UPDATED):
 # Fasm2bels
 ####################################################################################################
 .PHONY: init_f2b_db
-fasm2bels: init_f2b_db
+fasm2bels_post_install: init_f2b_db
 
 # f2b env is NOT parallel friendly, so for now do not use $(MAKE) for env target
 define F2B_BUILD
@@ -203,11 +211,14 @@ define F2B_BUILD
 	touch $1
 endef
 
+$(FASM2BELS_BUILT):
+	$(call F2B_BUILD,$@)
+
 export VIVADO_PATH ?= $(VIVADO_BIN)
 F2B_PATH := $(FASM2BELS_PATH)
-$(FASM2BELS_INSTALLED): $(RAPIDWRIGHT_INSTALLED) $(VIVADO_BIN)
+$(FASM2BELS_INSTALLED): | $(RAPIDWRIGHT_BUILT) $(VIVADO_BIN)
 	$(call ADD_ENV_VARS,fasm2bels,$(INITIAL_VARS)/fasm2bels.env,$(VENV_VARS),F2B_PATH)
-	$(call F2B_BUILD,$@)
+	touch $@
 	touch $(FASM2BELS_UPDATED)
 
 $(FASM2BELS_UPDATED):
