@@ -9,6 +9,7 @@ from bfasst.tools.tool import Tool
 class Conformal(Tool):
     """Create the rule and build snippets for conformal comparison."""
 
+    # pylint: disable=too-many-positional-arguments
     def __init__(self, flow, design, golden_netlist, rev_netlist, vendor):
         super().__init__(flow, design)
 
@@ -33,7 +34,11 @@ class Conformal(Tool):
                     "gui_path": str(self.outputs["conformal_gui"]),
                     "hdl_srcs": self.golden_netlist,
                     "rev_netlist": self.rev_netlist,
+<<<<<<< HEAD
                     "conformal_script_path": str(BFASST_UTILS / "conformal.py"),
+=======
+                    "conformal_script_path": str(BFASST_UTILS_PATH / "compare/conformal.py"),
+>>>>>>> main
                     "build_dir": self.build_path.parent,
                     "vendor": self.vendor,
                 },
@@ -50,6 +55,12 @@ class Conformal(Tool):
     def add_ninja_deps(self, deps):
         """Add the conformal ninja deps."""
         self._add_ninja_deps_default(deps, __file__)
+<<<<<<< HEAD
         deps.append(CONFORMAL_TOOLS / "conformal.do.mustache")
         deps.append(CONFORMAL_TOOLS / "conformal.gui.mustache")
         deps.append(BFASST_UTILS / "conformal.py")
+=======
+        deps.append(CONFORMAL_TOOLS_PATH / "conformal.do.mustache")
+        deps.append(CONFORMAL_TOOLS_PATH / "conformal.gui.mustache")
+        deps.append(BFASST_UTILS_PATH / "compare/conformal.py")
+>>>>>>> main

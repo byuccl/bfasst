@@ -34,7 +34,7 @@ class NetlistDeobfuscate(Tool):
 
         self.rule_snippet_path = NINJA_TRANSFORM_TOOLS / "netlist_deobfuscate_rules.ninja.mustache"
         self.rules_render_dict = {
-            "transform_script_path": str(BFASST_UTILS / "netlist_deobfuscate.py"),
+            "transform_script_path": str(BFASST_UTILS / "transform" / "netlist_deobfuscate.py"),
             "dcp_in": str(self.dcp_path),
             "edf_in": str(self.edf_path),
             "unmodified_dcp_in": str(self.unmodified_dcp_path),
@@ -61,7 +61,7 @@ class NetlistDeobfuscate(Tool):
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
-        deps.append(BFASST_UTILS / "netlist_deobfuscate.py")
+        deps.append(BFASST_UTILS / "transform" / "netlist_deobfuscate.py")
         deps.append(self.dcp_path)
         deps.append(self.edf_path)
         deps.append(self.unmodified_dcp_path)

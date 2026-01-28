@@ -4,7 +4,12 @@ from argparse import Namespace
 
 from bfasst.paths import BFASST_UTILS, COMPARE_TOOLS
 from bfasst.tools.tool import Tool
+<<<<<<< HEAD
 from bfasst.utils.physcmp_data_types import ImplReports
+=======
+from bfasst.paths import BFASST_UTILS_PATH, COMPARE_TOOLS_PATH
+from bfasst.utils.compare.physcmp_data_types import ImplReports
+>>>>>>> main
 
 
 class PhysCmp(Tool):
@@ -34,7 +39,11 @@ class PhysCmp(Tool):
         self.rule_snippet_path = COMPARE_TOOLS / "physcmp" / "physcmp_rules.ninja.mustache"
 
         self.rules_render_dict = {
+<<<<<<< HEAD
             "compare_script_path": str(BFASST_UTILS / "physcmp.py"),
+=======
+            "compare_script_path": str(BFASST_UTILS_PATH / "compare" / "physcmp.py"),
+>>>>>>> main
             "golden_dcp": str(self.golden.dcp),
             "golden_edf": str(self.golden.edf),
             "golden_setup_timing": str(self.golden.setup_timing),
@@ -63,7 +72,11 @@ class PhysCmp(Tool):
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
+<<<<<<< HEAD
         deps.append(BFASST_UTILS / "physcmp.py")
+=======
+        deps.append(BFASST_UTILS_PATH / "compare" / "physcmp.py")
+>>>>>>> main
 
     @classmethod
     def from_args(cls, flow, design, args: Namespace):
