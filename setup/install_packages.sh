@@ -48,3 +48,7 @@ apt-get install -y \
     virtualenv \
     xdot \
     zlib1g-dev
+
+# Install Opentitan Packages
+opentitan_commit=$(git ls-tree HEAD designs/opentitan | awk '{print $3}')
+curl https://raw.githubusercontent.com/lowRISC/opentitan/${opentitan_commit}/apt-requirements.txt | sed '/^#/d' | sed '/^python/d' | xargs sudo apt install -y

@@ -38,12 +38,13 @@ ${upper_name}_INSTALLED := ${STAMP_DIR}/${submod_name}_installed
 ${upper_name}_UPDATED := ${STAMP_DIR}/${submod_name}_updated
 .PHONY: ${submod_name} update_${submod_name} ${submod_name}_post_install
 
+${submod_name}_post_install: \$(${upper_name}_INSTALLED)
 ${submod_name}_post_install:	;
 
 # Main install target - lazy: generate rule file if needed, then build
 ifeq (\$(realpath ${SUBMODULE_RULES_DIR}/${submod_name}.mk),)
 ${submod_name}: | ${SUBMODULE_RULES_DIR}/${submod_name}.mk
-	\$(MAKE) --no-print-directory \$(${upper_name}_INSTALLED) ${submod_name}_post_install 
+	\$(MAKE) --no-print-directory ${submod_name}_post_install 
 else
 ${submod_name}: ${submod_name}_post_install | ${SUBMODULE_RULES_DIR}/${submod_name}.mk
 endif

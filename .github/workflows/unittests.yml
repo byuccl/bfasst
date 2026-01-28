@@ -51,7 +51,7 @@ jobs:
     
     - name: Install external tools
       run: |
-        make env
+        make venv
         . .venv/bin/activate && python bfasst/external_tools.py install_test_yaml ${{ matrix.experiment }}
 
     - name: experiments
@@ -100,8 +100,7 @@ jobs:
 
     - name: Install external tools
       run: |
-        make env
-        make install_cmake
+        make venv
         . .venv/bin/activate && python bfasst/external_tools.py install rapidwright fasm2bels rand_soc
 
     - name: Run unittest

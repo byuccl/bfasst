@@ -49,12 +49,12 @@ MODULE_UPDATE := git submodule update --init --recursive
 # Each submodule target generates its rule file on first request, then rule file provides git deps
 # Batch build makefiles, then install targets to minimize redundant makefile parsing
 all_submodules: .gitmodules
-	$(MAKE) $(SUBMOD_MAKEFILES)
-	$(MAKE) $(SUBMOD_INSTALL_TARGETS)
+	$(MAKE) --no-print-directory $(SUBMOD_MAKEFILES)
+	$(MAKE) --no-print-directory $(SUBMOD_INSTALL_TARGETS)
 
 # Installed submodules are outdated if their current commit does not match the project's expected commit
 update_all_submodules: .gitmodules
-	$(MAKE) $(SUBMOD_UPDATE_TARGETS)
+	$(MAKE) --no-print-directory $(SUBMOD_UPDATE_TARGETS)
 
 RESET_BRANCH ?= main
 reset_submodules:
@@ -117,7 +117,7 @@ $(CAPNP_JAVA): $(shell command -v capnproto)
 ####################################################################################################
 # Rapidwright
 ####################################################################################################
-.PHONY: cache_rw_part inject_interchange
+.PHONY: cache_rw_part inject_interchange stubs
 # Find proper Java version. Currently 18 or 17.
 ifndef JAVA_HOME
   ifneq ($(wildcard /usr/lib/jvm/java-18-openjdk-amd64/bin/java), )
@@ -177,6 +177,7 @@ ifneq ($(wildcard $(RAPIDWRIGHT_PATH)/interchange/fpga-interchange-schema/),)
   endif
 endif
 
+stubs: $(JAVA_STUBS)
 
 JAVA_STUBS := $(SETUP_BUILD)/stubs
 ifneq ($(realpath $(RAPIDWRIGHT_PATH)/bin/com),)
@@ -234,7 +235,7 @@ $(FASM2BELS_PATH)/$(F2B_PART)_db: $(FASM2BELS_INSTALLED)
 		--db-root $(FASM2BELS_PATH)/third_party/prjxray-db/$(F2B_FAMILY) \
 		--part $(F2B_PART) \
 		--connection-database-output $(FASM2BELS_PATH)/$(F2B_PART)_db
-	@echo "$(F2B_PART) Database generated. Pregenerate any other database by running F2B_PART=<part	F2B_FAMILY=<family	make init_f2b_db"
+	@echo "$(F2B_PART) Database generated. Pregenerate any other database by running F2B_PART=<part> F2B_FAMILY=<family> make init_f2b_db"
 
 #####################################################################################################
 # rand_soc
@@ -300,13 +301,13 @@ $(WAFOVE_UPDATED):
 
 ICESTORM_HOME := $(ISCESTORM_PATH)
 $(ICESTORM_INSTALLED): 
-	$(MAKE) -C $(ICESTORM_PATH) && $(MAKE) install PREFIX=../; exit 1;
+	$(MAKE) -C $(ICESTORM_PATH) && $(MAKE) -C $(ICESTORM_PATH) install PREFIX=../
 	$(call ADD_ENV_VARS,icestorm,$(INITIAL_VARS)/icestorm.env,$(VENV_VARS),ICESTORM_HOME)
 	touch $@
 	touch $(ICESTORM_UPDATED)
 
 $(ICESTORM_UPDATED):
-	$(MAKE) -C $(ICESTORM_PATH) && $(MAKE) install PREFIX=../; exit 1;
+	$(MAKE) -C $(ICESTORM_PATH) && $(MAKE) -C $(ICESTORM_PATH) install PREFIX=../
 	touch $@
 
 #####################################################################################################
@@ -314,12 +315,14 @@ $(ICESTORM_UPDATED):
 #####################################################################################################
 FUSESOC_CMD := --cores-root . run --build-root $(BFASST_BUILD)/opentitan --flag=fileset_top --target=synth --no-export --setup lowrisc:systems:chip_earlgrey_cw310
 FINAL_TCL := $(BFASST_BUILD)/opentitan/synth-vivado/lowrisc_systems_chip_earlgrey_cw310_0.1.tcl
+export CARGO_HOME ?= $(VENV_DIR)/.cargo
+export RUSTUP_HOME ?= $(VENV_DIR)/.rustup
 $(OPENTITAN_INSTALLED): | vivado
 ifeq ($(shell command -v rustc),)
-	@echo "Rust compiler is required to build OpenTitan. https://rustup.rs/"; exit 1;
+	@echo "Rust compiler is required to build OpenTitan. Building venv local install: https://rustup.rs/"
+	tmp=$$(mktemp); curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > tmp; sh $$tmp -y --no-modify-path
 endif
-	$(MODULE_UPDATE) $(OPENTITAN_PATH)
-	sed '/^#/d' $(OPENTITAN_PATH)/apt-requirements.txt | xargs sudo apt install -y
+	$(call ADD_ENV_VARS,opentitan,$(INITIAL_VARS)/opentitan.path,$(VENV_ACTIVATE),CARGO_HOME)
 	pip install -U pip "setuptools<66.0.0"
 	pip install -r $(OPENTITAN_PATH)/python-requirements.txt
 	$(OPENTITAN_PATH)/util/get-toolchain.py --update

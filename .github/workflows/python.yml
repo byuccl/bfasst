@@ -27,11 +27,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r $(git ls-files 'requirements.txt')
         pip install -e .
-        git submodule update --init third_party/WaFoVe
-        python -m pip install -e third_party/WaFoVe
-        cd third_party/WaFoVe && make build
+        make wafove rand_soc stubs
       if: env.GIT_DIFF
     - name: Check for syntax errors with pylint
       run: |
@@ -49,7 +46,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r $(git ls-files 'requirements.txt')
+        pip install $(grep "black=" pyproject.toml | sed 's/.*"\(black==[^"]*\)".*/\1/')
 
     - name: Run format
       run: |

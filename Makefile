@@ -1,6 +1,5 @@
 SHELL := /bin/bash
 .SHELLFLAGS := -e -o pipefail -c
-MAKEFLAGS += --no-builtin-rules
 
 BFASST_ROOT := $(realpath .)
 BFASST_EXTERNAL_TOOLS := $(BFASST_ROOT)/third_party
