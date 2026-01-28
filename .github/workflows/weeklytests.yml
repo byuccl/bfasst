@@ -41,7 +41,7 @@ jobs:
         
     - name: Install external tools
       run: |
-        make env
+        make venv
         make install_cmake
         . .venv/bin/activate && python bfasst/external_tools.py install_test_yaml ${{ matrix.experiment }}
     - name: tests
