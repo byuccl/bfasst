@@ -10,7 +10,7 @@ import paramiko
 import yaml
 
 from bfasst.paths import BFASST_ROOT, IC2_INSTALL_DIR, VIVADO_BIN
-from bfasst.utils.conformal import ConformalCompare
+from bfasst.utils.compare.conformal import ConformalCompare
 from bfasst.utils.general import error
 from bfasst.yaml_parser import FlowDescriptionParser
 

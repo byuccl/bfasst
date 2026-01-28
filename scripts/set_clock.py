@@ -9,7 +9,7 @@ new clock period.
 import re
 from argparse import ArgumentParser
 
-from bfasst.paths import BFASST_BUILD, DESIGNS_PATH
+from bfasst.paths import BFASST_BUILD, BFASST_DESIGNS
 
 
 def get_clock_wns(timing_summary: str) -> tuple[float, float]:
@@ -33,7 +33,7 @@ def get_clock_wns(timing_summary: str) -> tuple[float, float]:
 def update_clock(designs: list[str]):
     """Update clock period based on timing_summary.txt."""
     for d in designs:
-        src_dir = DESIGNS_PATH / d
+        src_dir = BFASST_DESIGNS / d
         design_config = src_dir / "design.yaml"
         timing_summary = BFASST_BUILD / d / "vivado_impl/timing_summary.txt"
 
@@ -77,7 +77,7 @@ def update_clock(designs: list[str]):
 def init_clock(designs: list[str], clock_name: str = "clk", period: int = 100):
     """Add defualt clock signal and period to design.yaml if not already defined."""
     for d in designs:
-        src_dir = DESIGNS_PATH / d
+        src_dir = BFASST_DESIGNS / d
         design_config = src_dir / "design.yaml"
         if not design_config.exists():
             design_config.touch()

@@ -128,6 +128,15 @@ ifndef JAVA_HOME
 endif
 export JAVA_HOME
 
+JAVA_STUBS_DEFAULT_PREFIX := $(SETUP_BUILD)/java_stubs
+JAVA_STUBS_DIRS := com/xilinx/rapidwright java
+ifneq ($(realpath $(RAPIDWRIGHT_PATH)/bin/),)
+  JAVA_STUBS := $(addprefix $(RAPIDWRIGHT_PATH)/stubs/, $(JAVA_STUBS_DIRS))
+  $(JAVA_STUBS): $(RAPIDWRIGHT_BUILT) | $(RAPIDWRIGHT_INSTALLED)
+else
+  JAVA_STUBS := $(addprefix $(JAVA_STUBS_DEFAULT_PREFIX)/, $(JAVA_STUBS_DIRS))
+endif
+
 RW_PART ?= $(DEFAULT_PART)
 PART_CSV := $(RAPIDWRIGHT_PATH)/data/partdump.csv
 # Infer family from part using $(RAPIDWRIGHT_PATH)/data/partdump.csv, if it exists
@@ -139,28 +148,26 @@ else
   RW_PART_CACHE := $(RAPIDWRIGHT_PATH)/data/devices/$(RW_FAMILY)/$(RW_PART)_db_cache.dat
 endif
 
-rapidwright_post_install: $(RW_PART_CACHE)
+rapidwright_post_install: $(RW_PART_CACHE) $(JAVA_STUBS)
 cache_rw_part: $(RW_PART_CACHE)
 $(RW_PART_CACHE): $(RAPIDWRIGHT_INSTALLED)
 	cd $(RAPIDWRIGHT_PATH); rapidwright jython -c 'FileTools.ensureDataFilesAreStaticInstallFriendly("$(RW_PART)")'
 	@echo "Cached RapidWright database for part $(RW_PART). To cache other parts, run make cache_rw_part RW_PART=<part>"
 
-RW_PATH := $(RAPIDWRIGHT_PATH)
-CLASSPATH = $(RAPIDWRIGHT_PATH)/bin:$$(echo $(RAPIDWRIGHT_PATH)/jars/*.jar | tr ' ' ':')
-$(RAPIDWRIGHT_BUILT): 
+$(RAPIDWRIGHT_BUILT): | $(CAPNP_JAVA) $(VIVADO_BIN)
 ifndef JAVA_HOME
 	@echo "Java 17 or 18 is required to build RapidWright. Please run 'sudo make packages' to install it."
 	@exit 1
 else
+	cd $(RAPIDWRIGHT_PATH) && JAVA_HOME=$(JAVA_HOME) ./gradlew updateJars
 	cd $(RAPIDWRIGHT_PATH) && JAVA_HOME=$(JAVA_HOME) ./gradlew compileJava
 	touch $@
 
-$(RAPIDWRIGHT_INSTALLED): | $(CAPNP_JAVA) $(VIVADO_BIN)
+RW_PATH := $(RAPIDWRIGHT_PATH)
+CLASSPATH = $(RAPIDWRIGHT_PATH)/bin:$$(echo $(RAPIDWRIGHT_PATH)/jars/*.jar | tr ' ' ':')
+$(RAPIDWRIGHT_INSTALLED): 
 	@$(call ADD_ENV_VARS,rapidwright,$(INITIAL_VARS)/rapidwright.env,$(VENV_VARS),RW_PATH JAVA_HOME CLASSPATH)
 	@$(call ADD_ENV_VARS,rapidwright,$(INITIAL_VARS)/rapidwright.paths,$(VENV_ACTIVATE))
-	@mkdir -p $(RAPIDWRIGHT_PATH)/stubs
-	@echo "Generating Java stubs for RapidWright at $(RAPIDWRIGHT_PATH)/stubs"
-	@python $(BFASST_SETUP)/generate_java_stubs.py $(RAPIDWRIGHT_PATH)/stubs > /dev/null 2>&1 &
 	touch $@
 	touch $(RAPIDWRIGHT_UPDATED)
 endif
@@ -177,26 +184,19 @@ ifneq ($(wildcard $(RAPIDWRIGHT_PATH)/interchange/fpga-interchange-schema/),)
   endif
 endif
 
-stubs: $(JAVA_STUBS)
+stubs: $(PY_STUBS) $(JAVA_STUBS)
 
-JAVA_STUBS := $(SETUP_BUILD)/stubs
-ifneq ($(realpath $(RAPIDWRIGHT_PATH)/bin/com),)
-  $(shell rm -rf $(JAVA_STUBS))
-  JAVA_STUBS := $(RAPIDWRIGHT_PATH)/stubs
-  $(JAVA_STUBS): $(RAPIDWRIGHT_INSTALLED) $(RAPIDWRIGHT_UPDATED)
+$(JAVA_STUBS) &:
+ifneq ($(realpath $(JAVA_STUBS_DEFAULT_PREFIX)),)
+	@rm -rf $(JAVA_STUBS_DEFAULT_PREFIX)
 endif
-
-$(JAVA_STUBS):
 	@rm -rf $(JAVA_STUBS)
 	@mkdir -p $(JAVA_STUBS)
 	@echo "Generating Java stubs for RapidWright at $(JAVA_STUBS)"
-	@python $(BFASST_SETUP)/generate_java_stubs.py $(JAVA_STUBS) > /dev/null 2>&1
-	touch $@
+	@python $(BFASST_SETUP)/generate_stubs.py --java $(JAVA_STUBS) > /dev/null 2>&1
 	
 update_rapidwright: $(JAVA_STUBS)
 $(RAPIDWRIGHT_UPDATED):
-	cd $(RAPIDWRIGHT_PATH) && ./gradlew updateJars
-	cd $(RAPIDWRIGHT_PATH) && ./gradlew compileJava
 	touch $@
 
 ####################################################################################################

@@ -16,6 +16,8 @@ SETUP_BUILD := $(BFASST_SETUP)/build
 STAMP_DIR := $(SETUP_BUILD)/stamps
 $(shell mkdir -p $(STAMP_DIR))
 
+PY_STUBS := $(BFASST_ROOT)/bfasst/config.pyi $(BFASST_ROOT)/bfasst/paths.pyi
+
 export BASH_ENV=$(VENV_ACTIVATE)
 
 # Below also includes setup/helper_macros.mk
@@ -29,18 +31,13 @@ install: venv all_submodules
 apt_packages:
 	$(BFASST_SETUP)/install_packages.sh
 
-clean: 
-# ifndef FORCE_CLEAN
-# 	@echo "Are you sure? make clean will erase the $(notdir $(VENV_DIR)), $(notdir $(VENV_VARS)), \
-# 	pre_commit hook, and all submodules installed. Rerun 'make clean FORCE_CLEAN=1' to confirm." >&2
-# else
+clean:
 	$(foreach installed, $(subst _updated, ,$(notdir $(SUBMOD_UPDATE_TARGETS))), \
 		rm -f $($(call TO_UPPER, $(installed))_PATH)/.bfasst_installed; \
 	)
 	rm -rf $(VENV_DIR) $(VENV_VARS) $(PRE_COMMIT_HOOK) $(SETUP_BUILD)
 	rm -rf $(JAVA_STUBS)
 	git submodule deinit -f --all
-# endif
 
 .NOTPARALLEL: $(VENV_ACTIVATE) $(VENV_VARS)
 
@@ -81,17 +78,22 @@ $(PRE_COMMIT_HOOK):
 	chmod +x $(PRE_COMMIT_HOOK)
 	@echo "Enabled pre-commit hook at $(PRE_COMMIT_HOOK)"
 
+$(PY_STUBS) &: $(INITIAL_VARS)/*.env $(BFASST_SETUP)/generate_stubs.py
+	python $(BFASST_SETUP)/generate_stubs.py --bfasst $(BFASST_ROOT)/bfasst
+	git add $(PY_STUBS)
+
 ################################## Linting and Testing #############################################
 .PHONY: pre_commit format pylint doctest unittest unittest_failfast
+
 pre_commit: format doctest pylint
 
 format:
 	find ./scripts ./bfasst -iname "*.py" -exec black -q -l 100 {} \;
 
-pylint: format $(JAVA_STUBS)
+pylint: format $(JAVA_STUBS) $(PY_STUBS)
 	git fetch origin main
-	pylint -j 8 --errors-only $$(git ls-files --directory scripts --directory bfasst | grep -e ".py$$")
-	pylint -j 8 $$(git diff origin/main --diff-filter=AM --name-only | grep -e ".py$$")
+	pylint --errors-only $$(git ls-files --directory scripts --directory bfasst | grep -e ".py$$")
+	pylint $$(git diff origin/main --diff-filter=AM --name-only | grep -e ".py$$")
 
 doctest:
 	find bfasst -iname "*.py" -exec python -m doctest {} \;

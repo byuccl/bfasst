@@ -155,8 +155,8 @@ class ConformalCompare:
             gui_text = chevron.render(
                 f,
                 {
-                    "remote_source_script": str(bfasst.config.CONFORMAL_REMOTE_SOURCE_SCRIPT),
-                    "remote_path": str(bfasst.config.CONFORMAL_REMOTE_PATH),
+                    "remote_source_script": bfasst.config.CONFORMAL_REMOTE_SOURCE_SCRIPT,
+                    "remote_path": bfasst.config.CONFORMAL_REMOTE_PATH,
                     "dofile_name": self.DO_FILE_NAME,
                 },
             )
@@ -172,27 +172,27 @@ class ConformalCompare:
 
         # Copy do script
         scp_client.put(
-            str(do_file), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR / self.DO_FILE_NAME)
+            str(do_file), str(bfasst.paths.CONFORMAL_REMOTE_WORK_DIR / self.DO_FILE_NAME)
         )
 
         # Copy gui script
         run_gui_path = self.stage_dir / self.GUI_FILE_NAME
         scp_client.put(
-            str(run_gui_path), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR / self.GUI_FILE_NAME)
+            str(run_gui_path), str(bfasst.paths.CONFORMAL_REMOTE_WORK_DIR / self.GUI_FILE_NAME)
         )
 
         # Copy mapped points
         # mapped_points_file_path = self.stage_dir / self.MAPPED_POINTS_FILE_NAME
         # scpClient.put(
         #     str(mapped_points_file_path),
-        #     str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR / self.MAPPED_POINTS_FILE_NAME),
+        #     str(bfasst.paths.CONFORMAL_REMOTE_WORK_DIR / self.MAPPED_POINTS_FILE_NAME),
         # )
 
         for src in self.hdl_srcs:
-            scp_client.put(str(src), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
+            scp_client.put(str(src), bfasst.config.CONFORMAL_REMOTE_WORK_DIR)
 
         # Copy reverse netlist file
-        scp_client.put(str(self.rev_netlist), str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR))
+        scp_client.put(str(self.rev_netlist), bfasst.config.CONFORMAL_REMOTE_WORK_DIR)
 
         scp_client.close()
 
@@ -222,7 +222,7 @@ class ConformalCompare:
     def __copy_log_from_remote(self, client):
         scp_client = scp.SCPClient(client.get_transport())
         scp_client.get(
-            str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR / self.LOG_FILE_NAME),
+            str(bfasst.paths.CONFORMAL_REMOTE_WORK_DIR / self.LOG_FILE_NAME),
             str(self.stage_dir),
         )
         scp_client.close()
