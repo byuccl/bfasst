@@ -1,1 +1,4 @@
 top: td_fused_top
+
+# Needs almost 1700 BRAMs
+part: xc7vx1140tflg1926-1
