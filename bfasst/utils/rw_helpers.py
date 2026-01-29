@@ -414,15 +414,12 @@ def process_lut_eqn(cell, is_lut5, log=logging.info):
 
 def process_shared_gnd_lut_eqn(lut5, gnd_pin, new_cell_inst, gnd, log=logging.info):
     lut5_eqn = process_lut_eqn(lut5, True, log)
+    lut5_eqn = str(LUTTools.getLUTInitFromEquation(lut5_eqn, 5))[4:].zfill(8)
     const_str = "00000000" if gnd else "FFFFFFFF"
     if gnd_pin.endswith("O5"):
-        init_str = (
-            "64'h" + str(LUTTools.getLUTInitFromEquation(lut5_eqn, 5))[4:].zfill(8) + const_str
-        )
+        init_str = "64'h" + lut5_eqn + const_str
     else:
-        init_str = f"64'h{const_str}" + str(LUTTools.getLUTInitFromEquation(lut5_eqn, 5))[4:].zfill(
-            8
-        )
+        init_str = "64'h" + const_str + lut5_eqn
     log(f"  New LUT INIT: {init_str}")
     new_cell_inst.addProperty("INIT", init_str)
 
@@ -640,7 +637,7 @@ def get_site_pin_driver(sink_pin: SitePinInst, design: Design):
     return spi
 
 
-class _PinMapping:
+class PinMap:
     """
     Check default pin mappings for unisim types.
     """
@@ -711,10 +708,12 @@ class _PinMapping:
         ),
     }
 
-    def __getitem__(self, attr):
-        return self.CELL_PIN_MAP[attr]
+    @classmethod
+    def __class_getitem__(cls, attr):
+        return cls.CELL_PIN_MAP[attr]
 
-    def cell_is_default_mapping(self, cell):
+    @classmethod
+    def cell_is_default_mapping(cls, cell):
         """
         This checks whether the cell is using the default logical to physical mappings.
 
@@ -722,7 +721,7 @@ class _PinMapping:
             cell (rapidwright.Cell)
         """
         type_name = cell.getEDIFCellInst().getCellType().getName()
-        default_l2p_map = self.CELL_PIN_MAP[type_name]
+        default_l2p_map = cls.CELL_PIN_MAP[type_name]
 
         l2p = cell.getPinMappingsL2P()
         for logical, physical in default_l2p_map.items():
@@ -732,7 +731,8 @@ class _PinMapping:
 
         return True
 
-    def ensure_connected(self, edif_cell_inst, net, log=logging.info):
+    @classmethod
+    def ensure_connected(cls, edif_cell_inst, net, log=logging.info):
         """
         Ensure that all ports on the cell are connected to the net.
 
@@ -743,7 +743,7 @@ class _PinMapping:
         """
 
         type_name = edif_cell_inst.getCellType().getName()
-        port_names = self.CELL_PIN_MAP[type_name]
+        port_names = cls.CELL_PIN_MAP[type_name]
 
         for phys_name, log_name in port_names.items():
             port = edif_cell_inst.getPortInst(phys_name)
@@ -753,9 +753,6 @@ class _PinMapping:
                 )
                 new_port = edif_cell_inst.getPort(log_name)
                 net.createPortInst(new_port, edif_cell_inst)
-
-
-PinMap = _PinMapping()
 
 
 def is_connected(port_inst: EDIFHierPortInst) -> bool:

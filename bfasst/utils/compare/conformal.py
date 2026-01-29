@@ -11,8 +11,8 @@ import scp
 
 import bfasst
 from bfasst import paths
+from bfasst.design import Vendor
 from bfasst.locks import conformal_lock
-from bfasst.types import Vendor
 from bfasst.utils import error
 from bfasst.utils.general import HdlType, get_hdl_src_types
 

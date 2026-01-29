@@ -6,8 +6,9 @@ from typing import TYPE_CHECKING
 
 from bfasst import config
 
+# This is needed for pylint/pylance type checking to work. Ignored during real runtimes.
 if TYPE_CHECKING:
-    from .paths_stubs import *
+    from .paths_stubs import *  # pylint: disable=wildcard-import,unused-wildcard-import
 
 
 def __getattr__(name):

@@ -1,12 +1,12 @@
 """Ic2LseConformal flow"""
 
+from bfasst.design import Vendor
 from bfasst.flows.flow import Flow
 from bfasst.paths import BFASST_FLOWS
 from bfasst.tools.compare.conformal.conformal import Conformal
 from bfasst.tools.impl.ic2_impl import Ic2Impl
 from bfasst.tools.rev_bit.icestorm import IcestormRevBit
 from bfasst.tools.synth.ic2_lse_synth import Ic2LseSynth
-from bfasst.types import Vendor
 
 
 class Ic2LseConformal(Flow):

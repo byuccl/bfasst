@@ -5,13 +5,13 @@ import argparse
 import datetime
 import pathlib
 import shlex
-from shutil import copyfileobj
 import subprocess
 import sys
 import types
 from dataclasses import dataclass
-from bfasst.legacy.output_cntrl import cleanup_redirect, enable_proxy, redirect
+from shutil import copyfileobj
 
+from bfasst.legacy.output_cntrl import cleanup_redirect, enable_proxy, redirect
 from bfasst.utils import TermColor
 
 
@@ -27,7 +27,7 @@ class ToolProduct:
 
     file_path: pathlib.Path
     log_path: pathlib.Path = None
-    check_log_fcn: types.FunctionType = None
+    check_log_fcn: types.FunctionType = None  # pylint: disable=no-member
 
 
 class Tool(abc.ABC):

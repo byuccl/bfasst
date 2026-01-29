@@ -6,7 +6,7 @@ import unittest
 from contextlib import redirect_stderr
 
 from bfasst.flows.flow import FlowNoDesign
-from bfasst.paths import BFASST_ROOT, TESTS_PATH
+from bfasst.paths import BFASST_ROOT, BFASST_TESTS
 from bfasst.yaml_parser import FlowDescriptionParser
 from scripts.run import parse_args
 
@@ -14,7 +14,7 @@ from scripts.run import parse_args
 class TestApplicationRunner(unittest.TestCase):
     """Unit tests for the run.py ApplicationRunner class."""
 
-    def __run_flow(self, flow, flow_args=None):
+    def __run_flow(self, flow, flow_args=None):  # pylint: disable=unused-private-member
         # run the run.py script with the given flow
 
         cmd = ["python", "scripts/run.py", flow]
@@ -99,7 +99,7 @@ class TestApplicationRunner(unittest.TestCase):
 
     def test_check_args_succeeds_on_yaml(self):
         """Test that the check_args function accepts only a yaml or a design/flow"""
-        args = [TESTS_PATH / "ci/vivado_bit_analysis.yaml"]
+        args = [BFASST_TESTS / "ci/vivado_bit_analysis.yaml"]
         self.__try_check_args_for_success(args)
 
     def test_check_args_succeeds_on_flow_and_design(self):

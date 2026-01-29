@@ -16,7 +16,7 @@ from com.xilinx.rapidwright.edif import (
     EDIFHierPortInst,
     EDIFPortInst,
 )
-from jpype import JException
+from jpype import JException  # pylint: disable=no-name-in-module
 
 import bfasst.utils.rw_helpers as rw
 from bfasst.utils import add_path_arg, add_standard_args, convert_verilog_literal_to_int

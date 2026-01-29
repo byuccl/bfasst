@@ -23,7 +23,7 @@ from bfasst.flows.vivado_wafove import VivadoWafove
 from bfasst.flows.vivado_yosys_cmp import VivadoYosysCmp
 
 # from bfasst.flows.flow_utils import get_flows
-from bfasst.paths import DESIGNS_PATH, NINJA_BUILD_PATH  # BFASST_ROOT,
+from bfasst.paths import BFASST_DESIGNS, NINJA_BUILD_PATH  # BFASST_ROOT,
 
 
 class TestNinjaFlowManager(unittest.TestCase):
@@ -39,7 +39,7 @@ class TestNinjaFlowManager(unittest.TestCase):
         self.assertIsInstance(self.flow_manager.flows[0], flow_type)
         self.assertIsInstance(self.flow_manager.flows[1], flow_type)
         self.assertEqual(
-            self.flow_manager.designs, [DESIGNS_PATH / "byu/alu", DESIGNS_PATH / "byu/counter"]
+            self.flow_manager.designs, [BFASST_DESIGNS / "byu/alu", BFASST_DESIGNS / "byu/counter"]
         )
         self.assertEqual(self.flow_manager.flow_name, name)
 
@@ -88,7 +88,7 @@ class TestNinjaFlowManager(unittest.TestCase):
             ninja_build = f.read()
 
         self.assertIn(" configure\n", ninja_build)
-        self.assertIn(f" configure {DESIGNS_PATH}/byu/alu ", ninja_build)
+        self.assertIn(f" configure {BFASST_DESIGNS}/byu/alu ", ninja_build)
 
         build_statement_count = ninja_build.count("\nbuild ")
         self.assertEqual(build_statement_count, correct_num_build_statements)

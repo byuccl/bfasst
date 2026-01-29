@@ -1,12 +1,12 @@
 """Run vivado, phys_netlist, reverse with xray, then compare with conformal."""
 
+from bfasst.design import Vendor
 from bfasst.flows.flow import Flow
 from bfasst.paths import BFASST_FLOWS
 from bfasst.tools.compare.conformal.conformal import Conformal
 from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.tools.rev_bit.xray import Xray
 from bfasst.tools.synth.vivado_synth import VivadoSynth
-from bfasst.types import Vendor
 
 
 class VivadoConformal(Flow):

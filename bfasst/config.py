@@ -4,8 +4,9 @@ import os
 import sys
 from typing import TYPE_CHECKING
 
+# This is needed for pylint/pylance type checking to work. Ignored during real runtimes.
 if TYPE_CHECKING:
-    from .config_stubs import *
+    from .config_stubs import *  # pylint: disable=wildcard-import,unused-wildcard-import
 
 
 def __getattr__(name):

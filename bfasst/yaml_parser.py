@@ -3,7 +3,7 @@
 from abc import ABC
 from importlib import import_module
 from pathlib import Path
-from types import ModuleType
+from types import ModuleType  # pylint: disable=no-name-in-module
 from typing import Optional
 
 import yaml
