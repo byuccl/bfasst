@@ -63,6 +63,10 @@ all_submodules: .gitmodules $(VENV_VARS)
 update_all_submodules: .gitmodules
 	$(MAKE) --no-print-directory $(SUBMOD_UPDATE_TARGETS)
 
+clean_submodules:
+	@echo "Cleaning all submodules"
+	@$(MAKE) --no-print-directory $(foreach submodule,$(SUBMODULES),clean_$(notdir $(submodule)) )
+
 RESET_BRANCH ?= main
 reset_submodules:
 	@echo "Force resetting all submodules to match origin/$(RESET_BRANCH)"

@@ -97,7 +97,9 @@ def check_flow_cli(flow):
 
 def check_tools(tools):
     """Check that the given list of tools are installed"""
-    missing_tools = [t for t in tools if not (BFASST_ROOT / f"setup/stamps/{t}_installed").exists()]
+    missing_tools = [
+        t for t in tools if not (BFASST_ROOT / f"setup/build/stamps/{t}_installed").exists()
+    ]
     if not missing_tools:
         return True
     all_found = True
