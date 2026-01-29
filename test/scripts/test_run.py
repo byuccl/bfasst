@@ -1,56 +1,19 @@
-"""Unit tests for the run.py ApplicationRunner class."""
+"""
+Unit tests for the run.py ApplicationRunner class.
+
+Actual flows are tested using github actions running the test yamls in tests/ci and tests/weekly.
+"""
 
 import io
-import subprocess
 import unittest
 from contextlib import redirect_stderr
 
-from bfasst.flows.flow import FlowNoDesign
-from bfasst.paths import BFASST_ROOT, BFASST_TESTS
-from bfasst.yaml_parser import FlowDescriptionParser
+from bfasst.paths import BFASST_TESTS
 from scripts.run import parse_args
 
 
 class TestApplicationRunner(unittest.TestCase):
     """Unit tests for the run.py ApplicationRunner class."""
-
-    def __run_flow(self, flow, flow_args=None):  # pylint: disable=unused-private-member
-        # run the run.py script with the given flow
-
-        cmd = ["python", "scripts/run.py", flow]
-
-        # some flows don't need a design to run, and will error if one is passed in
-        flow_type = FlowDescriptionParser().get_flow_class(flow)
-        if not issubclass(flow_type, FlowNoDesign):
-            cmd.append("byu/alu")
-
-        # we may want to use flow args to limit the number of runs of a repetitive flow
-        if flow_args:
-            cmd.append(flow_args)
-
-        # capture the output of the runner with subprocess.PIPE so it doesn't print to the console.
-        # the first time run.py runs, ninja will get everything up to date.
-        proc = subprocess.Popen(
-            cmd, cwd=BFASST_ROOT, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-        )
-        proc.communicate()
-
-        status = proc.wait()
-        self.assertEqual(
-            status, 0, msg=f"run.py failed with return code {status}, command: {' '.join(cmd)}"
-        )
-
-        # the second time run.py runs, ninja will have nothing to do.
-        proc = subprocess.Popen(
-            cmd, cwd=BFASST_ROOT, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-        )
-        (output, _) = proc.communicate()
-        status = proc.wait()
-        self.assertEqual(
-            status, 0, msg=f"run.py failed with return code {status}, command: {' '.join(cmd)}"
-        )
-
-        self.assertIn("ninja: no work to do.", str(output))
 
     def __try_check_args_for_success(self, args):
         try:
