@@ -71,6 +71,7 @@ define ADD_ENV_VARS
 	{ \
 		printf "\n%s\n" "$(call TOOL_HEADER,$(1))"; \
 		envsubst '$(addprefix $$,$(4))' < $(2) ; \
+		printf "\n"; \
 		echo "$(call TOOL_FOOTER,$(1))"; \
 	} >> $$tmp; \
 	flock $(3) -c "cat $$tmp > $(3)"; \
