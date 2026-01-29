@@ -49,6 +49,7 @@ $(VENV_ACTIVATE) $(VENV_BIN) &:
 python_packages: $(VENV_BIN)/cmake pyproject.toml
 	python -m pip install -U pip
 	python -m pip install -e .
+	$(foreach stub,$(PY_STUBS),touch $(stub);)
 
 MAKEFILE_ROOT := $(BFASST_ROOT)
 env_vars: $(VENV_VARS)
