@@ -1,1 +1,5 @@
 top: bnn_random
+
+clocks:
+  - name: clk
+    period: 10.0

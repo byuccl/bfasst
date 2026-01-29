@@ -1,12 +1,12 @@
 """Unit tests for ImplObfuscate flow."""
+
 # pylint: disable=duplicate-code
 
 import unittest
-import os
 
 from bfasst.flows.flow_utils import create_build_file
 from bfasst.flows.impl_obfuscate import ImplObfuscate
-from bfasst.paths import DESIGNS_PATH, NINJA_BUILD_PATH, FLOWS_PATH
+from bfasst.paths import BFASST_DESIGNS, BFASST_FLOWS, NINJA_BUILD_PATH
 
 
 class TestImplObfuscate(unittest.TestCase):
@@ -16,11 +16,10 @@ class TestImplObfuscate(unittest.TestCase):
     def setUpClass(cls):
         create_build_file()
 
-        cls.flow = ImplObfuscate(DESIGNS_PATH / "byu/alu")
+        cls.flow = ImplObfuscate(BFASST_DESIGNS / "byu/alu")
         cls.flow.create_tool_build_dirs()
         cls.flow.create_rule_snippets()
         cls.flow.create_build_snippets()
-
 
     def test_rule_snippets_exist(self):
         """Check that core Vivado / transform / compare rules are in build.ninja."""
@@ -30,7 +29,6 @@ class TestImplObfuscate(unittest.TestCase):
         self.assertIn("rule netlist_obfuscate", ninja)
         self.assertIn("rule netlist_deobfuscate", ninja)
         self.assertIn("rule physcmp", ninja)
-
 
     def test_build_targets_exist(self):
         """Verify that each stage (synth, impl, reimpl, transform, physcmp) appears."""
@@ -44,10 +42,9 @@ class TestImplObfuscate(unittest.TestCase):
         self.assertIn("full_timing_summary.txt", ninja)
         self.assertIn("physcmp.log", ninja)
 
-
     def test_get_top_level_flow_path(self):
         """Ensure get_top_level_flow_path points at the correct file."""
-        expected = f"{FLOWS_PATH}/impl_obfuscate.py"
+        expected = f"{BFASST_FLOWS}/impl_obfuscate.py"
         self.assertEqual(str(self.flow.get_top_level_flow_path()), expected)
 
 

@@ -103,9 +103,9 @@ Each `Flow` and `Tool` object is required to implement the `add_ninja_deps` meth
 ```py
 def add_ninja_deps(self, deps):
         self.vivado_tool.add_ninja_deps(deps)
-        deps.append(FLOWS_PATH / "vivado.py")
+        deps.append(BFASST_FLOWS / "vivado.py")
         if self.ooc:
-            deps.append(FLOWS_PATH / "vivado_ooc.py")
+            deps.append(BFASST_FLOWS / "vivado_ooc.py")
 ```
 
 The entire goal of this restructuring of bfasst is to separate responsibilities and reduce the size of the code base. We hope that our approach will allow new flows to be added with relative ease and greatly improve the maintainability of the code base.

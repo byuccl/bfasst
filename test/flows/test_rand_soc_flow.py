@@ -7,7 +7,7 @@ import unittest
 
 from bfasst.flows.flow_utils import create_build_file
 from bfasst.flows.rand_soc import RandSoc
-from bfasst.paths import NINJA_BUILD_PATH, FLOWS_PATH
+from bfasst.paths import BFASST_FLOWS, NINJA_BUILD_PATH
 
 
 class TestRandSocFlow(unittest.TestCase):
@@ -31,7 +31,7 @@ class TestRandSocFlow(unittest.TestCase):
         self.assertIn("rule vivado_ioparse", ninja_rules)
 
     def test_get_top_level_flow_path(self):
-        self.assertEqual(self.flow.get_top_level_flow_path(), FLOWS_PATH / "rand_soc.py")
+        self.assertEqual(self.flow.get_top_level_flow_path(), BFASST_FLOWS / "rand_soc.py")
 
 
 if __name__ == "__main__":
