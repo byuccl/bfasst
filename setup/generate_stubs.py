@@ -31,8 +31,6 @@ def generate_stubs(keys: set[str], output_dir: Path):
         f.write("\nif TYPE_CHECKING:\n")
         p.write("\nif TYPE_CHECKING:\n")
         _ = [(f.write(line[0]), p.write(line[1])) for line in content]
-        f.write("\n")
-        p.write("\n")
     print(f"Generated: {output_dir / 'config_stubs.py'} and {output_dir / 'paths_stubs.py'}")
 
 

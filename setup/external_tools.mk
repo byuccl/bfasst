@@ -192,7 +192,7 @@ ifneq ($(wildcard $(RAPIDWRIGHT_PATH)/interchange/fpga-interchange-schema/),)
   endif
 endif
 
-stubs: $(PY_STUBS) $(JAVA_STUBS)
+stubs: $(JAVA_STUBS)
 
 $(JAVA_STUBS) &:
 ifneq ($(JAVA_STUBS_DEFAULT_PREFIX), $(STUBS_PREFIX))

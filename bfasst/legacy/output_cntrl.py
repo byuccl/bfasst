@@ -1,6 +1,9 @@
+"""Output control for python parallel processing."""
+
 import sys
 import threading
 from io import StringIO
+
 from werkzeug import local
 
 # Save all of the objects for use later.

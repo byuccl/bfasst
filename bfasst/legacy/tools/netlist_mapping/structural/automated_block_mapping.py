@@ -46,8 +46,7 @@ def get_higher_potential_instances(potential_instances, higher_potential_instanc
     potential_instances_len = len(potential_instances)
     for i in range(potential_instances_len):
         matching_wires = potential_instances[i][1]
-        if matching_wires > max_num:
-            max_num = matching_wires
+        max_num = max(max_num, matching_wires)
     # Getting the instances with the max number of matching wires
     for i in range(potential_instances_len):
         matching_wires = potential_instances[i][1]
