@@ -65,9 +65,7 @@ jobs:
     - uses: actions/checkout@v3
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -e .
-        make wafove rand_soc
+        make venv wafove rand_soc stubs
     - name: Run doctest
       run: |
         make doctest
