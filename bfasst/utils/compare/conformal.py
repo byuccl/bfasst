@@ -205,7 +205,9 @@ class ConformalCompare:
             f" -Logfile {self.LOG_FILE_NAME} -NOGui"
         )
 
-        (stdin, stdout, stderr) = client.exec_command(cmd, timeout=bfasst.config.CONFORMAL_TIMEOUT)
+        (stdin, stdout, stderr) = client.exec_command(
+            cmd, timeout=float(bfasst.config.CONFORMAL_TIMEOUT)
+        )
 
         stdin.write("yes\n")
 
