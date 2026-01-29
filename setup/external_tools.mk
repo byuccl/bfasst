@@ -161,7 +161,7 @@ else
   RW_PART_CACHE := $(RAPIDWRIGHT_PATH)/data/devices/$(RW_FAMILY)/$(RW_PART)_db_cache.dat
 endif
 
-rapidwright_post_install: $(RW_PART_CACHE) $(JAVA_STUBS)
+rapidwright_post_install: $(RW_PART_CACHE)
 cache_rw_part: $(RW_PART_CACHE)
 $(RW_PART_CACHE): $(RAPIDWRIGHT_INSTALLED)
 	cd $(RAPIDWRIGHT_PATH); rapidwright jython -c 'FileTools.ensureDataFilesAreStaticInstallFriendly("$(RW_PART)")'
@@ -290,13 +290,13 @@ $(YOSYS_UPDATED):
 # Wafove
 #####################################################################################################
 $(WAFOVE_INSTALLED):
-	python $(WAFOVE_PATH)/setup.py install
+	cd $(WAFOVE_PATH) && python setup.py install
 	$(MAKE) -C $(WAFOVE_PATH) yosys_cells_sim
 	touch $@
 	touch $(WAFOVE_UPDATED)
 
 $(WAFOVE_UPDATED):
-	python $(WAFOVE_PATH)/setup.py install
+	cd $(WAFOVE_PATH) && python setup.py install
 	$(MAKE) -C $(WAFOVE_PATH) yosys_cells_sim
 	touch $@
 
@@ -330,7 +330,7 @@ ifeq ($(shell command -v rustc),)
 	@echo "Rust compiler is required to build OpenTitan. Building venv local install: https://rustup.rs/"
 	tmp=$$(mktemp); curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > tmp; sh $$tmp -y --no-modify-path
 endif
-	$(call ADD_ENV_VARS,opentitan,$(INITIAL_VARS)/opentitan.path,$(VENV_ACTIVATE),CARGO_HOME)
+#   $(call ADD_ENV_VARS,opentitan,$(INITIAL_VARS)/opentitan.path,$(VENV_ACTIVATE),CARGO_HOME)
 	pip install -U pip "setuptools<66.0.0"
 	pip install -r $(OPENTITAN_PATH)/python-requirements.txt
 	$(OPENTITAN_PATH)/util/get-toolchain.py --update
