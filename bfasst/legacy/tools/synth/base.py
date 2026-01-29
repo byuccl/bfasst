@@ -2,8 +2,8 @@
 
 import abc
 
-from bfasst.tools_legacy import tool
-from bfasst.tools_legacy.tool import BfasstException
+from bfasst.legacy.tools import tool
+from bfasst.legacy.tools.tool import BfasstException
 
 
 class SynthesisException(BfasstException):

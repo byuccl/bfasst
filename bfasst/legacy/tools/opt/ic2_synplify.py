@@ -1,14 +1,14 @@
 """Run Synplify logic optimization"""
 
-import shutil
-import re
 import os
+import re
+import shutil
 
 import bfasst
 from bfasst import paths
 from bfasst.design import Design
-from bfasst.tools_legacy.opt.ic2_base import Ic2BaseOptTool
-from bfasst.tools_legacy.opt.base import OptException
+from bfasst.legacy.tools.opt.base import OptException
+from bfasst.legacy.tools.opt.ic2_base import Ic2BaseOptTool
 
 PROJECT_TEMPLATE_FILE = "template_sp.prj"
 IC2_SYNPLIFY_PROJ_FILE = "synplify_project.prj"

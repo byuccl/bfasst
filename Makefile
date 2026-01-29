@@ -16,7 +16,7 @@ SETUP_BUILD := $(BFASST_SETUP)/build
 STAMP_DIR := $(SETUP_BUILD)/stamps
 $(shell mkdir -p $(STAMP_DIR))
 
-PY_STUBS := $(BFASST_ROOT)/bfasst/config.pyi $(BFASST_ROOT)/bfasst/paths.pyi
+PY_STUBS := $(BFASST_ROOT)/bfasst/config_stubs.py $(BFASST_ROOT)/bfasst/paths_stubs.py
 
 export BASH_ENV=$(VENV_ACTIVATE)
 
@@ -89,10 +89,10 @@ $(PY_STUBS) &: $(INITIAL_VARS)/*.env $(BFASST_SETUP)/generate_stubs.py
 pre_commit: format doctest pylint
 
 format:
-	find ./scripts ./bfasst -iname "*.py" -exec black -q -l 100 {} \;
+	find ./scripts ./bfasst -iname "*.py" -exec black -q -l 100 {} +
 
 pylint: format $(JAVA_STUBS) $(PY_STUBS)
-	git fetch origin main
+	git fetch --no-recurse-submodules origin main
 	pylint --errors-only $$(git ls-files --directory scripts --directory bfasst | grep -e ".py$$")
 	pylint $$(git diff origin/main --diff-filter=AM --name-only | grep -e ".py$$")
 

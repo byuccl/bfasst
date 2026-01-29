@@ -1,13 +1,13 @@
 """Unit tests for the run.py ApplicationRunner class."""
 
+import io
 import subprocess
 import unittest
-import io
 from contextlib import redirect_stderr
-from bfasst.paths import TESTS_PATH, ROOT_PATH
-from bfasst.flows.flow import FlowNoDesign
-from bfasst.yaml_parser import FlowDescriptionParser
 
+from bfasst.flows.flow import FlowNoDesign
+from bfasst.paths import BFASST_ROOT, TESTS_PATH
+from bfasst.yaml_parser import FlowDescriptionParser
 from scripts.run import parse_args
 
 
@@ -30,7 +30,9 @@ class TestApplicationRunner(unittest.TestCase):
 
         # capture the output of the runner with subprocess.PIPE so it doesn't print to the console.
         # the first time run.py runs, ninja will get everything up to date.
-        proc = subprocess.Popen(cmd, cwd=ROOT_PATH, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(
+            cmd, cwd=BFASST_ROOT, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
         proc.communicate()
 
         status = proc.wait()
@@ -39,7 +41,9 @@ class TestApplicationRunner(unittest.TestCase):
         )
 
         # the second time run.py runs, ninja will have nothing to do.
-        proc = subprocess.Popen(cmd, cwd=ROOT_PATH, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(
+            cmd, cwd=BFASST_ROOT, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
         (output, _) = proc.communicate()
         status = proc.wait()
         self.assertEqual(
@@ -48,15 +52,13 @@ class TestApplicationRunner(unittest.TestCase):
 
         self.assertIn("ninja: no work to do.", str(output))
 
-
-
     # It would be nice to have the below tests added in,
     # but they have serious issues with runtime.
-    
+
     # def test_run_vivado_ooc_flow(self):
     #     """Test that the runner runs the vivado_ooc flow without errors"""
     #     self.__run_flow("VivadoOoc")
-    
+
     # def test_run_vivado_bit_analysis_flow(self):
     #     """Test that the runner runs the vivado_bit_analysis flow without errors"""
     #     self.__run_flow("VivadoBitAnalysis")

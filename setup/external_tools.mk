@@ -214,14 +214,10 @@ $(RAPIDWRIGHT_UPDATED):
 fasm2bels_post_install: init_f2b_db
 
 # f2b env is NOT parallel friendly, so for now do not use $(MAKE) for env target
-define F2B_BUILD
+$(FASM2BELS_BUILT): | $(RAPIDWRIGHT_INSTALLED) $(VIVADO)
 	CONDA_PLUGINS_AUTO_ACCEPT_TOS=true make -C $(FASM2BELS_PATH) env & $(MAKE) -C $(FASM2BELS_PATH) build ; wait
 	VIVADO_PATH=$$VIVADO_BIN $(MAKE) -C $(FASM2BELS_PATH) test-py
-	touch $1
-endef
-
-$(FASM2BELS_BUILT): | $(RAPIDWRIGHT_INSTALLED) $(VIVADO)
-	$(call F2B_BUILD,$@)
+	touch $@
 
 F2B_PATH := $(FASM2BELS_PATH)
 $(FASM2BELS_INSTALLED): 
@@ -230,7 +226,9 @@ $(FASM2BELS_INSTALLED):
 	touch $(FASM2BELS_UPDATED)
 
 $(FASM2BELS_UPDATED):
-	$(call F2B_BUILD,$@)
+	CONDA_PLUGINS_AUTO_ACCEPT_TOS=true make -C $(FASM2BELS_PATH) env & $(MAKE) -C $(FASM2BELS_PATH) build ; wait
+	VIVADO_PATH=$$VIVADO_BIN $(MAKE) -C $(FASM2BELS_PATH) test-py
+	touch $@
 
 F2B_PART ?= $(DEFAULT_PART)
 F2B_FAMILY ?= $(DEFAULT_PART_FAMILY)
@@ -241,7 +239,7 @@ $(FASM2BELS_PATH)/$(F2B_PART)_db: $(FASM2BELS_INSTALLED)
 	$(FASM2BELS_PYTHON) $(FASM2BELS_PATH)/fasm2bels/database/create_channels.py \
 		--db-root $(FASM2BELS_PATH)/third_party/prjxray-db/$(F2B_FAMILY) \
 		--part $(F2B_PART) \
-		--connection-database-output $(FASM2BELS_PATH)/$(F2B_PART)_db
+		--connection-database-output $(FASM2BELS_PATH)/$(F2B_PART)_db > /dev/null
 	@echo "$(F2B_PART) Database generated. Pregenerate any other database by running F2B_PART=<part> F2B_FAMILY=<family> make init_f2b_db"
 
 #####################################################################################################
@@ -249,6 +247,7 @@ $(FASM2BELS_PATH)/$(F2B_PART)_db: $(FASM2BELS_INSTALLED)
 #####################################################################################################
 $(RAND_SOC_INSTALLED):
 	cd $(RAND_SOC_PATH) && pip install -r requirements.txt
+	$(call ADD_ENV_VARS,randsoc,$(INITIAL_VARS)/randsoc.env,$(VENV_VARS),RAND_SOC_PATH)
 	touch $@
 	touch $(RAND_SOC_UPDATED)
 
@@ -271,19 +270,16 @@ $(CONFROMAL_BIN):
 #####################################################################################################
 # Yosys
 #####################################################################################################
-define YOSYS_BUILD
-	$(MAKE) -C $(YOSYS_PATH)
-	touch $1
-endef
-
 YO_PATH := $(YOSYS_PATH)
 $(YOSYS_INSTALLED): 
 	$(call ADD_ENV_VARS,yosys,$(INITIAL_VARS)/yosys.env,$(VENV_VARS),YO_PATH)
-	$(call YOSYS_BUILD,$@)
+	$(MAKE) -C $(YOSYS_PATH)
+	touch $@
 	touch $(YOSYS_UPDATED)
 
 $(YOSYS_UPDATED):
-	$(call YOSYS_BUILD,$@)
+	$(MAKE) -C $(YOSYS_PATH)
+	touch $@
 
 #####################################################################################################
 # Wafove
@@ -345,8 +341,6 @@ $(OPENTITAN_UPDATED):
 # 	$(OPENTITAN_PATH)/util/get-toolchain.py --update
 # 	cd $(OPENTITAN_PATH) && fusesoc $(FUSESOC_CMD)
 # 	echo "\nlaunch_runs impl_1" >> $(FINAL_TCL)
-
-
 
 #####################################################################################################
 # iCEcube2

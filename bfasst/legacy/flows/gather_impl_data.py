@@ -4,17 +4,17 @@
 
 import shutil
 
-from bfasst.flows_legacy.flow import Flow
-from bfasst.tools_legacy.impl.ic2 import Ic2ImplementationTool
-from bfasst.tools_legacy.opt.ic2_lse import Ic2LseOptTool
-from bfasst.tools_legacy.opt.ic2_synplify import Ic2SynplifyOptTool
-from bfasst.tools_legacy.reverse_bit.icestorm import IcestormReverseBitTool
-from bfasst.tools_legacy.synth.ic2_lse import Ic2LseSynthesisTool
-from bfasst.tools_legacy.synth.ic2_synplify import Ic2SynplifySynthesisTool
-from bfasst.tools_legacy.synth.yosys import YosysTechSynthTool
-from bfasst.types import ToolType
-from bfasst.tools_legacy.job import Job
-from bfasst.flows_legacy.sub_flows.ic2_impl_and_ice_rev import Ic2ImplAndIceRev
+from bfasst.legacy.flows.flow import Flow
+from bfasst.legacy.flows.sub_flows.ic2_impl_and_ice_rev import Ic2ImplAndIceRev
+from bfasst.legacy.tools.impl.ic2 import Ic2ImplementationTool
+from bfasst.legacy.tools.job import Job
+from bfasst.legacy.tools.opt.ic2_lse import Ic2LseOptTool
+from bfasst.legacy.tools.opt.ic2_synplify import Ic2SynplifyOptTool
+from bfasst.legacy.tools.reverse_bit.icestorm import IcestormReverseBitTool
+from bfasst.legacy.tools.synth.ic2_lse import Ic2LseSynthesisTool
+from bfasst.legacy.tools.synth.ic2_synplify import Ic2SynplifySynthesisTool
+from bfasst.legacy.tools.synth.yosys import YosysTechSynthTool
+from bfasst.legacy.types import ToolType
 
 
 class GatherImplData(Flow):

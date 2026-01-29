@@ -1,15 +1,16 @@
 """Module wrapping around icecube2 lse optimization pass"""
 
-import shutil
-import re
 import os
 import os.path
+import re
+import shutil
+
 import in_place
 
 import bfasst
 from bfasst import paths
-from bfasst.tools_legacy.opt.base import OptException
-from bfasst.tools_legacy.opt.ic2_base import Ic2BaseOptTool
+from bfasst.legacy.tools.opt.base import OptException
+from bfasst.legacy.tools.opt.ic2_base import Ic2BaseOptTool
 from bfasst.utils import error
 
 PROJECT_TEMPLATE_FILE = "template_lse.prj"

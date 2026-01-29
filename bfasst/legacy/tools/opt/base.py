@@ -2,9 +2,8 @@
 
 import abc
 
-from bfasst.tools_legacy.tool import Tool
+from bfasst.legacy.tools.tool import BfasstException, Tool
 from bfasst.utils import print_color
-from bfasst.tools_legacy.tool import BfasstException
 
 
 class OptException(BfasstException):

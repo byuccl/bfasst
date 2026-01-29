@@ -8,7 +8,7 @@ import chevron
 
 from bfasst.flows.flow import FlowNoDesign
 from bfasst.flows.flow_utils import create_build_file
-from bfasst.paths import BFASST_DESIGNS, BFASST_FLOWS, NINJA_BUILD_PATH, ROOT_PATH
+from bfasst.paths import BFASST_DESIGNS, BFASST_FLOWS, BFASST_ROOT, NINJA_BUILD_PATH
 from bfasst.utils import error
 from bfasst.yaml_parser import FlowDescriptionParser
 
@@ -94,7 +94,7 @@ class NinjaFlowManager:
             f.write(master_ninja)
 
     def __populate_template(self):
-        with open(ROOT_PATH / "master.ninja.mustache", "r") as f:
+        with open(BFASST_ROOT / "master.ninja.mustache", "r") as f:
             deps = []
             self.flows[0].add_ninja_deps(deps)
             master_ninja = chevron.render(

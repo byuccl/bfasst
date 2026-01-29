@@ -2,8 +2,12 @@
 
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-from . import config
+from bfasst import config
+
+if TYPE_CHECKING:
+    from .paths_stubs import *
 
 
 def __getattr__(name):

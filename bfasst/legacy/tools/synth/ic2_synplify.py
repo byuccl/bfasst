@@ -1,7 +1,7 @@
 """Run synplify synthesis"""
 
-from bfasst.tools_legacy.opt.ic2_synplify import Ic2SynplifyOptTool
-from bfasst.tools_legacy.synth.ic2_base import Ic2BaseSynthesisTool
+from bfasst.legacy.tools.opt.ic2_synplify import Ic2SynplifyOptTool
+from bfasst.legacy.tools.synth.ic2_base import Ic2BaseSynthesisTool
 
 
 class Ic2SynplifySynthesisTool(Ic2BaseSynthesisTool):

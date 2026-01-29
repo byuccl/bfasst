@@ -1,5 +1,5 @@
 # pylint: disable-msg=C0114
-import bfasst.tools_legacy.synth.base
-import bfasst.tools_legacy.synth.ic2_lse
-import bfasst.tools_legacy.synth.ic2_synplify
-import bfasst.tools_legacy.synth.yosys
+import bfasst.legacy.tools.synth.base
+import bfasst.legacy.tools.synth.ic2_lse
+import bfasst.legacy.tools.synth.ic2_synplify
+import bfasst.legacy.tools.synth.yosys

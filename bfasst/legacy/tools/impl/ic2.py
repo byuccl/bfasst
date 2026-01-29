@@ -1,13 +1,13 @@
 """IceCube2 Implementation tool"""
 
+import os
+import re
 import shutil
 import subprocess
-import re
-import os
 
 import bfasst
 from bfasst import paths
-from bfasst.tools_legacy.impl.base import ImplementationTool, ImplementationException
+from bfasst.legacy.tools.impl.base import ImplementationException, ImplementationTool
 
 
 class Ic2ImplementationTool(ImplementationTool):

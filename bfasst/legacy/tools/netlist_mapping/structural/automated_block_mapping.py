@@ -1,6 +1,6 @@
 """Algorithm used to mapped netlists based on their structure"""
 
-from bfasst.tools_legacy.netlist_mapping.structural.updating_reversed_netlist import (
+from bfasst.legacy.tools.netlist_mapping.structural.updating_reversed_netlist import (
     update_wires_in_reversed_netlist,
 )
 

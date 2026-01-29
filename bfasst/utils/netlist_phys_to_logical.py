@@ -79,8 +79,8 @@ class NetlistPhysToLogical:
         assert o6_net_connected or o5_net_connected
 
         # Get equation for LUT outputs
-        eqn = LUTTools.getLUTEquation(instance_wrapper.properties["INIT"])[2:].replace("!", "~")
-        eqn = boolean.BooleanAlgebra().parse(eqn)
+        eqn = str(LUTTools.getLUTEquation(instance_wrapper.properties["INIT"]))[2:]
+        eqn = boolean.BooleanAlgebra().parse(eqn.replace("!", "~"))
 
         if o5_net_connected:
             # 05 output uses only half the equation,

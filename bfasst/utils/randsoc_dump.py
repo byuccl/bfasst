@@ -7,7 +7,7 @@ import pathlib
 import shutil
 import subprocess
 
-from bfasst.config import VIVADO
+from bfasst.config import VIVADO_BIN
 from bfasst.paths import BFASST_BUILD, BFASST_UTILS
 
 
@@ -45,7 +45,7 @@ class NetlistDump:
         """Dump the design's impl.dcp to isoblaze dumpfile format,
         and return the path to the dumpfile"""
         command = [
-            f"{VIVADO}",
+            f"{VIVADO_BIN}",
             "-mode",
             "batch",
             "-source",

@@ -3,7 +3,7 @@
 import json
 import pathlib
 
-from bfasst.paths import BFASST_TOOLS, YOSYS_EXE_PATH, YOSYS_SYNTH_SCRIPT_TEMPLATE
+from bfasst.paths import BFASST_TOOLS, YOSYS_PATH, YOSYS_SYNTH_SCRIPT_TEMPLATE
 from bfasst.tools.synth.synth_tool import SynthTool
 from bfasst.utils.general import json_write_if_changed
 
@@ -39,7 +39,7 @@ class YosysSynth(SynthTool):
                 "json_render_dict": self.outputs["synth_json"],
                 "script_template": YOSYS_SYNTH_SCRIPT_TEMPLATE,
                 "yosys_synth_outputs": [self.outputs["netlist"], self.outputs["log"]],
-                "yosys_exe_path": YOSYS_EXE_PATH,
+                "yosys_exe_path": YOSYS_PATH,
                 "log": self.outputs["log"],
                 "design": self.design_path,
             },

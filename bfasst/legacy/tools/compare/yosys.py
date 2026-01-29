@@ -2,8 +2,9 @@
 
 import pathlib
 import re
-from bfasst.tools_legacy.compare.base import CompareException, CompareTool
-from bfasst.tools_legacy.tool import ToolProduct
+
+from bfasst.legacy.tools.compare.base import CompareException, CompareTool
+from bfasst.legacy.tools.tool import ToolProduct
 
 
 class YosysCompareTool(CompareTool):

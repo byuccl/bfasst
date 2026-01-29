@@ -6,7 +6,7 @@ import pathlib
 import chevron
 
 from bfasst.flows.flow import FlowBase
-from bfasst.paths import BFASST_BUILD, BFASST_DESIGNS, NINJA_BUILD_PATH, ROOT_PATH
+from bfasst.paths import BFASST_BUILD, BFASST_DESIGNS, BFASST_ROOT, NINJA_BUILD_PATH
 from bfasst.yaml_parser import DesignParser
 
 
@@ -31,7 +31,7 @@ class ToolBase(abc.ABC):
 
         self.flow.rule_paths.append(rules_path)
 
-        rules_render_dict["bfasst_path"] = ROOT_PATH
+        rules_render_dict["bfasst_path"] = BFASST_ROOT
         with open(rules_path, "r") as f:
             if rules_render_dict:
                 rules = chevron.render(f, rules_render_dict)
@@ -65,7 +65,7 @@ class ToolBase(abc.ABC):
             build_snippet_path.is_file()
         ), f"Build snippet template {build_snippet_path} does not exist"
 
-        render_dict["bfasst_path"] = ROOT_PATH
+        render_dict["bfasst_path"] = BFASST_ROOT
         with open(build_snippet_path) as f:
             build_snippet = chevron.render(f, render_dict)
 

@@ -6,7 +6,7 @@ import abc
 from importlib import import_module
 from pathlib import Path
 
-from bfasst.tools_legacy.tool import BfasstException
+from bfasst.legacy.tools.tool import BfasstException
 
 
 class FlowException(BfasstException):
@@ -23,7 +23,7 @@ def get_flow(flow_name):
     """Get a flow by name"""
     if flow_name not in get_flows():
         raise FlowException(f"Flow {flow_name} not found")
-    flow_module = import_module(f"bfasst.flows_legacy.{flow_name}")
+    flow_module = import_module(f"bfasst.legacy.flows.{flow_name}")
     flow_class = "".join([word.capitalize() for word in flow_name.split("_")])
     return getattr(flow_module, flow_class)
 

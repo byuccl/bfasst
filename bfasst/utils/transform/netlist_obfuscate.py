@@ -28,7 +28,7 @@ from java.lang import System
 
 from bfasst.config import DEFAULT_PART
 from bfasst.utils import json_write_if_changed
-from bfasst.utils.netlist_obfuscate_helpers import TAG_PROP, get_masking_init
+from bfasst.utils.transform.netlist_obfuscate_helpers import TAG_PROP, get_masking_init
 
 
 def _json_entry(prop_name: str, prop_val: EDIFPropertyValue) -> dict[str, str]:

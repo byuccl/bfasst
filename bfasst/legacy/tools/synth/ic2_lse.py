@@ -3,7 +3,7 @@ Wrapper class for IC2 LSE Synthesis Tool.
 """
 
 import bfasst
-from bfasst.tools_legacy.synth.ic2_base import Ic2BaseSynthesisTool
+from bfasst.legacy.tools.synth.ic2_base import Ic2BaseSynthesisTool
 
 
 class Ic2LseSynthesisTool(Ic2BaseSynthesisTool):
@@ -12,4 +12,4 @@ class Ic2LseSynthesisTool(Ic2BaseSynthesisTool):
     """
 
     def get_tool(self):
-        return bfasst.tools_legacy.opt.ic2_lse.Ic2LseOptTool(self.cwd, self.design)
+        return bfasst.legacy.tools.opt.ic2_lse.Ic2LseOptTool(self.cwd, self.design)

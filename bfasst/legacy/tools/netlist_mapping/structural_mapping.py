@@ -16,13 +16,17 @@
 
 
 import argparse
+
 import spydrnet as sdn
-from bfasst.tools_legacy.netlist_mapping.print_data import print_conformal_input_output_points
-from bfasst.tools_legacy.netlist_mapping.print_data import print_conformal_structural_points
-from bfasst.tools_legacy.netlist_mapping.structural.netlist import get_netlist
-from bfasst.tools_legacy.netlist_mapping.structural.automated_block_mapping import (
+
+from bfasst.legacy.tools.netlist_mapping.print_data import (
+    print_conformal_input_output_points,
+    print_conformal_structural_points,
+)
+from bfasst.legacy.tools.netlist_mapping.structural.automated_block_mapping import (
     automatically_map_blocks,
 )
+from bfasst.legacy.tools.netlist_mapping.structural.netlist import get_netlist
 
 
 def structurally_map_netlists(golden_netlist_arg, reversed_netlist_arg):

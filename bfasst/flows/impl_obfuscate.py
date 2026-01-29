@@ -14,6 +14,7 @@ from bfasst.tools.impl.impl_detailed_reports import ImplDetailedReports
 from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.tools.synth.vivado_synth import VivadoSynth
 from bfasst.tools.transform.netlist_deobfuscate import NetlistDeobfuscate
+from bfasst.tools.transform.netlist_obfuscate import NetlistObfuscate
 from bfasst.utils.compare.physcmp_data_types import ImplReports
 from bfasst.yaml_parser import DesignParser
 

@@ -16,7 +16,7 @@ from pathlib import Path
 
 from jpype.types import JString
 
-from bfasst.config import BUILD
+from bfasst.config import BFASST_BUILD
 from bfasst.paths import BFASST_DESIGNS
 
 
@@ -63,7 +63,7 @@ def error(*msg, returncode=-1):
 
 def create_build_dir(path):
     """Create a build directory if it doesn't exist"""
-    new_dir = path / BUILD
+    new_dir = path / BFASST_BUILD
     new_dir.mkdir(exist_ok=True)
     return new_dir
 

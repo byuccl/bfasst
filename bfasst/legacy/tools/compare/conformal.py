@@ -12,10 +12,10 @@ import scp
 import bfasst
 from bfasst import paths
 from bfasst.design import HdlType
+from bfasst.legacy.tools.compare.base import CompareException, CompareTool
+from bfasst.legacy.tools.tool import BfasstException
+from bfasst.legacy.types import Vendor
 from bfasst.locks import conformal_lock
-from bfasst.tools_legacy.compare.base import CompareException, CompareTool
-from bfasst.tools_legacy.tool import BfasstException
-from bfasst.types import Vendor
 from bfasst.utils import error
 
 # Suppress paramiko warning
@@ -70,7 +70,7 @@ class ConformalCompareTool(CompareTool):
 
             self.local_libs_paths = []
             yosys_xilinx_libs_path = (
-                paths.ROOT_PATH
+                paths.BFASST_ROOT
                 / "third_party/fasm2bels/third_party/prjxray/third_party/yosys/techlibs/xilinx/"
             )
             self.local_libs_paths.append(yosys_xilinx_libs_path / "cells_sim.v")

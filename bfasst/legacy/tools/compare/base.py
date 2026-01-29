@@ -3,8 +3,7 @@
 import abc
 import pathlib
 
-from bfasst.tools_legacy.tool import Tool, ToolProduct
-from bfasst.tools_legacy.tool import BfasstException
+from bfasst.legacy.tools.tool import BfasstException, Tool, ToolProduct
 
 
 class CompareException(BfasstException):

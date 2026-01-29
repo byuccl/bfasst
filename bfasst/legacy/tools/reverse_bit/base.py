@@ -2,8 +2,7 @@
 
 import abc
 
-from bfasst.tools_legacy.tool import Tool
-from bfasst.tools_legacy.tool import BfasstException
+from bfasst.legacy.tools.tool import BfasstException, Tool
 
 
 class ReverseBitException(BfasstException):

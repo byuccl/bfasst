@@ -1,13 +1,13 @@
 """Base IceCub2 optimization class"""
 
-from abc import abstractmethod
 import pathlib
 import shutil
 import subprocess
+from abc import abstractmethod
 
 import bfasst
-from bfasst.tools_legacy.opt.base import OptException, OptTool
-from bfasst.tools_legacy.tool import ToolProduct
+from bfasst.legacy.tools.opt.base import OptException, OptTool
+from bfasst.legacy.tools.tool import ToolProduct
 
 
 class Ic2BaseOptTool(OptTool):

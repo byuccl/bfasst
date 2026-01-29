@@ -1,12 +1,12 @@
 """IceStorm reverse bitstream tool."""
 
-import subprocess
-import re
-import time
 import os
+import re
+import subprocess
+import time
 
+from bfasst.legacy.tools.reverse_bit.base import ReverseBitException, ReverseBitTool
 from bfasst.paths import ICEBOX_VLOG_PATH, ICEUNPACK_PATH
-from bfasst.tools_legacy.reverse_bit.base import ReverseBitTool, ReverseBitException
 
 # PROJECT_TEMPLATE_FILE = 'template_lse.prj'
 # IC2_LSE_PROJ_FILE = 'lse_project.prj'

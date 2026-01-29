@@ -6,9 +6,9 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 import rapidwright as _
+import com.xilinx.rapidwright.device.SiteTypeEnum as ST
 from com.xilinx.rapidwright.design import Cell, SiteInst, SitePinInst, Unisim
 from com.xilinx.rapidwright.device import BELPin
-from com.xilinx.rapidwright.device.SiteTypeEnum import SLICEL, SLICEM
 from com.xilinx.rapidwright.edif import (
     EDIFCellInst,
     EDIFNet,
@@ -208,11 +208,11 @@ class RwPhysNetlist(PhysNetlist):
         # Design.getSiteInsts() won't return some sites w/only constant generators. RW Issue #1228
         site_insts = {self.vivado_design.getSiteInstFromSite(s) for s in self.device.getAllSites()}
         site_insts.remove(None)
-        for site_inst in (s for s in site_insts if s.getSiteTypeEnum() in (SLICEL, SLICEM)):
+        for site_inst in (s for s in site_insts if s.getSiteTypeEnum() in (ST.SLICEL, ST.SLICEM)):
             self.__process_luts(site_inst)
         self.cleanup_hanging_lut_pins()
         # Now that all LUT Generators are instanced, process FFs
-        for site_inst in (s for s in site_insts if s.getSiteTypeEnum() in (SLICEL, SLICEM)):
+        for site_inst in (s for s in site_insts if s.getSiteTypeEnum() in (ST.SLICEL, ST.SLICEM)):
             cell_gen = (site_inst.getCell(ff_name) for ff_name in ("AFF", "BFF", "CFF", "DFF"))
             for ff in (
                 ff
