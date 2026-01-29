@@ -15,6 +15,9 @@ def __getattr__(name):
     """Return environment variables as Path(value) or None."""
     if name == "__all__":
         raise ImportError("Wildcard imports are not supported from bfasst.paths")
+    if name[0:2] == "__" and name[-2:] == "__":
+        # Do not pretend to have values for dunder members. (e.g., __test__ for doctest)
+        raise AttributeError
     value = config.__getattr__(name)
     if value is not None:
         value = Path(value)

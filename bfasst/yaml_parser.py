@@ -8,8 +8,8 @@ from typing import Optional
 
 import yaml
 
-from . import config, paths
-from .utils import error
+from bfasst import config, paths
+from bfasst.utils import error
 
 
 class YamlParser(ABC):

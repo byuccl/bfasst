@@ -21,7 +21,8 @@ IC2_PATH ?= /tools/lscc/iCEcube2.2020.12
 
 # Automated Submodule Variables and Rules:
 # Helper macros has imported <SUBMODULE>_PATH, <SUBMODULE>_INSTALLED, <SUBMODULE>_UPDATED for each submodule
-# Helper macros has linked dependency rules to make sure the repo is cloned and checked out, and $(VENV_ACTIVATE) and $(VENV_VARS) exists
+# Helper macros has linked dependency rules to make sure the repo is cloned and checked out
+# Keep $(VENV_VARS) newer than $(VENV_ACTIVATE) to prevent env_vars rebuild
 # Dependency chain: (auto generated)
 #    PHONY COMMAND                ACTUAL TARGET             	DEPENDENCIES
 #  update_<submodule>	$(STAMP_DIR)/<submodule>_updated		$(STAMP_DIR)/<submodule>_checkout | $(STAMP_DIR)/<submodule>_installed
@@ -173,9 +174,9 @@ else
 
 RW_PATH := $(RAPIDWRIGHT_PATH)
 CLASSPATH = $(RAPIDWRIGHT_PATH)/bin:$$(echo $(RAPIDWRIGHT_PATH)/jars/*.jar | tr ' ' ':')
-$(RAPIDWRIGHT_INSTALLED): 
-	@$(call ADD_ENV_VARS,rapidwright,$(INITIAL_VARS)/rapidwright.env,$(VENV_VARS),RW_PATH JAVA_HOME CLASSPATH)
+$(RAPIDWRIGHT_INSTALLED):
 	@$(call ADD_ENV_VARS,rapidwright,$(INITIAL_VARS)/rapidwright.paths,$(VENV_ACTIVATE))
+	@$(call ADD_ENV_VARS,rapidwright,$(INITIAL_VARS)/rapidwright.env,$(VENV_VARS),RW_PATH JAVA_HOME CLASSPATH)
 	touch $@
 	touch $(RAPIDWRIGHT_UPDATED)
 endif

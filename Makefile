@@ -53,7 +53,7 @@ python_packages: $(VENV_BIN)/cmake pyproject.toml
 
 MAKEFILE_ROOT := $(BFASST_ROOT)
 env_vars: $(VENV_VARS)
-$(VENV_VARS): | $(VENV_ACTIVATE)
+$(VENV_VARS): $(VENV_ACTIVATE)
 	export MAKEFILE_ROOT=$(MAKEFILE_ROOT); \
 	envsubst '$$MAKEFILE_ROOT' < $(INITIAL_VARS)/general.env > $(VENV_VARS)
 ifndef _load_project_env_vars
