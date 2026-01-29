@@ -134,7 +134,7 @@ ifndef JAVA_HOME
 endif
 export JAVA_HOME
 
-JAVA_STUBS_DEFAULT_PREFIX := $(SETUP_BUILD)/java_stubs
+JAVA_STUBS_DEFAULT_PREFIX := $(SETUP_BUILD)/stubs
 JAVA_STUBS_DIRS := com/xilinx/rapidwright java
 ifneq ($(realpath $(RAPIDWRIGHT_PATH)/bin/),)
   STUBS_PREFIX := $(RAPIDWRIGHT_PATH)/stubs/
