@@ -98,7 +98,7 @@ pylint: format $(JAVA_STUBS) $(PY_STUBS)
 	pylint $$(git diff origin/main --diff-filter=AM --name-only | grep -e ".py$$")
 
 doctest:
-	find bfasst -iname "*.py" -exec python -m doctest {} \;
+	find ./bfasst ./scripts -iname "*.py" -exec python -m doctest {} +
 
 unittest:
 	python -m unittest

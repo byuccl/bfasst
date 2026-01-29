@@ -63,6 +63,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+        make wafove rand_soc
     - name: Run doctest
       run: |
         make doctest
