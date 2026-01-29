@@ -54,6 +54,7 @@ endef
 # Usage: $(call REMOVE_ENV_VARS,tool_name,var_file) - Avoid spaces between the commas
 # Finds # tool_name ENV VARS section and removes it from var_file (section ends with # END tool_name ENV VARS)
 define REMOVE_ENV_VARS
+	if [ ! -f $(2) ]; then exit 0; fi; \
 	tmp=$$(mktemp); \
 	sed '/$(call TOOL_HEADER,$(1))/,/$(call TOOL_FOOTER,$(1))/d' $(2) > $$tmp; \
 	flock $(2) -c "mv $$tmp $(2)"
@@ -66,7 +67,7 @@ endef
 define ADD_ENV_VARS
 	$(foreach cmd, $(4), export $(cmd)=$($(cmd));) \
 	tmp=$$(mktemp); \
-	sed '/$(call TOOL_HEADER,$(1))/,/$(call TOOL_FOOTER,$(1))/d' $(3) > $$tmp; \
+	if [ -f $(3) ]; then sed '/$(call TOOL_HEADER,$(1))/,/$(call TOOL_FOOTER,$(1))/d' $(3) > $$tmp; fi; \
 	{ \
 		printf "\n%s\n" "$(call TOOL_HEADER,$(1))"; \
 		envsubst '$(addprefix $$,$(4))' < $(2) ; \
