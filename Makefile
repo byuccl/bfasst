@@ -26,7 +26,7 @@ include $(BFASST_SETUP)/external_tools.mk
 ################################### Installation and Setup #########################################
 .DEFAULT_GOAL: install
 .PHONY: apt_packages install venv init_venv python_packages setup_autocomplete env_vars enable_pre_commit_hook
-install: venv all_submodules
+install: venv setup_autocomplete all_submodules
 
 apt_packages:
 	$(BFASST_SETUP)/install_packages.sh
@@ -63,7 +63,7 @@ ifndef _load_project_env_vars
 	mv $(VENV_ACTIVATE).tmp $(VENV_ACTIVATE)
 endif
 
-venv: $(VENV_ACTIVATE) $(VENV_VARS) python_packages setup_autocomplete
+venv: $(VENV_ACTIVATE) $(VENV_VARS) python_packages
 
 AUTO_COMPLETE := source $(BFASST_SETUP)/flow_autocomplete.sh
 setup_autocomplete: $(VENV_ACTIVATE)
