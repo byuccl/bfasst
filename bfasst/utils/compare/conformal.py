@@ -77,7 +77,7 @@ class ConformalCompare:
             + "mkdir -p bfasst_work;"
             + "mkdir -p bfasst_libs/lattice;"
         )
-        client.exec_command(cmd, timeout=int(bfasst.config.CONFORMAL_TIMEOUT))
+        client.exec_command(cmd, timeout=float(bfasst.config.CONFORMAL_TIMEOUT))
 
         self.__copy_files_to_remote(client, do_file_path)
 
