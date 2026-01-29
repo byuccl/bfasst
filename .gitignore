@@ -31,7 +31,6 @@ ic2/
 
 # Generated local environment
 bfasst.env
-setup/submodule_rules.mk
 **/.bfasst_installed
 **/stubs/**
 

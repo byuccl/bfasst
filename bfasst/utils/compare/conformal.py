@@ -51,7 +51,7 @@ class ConformalCompare:
 
         # Handle libraries
         if self.vendor == Vendor.XILINX:
-            self.remote_libs_dir_path = bfasst.config.CONFORMAL_REMOTE_LIBS_DIR / "xilinx"
+            self.remote_libs_dir_path = bfasst.paths.CONFORMAL_REMOTE_LIBS_DIR / "xilinx"
 
             self.local_libs_paths = []
             yosys_xilinx_libs_path = (
@@ -60,7 +60,7 @@ class ConformalCompare:
             self.local_libs_paths.append(yosys_xilinx_libs_path / "cells_sim.v")
 
         elif self.vendor == Vendor.LATTICE:
-            self.remote_libs_dir_path = bfasst.config.CONFORMAL_REMOTE_LIBS_DIR / "lattice"
+            self.remote_libs_dir_path = bfasst.paths.CONFORMAL_REMOTE_LIBS_DIR / "lattice"
             self.local_libs_paths = (
                 paths.BFASST_RESOURCES / "conformal" / "libraries" / "lattice" / "sb_ice_syn.v",
             )
@@ -137,12 +137,12 @@ class ConformalCompare:
                         str(self.remote_libs_dir_path / f.name) for f in self.local_libs_paths
                     ],
                     "golden_files": [
-                        str(bfasst.config.CONFORMAL_REMOTE_WORK_DIR / src.name)
+                        str(bfasst.paths.CONFORMAL_REMOTE_WORK_DIR / src.name)
                         for src in self.hdl_srcs
                     ],
                     "src_type": gold_src_type,
                     "rev_netlist": str(
-                        bfasst.config.CONFORMAL_REMOTE_WORK_DIR / self.rev_netlist.name
+                        bfasst.paths.CONFORMAL_REMOTE_WORK_DIR / self.rev_netlist.name
                     ),
                     "renaming_rule_vector": "add renaming rule"
                     + r" vector_expand %s\[%d\] @1_@2 -Both -map",
