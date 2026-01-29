@@ -63,6 +63,7 @@ ${configured_path}/.git:
 	fi; \\
 	if [ "\$\$CONFIGURED_PATH" = "\$\$SUBMODULE_PATH" ]; then \\
 		echo "Initial submodule checkout for ${submod_name}"; \\
+		flock ${BFASST_ROOT} -c "git submodule init ${rel_path}"; \\
 		git submodule update --init --recursive --merge ${rel_path}; \\
 	else \\
 		echo "Cached submodule location detected for ${submod_name} at \$\$CONFIGURED_PATH"; \\

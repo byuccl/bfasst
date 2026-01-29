@@ -7,7 +7,13 @@ TOOL_VARS := $(INITIAL_VARS)
 include $(BFASST_SETUP)/helper_macros.mk
 ########################## Non-submodule Tools #####################################################
 CONFORMAL_PATH ?= $(or $(shell command -v conformal), "conformal_is_missing")
-VIVADO_BIN ?= $(or $(shell command -v vivado), "vivado_is_missing")
+
+ifndef VIVADO_BIN
+  VIVADO ?= $(or $(shell command -v vivado), "vivado_is_missing")
+else
+  VIVADO := $(VIVADO_BIN)
+endif
+
 IC2_PATH ?= /tools/lscc/iCEcube2.2020.12
 
 ########################## Bulk Submodule Build Recipes ############################################
@@ -48,7 +54,7 @@ MODULE_UPDATE := git submodule update --init --recursive
 # On fresh clone: bootstrap rules handle checkout + rule file generation lazily per-submodule
 # Each submodule target generates its rule file on first request, then rule file provides git deps
 # Batch build makefiles, then install targets to minimize redundant makefile parsing
-all_submodules: .gitmodules
+all_submodules: .gitmodules $(VENV_VARS)
 	$(MAKE) --no-print-directory $(SUBMOD_MAKEFILES)
 	$(MAKE) --no-print-directory $(SUBMOD_INSTALL_TARGETS)
 
@@ -69,8 +75,8 @@ reset_submodules:
 # Vivado
 ####################################################################################################
 .PHONY: vivado
-vivado: $(VIVADO_BIN)
-$(VIVADO_BIN):
+vivado: $(VIVADO)
+$(VIVADO):
 	@echo "Vivado is not installed by this Makefile. Please install Vivado 2025.1"
 	@echo "Then, set the VIVADO_BIN variable in bfasst.env to point to the vivado binary."
 	exit 1
@@ -131,16 +137,18 @@ export JAVA_HOME
 JAVA_STUBS_DEFAULT_PREFIX := $(SETUP_BUILD)/java_stubs
 JAVA_STUBS_DIRS := com/xilinx/rapidwright java
 ifneq ($(realpath $(RAPIDWRIGHT_PATH)/bin/),)
-  JAVA_STUBS := $(addprefix $(RAPIDWRIGHT_PATH)/stubs/, $(JAVA_STUBS_DIRS))
+  STUBS_PREFIX := $(RAPIDWRIGHT_PATH)/stubs/
+  JAVA_STUBS := $(addprefix $(STUBS_PREFIX), $(JAVA_STUBS_DIRS))
   $(JAVA_STUBS): $(RAPIDWRIGHT_BUILT) | $(RAPIDWRIGHT_INSTALLED)
 else
-  JAVA_STUBS := $(addprefix $(JAVA_STUBS_DEFAULT_PREFIX)/, $(JAVA_STUBS_DIRS))
+  STUBS_PREFIX := $(JAVA_STUBS_DEFAULT_PREFIX)/
+  JAVA_STUBS := $(addprefix $(STUBS_PREFIX), $(JAVA_STUBS_DIRS))
 endif
 
 RW_PART ?= $(DEFAULT_PART)
 PART_CSV := $(RAPIDWRIGHT_PATH)/data/partdump.csv
 # Infer family from part using $(RAPIDWRIGHT_PATH)/data/partdump.csv, if it exists
-ifeq ($(real_path $(PART_CSV)),)
+ifeq ($(realpath $(PART_CSV)),)
   # Partdump.csv does not exist, no parts have been cached.
   RW_PART_CACHE := $(PART_CSV)
 else
@@ -154,7 +162,7 @@ $(RW_PART_CACHE): $(RAPIDWRIGHT_INSTALLED)
 	cd $(RAPIDWRIGHT_PATH); rapidwright jython -c 'FileTools.ensureDataFilesAreStaticInstallFriendly("$(RW_PART)")'
 	@echo "Cached RapidWright database for part $(RW_PART). To cache other parts, run make cache_rw_part RW_PART=<part>"
 
-$(RAPIDWRIGHT_BUILT): | $(CAPNP_JAVA) $(VIVADO_BIN)
+$(RAPIDWRIGHT_BUILT): | $(CAPNP_JAVA) $(VIVADO)
 ifndef JAVA_HOME
 	@echo "Java 17 or 18 is required to build RapidWright. Please run 'sudo make packages' to install it."
 	@exit 1
@@ -187,13 +195,13 @@ endif
 stubs: $(PY_STUBS) $(JAVA_STUBS)
 
 $(JAVA_STUBS) &:
-ifneq ($(realpath $(JAVA_STUBS_DEFAULT_PREFIX)),)
+ifneq ($(JAVA_STUBS_DEFAULT_PREFIX), $(STUBS_PREFIX))
 	@rm -rf $(JAVA_STUBS_DEFAULT_PREFIX)
 endif
-	@rm -rf $(JAVA_STUBS)
-	@mkdir -p $(JAVA_STUBS)
-	@echo "Generating Java stubs for RapidWright at $(JAVA_STUBS)"
-	@python $(BFASST_SETUP)/generate_stubs.py --java $(JAVA_STUBS) > /dev/null 2>&1
+	@rm -rf $(STUBS_PREFIX)
+	@mkdir -p $(STUBS_PREFIX)
+	@echo "Generating Java stubs for RapidWright at $(STUBS_PREFIX)"
+	@python $(BFASST_SETUP)/generate_stubs.py --java $(STUBS_PREFIX) > /dev/null 2>&1
 	
 update_rapidwright: $(JAVA_STUBS)
 $(RAPIDWRIGHT_UPDATED):
@@ -207,17 +215,16 @@ fasm2bels_post_install: init_f2b_db
 
 # f2b env is NOT parallel friendly, so for now do not use $(MAKE) for env target
 define F2B_BUILD
-	make -C $(FASM2BELS_PATH) env & $(MAKE) -C $(FASM2BELS_PATH) build ; wait
-	$(MAKE) -C $(FASM2BELS_PATH) test-py
+	CONDA_PLUGINS_AUTO_ACCEPT_TOS=true make -C $(FASM2BELS_PATH) env & $(MAKE) -C $(FASM2BELS_PATH) build ; wait
+	VIVADO_PATH=$$VIVADO_BIN $(MAKE) -C $(FASM2BELS_PATH) test-py
 	touch $1
 endef
 
-$(FASM2BELS_BUILT):
+$(FASM2BELS_BUILT): | $(RAPIDWRIGHT_INSTALLED) $(VIVADO)
 	$(call F2B_BUILD,$@)
 
-export VIVADO_PATH ?= $(VIVADO_BIN)
 F2B_PATH := $(FASM2BELS_PATH)
-$(FASM2BELS_INSTALLED): | $(RAPIDWRIGHT_BUILT) $(VIVADO_BIN)
+$(FASM2BELS_INSTALLED): 
 	$(call ADD_ENV_VARS,fasm2bels,$(INITIAL_VARS)/fasm2bels.env,$(VENV_VARS),F2B_PATH)
 	touch $@
 	touch $(FASM2BELS_UPDATED)
@@ -265,7 +272,7 @@ $(CONFROMAL_BIN):
 # Yosys
 #####################################################################################################
 define YOSYS_BUILD
-	make -C $(YOSYS_PATH)
+	$(MAKE) -C $(YOSYS_PATH)
 	touch $1
 endef
 

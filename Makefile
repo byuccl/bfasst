@@ -38,11 +38,12 @@ clean:
 	rm -rf $(VENV_DIR) $(VENV_VARS) $(PRE_COMMIT_HOOK) $(SETUP_BUILD)
 	rm -rf $(JAVA_STUBS)
 	git submodule deinit -f --all
+	@echo "Environment removed. Please run 'deactivate' in your shell before rebuilding the virtual environment."
 
 .NOTPARALLEL: $(VENV_ACTIVATE) $(VENV_VARS)
 
 init_venv: $(VENV_ACTIVATE)
-$(VENV_ACTIVATE) $(VENV_BIN):
+$(VENV_ACTIVATE) $(VENV_BIN) &:
 	$(PYTHON) -m venv $(VENV_DIR) --prompt bfasst
 
 python_packages: $(VENV_BIN)/cmake pyproject.toml
