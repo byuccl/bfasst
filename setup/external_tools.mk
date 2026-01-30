@@ -292,6 +292,7 @@ $(YOSYS_UPDATED):
 $(WAFOVE_INSTALLED):
 	cd $(WAFOVE_PATH) && python setup.py install
 	$(MAKE) -C $(WAFOVE_PATH) yosys_cells_sim
+	$(call ADD_ENV_VARS,wafove,$(INITIAL_VARS)/wafove.env,$(VENV_VARS),WAFOVE_PATH)
 	touch $@
 	touch $(WAFOVE_UPDATED)
 
