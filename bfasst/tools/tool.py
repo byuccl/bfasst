@@ -4,9 +4,9 @@ import abc
 import pathlib
 
 import chevron
-from bfasst.flows.flow import FlowBase
 
-from bfasst.paths import BUILD_PATH, DESIGNS_PATH, NINJA_BUILD_PATH, ROOT_PATH
+from bfasst.flows.flow import FlowBase
+from bfasst.paths import BFASST_BUILD, BFASST_DESIGNS, BFASST_ROOT, NINJA_BUILD_PATH
 from bfasst.yaml_parser import DesignParser
 
 
@@ -31,7 +31,7 @@ class ToolBase(abc.ABC):
 
         self.flow.rule_paths.append(rules_path)
 
-        rules_render_dict["bfasst_path"] = ROOT_PATH
+        rules_render_dict["bfasst_path"] = BFASST_ROOT
         with open(rules_path, "r") as f:
             if rules_render_dict:
                 rules = chevron.render(f, rules_render_dict)
@@ -65,7 +65,7 @@ class ToolBase(abc.ABC):
             build_snippet_path.is_file()
         ), f"Build snippet template {build_snippet_path} does not exist"
 
-        render_dict["bfasst_path"] = ROOT_PATH
+        render_dict["bfasst_path"] = BFASST_ROOT
         with open(build_snippet_path) as f:
             build_snippet = chevron.render(f, render_dict)
 
@@ -95,10 +95,10 @@ class Tool(ToolBase, abc.ABC):
         super().__init__(flow)
         self.design_path = design_path
 
-        if design_path.is_relative_to(DESIGNS_PATH):
-            self.design_build_path = BUILD_PATH / design_path.relative_to(DESIGNS_PATH)
+        if design_path.is_relative_to(BFASST_DESIGNS):
+            self.design_build_path = BFASST_BUILD / design_path.relative_to(BFASST_DESIGNS)
         else:
-            self.design_build_path = BUILD_PATH / "<external>" / design_path
+            self.design_build_path = BFASST_BUILD / "<external>" / design_path
 
         design_yaml = design_path / "design.yaml"
         self.design_props = None

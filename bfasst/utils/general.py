@@ -1,22 +1,23 @@
 """Utility functions"""
 
-from argparse import ArgumentParser
 import atexit
 import code
+import enum
 import json
 import logging
 import os
-from pathlib import Path
 import re
 import readline
 import rlcompleter
-import sys
 import shutil
-import enum
+import sys
+from argparse import ArgumentParser
+from pathlib import Path
 
 from jpype.types import JString
-from bfasst.paths import DESIGNS_PATH
-from bfasst.config import BUILD
+
+from bfasst.config import BFASST_BUILD
+from bfasst.paths import BFASST_DESIGNS
 
 
 class TermColor:
@@ -62,7 +63,7 @@ def error(*msg, returncode=-1):
 
 def create_build_dir(path):
     """Create a build directory if it doesn't exist"""
-    new_dir = path / BUILD
+    new_dir = path / BFASST_BUILD
     new_dir.mkdir(exist_ok=True)
     return new_dir
 
@@ -76,7 +77,7 @@ def create_build_design_dir(build_dir, design_dir):
 
 def get_design_dir(design_name):
     """Return the design directory"""
-    return DESIGNS_PATH / design_name
+    return BFASST_DESIGNS / design_name
 
 
 def clean_folder(folder_path):

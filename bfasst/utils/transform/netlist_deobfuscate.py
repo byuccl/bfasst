@@ -17,18 +17,17 @@ import logging
 import pathlib
 import re
 import time
-from typing import Dict, Tuple, Optional
+from typing import Dict, Optional, Tuple
 
-from bfasst import jpype_jvm
-from bfasst.utils.transform.netlist_obfuscate_helpers import TAG_PROP  # tag property key
-
-jpype_jvm.start()
-
-# pylint: disable=wrong-import-position, wrong-import-order
+import rapidwright as _
 from com.xilinx.rapidwright.design import Design
 from com.xilinx.rapidwright.edif import EDIFTools, EDIFValueType
+from java.io import FileOutputStream, PrintStream
 from java.lang import System
-from java.io import PrintStream, FileOutputStream
+
+from bfasst.utils.transform.netlist_obfuscate_helpers import (
+    TAG_PROP,  # tag property key
+)
 
 
 # ----------------- Logging -----------------

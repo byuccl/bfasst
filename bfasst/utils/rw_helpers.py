@@ -12,15 +12,15 @@ from typing import Optional, TypeAlias
 import spydrnet as sdn
 from bidict import bidict
 
-# pylint: disable=wrong-import-position,wrong-import-order
-from bfasst import jpype_jvm
-from bfasst.config import PART
-
-jpype_jvm.start()
-from java.util import ArrayList as JArrayList
-
-from com.xilinx.rapidwright.design import Cell, Design, SiteInst, SitePinInst, Unisim
-from com.xilinx.rapidwright.design.DesignTools import getConnectionPIPs
+import rapidwright as _
+from com.xilinx.rapidwright.design import (
+    Cell,
+    Design,
+    DesignTools,
+    SiteInst,
+    SitePinInst,
+    Unisim,
+)
 from com.xilinx.rapidwright.design.tools import LUTTools
 from com.xilinx.rapidwright.device import BELPin, Device, Series
 from com.xilinx.rapidwright.edif import EDIFCellInst
@@ -31,8 +31,9 @@ from com.xilinx.rapidwright.edif import (
     EDIFNetlist,
     EDIFPortInst,
 )
+from java.util import ArrayList as JArrayList
 
-# pylint: enable=wrong-import-position,wrong-import-order
+from bfasst.config import DEFAULT_PART
 
 DesignCells: TypeAlias = dict[tuple[str, str], EDIFCellInst]  # (site_name, bel_name): EDIFCellInst
 VivadoCheckpoint = namedtuple("VivadoCheckpoint", ["dcp", "edf"])
@@ -40,7 +41,7 @@ RWObject = namedtuple("RWObject", ["design", "netlist"])
 
 
 def load_design(
-    checkpt: VivadoCheckpoint, series: Series = Device.getDevice(PART).getSeries()
+    checkpt: VivadoCheckpoint, series: Series = Device.getDevice(DEFAULT_PART).getSeries()
 ) -> tuple[Design, EDIFNetlist]:
     """Load the designs from the given paths"""
     logging.info("Loading vivado dcp and edf files: %s, %s", str(checkpt.dcp), str(checkpt.edf))
@@ -413,11 +414,12 @@ def process_lut_eqn(cell, is_lut5, log=logging.info):
 
 def process_shared_gnd_lut_eqn(lut5, gnd_pin, new_cell_inst, gnd, log=logging.info):
     lut5_eqn = process_lut_eqn(lut5, True, log)
+    lut5_eqn = str(LUTTools.getLUTInitFromEquation(lut5_eqn, 5))[4:].zfill(8)
     const_str = "00000000" if gnd else "FFFFFFFF"
     if gnd_pin.endswith("O5"):
-        init_str = "64'h" + LUTTools.getLUTInitFromEquation(lut5_eqn, 5)[4:].zfill(8) + const_str
+        init_str = "64'h" + lut5_eqn + const_str
     else:
-        init_str = f"64'h{const_str}" + LUTTools.getLUTInitFromEquation(lut5_eqn, 5)[4:].zfill(8)
+        init_str = "64'h" + const_str + lut5_eqn
     log(f"  New LUT INIT: {init_str}")
     new_cell_inst.addProperty("INIT", init_str)
 
@@ -435,17 +437,19 @@ def process_lut_init(lut6_cell, lut5_cell, log=logging.info):
 
     if not lut5_cell:
         assert lut6_eqn_phys is not None
-        init_str = "64'h" + LUTTools.getLUTInitFromEquation(lut6_eqn_phys, 6)[4:].zfill(16)
+        init_str = "64'h" + str(LUTTools.getLUTInitFromEquation(lut6_eqn_phys, 6))[4:].zfill(16)
     elif not lut6_cell:
         assert lut5_eqn_phys is not None
-        init_str = "64'h00000000" + LUTTools.getLUTInitFromEquation(lut5_eqn_phys, 5)[4:].zfill(8)
+        init_str = "64'h00000000" + str(LUTTools.getLUTInitFromEquation(lut5_eqn_phys, 5))[
+            4:
+        ].zfill(8)
     else:
         assert lut6_eqn_phys is not None
         assert lut5_eqn_phys is not None
         init_str = (
             "64'h"
-            + LUTTools.getLUTInitFromEquation(lut6_eqn_phys, 5)[4:].zfill(8)
-            + LUTTools.getLUTInitFromEquation(lut5_eqn_phys, 5)[4:].zfill(8)
+            + str(LUTTools.getLUTInitFromEquation(lut6_eqn_phys, 5))[4:].zfill(8)
+            + str(LUTTools.getLUTInitFromEquation(lut5_eqn_phys, 5))[4:].zfill(8)
         )
     return init_str
 
@@ -625,14 +629,15 @@ def get_cells_from_site_pin(
 
 def get_site_pin_driver(sink_pin: SitePinInst, design: Design):
     """Look at the intersite connection to get the site pin that drives sink_pin."""
-    drv_node = getConnectionPIPs(sink_pin)[-1].getStartNode()
+    conn_pips = DesignTools.getConnectionPIPs(sink_pin)
+    drv_node = conn_pips.get(conn_pips.size() - 1).getStartNode()
     drv_pin = drv_node.getSitePin()
     src_site_inst = design.getSiteInstFromSite(drv_pin.getSite())
     spi = src_site_inst.getSitePinInst(drv_pin.getPinName())
     return spi
 
 
-class _PinMapping:
+class PinMap:
     """
     Check default pin mappings for unisim types.
     """
@@ -703,10 +708,12 @@ class _PinMapping:
         ),
     }
 
-    def __getitem__(self, attr):
-        return self.CELL_PIN_MAP[attr]
+    @classmethod
+    def __class_getitem__(cls, attr):
+        return cls.CELL_PIN_MAP[attr]
 
-    def cell_is_default_mapping(self, cell):
+    @classmethod
+    def cell_is_default_mapping(cls, cell):
         """
         This checks whether the cell is using the default logical to physical mappings.
 
@@ -714,7 +721,7 @@ class _PinMapping:
             cell (rapidwright.Cell)
         """
         type_name = cell.getEDIFCellInst().getCellType().getName()
-        default_l2p_map = self.CELL_PIN_MAP[type_name]
+        default_l2p_map = cls.CELL_PIN_MAP[type_name]
 
         l2p = cell.getPinMappingsL2P()
         for logical, physical in default_l2p_map.items():
@@ -724,7 +731,8 @@ class _PinMapping:
 
         return True
 
-    def ensure_connected(self, edif_cell_inst, net, log=logging.info):
+    @classmethod
+    def ensure_connected(cls, edif_cell_inst, net, log=logging.info):
         """
         Ensure that all ports on the cell are connected to the net.
 
@@ -735,7 +743,7 @@ class _PinMapping:
         """
 
         type_name = edif_cell_inst.getCellType().getName()
-        port_names = self.CELL_PIN_MAP[type_name]
+        port_names = cls.CELL_PIN_MAP[type_name]
 
         for phys_name, log_name in port_names.items():
             port = edif_cell_inst.getPortInst(phys_name)
@@ -745,9 +753,6 @@ class _PinMapping:
                 )
                 new_port = edif_cell_inst.getPort(log_name)
                 net.createPortInst(new_port, edif_cell_inst)
-
-
-PinMap = _PinMapping()
 
 
 def is_connected(port_inst: EDIFHierPortInst) -> bool:

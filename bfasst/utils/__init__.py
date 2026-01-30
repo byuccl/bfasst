@@ -1,3 +1,3 @@
 """Import general functions into the utils namespace"""
 
-from .general import *
+from bfasst.utils.general import *

@@ -1,8 +1,9 @@
 """Unit tests for the Vivado ooc flow."""
 
 import unittest
+
 from bfasst.flows.vivado_ooc import VivadoOoc
-from bfasst.paths import DESIGNS_PATH, NINJA_BUILD_PATH, FLOWS_PATH
+from bfasst.paths import BFASST_DESIGNS, BFASST_FLOWS, NINJA_BUILD_PATH
 
 
 class TestVivadoOocFlow(unittest.TestCase):
@@ -14,7 +15,7 @@ class TestVivadoOocFlow(unittest.TestCase):
         with open(NINJA_BUILD_PATH, "w") as f:
             f.write("")
 
-        cls.flow = VivadoOoc(DESIGNS_PATH / "byu/alu")
+        cls.flow = VivadoOoc(BFASST_DESIGNS / "byu/alu")
         cls.flow.create_tool_build_dirs()
         cls.flow.create_rule_snippets()
         cls.flow.create_build_snippets()
@@ -31,7 +32,7 @@ class TestVivadoOocFlow(unittest.TestCase):
         self.assertNotIn("rule vivado_ioparse", ninja_rules)
 
     def test_get_top_level_flow_path(self):
-        self.assertEqual(self.flow.get_top_level_flow_path(), FLOWS_PATH / "vivado_ooc.py")
+        self.assertEqual(self.flow.get_top_level_flow_path(), BFASST_FLOWS / "vivado_ooc.py")
 
 
 if __name__ == "__main__":

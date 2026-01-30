@@ -1,13 +1,13 @@
 """Yosys -> LSE -> Ic2Impl -> Icestorm -> Conformal"""
 
+from bfasst.design import Vendor
 from bfasst.flows.flow import Flow
-from bfasst.paths import FLOWS_PATH
+from bfasst.paths import BFASST_FLOWS
 from bfasst.tools.compare.conformal.conformal import Conformal
 from bfasst.tools.impl.ic2_impl import Ic2Impl
 from bfasst.tools.rev_bit.icestorm import IcestormRevBit
 from bfasst.tools.synth.ic2_lse_synth import Ic2LseSynth
 from bfasst.tools.synth.yosys_synth import YosysSynth
-from bfasst.types import Vendor
 
 
 class YosysLseConformal(Flow):
@@ -39,4 +39,4 @@ class YosysLseConformal(Flow):
         # pylint: enable=duplicate-code
 
     def get_top_level_flow_path(self) -> str:
-        return FLOWS_PATH / "yosys_lse_conformal.py"
+        return BFASST_FLOWS / "yosys_lse_conformal.py"

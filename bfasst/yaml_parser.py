@@ -3,7 +3,7 @@
 from abc import ABC
 from importlib import import_module
 from pathlib import Path
-from types import ModuleType
+from types import ModuleType  # pylint: disable=no-name-in-module
 from typing import Optional
 
 import yaml
@@ -53,7 +53,7 @@ class RunParser(YamlParser):
 
         if "designs" in self.props:
             for design in self.props.pop("designs"):
-                design_path = paths.DESIGNS_PATH / design
+                design_path = paths.BFASST_DESIGNS / design
                 if not design_path.is_dir():
                     error("Provided design directory", design_path, "does not exist")
 
@@ -95,7 +95,7 @@ class DesignParser(YamlParser):
         self.system_verilog_files = None
         self.other_sources = None
         self.clocks = {}
-        self.part = config.PART
+        self.part = config.DEFAULT_PART
 
         if yaml_path is None:
             return

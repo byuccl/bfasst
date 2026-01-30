@@ -4,7 +4,7 @@ import json
 import pathlib
 
 from bfasst import config
-from bfasst.paths import BFASST_UTILS_PATH, COMMON_TOOLS_PATH
+from bfasst.paths import BFASST_COMMON_TOOLS, BFASST_UTILS
 from bfasst.tools.synth.synth_tool import SynthTool
 from bfasst.utils.general import json_write_if_changed
 
@@ -42,7 +42,7 @@ class VivadoSynth(SynthTool):
             "io": str(self.build_path / "report_io.txt") if not self.ooc else False,
             "synth_output": str(self.build_path),
             "synth_design": "",
-            "common_tools_path": str(COMMON_TOOLS_PATH),
+            "common_tools_path": str(BFASST_COMMON_TOOLS),
             "outputs": self.outputs_str,
             "tcl_sources": [
                 self.outputs_str["setup_tcl"],
@@ -56,11 +56,11 @@ class VivadoSynth(SynthTool):
             synth_opts = self.synth_build.get("synth_design", "") + " -mode out_of_context"
             self.synth_build["synth_design"] = synth_opts
 
-        self.rule_snippet_path = COMMON_TOOLS_PATH / "vivado_rules.ninja.mustache"
+        self.rule_snippet_path = BFASST_COMMON_TOOLS / "vivado_rules.ninja.mustache"
         self.rules_render_dict = {
-            "vivado_path": config.VIVADO_BIN_PATH,
+            "vivado_path": config.VIVADO,
             "in_context": not self.ooc,
-            "utils_path": BFASST_UTILS_PATH,
+            "utils_path": BFASST_UTILS,
         }
 
     def create_build_snippets(self):
@@ -85,7 +85,7 @@ class VivadoSynth(SynthTool):
                 "other_sources": self.other_sources,
                 "cwd": self.build_path,
                 "outputs": self.outputs_str,
-                "common_tools_path": str(COMMON_TOOLS_PATH),
+                "common_tools_path": str(BFASST_COMMON_TOOLS),
                 "tcl_sources": [str(i) for i in self.synth_build["tcl_sources"]],
             },
         )

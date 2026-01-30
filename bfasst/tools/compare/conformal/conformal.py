@@ -1,8 +1,9 @@
 """Create the rule and build snippets for conformal comparison."""
 
 import chevron
+
+from bfasst.paths import BFASST_UTILS, CONFORMAL_TOOLS, NINJA_BUILD_PATH
 from bfasst.tools.tool import Tool
-from bfasst.paths import NINJA_BUILD_PATH, CONFORMAL_TOOLS_PATH, BFASST_UTILS_PATH
 
 
 class Conformal(Tool):
@@ -19,12 +20,12 @@ class Conformal(Tool):
         self.build_path = self.design_build_path / "conformal"
         self._init_outputs()
         # self._read_hdl_files()
-        self.rule_snippet_path = CONFORMAL_TOOLS_PATH / "conformal_rules.ninja.mustache"
-        self.rules_render_dict = {"utils": str(BFASST_UTILS_PATH)}
+        self.rule_snippet_path = CONFORMAL_TOOLS / "conformal_rules.ninja.mustache"
+        self.rules_render_dict = {"utils": str(BFASST_UTILS)}
 
     def create_build_snippets(self):
         """Create the build snippets for conformal comparison."""
-        with open(CONFORMAL_TOOLS_PATH / "conformal_build.ninja.mustache", "r") as f:
+        with open(CONFORMAL_TOOLS / "conformal_build.ninja.mustache", "r") as f:
             build = chevron.render(
                 f,
                 {
@@ -33,7 +34,7 @@ class Conformal(Tool):
                     "gui_path": str(self.outputs["conformal_gui"]),
                     "hdl_srcs": self.golden_netlist,
                     "rev_netlist": self.rev_netlist,
-                    "conformal_script_path": str(BFASST_UTILS_PATH / "compare/conformal.py"),
+                    "conformal_script_path": str(BFASST_UTILS / "compare/conformal.py"),
                     "build_dir": self.build_path.parent,
                     "vendor": self.vendor,
                 },
@@ -50,6 +51,6 @@ class Conformal(Tool):
     def add_ninja_deps(self, deps):
         """Add the conformal ninja deps."""
         self._add_ninja_deps_default(deps, __file__)
-        deps.append(CONFORMAL_TOOLS_PATH / "conformal.do.mustache")
-        deps.append(CONFORMAL_TOOLS_PATH / "conformal.gui.mustache")
-        deps.append(BFASST_UTILS_PATH / "compare/conformal.py")
+        deps.append(CONFORMAL_TOOLS / "conformal.do.mustache")
+        deps.append(CONFORMAL_TOOLS / "conformal.gui.mustache")
+        deps.append(BFASST_UTILS / "compare/conformal.py")

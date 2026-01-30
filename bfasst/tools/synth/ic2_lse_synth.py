@@ -4,13 +4,14 @@
 
 import json
 import pathlib
+
 from bfasst.config import (
     IC2_FOUNDRY,
     IC2_LSE_LD_LIBRARY_PATH,
-    IC2_SBT_DIR,
     IC2_LSE_SYNTH_BIN,
+    IC2_SBT_DIR,
 )
-from bfasst.paths import BFASST_UTILS_PATH, LSE_PRJ_TEMPLATE, TOOLS_PATH
+from bfasst.paths import BFASST_TOOLS, BFASST_UTILS, LSE_PRJ_TEMPLATE
 from bfasst.tools.synth.synth_tool import SynthTool
 from bfasst.utils.general import json_write_if_changed
 
@@ -31,7 +32,7 @@ class Ic2LseSynth(SynthTool):
 
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()
-        self.rule_snippet_path = TOOLS_PATH / "synth" / "ic2_lse_synth_rules.ninja"
+        self.rule_snippet_path = BFASST_TOOLS / "synth" / "ic2_lse_synth_rules.ninja"
 
     def create_build_snippets(self):
         # first, the project file must be created with ninja and chevron.
@@ -58,7 +59,7 @@ class Ic2LseSynth(SynthTool):
                 "json_render_dict": self.outputs["synth_json"],
                 "prj_template": LSE_PRJ_TEMPLATE,
                 "design": self.design_path,
-                "lse_post_synth_util": BFASST_UTILS_PATH / "lse_post_synth.py",
+                "lse_post_synth_util": BFASST_UTILS / "lse_post_synth.py",
                 "build_path": self.build_path,
                 "edf_output": self.outputs["edif_file"],
                 "input_verilog_file": (

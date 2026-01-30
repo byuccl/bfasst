@@ -30,7 +30,9 @@ scripts/timing_artifacts/*
 ic2/
 
 # Generated local environment
-env.sh
+bfasst.env
+**/.bfasst_installed
+**/stubs/**
 
 # Xray Databases
 *_db
@@ -39,6 +41,3 @@ env.sh
 build.ninja
 .ninja_log
 .ninja_deps
-
-# Cmake installations
-third_party/cmake/*

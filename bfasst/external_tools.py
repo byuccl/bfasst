@@ -5,23 +5,11 @@ import socket
 import subprocess
 import sys
 import traceback
-import paramiko
 
+import paramiko
 import yaml
 
-from bfasst.config import IC2_INSTALL_DIR, PART_FAMILY, PART, VIVADO_BIN_PATH
-from bfasst.paths import (
-    ICEBOX_VLOG_PATH,
-    ICEUNPACK_PATH,
-    SCRIPTS_PATH,
-    RAPIDWRIGHT_PATH,
-    ROOT_PATH,
-    THIRD_PARTY_PATH,
-    WAFOVE_PATH,
-    YOSYS_PATH,
-    FASM2BELS_PATH,
-    DESIGNS_PATH,
-)
+from bfasst.paths import BFASST_ROOT, IC2_INSTALL_DIR, VIVADO_BIN
 from bfasst.utils.compare.conformal import ConformalCompare
 from bfasst.utils.general import error
 from bfasst.yaml_parser import FlowDescriptionParser
@@ -31,28 +19,12 @@ from bfasst.yaml_parser import FlowDescriptionParser
 ################################################################################
 
 
-def check_rand_soc():
-    return (THIRD_PARTY_PATH / "rand_soc" / "requirements.txt").is_file()
-
-
 def check_vivado():
-    return VIVADO_BIN_PATH.is_file()
+    return VIVADO_BIN.is_file()
 
 
 def check_ic2():
     return IC2_INSTALL_DIR.is_dir()
-
-
-def check_icestorm():
-    return ICEBOX_VLOG_PATH.is_file() and ICEUNPACK_PATH.is_file()
-
-
-def check_fasm2bels():
-    if not (FASM2BELS_PATH / "env").is_dir():
-        return False
-    if not (FASM2BELS_PATH / f"{PART}_db").is_file():
-        subprocess.run([f"{SCRIPTS_PATH}/database.sh", PART_FAMILY, PART], cwd=ROOT_PATH)
-    return True
 
 
 def check_conformal():
@@ -67,24 +39,6 @@ def check_conformal():
     return True
 
 
-def check_rapidwright():
-    return (RAPIDWRIGHT_PATH / "build" / "libs" / "rapidwright.jar").is_file() and (
-        RAPIDWRIGHT_PATH / "interchange" / "schema" / "capnp" / "java.capnp"
-    ).is_file()
-
-
-def check_yosys():
-    return (YOSYS_PATH / "yosys").is_file()
-
-
-def check_wafove():
-    return (WAFOVE_PATH / "wafove" / "compare_waveforms.py").is_file()
-
-
-def check_opentitan():
-    return (DESIGNS_PATH / "opentitan").is_dir()
-
-
 ################################################################################
 # Command Line Interface
 ################################################################################
@@ -95,7 +49,7 @@ def install_tool(tool):
     print("Installing", tool)
     print("=" * 80, flush=True)
 
-    proc = subprocess.run(["make", f"install_{tool}"], cwd=ROOT_PATH)
+    proc = subprocess.run(["make", f"{tool}"], cwd=BFASST_ROOT)
     if proc.returncode:
         return False
     return True
@@ -143,24 +97,25 @@ def check_flow_cli(flow):
 
 def check_tools(tools):
     """Check that the given list of tools are installed"""
-    missing_tools = []
-    if not tools:
+    missing_tools = [
+        t for t in tools if not (BFASST_ROOT / f"setup/build/stamps/{t}_installed").exists()
+    ]
+    if not missing_tools:
         return True
-    for tool in tools:
+    all_found = True
+    for tool in missing_tools:
         fcn_name = f"check_{tool}"
         if fcn_name not in globals():
             error("external_tools.py requires a function named", fcn_name)
         if not globals()[fcn_name]():
-            missing_tools.append(tool)
+            all_found = False
             print(
                 (
                     f"External tool {tool} is not installed. "
-                    f"Please try installing with `make install_{tool}`"
+                    f"Please try installing with `make {tool}`"
                 )
             )
-    if missing_tools:
-        return False
-    return True
+    return all_found
 
 
 def check_tools_cli(tools):

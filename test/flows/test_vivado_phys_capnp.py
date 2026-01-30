@@ -7,7 +7,7 @@ import unittest
 
 from bfasst.flows.flow_utils import create_build_file
 from bfasst.flows.vivado_phys_capnp import VivadoPhysCapnp
-from bfasst.paths import DESIGNS_PATH, NINJA_BUILD_PATH, FLOWS_PATH
+from bfasst.paths import BFASST_DESIGNS, BFASST_FLOWS, NINJA_BUILD_PATH
 
 
 class TestVivadoPhysCapnp(unittest.TestCase):
@@ -18,7 +18,7 @@ class TestVivadoPhysCapnp(unittest.TestCase):
         # overwrite the build file so it is not appended to incorrectly
         create_build_file()
 
-        cls.flow = VivadoPhysCapnp(DESIGNS_PATH / "byu/alu")
+        cls.flow = VivadoPhysCapnp(BFASST_DESIGNS / "byu/alu")
         cls.flow.create_tool_build_dirs()
         cls.flow.create_rule_snippets()
         cls.flow.create_build_snippets()
@@ -36,7 +36,9 @@ class TestVivadoPhysCapnp(unittest.TestCase):
         self.assertIn("rule phys_capnp_cmp", ninja_rules)
 
     def test_get_top_level_flow_path(self):
-        self.assertEqual(self.flow.get_top_level_flow_path(), f"{FLOWS_PATH}/vivado_phys_capnp.py")
+        self.assertEqual(
+            self.flow.get_top_level_flow_path(), f"{BFASST_FLOWS}/vivado_phys_capnp.py"
+        )
 
 
 if __name__ == "__main__":

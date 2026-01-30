@@ -1,74 +1,25 @@
-"""Repository paths using pathlib"""
+"""Import Environmant Variables as Pathlib.Path objects if they exist"""
 
-import pathlib
-import os
+import sys
+from pathlib import Path
+from typing import TYPE_CHECKING
 
-ROOT_PATH = pathlib.Path(__file__).resolve().parent.parent
+from bfasst import config
 
-BUILD_PATH = pathlib.Path().cwd() / "build"
-
-DESIGNS_PATH = ROOT_PATH / "designs"
-BFASST_PATH = ROOT_PATH / "bfasst"
-TESTS_PATH = ROOT_PATH / "tests"
-RESOURCES_PATH = ROOT_PATH / "resources"
-SCRIPTS_PATH = ROOT_PATH / "scripts"
-ERROR_FLOW_PATH = ROOT_PATH / "error_flows"
-THIRD_PARTY_PATH = ROOT_PATH / "third_party"
-
-TOOLS_PATH = BFASST_PATH / "tools"
-FLOWS_PATH = BFASST_PATH / "flows"
-
-COMMON_TOOLS_PATH = TOOLS_PATH / "common"
-
-DATASET_METRICS_TOOLS_PATH = TOOLS_PATH / "dataset_metrics"
-
-REV_BIT_TOOLS_PATH = TOOLS_PATH / "rev_bit"
-NINJA_TRANSFORM_TOOLS_PATH = TOOLS_PATH / "transform"
-
-COMPARE_TOOLS_PATH = TOOLS_PATH / "compare"
-CONFORMAL_TOOLS_PATH = COMPARE_TOOLS_PATH / "conformal"
-STRUCTURAL_TOOLS_PATH = COMPARE_TOOLS_PATH / "structural"
-YOSYS_TOOLS_PATH = COMPARE_TOOLS_PATH / "yosys"
-PHYSCMP_TOOLS_PATH = COMPARE_TOOLS_PATH / "physcmp"
-
-NINJA_BUILD_PATH = pathlib.Path().cwd() / "build.ninja"
-
-IC2_RESOURCES = RESOURCES_PATH / "iCEcube2"
-LSE_PRJ_TEMPLATE = IC2_RESOURCES / "template_lse_prj.mustache"
-IC2_IMPL_TCL_TEMPLATE = IC2_RESOURCES / "template.tcl"
-SYNPLIFY_PRJ_TEMPLATE = IC2_RESOURCES / "template_sp_prj.mustache"
-
-YOSYS_RESOURCES = RESOURCES_PATH / "yosys"
-YOSYS_SYNTH_SCRIPT_TEMPLATE = YOSYS_RESOURCES / "yosys_synth_template.mustache"
-RAPIDWRIGHT_PATH = THIRD_PARTY_PATH / "RapidWright"
-INTERCHANGE_SCHEMA_DIR = (
-    RAPIDWRIGHT_PATH / "interchange" / "fpga-interchange-schema" / "interchange"
-)
-JAVA_SCHEMA = RAPIDWRIGHT_PATH / "interchange" / "schema"
-YOSYS_PATH = THIRD_PARTY_PATH / "yosys"
-YOSYS_EXE_PATH = YOSYS_PATH / "yosys"
-WAFOVE_PATH = THIRD_PARTY_PATH / "WaFoVe"
-
-ICESTORM_PATH = THIRD_PARTY_PATH / "icestorm" / "bin"
-ICEUNPACK_PATH = ICESTORM_PATH / "iceunpack"
-ICEBOX_VLOG_PATH = ICESTORM_PATH / "icebox_vlog"
-
-BFASST_UTILS_PATH = BFASST_PATH / "utils"
-
-FLOW_DESCRIPTIONS_PATH = FLOWS_PATH / "flow_descriptions.yaml"
-
-RAND_SOC_PATH = THIRD_PARTY_PATH / "rand_soc"
+# This is needed for pylint/pylance type checking to work. Ignored during real runtimes.
+if TYPE_CHECKING:
+    from .paths_stubs import *  # pylint: disable=wildcard-import,unused-wildcard-import
 
 
-def get_fasm2bels_path():
-    if "BFASST_PATH_FASM2BELS" in os.environ:
-        return pathlib.Path(os.environ["BFASST_PATH_FASM2BELS"])
-    return THIRD_PARTY_PATH / "fasm2bels"
-
-
-FASM2BELS_PATH = get_fasm2bels_path()
-FASM2BELS_PYTHON_PATH = (
-    FASM2BELS_PATH / "env" / "conda" / "envs" / "f4pga_xc_fasm2bels" / "bin" / "python3"
-)
-XRAY_PATH = FASM2BELS_PATH / "third_party" / "prjxray"
-XRAY_DB_PATH = FASM2BELS_PATH / "third_party" / "prjxray-db"
+def __getattr__(name):
+    """Return environment variables as Path(value) or None."""
+    if name == "__all__":
+        raise ImportError("Wildcard imports are not supported from bfasst.paths")
+    if name[0:2] == "__" and name[-2:] == "__":
+        # Do not pretend to have values for dunder members. (e.g., __test__ for doctest)
+        raise AttributeError
+    value = config.__getattr__(name)
+    if value is not None:
+        value = Path(value)
+    setattr(sys.modules[__name__], name, value)
+    return value

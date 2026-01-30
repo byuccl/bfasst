@@ -5,16 +5,12 @@ import logging
 import pathlib
 
 import boolean
-
 import spydrnet as sdn
-from bfasst.utils.sdn_helpers import SdnInstanceWrapper, SdnNetlistWrapper
 
-from bfasst import jpype_jvm
-
-jpype_jvm.start()
-
-# pylint: disable=wrong-import-position, wrong-import-order
+import rapidwright as _
 from com.xilinx.rapidwright.design.tools import LUTTools
+
+from bfasst.utils.sdn_helpers import SdnInstanceWrapper, SdnNetlistWrapper
 
 
 class NetlistPhysToLogical:
@@ -83,8 +79,8 @@ class NetlistPhysToLogical:
         assert o6_net_connected or o5_net_connected
 
         # Get equation for LUT outputs
-        eqn = LUTTools.getLUTEquation(instance_wrapper.properties["INIT"])[2:].replace("!", "~")
-        eqn = boolean.BooleanAlgebra().parse(eqn)
+        eqn = str(LUTTools.getLUTEquation(instance_wrapper.properties["INIT"]))[2:]
+        eqn = boolean.BooleanAlgebra().parse(eqn.replace("!", "~"))
 
         if o5_net_connected:
             # 05 output uses only half the equation,

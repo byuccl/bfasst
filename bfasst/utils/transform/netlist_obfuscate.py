@@ -5,35 +5,33 @@ Then store the original properties in a JSON file for restoration later
 """
 
 import argparse
+import json
 import logging
 import pathlib
 import time
-import json
 import uuid
 from collections import defaultdict
-from bfasst.config import PART
-from bfasst.utils.general import json_write_if_changed
-from bfasst.utils.transform.netlist_obfuscate_helpers import TAG_PROP, get_masking_init
 
-from bfasst import jpype_jvm
-
-jpype_jvm.start()
-
-# pylint: disable=wrong-import-position, wrong-import-order
-from java.lang import System
-from java.io import PrintStream, FileOutputStream
+import rapidwright as _
 from com.xilinx.rapidwright.design import Design
 from com.xilinx.rapidwright.design.tools import LUTTools
 from com.xilinx.rapidwright.device import Device
 from com.xilinx.rapidwright.edif import (
-    EDIFTools,
-    EDIFNetlist,
     EDIFHierCellInst,
+    EDIFNetlist,
+    EDIFPropertyValue,
+    EDIFTools,
     EDIFValueType,
 )
+from java.io import FileOutputStream, PrintStream
+from java.lang import System
+
+from bfasst.config import DEFAULT_PART
+from bfasst.utils import json_write_if_changed
+from bfasst.utils.transform.netlist_obfuscate_helpers import TAG_PROP, get_masking_init
 
 
-def _json_entry(prop_name: str, prop_val: "EDIFPropertyValue") -> dict[str, str]:
+def _json_entry(prop_name: str, prop_val: EDIFPropertyValue) -> dict[str, str]:
     """
     Returns a json entry with the correct type based on a property's name and value
     """
@@ -374,7 +372,7 @@ def main():
     design2 = Design.readCheckpoint(args.orig_dcp, args.orig_edf)
 
     t1 = time.perf_counter()
-    device = Device.getDevice(PART)
+    device = Device.getDevice(DEFAULT_PART)
     # design1.flattenDesign()
     # design2.flattenDesign()
     netlist1 = design1.getNetlist()

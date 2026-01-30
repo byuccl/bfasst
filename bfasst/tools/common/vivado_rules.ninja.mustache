@@ -1,5 +1,5 @@
 rule vivado
-    command = cd $cwd && {{ utils_path }}/retry.sh {{ vivado_path }} -mode batch -journal $journal -log $log -source $in >&- 
+    command = cd $cwd && $$BFASST_UTILS/retry.sh $$VIVADO_BIN -mode batch -journal $journal -log $log -source $in >&- 
     description = vivado $in
 
 {{#in_context}}
