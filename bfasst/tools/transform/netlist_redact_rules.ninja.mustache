@@ -1,0 +1,3 @@
+rule netlist_redact
+  command = python $script --build_path $build_path --dcp $dcp --edf $edf --orig_dcp $orig_dcp --orig_edf $orig_edf --out_dcp $out_dcp --out_edf $out_edf --unredacted_out_dcp $unredacted_dcp --unredacted_out_edf $unredacted_edf --original_cell_props $orig_props --log $log $logging_level
+  description = [NetlistRedact] Redacting netlist

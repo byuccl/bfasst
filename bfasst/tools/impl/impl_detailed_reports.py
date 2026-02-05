@@ -11,8 +11,9 @@ from bfasst.utils.general import json_write_if_changed
 class ImplDetailedReports(ImplTool):
     """Tool to generate every post‐implementation Vivado report."""
 
-    def __init__(self, flow, design, impl_dcp, tag=""):
+    def __init__(self, flow, design, impl_dcp, *, tag="", disable_drc=False):
         super().__init__(flow, design)
+        self.disable_drc = disable_drc
 
         base_name = "impl_detailed_reports"
         if tag:
@@ -36,6 +37,7 @@ class ImplDetailedReports(ImplTool):
             "impl_dcp": self.inputs_str["dcp"],
             "outputs": self.outputs_str,
             "tcl_sources": [self.outputs_str["reports_tcl"]],
+            "disable_drc": self.disable_drc,
         }
 
         self.rule_snippet_path = COMMON_TOOLS_PATH / "vivado_rules.ninja.mustache"
@@ -58,6 +60,7 @@ class ImplDetailedReports(ImplTool):
         self.outputs["power_summary"] = bp / "power_summary.txt"
         self.outputs["clocks"] = bp / "clocks.txt"
         self.outputs["journal"] = bp / "vivado.jou"
+        self.outputs["congestion"] = bp / "congestion.txt"
         self.outputs["drc"] = bp / "drc_report.txt"
         self.outputs["verilog"] = bp / (str(self.impl_dcp) + ".v")
         self.outputs["bitstream"] = bp / "bitstream.bit"
