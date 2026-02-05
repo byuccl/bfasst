@@ -167,7 +167,17 @@ def compute_aggregate_stats(summaries: List[DesignSummary]) -> Dict[str, Any]:
     stats.update(_compute_metric_stats(summaries, "cranked_timing", cranked_timing_metrics))
 
     # Resource metrics
-    resource_metrics = ["lut", "logic_luts", "lutrams", "srls", "ff", "bram36", "bram18", "dsp", "total_cells"]
+    resource_metrics = [
+        "lut",
+        "logic_luts",
+        "lutrams",
+        "srls",
+        "ff",
+        "bram36",
+        "bram18",
+        "dsp",
+        "total_cells",
+    ]
     stats.update(_compute_metric_stats(summaries, "resources", resource_metrics))
 
     # Congestion metrics
@@ -206,8 +216,12 @@ def create_summary_report(summaries: List[DesignSummary], aggregate: Dict[str, A
         # Timing (reference - 10ns clock)
         if "timing" in m:
             design_entry["timing"] = {
-                "clock_period_ns_baseline": extract_nested_value(m, "timing", "clock_period_ns", "baseline"),
-                "clock_period_ns_test": extract_nested_value(m, "timing", "clock_period_ns", "test"),
+                "clock_period_ns_baseline": extract_nested_value(
+                    m, "timing", "clock_period_ns", "baseline"
+                ),
+                "clock_period_ns_test": extract_nested_value(
+                    m, "timing", "clock_period_ns", "test"
+                ),
                 "wns_baseline": extract_nested_value(m, "timing", "wns", "baseline"),
                 "wns_test": extract_nested_value(m, "timing", "wns", "test"),
                 "wns_delta": extract_nested_value(m, "timing", "wns", "delta"),
@@ -222,12 +236,18 @@ def create_summary_report(summaries: List[DesignSummary], aggregate: Dict[str, A
         # Cranked timing (actual tight constraints)
         if "cranked_timing" in m:
             design_entry["cranked_timing"] = {
-                "clock_period_ns_baseline": extract_nested_value(m, "cranked_timing", "clock_period_ns", "baseline"),
-                "clock_period_ns_test": extract_nested_value(m, "cranked_timing", "clock_period_ns", "test"),
+                "clock_period_ns_baseline": extract_nested_value(
+                    m, "cranked_timing", "clock_period_ns", "baseline"
+                ),
+                "clock_period_ns_test": extract_nested_value(
+                    m, "cranked_timing", "clock_period_ns", "test"
+                ),
                 "wns_baseline": extract_nested_value(m, "cranked_timing", "wns", "baseline"),
                 "wns_test": extract_nested_value(m, "cranked_timing", "wns", "test"),
                 "wns_delta": extract_nested_value(m, "cranked_timing", "wns", "delta"),
-                "fmax_baseline_mhz": extract_nested_value(m, "cranked_timing", "fmax_mhz", "baseline"),
+                "fmax_baseline_mhz": extract_nested_value(
+                    m, "cranked_timing", "fmax_mhz", "baseline"
+                ),
                 "fmax_test_mhz": extract_nested_value(m, "cranked_timing", "fmax_mhz", "test"),
                 "fmax_delta_mhz": extract_nested_value(m, "cranked_timing", "fmax_mhz", "delta"),
             }
@@ -238,7 +258,9 @@ def create_summary_report(summaries: List[DesignSummary], aggregate: Dict[str, A
                 "lut_baseline": extract_nested_value(m, "resources", "lut", "baseline"),
                 "lut_test": extract_nested_value(m, "resources", "lut", "test"),
                 "lut_delta": extract_nested_value(m, "resources", "lut", "delta"),
-                "logic_luts_baseline": extract_nested_value(m, "resources", "logic_luts", "baseline"),
+                "logic_luts_baseline": extract_nested_value(
+                    m, "resources", "logic_luts", "baseline"
+                ),
                 "logic_luts_test": extract_nested_value(m, "resources", "logic_luts", "test"),
                 "logic_luts_delta": extract_nested_value(m, "resources", "logic_luts", "delta"),
                 "lutrams_baseline": extract_nested_value(m, "resources", "lutrams", "baseline"),
@@ -259,7 +281,9 @@ def create_summary_report(summaries: List[DesignSummary], aggregate: Dict[str, A
                 "dsp_baseline": extract_nested_value(m, "resources", "dsp", "baseline"),
                 "dsp_test": extract_nested_value(m, "resources", "dsp", "test"),
                 "dsp_delta": extract_nested_value(m, "resources", "dsp", "delta"),
-                "total_cells_baseline": extract_nested_value(m, "resources", "total_cells", "baseline"),
+                "total_cells_baseline": extract_nested_value(
+                    m, "resources", "total_cells", "baseline"
+                ),
                 "total_cells_test": extract_nested_value(m, "resources", "total_cells", "test"),
                 "total_cells_delta": extract_nested_value(m, "resources", "total_cells", "delta"),
             }

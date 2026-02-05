@@ -19,9 +19,8 @@ from bfasst.utils.transform.netlist_redact_helpers import TAG_PROP, get_masking_
 
 jpype_jvm.start()
 
-from java.io import FileOutputStream, PrintStream
-
 # pylint: disable=wrong-import-position, wrong-import-order
+from java.io import FileOutputStream, PrintStream
 from java.lang import System
 
 from com.xilinx.rapidwright.design import Design

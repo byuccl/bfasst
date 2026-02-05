@@ -4,6 +4,7 @@ import argparse
 import json
 import re
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
 from typing import Optional, List
 
@@ -287,7 +288,8 @@ class MetricsComparison:
                 "fmax_mhz": {
                     "baseline": self.baseline.cranked_timing.fmax_mhz,
                     "test": self.test.cranked_timing.fmax_mhz,
-                    "delta": self.test.cranked_timing.fmax_mhz - self.baseline.cranked_timing.fmax_mhz,
+                    "delta": self.test.cranked_timing.fmax_mhz
+                    - self.baseline.cranked_timing.fmax_mhz,
                 },
             }
 
@@ -347,14 +349,8 @@ def parse_timing_summary(path: Path) -> TimingMetrics:
     )
 
 
-def parse_utilization(path: Path) -> ResourceMetrics:
-    """Parse resource utilization from Vivado utilization.txt.
-
-    Handles both hierarchical reports (with (top) row) and detailed reports (with Slice Logic table).
-    """
-    content = path.read_text()
-
-    # Try to match the (top) row with all resource columns (hierarchical report)
+def _parse_hierarchical_utilization(content: str) -> Optional[dict]:
+    """Parse resource utilization from hierarchical (top) row format."""
     pattern = (
         r"\|\s*\S+\s*\|\s*\(top\)\s*\|"  # Instance | Module
         r"\s*(\d+)\s*\|"  # Total LUTs
@@ -367,80 +363,102 @@ def parse_utilization(path: Path) -> ResourceMetrics:
         r"\s*(\d+)\s*\|"  # DSP Blocks
     )
     match = re.search(pattern, content)
-
-    lut_used = 0
-    logic_luts = 0
-    lutrams = 0
-    srls = 0
-    ff_used = 0
-    bram36_used = 0
-    bram18_used = 0
-    dsp_used = 0
-
     if match:
-        lut_used = int(match.group(1))
-        logic_luts = int(match.group(2))
-        lutrams = int(match.group(3))
-        srls = int(match.group(4))
-        ff_used = int(match.group(5))
-        bram36_used = int(match.group(6))
-        bram18_used = int(match.group(7))
-        dsp_used = int(match.group(8))
-    else:
-        # Try to parse from "1. Slice Logic" table (non-hierarchical report)
-        slice_luts_match = re.search(r"\|\s*Slice LUTs\s*\|\s*(\d+)\s*\|", content)
-        if slice_luts_match:
-            lut_used = int(slice_luts_match.group(1))
+        return {
+            "lut_used": int(match.group(1)),
+            "logic_luts": int(match.group(2)),
+            "lutrams": int(match.group(3)),
+            "srls": int(match.group(4)),
+            "ff_used": int(match.group(5)),
+            "bram36_used": int(match.group(6)),
+            "bram18_used": int(match.group(7)),
+            "dsp_used": int(match.group(8)),
+        }
+    return None
 
-        lut_as_logic_match = re.search(r"\|\s*LUT as Logic\s*\|\s*(\d+)\s*\|", content)
-        if lut_as_logic_match:
-            logic_luts = int(lut_as_logic_match.group(1))
 
-        lut_as_srl_match = re.search(r"\|\s*LUT as Shift Register\s*\|\s*(\d+)\s*\|", content)
-        if lut_as_srl_match:
-            srls = int(lut_as_srl_match.group(1))
+def _parse_detailed_utilization(content: str) -> dict:
+    """Parse resource utilization from detailed Slice Logic table format."""
+    result = {
+        "lut_used": 0,
+        "logic_luts": 0,
+        "lutrams": 0,
+        "srls": 0,
+        "ff_used": 0,
+        "bram36_used": 0,
+        "bram18_used": 0,
+        "dsp_used": 0,
+    }
 
-        slice_regs_match = re.search(r"\|\s*Slice Registers\s*\|\s*(\d+)\s*\|", content)
-        if slice_regs_match:
-            ff_used = int(slice_regs_match.group(1))
+    slice_luts_match = re.search(r"\|\s*Slice LUTs\s*\|\s*(\d+)\s*\|", content)
+    if slice_luts_match:
+        result["lut_used"] = int(slice_luts_match.group(1))
 
-        # Parse BRAMs from "3. Memory" section
-        ramb36_match = re.search(r"\|\s*RAMB36E1 only\s*\|\s*(\d+)\s*\|", content)
-        if ramb36_match:
-            bram36_used = int(ramb36_match.group(1))
+    lut_as_logic_match = re.search(r"\|\s*LUT as Logic\s*\|\s*(\d+)\s*\|", content)
+    if lut_as_logic_match:
+        result["logic_luts"] = int(lut_as_logic_match.group(1))
 
-        # Parse DSPs from "4. DSP" section
-        dsp_match = re.search(r"\|\s*DSP48E1 only\s*\|\s*(\d+)\s*\|", content)
-        if dsp_match:
-            dsp_used = int(dsp_match.group(1))
+    lut_as_srl_match = re.search(r"\|\s*LUT as Shift Register\s*\|\s*(\d+)\s*\|", content)
+    if lut_as_srl_match:
+        result["srls"] = int(lut_as_srl_match.group(1))
 
-    # Parse Section 8: Primitives to get total cell count
-    total_cells = 0
-    # Match the actual primitives table (not just the table of contents)
-    # Look for "8. Primitives" followed by "---" and then the table
+    slice_regs_match = re.search(r"\|\s*Slice Registers\s*\|\s*(\d+)\s*\|", content)
+    if slice_regs_match:
+        result["ff_used"] = int(slice_regs_match.group(1))
+
+    ramb36_match = re.search(r"\|\s*RAMB36E1 only\s*\|\s*(\d+)\s*\|", content)
+    if ramb36_match:
+        result["bram36_used"] = int(ramb36_match.group(1))
+
+    dsp_match = re.search(r"\|\s*DSP48E1 only\s*\|\s*(\d+)\s*\|", content)
+    if dsp_match:
+        result["dsp_used"] = int(dsp_match.group(1))
+
+    return result
+
+
+def _parse_primitives_count(content: str) -> int:
+    """Parse total primitive count from Section 8 of utilization report."""
+    total = 0
     primitives_section = re.search(
         r"8\. Primitives\s*\n-+\s*\n\+.+?\+\s*\n\|\s*Ref Name.+?\n\+.+?\+\s*\n(.+?)\n\+",
         content,
-        re.DOTALL
+        re.DOTALL,
     )
     if primitives_section:
-        # Extract the table rows with primitive counts
         table_text = primitives_section.group(1)
-        # Match lines like: | FDRE     | 153062 |        Flop & Latch |
         for line in table_text.split("\n"):
             prim_match = re.search(r"\|\s*\S+\s*\|\s*(\d+)\s*\|", line)
             if prim_match:
-                total_cells += int(prim_match.group(1))
+                total += int(prim_match.group(1))
+    return total
+
+
+def parse_utilization(path: Path) -> ResourceMetrics:
+    """Parse resource utilization from Vivado utilization.txt.
+
+    Handles both hierarchical reports (with (top) row) and detailed reports
+    (with Slice Logic table).
+    """
+    content = path.read_text()
+
+    # Try hierarchical format first
+    resources = _parse_hierarchical_utilization(content)
+    if not resources:
+        # Fall back to detailed format
+        resources = _parse_detailed_utilization(content)
+
+    total_cells = _parse_primitives_count(content)
 
     return ResourceMetrics(
-        lut_used=lut_used,
-        logic_luts=logic_luts,
-        lutrams=lutrams,
-        srls=srls,
-        ff_used=ff_used,
-        bram36_used=bram36_used,
-        bram18_used=bram18_used,
-        dsp_used=dsp_used,
+        lut_used=resources["lut_used"],
+        logic_luts=resources["logic_luts"],
+        lutrams=resources["lutrams"],
+        srls=resources["srls"],
+        ff_used=resources["ff_used"],
+        bram36_used=resources["bram36_used"],
+        bram18_used=resources["bram18_used"],
+        dsp_used=resources["dsp_used"],
         total_cells=total_cells,
     )
 
@@ -564,40 +582,29 @@ def parse_synth_log(path: Path) -> SynthTiming:
     )
 
 
-def parse_detailed_impl_log(path: Path) -> DetailedImplTiming:
-    """Parse detailed implementation timing from Vivado implementation log.
-
-    Extracts timing for place_design, route_design, and each phys_opt_design call.
-    The clock crank loop may run multiple iterations, each with post-place and
-    post-route phys_opt calls.
-    """
-    content = path.read_text()
-
-    # Find all timing events in order with their positions
-    # This handles multiple clock crank iterations properly
+def _extract_timing_events(content: str) -> List[tuple]:
+    """Extract all timing events from Vivado log with their positions."""
     events = []
-
-    # Pattern for any Vivado command timing
     timing_pattern = re.compile(
         r"(place_design|route_design|phys_opt_design): Time \(s\):.*?elapsed = ([\d:]+)"
     )
-
     for match in timing_pattern.finditer(content):
         cmd = match.group(1)
         elapsed = _parse_time_to_seconds(match.group(2))
         events.append((match.start(), cmd, elapsed))
+    return events
 
-    # Process events to calculate totals and identify phys_opt stages
+
+def _process_timing_events(events: List[tuple]) -> tuple:
+    """Process timing events to calculate totals and categorize phys_opt iterations."""
     total_place = 0.0
     total_route = 0.0
     phys_opt_iterations: List[PhysOptIteration] = []
-
-    # Track state for determining phys_opt stage
-    last_major_cmd = None  # "place" or "route"
+    last_major_cmd = None
     post_place_count = 0
     post_route_count = 0
 
-    for pos, cmd, elapsed in events:
+    for _, cmd, elapsed in events:
         if cmd == "place_design":
             total_place += elapsed
             last_major_cmd = "place"
@@ -610,7 +617,6 @@ def parse_detailed_impl_log(path: Path) -> DetailedImplTiming:
                 iteration = post_route_count
                 post_route_count += 1
             else:
-                # Default to post_place if we haven't seen route yet
                 stage = "post_place"
                 iteration = post_place_count
                 post_place_count += 1
@@ -618,6 +624,20 @@ def parse_detailed_impl_log(path: Path) -> DetailedImplTiming:
             phys_opt_iterations.append(
                 PhysOptIteration(stage=stage, iteration=iteration, elapsed_sec=elapsed)
             )
+
+    return total_place, total_route, phys_opt_iterations
+
+
+def parse_detailed_impl_log(path: Path) -> DetailedImplTiming:
+    """Parse detailed implementation timing from Vivado implementation log.
+
+    Extracts timing for place_design, route_design, and each phys_opt_design call.
+    The clock crank loop may run multiple iterations, each with post-place and
+    post-route phys_opt calls.
+    """
+    content = path.read_text()
+    events = _extract_timing_events(content)
+    total_place, total_route, phys_opt_iterations = _process_timing_events(events)
 
     total_phys_opt = sum(p.elapsed_sec for p in phys_opt_iterations)
     total_time = total_place + total_route + total_phys_opt
@@ -652,8 +672,6 @@ def parse_transform_log(path: Path) -> TransformTiming:
         # Format: "2026-01-16 15:09:30.924 INFO: ..."
         timestamps = re.findall(r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)", content)
         if len(timestamps) >= 2:
-            from datetime import datetime
-
             fmt = "%Y-%m-%d %H:%M:%S.%f"
             try:
                 start = datetime.strptime(timestamps[0], fmt)
@@ -679,7 +697,8 @@ def parse_impl_metrics(
         utilization_path: Path to utilization.txt
         log_path: Path to vivado.log
         congestion_path: Optional path to congestion.txt
-        cranked_timing_path: Optional path to timing_summary.txt from impl dir (actual cranked clock)
+        cranked_timing_path: Optional path to timing_summary.txt from impl dir
+            (actual cranked clock)
     """
     congestion = None
     if congestion_path and congestion_path.exists():
@@ -719,6 +738,60 @@ def compare_bitstreams(
 
 
 # --- Main ---
+
+
+def _build_detailed_timing_dict(
+    synth_log: Optional[Path],
+    redact_log: Optional[Path],
+    unredact_log: Optional[Path],
+    baseline_log: Path,
+    test_log: Path,
+) -> dict:
+    """Build detailed timing dictionary from optional log files."""
+    detailed_timing = {}
+
+    if synth_log:
+        synth_timing = parse_synth_log(synth_log)
+        detailed_timing["synthesis"] = {
+            "synth_design_sec": synth_timing.synth_design_sec,
+            "opt_design_sec": synth_timing.opt_design_sec,
+            "total_sec": synth_timing.total_sec,
+        }
+
+    if redact_log:
+        redact_timing = parse_transform_log(redact_log)
+        detailed_timing["redaction"] = {"total_sec": redact_timing.total_sec}
+
+    if unredact_log:
+        unredact_timing = parse_transform_log(unredact_log)
+        detailed_timing["unredaction"] = {"total_sec": unredact_timing.total_sec}
+
+    baseline_impl_timing = parse_detailed_impl_log(baseline_log)
+    test_impl_timing = parse_detailed_impl_log(test_log)
+
+    detailed_timing["baseline_impl"] = {
+        "place_sec": baseline_impl_timing.place_sec,
+        "route_sec": baseline_impl_timing.route_sec,
+        "phys_opt_iterations": [
+            {"stage": p.stage, "iteration": p.iteration, "elapsed_sec": p.elapsed_sec}
+            for p in baseline_impl_timing.phys_opt_iterations
+        ],
+        "total_phys_opt_sec": baseline_impl_timing.total_phys_opt_sec,
+        "total_sec": baseline_impl_timing.total_sec,
+    }
+
+    detailed_timing["test_impl"] = {
+        "place_sec": test_impl_timing.place_sec,
+        "route_sec": test_impl_timing.route_sec,
+        "phys_opt_iterations": [
+            {"stage": p.stage, "iteration": p.iteration, "elapsed_sec": p.elapsed_sec}
+            for p in test_impl_timing.phys_opt_iterations
+        ],
+        "total_phys_opt_sec": test_impl_timing.total_phys_opt_sec,
+        "total_sec": test_impl_timing.total_sec,
+    }
+
+    return detailed_timing
 
 
 def main():
@@ -763,85 +836,46 @@ def main():
 
     args = parser.parse_args()
 
-    baseline_congestion = Path(args.baseline_congestion) if args.baseline_congestion else None
-    test_congestion = Path(args.test_congestion) if args.test_congestion else None
-    baseline_cranked_timing = (
-        Path(args.baseline_cranked_timing) if args.baseline_cranked_timing else None
-    )
-    test_cranked_timing = Path(args.test_cranked_timing) if args.test_cranked_timing else None
+    # Convert optional paths
+    def optional_path(p):
+        return Path(p) if p else None
 
+    # Parse implementation metrics
     baseline_metrics = parse_impl_metrics(
         Path(args.baseline_timing),
         Path(args.baseline_utilization),
         Path(args.baseline_log),
-        baseline_congestion,
-        baseline_cranked_timing,
+        optional_path(args.baseline_congestion),
+        optional_path(args.baseline_cranked_timing),
     )
     test_metrics = parse_impl_metrics(
         Path(args.test_timing),
         Path(args.test_utilization),
         Path(args.test_log),
-        test_congestion,
-        test_cranked_timing,
+        optional_path(args.test_congestion),
+        optional_path(args.test_cranked_timing),
     )
 
+    # Compare bitstreams
     bitstream_cmp = compare_bitstreams(
         Path(args.golden_bitstream),
         Path(args.test_bitstream),
     )
 
+    # Build comparison
     comparison = MetricsComparison(
         baseline=baseline_metrics, test=test_metrics, bitstream=bitstream_cmp
     )
-
-    # Build output dictionary
     output_dict = comparison.to_dict()
 
-    # Add detailed timing if additional logs are provided
-    detailed_timing = {}
-
-    if args.synth_log:
-        synth_timing = parse_synth_log(Path(args.synth_log))
-        detailed_timing["synthesis"] = {
-            "synth_design_sec": synth_timing.synth_design_sec,
-            "opt_design_sec": synth_timing.opt_design_sec,
-            "total_sec": synth_timing.total_sec,
-        }
-
-    if args.redact_log:
-        redact_timing = parse_transform_log(Path(args.redact_log))
-        detailed_timing["redaction"] = {"total_sec": redact_timing.total_sec}
-
-    if args.unredact_log:
-        unredact_timing = parse_transform_log(Path(args.unredact_log))
-        detailed_timing["unredaction"] = {"total_sec": unredact_timing.total_sec}
-
-    # Parse detailed impl timing from the baseline and test logs
-    baseline_impl_timing = parse_detailed_impl_log(Path(args.baseline_log))
-    test_impl_timing = parse_detailed_impl_log(Path(args.test_log))
-
-    detailed_timing["baseline_impl"] = {
-        "place_sec": baseline_impl_timing.place_sec,
-        "route_sec": baseline_impl_timing.route_sec,
-        "phys_opt_iterations": [
-            {"stage": p.stage, "iteration": p.iteration, "elapsed_sec": p.elapsed_sec}
-            for p in baseline_impl_timing.phys_opt_iterations
-        ],
-        "total_phys_opt_sec": baseline_impl_timing.total_phys_opt_sec,
-        "total_sec": baseline_impl_timing.total_sec,
-    }
-
-    detailed_timing["test_impl"] = {
-        "place_sec": test_impl_timing.place_sec,
-        "route_sec": test_impl_timing.route_sec,
-        "phys_opt_iterations": [
-            {"stage": p.stage, "iteration": p.iteration, "elapsed_sec": p.elapsed_sec}
-            for p in test_impl_timing.phys_opt_iterations
-        ],
-        "total_phys_opt_sec": test_impl_timing.total_phys_opt_sec,
-        "total_sec": test_impl_timing.total_sec,
-    }
-
+    # Add detailed timing
+    detailed_timing = _build_detailed_timing_dict(
+        optional_path(args.synth_log),
+        optional_path(args.redact_log),
+        optional_path(args.unredact_log),
+        Path(args.baseline_log),
+        Path(args.test_log),
+    )
     output_dict["detailed_timing"] = detailed_timing
 
     output_path = Path(args.output)
@@ -851,9 +885,9 @@ def main():
         json.dump(output_dict, f, indent=2)
 
     if not bitstream_cmp.identical:
-        #raise RuntimeError(
+        # raise RuntimeError(
         #    f"Bitstreams do not match: {args.golden_bitstream} vs {args.test_bitstream}"
-        #)
+        # )
         print(f"Bitstreams do not match: {args.golden_bitstream} vs {args.test_bitstream}")
 
 

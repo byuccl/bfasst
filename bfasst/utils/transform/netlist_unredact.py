@@ -22,10 +22,9 @@ from bfasst.utils.transform.netlist_redact_helpers import TAG_PROP  # tag proper
 
 jpype_jvm.start()
 
+# pylint: disable=wrong-import-position, wrong-import-order
 from java.io import FileOutputStream, PrintStream
 from java.lang import System
-
-# pylint: disable=wrong-import-position, wrong-import-order
 from com.xilinx.rapidwright.design import Design
 from com.xilinx.rapidwright.edif import EDIFTools, EDIFValueType
 
