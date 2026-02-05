@@ -5,6 +5,7 @@ Analyze slice utilization from Vivado utilization reports.
 Creates a detailed table showing slice resource usage for all designs.
 """
 
+import argparse
 import re
 import sys
 from pathlib import Path
@@ -15,7 +16,7 @@ def parse_slice_utilization(util_file: Path) -> Optional[Dict]:
     """Parse slice utilization from a Vivado utilization.txt file."""
     try:
         content = util_file.read_text()
-    except Exception as e:
+    except (OSError, IOError) as e:
         print(f"Error reading {util_file}: {e}", file=sys.stderr)
         return None
 
@@ -90,10 +91,94 @@ def parse_slice_utilization(util_file: Path) -> Optional[Dict]:
     return data
 
 
+def find_utilization_files(build_dir: Path):
+    """Find all utilization files in the build directory."""
+    util_files = []
+    for util_file in build_dir.rglob("vivado_reimpl/utilization.txt"):
+        design_dir = util_file.parent.parent
+        collection = design_dir.parent.name
+        design = design_dir.name
+        util_files.append((collection, design, util_file))
+    return sorted(util_files, key=lambda x: (x[0], x[1]))
+
+
+def parse_all_designs(util_files):
+    """Parse utilization data for all designs."""
+    results = []
+    for collection, design, util_file in util_files:
+        data = parse_slice_utilization(util_file)
+        if data:
+            data["collection"] = collection
+            data["design"] = design
+            results.append(data)
+    return results
+
+
+def write_fpga_section(f, fpga_type: str, fpga_designs):
+    """Write the utilization table for a specific FPGA type."""
+    f.write(f"\n{fpga_type} Designs ({fpga_designs[0]['device']}):\n")
+    f.write("-" * 150 + "\n")
+    f.write(
+        f"{'Design':<45} {'Slices':<10} {'SLICEL':<10} {'SLICEM':<10} "
+        f"{'LUTs':<10} {'Regs':<10} {'LUT/Logic':<10} {'LUT/Mem':<10} {'Util%':<8}\n"
+    )
+    f.write("-" * 150 + "\n")
+
+    for r in fpga_designs:
+        name = f"{r['collection']}/{r['design']}"
+        f.write(
+            f"{name:<45} "
+            f"{r['total_slices']:>9,} "
+            f"{r['slicel']:>9,} "
+            f"{r['slicem']:>9,} "
+            f"{r['slice_luts']:>9,} "
+            f"{r['slice_registers']:>9,} "
+            f"{r['lut_as_logic']:>9,} "
+            f"{r['lut_as_memory']:>9,} "
+            f"{r['slice_util_pct']:>7.2f}\n"
+        )
+
+    # Print summary stats
+    total_slices = sum(r["total_slices"] for r in fpga_designs)
+    total_slicel = sum(r["slicel"] for r in fpga_designs)
+    total_slicem = sum(r["slicem"] for r in fpga_designs)
+    avg_util = sum(r["slice_util_pct"] for r in fpga_designs) / len(fpga_designs)
+    max_util = max(r["slice_util_pct"] for r in fpga_designs)
+    max_design = max(fpga_designs, key=lambda x: x["slice_util_pct"])
+
+    f.write("-" * 150 + "\n")
+    f.write(
+        f"{'TOTALS:':<45} "
+        f"{total_slices:>9,} "
+        f"{total_slicel:>9,} "
+        f"{total_slicem:>9,} "
+        f"{'':>10} {'':>10} {'':>10} {'':>10} "
+        f"Avg:{avg_util:>5.2f}%\n"
+    )
+    f.write(
+        f"{'MAX UTILIZATION:':<45} "
+        f"{max_design['collection']}/{max_design['design']:<30} {max_util:>6.2f}%\n"
+    )
+
+
+def write_report_footer(f):
+    """Write the column descriptions footer."""
+    f.write("\n")
+    f.write("=" * 150 + "\n")
+    f.write("\nColumn Descriptions:\n")
+    f.write("  Slices:    Total slice primitives used\n")
+    f.write("  SLICEL:    Logic-only slices (cannot be used as memory)\n")
+    f.write("  SLICEM:    Multi-function slices (can be used as logic or memory)\n")
+    f.write("  LUTs:      Total LUTs in slices (Logic + Memory)\n")
+    f.write("  Regs:      Total registers (FFs) in slices\n")
+    f.write("  LUT/Logic: LUTs used for combinational logic\n")
+    f.write("  LUT/Mem:   LUTs used as distributed RAM or shift registers\n")
+    f.write("  Util%:     Slice utilization percentage\n")
+    f.write("\n")
+
+
 def main():
     """Main entry point."""
-    import argparse
-
     parser = argparse.ArgumentParser(description="Analyze slice utilization from Vivado reports")
     parser.add_argument(
         "--output",
@@ -104,109 +189,36 @@ def main():
     args = parser.parse_args()
 
     build_dir = Path("build")
-
     if not build_dir.exists():
         print(f"Error: {build_dir} does not exist")
         return 1
 
-    # Find all utilization files
-    util_files = []
-    for util_file in build_dir.rglob("vivado_reimpl/utilization.txt"):
-        design_dir = util_file.parent.parent
-        collection = design_dir.parent.name
-        design = design_dir.name
-        util_files.append((collection, design, util_file))
-
+    util_files = find_utilization_files(build_dir)
     if not util_files:
         print("No utilization files found")
         return 1
-
-    util_files.sort(key=lambda x: (x[0], x[1]))
 
     print(f"Found {len(util_files)} designs")
     print(f"Writing report to {args.output}")
     print()
 
-    # Parse all utilization data
-    results = []
-    for collection, design, util_file in util_files:
-        data = parse_slice_utilization(util_file)
-        if data:
-            data["collection"] = collection
-            data["design"] = design
-            results.append(data)
+    results = parse_all_designs(util_files)
 
-    # Open output file and write report
+    # Write report
     with open(args.output, "w") as f:
-        # Print summary table
         f.write("=" * 150 + "\n")
         f.write("SLICE UTILIZATION ANALYSIS\n")
         f.write("=" * 150 + "\n")
         f.write("\n")
 
-        # Group by FPGA type
         for fpga_type in ["Artix-7", "Kintex-7"]:
             fpga_designs = [r for r in results if r["fpga_type"] == fpga_type]
-            if not fpga_designs:
-                continue
+            if fpga_designs:
+                write_fpga_section(f, fpga_type, fpga_designs)
 
-            f.write(f"\n{fpga_type} Designs ({fpga_designs[0]['device']}):\n")
-            f.write("-" * 150 + "\n")
-            f.write(
-                f"{'Design':<45} {'Slices':<10} {'SLICEL':<10} {'SLICEM':<10} {'LUTs':<10} {'Regs':<10} {'LUT/Logic':<10} {'LUT/Mem':<10} {'Util%':<8}\n"
-            )
-            f.write("-" * 150 + "\n")
-
-            for r in fpga_designs:
-                name = f"{r['collection']}/{r['design']}"
-                f.write(
-                    f"{name:<45} "
-                    f"{r['total_slices']:>9,} "
-                    f"{r['slicel']:>9,} "
-                    f"{r['slicem']:>9,} "
-                    f"{r['slice_luts']:>9,} "
-                    f"{r['slice_registers']:>9,} "
-                    f"{r['lut_as_logic']:>9,} "
-                    f"{r['lut_as_memory']:>9,} "
-                    f"{r['slice_util_pct']:>7.2f}\n"
-                )
-
-            # Print summary stats for this FPGA type
-            total_slices = sum(r["total_slices"] for r in fpga_designs)
-            total_slicel = sum(r["slicel"] for r in fpga_designs)
-            total_slicem = sum(r["slicem"] for r in fpga_designs)
-            avg_util = sum(r["slice_util_pct"] for r in fpga_designs) / len(fpga_designs)
-            max_util = max(r["slice_util_pct"] for r in fpga_designs)
-            max_design = max(fpga_designs, key=lambda x: x["slice_util_pct"])
-
-            f.write("-" * 150 + "\n")
-            f.write(
-                f"{'TOTALS:':<45} "
-                f"{total_slices:>9,} "
-                f"{total_slicel:>9,} "
-                f"{total_slicem:>9,} "
-                f"{'':>10} {'':>10} {'':>10} {'':>10} "
-                f"Avg:{avg_util:>5.2f}%\n"
-            )
-            f.write(
-                f"{'MAX UTILIZATION:':<45} {max_design['collection']}/{max_design['design']:<30} {max_util:>6.2f}%\n"
-            )
-
-        f.write("\n")
-        f.write("=" * 150 + "\n")
-        f.write("\nColumn Descriptions:\n")
-        f.write("  Slices:    Total slice primitives used\n")
-        f.write("  SLICEL:    Logic-only slices (cannot be used as memory)\n")
-        f.write("  SLICEM:    Multi-function slices (can be used as logic or memory)\n")
-        f.write("  LUTs:      Total LUTs in slices (Logic + Memory)\n")
-        f.write("  Regs:      Total registers (FFs) in slices\n")
-        f.write("  LUT/Logic: LUTs used for combinational logic\n")
-        f.write("  LUT/Mem:   LUTs used as distributed RAM or shift registers\n")
-        f.write("  Util%:     Slice utilization percentage\n")
-        f.write("\n")
+        write_report_footer(f)
 
     print(f"Report written to {args.output}")
-
     return 0
 
 

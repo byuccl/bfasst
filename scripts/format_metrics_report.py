@@ -251,6 +251,26 @@ def format_aggregate_detailed_timing_stats(stats: Dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def extract_timing_data(design: Dict) -> Dict:
+    """Extract timing data from a design."""
+    cranked = design.get("cranked_timing", {}) or design.get("timing", {})
+
+    fmax_baseline = cranked.get("fmax_baseline_mhz", 0.0)
+    fmax_delta = cranked.get("fmax_delta_mhz", 0.0)
+    fmax_delta_pct = (fmax_delta / fmax_baseline * 100) if fmax_baseline else 0.0
+
+    return {
+        "clock_period_baseline": cranked.get("clock_period_ns_baseline", 0.0),
+        "clock_period_test": cranked.get("clock_period_ns_test", 0.0),
+        "wns_baseline": cranked.get("wns_baseline", 0.0),
+        "wns_test": cranked.get("wns_test", 0.0),
+        "wns_delta": cranked.get("wns_delta", 0.0),
+        "fmax_baseline": fmax_baseline,
+        "fmax_test": cranked.get("fmax_test_mhz", 0.0),
+        "fmax_delta_pct": fmax_delta_pct,
+    }
+
+
 def format_per_design_timing_resources(designs: List[Dict]) -> str:
     """Format per-design timing and resource results table.
 
@@ -261,8 +281,10 @@ def format_per_design_timing_resources(designs: List[Dict]) -> str:
     lines.append("PER-DESIGN RESULTS - TIMING & RESOURCES")
     lines.append("=" * 200)
     lines.append(
-        f"{'Collection':<15} {'Design':<28} {'Clk.B(ns)':>10} {'Clk.T(ns)':>10} {'B.WNS':>8} {'T.WNS':>8} {'WNS Δ':>8} "
-        f"{'B.Fmax':>9} {'T.Fmax':>9} {'Fmax Δ%':>9} {'LUT Δ':>8} {'FF Δ':>7} {'Cong':>5}  {'Bitstream':<10}"
+        f"{'Collection':<15} {'Design':<28} {'Clk.B(ns)':>10} {'Clk.T(ns)':>10} "
+        f"{'B.WNS':>8} {'T.WNS':>8} {'WNS Δ':>8} "
+        f"{'B.Fmax':>9} {'T.Fmax':>9} {'Fmax Δ%':>9} {'LUT Δ':>8} {'FF Δ':>7} "
+        f"{'Cong':>5}  {'Bitstream':<10}"
     )
     lines.append("-" * 200)
 
@@ -270,56 +292,59 @@ def format_per_design_timing_resources(designs: List[Dict]) -> str:
         collection = design.get("collection", "")
         name = design.get("design", "")
 
-        # Use cranked timing (actual implementation results)
-        cranked = design.get("cranked_timing", {})
-
-        # Fall back to reference timing if cranked not available
-        if not cranked:
-            cranked = design.get("timing", {})
-
-        # Clock periods (actual from implementation)
-        clock_period_baseline = cranked.get("clock_period_ns_baseline", 0.0)
-        clock_period_test = cranked.get("clock_period_ns_test", 0.0)
-
-        # WNS values (from actual implementation)
-        wns_baseline = cranked.get("wns_baseline", 0.0)
-        wns_test = cranked.get("wns_test", 0.0)
-        wns_delta = cranked.get("wns_delta", 0.0)
-
-        # Fmax values (from actual implementation)
-        fmax_baseline = cranked.get("fmax_baseline_mhz", 0.0)
-        fmax_test = cranked.get("fmax_test_mhz", 0.0)
-        fmax_delta = cranked.get("fmax_delta_mhz", 0.0)
-        fmax_delta_pct = (fmax_delta / fmax_baseline * 100) if fmax_baseline else 0.0
-
+        timing = extract_timing_data(design)
         resources = design.get("resources", {})
-        lut_delta = resources.get("lut_delta", 0)
-        ff_delta = resources.get("ff_delta", 0)
-
         congestion = design.get("congestion", {})
-        max_level = congestion.get("max_level_test", 0)
-
         bitstream = design.get("bitstream", {})
-        identical = bitstream.get("identical", True)
-        bitstream_status = "Identical" if identical else "Different"
+
+        bitstream_status = "Identical" if bitstream.get("identical", True) else "Different"
 
         lines.append(
-            f"{collection:<15} {name:<28} {clock_period_baseline:>10.3f} {clock_period_test:>10.3f} "
-            f"{wns_baseline:>8.3f} {wns_test:>8.3f} {wns_delta:>8.3f} "
-            f"{fmax_baseline:>9.1f} {fmax_test:>9.1f} {fmax_delta_pct:>8.2f}% {lut_delta:>8} {ff_delta:>7} "
-            f"{max_level:>5}  {bitstream_status:<10}"
+            f"{collection:<15} {name:<28} {timing['clock_period_baseline']:>10.3f} "
+            f"{timing['clock_period_test']:>10.3f} "
+            f"{timing['wns_baseline']:>8.3f} {timing['wns_test']:>8.3f} "
+            f"{timing['wns_delta']:>8.3f} "
+            f"{timing['fmax_baseline']:>9.1f} {timing['fmax_test']:>9.1f} "
+            f"{timing['fmax_delta_pct']:>8.2f}% "
+            f"{resources.get('lut_delta', 0):>8} {resources.get('ff_delta', 0):>7} "
+            f"{congestion.get('max_level_test', 0):>5}  {bitstream_status:<10}"
         )
 
     lines.append("")
     lines.append(
-        "Legend: Clk.B/T=Clock Period Baseline/Test (actual from implementation), B.WNS=Baseline WNS, T.WNS=Test WNS,"
+        "Legend: Clk.B/T=Clock Period Baseline/Test (actual from implementation), "
+        "B.WNS=Baseline WNS, T.WNS=Test WNS,"
     )
     lines.append("        B.Fmax=Baseline Fmax (MHz), T.Fmax=Test Fmax (MHz)")
     lines.append(
-        "Note: All timing data from cranked timing (actual implementation results, not post-redaction re-analysis)"
+        "Note: All timing data from cranked timing (actual implementation results, "
+        "not post-redaction re-analysis)"
     )
     lines.append("")
     return "\n".join(lines)
+
+
+def extract_detailed_timing(design: Dict) -> Dict:
+    """Extract detailed timing data from a design."""
+    detailed = design.get("detailed_timing", {})
+    synth = detailed.get("synthesis", {})
+    baseline_impl = detailed.get("baseline_impl", {})
+    test_impl = detailed.get("test_impl", {})
+
+    return {
+        "synth_design_sec": synth.get("synth_design_sec", 0.0),
+        "opt_design_sec": synth.get("opt_design_sec", 0.0),
+        "redact_sec": detailed.get("redaction_sec", 0.0),
+        "unredact_sec": detailed.get("unredaction_sec", 0.0),
+        "b_place": baseline_impl.get("place_sec", 0.0),
+        "b_route": baseline_impl.get("route_sec", 0.0),
+        "b_phys_opt": baseline_impl.get("total_phys_opt_sec", 0.0),
+        "b_total": baseline_impl.get("total_sec", 0.0),
+        "t_place": test_impl.get("place_sec", 0.0),
+        "t_route": test_impl.get("route_sec", 0.0),
+        "t_phys_opt": test_impl.get("total_phys_opt_sec", 0.0),
+        "t_total": test_impl.get("total_sec", 0.0),
+    }
 
 
 def format_per_design_detailed_timing(designs: List[Dict]) -> str:
@@ -338,35 +363,17 @@ def format_per_design_detailed_timing(designs: List[Dict]) -> str:
     for design in designs:
         collection = design.get("collection", "")
         name = design.get("design", "")
-
-        detailed = design.get("detailed_timing", {})
-
-        synth = detailed.get("synthesis", {})
-        synth_design_sec = synth.get("synth_design_sec", 0.0)
-        opt_design_sec = synth.get("opt_design_sec", 0.0)
-
-        redact_sec = detailed.get("redaction_sec", 0.0)
-        unredact_sec = detailed.get("unredaction_sec", 0.0)
-
-        baseline_impl = detailed.get("baseline_impl", {})
-        b_place = baseline_impl.get("place_sec", 0.0)
-        b_route = baseline_impl.get("route_sec", 0.0)
-        b_phys_opt = baseline_impl.get("total_phys_opt_sec", 0.0)
-        b_total = baseline_impl.get("total_sec", 0.0)
-
-        test_impl = detailed.get("test_impl", {})
-        t_place = test_impl.get("place_sec", 0.0)
-        t_route = test_impl.get("route_sec", 0.0)
-        t_phys_opt = test_impl.get("total_phys_opt_sec", 0.0)
-        t_total = test_impl.get("total_sec", 0.0)
-
-        delta_total = t_total - b_total
+        timing = extract_detailed_timing(design)
+        delta_total = timing["t_total"] - timing["b_total"]
 
         lines.append(
-            f"{collection:<15} {name:<28} {synth_design_sec:>8.0f} {opt_design_sec:>6.0f} "
-            f"{redact_sec:>8.1f} {unredact_sec:>8.1f} {b_place:>9.0f} {b_route:>9.0f} "
-            f"{b_phys_opt:>8.0f} {b_total:>9.0f} {t_place:>9.0f} {t_route:>9.0f} "
-            f"{t_phys_opt:>8.0f} {t_total:>9.0f} {delta_total:>9.0f}"
+            f"{collection:<15} {name:<28} {timing['synth_design_sec']:>8.0f} "
+            f"{timing['opt_design_sec']:>6.0f} "
+            f"{timing['redact_sec']:>8.1f} {timing['unredact_sec']:>8.1f} "
+            f"{timing['b_place']:>9.0f} {timing['b_route']:>9.0f} "
+            f"{timing['b_phys_opt']:>8.0f} {timing['b_total']:>9.0f} "
+            f"{timing['t_place']:>9.0f} {timing['t_route']:>9.0f} "
+            f"{timing['t_phys_opt']:>8.0f} {timing['t_total']:>9.0f} {delta_total:>9.0f}"
         )
 
     lines.append("")
@@ -407,6 +414,35 @@ def format_per_design_congestion(designs: List[Dict]) -> str:
     return "\n".join(lines)
 
 
+def extract_resource_data(design: Dict, has_detailed: bool) -> Dict:
+    """Extract resource data from a design."""
+    resources = design.get("resources", {})
+
+    def safe_get(key):
+        val = resources.get(key)
+        return val if val is not None else 0
+
+    if has_detailed:
+        return {
+            "total_luts": safe_get("lut_test"),
+            "logic_luts": safe_get("logic_luts_test"),
+            "lutrams": safe_get("lutrams_test"),
+            "srls": safe_get("srls_test"),
+            "ffs": safe_get("ff_test"),
+            "bram36": safe_get("bram36_test"),
+            "bram18": safe_get("bram18_test"),
+            "dsp": safe_get("dsp_test"),
+        }
+
+    return {
+        "total_luts": safe_get("lut_test"),
+        "ffs": safe_get("ff_test"),
+        "bram36": safe_get("bram36_test"),
+        "bram18": safe_get("bram18_test"),
+        "dsp": safe_get("dsp_test"),
+    }
+
+
 def format_per_design_resource_breakdown(designs: List[Dict]) -> str:
     """Format per-design detailed resource breakdown table.
 
@@ -428,28 +464,19 @@ def format_per_design_resource_breakdown(designs: List[Dict]) -> str:
         lines.append("To see Logic LUTs, LUTRAMs, and SRLs, regenerate metrics with updated tools.")
         lines.append("")
         lines.append(
-            f"{'Collection':<15} {'Design':<28} {'Total LUTs':>10} {'FFs':>10} {'BRAM36':>8} {'BRAM18':>8} {'DSP':>8}"
+            f"{'Collection':<15} {'Design':<28} {'Total LUTs':>10} {'FFs':>10} "
+            f"{'BRAM36':>8} {'BRAM18':>8} {'DSP':>8}"
         )
         lines.append("-" * 120)
 
         for design in designs:
             collection = design.get("collection", "")
             name = design.get("design", "")
-            resources = design.get("resources", {})
-            total_luts = (
-                resources.get("lut_test", 0) if resources.get("lut_test") is not None else 0
-            )
-            ffs = resources.get("ff_test", 0) if resources.get("ff_test") is not None else 0
-            bram36 = (
-                resources.get("bram36_test", 0) if resources.get("bram36_test") is not None else 0
-            )
-            bram18 = (
-                resources.get("bram18_test", 0) if resources.get("bram18_test") is not None else 0
-            )
-            dsp = resources.get("dsp_test", 0) if resources.get("dsp_test") is not None else 0
+            res = extract_resource_data(design, has_detailed_data)
 
             lines.append(
-                f"{collection:<15} {name:<28} {total_luts:>10} {ffs:>10} {bram36:>8} {bram18:>8} {dsp:>8}"
+                f"{collection:<15} {name:<28} {res['total_luts']:>10} {res['ffs']:>10} "
+                f"{res['bram36']:>8} {res['bram18']:>8} {res['dsp']:>8}"
             )
     else:
         lines.append("=" * 160)
@@ -464,35 +491,13 @@ def format_per_design_resource_breakdown(designs: List[Dict]) -> str:
         for design in designs:
             collection = design.get("collection", "")
             name = design.get("design", "")
-
-            # Show test implementation resources
-            resources = design.get("resources", {})
-            total_luts = (
-                resources.get("lut_test", 0) if resources.get("lut_test") is not None else 0
-            )
-            logic_luts = (
-                resources.get("logic_luts_test", 0)
-                if resources.get("logic_luts_test") is not None
-                else 0
-            )
-            lutrams = (
-                resources.get("lutrams_test", 0) if resources.get("lutrams_test") is not None else 0
-            )
-            srls = resources.get("srls_test", 0) if resources.get("srls_test") is not None else 0
-            ffs = resources.get("ff_test", 0) if resources.get("ff_test") is not None else 0
-            bram36 = (
-                resources.get("bram36_test", 0) if resources.get("bram36_test") is not None else 0
-            )
-            bram18 = (
-                resources.get("bram18_test", 0) if resources.get("bram18_test") is not None else 0
-            )
-            dsp = resources.get("dsp_test", 0) if resources.get("dsp_test") is not None else 0
-
-            impl_type = "Test"
+            res = extract_resource_data(design, has_detailed_data)
 
             lines.append(
-                f"{collection:<15} {name:<28} {total_luts:>8} {logic_luts:>8} {lutrams:>8} {srls:>8} "
-                f"{ffs:>10} {bram36:>8} {bram18:>8} {dsp:>8}  {impl_type:<10}"
+                f"{collection:<15} {name:<28} {res['total_luts']:>8} {res['logic_luts']:>8} "
+                f"{res['lutrams']:>8} {res['srls']:>8} "
+                f"{res['ffs']:>10} {res['bram36']:>8} {res['bram18']:>8} "
+                f"{res['dsp']:>8}  {'Test':<10}"
             )
 
         lines.append("")
@@ -504,6 +509,21 @@ def format_per_design_resource_breakdown(designs: List[Dict]) -> str:
     return "\n".join(lines)
 
 
+def is_notable_design(design: Dict) -> bool:
+    """Check if a design has notable differences."""
+    cranked = design.get("cranked_timing", {}) or design.get("timing", {})
+    resources = design.get("resources", {})
+
+    wns_delta = abs(cranked.get("wns_delta", 0.0))
+    fmax_baseline = cranked.get("fmax_baseline_mhz", 0.0)
+    fmax_delta = cranked.get("fmax_delta_mhz", 0.0)
+    fmax_delta_pct = abs(fmax_delta / fmax_baseline * 100) if fmax_baseline else 0.0
+    lut_delta = abs(resources.get("lut_delta", 0))
+    ff_delta = abs(resources.get("ff_delta", 0))
+
+    return wns_delta > 0.3 or fmax_delta_pct > 5 or lut_delta > 15 or ff_delta > 15
+
+
 def format_notable_designs(designs: List[Dict]) -> str:
     """Format table of designs with notable differences.
 
@@ -512,24 +532,7 @@ def format_notable_designs(designs: List[Dict]) -> str:
     lines = []
 
     # Filter designs with notable differences
-    notable = []
-    for design in designs:
-        # Use cranked timing (actual implementation results)
-        cranked = design.get("cranked_timing", {})
-        if not cranked:
-            cranked = design.get("timing", {})
-
-        resources = design.get("resources", {})
-
-        wns_delta = abs(cranked.get("wns_delta", 0.0))
-        fmax_baseline = cranked.get("fmax_baseline_mhz", 0.0)
-        fmax_delta = cranked.get("fmax_delta_mhz", 0.0)
-        fmax_delta_pct = abs(fmax_delta / fmax_baseline * 100) if fmax_baseline else 0.0
-        lut_delta = abs(resources.get("lut_delta", 0))
-        ff_delta = abs(resources.get("ff_delta", 0))
-
-        if wns_delta > 0.3 or fmax_delta_pct > 5 or lut_delta > 15 or ff_delta > 15:
-            notable.append(design)
+    notable = [d for d in designs if is_notable_design(d)]
 
     # Sort by WNS delta (descending absolute value)
     notable.sort(
@@ -539,7 +542,8 @@ def format_notable_designs(designs: List[Dict]) -> str:
 
     lines.append("=" * 150)
     lines.append(
-        "DESIGNS WITH NOTABLE DIFFERENCES (|WNS Δ| > 0.3 OR |Fmax Δ%| > 5 OR |LUT Δ| > 15 OR |FF Δ| > 15)"
+        "DESIGNS WITH NOTABLE DIFFERENCES "
+        "(|WNS Δ| > 0.3 OR |Fmax Δ%| > 5 OR |LUT Δ| > 15 OR |FF Δ| > 15)"
     )
     lines.append("=" * 150)
     lines.append(
@@ -552,30 +556,22 @@ def format_notable_designs(designs: List[Dict]) -> str:
         collection = design.get("collection", "")
         name = design.get("design", "")
 
-        # Use cranked timing (actual implementation results)
-        cranked = design.get("cranked_timing", {})
-        if not cranked:
-            cranked = design.get("timing", {})
+        cranked = design.get("cranked_timing", {}) or design.get("timing", {})
+        timing_ref = design.get("timing", {})
+        resources = design.get("resources", {})
+        bitstream = design.get("bitstream", {})
 
-        timing_ref = design.get("timing", {})  # For TNS (not in cranked)
-
-        wns_delta = cranked.get("wns_delta", 0.0)
-        tns_delta = timing_ref.get("tns_delta", 0.0)  # TNS only in reference timing
         fmax_baseline = cranked.get("fmax_baseline_mhz", 0.0)
         fmax_delta = cranked.get("fmax_delta_mhz", 0.0)
         fmax_delta_pct = (fmax_delta / fmax_baseline * 100) if fmax_baseline else 0.0
-
-        resources = design.get("resources", {})
-        lut_delta = resources.get("lut_delta", 0)
-        ff_delta = resources.get("ff_delta", 0)
-
-        bitstream = design.get("bitstream", {})
-        identical = bitstream.get("identical", True)
-        bitstream_status = "Identical" if identical else "Different"
+        bitstream_status = "Identical" if bitstream.get("identical", True) else "Different"
 
         lines.append(
-            f"{collection:<15} {name:<28} {wns_delta:>10.3f} {tns_delta:>10.1f} {fmax_delta_pct:>9.2f}% "
-            f"{lut_delta:>8} {ff_delta:>7}  {bitstream_status:<10}"
+            f"{collection:<15} {name:<28} {cranked.get('wns_delta', 0.0):>10.3f} "
+            f"{timing_ref.get('tns_delta', 0.0):>10.1f} "
+            f"{fmax_delta_pct:>9.2f}% "
+            f"{resources.get('lut_delta', 0):>8} {resources.get('ff_delta', 0):>7}  "
+            f"{bitstream_status:<10}"
         )
 
     lines.append("")
@@ -583,6 +579,29 @@ def format_notable_designs(designs: List[Dict]) -> str:
     lines.append("Note: Timing data from cranked timing (actual implementation results)")
     lines.append("")
     return "\n".join(lines)
+
+
+def extract_cranked_timing_comparison(design: Dict) -> Dict:
+    """Extract both reference and cranked timing for comparison."""
+    timing = design.get("timing", {})
+    cranked = design.get("cranked_timing", {})
+
+    fmax_baseline = cranked.get("fmax_baseline_mhz", 0.0)
+    fmax_delta = cranked.get("fmax_delta_mhz", 0.0)
+    fmax_delta_pct = (fmax_delta / fmax_baseline * 100) if fmax_baseline else 0.0
+
+    return {
+        "ref_clk": timing.get("clock_period_ns_baseline", 0.0),
+        "ref_wns_b": timing.get("wns_baseline", 0.0),
+        "ref_wns_t": timing.get("wns_test", 0.0),
+        "crnk_clk_b": cranked.get("clock_period_ns_baseline", 0.0),
+        "crnk_clk_t": cranked.get("clock_period_ns_test", 0.0),
+        "crnk_wns_b": cranked.get("wns_baseline", 0.0),
+        "crnk_wns_t": cranked.get("wns_test", 0.0),
+        "fmax_baseline": fmax_baseline,
+        "fmax_test": cranked.get("fmax_test_mhz", 0.0),
+        "fmax_delta_pct": fmax_delta_pct,
+    }
 
 
 def format_per_design_cranked_timing(designs: List[Dict]) -> str:
@@ -601,30 +620,15 @@ def format_per_design_cranked_timing(designs: List[Dict]) -> str:
     for design in designs:
         collection = design.get("collection", "")
         name = design.get("design", "")
-
-        # Reference timing (10ns clock)
-        timing = design.get("timing", {})
-        ref_clk = timing.get("clock_period_ns_baseline", 0.0)
-        ref_wns_b = timing.get("wns_baseline", 0.0)
-        ref_wns_t = timing.get("wns_test", 0.0)
-
-        # Cranked timing (actual tight constraints)
-        cranked = design.get("cranked_timing", {})
-        crnk_clk_b = cranked.get("clock_period_ns_baseline", 0.0)
-        crnk_clk_t = cranked.get("clock_period_ns_test", 0.0)
-        crnk_wns_b = cranked.get("wns_baseline", 0.0)
-        crnk_wns_t = cranked.get("wns_test", 0.0)
-
-        # Fmax (use cranked timing - actual implementation results)
-        fmax_baseline = cranked.get("fmax_baseline_mhz", 0.0)
-        fmax_test = cranked.get("fmax_test_mhz", 0.0)
-        fmax_delta = cranked.get("fmax_delta_mhz", 0.0)
-        fmax_delta_pct = (fmax_delta / fmax_baseline * 100) if fmax_baseline else 0.0
+        ct = extract_cranked_timing_comparison(design)
 
         lines.append(
-            f"{collection:<15} {name:<28} {ref_clk:>8.2f} {ref_wns_b:>10.3f} {ref_wns_t:>10.3f} "
-            f"{crnk_clk_b:>10.3f} {crnk_clk_t:>10.3f} {crnk_wns_b:>10.3f} {crnk_wns_t:>10.3f} "
-            f"{fmax_baseline:>9.1f} {fmax_test:>9.1f} {fmax_delta_pct:>8.2f}%"
+            f"{collection:<15} {name:<28} {ct['ref_clk']:>8.2f} {ct['ref_wns_b']:>10.3f} "
+            f"{ct['ref_wns_t']:>10.3f} "
+            f"{ct['crnk_clk_b']:>10.3f} {ct['crnk_clk_t']:>10.3f} "
+            f"{ct['crnk_wns_b']:>10.3f} {ct['crnk_wns_t']:>10.3f} "
+            f"{ct['fmax_baseline']:>9.1f} {ct['fmax_test']:>9.1f} "
+            f"{ct['fmax_delta_pct']:>8.2f}%"
         )
 
     lines.append("")
@@ -632,14 +636,16 @@ def format_per_design_cranked_timing(designs: List[Dict]) -> str:
     lines.append("  Ref.Clk = Reference clock period (10ns, reset after unredaction)")
     lines.append("  Ref.WNS.B/T = Reference WNS baseline/test (from post-unredaction analysis)")
     lines.append(
-        "  Crnk.Clk.B/T = Cranked clock period baseline/test (actual tight constraints from implementation)"
+        "  Crnk.Clk.B/T = Cranked clock period baseline/test "
+        "(actual tight constraints from implementation)"
     )
     lines.append("  Crnk.WNS.B/T = Cranked WNS baseline/test (actual from implementation)")
     lines.append("  Fmax.B/T = Fmax baseline/test (calculated from cranked timing)")
     lines.append("")
     lines.append("Note: This table shows both timing sources side-by-side for comparison.")
     lines.append(
-        "      For 96% of designs, both sources calculate identical Fmax (same critical path)."
+        "      For 96% of designs, both sources calculate identical Fmax "
+        "(same critical path)."
     )
     lines.append("      A few designs show different Fmax due to different clocks being reported.")
     lines.append("      Formula: Fmax = 1000 / (Clock_Period - WNS)")
@@ -677,7 +683,8 @@ def format_bitstream_summary(designs: List[Dict]) -> str:
                 test_size = bitstream.get("test_size", 0)
                 lines.append(f"  - {collection}/{name}: Golden={golden_size}, Test={test_size}")
                 lines.append(
-                    f"    Note: Netlist comparison shows functionally equivalent (only clock buffer replication differs)"
+                    "    Note: Netlist comparison shows functionally equivalent "
+                    "(only clock buffer replication differs)"
                 )
         lines.append("")
 
