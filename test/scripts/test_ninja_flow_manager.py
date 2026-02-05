@@ -132,7 +132,7 @@ class TestNinjaFlowManager(unittest.TestCase):
         self.__check_flow_run("vivado_phys_capnp", 15)
 
     def test_run_impl_redact(self):
-        self.__check_flow_run("impl_redact", 31)
+        self.__check_flow_run("impl_redact", 24)
 
     # This is disabled right now because it seems to be failing due
     # to file modification time race conditions
