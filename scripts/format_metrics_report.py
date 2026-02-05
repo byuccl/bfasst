@@ -644,8 +644,7 @@ def format_per_design_cranked_timing(designs: List[Dict]) -> str:
     lines.append("")
     lines.append("Note: This table shows both timing sources side-by-side for comparison.")
     lines.append(
-        "      For 96% of designs, both sources calculate identical Fmax "
-        "(same critical path)."
+        "      For 96% of designs, both sources calculate identical Fmax (same critical path)."
     )
     lines.append("      A few designs show different Fmax due to different clocks being reported.")
     lines.append("      Formula: Fmax = 1000 / (Clock_Period - WNS)")
