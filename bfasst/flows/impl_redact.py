@@ -24,7 +24,7 @@ from bfasst.yaml_parser import DesignParser
 class ImplRedact(Flow):
     """Tool to synthesize, implement, redact, reimplement, and compare designs"""
 
-    def __init__(self, design, use_super_golden=True, super_golden_impl_options=None):
+    def __init__(self, design, use_super_golden=False, super_golden_impl_options=None):
         super().__init__(design)
 
         self.use_super_golden = use_super_golden

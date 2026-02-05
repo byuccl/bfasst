@@ -25,11 +25,15 @@ class TimingMetrics:
 class ResourceMetrics:
     """Resource utilization metrics from Vivado utilization report."""
 
-    lut_used: int
+    lut_used: int  # Total LUTs
+    logic_luts: int  # LUTs used as logic
+    lutrams: int  # LUTs used as distributed RAM
+    srls: int  # Shift Register LUTs
     ff_used: int
     bram36_used: int
     bram18_used: int
     dsp_used: int
+    total_cells: int  # Sum of all primitives from Section 8
 
 
 @dataclass
@@ -92,10 +96,11 @@ class TransformTiming:
 class ImplMetrics:
     """Combined metrics for an implementation."""
 
-    timing: TimingMetrics
+    timing: TimingMetrics  # From detailed reports (10ns reference clock)
     resources: ResourceMetrics
     compilation: CompilationMetrics
     congestion: Optional[CongestionMetrics] = None
+    cranked_timing: Optional[TimingMetrics] = None  # From impl directory (actual cranked clock)
 
 
 @dataclass
@@ -163,6 +168,21 @@ class MetricsComparison:
                     "test": self.test.resources.lut_used,
                     "delta": self.test.resources.lut_used - self.baseline.resources.lut_used,
                 },
+                "logic_luts": {
+                    "baseline": self.baseline.resources.logic_luts,
+                    "test": self.test.resources.logic_luts,
+                    "delta": self.test.resources.logic_luts - self.baseline.resources.logic_luts,
+                },
+                "lutrams": {
+                    "baseline": self.baseline.resources.lutrams,
+                    "test": self.test.resources.lutrams,
+                    "delta": self.test.resources.lutrams - self.baseline.resources.lutrams,
+                },
+                "srls": {
+                    "baseline": self.baseline.resources.srls,
+                    "test": self.test.resources.srls,
+                    "delta": self.test.resources.srls - self.baseline.resources.srls,
+                },
                 "ff": {
                     "baseline": self.baseline.resources.ff_used,
                     "test": self.test.resources.ff_used,
@@ -182,6 +202,11 @@ class MetricsComparison:
                     "baseline": self.baseline.resources.dsp_used,
                     "test": self.test.resources.dsp_used,
                     "delta": self.test.resources.dsp_used - self.baseline.resources.dsp_used,
+                },
+                "total_cells": {
+                    "baseline": self.baseline.resources.total_cells,
+                    "test": self.test.resources.total_cells,
+                    "delta": self.test.resources.total_cells - self.baseline.resources.total_cells,
                 },
             },
             "compilation": {
@@ -245,6 +270,27 @@ class MetricsComparison:
                 },
             }
 
+        # Add cranked timing metrics if available (from impl directory, before detailed reports)
+        if self.baseline.cranked_timing and self.test.cranked_timing:
+            result["cranked_timing"] = {
+                "wns": {
+                    "baseline": self.baseline.cranked_timing.wns,
+                    "test": self.test.cranked_timing.wns,
+                    "delta": self.test.cranked_timing.wns - self.baseline.cranked_timing.wns,
+                },
+                "clock_period_ns": {
+                    "baseline": self.baseline.cranked_timing.clock_period_ns,
+                    "test": self.test.cranked_timing.clock_period_ns,
+                    "delta": self.test.cranked_timing.clock_period_ns
+                    - self.baseline.cranked_timing.clock_period_ns,
+                },
+                "fmax_mhz": {
+                    "baseline": self.baseline.cranked_timing.fmax_mhz,
+                    "test": self.test.cranked_timing.fmax_mhz,
+                    "delta": self.test.cranked_timing.fmax_mhz - self.baseline.cranked_timing.fmax_mhz,
+                },
+            }
+
         return result
 
 
@@ -302,25 +348,101 @@ def parse_timing_summary(path: Path) -> TimingMetrics:
 
 
 def parse_utilization(path: Path) -> ResourceMetrics:
-    """Parse resource utilization from Vivado utilization.txt."""
+    """Parse resource utilization from Vivado utilization.txt.
+
+    Handles both hierarchical reports (with (top) row) and detailed reports (with Slice Logic table).
+    """
     content = path.read_text()
 
+    # Try to match the (top) row with all resource columns (hierarchical report)
     pattern = (
-        r"\|\s*\S+\s*\|\s*\(top\)\s*\|\s*(\d+)\s*\|\s*\d+\s*\|\s*\d+\s*\|\s*\d+\s*\|"
-        r"\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|"
+        r"\|\s*\S+\s*\|\s*\(top\)\s*\|"  # Instance | Module
+        r"\s*(\d+)\s*\|"  # Total LUTs
+        r"\s*(\d+)\s*\|"  # Logic LUTs
+        r"\s*(\d+)\s*\|"  # LUTRAMs
+        r"\s*(\d+)\s*\|"  # SRLs
+        r"\s*(\d+)\s*\|"  # FFs
+        r"\s*(\d+)\s*\|"  # RAMB36
+        r"\s*(\d+)\s*\|"  # RAMB18
+        r"\s*(\d+)\s*\|"  # DSP Blocks
     )
     match = re.search(pattern, content)
 
-    if match:
-        return ResourceMetrics(
-            lut_used=int(match.group(1)),
-            ff_used=int(match.group(2)),
-            bram36_used=int(match.group(3)),
-            bram18_used=int(match.group(4)),
-            dsp_used=int(match.group(5)),
-        )
+    lut_used = 0
+    logic_luts = 0
+    lutrams = 0
+    srls = 0
+    ff_used = 0
+    bram36_used = 0
+    bram18_used = 0
+    dsp_used = 0
 
-    return ResourceMetrics(lut_used=0, ff_used=0, bram36_used=0, bram18_used=0, dsp_used=0)
+    if match:
+        lut_used = int(match.group(1))
+        logic_luts = int(match.group(2))
+        lutrams = int(match.group(3))
+        srls = int(match.group(4))
+        ff_used = int(match.group(5))
+        bram36_used = int(match.group(6))
+        bram18_used = int(match.group(7))
+        dsp_used = int(match.group(8))
+    else:
+        # Try to parse from "1. Slice Logic" table (non-hierarchical report)
+        slice_luts_match = re.search(r"\|\s*Slice LUTs\s*\|\s*(\d+)\s*\|", content)
+        if slice_luts_match:
+            lut_used = int(slice_luts_match.group(1))
+
+        lut_as_logic_match = re.search(r"\|\s*LUT as Logic\s*\|\s*(\d+)\s*\|", content)
+        if lut_as_logic_match:
+            logic_luts = int(lut_as_logic_match.group(1))
+
+        lut_as_srl_match = re.search(r"\|\s*LUT as Shift Register\s*\|\s*(\d+)\s*\|", content)
+        if lut_as_srl_match:
+            srls = int(lut_as_srl_match.group(1))
+
+        slice_regs_match = re.search(r"\|\s*Slice Registers\s*\|\s*(\d+)\s*\|", content)
+        if slice_regs_match:
+            ff_used = int(slice_regs_match.group(1))
+
+        # Parse BRAMs from "3. Memory" section
+        ramb36_match = re.search(r"\|\s*RAMB36E1 only\s*\|\s*(\d+)\s*\|", content)
+        if ramb36_match:
+            bram36_used = int(ramb36_match.group(1))
+
+        # Parse DSPs from "4. DSP" section
+        dsp_match = re.search(r"\|\s*DSP48E1 only\s*\|\s*(\d+)\s*\|", content)
+        if dsp_match:
+            dsp_used = int(dsp_match.group(1))
+
+    # Parse Section 8: Primitives to get total cell count
+    total_cells = 0
+    # Match the actual primitives table (not just the table of contents)
+    # Look for "8. Primitives" followed by "---" and then the table
+    primitives_section = re.search(
+        r"8\. Primitives\s*\n-+\s*\n\+.+?\+\s*\n\|\s*Ref Name.+?\n\+.+?\+\s*\n(.+?)\n\+",
+        content,
+        re.DOTALL
+    )
+    if primitives_section:
+        # Extract the table rows with primitive counts
+        table_text = primitives_section.group(1)
+        # Match lines like: | FDRE     | 153062 |        Flop & Latch |
+        for line in table_text.split("\n"):
+            prim_match = re.search(r"\|\s*\S+\s*\|\s*(\d+)\s*\|", line)
+            if prim_match:
+                total_cells += int(prim_match.group(1))
+
+    return ResourceMetrics(
+        lut_used=lut_used,
+        logic_luts=logic_luts,
+        lutrams=lutrams,
+        srls=srls,
+        ff_used=ff_used,
+        bram36_used=bram36_used,
+        bram18_used=bram18_used,
+        dsp_used=dsp_used,
+        total_cells=total_cells,
+    )
 
 
 def _parse_time_to_seconds(time_str: str) -> float:
@@ -548,17 +670,31 @@ def parse_impl_metrics(
     utilization_path: Path,
     log_path: Path,
     congestion_path: Optional[Path] = None,
+    cranked_timing_path: Optional[Path] = None,
 ) -> ImplMetrics:
-    """Parse all metrics for an implementation from its output files."""
+    """Parse all metrics for an implementation from its output files.
+
+    Args:
+        timing_path: Path to timing_summary.txt (from detailed reports, 10ns reference)
+        utilization_path: Path to utilization.txt
+        log_path: Path to vivado.log
+        congestion_path: Optional path to congestion.txt
+        cranked_timing_path: Optional path to timing_summary.txt from impl dir (actual cranked clock)
+    """
     congestion = None
     if congestion_path and congestion_path.exists():
         congestion = parse_congestion_report(congestion_path)
+
+    cranked_timing = None
+    if cranked_timing_path and cranked_timing_path.exists():
+        cranked_timing = parse_timing_summary(cranked_timing_path)
 
     return ImplMetrics(
         timing=parse_timing_summary(timing_path),
         resources=parse_utilization(utilization_path),
         compilation=parse_vivado_log(log_path),
         congestion=congestion,
+        cranked_timing=cranked_timing,
     )
 
 
@@ -608,6 +744,17 @@ def main():
     parser.add_argument("--test_utilization", required=True, help="Path to test utilization.txt")
     parser.add_argument("--test_log", required=True, help="Path to test vivado.log")
     parser.add_argument("--test_congestion", required=False, help="Path to test congestion.txt")
+    # Cranked timing (from impl directory, before detailed reports)
+    parser.add_argument(
+        "--baseline_cranked_timing",
+        required=False,
+        help="Path to baseline cranked timing_summary.txt (from vivado_impl_super_golden/)",
+    )
+    parser.add_argument(
+        "--test_cranked_timing",
+        required=False,
+        help="Path to test cranked timing_summary.txt (from vivado_reimpl/)",
+    )
     # Additional logs for detailed timing
     parser.add_argument("--synth_log", required=False, help="Path to synthesis vivado.log")
     parser.add_argument("--redact_log", required=False, help="Path to redaction log")
@@ -618,18 +765,24 @@ def main():
 
     baseline_congestion = Path(args.baseline_congestion) if args.baseline_congestion else None
     test_congestion = Path(args.test_congestion) if args.test_congestion else None
+    baseline_cranked_timing = (
+        Path(args.baseline_cranked_timing) if args.baseline_cranked_timing else None
+    )
+    test_cranked_timing = Path(args.test_cranked_timing) if args.test_cranked_timing else None
 
     baseline_metrics = parse_impl_metrics(
         Path(args.baseline_timing),
         Path(args.baseline_utilization),
         Path(args.baseline_log),
         baseline_congestion,
+        baseline_cranked_timing,
     )
     test_metrics = parse_impl_metrics(
         Path(args.test_timing),
         Path(args.test_utilization),
         Path(args.test_log),
         test_congestion,
+        test_cranked_timing,
     )
 
     bitstream_cmp = compare_bitstreams(
