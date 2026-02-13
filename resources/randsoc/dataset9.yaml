@@ -1,0 +1,7 @@
+flow: RandSocDumped
+
+num_designs: 6500
+
+part: xc7a200tlffv1156-2L
+
+randsoc_config_path: resources/randsoc/randsoc_configs/dataset9.yaml
