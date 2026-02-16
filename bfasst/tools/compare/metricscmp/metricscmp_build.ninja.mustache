@@ -1,0 +1,13 @@
+build {{output_json}} : metricscmp {{golden_bitstream}} {{test_bitstream}} {{baseline_timing}} {{test_timing}} {{baseline_utilization}} {{test_utilization}} {{baseline_log}} {{test_log}} {{#baseline_congestion}}{{baseline_congestion}}{{/baseline_congestion}} {{#test_congestion}}{{test_congestion}}{{/test_congestion}} {{#synth_log}}{{synth_log}}{{/synth_log}} {{#redact_log}}{{redact_log}}{{/redact_log}} {{#unredact_log}}{{unredact_log}}{{/unredact_log}}
+    script               = {{compare_script_path}}
+    golden_bitstream     = {{golden_bitstream}}
+    test_bitstream       = {{test_bitstream}}
+    baseline_timing      = {{baseline_timing}}
+    baseline_utilization = {{baseline_utilization}}
+    baseline_log         = {{baseline_log}}
+    test_timing          = {{test_timing}}
+    test_utilization     = {{test_utilization}}
+    test_log             = {{test_log}}
+    congestion_args      = {{#baseline_congestion}}--baseline_congestion {{baseline_congestion}}{{/baseline_congestion}} {{#test_congestion}}--test_congestion {{test_congestion}}{{/test_congestion}}
+    detailed_timing_args = {{#synth_log}}--synth_log {{synth_log}}{{/synth_log}} {{#redact_log}}--redact_log {{redact_log}}{{/redact_log}} {{#unredact_log}}--unredact_log {{unredact_log}}{{/unredact_log}}
+    output               = {{output_json}}

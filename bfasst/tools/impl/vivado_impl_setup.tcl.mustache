@@ -3,6 +3,12 @@ set_property top_file {{ inputs.synth_edf }} [current_fileset]
 link_design -part {{ part }}
 set_property design_mode GateLvl [current_fileset]
 
+{{#disable_drc}}
+foreach rule [get_drc_checks] {
+    set_property IS_ENABLED false $rule
+}
+{{/disable_drc}}
+
 {{#inputs.xdc}}
 read_xdc {{ . }}
 {{/inputs.xdc}}

@@ -1,0 +1,6 @@
+designs:
+  - byu/debouncer
+  - byu/alu
+  - byu/counter
+
+flow: impl_redact

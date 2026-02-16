@@ -1,7 +1,9 @@
 open_checkpoint {{ impl_dcp }}
+{{#disable_drc}}
 foreach rule [get_drc_checks] {
     set_property IS_ENABLED false $rule
 }
+{{/disable_drc}}
 
 foreach clk [get_clocks *] {
     set period [get_property PERIOD $clk]
@@ -20,7 +22,8 @@ report_timing_summary -delay_type max -report_unconstrained -check_timing_verbos
 report_utilization -hierarchical -file {{ outputs.utilization }}
 report_power -verbose -file {{ outputs.power_summary }}
 report_clocks -file {{ outputs.clocks }}
+report_design_analysis -congestion -file {{ outputs.congestion }}
 report_drc -file {{ outputs.drc }}
-write_verilog -mode funcsim -force {{ outputs.verilog }}
+write_verilog -force {{ outputs.verilog }}
 write_bitstream -force -file {{ outputs.bitstream }}
 

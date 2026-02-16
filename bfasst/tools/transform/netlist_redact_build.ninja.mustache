@@ -1,0 +1,14 @@
+build {{redacted_synth_dcp}} {{redacted_synth_edf}} {{unredacted_synth_dcp}} {{unredacted_synth_edf}} {{original_cell_props}} {{log_path}}: netlist_redact {{dcp_path}} {{edf_path}}
+    script          = {{redact_script_path}}
+    build_path      = {{build_path}}
+    dcp             = {{dcp_path}}
+    edf             = {{edf_path}}
+    orig_dcp        = {{orig_dcp_path}}
+    orig_edf        = {{orig_edf_path}}
+    out_dcp         = {{redacted_synth_dcp}}
+    out_edf         = {{redacted_synth_edf}}
+    unredacted_dcp  = {{unredacted_synth_dcp}}
+    unredacted_edf  = {{unredacted_synth_edf}}
+    orig_props      = {{original_cell_props}}
+    log             = {{log_path}}
+    logging_level   = {{logging_level}}

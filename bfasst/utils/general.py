@@ -236,12 +236,17 @@ def json_write_if_changed(path, json_str):
 
 
 def get_family_from_part(part):
+    """Derive family name from Xilinx 7-series part number.
+
+    Example: 'xc7a200tsbg484-1' -> 'artix7'
     """
-    part (string): e.g., "xc7a200tsbg484-1"
-    Returns the part family name based on the part name,
-    will have to be changed if we start supporting more part families
-    """
-    return "kintex7" if part[3] == "k" else "artix7"
+    family_map = {
+        "a": "artix7",
+        "k": "kintex7",
+        "s": "spartan7",
+        "z": "zynq7",
+    }
+    return family_map.get(part[3], "artix7")
 
 
 def get_size(obj, seen=None):

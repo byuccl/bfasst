@@ -89,14 +89,15 @@ flows:
   - fasm2bels
   - rapidwright
 
-- name: ImplObfuscate
-  description: Synthesize, implement, modify netlist, reimplement, and compare
-  module: impl_obfuscate
-  class: ImplObfuscate
+- name: ImplRedact
+  description: Synthesize, implement, redact netlist, reimplement, and compare
+  module: impl_redact
+  class: ImplRedact
   external_tools:
   - vivado
   - rapidwright
   - fasm2bels
+  - yosys
 
 - name: RandSoc
   description: Create random block design(s) in Vivado

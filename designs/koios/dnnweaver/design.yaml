@@ -1,3 +1,7 @@
 top: cl_wrapper_random
 
 part: xc7k410tfbg900-1
+
+clocks:
+  - name: clk
+    period: 10.0
