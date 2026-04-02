@@ -1,3 +1,12 @@
+# Remove FSM encoding to prevent bloated edf/v files. Vivado will print every possible state
+# - koios/lenet has fsm with 2.5k states, each state represented by a bit. Verilog file becomes 14GB.
+# Apparently this property is only used for simulation display (show state instead of binary value).
+set fsm_regs [get_cells -hier -filter {(NAME =~ "*fsm*" || NAME =~ "*FSM*") && REF_NAME =~ "FD*"}]
+if {[llength $fsm_regs] > 0} {
+    set_property -quiet FSM_ENCODED_STATES "" $fsm_regs # Filtering cells by property FSM_ENCODED_STATES instead takes 1000x longer.
+    puts "BFASST vivado_synth_reports: Removed FSM_ENCODED_STATES from [llength $fsm_regs] FSM registers."
+}
+
 write_edif -force {{ outputs.synth_edf }}
 write_checkpoint -force -file {{ outputs.synth_dcp }}
 write_verilog -force -file {{ outputs.verilog }}

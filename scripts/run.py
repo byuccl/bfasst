@@ -179,5 +179,5 @@ if __name__ == "__main__":
             parsed_args.yaml,
             check_tools=parsed_args.no_tool_checks,
             num_threads=parsed_args.jobs,
-            ignore_errors=parsed_args.ignore_errors,
+            ignore_errors=True,
         )
