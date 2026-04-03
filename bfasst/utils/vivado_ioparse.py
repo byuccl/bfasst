@@ -1,7 +1,6 @@
 """This module provides support for parsing the report_io output of
 vivado into pin-port mappings"""
 
-import re
 import sys
 
 
@@ -13,13 +12,10 @@ def parse_pin(line):
     return (res[1].strip(), res[2].strip(), res[5].strip(), res[6].strip().replace("*", ""))
 
 
-def lines_of(stream):
-    yield from stream
-
-
 # Note that filter with None works like (x for x in gen if x)
+# yeild line in io_stream is default behavior in python for loop
 def map_pins(io_stream):
-    return filter(None, (parse_pin(line) for line in lines_of(io_stream)))
+    return filter(None, (parse_pin(line) for line in io_stream))
 
 
 def xdc_line(pin):
@@ -31,8 +27,7 @@ def xdc_line(pin):
 
 
 def write_xdc(pinmap, stream):
-    for pin in pinmap:
-        stream.write(xdc_line(pin))
+    stream.writelines(xdc_line(pin) for pin in pinmap)
 
 
 def main():

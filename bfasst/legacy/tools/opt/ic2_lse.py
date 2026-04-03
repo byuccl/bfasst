@@ -37,7 +37,7 @@ class Ic2LseOptTool(Ic2BaseOptTool):
 
     def create_project_file(self, edif_path, lib_files):
         """create project file for icecube2 lse"""
-        assert isinstance(self.design, bfasst.design.Design)
+        assert isinstance(self.design, bfasst.legacy.design.Design)
 
         template_file = paths.IC2_RESOURCES / PROJECT_TEMPLATE_FILE
         project_file = self.work_dir / IC2_LSE_PROJ_FILE

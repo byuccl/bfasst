@@ -6,7 +6,7 @@ import pathlib
 import yaml
 
 from bfasst import paths
-from bfasst.design import Design
+from bfasst.legacy.design import Design
 from bfasst.legacy.flows.flow import get_flow
 from bfasst.legacy.types import ToolType
 from bfasst.utils import error

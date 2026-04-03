@@ -62,8 +62,3 @@ class NetlistDeobfuscate(Tool):
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
         deps.append(BFASST_UTILS / "transform" / "netlist_deobfuscate.py")
-        deps.append(self.dcp_path)
-        deps.append(self.edf_path)
-        deps.append(self.unmodified_dcp_path)
-        deps.append(self.unmodified_edf_path)
-        deps.append(self.props_json)

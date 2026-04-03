@@ -11,7 +11,7 @@ import scp
 
 import bfasst
 from bfasst import paths
-from bfasst.design import HdlType
+from bfasst.legacy.design import HdlType
 from bfasst.legacy.tools.compare.base import CompareException, CompareTool
 from bfasst.legacy.tools.tool import BfasstException
 from bfasst.legacy.types import Vendor

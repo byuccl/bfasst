@@ -1,7 +1,6 @@
 """A class holding a design object, coordinating different parts of the flow"""
 
 import os
-from enum import Enum, auto
 
 import yaml
 
@@ -11,13 +10,6 @@ from bfasst.utils import error
 from bfasst.utils.general import HdlType, get_hdl_src_types
 
 DESIGN_YAML_NAME = "design.yaml"
-
-
-class Vendor(Enum):
-    """Enum differentiating between different fpga vendors"""
-
-    LATTICE = auto()
-    XILINX = auto()
 
 
 class Design:
@@ -48,12 +40,6 @@ class Design:
         self.vhdl_file_paths = []
         self.vhdl_libs = {}
         self.other_sources_file_paths = []
-
-        # self.compare_golden_files = []
-        # self.golden_is_verilog = None
-        # I don't like having two golden file lists...
-        # self.compare_golden_files_paths = []
-        # self.compare_revised_file = None
 
         self.mapped_io = None
 

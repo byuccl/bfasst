@@ -6,7 +6,7 @@ import shutil
 
 import bfasst
 from bfasst import paths
-from bfasst.design import Design
+from bfasst.legacy.design import Design
 from bfasst.legacy.tools.opt.base import OptException
 from bfasst.legacy.tools.opt.ic2_base import Ic2BaseOptTool
 

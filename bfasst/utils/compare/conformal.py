@@ -11,7 +11,7 @@ import scp
 
 import bfasst
 from bfasst import paths
-from bfasst.design import Vendor
+from bfasst.config import Vendor
 from bfasst.locks import conformal_lock
 from bfasst.utils import error
 from bfasst.utils.general import HdlType, get_hdl_src_types
@@ -42,7 +42,7 @@ class ConformalCompare:
         self.local_libs_paths = None
 
     def compare_netlists(self):
-        with conformal_lock:
+        with conformal_lock():
             self._compare_netlists()
 
     def _compare_netlists(self):

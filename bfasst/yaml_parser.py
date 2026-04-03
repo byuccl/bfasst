@@ -105,25 +105,6 @@ class DesignParser(YamlParser):
         props = YamlParser(yaml_path).props
         for key, value in props.items():
             setattr(self, key, value)
-        # self.top = props["top"]
-        # if "part" in props:
-        #     self.part = props["part"]
-
-        # if "vhdl_libs" in props:
-        #     self.vhdl_libs = props["vhdl_libs"]
-
-        # # [{name: "clk", period: int (ns), waveform: "0.000 5.000"}] - Waveform is optional
-        # if "clocks" in props:
-        #     self.clocks = props["clocks"]
-
-        # if "verilog_files" in props:
-        #     self.verilog_files = props["verilog_files"]
-
-        # if "system_verilog_files" in props:
-        #     self.system_verilog_files = props["system_verilog_files"]
-
-        # if "other_sources" in props:
-        #     self.other_sources = props["other_sources"]
 
 
 class FlowDescriptionParser(YamlParser):

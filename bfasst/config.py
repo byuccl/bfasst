@@ -2,11 +2,19 @@
 
 import os
 import sys
+from enum import Enum, auto
 from typing import TYPE_CHECKING
 
 # This is needed for pylint/pylance type checking to work. Ignored during real runtimes.
 if TYPE_CHECKING:
     from .config_stubs import *  # pylint: disable=wildcard-import,unused-wildcard-import
+
+
+class Vendor(Enum):
+    """Enum differentiating between different fpga vendors"""
+
+    LATTICE = auto()
+    XILINX = auto()
 
 
 def __getattr__(name):

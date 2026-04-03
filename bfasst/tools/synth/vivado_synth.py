@@ -112,9 +112,6 @@ class VivadoSynth(SynthTool):
     def add_ninja_deps(self, deps):
         """Add dependencies to the master ninja file that would cause it to rebuild if modified"""
         self._add_ninja_deps_default(deps, __file__)
-        for dep in self._my_dir_path.glob("*.mustache"):
-            if "vivado" in dep.name:
-                deps.append(dep)
 
         for dep in self.deps:
             deps.append(dep)
