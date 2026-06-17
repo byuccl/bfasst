@@ -227,7 +227,7 @@ def ensure(x, y):
 
 
 def normalize(data):
-    """Recursively normalize to dict, str, list, None, int, bool types"""
+    """Recursively normalize containers to dict, str, list, None, int, bool types"""
     if data is None or not data:
         return data
     if isinstance(data, (str, int, bool)):
@@ -249,7 +249,7 @@ def json_write_if_changed(old_data: Path, new_data):
     old_data (Path): The path to the old json file
     new_data: The new data to write to the json file if it is different from the old data
 
-    Returns (bool, normalized data): A tuple indicating whether the file was written and the normalized data
+    Returns (bool, normalized data): A tuple indicating whether the file was written and data
     """
     normalized = normalize(new_data)
     old_json = None
