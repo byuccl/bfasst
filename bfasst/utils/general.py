@@ -1,22 +1,23 @@
 """Utility functions"""
 
-from argparse import ArgumentParser
 import atexit
 import code
+import enum
 import json
 import logging
 import os
-from pathlib import Path
 import re
 import readline
 import rlcompleter
-import sys
 import shutil
-import enum
+import sys
+from argparse import ArgumentParser
+from pathlib import Path
 
 from jpype.types import JString
-from bfasst.paths import DESIGNS_PATH
+
 from bfasst.config import BUILD
+from bfasst.paths import DESIGNS_PATH
 
 
 class TermColor:
@@ -225,14 +226,45 @@ def ensure(x, y):
     return x if x is not None else y
 
 
-def json_write_if_changed(path, json_str):
-    """Write the json file for the tool, if the new string
-    does not match the json already in existence."""
-    json_equivalent = compare_json(path, json_str)
+def normalize(data):
+    """Recursively normalize containers to dict, str, list, None, int, bool types"""
+    if data is None or not data:
+        return data
+    elif isinstance(data, (str, int, bool)):
+        return data
+    elif isinstance(data, dict):
+        return {str(k): normalize(v) for k, v in data.items()}
+    elif isinstance(data, (list, tuple, set)):
+        return [normalize(v) for v in data]
+    else:
+        return str(data)
 
-    if not json_equivalent:
-        with open(path, "w") as f:
-            f.write(json_str)
+
+def json_write_if_changed(old_data: Path, new_data):
+    """
+    Write the json file for the tool, if the new data
+    does not match the json already in existence.
+
+    Calls normalize() on new_data to ensure json serialization compatibility.
+
+    old_data (Path): The path to the old json file
+    new_data: The new data to write to the json file if it is different from the old data
+
+    Returns (bool, normalized data): A tuple indicating whether the file was written and the normalized data
+    """
+    normalized = normalize(new_data)
+    old_json = None
+    if old_data.exists():
+        with open(old_data, "r") as f:
+            old_json = json.load(f)
+
+    if old_json == normalized:
+        return False, normalized
+
+    with open(old_data, "w") as f:
+        json.dump(normalized, f, indent=4)
+
+    return True, normalized
 
 
 def get_family_from_part(part):

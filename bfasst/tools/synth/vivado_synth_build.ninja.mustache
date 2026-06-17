@@ -1,8 +1,3 @@
-{{#outputs.setup_tcl}}build {{.}}: template {{outputs.synth_json}} {{synth_library}}/vivado_synth_setup.tcl.mustache {{/outputs.setup_tcl}}
-{{#outputs.synth_tcl}}build {{.}}: template {{outputs.synth_json}} {{synth_library}}/vivado_synth_run.tcl.mustache {{/outputs.synth_tcl}}
-{{#outputs.reports_tcl}}build {{.}}: template {{outputs.synth_json}} {{synth_library}}/vivado_synth_reports.tcl.mustache {{/outputs.reports_tcl}}
-{{#outputs.run_tcl}}build {{.}}: template {{outputs.synth_json}} {{ common_tools_path }}/vivado_top_tcl.mustache | {{#tcl_sources}}{{ . }} {{/tcl_sources}} {{/outputs.run_tcl}}
-
 {{#in_context}}
 build {{ outputs.synth_constraints }}: vivado_ioparse {{ outputs.io_report }} | {{outputs.synth_dcp}}
 {{/in_context}}
