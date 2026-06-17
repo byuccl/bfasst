@@ -227,17 +227,16 @@ def ensure(x, y):
 
 
 def normalize(data):
-    """Recursively normalize containers to dict, str, list, None, int, bool types"""
+    """Recursively normalize to dict, str, list, None, int, bool types"""
     if data is None or not data:
         return data
-    elif isinstance(data, (str, int, bool)):
+    if isinstance(data, (str, int, bool)):
         return data
-    elif isinstance(data, dict):
+    if isinstance(data, dict):
         return {str(k): normalize(v) for k, v in data.items()}
-    elif isinstance(data, (list, tuple, set)):
+    if isinstance(data, (list, tuple, set)):
         return [normalize(v) for v in data]
-    else:
-        return str(data)
+    return str(data)
 
 
 def json_write_if_changed(old_data: Path, new_data):
