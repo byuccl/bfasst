@@ -108,6 +108,7 @@ class VivadoSynth(SynthTool):
         self.outputs["journal"] = self.build_path / "vivado.jou"
         self.outputs["log"] = self.build_path / "vivado.log"
         self.outputs["verilog"] = self.build_path / "viv_synth.v"
+        self.outputs["synth_utilization"] = self.build_path / "synth_utilization.txt"
 
         if not self.ooc:
             self.outputs["io_report"] = self.build_path / "report_io.txt"
