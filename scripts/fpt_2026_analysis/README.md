@@ -23,6 +23,62 @@ make BUILD_DIR=/path/to/rand_soc/build
 
 Output is written to `output/` by default; override with `OUT_DIR=`.
 
+### `congestion.py`
+
+Parses peak routing segment utilization percentages from `vivado.log` (the `Max Cong = XX%` lines emitted during placement) and produces:
+
+- **`congestion.png`** — Three-panel figure: box plots of peak utilization per direction (N/S/E/W), a histogram of the overall maximum congestion per design colored by whether a hotspot was detected, and a clean vs. hotspot count bar.
+
+Vivado flags a region as a congestion hotspot when routing segment utilization exceeds ~85%. Also prints a per-direction summary table and hotspot count to stdout.
+
+**Usage:**
+```
+make congestion               # uses default BUILD_DIR
+make congestion BUILD_DIR=/path/to/rand_soc/build
+```
+
+### `timing.py`
+
+Parses Vivado `timing_summary.txt` reports from a RandSoC build directory and produces:
+
+- **`timing.png`** — 2×2 grid of histograms: WNS distribution (pass/fail colored), failing endpoint count, worst-case logic level depth, and worst-case data path delay.
+
+Also prints a timing closure summary (designs meeting vs. failing timing) and a statistics table to stdout. Skips designs with no clock constraint.
+
+**Usage:**
+```
+make timing                   # uses default BUILD_DIR
+make timing BUILD_DIR=/path/to/rand_soc/build
+```
+
+### `runtime.py`
+
+Parses wall-clock elapsed times for each Vivado phase from `vivado_synth/vivado.log` and `vivado_impl/vivado.log` and produces:
+
+- **`runtime.png`** — Two-panel figure: stacked bar chart showing synth/opt/place/route breakdown per design (sorted by total), and a histogram of total elapsed time across designs.
+
+Also prints a summary table (min, median, mean, max) per phase to stdout.
+
+**Usage:**
+```
+make runtime                  # uses default BUILD_DIR
+make runtime BUILD_DIR=/path/to/rand_soc/build
+```
+
+### `dataset.py`
+
+Aggregates all per-design metrics from every other script into a single CSV file: **`dataset.csv`**. One row per design, with the design seed as the key.
+
+**Columns:** `seed` | post-impl utilization (LUT/FF/BRAM/DSP/IO %) | post-synth utilization | timing (WNS, TNS, failing endpoints, logic levels, data path delay) | congestion (N/S/E/W %, max %, hotspot flag) | runtime (synth, opt, place, route, impl, total — all in seconds)
+
+Missing data (e.g. a design that hasn't finished impl yet) is written as empty cells.
+
+**Usage:**
+```
+make csv                      # uses default BUILD_DIR
+make csv BUILD_DIR=/path/to/rand_soc/build
+```
+
 ## Possible Ideas
 
 ### Suggested Metrics
