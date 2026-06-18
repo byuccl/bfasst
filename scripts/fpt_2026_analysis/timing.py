@@ -9,6 +9,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
 from parsers import parse_timing, read_dataset_csv
+from plot_utils import figure
 
 
 def collect_data(build_dir: Path) -> tuple[list[str], list[dict]]:
@@ -120,77 +121,68 @@ def _hist(ax, raw, color, title, xlabel, clip="upper", integer=False):
         ax.hist(vals, bins=30, range=(lo, hi), color=color, edgecolor="white", linewidth=0.5)
     ax.set_xlim(lo, hi)
     if n_out:
-        title += f"\n({n_out} outliers not shown)"
-    ax.set_title(title, fontweight="bold")
+        print(f"  {title}: {n_out} outliers not shown")
     ax.set_xlabel(xlabel)
     ax.set_ylabel("Number of designs")
 
 
-def plot_timing(data: list[dict], out_path: Path) -> None:
-    """2x3 grid: WNS, Fmax, TNS, failing endpoints, logic levels, data path delay."""
-    fig, axes = plt.subplots(2, 3, figsize=(16, 9))
-
+def plot_timing(data: list[dict], out_dir: Path) -> None:
+    """One PDF each: WNS, Fmax, TNS, failing endpoints, logic levels, data path delay."""
     # --- WNS (pass/fail coloured, negative tail clipped) ---
-    ax = axes[0, 0]
-    wns_vals = np.array([d["wns"] for d in data], dtype=float)
-    lo, hi, n_out = _clip_range(wns_vals, "lower")
-    hi = max(hi, 0.1)
-    bins = np.linspace(lo, hi, 30)
-    neg = wns_vals[wns_vals < 0]
-    pos = wns_vals[wns_vals >= 0]
-    if len(neg):
-        ax.hist(neg, bins=bins, color="#e15759", label=f"Failing ({len(neg)})")
-    if len(pos):
-        ax.hist(pos, bins=bins, color="#4e79a7", label=f"Meeting ({len(pos)})")
-    ax.axvline(0, color="black", linewidth=1, linestyle="--")
-    ax.set_xlim(lo, hi)
-    title = "WNS Distribution"
-    if n_out:
-        title += f"\n({n_out} outliers not shown)"
-    ax.set_title(title, fontweight="bold")
-    ax.set_xlabel("WNS (ns)")
-    ax.set_ylabel("Number of designs")
-    ax.legend(fontsize=9)
+    with figure(out_dir / "timing_wns.pdf") as (_fig, ax):
+        wns_vals = np.array([d["wns"] for d in data], dtype=float)
+        lo, hi, n_out = _clip_range(wns_vals, "lower")
+        hi = max(hi, 0.1)
+        bins = np.linspace(lo, hi, 30)
+        neg = wns_vals[wns_vals < 0]
+        pos = wns_vals[wns_vals >= 0]
+        if len(neg):
+            ax.hist(neg, bins=bins, color="#e15759", label=f"Failing ({len(neg)})")
+        if len(pos):
+            ax.hist(pos, bins=bins, color="#4e79a7", label=f"Meeting ({len(pos)})")
+        ax.axvline(0, color="black", linewidth=1, linestyle="--")
+        ax.set_xlim(lo, hi)
+        if n_out:
+            print(f"  WNS Distribution: {n_out} outliers not shown")
+        ax.set_xlabel("WNS (ns)")
+        ax.set_ylabel("Number of designs")
+        ax.legend(fontsize=9)
 
     # --- Fmax (achieved) ---
     # Clip only the high tail: the low tail is the failing/hard-design population
     # (fmax well below target), which is exactly what we want to keep visible.
-    fmax_vals = [fmax_mhz(d) for d in data]
-    _hist(axes[0, 1], fmax_vals, "#af7aa1", "Achieved Fmax", "Fmax (MHz)", clip="upper")
-    # Mark the median target frequency for reference.
     periods = np.array([d["clk_period"] for d in data if d.get("clk_period")], dtype=float)
-    if len(periods):
-        target_mhz = 1000.0 / float(np.median(periods))
-        axes[0, 1].axvline(target_mhz, color="black", linewidth=1, linestyle="--")
-        axes[0, 1].text(target_mhz, axes[0, 1].get_ylim()[1] * 0.92,
-                        f" target {target_mhz:.0f} MHz", fontsize=8, color="black")
-    # Anchor the Fmax axis at 0 so the slow/failing tail reads on an absolute scale.
-    axes[0, 1].set_xlim(left=0)
+    with figure(out_dir / "timing_fmax.pdf") as (_fig, ax):
+        fmax_vals = [fmax_mhz(d) for d in data]
+        _hist(ax, fmax_vals, "#af7aa1", "Achieved Fmax", "Fmax (MHz)", clip="upper")
+        # Mark the median target frequency for reference.
+        if len(periods):
+            target_mhz = 1000.0 / float(np.median(periods))
+            ax.axvline(target_mhz, color="black", linewidth=1, linestyle="--")
+            ax.text(target_mhz, ax.get_ylim()[1] * 0.92,
+                    f" target {target_mhz:.0f} MHz", fontsize=8, color="black")
+        # Anchor the Fmax axis at 0 so the slow/failing tail reads on an absolute scale.
+        ax.set_xlim(left=0)
 
     # --- TNS (negative tail clipped) ---
-    _hist(axes[0, 2], [d["tns"] for d in data], "#9c755f", "TNS Distribution",
-          "TNS (ns)", clip="lower")
+    with figure(out_dir / "timing_tns.pdf") as (_fig, ax):
+        _hist(ax, [d["tns"] for d in data], "#9c755f", "TNS Distribution",
+              "TNS (ns)", clip="lower")
 
     # --- Failing endpoints (upper tail clipped) ---
-    _hist(axes[1, 0], [d["failing_endpoints"] for d in data], "#f28e2b",
-          "Failing Timing Endpoints", "Count", clip="upper")
+    with figure(out_dir / "timing_failing_endpoints.pdf") as (_fig, ax):
+        _hist(ax, [d["failing_endpoints"] for d in data], "#f28e2b",
+              "Failing Timing Endpoints", "Count", clip="upper")
 
     # --- Logic levels (integer, upper tail clipped) ---
-    _hist(axes[1, 1], [d["logic_levels"] for d in data], "#59a14f",
-          "Critical Path Logic Levels", "Logic levels", clip="upper", integer=True)
+    with figure(out_dir / "timing_logic_levels.pdf") as (_fig, ax):
+        _hist(ax, [d["logic_levels"] for d in data], "#59a14f",
+              "Critical Path Logic Levels", "Logic levels", clip="upper", integer=True)
 
     # --- Data path delay (upper tail clipped) ---
-    _hist(axes[1, 2], [d["data_path_delay"] for d in data], "#76b7b2",
-          "Worst-Case Data Path Delay", "Delay (ns)", clip="upper")
-
-    meeting = sum(1 for d in data if d["wns"] >= 0)
-    suptitle = f"Timing Analysis — {len(data)} designs, {meeting} meeting timing"
-    if len(periods):
-        suptitle += f" at {1000.0 / float(np.median(periods)):.0f} MHz"
-    fig.suptitle(suptitle, fontsize=13)
-    plt.tight_layout()
-    plt.savefig(out_path, dpi=150)
-    print(f"Saved {out_path}")
+    with figure(out_dir / "timing_data_path_delay.pdf") as (_fig, ax):
+        _hist(ax, [d["data_path_delay"] for d in data], "#76b7b2",
+              "Worst-Case Data Path Delay", "Delay (ns)", clip="upper")
 
 
 def main() -> None:
@@ -223,7 +215,7 @@ def main() -> None:
     print()
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    plot_timing(data, args.out_dir / "timing.png")
+    plot_timing(data, args.out_dir)
 
 
 if __name__ == "__main__":

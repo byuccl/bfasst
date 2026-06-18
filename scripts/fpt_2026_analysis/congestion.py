@@ -4,11 +4,11 @@ import argparse
 import sys
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
 from parsers import DIRECTIONS, parse_congestion, read_dataset_csv
+from plot_utils import figure
 
 
 def collect_data(build_dir: Path) -> tuple[list[str], list[dict]]:
@@ -61,11 +61,8 @@ def print_summary(data: list[dict]) -> None:
         )
 
 
-def plot_congestion(data: list[dict], out_path: Path) -> None:
-    """3-panel figure: per-direction box plots, overall max histogram, hotspot count."""
-    fig = plt.figure(figsize=(14, 5))
-    gs = fig.add_gridspec(1, 3, width_ratios=[2, 2, 1])
-
+def plot_congestion(data: list[dict], out_dir: Path) -> None:
+    """One PDF each: per-direction box plots, overall max histogram, hotspot count."""
     dir_colors = {
         "North": "#4e79a7",
         "South": "#f28e2b",
@@ -74,54 +71,42 @@ def plot_congestion(data: list[dict], out_path: Path) -> None:
     }
 
     # --- Box plots per direction ---
-    ax1 = fig.add_subplot(gs[0])
-    box_data = [[d[direction] for d in data] for direction in DIRECTIONS]
-    bp = ax1.boxplot(box_data, patch_artist=True, widths=0.5)
-    for patch, direction in zip(bp["boxes"], DIRECTIONS):
-        patch.set_facecolor(dir_colors[direction])
-        patch.set_alpha(0.7)
-    ax1.set_xticklabels(DIRECTIONS)
-    ax1.set_ylabel("Peak routing segment utilization (%)")
-    ax1.set_title("Congestion by Direction", fontweight="bold")
-    ax1.axhline(85, color="gray", linewidth=0.8, linestyle="--", label="85% threshold")
-    ax1.legend(fontsize=8)
+    with figure(out_dir / "congestion_by_direction.pdf") as (_fig, ax1):
+        box_data = [[d[direction] for d in data] for direction in DIRECTIONS]
+        bp = ax1.boxplot(box_data, patch_artist=True, widths=0.5)
+        for patch, direction in zip(bp["boxes"], DIRECTIONS):
+            patch.set_facecolor(dir_colors[direction])
+            patch.set_alpha(0.7)
+        ax1.set_xticklabels(DIRECTIONS)
+        ax1.set_ylabel("Peak routing segment utilization (%)")
+        ax1.axhline(85, color="gray", linewidth=0.8, linestyle="--", label="85% threshold")
+        ax1.legend(fontsize=8)
 
     # --- Overall max histogram ---
-    ax2 = fig.add_subplot(gs[1])
-    max_vals = [d["max"] for d in data]
-    hotspot_vals = [v for d, v in zip(data, max_vals) if d["has_congested_region"]]
-    clean_vals   = [v for d, v in zip(data, max_vals) if not d["has_congested_region"]]
-    # Congestion can exceed 100% (Vivado reports routing overuse that way), so
-    # the upper bin edge tracks the actual max rather than being capped at 100.
-    bins = np.linspace(min(max_vals) - 1, max(max(max_vals), 100) + 1, 25)
-    if clean_vals:
-        ax2.hist(clean_vals, bins=bins, color="#4e79a7", label="No hotspot", alpha=0.8)
-    if hotspot_vals:
-        ax2.hist(hotspot_vals, bins=bins, color="#e15759", label="Has hotspot", alpha=0.8)
-    ax2.axvline(85, color="gray", linewidth=0.8, linestyle="--")
-    ax2.set_xlabel("Peak routing segment utilization (%)")
-    ax2.set_ylabel("Number of designs")
-    ax2.set_title("Overall Max Congestion", fontweight="bold")
-    ax2.legend(fontsize=8)
+    with figure(out_dir / "congestion_max.pdf") as (_fig, ax2):
+        max_vals = [d["max"] for d in data]
+        hotspot_vals = [v for d, v in zip(data, max_vals) if d["has_congested_region"]]
+        clean_vals   = [v for d, v in zip(data, max_vals) if not d["has_congested_region"]]
+        # Congestion can exceed 100% (Vivado reports routing overuse that way), so
+        # the upper bin edge tracks the actual max rather than being capped at 100.
+        bins = np.linspace(min(max_vals) - 1, max(max(max_vals), 100) + 1, 25)
+        if clean_vals:
+            ax2.hist(clean_vals, bins=bins, color="#4e79a7", label="No hotspot", alpha=0.8)
+        if hotspot_vals:
+            ax2.hist(hotspot_vals, bins=bins, color="#e15759", label="Has hotspot", alpha=0.8)
+        ax2.axvline(85, color="gray", linewidth=0.8, linestyle="--")
+        ax2.set_xlabel("Peak routing segment utilization (%)")
+        ax2.set_ylabel("Number of designs")
+        ax2.legend(fontsize=8)
 
     # --- Hotspot count bar ---
-    ax3 = fig.add_subplot(gs[2])
-    hotspot = sum(1 for d in data if d["has_congested_region"])
-    clean = len(data) - hotspot
-    ax3.bar(["Clean", "Hotspot"], [clean, hotspot],
-            color=["#4e79a7", "#e15759"], edgecolor="white")
-    ax3.bar_label(ax3.containers[0], padding=3)
-    ax3.set_ylabel("Number of designs")
-    ax3.set_title("Congestion Hotspots", fontweight="bold")
-
-    fig.suptitle(
-        f"Routing Congestion — {len(data)} designs  "
-        f"(dashed line = 85% Vivado hotspot threshold)",
-        fontsize=12,
-    )
-    plt.tight_layout()
-    plt.savefig(out_path, dpi=150)
-    print(f"Saved {out_path}")
+    with figure(out_dir / "congestion_hotspots.pdf") as (_fig, ax3):
+        hotspot = sum(1 for d in data if d["has_congested_region"])
+        clean = len(data) - hotspot
+        ax3.bar(["Clean", "Hotspot"], [clean, hotspot],
+                color=["#4e79a7", "#e15759"], edgecolor="white")
+        ax3.bar_label(ax3.containers[0], padding=3)
+        ax3.set_ylabel("Number of designs")
 
 
 def main() -> None:
@@ -156,7 +141,7 @@ def main() -> None:
     print()
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    plot_congestion(data, args.out_dir / "congestion.png")
+    plot_congestion(data, args.out_dir)
 
 
 if __name__ == "__main__":

@@ -11,15 +11,17 @@ import sys
 
 # (label, ssh_host, build_dir)
 DEFAULT_MACHINES = [
-    ("CCL1",     "CCL1",     "/data/jgoeders/fpt2026/build/rand_soc"),
+    ("CCL1", "CCL1", "/data/jgoeders/fpt2026/build/rand_soc"),
     ("serenity", "serenity", "/data/jgoeders/fpt2026/build/rand_soc"),
+    ("CCL1_all", "CCL1", "/data/jgoeders/fpt2026_1/build/rand_soc"),
+    ("serenity_big", "serenity", "/data/jgoeders/fpt2026_1/build/rand_soc"),
 ]
 
 # Remote shell snippet: prints "<done> <total>" for the given build dir.
 REMOTE_CMD = (
     'cd {build_dir} 2>/dev/null || {{ echo "0 0"; exit 0; }}; '
-    'total=$(ls -d design_* 2>/dev/null | wc -l); '
-    'done=$(ls design_*/vivado_impl/impl.dcp 2>/dev/null | wc -l); '
+    "total=$(ls -d design_* 2>/dev/null | wc -l); "
+    "done=$(ls design_*/vivado_impl/impl.dcp 2>/dev/null | wc -l); "
     'echo "$done $total"'
 )
 
@@ -56,8 +58,7 @@ def main() -> None:
         "--machine",
         action="append",
         metavar="LABEL:HOST:BUILD_DIR",
-        help="Override machines to query (repeatable). "
-             "Default: CCL1 and serenity.",
+        help="Override machines to query (repeatable). " "Default: CCL1 and serenity.",
     )
     args = parser.parse_args()
 

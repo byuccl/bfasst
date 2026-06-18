@@ -9,6 +9,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
 from parsers import RESOURCES, parse_utilization, read_dataset_csv
+from plot_utils import figure
 
 COLORS = {
     "LUT": "#4e79a7",
@@ -64,32 +65,26 @@ def print_summary(data: list[dict]) -> None:
         )
 
 
-def plot_histograms(data: list[dict], out_path: Path) -> None:
-    """2x3 grid of histograms, one per resource type."""
-    keys = list(RESOURCES.keys())
-    fig, axes = plt.subplots(2, 3, figsize=(14, 8))
-    axes = axes.flatten()
+def plot_histograms(data: list[dict], out_dir: Path, log: bool = False) -> None:
+    """One histogram, in its own PDF, per resource type.
 
-    for i, key in enumerate(keys):
-        vals = [d[key] for d in data]
-        ax = axes[i]
-        ax.hist(vals, bins=30, color=COLORS[key], edgecolor="white", linewidth=0.5)
-        ax.set_title(key, fontsize=13, fontweight="bold")
-        ax.set_xlabel("Utilization (%)")
-        ax.set_ylabel("Number of designs")
-        ax.set_xlim(0, 100)
-
-    # Hide any leftover axes when there are fewer resources than grid cells.
-    for ax in axes[len(keys):]:
-        ax.set_visible(False)
-    fig.suptitle(f"Resource Utilization Distribution ({len(data)} designs)", fontsize=14)
-    plt.tight_layout()
-    plt.savefig(out_path, dpi=150)
-    print(f"Saved {out_path}")
+    With ``log=True`` the y-axis (design count) is log-scaled so sparse, heavy
+    tails stay visible; the files get a ``_log`` suffix.
+    """
+    suffix = "_log" if log else ""
+    for key in RESOURCES:  # pylint: disable=consider-using-dict-items
+        with figure(out_dir / f"utilization_{key.lower()}{suffix}.pdf") as (_fig, ax):
+            vals = [d[key] for d in data]
+            ax.hist(vals, bins=30, color=COLORS[key], edgecolor="white", linewidth=0.5)
+            if log:
+                ax.set_yscale("log")
+            ax.set_xlabel("Utilization (%)")
+            ax.set_ylabel("Number of designs")
+            ax.set_xlim(0, 100)
 
 
-def plot_radar(designs: list[Path], data: list[dict], out_path: Path) -> None:
-    """Radar chart showing median + the most extreme design for each resource type."""
+def plot_radar(data: list[dict], out_dir: Path) -> None:
+    """Radar chart showing the most extreme design for each resource type."""
     keys = list(RESOURCES.keys())
     N = len(keys)
     angles = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
@@ -101,34 +96,26 @@ def plot_radar(designs: list[Path], data: list[dict], out_path: Path) -> None:
     # Deduplicate while preserving first-occurrence order
     shown_indices = list(dict.fromkeys(extreme_idx.values()))
 
-    medians = {k: float(np.median([d[k] for d in data])) for k in keys}
+    with figure(
+        out_dir / "utilization_radar.pdf", figsize=(7, 7),
+        subplot_kw=dict(polar=True), savefig_kw=dict(bbox_inches="tight"),
+    ) as (_fig, ax):
+        ax.set_xticks(angles[:-1])
+        ax.set_xticklabels(keys, fontsize=12)
+        ax.set_ylim(0, 100)
+        ax.set_yticks([20, 40, 60, 80, 100])
+        ax.set_yticklabels(["20%", "40%", "60%", "80%", "100%"], fontsize=7)
 
-    fig, ax = plt.subplots(figsize=(7, 7), subplot_kw=dict(polar=True))
-    ax.set_xticks(angles[:-1])
-    ax.set_xticklabels(keys, fontsize=12)
-    ax.set_ylim(0, 100)
-    ax.set_yticks([20, 40, 60, 80, 100])
-    ax.set_yticklabels(["20%", "40%", "60%", "80%", "100%"], fontsize=7)
+        cmap = plt.cm.tab10
+        for ci, idx in enumerate(shown_indices):
+            d = data[idx]
+            vals = [d[k] for k in keys] + [d[keys[0]]]
+            dominant = [k for k, v in extreme_idx.items() if v == idx]
+            label = f"max {'/'.join(dominant)}"
+            ax.plot(angles, vals, color=cmap(ci), linewidth=2, label=label)
+            ax.fill(angles, vals, color=cmap(ci), alpha=0.12)
 
-    # Median reference
-    median_vals = [medians[k] for k in keys] + [medians[keys[0]]]
-    ax.plot(angles, median_vals, color="gray", linewidth=1.5, linestyle="--", label="Median")
-    ax.fill(angles, median_vals, color="gray", alpha=0.1)
-
-    cmap = plt.cm.tab10
-    for ci, idx in enumerate(shown_indices):
-        d = data[idx]
-        vals = [d[k] for k in keys] + [d[keys[0]]]
-        dominant = [k for k, v in extreme_idx.items() if v == idx]
-        label = f"{designs[idx]}  (max {'/'.join(dominant)})"
-        ax.plot(angles, vals, color=cmap(ci), linewidth=2, label=label)
-        ax.fill(angles, vals, color=cmap(ci), alpha=0.12)
-
-    ax.legend(loc="upper right", bbox_to_anchor=(1.4, 1.15), fontsize=8)
-    ax.set_title("Extreme Designs by Resource Type", fontsize=13, pad=20)
-    plt.tight_layout()
-    plt.savefig(out_path, dpi=150, bbox_inches="tight")
-    print(f"Saved {out_path}")
+        ax.legend(loc="upper right", bbox_to_anchor=(1.4, 1.15), fontsize=8)
 
 
 def main() -> None:
@@ -161,8 +148,9 @@ def main() -> None:
     print()
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    plot_histograms(data, args.out_dir / "utilization_histograms.png")
-    plot_radar(designs, data, args.out_dir / "utilization_radar.png")
+    plot_histograms(data, args.out_dir)
+    plot_histograms(data, args.out_dir, log=True)
+    plot_radar(data, args.out_dir)
 
 
 if __name__ == "__main__":
