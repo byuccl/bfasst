@@ -4,21 +4,54 @@ Scripts for analyzing the RandSoC dataset generated for the FPT 2026 paper.
 The main result strategy is to generate a large dataset and report statistics
 that demonstrate the diverse nature of the designs.
 
+## Aggregating data across machines
+
+The dataset is built on multiple remote machines (see `progress.py` for the
+current list). The raw Vivado build output is far too large to copy locally, so
+the pipeline generates a small per-design CSV **on each remote machine**, copies
+just those CSVs back, joins them, and runs all plotting **purely from the joined
+CSV** — no raw build directory is needed locally.
+
+```
+make remote-csv   # Step 1: generate CSVs on remotes (stdlib-only), fetch to output/raw/
+make join         # Step 2: merge output/raw/*.csv -> output/dataset.csv
+make all          # Step 3: generate all plots from output/dataset.csv
+```
+
+Key design point: **the remote step depends only on the Python standard
+library**. `dataset.py` and its parsing helpers live in `parsers.py`, which
+imports nothing beyond `re`/`csv`/`pathlib`, so they run on the remotes (which
+have no numpy/matplotlib and may have no bfasst checkout) with zero setup. Only
+the local plotting scripts use numpy/matplotlib.
+
+Every row carries a `machine` column, so design identity is `(machine, seed)`
+and seed ranges across machines never collide.
+
+- **Configure machines** in `remote_csv.py` (`DEFAULT_MACHINES`: label, ssh
+  host, build dir, python interpreter), or override per-run with
+  `--machine LABEL:HOST:BUILD_DIR[:INTERP]` (repeatable). `python remote_csv.py
+  --machine CCL1:CCL1:/data/jgoeders/fpt2026/build/rand_soc:python`.
+- The plotting scripts also accept a positional `build_dir` instead of `--csv`
+  to parse a single local build directory directly (the original behavior).
+
 ## Scripts
 
 ### `utilization.py`
 
 Parses Vivado `utilization.txt` reports from a RandSoC build directory and produces two figures:
 
-- **`utilization_histograms.png`** — 2×3 grid of histograms showing the distribution of LUT, FF, BRAM, DSP, and IO utilization (as % of device capacity) across all designs.
+- **`utilization_histograms.png`** — 2×3 grid of histograms showing the distribution of LUT, FF, Slice (slice/CLB occupancy), BRAM, DSP, and IO utilization (as % of device capacity) across all designs.
+
+All utilization metrics are read from the **post-implementation** report (`vivado_impl/utilization.txt`).
 - **`utilization_radar.png`** — Radar chart overlaying the median design against the most extreme design for each resource type, highlighting the diversity of resource profiles.
 
 Also prints a summary table (min, median, mean, max, std) for each resource to stdout.
 
 **Usage:**
 ```
-make                          # uses default BUILD_DIR
-make BUILD_DIR=/path/to/rand_soc/build
+make utilization                          # plots from output/dataset.csv
+python utilization.py --csv path/to/dataset.csv --out-dir output
+python utilization.py /path/to/rand_soc   # parse a local build dir directly
 ```
 
 Output is written to `output/` by default; override with `OUT_DIR=`.
@@ -33,22 +66,26 @@ Vivado flags a region as a congestion hotspot when routing segment utilization e
 
 **Usage:**
 ```
-make congestion               # uses default BUILD_DIR
-make congestion BUILD_DIR=/path/to/rand_soc/build
+make congestion                          # plots from output/dataset.csv
+python congestion.py --csv path/to/dataset.csv --out-dir output
+python congestion.py /path/to/rand_soc   # parse a local build dir directly
 ```
 
 ### `timing.py`
 
 Parses Vivado `timing_summary.txt` reports from a RandSoC build directory and produces:
 
-- **`timing.png`** — 2×2 grid of histograms: WNS distribution (pass/fail colored), failing endpoint count, worst-case logic level depth, and worst-case data path delay.
+- **`timing.png`** — 2×3 grid of histograms: WNS distribution (pass/fail colored), achieved **Fmax**, TNS, failing endpoint count, worst-case logic level depth, and worst-case data path delay. Each panel clips its extreme tail(s) to a percentile (noting how many outliers are hidden) so a few pathological designs don't flatten the distribution.
 
-Also prints a timing closure summary (designs meeting vs. failing timing) and a statistics table to stdout. Skips designs with no clock constraint.
+Achieved Fmax is computed as `1000 / (clk_period_ns - WNS_ns)`, using the target clock period parsed from the report's Clock Summary (so it adapts if the target frequency varies across designs).
+
+Also prints a timing closure summary (designs meeting vs. failing timing) and a statistics table (incl. Fmax) to stdout. Skips designs with no clock constraint.
 
 **Usage:**
 ```
-make timing                   # uses default BUILD_DIR
-make timing BUILD_DIR=/path/to/rand_soc/build
+make timing                          # plots from output/dataset.csv
+python timing.py --csv path/to/dataset.csv --out-dir output
+python timing.py /path/to/rand_soc   # parse a local build dir directly
 ```
 
 ### `runtime.py`
@@ -61,22 +98,58 @@ Also prints a summary table (min, median, mean, max) per phase to stdout.
 
 **Usage:**
 ```
-make runtime                  # uses default BUILD_DIR
-make runtime BUILD_DIR=/path/to/rand_soc/build
+make runtime                          # plots from output/dataset.csv
+python runtime.py --csv path/to/dataset.csv --out-dir output
+python runtime.py /path/to/rand_soc   # parse a local build dir directly
 ```
+
+### `parsers.py`
+
+Stdlib-only (no numpy/matplotlib) module holding the four `parse_*` functions,
+`collect_all(build_dir, machine)`, the canonical `COLUMNS` list, `write_csv`, and
+`read_dataset_csv` (reads a joined CSV back into typed rows). Shared by both the
+remote generator (`dataset.py`) and the local plotting scripts. Not run directly.
 
 ### `dataset.py`
 
-Aggregates all per-design metrics from every other script into a single CSV file: **`dataset.csv`**. One row per design, with the design seed as the key.
+Aggregates all per-design metrics into a single CSV file: **`dataset.csv`**. One
+row per design, keyed by `(machine, seed)`. Imports only `parsers.py`, so it runs
+on the remote machines. `--machine LABEL` stamps the `machine` column.
 
-**Columns:** `seed` | post-impl utilization (LUT/FF/BRAM/DSP/IO %) | post-synth utilization | timing (WNS, TNS, failing endpoints, logic levels, data path delay) | congestion (N/S/E/W %, max %, hotspot flag) | runtime (synth, opt, place, route, impl, total — all in seconds)
+**Columns:** `machine`, `seed` | post-impl utilization (LUT/FF/Slice/BRAM/DSP/IO %) | post-synth utilization | timing (WNS, TNS, failing endpoints, logic levels, data path delay, target clock period) | congestion (N/S/E/W %, max %, hotspot flag) | runtime (synth, opt, place, route, impl, total — all in seconds)
 
 Missing data (e.g. a design that hasn't finished impl yet) is written as empty cells.
 
-**Usage:**
+**Usage (single local build dir):**
 ```
 make csv                      # uses default BUILD_DIR
 make csv BUILD_DIR=/path/to/rand_soc/build
+```
+
+### `remote_csv.py`
+
+**Step 1** of the aggregation pipeline. For each configured machine: copies the
+stdlib-only generator (`parsers.py` + `dataset.py`) into a remote temp dir, runs
+it against the remote build directory, and copies the resulting CSV back to
+`output/raw/<label>.csv`. Machines are configured in `DEFAULT_MACHINES` or
+overridden with `--machine LABEL:HOST:BUILD_DIR[:INTERP]`.
+
+**Usage:**
+```
+make remote-csv
+python remote_csv.py --out-dir output --machine serenity:serenity:/data/.../rand_soc:python3
+```
+
+### `join_csv.py`
+
+**Step 2** of the aggregation pipeline. Merges every `output/raw/*.csv` into a
+single `output/dataset.csv`, validating headers and flagging any duplicate
+`(machine, seed)` keys.
+
+**Usage:**
+```
+make join
+python join_csv.py --raw-dir output/raw --out output/dataset.csv
 ```
 
 ## Possible Ideas

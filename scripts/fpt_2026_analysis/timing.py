@@ -1,64 +1,17 @@
 """Analyze Vivado timing summary reports from a RandSoC dataset."""
 
 import argparse
-import re
 import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-
-def parse_timing(path: Path) -> dict | None:
-    """Parse a Vivado timing_summary.txt; returns timing metrics or None if unconstrained."""
-    text = path.read_text()
-
-    if "There are no user specified timing constraints" in text:
-        return None
-
-    # WNS, TNS, failing endpoints, total endpoints from the Intra Clock Table row for clk_out1
-    # Row format:  clk_out1_<name>  WNS  TNS  TNS_fail  TNS_total  WPWS  TPWS  ...
-    clock_row = re.search(
-        r"^\s+clk_out1_\S+\s+([-\d.]+)\s+([-\d.]+)\s+(\d+)\s+(\d+)",
-        text,
-        re.MULTILINE,
-    )
-    if not clock_row:
-        return None
-
-    wns = float(clock_row.group(1))
-    tns = float(clock_row.group(2))
-    failing_endpoints = int(clock_row.group(3))
-    total_endpoints = int(clock_row.group(4))
-
-    # Logic levels and data path delay from the first constrained Max Delay Paths section.
-    # Find the first path that is clocked (VIOLATED or MET, not inf).
-    # The constrained paths appear before unconstrained (inf) ones.
-    logic_levels = None
-    data_path_delay = None
-
-    # Locate the first Slack line that is not "inf"
-    for m in re.finditer(r"Slack\s*(?:\(VIOLATED\)|\(MET\))\s*:\s*([-\d.]+)ns", text):
-        # From this position, grab the next Logic Levels and Data Path Delay lines
-        tail = text[m.start() :]
-        ll_m = re.search(r"Logic Levels:\s+(\d+)", tail)
-        dp_m = re.search(r"Data Path Delay:\s+([\d.]+)ns", tail)
-        if ll_m and dp_m:
-            logic_levels = int(ll_m.group(1))
-            data_path_delay = float(dp_m.group(1))
-        break
-
-    return {
-        "wns": wns,
-        "tns": tns,
-        "failing_endpoints": failing_endpoints,
-        "total_endpoints": total_endpoints,
-        "logic_levels": logic_levels,
-        "data_path_delay": data_path_delay,
-    }
+sys.path.insert(0, str(Path(__file__).parent))
+from parsers import parse_timing, read_dataset_csv
 
 
-def collect_data(build_dir: Path) -> tuple[list[Path], list[dict]]:
+def collect_data(build_dir: Path) -> tuple[list[str], list[dict]]:
     """Find all timing_summary.txt files and parse them."""
     paths = sorted(build_dir.glob("*/vivado_impl/timing_summary.txt"))
     designs, data = [], []
@@ -68,10 +21,39 @@ def collect_data(build_dir: Path) -> tuple[list[Path], list[dict]]:
         if d is None:
             unconstrained += 1
         else:
-            designs.append(p.parent.parent)
+            designs.append(p.parent.parent.name)
             data.append(d)
     if unconstrained:
         print(f"Skipped {unconstrained} unconstrained designs (no clock_period set)")
+    return designs, data
+
+
+def fmax_mhz(d: dict) -> float | None:
+    """Achieved max frequency (MHz) = 1000 / (target_period - WNS)."""
+    period = d.get("clk_period")
+    wns = d.get("wns")
+    if period is None or wns is None:
+        return None
+    slack_period = period - wns
+    return 1000.0 / slack_period if slack_period > 0 else None
+
+
+def load_csv(rows: list[dict]) -> tuple[list[str], list[dict]]:
+    """Build (labels, data) from joined-dataset rows, skipping unconstrained designs."""
+    designs, data = [], []
+    for r in rows:
+        if r["wns_ns"] is None:
+            continue
+        designs.append(f"{r['machine']}/d{r['seed']}")
+        data.append({
+            "wns": r["wns_ns"],
+            "tns": r["tns_ns"],
+            "failing_endpoints": r["failing_endpoints"],
+            "total_endpoints": r["total_endpoints"],
+            "logic_levels": r["logic_levels"],
+            "data_path_delay": r["data_path_delay_ns"],
+            "clk_period": r["clk_period_ns"],
+        })
     return designs, data
 
 
@@ -81,17 +63,18 @@ def print_summary(data: list[dict]) -> None:
     print(f"Timing closure: {meeting}/{len(data)} designs meet timing ({failing} failing)\n")
 
     rows = [
-        ("WNS (ns)", "wns"),
-        ("TNS (ns)", "tns"),
-        ("Failing endpoints", "failing_endpoints"),
-        ("Logic levels (worst path)", "logic_levels"),
-        ("Data path delay (ns)", "data_path_delay"),
+        ("WNS (ns)", lambda d: d["wns"]),
+        ("TNS (ns)", lambda d: d["tns"]),
+        ("Fmax (MHz)", fmax_mhz),
+        ("Failing endpoints", lambda d: d["failing_endpoints"]),
+        ("Logic levels (worst path)", lambda d: d["logic_levels"]),
+        ("Data path delay (ns)", lambda d: d["data_path_delay"]),
     ]
     header = f"{'Metric':<28} {'Min':>8} {'Median':>8} {'Mean':>8} {'Max':>8}"
     print(header)
     print("-" * len(header))
-    for label, key in rows:
-        vals = np.array([d[key] for d in data if d[key] is not None], dtype=float)
+    for label, getter in rows:
+        vals = np.array([v for v in (getter(d) for d in data) if v is not None], dtype=float)
         if len(vals):
             print(
                 f"{label:<28} {vals.min():>8.3f} {np.median(vals):>8.3f}"
@@ -99,61 +82,112 @@ def print_summary(data: list[dict]) -> None:
             )
 
 
-def plot_timing(data: list[dict], out_path: Path) -> None:
-    """2x2 grid: WNS, failing endpoints, logic levels, data path delay."""
-    fig, axes = plt.subplots(2, 2, figsize=(12, 9))
+def _clip_range(vals: np.ndarray, clip: str, k: float = 1.5) -> tuple[float, float, int]:
+    """Return (lo, hi, n_outliers) trimming the requested tail(s) to a Tukey fence.
 
-    # --- WNS ---
+    These timing metrics are extremely heavy-tailed/bimodal — designs that fail
+    timing have catastrophic values (logic depth, slack, endpoints) while the
+    rest cluster tightly — so a percentile clip is far too loose. The Tukey fence
+    (Q1 - k·IQR, Q3 + k·IQR) tracks the bulk and the panel reports how many
+    designs fall outside the shown range.
+    """
+    q1, q3 = np.percentile(vals, [25, 75])
+    iqr = q3 - q1
+    lo, hi = float(vals.min()), float(vals.max())
+    n_out = 0
+    if clip in ("lower", "both"):
+        lo = float(q1 - k * iqr)
+        n_out += int((vals < lo).sum())
+    if clip in ("upper", "both"):
+        hi = float(q3 + k * iqr)
+        n_out += int((vals > hi).sum())
+    return lo, hi, n_out
+
+
+def _hist(ax, raw, color, title, xlabel, clip="upper", integer=False):
+    vals = np.array([v for v in raw if v is not None], dtype=float)
+    if len(vals) == 0:
+        ax.set_visible(False)
+        return
+    lo, hi, n_out = _clip_range(vals, clip)
+    if hi <= lo:
+        hi = lo + 1
+    if integer:
+        edges = np.arange(int(np.floor(lo)), int(np.ceil(hi)) + 2) - 0.5
+        ax.hist(vals, bins=edges, color=color, edgecolor="white", linewidth=0.5)
+        ax.xaxis.set_major_locator(plt.MaxNLocator(integer=True))
+    else:
+        ax.hist(vals, bins=30, range=(lo, hi), color=color, edgecolor="white", linewidth=0.5)
+    ax.set_xlim(lo, hi)
+    if n_out:
+        title += f"\n({n_out} outliers not shown)"
+    ax.set_title(title, fontweight="bold")
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel("Number of designs")
+
+
+def plot_timing(data: list[dict], out_path: Path) -> None:
+    """2x3 grid: WNS, Fmax, TNS, failing endpoints, logic levels, data path delay."""
+    fig, axes = plt.subplots(2, 3, figsize=(16, 9))
+
+    # --- WNS (pass/fail coloured, negative tail clipped) ---
     ax = axes[0, 0]
-    wns_vals = [d["wns"] for d in data]
-    colors = ["#e15759" if v < 0 else "#4e79a7" for v in wns_vals]
-    ax.bar(range(len(wns_vals)), sorted(wns_vals), color=sorted(colors, key=lambda c: c != "#e15759"))
-    # Histogram instead of bar
-    ax.cla()
-    neg = [v for v in wns_vals if v < 0]
-    pos = [v for v in wns_vals if v >= 0]
-    bins = np.linspace(min(wns_vals) - 0.1, max(wns_vals) + 0.1, 30)
-    if neg:
+    wns_vals = np.array([d["wns"] for d in data], dtype=float)
+    lo, hi, n_out = _clip_range(wns_vals, "lower")
+    hi = max(hi, 0.1)
+    bins = np.linspace(lo, hi, 30)
+    neg = wns_vals[wns_vals < 0]
+    pos = wns_vals[wns_vals >= 0]
+    if len(neg):
         ax.hist(neg, bins=bins, color="#e15759", label=f"Failing ({len(neg)})")
-    if pos:
+    if len(pos):
         ax.hist(pos, bins=bins, color="#4e79a7", label=f"Meeting ({len(pos)})")
     ax.axvline(0, color="black", linewidth=1, linestyle="--")
-    ax.set_title("WNS Distribution", fontweight="bold")
+    ax.set_xlim(lo, hi)
+    title = "WNS Distribution"
+    if n_out:
+        title += f"\n({n_out} outliers not shown)"
+    ax.set_title(title, fontweight="bold")
     ax.set_xlabel("WNS (ns)")
     ax.set_ylabel("Number of designs")
     ax.legend(fontsize=9)
 
-    # --- Failing endpoints ---
-    ax = axes[0, 1]
-    fe_vals = [d["failing_endpoints"] for d in data]
-    ax.hist(fe_vals, bins=20, color="#f28e2b", edgecolor="white", linewidth=0.5)
-    ax.set_title("Failing Timing Endpoints", fontweight="bold")
-    ax.set_xlabel("Count")
-    ax.set_ylabel("Number of designs")
+    # --- Fmax (achieved) ---
+    # Clip only the high tail: the low tail is the failing/hard-design population
+    # (fmax well below target), which is exactly what we want to keep visible.
+    fmax_vals = [fmax_mhz(d) for d in data]
+    _hist(axes[0, 1], fmax_vals, "#af7aa1", "Achieved Fmax", "Fmax (MHz)", clip="upper")
+    # Mark the median target frequency for reference.
+    periods = np.array([d["clk_period"] for d in data if d.get("clk_period")], dtype=float)
+    if len(periods):
+        target_mhz = 1000.0 / float(np.median(periods))
+        axes[0, 1].axvline(target_mhz, color="black", linewidth=1, linestyle="--")
+        axes[0, 1].text(target_mhz, axes[0, 1].get_ylim()[1] * 0.92,
+                        f" target {target_mhz:.0f} MHz", fontsize=8, color="black")
+    # Anchor the Fmax axis at 0 so the slow/failing tail reads on an absolute scale.
+    axes[0, 1].set_xlim(left=0)
 
-    # --- Logic levels ---
-    ax = axes[1, 0]
-    ll_vals = [d["logic_levels"] for d in data if d["logic_levels"] is not None]
-    ax.hist(ll_vals, bins=range(min(ll_vals), max(ll_vals) + 2), color="#59a14f",
-            edgecolor="white", linewidth=0.5, align="left")
-    ax.set_title("Critical Path Logic Levels", fontweight="bold")
-    ax.set_xlabel("Logic levels")
-    ax.set_ylabel("Number of designs")
-    ax.xaxis.set_major_locator(plt.MaxNLocator(integer=True))
+    # --- TNS (negative tail clipped) ---
+    _hist(axes[0, 2], [d["tns"] for d in data], "#9c755f", "TNS Distribution",
+          "TNS (ns)", clip="lower")
 
-    # --- Data path delay ---
-    ax = axes[1, 1]
-    dp_vals = [d["data_path_delay"] for d in data if d["data_path_delay"] is not None]
-    ax.hist(dp_vals, bins=20, color="#76b7b2", edgecolor="white", linewidth=0.5)
-    ax.set_title("Worst-Case Data Path Delay", fontweight="bold")
-    ax.set_xlabel("Delay (ns)")
-    ax.set_ylabel("Number of designs")
+    # --- Failing endpoints (upper tail clipped) ---
+    _hist(axes[1, 0], [d["failing_endpoints"] for d in data], "#f28e2b",
+          "Failing Timing Endpoints", "Count", clip="upper")
+
+    # --- Logic levels (integer, upper tail clipped) ---
+    _hist(axes[1, 1], [d["logic_levels"] for d in data], "#59a14f",
+          "Critical Path Logic Levels", "Logic levels", clip="upper", integer=True)
+
+    # --- Data path delay (upper tail clipped) ---
+    _hist(axes[1, 2], [d["data_path_delay"] for d in data], "#76b7b2",
+          "Worst-Case Data Path Delay", "Delay (ns)", clip="upper")
 
     meeting = sum(1 for d in data if d["wns"] >= 0)
-    fig.suptitle(
-        f"Timing Analysis — {len(data)} designs, {meeting} meeting timing at 120 MHz",
-        fontsize=13,
-    )
+    suptitle = f"Timing Analysis — {len(data)} designs, {meeting} meeting timing"
+    if len(periods):
+        suptitle += f" at {1000.0 / float(np.median(periods)):.0f} MHz"
+    fig.suptitle(suptitle, fontsize=13)
     plt.tight_layout()
     plt.savefig(out_path, dpi=150)
     print(f"Saved {out_path}")
@@ -161,20 +195,30 @@ def plot_timing(data: list[dict], out_path: Path) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Analyze RandSoC Vivado timing reports.")
-    parser.add_argument(
-        "build_dir", type=Path, help="Root rand_soc build directory (e.g. build/rand_soc)"
+    src = parser.add_mutually_exclusive_group(required=True)
+    src.add_argument(
+        "build_dir", type=Path, nargs="?",
+        help="Root rand_soc build directory (parse raw reports directly)"
+    )
+    src.add_argument(
+        "--csv", type=Path, help="Joined dataset CSV to plot from (e.g. output/dataset.csv)"
     )
     parser.add_argument(
         "--out-dir", type=Path, default=Path("output"), help="Directory for output plots"
     )
     args = parser.parse_args()
 
-    designs, data = collect_data(args.build_dir)
+    if args.csv:
+        designs, data = load_csv(read_dataset_csv(args.csv))
+        source = args.csv
+    else:
+        designs, data = collect_data(args.build_dir)
+        source = args.build_dir
     if not data:
-        print(f"No constrained timing reports found under {args.build_dir}", file=sys.stderr)
+        print(f"No constrained timing data found in {source}", file=sys.stderr)
         sys.exit(1)
 
-    print(f"Parsed {len(data)} constrained designs from {args.build_dir}\n")
+    print(f"Parsed {len(data)} constrained designs from {source}\n")
     print_summary(data)
     print()
 

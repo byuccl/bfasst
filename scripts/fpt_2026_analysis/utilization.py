@@ -1,51 +1,26 @@
 """Analyze Vivado utilization reports from a RandSoC dataset."""
 
 import argparse
-import re
 import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Maps short name -> (table row label, section header for zero-usage fallback)
-RESOURCES = {
-    "LUT": ("Slice LUTs", None),
-    "FF": ("Slice Registers", None),
-    "BRAM": ("Block RAM Tile", "3. Memory"),
-    "DSP": ("DSPs", "4. DSP"),
-    "IO": ("Bonded IOB", None),
-}
+sys.path.insert(0, str(Path(__file__).parent))
+from parsers import RESOURCES, parse_utilization, read_dataset_csv
 
 COLORS = {
     "LUT": "#4e79a7",
     "FF": "#f28e2b",
+    "SLICE": "#b07aa1",
     "BRAM": "#59a14f",
     "DSP": "#e15759",
     "IO": "#76b7b2",
 }
 
 
-def parse_utilization(path: Path) -> dict[str, float] | None:
-    """Parse a Vivado utilization report; returns util% per resource, or None on parse failure."""
-    text = path.read_text()
-    result = {}
-    for key, (label, zero_section) in RESOURCES.items():
-        pattern = (
-            rf"\|\s*{re.escape(label)}\s*\|\s*[\d,]+\s*\|[^|]*\|[^|]*\|[^|]*\|\s*([\d.]+)\s*\|"
-        )
-        m = re.search(pattern, text)
-        if m:
-            result[key] = float(m.group(1))
-        elif zero_section and zero_section in text:
-            # Section exists but table is empty — resource count is zero
-            result[key] = 0.0
-        else:
-            return None
-    return result
-
-
-def collect_data(build_dir: Path) -> tuple[list[Path], list[dict]]:
+def collect_data(build_dir: Path) -> tuple[list[str], list[dict]]:
     """Find all utilization.txt files under build_dir and parse them."""
     paths = sorted(build_dir.glob("*/vivado_impl/utilization.txt"))
     designs, data = [], []
@@ -53,12 +28,27 @@ def collect_data(build_dir: Path) -> tuple[list[Path], list[dict]]:
     for p in paths:
         d = parse_utilization(p)
         if d is not None:
-            designs.append(p.parent.parent)
+            designs.append(p.parent.parent.name)
             data.append(d)
         else:
             skipped += 1
     if skipped:
         print(f"Skipped {skipped} reports with missing resource rows")
+    return designs, data
+
+
+def load_csv(rows: list[dict]) -> tuple[list[str], list[dict]]:
+    """Build (labels, data) from joined-dataset rows, skipping rows without util data."""
+    designs, data = [], []
+    for r in rows:
+        vals = {
+            "LUT": r["lut_util_pct"], "FF": r["ff_util_pct"], "SLICE": r["slice_util_pct"],
+            "BRAM": r["bram_util_pct"], "DSP": r["dsp_util_pct"], "IO": r["io_util_pct"],
+        }
+        if any(v is None for v in vals.values()):
+            continue
+        designs.append(f"{r['machine']}/d{r['seed']}")
+        data.append(vals)
     return designs, data
 
 
@@ -89,7 +79,9 @@ def plot_histograms(data: list[dict], out_path: Path) -> None:
         ax.set_ylabel("Number of designs")
         ax.set_xlim(0, 100)
 
-    axes[-1].set_visible(False)
+    # Hide any leftover axes when there are fewer resources than grid cells.
+    for ax in axes[len(keys):]:
+        ax.set_visible(False)
     fig.suptitle(f"Resource Utilization Distribution ({len(data)} designs)", fontsize=14)
     plt.tight_layout()
     plt.savefig(out_path, dpi=150)
@@ -128,7 +120,7 @@ def plot_radar(designs: list[Path], data: list[dict], out_path: Path) -> None:
         d = data[idx]
         vals = [d[k] for k in keys] + [d[keys[0]]]
         dominant = [k for k, v in extreme_idx.items() if v == idx]
-        label = f"{designs[idx].name}  (max {'/'.join(dominant)})"
+        label = f"{designs[idx]}  (max {'/'.join(dominant)})"
         ax.plot(angles, vals, color=cmap(ci), linewidth=2, label=label)
         ax.fill(angles, vals, color=cmap(ci), alpha=0.12)
 
@@ -141,20 +133,30 @@ def plot_radar(designs: list[Path], data: list[dict], out_path: Path) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Analyze RandSoC Vivado utilization reports.")
-    parser.add_argument(
-        "build_dir", type=Path, help="Root rand_soc build directory (e.g. build/rand_soc)"
+    src = parser.add_mutually_exclusive_group(required=True)
+    src.add_argument(
+        "build_dir", type=Path, nargs="?",
+        help="Root rand_soc build directory (parse raw reports directly)"
+    )
+    src.add_argument(
+        "--csv", type=Path, help="Joined dataset CSV to plot from (e.g. output/dataset.csv)"
     )
     parser.add_argument(
         "--out-dir", type=Path, default=Path("output"), help="Directory for output plots"
     )
     args = parser.parse_args()
 
-    designs, data = collect_data(args.build_dir)
+    if args.csv:
+        designs, data = load_csv(read_dataset_csv(args.csv))
+        source = args.csv
+    else:
+        designs, data = collect_data(args.build_dir)
+        source = args.build_dir
     if not data:
-        print(f"No utilization reports found under {args.build_dir}", file=sys.stderr)
+        print(f"No utilization data found in {source}", file=sys.stderr)
         sys.exit(1)
 
-    print(f"Parsed {len(data)} designs from {args.build_dir}\n")
+    print(f"Parsed {len(data)} designs from {source}\n")
     print_summary(data)
     print()
 

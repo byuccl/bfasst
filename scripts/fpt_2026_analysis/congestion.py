@@ -1,53 +1,47 @@
 """Analyze routing congestion from Vivado implementation logs for a RandSoC dataset."""
 
 import argparse
-import re
 import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-DIRECTIONS = ["North", "South", "East", "West"]
+sys.path.insert(0, str(Path(__file__).parent))
+from parsers import DIRECTIONS, parse_congestion, read_dataset_csv
 
 
-def parse_congestion(log_path: Path) -> dict | None:
-    """Parse peak routing segment utilization (%) per direction from vivado.log."""
-    text = log_path.read_text()
-
-    # Lines look like:
-    #   North Dir 2x2 Area, Max Cong = 87.6126%, Congestion bounded by ...
-    #   East Dir 1x1 Area, Max Cong = 83.8235%, No Congested Regions.
-    result = {}
-    for direction in DIRECTIONS:
-        m = re.search(
-            rf"{direction} Dir \S+ Area, Max Cong = ([\d.]+)%",
-            text,
-        )
-        if m:
-            result[direction] = float(m.group(1))
-
-    if len(result) != len(DIRECTIONS):
-        return None
-
-    result["max"] = max(result[d] for d in DIRECTIONS)
-    result["has_congested_region"] = "Congestion bounded by tiles" in text
-    return result
-
-
-def collect_data(build_dir: Path) -> tuple[list[Path], list[dict]]:
+def collect_data(build_dir: Path) -> tuple[list[str], list[dict]]:
     logs = sorted(build_dir.glob("*/vivado_impl/vivado.log"))
     designs, data = [], []
     skipped = 0
     for log in logs:
         d = parse_congestion(log)
         if d is not None:
-            designs.append(log.parent.parent)
+            designs.append(log.parent.parent.name)
             data.append(d)
         else:
             skipped += 1
     if skipped:
         print(f"Skipped {skipped} logs with missing congestion data")
+    return designs, data
+
+
+def load_csv(rows: list[dict]) -> tuple[list[str], list[dict]]:
+    """Build (labels, data) from joined-dataset rows, skipping rows without congestion data."""
+    designs, data = [], []
+    for r in rows:
+        if r["congestion_max_pct"] is None:
+            continue
+        designs.append(f"{r['machine']}/d{r['seed']}")
+        data.append({
+            "North": r["congestion_north_pct"],
+            "South": r["congestion_south_pct"],
+            "East": r["congestion_east_pct"],
+            "West": r["congestion_west_pct"],
+            "max": r["congestion_max_pct"],
+            "has_congested_region": bool(r["has_congestion_hotspot"]),
+        })
     return designs, data
 
 
@@ -97,7 +91,9 @@ def plot_congestion(data: list[dict], out_path: Path) -> None:
     max_vals = [d["max"] for d in data]
     hotspot_vals = [v for d, v in zip(data, max_vals) if d["has_congested_region"]]
     clean_vals   = [v for d, v in zip(data, max_vals) if not d["has_congested_region"]]
-    bins = np.linspace(min(max_vals) - 1, 100, 25)
+    # Congestion can exceed 100% (Vivado reports routing overuse that way), so
+    # the upper bin edge tracks the actual max rather than being capped at 100.
+    bins = np.linspace(min(max_vals) - 1, max(max(max_vals), 100) + 1, 25)
     if clean_vals:
         ax2.hist(clean_vals, bins=bins, color="#4e79a7", label="No hotspot", alpha=0.8)
     if hotspot_vals:
@@ -132,20 +128,30 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Analyze RandSoC routing congestion from Vivado impl logs."
     )
-    parser.add_argument(
-        "build_dir", type=Path, help="Root rand_soc build directory (e.g. build/rand_soc)"
+    src = parser.add_mutually_exclusive_group(required=True)
+    src.add_argument(
+        "build_dir", type=Path, nargs="?",
+        help="Root rand_soc build directory (parse raw logs directly)"
+    )
+    src.add_argument(
+        "--csv", type=Path, help="Joined dataset CSV to plot from (e.g. output/dataset.csv)"
     )
     parser.add_argument(
         "--out-dir", type=Path, default=Path("output"), help="Directory for output plots"
     )
     args = parser.parse_args()
 
-    designs, data = collect_data(args.build_dir)
+    if args.csv:
+        designs, data = load_csv(read_dataset_csv(args.csv))
+        source = args.csv
+    else:
+        designs, data = collect_data(args.build_dir)
+        source = args.build_dir
     if not data:
-        print(f"No impl logs with congestion data found under {args.build_dir}", file=sys.stderr)
+        print(f"No congestion data found in {source}", file=sys.stderr)
         sys.exit(1)
 
-    print(f"Parsed {len(data)} designs from {args.build_dir}\n")
+    print(f"Parsed {len(data)} designs from {source}\n")
     print_summary(data)
     print()
 
