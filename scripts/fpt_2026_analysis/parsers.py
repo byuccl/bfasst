@@ -123,6 +123,49 @@ def parse_timing(path: Path) -> dict | None:
 
 
 # --------------------------------------------------------------------------- #
+# Logic levels (max combinational depth)
+# --------------------------------------------------------------------------- #
+
+
+def parse_logic_levels(path: Path) -> int | None:
+    """Parse a report_design_analysis logic-level distribution report.
+
+    Returns the maximum combinational logic depth across the design -- the
+    highest logic-level column with a non-zero path count, over all end-point
+    clocks -- or None if the report contains no distribution data. This is the
+    deepest path regardless of slack, unlike the worst-path ``logic_levels`` from
+    ``parse_timing``. The report table looks like:
+
+        |     End Point Clock     | Requirement |  0  |  1  |  2  | ... |
+        | clk_out1_...            | 8.333ns     | 690 | 203 |  11 | ... |
+    """
+    levels = None
+    max_level = None
+    for line in path.read_text().splitlines():
+        stripped = line.strip()
+        if not stripped.startswith("|"):
+            continue
+        cells = [c.strip() for c in stripped.strip("|").split("|")]
+        if not cells:
+            continue
+        if cells[0] == "End Point Clock":
+            # Remaining header cells are the logic-level numbers (0, 1, 2, ...).
+            levels = [int(c) for c in cells[2:] if c.isdigit()]
+            continue
+        if not levels:
+            continue
+        # Data row: per-level path counts follow the clock name and requirement.
+        try:
+            counts = [int(c) for c in cells[2:2 + len(levels)]]
+        except ValueError:
+            continue
+        for lvl, cnt in zip(levels, counts):
+            if cnt > 0 and (max_level is None or lvl > max_level):
+                max_level = lvl
+    return max_level
+
+
+# --------------------------------------------------------------------------- #
 # Congestion
 # --------------------------------------------------------------------------- #
 
@@ -164,24 +207,39 @@ def _parse_elapsed(hms: str) -> float:
     return sum(float(p) * 60 ** (len(parts) - 1 - i) for i, p in enumerate(parts))
 
 
+def _phase_elapsed(text: str, phase: str) -> float | None:
+    """Elapsed seconds for a Vivado phase command (e.g. 'place_design').
+
+    Normally the phase summary is a prefixed line ('place_design: Time (s): ...
+    elapsed = ...'). For some fast phases Vivado instead emits a *bare*
+    'Time (s): ... elapsed = ...' line, so fall back to the last such line before
+    '<phase> completed successfully' (the command's own summary).
+    """
+    m = re.search(rf"^{phase}: Time.*?elapsed = ([\d:]+)", text, re.MULTILINE)
+    if m:
+        return _parse_elapsed(m.group(1))
+    end = text.find(f"{phase} completed successfully")
+    if end == -1:
+        return None
+    times = re.findall(r"Time \(s\):[^\n]*elapsed = ([\d:]+)", text[:end])
+    return _parse_elapsed(times[-1]) if times else None
+
+
 def parse_runtime(synth_log: Path, impl_log: Path) -> dict | None:
     """Parse elapsed wall-clock time for each Vivado phase."""
     result = {}
 
     if synth_log.exists():
-        m = re.search(
-            r"^synth_design: Time.*?elapsed = ([\d:]+)",
-            synth_log.read_text(), re.MULTILINE,
-        )
-        if m:
-            result["synth"] = _parse_elapsed(m.group(1))
+        elapsed = _phase_elapsed(synth_log.read_text(), "synth_design")
+        if elapsed is not None:
+            result["synth"] = elapsed
 
     if impl_log.exists():
         text = impl_log.read_text()
         for phase in ["opt_design", "place_design", "route_design"]:
-            m = re.search(rf"^{phase}: Time.*?elapsed = ([\d:]+)", text, re.MULTILINE)
-            if m:
-                result[phase.replace("_design", "")] = _parse_elapsed(m.group(1))
+            elapsed = _phase_elapsed(text, phase)
+            if elapsed is not None:
+                result[phase.replace("_design", "")] = elapsed
 
     if not result:
         return None
@@ -200,7 +258,7 @@ COLUMNS = [
     "lut_util_pct", "ff_util_pct", "slice_util_pct", "bram_util_pct", "dsp_util_pct", "io_util_pct",
     "synth_lut_util_pct", "synth_ff_util_pct", "synth_bram_util_pct", "synth_dsp_util_pct",
     "wns_ns", "tns_ns", "failing_endpoints", "total_endpoints",
-    "logic_levels", "data_path_delay_ns", "clk_period_ns",
+    "logic_levels", "max_logic_levels", "data_path_delay_ns", "clk_period_ns",
     "congestion_north_pct", "congestion_south_pct", "congestion_east_pct",
     "congestion_west_pct", "congestion_max_pct", "has_congestion_hotspot",
     "synth_elapsed_s", "opt_elapsed_s", "place_elapsed_s",
@@ -209,7 +267,8 @@ COLUMNS = [
 
 # Per-column type converters used by read_dataset_csv to turn CSV strings back
 # into typed values (empty string -> None).
-_INT_COLUMNS = {"seed", "failing_endpoints", "total_endpoints", "logic_levels"}
+_INT_COLUMNS = {"seed", "failing_endpoints", "total_endpoints", "logic_levels",
+                "max_logic_levels"}
 _BOOL_COLUMNS = {"has_congestion_hotspot"}
 _STR_COLUMNS = {"machine"}
 
@@ -276,6 +335,12 @@ def collect_all(build_dir: Path, machine: str = "") -> list[dict]:
             for k in ("wns_ns", "tns_ns", "failing_endpoints", "total_endpoints",
                       "logic_levels", "data_path_delay_ns", "clk_period_ns"):
                 row[k] = None
+
+        # --- Max logic depth (separate logic-level distribution report) ---
+        # Independent of timing_summary.txt and only present once
+        # report_logic_levels has been run, so parsed on its own.
+        ll_path = design_dir / "vivado_impl" / "logic_levels.txt"
+        row["max_logic_levels"] = parse_logic_levels(ll_path) if ll_path.exists() else None
 
         # --- Congestion ---
         impl_log = design_dir / "vivado_impl" / "vivado.log"

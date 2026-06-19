@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
-from parsers import parse_timing, read_dataset_csv
+from parsers import parse_logic_levels, parse_timing, read_dataset_csv
 from plot_utils import figure
 
 
@@ -22,6 +22,10 @@ def collect_data(build_dir: Path) -> tuple[list[str], list[dict]]:
         if d is None:
             unconstrained += 1
         else:
+            # Max logic depth comes from the sibling logic-level distribution
+            # report (absent until report_logic_levels has been run).
+            ll_path = p.parent / "logic_levels.txt"
+            d["max_logic_levels"] = parse_logic_levels(ll_path) if ll_path.exists() else None
             designs.append(p.parent.parent.name)
             data.append(d)
     if unconstrained:
@@ -52,6 +56,7 @@ def load_csv(rows: list[dict]) -> tuple[list[str], list[dict]]:
             "failing_endpoints": r["failing_endpoints"],
             "total_endpoints": r["total_endpoints"],
             "logic_levels": r["logic_levels"],
+            "max_logic_levels": r["max_logic_levels"],
             "data_path_delay": r["data_path_delay_ns"],
             "clk_period": r["clk_period_ns"],
         })
@@ -69,6 +74,7 @@ def print_summary(data: list[dict]) -> None:
         ("Fmax (MHz)", fmax_mhz),
         ("Failing endpoints", lambda d: d["failing_endpoints"]),
         ("Logic levels (worst path)", lambda d: d["logic_levels"]),
+        ("Logic levels (design max)", lambda d: d.get("max_logic_levels")),
         ("Data path delay (ns)", lambda d: d["data_path_delay"]),
     ]
     header = f"{'Metric':<28} {'Min':>8} {'Median':>8} {'Mean':>8} {'Max':>8}"
@@ -174,10 +180,18 @@ def plot_timing(data: list[dict], out_dir: Path) -> None:
         _hist(ax, [d["failing_endpoints"] for d in data], "#f28e2b",
               "Failing Timing Endpoints", "Count", clip="upper")
 
-    # --- Logic levels (integer, upper tail clipped) ---
-    with figure(out_dir / "timing_logic_levels.pdf") as (_fig, ax):
-        _hist(ax, [d["logic_levels"] for d in data], "#59a14f",
-              "Critical Path Logic Levels", "Logic levels", clip="upper", integer=True)
+    # --- Max logic depth across the design (from logic-level distribution) ---
+    # The deepest combinational path regardless of slack -- the full range is
+    # shown (no clipping) since the tail is the metric of interest. Only
+    # available once report_logic_levels has populated logic_levels.txt.
+    max_ll = [d.get("max_logic_levels") for d in data if d.get("max_logic_levels") is not None]
+    if max_ll:
+        with figure(out_dir / "timing_logic_levels.pdf") as (_fig, ax):
+            _hist(ax, max_ll, "#59a14f", "Max Logic Depth", "Logic levels",
+                  clip="none", integer=True)
+    else:
+        print("  No max-logic-level data (run report_logic_levels first); "
+              "skipping logic-depth plot")
 
     # --- Data path delay (upper tail clipped) ---
     with figure(out_dir / "timing_data_path_delay.pdf") as (_fig, ax):

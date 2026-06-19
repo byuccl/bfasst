@@ -192,6 +192,42 @@ def _ternary_gridlines(ax, verts: np.ndarray, levels=(0.2, 0.4, 0.6, 0.8)) -> No
             ax.plot([x1, x2], [y1, y2], color="0.85", linewidth=0.6, zorder=0)
 
 
+def _ternary_axes(ax, verts: np.ndarray, colors, levels=(0.2, 0.4, 0.6, 0.8)) -> None:
+    """Label the three edges with a 0-100% scale for each phase fraction.
+
+    Each phase's share is 1 at its corner and 0 on the opposite edge, so its tick
+    marks run along the edge from the opposite corner up to its own. Ticks are
+    placed counter-clockwise: Opt along the bottom edge, Place up the right edge,
+    Route up the left edge.
+    """
+    c_opt, c_place, c_route = colors
+
+    def bc(a, b, c):
+        return a * verts[0] + b * verts[1] + c * verts[2]
+
+    for t in levels:
+        pct = f"{t * 100:.0f}"
+        # Opt share: bottom edge, ticking right-to-left, labels below.
+        x, y = bc(t, 1 - t, 0)
+        ax.text(x, y - 0.03, pct, ha="center", va="top", fontsize=7, color=c_opt)
+        # Place share: right edge (Route apex -> Place corner), labels to the right.
+        x, y = bc(0, t, 1 - t)
+        ax.text(x + 0.022, y + 0.013, pct, ha="left", va="center", fontsize=7, color=c_place)
+        # Route share: left edge (Opt corner -> Route apex), labels to the left.
+        x, y = bc(1 - t, 0, t)
+        ax.text(x - 0.022, y + 0.013, pct, ha="right", va="center", fontsize=7, color=c_route)
+
+    # Axis titles centred along each edge, rotated to follow it. The numeric
+    # ticks already convey the direction each phase's share increases.
+    h = verts[2][1]
+    ax.text(0.5, -0.11, "Opt share (%)", ha="center", va="top",
+            fontsize=9, color=c_opt)
+    ax.text(0.80, h / 2 + 0.05, "Place share (%)", ha="center", va="center",
+            rotation=-60, rotation_mode="anchor", fontsize=9, color=c_place)
+    ax.text(0.20, h / 2 + 0.05, "Route share (%)", ha="center", va="center",
+            rotation=60, rotation_mode="anchor", fontsize=9, color=c_route)
+
+
 def plot_phase_mix(data: list[dict], out_dir: Path) -> None:
     """Ternary plot of the relative opt/place/route runtime split per design.
 
@@ -222,6 +258,8 @@ def plot_phase_mix(data: list[dict], out_dir: Path) -> None:
         savefig_kw=dict(bbox_inches="tight"),
     ) as (fig, ax):
         _ternary_gridlines(ax, verts)
+        _ternary_axes(ax, verts,
+                      (PHASE_COLORS["opt"], PHASE_COLORS["place"], PHASE_COLORS["route"]))
         outline = np.vstack([verts, verts[0]])
         ax.plot(outline[:, 0], outline[:, 1], color="black", linewidth=1.2, zorder=1)
 
