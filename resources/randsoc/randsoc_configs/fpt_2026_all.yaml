@@ -1,0 +1,36 @@
+vivado_version: v2024_2
+
+axi_types: [AxiSmartconnect, AxiInterconnect]
+
+axi_mm:
+  no_master: [external, jtag]
+
+axi_stream:
+  io_converters: random
+  internal_converters: random
+
+available_ip:
+  - class: Accumulator
+  - class: AxiCdma
+  - class: AxiDma
+  - class: AxiEthernetLite
+  - class: AxiHwicap
+    max: 1
+  - class: AxiIic
+  - class: AxiQuadSpi
+  - class: AxiTimer
+  - class: ComplexMultiplier
+  - class: ConvolutionEncoder
+  - class: Cordic
+  - class: Dft
+  - class: Emc
+  - class: Fft
+  - class: FloatingPoint
+  - class: Gpio
+  - class: Microblaze
+  - class: Uartlite
+  - class: XadcWiz
+    max: 1
+
+min_ip: 2
+max_ip: 30
