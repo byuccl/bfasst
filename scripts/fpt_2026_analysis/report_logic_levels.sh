@@ -19,7 +19,7 @@
 # between attempts (default 10s); Ctrl-C to stop.
 set -eo pipefail
 
-VIVADO="${VIVADO:-/tools/Xilinx/Vitis/2024.2/bin/vivado}"
+VIVADO="${VIVADO:-/tools/Xilinx/Vivado/2024.2/bin/vivado}"
 BUILD_DIR="${1:-/data/jgoeders/fpt2026/build/rand_soc}"
 MAX_PATHS="${2:-100000}"
 RETRY_DELAY="${RETRY_DELAY:-10}"
