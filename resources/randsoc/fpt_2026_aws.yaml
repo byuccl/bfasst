@@ -1,0 +1,11 @@
+flow: RandSoc
+
+num_designs: 10000
+
+part: xc7a200tlffv1156-2L
+
+randsoc_config_path: resources/randsoc/randsoc_configs/fpt_2026_all.yaml
+
+start_seed: 20000
+
+clock_period: 8.333
