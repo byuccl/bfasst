@@ -2,7 +2,6 @@
 
 # pylint: disable=duplicate-code
 
-import json
 import pathlib
 from bfasst.config import (
     IC2_SYNPLIFY_LD_LIBRARY_PATH,
@@ -42,8 +41,7 @@ class Ic2SynplifySynth(SynthTool):
             "top": self.design_props.top,
             "edf_output": str(self.outputs["edf_output"]),
         }
-        synth_json = json.dumps(synth, indent=4)
-        json_write_if_changed(self.outputs["synth_json"], synth_json)
+        json_write_if_changed(self.outputs["synth_json"], synth)
 
         # then the build snippet can be created as normal
         self._append_build_snippets_default(
