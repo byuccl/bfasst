@@ -1,6 +1,5 @@
 """Create the rule and build snippets for yosys comparison."""
 
-import json
 from bfasst.tools.tool import Tool
 from bfasst.paths import BFASST_UTILS_PATH, YOSYS_TOOLS_PATH
 from bfasst.utils.general import json_write_if_changed
@@ -32,9 +31,7 @@ class YosysCompare(Tool):
             "gold_netlist": str(self.golden_netlist),
             "rev_netlist": str(self.rev_netlist),
         }
-        yosys_json = json.dumps(yosys_tcl_args, indent=4)
-
-        json_write_if_changed(self.outputs["yosys_json"], yosys_json)
+        json_write_if_changed(self.outputs["yosys_json"], yosys_tcl_args)
 
     def __append_build_snippets(self):
         """Create ninja snippets for yosys comparison."""

@@ -4,8 +4,8 @@ import abc
 import pathlib
 
 import chevron
-from bfasst.flows.flow import FlowBase
 
+from bfasst.flows.flow import FlowBase
 from bfasst.paths import BUILD_PATH, DESIGNS_PATH, NINJA_BUILD_PATH, ROOT_PATH
 from bfasst.yaml_parser import DesignParser
 
@@ -54,6 +54,20 @@ class ToolBase(abc.ABC):
     def _init_outputs(self):
         """Fill the self.outputs dictionary that lists
         all files the tool is responsible for creating"""
+
+    def _render_templates(self, build_dir, template_tuples, render_dict):
+        """
+        Helper function to render a list of templates with a given render dict
+
+        Only re-render when necessary to avoid all downstream targets from being out of date.
+        """
+        for template_path, output_path in template_tuples:
+            dest = build_dir / output_path
+            if not dest.is_file() or template_path.stat().st_mtime > dest.stat().st_mtime:
+                with open(template_path, "r") as f:
+                    rendered = chevron.render(f, render_dict)
+                with open(build_dir / output_path, "w") as f:
+                    f.write(rendered)
 
     def _append_build_snippets_default(self, py_tool_path, render_dict):
         """Create the build snippets for a python tool,
