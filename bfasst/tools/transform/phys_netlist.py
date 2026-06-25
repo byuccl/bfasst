@@ -1,7 +1,5 @@
 """Create rule and build snippets for phys netlist creation."""
 
-import json
-
 import chevron
 
 from bfasst.paths import BFASST_UTILS, NINJA_BUILD_PATH, NINJA_TRANSFORM_TOOLS
@@ -49,8 +47,7 @@ class PhysNetlist(Tool):
             "phys_netlist_checkpoint": str(self.outputs["phys_netlist_checkpoint"]),
         }
 
-        checkpoint_to_v_json = json.dumps(checkpoint_to_v, indent=4)
-        json_write_if_changed(self.outputs["checkpoint_to_v_json"], checkpoint_to_v_json)
+        json_write_if_changed(self.outputs["checkpoint_to_v_json"], checkpoint_to_v)
 
     def __append_build_snippets(self):
         with open(NINJA_TRANSFORM_TOOLS / "phys_netlist_build.ninja.mustache") as f:

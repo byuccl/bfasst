@@ -267,7 +267,7 @@ def obfuscate_cell_properties(netlist: EDIFNetlist, out_path: str) -> int:
                     obf_count += 1
 
     print_obfuscation_summary(counts_all, counts, obf_count)
-    json_write_if_changed(out_path, json.dumps(cells_json, indent=2))
+    json_write_if_changed(out_path, cells_json)
     return obf_count
 
 

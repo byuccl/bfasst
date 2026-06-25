@@ -1,6 +1,5 @@
 """Tool to create Yosys synthesis ninja snippets."""
 
-import json
 import pathlib
 
 from bfasst.paths import BFASST_TOOLS, YOSYS_PATH, YOSYS_SYNTH_SCRIPT_TEMPLATE
@@ -28,8 +27,7 @@ class YosysSynth(SynthTool):
             "vhdl": self.vhdl,
             "netlist": str(self.outputs["netlist"]),
         }
-        synth_json = json.dumps(synth, indent=4)
-        json_write_if_changed(self.outputs["synth_json"], synth_json)
+        json_write_if_changed(self.outputs["synth_json"], synth)
 
         # then the build snippet can be created as normal
         self._append_build_snippets_default(

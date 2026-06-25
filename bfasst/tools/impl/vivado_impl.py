@@ -1,6 +1,5 @@
 """Tool to create Vivado implementation ninja snippets."""
 
-import json
 import pathlib
 
 from bfasst import config
@@ -11,6 +10,14 @@ from bfasst.utils.general import ensure_tuple, json_write_if_changed
 
 class VivadoImpl(ImplTool):
     """Tool to create Vivado implementation ninja snippets."""
+
+    _my_dir_path = pathlib.Path(__file__).parent
+    template_tuples = [
+        (COMMON_TOOLS_PATH / "vivado_top_tcl.mustache", "run.tcl"),
+        (_my_dir_path / "vivado_impl_run.tcl.mustache", "impl.tcl"),
+        (_my_dir_path / "vivado_impl_setup.tcl.mustache", "setup.tcl"),
+        (_my_dir_path / "vivado_impl_reports.tcl.mustache", "reports.tcl"),
+    ]
 
     def __init__(
         self,
@@ -79,8 +86,11 @@ class VivadoImpl(ImplTool):
 
     def create_build_snippets(self):
         """Create build snippets in ninja file"""
-        impl_json = json.dumps(self.impl_build, indent=4)
-        json_write_if_changed(self.build_path / "impl.json", impl_json)
+        rerender, normalized_data = json_write_if_changed(
+            self.build_path / "impl.json", self.impl_build
+        )
+        if rerender:
+            self._render_templates(self.build_path, VivadoImpl.template_tuples, normalized_data)
 
         self._append_build_snippets_default(
             __file__,

@@ -1,6 +1,5 @@
 """Tool to create Vivado implementation‐report ninja snippets."""
 
-import json
 import pathlib
 
 from bfasst import config
@@ -65,8 +64,7 @@ class ImplDetailedReports(ImplTool):
         self.outputs["log"] = bp / "vivado.log"
 
     def create_build_snippets(self):
-        rpt_json = json.dumps(self.report_build, indent=4)
-        json_write_if_changed(self.build_path / "reports.json", rpt_json)
+        json_write_if_changed(self.build_path / "reports.json", self.report_build)
 
         self._append_build_snippets_default(
             __file__,

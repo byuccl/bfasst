@@ -1,6 +1,5 @@
 """Tool to create Vivado synthesis ninja snippets."""
 
-import json
 import pathlib
 
 from bfasst import config
@@ -11,6 +10,14 @@ from bfasst.utils.general import json_write_if_changed
 
 class VivadoSynth(SynthTool):
     """Tool to create vivado synthesis ninja snippets."""
+
+    _my_dir_path = pathlib.Path(__file__).parent
+    template_tuples = [
+        (COMMON_TOOLS_PATH / "vivado_top_tcl.mustache", "run.tcl"),
+        (_my_dir_path / "vivado_synth_setup.tcl.mustache", "setup.tcl"),
+        (_my_dir_path / "vivado_synth_run.tcl.mustache", "synth.tcl"),
+        (_my_dir_path / "vivado_synth_reports.tcl.mustache", "reports.tcl"),
+    ]
 
     def __init__(
         self, flow, design_path, synth_options="", opt_design=False, ooc=False
@@ -66,12 +73,12 @@ class VivadoSynth(SynthTool):
     def create_build_snippets(self):
         """Create build snippets in ninja file"""
 
-        # Specify synthesis arguments in a json file.
-        # Chevron will use this file to fill in the tcl template.
+        rerender, normalized_data = json_write_if_changed(
+            self.outputs["synth_json"], self.synth_build
+        )
 
-        synth_json = json.dumps(self.synth_build, indent=4)
-
-        json_write_if_changed(self.outputs["synth_json"], synth_json)
+        if rerender:  # Only re-render tcl files if the data has changed.
+            self._render_templates(self.build_path, VivadoSynth.template_tuples, normalized_data)
 
         self._append_build_snippets_default(
             __file__,

@@ -94,43 +94,43 @@ class TestNinjaFlowManager(unittest.TestCase):
         self.assertEqual(build_statement_count, correct_num_build_statements)
 
     def test_run_vivado_flow(self):
-        self.__check_flow_run("vivado", 12)
+        self.__check_flow_run("vivado", 4)
 
     def test_run_vivado_ooc_flow(self):
-        self.__check_flow_run("vivado_ooc", 11)
+        self.__check_flow_run("vivado_ooc", 3)
 
     def test_run_vivado_reversed_flow(self):
-        self.__check_flow_run("vivado_bit_analysis", 16)
+        self.__check_flow_run("vivado_bit_analysis", 8)
 
     def test_run_vivado_bit_to_netlist(self):
-        self.__check_flow_run("vivado_bit_to_netlist", 14)
+        self.__check_flow_run("vivado_bit_to_netlist", 6)
 
     def test_run_vivado_phys_netlist_flow(self):
-        self.__check_flow_run("vivado_phys_netlist", 15)
+        self.__check_flow_run("vivado_phys_netlist", 7)
 
     def test_run_phys_compare_flow(self):
-        self.__check_flow_run("vivado_phys_netlist_cmp", 19)
+        self.__check_flow_run("vivado_phys_netlist_cmp", 11)
 
     def test_run_cmp_error_injection_flow(self):
         # There should be 200 injections and 200 comparisons for one flow
         # plus all the build statements for the phys_reversed_flow
         # ((200 * 2)) + 11 = 411 build statements
-        self.__check_flow_run("vivado_structural_error_injection", 417)
+        self.__check_flow_run("vivado_structural_error_injection", 409)
 
     def test_run_vivado_conformal_flow(self):
-        self.__check_flow_run("vivado_conformal", 15)
+        self.__check_flow_run("vivado_conformal", 7)
 
     def test_run_vivado_yosys_impl_flow(self):
-        self.__check_flow_run("vivado_yosys_cmp", 16)
+        self.__check_flow_run("vivado_yosys_cmp", 8)
 
     def test_run_vivado_wafove_flow(self):
         self.__check_flow_run("vivado_wafove", 15)
 
     def test_run_vivado_phys_capnp_flow(self):
-        self.__check_flow_run("vivado_phys_capnp", 15)
+        self.__check_flow_run("vivado_phys_capnp", 7)
 
     def test_run_impl_obfuscate(self):
-        self.__check_flow_run("impl_obfuscate", 24)
+        self.__check_flow_run("impl_obfuscate", 12)
 
     # This is disabled right now because it seems to be failing due
     # to file modification time race conditions
