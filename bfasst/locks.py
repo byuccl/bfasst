@@ -2,7 +2,7 @@
 
 import multiprocessing
 
-__conformal_lock = None
+__conformal_lock = None  # pylint: disable=invalid-name
 
 
 def conformal_lock():

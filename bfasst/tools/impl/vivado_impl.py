@@ -13,7 +13,7 @@ class VivadoImpl(ImplTool):
 
     _my_dir_path = pathlib.Path(__file__).parent
     template_tuples = [
-        (COMMON_TOOLS_PATH / "vivado_top_tcl.mustache", "run.tcl"),
+        (BFASST_COMMON_TOOLS / "vivado_top_tcl.mustache", "run.tcl"),
         (_my_dir_path / "vivado_impl_run.tcl.mustache", "impl.tcl"),
         (_my_dir_path / "vivado_impl_setup.tcl.mustache", "setup.tcl"),
         (_my_dir_path / "vivado_impl_reports.tcl.mustache", "reports.tcl"),

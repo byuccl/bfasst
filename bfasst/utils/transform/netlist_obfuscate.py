@@ -5,7 +5,6 @@ Then store the original properties in a JSON file for restoration later
 """
 
 import argparse
-import json
 import logging
 import pathlib
 import time
