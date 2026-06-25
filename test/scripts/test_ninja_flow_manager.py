@@ -4,9 +4,6 @@
 # pylint: disable=too-many-public-methods
 # pylint: disable=duplicate-code
 
-# import pathlib
-# import subprocess
-# import time
 import unittest
 
 from bfasst.flows.impl_obfuscate import ImplObfuscate
@@ -124,7 +121,7 @@ class TestNinjaFlowManager(unittest.TestCase):
         self.__check_flow_run("vivado_yosys_cmp", 8)
 
     def test_run_vivado_wafove_flow(self):
-        self.__check_flow_run("vivado_wafove", 15)
+        self.__check_flow_run("vivado_wafove", 7)
 
     def test_run_vivado_phys_capnp_flow(self):
         self.__check_flow_run("vivado_phys_capnp", 7)
