@@ -2,7 +2,24 @@ write_checkpoint -force -file {{ outputs.impl_dcp }}
 write_edif -force -file {{ outputs.impl_edf }}
 write_verilog -force -file {{ outputs.impl_verilog }}
 report_utilization -file {{ outputs.utilization }}
+report_utilization -hierarchical -file {{ outputs.utilization_hier }}
 report_timing_summary -delay_type max -report_unconstrained -check_timing_verbose -file {{ outputs.timing }}
+# Logic-level distribution over the worst setup path per endpoint (up to max_paths
+# endpoints): the highest populated column is the design's max combinational depth,
+# independent of the worst-slack path that timing_summary reports. Guarded so a
+# design with no constrained setup paths produces an empty report instead of
+# failing the whole implementation.
+if {[catch {
+    set ll_paths [get_timing_paths -setup -max_paths 100000 -nworst 1]
+    report_design_analysis -logic_level_distribution -of_timing_paths $ll_paths -file {{ outputs.logic_levels }}
+} ll_err]} {
+    puts "WARNING: logic-level distribution report failed: $ll_err"
+    set fh [open {{ outputs.logic_levels }} w]
+    puts $fh "logic-level distribution report unavailable: $ll_err"
+    close $fh
+}
+report_design_analysis -congestion -file {{ outputs.congestion }}
+report_power -file {{ outputs.power }}
 report_qor_suggestions -name retarget -report_all_suggestions -file retarget.rpt
 {{#outputs.bitstream}}
 foreach rule [get_drc_checks] {

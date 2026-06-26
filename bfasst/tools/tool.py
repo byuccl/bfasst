@@ -116,7 +116,7 @@ class Tool(ToolBase, abc.ABC):
 
         design_yaml = design_path / "design.yaml"
         self.design_props = None
-        if design_yaml.is_file():
+        if design_yaml.is_file() and design_path.is_relative_to(DESIGNS_PATH):
             self.design_props = DesignParser(design_yaml)
         else:
             self.design_props = DesignParser()
