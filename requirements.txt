@@ -20,3 +20,4 @@ spydrnet @ git+https://github.com/byuccl/spydrnet@bfasst_spydrnet
 werkzeug
 boolean.py
 xlsxwriter
+tdqm
