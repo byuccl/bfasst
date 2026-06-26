@@ -85,19 +85,12 @@ def plot_congestion(data: list[dict], out_dir: Path) -> None:
     # --- Overall max histogram ---
     with figure(out_dir / "congestion_max.pdf") as (_fig, ax2):
         max_vals = [d["max"] for d in data]
-        hotspot_vals = [v for d, v in zip(data, max_vals) if d["has_congested_region"]]
-        clean_vals   = [v for d, v in zip(data, max_vals) if not d["has_congested_region"]]
         # Congestion can exceed 100% (Vivado reports routing overuse that way), so
         # the upper bin edge tracks the actual max rather than being capped at 100.
         bins = np.linspace(min(max_vals) - 1, max(max(max_vals), 100) + 1, 25)
-        if clean_vals:
-            ax2.hist(clean_vals, bins=bins, color="#4e79a7", label="No hotspot", alpha=0.8)
-        if hotspot_vals:
-            ax2.hist(hotspot_vals, bins=bins, color="#e15759", label="Has hotspot", alpha=0.8)
-        ax2.axvline(85, color="gray", linewidth=0.8, linestyle="--")
+        ax2.hist(max_vals, bins=bins, color="#4e79a7", alpha=0.8)
         ax2.set_xlabel("Peak routing segment utilization (%)")
         ax2.set_ylabel("Number of designs")
-        ax2.legend(fontsize=8)
 
     # --- Hotspot count bar ---
     with figure(out_dir / "congestion_hotspots.pdf") as (_fig, ax3):

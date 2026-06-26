@@ -6,6 +6,7 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.ticker import ScalarFormatter
 
 sys.path.insert(0, str(Path(__file__).parent))
 from parsers import RESOURCES, parse_utilization, read_dataset_csv
@@ -78,6 +79,9 @@ def plot_histograms(data: list[dict], out_dir: Path, log: bool = False) -> None:
             ax.hist(vals, bins=30, color=COLORS[key], edgecolor="white", linewidth=0.5)
             if log:
                 ax.set_yscale("log")
+                # Label the decade ticks as plain integers (1, 10, 100, ...) rather
+                # than matplotlib's default 10^x scientific notation.
+                ax.yaxis.set_major_formatter(ScalarFormatter())
             ax.set_xlabel("Utilization (%)")
             ax.set_ylabel("Number of designs")
             ax.set_xlim(0, 100)

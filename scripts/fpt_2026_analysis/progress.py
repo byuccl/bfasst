@@ -15,6 +15,11 @@ DEFAULT_MACHINES = [
     ("serenity", "serenity", "/data/jgoeders/fpt2026/build/rand_soc"),
     ("CCL1_all", "CCL1", "/data/jgoeders/fpt2026_1/build/rand_soc"),
     ("serenity_big", "serenity", "/data/jgoeders/fpt2026_1/build/rand_soc"),
+    ("CCL1_2", "CCL1", "/data/jgoeders/fpt2026_2/build/rand_soc"),
+    ("serenity_2", "serenity", "/data/jgoeders/fpt2026_2/build/rand_soc"),
+    # ("aws", "aws", "/home/ubuntu/bfasst/build/rand_soc"),
+    # ("aws2", "aws2", "/home/ubuntu/bfasst/build/rand_soc"),
+    # ("aws3", "aws3", "/home/ubuntu/bfasst/build/rand_soc"),
 ]
 
 # Remote shell snippet: prints "<done> <total>" for the given build dir.

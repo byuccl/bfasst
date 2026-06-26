@@ -57,6 +57,46 @@ def parse_utilization(path: Path, keys=None) -> dict[str, float] | None:
     return result
 
 
+# Columns in `report_utilization -hierarchical` (utilization_hier.txt), in order
+# after the Instance and Module name columns.
+HIER_RESOURCE_COLUMNS = [
+    "total_luts", "logic_luts", "lutrams", "srls", "ffs", "ramb36", "ramb18", "dsp",
+]
+
+# A top-level RandSoC IP wrapper instance: the design.tcl wraps each generated IP
+# in a `ip_<index>_<type>` hierarchy (e.g. ip_0_axi_quad_spi), so these rows give
+# per-IP resource usage. Children (deeper in the hierarchy) are ignored.
+_HIER_IP_RE = re.compile(r"^ip_(\d+)_([a-zA-Z0-9_]+)$")
+
+
+def parse_utilization_hier(path: Path) -> list[dict]:
+    """Parse `report_utilization -hierarchical`; one dict per top-level IP wrapper.
+
+    Returns a list of {ip_index, ip_type, total_luts, logic_luts, lutrams, srls,
+    ffs, ramb36, ramb18, dsp} for each ``ip_<n>_<type>`` instance in the design.
+    Only the IP-wrapper rows are kept (not their sub-instances), so summing a type
+    across designs gives that IP's size distribution. Empty list if none found.
+    """
+    ips = []
+    for line in path.read_text().splitlines():
+        if not line.lstrip().startswith("|"):
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) < 2 + len(HIER_RESOURCE_COLUMNS):
+            continue
+        m = _HIER_IP_RE.match(cells[0])
+        if not m:
+            continue
+        try:
+            vals = [int(c) for c in cells[2:2 + len(HIER_RESOURCE_COLUMNS)]]
+        except ValueError:
+            continue
+        ip = {"ip_index": int(m.group(1)), "ip_type": m.group(2)}
+        ip.update(dict(zip(HIER_RESOURCE_COLUMNS, vals)))
+        ips.append(ip)
+    return ips
+
+
 # --------------------------------------------------------------------------- #
 # Timing
 # --------------------------------------------------------------------------- #
@@ -386,6 +426,49 @@ def write_csv(rows: list[dict], out_path: Path) -> None:
         writer.writeheader()
         writer.writerows(rows)
     print(f"Saved {out_path}  ({len(rows)} designs, {len(COLUMNS)} columns)")
+
+
+# --------------------------------------------------------------------------- #
+# Per-IP sizes (one row per IP instance, from utilization_hier.txt)
+# --------------------------------------------------------------------------- #
+
+# One row per IP *instance* (not per design), so this is a separate dataset from
+# the per-design COLUMNS above.
+IP_SIZE_COLUMNS = ["machine", "seed", "ip_index", "ip_type"] + HIER_RESOURCE_COLUMNS
+
+
+def collect_ip_sizes(build_dir: Path, machine: str = "") -> list[dict]:
+    """One row per top-level IP instance across all completed designs.
+
+    Reads each design's ``vivado_impl/utilization_hier.txt`` (only present once
+    report_logic_levels / the impl flow has generated it) and emits a row per
+    ``ip_<n>_<type>`` wrapper with its resource counts, stamped with machine+seed.
+    Designs without the hierarchical report are skipped.
+    """
+    rows = []
+    designs = missing = 0
+    for design_dir in sorted(build_dir.glob("design_*")):
+        hier_path = design_dir / "vivado_impl" / "utilization_hier.txt"
+        if not hier_path.exists():
+            missing += 1
+            continue
+        seed = int(design_dir.name.split("_")[1])
+        ips = parse_utilization_hier(hier_path)
+        if ips:
+            designs += 1
+        for ip in ips:
+            rows.append({"machine": machine, "seed": seed, **ip})
+    print(f"Collected {len(rows)} IP instances from {designs} designs "
+          f"({missing} without a hierarchical report)")
+    return rows
+
+
+def write_ip_sizes_csv(rows: list[dict], out_path: Path) -> None:
+    with open(out_path, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=IP_SIZE_COLUMNS)
+        writer.writeheader()
+        writer.writerows(rows)
+    print(f"Saved {out_path}  ({len(rows)} IP instances)")
 
 
 def _convert(column: str, value: str):

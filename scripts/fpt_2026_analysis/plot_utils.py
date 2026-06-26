@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 
 @contextmanager
-def figure(out_path, figsize=(8, 6), subplot_kw=None, savefig_kw=None):
+def figure(out_path, figsize=(8, 4), subplot_kw=None, savefig_kw=None):
     """Create a single-axes figure, yield (fig, ax), then save it as its own PDF.
 
     Each graph is written to a separate PDF file at ``out_path`` (one graph per

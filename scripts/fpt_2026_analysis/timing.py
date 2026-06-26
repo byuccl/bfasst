@@ -111,12 +111,17 @@ def _clip_range(vals: np.ndarray, clip: str, k: float = 1.5) -> tuple[float, flo
     return lo, hi, n_out
 
 
-def _hist(ax, raw, color, title, xlabel, clip="upper", integer=False):
+def _hist(ax, raw, color, title, xlabel, clip="upper", integer=False, hi=None):
     vals = np.array([v for v in raw if v is not None], dtype=float)
     if len(vals) == 0:
         ax.set_visible(False)
         return
-    lo, hi, n_out = _clip_range(vals, clip)
+    if hi is not None:
+        # Explicit upper cap overrides the automatic clip: show [min, hi] and
+        # report how many designs fall beyond hi.
+        lo, n_out = float(vals.min()), int((vals > hi).sum())
+    else:
+        lo, hi, n_out = _clip_range(vals, clip)
     if hi <= lo:
         hi = lo + 1
     if integer:
@@ -181,14 +186,18 @@ def plot_timing(data: list[dict], out_dir: Path) -> None:
               "Failing Timing Endpoints", "Count", clip="upper")
 
     # --- Max logic depth across the design (from logic-level distribution) ---
-    # The deepest combinational path regardless of slack -- the full range is
-    # shown (no clipping) since the tail is the metric of interest. Only
-    # available once report_logic_levels has populated logic_levels.txt.
+    # The deepest combinational path regardless of slack. A handful of pathological
+    # designs reach depths in the hundreds (median ~15, max ~680). The bulk is very
+    # tight (IQR~7), so a Tukey fence would cap at ~30 and drop ~6% of designs; cap
+    # at a round LOGIC_DEPTH_MAX instead to show ~99% of the distribution while
+    # keeping the median peak readable (the count beyond the cap is reported).
+    # Only available once report_logic_levels has populated logic_levels.txt.
+    LOGIC_DEPTH_MAX = 50
     max_ll = [d.get("max_logic_levels") for d in data if d.get("max_logic_levels") is not None]
     if max_ll:
         with figure(out_dir / "timing_logic_levels.pdf") as (_fig, ax):
             _hist(ax, max_ll, "#59a14f", "Max Logic Depth", "Logic levels",
-                  clip="none", integer=True)
+                  integer=True, hi=LOGIC_DEPTH_MAX)
     else:
         print("  No max-logic-level data (run report_logic_levels first); "
               "skipping logic-depth plot")
