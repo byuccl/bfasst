@@ -16,6 +16,7 @@ fi
 
 # Install common packages
 apt-get install -y \
+    bash-completion \
     bison \
     build-essential \
     capnproto \
