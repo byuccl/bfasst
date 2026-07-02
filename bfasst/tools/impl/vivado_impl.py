@@ -73,7 +73,7 @@ class VivadoImpl(ImplTool):
             "phys_opt_design": self.phys_opt_design,
             "tcl_sources": tcl_sources,
             "inputs": self.inputs_str,
-            "cwd": self.build_path
+            "cwd": self.build_path,
         }
         if impl_options:
             self.impl_build.update(impl_options)
