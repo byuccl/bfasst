@@ -1,10 +1,10 @@
 """Creates a Vivado netlist that has only physical primitives."""
 
 from bfasst.flows.flow import Flow
+from bfasst.paths import BFASST_FLOWS
 from bfasst.tools.impl.vivado_impl import VivadoImpl
-from bfasst.tools.transform.phys_netlist import PhysNetlist
-from bfasst.paths import FLOWS_PATH
 from bfasst.tools.synth.vivado_synth import VivadoSynth
+from bfasst.tools.transform.phys_netlist import PhysNetlist
 
 
 class VivadoPhysNetlist(Flow):
@@ -36,7 +36,7 @@ class VivadoPhysNetlist(Flow):
         # pylint: enable=duplicate-code
 
     def get_top_level_flow_path(self):
-        return FLOWS_PATH / "vivado_phys_netlist.py"
+        return BFASST_FLOWS / "vivado_phys_netlist.py"
 
     @staticmethod
     def add_required_synth_options(options):

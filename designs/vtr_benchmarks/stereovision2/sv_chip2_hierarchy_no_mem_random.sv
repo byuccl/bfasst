@@ -7,7 +7,12 @@
 module sv_chip2_hierarchy_no_mem_random(
     input logic clk,
     input logic reset,
+    output logic [7:0]offchip_sram_we,
     output logic [1:0]offchip_sram_oe,
+    output logic xor_sram_addr,
+    output logic xor_sram_dout,
+    output logic xor_bus_words,
+    output logic xor_fifos,
     input logic tm3_clk_v0,
     output logic tm3_sram_adsp,
     input logic vidin_new_data,
@@ -25,7 +30,6 @@ module sv_chip2_hierarchy_no_mem_random(
 
 logic [18:0]offchip_sram_addr;
 logic [63:0]offchip_sram_data_out;
-logic [7:0]offchip_sram_we;
 logic [15:0] bus_word_3_2to1;
 logic [15:0] bus_word_4_2to1;
 logic [15:0] bus_word_5_2to1;
@@ -42,6 +46,11 @@ logic [7:0] v_d_reg_s4_left_2to0;
 logic [7:0] v_d_reg_s1_right_2to0;
 logic [7:0] v_d_reg_s2_right_2to0;
 logic [7:0] v_d_reg_s4_right_2to0;
+
+assign xor_sram_dout = ^offchip_sram_data_out;
+assign xor_bus_words = ^(bus_word_3_2to1 ^ bus_word_4_2to1 ^ bus_word_5_2to1 ^ bus_word_6_2to1);
+assign xor_sram_addr = ^offchip_sram_addr;
+assign xor_fifos = ^(vidin_rgb_reg_fifo_left ^ vidin_rgb_reg_fifo_right);
 
 RandomNumberGenerator #(64, 3) rng_offchip_sram_data_in (
   .clk(clk),

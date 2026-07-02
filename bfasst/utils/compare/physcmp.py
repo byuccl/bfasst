@@ -1,5 +1,5 @@
 """
-RapidWright physical‐comparison runner.
+RapidWright physical-comparison runner.
 
 Runs physical and logical comparisons on two post-implementation netlists
 Then compares the bitstreams to verify full equivalence
@@ -9,18 +9,15 @@ import logging
 import re
 from argparse import ArgumentParser
 from pathlib import Path
-from bfasst import jpype_jvm
-from bfasst.utils.compare.physcmp_data_types import ImplReports, PhyscmpException
 
-jpype_jvm.start()
-
-# pylint: disable=wrong-import-position, wrong-import-order
+import rapidwright as _
 from com.xilinx.rapidwright.design import Design
 from com.xilinx.rapidwright.design.compare import DesignComparator
 from com.xilinx.rapidwright.edif.compare import EDIFNetlistComparator
-from java.io import ByteArrayOutputStream, PrintStream, FileOutputStream
+from java.io import ByteArrayOutputStream, FileOutputStream, PrintStream
 from java.lang import System
 
+from bfasst.utils.compare.physcmp_data_types import ImplReports, PhyscmpException
 
 _DESIGN_ROW_RE = re.compile(
     r"^\s*(?P<wns>[+-]?\d+\.\d+)\s+"

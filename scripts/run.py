@@ -135,7 +135,7 @@ def parse_args(args):
         args = parser.parse_args(args)
     except SystemExit as e:
         if e.code == 2:
-            print(f"Valid flow names:\n{flow_choices}")
+            print(f"Valid flow names:\n{flow_choices}", file=sys.stderr)
             sys.exit(2)
         else:
             raise e

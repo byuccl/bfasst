@@ -1,8 +1,9 @@
 """Ic2 Implementation Tool (ninja snippet generation for ic2 implementation)"""
 
 import pathlib
+
 from bfasst.config import IC2_SBT_DIR
-from bfasst.paths import IC2_IMPL_TCL_TEMPLATE, TOOLS_PATH
+from bfasst.paths import BFASST_TOOLS, IC2_IMPL_TCL_TEMPLATE
 from bfasst.tools.impl.impl_tool import ImplTool
 
 
@@ -19,7 +20,7 @@ class Ic2Impl(ImplTool):
 
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()
-        self.rule_snippet_path = TOOLS_PATH / "impl" / "ic2_impl_rules.ninja"
+        self.rule_snippet_path = BFASST_TOOLS / "impl" / "ic2_impl_rules.ninja"
 
     def create_build_snippets(self):
         # NOTE: the netlist_full_path is used by ninja to ensure the build snippet

@@ -1,7 +1,7 @@
 """Create the rule and build snippets for structural comparison."""
 
+from bfasst.paths import BFASST_UTILS, COMPARE_TOOLS
 from bfasst.tools.tool import Tool
-from bfasst.paths import BFASST_UTILS_PATH, COMPARE_TOOLS_PATH
 
 
 class Structural(Tool):
@@ -28,9 +28,7 @@ class Structural(Tool):
         self.debug = debug
         self.logging_level = logging_level
         self._init_outputs()
-        self.rule_snippet_path = (
-            COMPARE_TOOLS_PATH / "structural" / "structural_rules.ninja.mustache"
-        )
+        self.rule_snippet_path = COMPARE_TOOLS / "structural" / "structural_rules.ninja.mustache"
 
     def create_build_snippets(self):
         self._append_build_snippets_default(
@@ -39,7 +37,7 @@ class Structural(Tool):
                 "netlist_a": str(self.golden_netlist),
                 "netlist_b": str(self.rev_netlist),
                 "log_path": str(self.outputs["structural_log"]),
-                "compare_script_path": str(BFASST_UTILS_PATH / "compare" / "structural.py"),
+                "compare_script_path": str(BFASST_UTILS / "compare" / "structural.py"),
                 "expect_fail": "--expect_fail" if self.expect_fail else "",
                 "debug": "--debug" if self.debug else "",
                 "logging_level": f"--logging_level {self.logging_level}",
@@ -51,6 +49,6 @@ class Structural(Tool):
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
-        deps.append(BFASST_UTILS_PATH / "compare" / "structural.py")
-        deps.append(BFASST_UTILS_PATH / "compare" / "structural_helpers.py")
-        deps.append(BFASST_UTILS_PATH / "sdn_helpers.py")
+        deps.append(BFASST_UTILS / "compare" / "structural.py")
+        deps.append(BFASST_UTILS / "compare" / "structural_helpers.py")
+        deps.append(BFASST_UTILS / "sdn_helpers.py")

@@ -7,18 +7,7 @@ import time
 from argparse import ArgumentParser
 from pathlib import Path
 
-# pylint: disable=no-name-in-module
-from jpype import JException
-
-# pylint: enable=no-name-in-module
-import bfasst.utils.rw_helpers as rw
-from bfasst import jpype_jvm, utils
-from bfasst.utils.compare.structural_helpers import create_cell_props
-from bfasst.utils.transform.f2b_design import F2BDesign
-from bfasst.utils.transform.rw_phys_netlist import RwPhysNetlist
-
-# pylint: disable=wrong-import-position,wrong-import-order,import-error
-jpype_jvm.start()
+import rapidwright as _
 from com.xilinx.rapidwright.design import Cell
 from com.xilinx.rapidwright.edif import (
     EDIFCellInst,
@@ -27,8 +16,13 @@ from com.xilinx.rapidwright.edif import (
     EDIFHierPortInst,
     EDIFPortInst,
 )
+from jpype import JException  # pylint: disable=no-name-in-module
 
-# pylint: enable=wrong-import-position,wrong-import-order,import-error
+import bfasst.utils.rw_helpers as rw
+from bfasst.utils import add_path_arg, add_standard_args, convert_verilog_literal_to_int
+from bfasst.utils.compare.structural_helpers import create_cell_props
+from bfasst.utils.transform.f2b_design import F2BDesign
+from bfasst.utils.transform.rw_phys_netlist import RwPhysNetlist
 
 
 class StructuralCompareError(Exception):
@@ -136,7 +130,7 @@ class StructuralCapnp(RwPhysNetlist, F2BDesign):
         except AttributeError:
             # Sometimes F2B misses a LUT GND generator directly driving the O6 site pin output.
             assert "LUT" in bel_name, f"F2B missing cells for {site}:{bel_name}"
-            assert utils.convert_verilog_literal_to_int(ecell.getProperty("INIT").getValue()) == 0
+            assert convert_verilog_literal_to_int(ecell.getProperty("INIT").getValue()) == 0
             logging.warning("F2B missed lut gnd gen at %s:%s", site, bel_name)
             self.lut_gnd_net.add(ecell.getPortInst("O6").getNet().getName())
             return
@@ -182,8 +176,8 @@ class StructuralCapnp(RwPhysNetlist, F2BDesign):
             )
 
         for name in keys:
-            value = utils.convert_verilog_literal_to_int(cell_props[name].getValue())
-            rev_value = utils.convert_verilog_literal_to_int(rev_props[name].getValue())
+            value = convert_verilog_literal_to_int(cell_props[name].getValue())
+            rev_value = convert_verilog_literal_to_int(rev_props[name].getValue())
 
             if rev_value != value:
                 capnp_rev_value = self.handle_missing_prop(rev_cell, name)
@@ -327,17 +321,13 @@ class StructuralCapnp(RwPhysNetlist, F2BDesign):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    utils.add_path_arg(parser, "--synth_dcp", "The synthesis dcp file to use for the netlist.")
-    utils.add_path_arg(parser, "--synth_edf", "The synthesis edf file to use for the netlist.")
-    utils.add_path_arg(parser, "--impl_edf", "The implementation edf file to use for the netlist.")
-    utils.add_path_arg(parser, "--impl_dcp", "The implementation dcp file to use for the netlist.")
-    utils.add_path_arg(
-        parser, "--phys_capnp", "The capnp file containing the reversed physical netlist."
-    )
-    utils.add_path_arg(
-        parser, "--edf_capnp", "The capnp file containing the reversed logical netlist."
-    )
-    utils.add_standard_args(parser)
+    add_path_arg(parser, "--synth_dcp", "The synthesis dcp file to use for the netlist.")
+    add_path_arg(parser, "--synth_edf", "The synthesis edf file to use for the netlist.")
+    add_path_arg(parser, "--impl_edf", "The implementation edf file to use for the netlist.")
+    add_path_arg(parser, "--impl_dcp", "The implementation dcp file to use for the netlist.")
+    add_path_arg(parser, "--phys_capnp", "The capnp file containing the reversed physical netlist.")
+    add_path_arg(parser, "--edf_capnp", "The capnp file containing the reversed logical netlist.")
+    add_standard_args(parser)
 
     args = parser.parse_args()
     comparator = StructuralCapnp(

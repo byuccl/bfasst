@@ -10,7 +10,7 @@ from pathlib import Path
 
 import capnp
 
-from bfasst.paths import INTERCHANGE_SCHEMA_DIR
+from bfasst.paths import INTERCHANGE_SCHEMA_PATH
 
 # pylint: disable=no-member
 capnp.remove_import_hook()
@@ -84,7 +84,7 @@ class CapnpCells:
         """
         # pylint: disable=no-member
         schema = capnp.load(
-            str(INTERCHANGE_SCHEMA_DIR / "PhysicalNetlist.capnp"),
+            str(INTERCHANGE_SCHEMA_PATH / "PhysicalNetlist.capnp"),
             imports=SEARCH_PATH,
         )
         # pylint: enable=no-member
@@ -100,7 +100,7 @@ class CapnpCells:
         """
         # pylint: disable=no-member
         schema = capnp.load(
-            str(INTERCHANGE_SCHEMA_DIR / "LogicalNetlist.capnp"),
+            str(INTERCHANGE_SCHEMA_PATH / "LogicalNetlist.capnp"),
             imports=SEARCH_PATH,
         )
         # pylint: enable=no-member

@@ -10,7 +10,7 @@ from pathlib import Path
 import xlsxwriter
 
 from bfasst import yaml_parser
-from bfasst.paths import BUILD_PATH
+from bfasst.paths import BFASST_BUILD
 
 
 class TransformStats:
@@ -86,7 +86,7 @@ def transform_stats(designs_yaml):
     for design in design_paths:
         design = Path(design)
         key = f"{design.parent.name}_{design.name}"
-        log = BUILD_PATH / design.parent.name / design.name / "vivado_impl/vivado.log"
+        log = BFASST_BUILD / design.parent.name / design.name / "vivado_impl/vivado.log"
         stats = None
         with open(log) as f:
             try:
@@ -210,7 +210,7 @@ def phys_capnp_results(flow, out="fast_results.csv"):
     fl = yaml_parser.RunParser(flow)
 
     designs = [
-        BUILD_PATH / Path(design).parent.name / Path(design).name for design in fl.design_paths
+        BFASST_BUILD / Path(design).parent.name / Path(design).name for design in fl.design_paths
     ]
 
     rows = []
@@ -287,7 +287,7 @@ def phys_cmp_results(flow, out="results.csv"):
     fl = yaml_parser.RunParser(flow)
 
     designs = [
-        BUILD_PATH / Path(design).parent.name / Path(design).name for design in fl.design_paths
+        BFASST_BUILD / Path(design).parent.name / Path(design).name for design in fl.design_paths
     ]
 
     rows = []

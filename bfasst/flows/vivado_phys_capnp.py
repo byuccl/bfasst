@@ -2,7 +2,7 @@
 
 from bfasst.flows.vivado_bit_to_netlist import VivadoBitToNetlist
 from bfasst.flows.vivado_phys_netlist import VivadoPhysNetlist
-from bfasst.paths import FLOWS_PATH
+from bfasst.paths import BFASST_FLOWS
 from bfasst.tools.compare.structural.structural_capnp_cmp import StructuralCapnpCmp
 
 
@@ -27,4 +27,4 @@ class VivadoPhysCapnp(VivadoBitToNetlist):
         )
 
     def get_top_level_flow_path(self):
-        return f"{FLOWS_PATH}/vivado_phys_capnp.py"
+        return f"{BFASST_FLOWS}/vivado_phys_capnp.py"

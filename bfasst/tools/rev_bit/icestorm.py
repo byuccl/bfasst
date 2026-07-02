@@ -1,7 +1,8 @@
 """Icestorm reverse bit tool (ninja snippet generation for icestorm reverse bitstream tool)"""
 
 import pathlib
-from bfasst.paths import ICEBOX_VLOG_PATH, ICEUNPACK_PATH, REV_BIT_TOOLS_PATH
+
+from bfasst.paths import ICEBOX_VLOG_PATH, ICEUNPACK_PATH, REV_BIT_TOOLS
 from bfasst.tools.tool import Tool
 
 
@@ -19,7 +20,7 @@ class IcestormRevBit(Tool):
 
         # outputs must be initialized AFTER output paths are set
         self._init_outputs()
-        self.rule_snippet_path = REV_BIT_TOOLS_PATH / "icestorm_rules.ninja.mustache"
+        self.rule_snippet_path = REV_BIT_TOOLS / "icestorm_rules.ninja.mustache"
 
     def create_build_snippets(self):
         self._append_build_snippets_default(

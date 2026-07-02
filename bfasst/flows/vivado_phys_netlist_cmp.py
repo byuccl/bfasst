@@ -2,7 +2,7 @@
 
 from bfasst.flows.flow import Flow
 from bfasst.flows.vivado_phys_netlist import VivadoPhysNetlist
-from bfasst.paths import FLOWS_PATH
+from bfasst.paths import BFASST_FLOWS
 from bfasst.tools.compare.structural.structural import Structural
 from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.tools.rev_bit.xray import Xray
@@ -63,4 +63,4 @@ class VivadoPhysNetlistCmp(Flow):
         # pylint: enable=duplicate-code
 
     def get_top_level_flow_path(self):
-        return f"{FLOWS_PATH}/vivado_phys_netlist_cmp.py"
+        return f"{BFASST_FLOWS}/vivado_phys_netlist_cmp.py"

@@ -68,17 +68,16 @@ Random I/Os for tpu.ws
 `define MAX_BITS_POOL 3
 
 module tpu_random (
-    input wire logicclk,
-    input wire logicclk_mem,
-    input wire logicreset,
-    input wire logicresetn,
+    input wire logic clk,
+    input wire logic reset,
+    input wire logic resetn,
     input wire logic[`REG_ADDRWIDTH-1:0] PADDR,
-    input wire logicPWRITE,
-    input wire logicPSEL,
-    input wire logicPENABLE,
+    input wire logic PWRITE,
+    input wire logic PSEL,
+    input wire logic PENABLE,
     input wire logic[`REG_DATAWIDTH-1:0] PWDATA,
     output logic[`REG_DATAWIDTH-1:0] PRDATA,
-    output logicPREADY,
+    output logic PREADY,
     input wire logic[`AWIDTH-1:0] bram_addr_a_ext,
     input wire logic[`DESIGN_SIZE-1:0] bram_we_a_ext,
     input wire logic[`AWIDTH-1:0] bram_addr_b_ext,
@@ -86,6 +85,9 @@ module tpu_random (
     input wire logic[5:0] out_sel,
     output logic [7:0] out
 );
+
+logic clk_mem;
+assign clk_mem = clk;
 
 logic[`DESIGN_SIZE*`DWIDTH-1:0] bram_rdata[1:0];
 always_comb begin
@@ -132,8 +134,8 @@ RandomNumberGenerator #(
     .RANDOM_WIDTH(`DESIGN_SIZE*`DWIDTH),
     .SEED(0)
 ) tpu0_random_number_generator (
-    .clk(logicclk),
-    .reset(logicreset),
+    .clk(clk),
+    .reset(reset),
     .random_number(bram_wdata_a_ext)
 );
 
@@ -141,8 +143,8 @@ RandomNumberGenerator #(
     .RANDOM_WIDTH(`DESIGN_SIZE*`DWIDTH),
     .SEED(1)
 ) tpu1_random_number_generator (
-    .clk(logicclk),
-    .reset(logicreset),
+    .clk(clk),
+    .reset(reset),
     .random_number(bram_wdata_b_ext)
 );
 

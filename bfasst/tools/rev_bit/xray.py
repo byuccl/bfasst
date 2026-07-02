@@ -1,16 +1,17 @@
 """Tool to create rule and build snippets that reverse a bitstream using xray."""
 
 import chevron
-from bfasst.utils.general import get_family_from_part
+
 from bfasst.paths import (
-    NINJA_BUILD_PATH,
-    REV_BIT_TOOLS_PATH,
-    XRAY_PATH,
     FASM2BELS_PATH,
-    FASM2BELS_PYTHON_PATH,
+    FASM2BELS_PYTHON,
+    NINJA_BUILD_PATH,
+    REV_BIT_TOOLS,
     XRAY_DB_PATH,
+    XRAY_PATH,
 )
 from bfasst.tools.tool import Tool
+from bfasst.utils.general import get_family_from_part
 
 
 class Xray(Tool):
@@ -28,12 +29,12 @@ class Xray(Tool):
         self.reversed_netlist_path = self.build_path / (self.design_props.top + "_reversed.v")
         self.xdc_path = self.build_path / (self.design_props.top + "_reversed.xdc")
 
-        self.rule_snippet_path = REV_BIT_TOOLS_PATH / "xray.ninja_rules"
+        self.rule_snippet_path = REV_BIT_TOOLS / "xray.ninja_rules"
         self._init_outputs()
 
     def create_build_snippets(self):
         """Populate xray build statements from template and copy them to build.ninja."""
-        with open(REV_BIT_TOOLS_PATH / "xray.ninja_build.mustache", "r") as f:
+        with open(REV_BIT_TOOLS / "xray.ninja_build.mustache", "r") as f:
             build_rules = chevron.render(
                 f,
                 {
@@ -43,7 +44,7 @@ class Xray(Tool):
                     "xray_xdc": str(self.outputs["xray_xdc"]),
                     "bitstream_path": self.bitstream,
                     "fasm2bels_path": FASM2BELS_PATH,
-                    "fasm2bels_python_path": FASM2BELS_PYTHON_PATH,
+                    "fasm2bels_python_path": FASM2BELS_PYTHON,
                     "bit_to_fasm_path": XRAY_PATH / "utils" / "bit2fasm.py",
                     "db_root": XRAY_DB_PATH / get_family_from_part(self.flow.part),
                     "part": self.flow.part,

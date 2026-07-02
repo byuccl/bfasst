@@ -2,8 +2,8 @@
 (tested primarily on post-fasm2bels netlists)
 """
 
+from bfasst.paths import BFASST_UTILS, NINJA_TRANSFORM_TOOLS
 from bfasst.tools.tool import Tool
-from bfasst.paths import BFASST_UTILS_PATH, NINJA_TRANSFORM_TOOLS_PATH
 
 
 class NetlistCleanup(Tool):
@@ -17,7 +17,7 @@ class NetlistCleanup(Tool):
 
         self.build_path = self.design_build_path / "netlist_cleanup"
         self._init_outputs()
-        self.rule_snippet_path = NINJA_TRANSFORM_TOOLS_PATH / "netlist_cleanup_rules.ninja.mustache"
+        self.rule_snippet_path = NINJA_TRANSFORM_TOOLS / "netlist_cleanup_rules.ninja.mustache"
 
     def _init_outputs(self):
         self.outputs["netlist_cleaned_path"] = self.build_path / (
@@ -26,7 +26,7 @@ class NetlistCleanup(Tool):
 
     def add_ninja_deps(self, deps):
         self._add_ninja_deps_default(deps, __file__)
-        deps.append(BFASST_UTILS_PATH / "netlist_cleanup.py")
+        deps.append(BFASST_UTILS / "netlist_cleanup.py")
 
     def create_build_snippets(self):
         self._append_build_snippets_default(

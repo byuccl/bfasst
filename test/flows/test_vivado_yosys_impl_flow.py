@@ -7,7 +7,7 @@ import unittest
 
 from bfasst.flows.flow_utils import create_build_file
 from bfasst.flows.vivado_yosys_cmp import VivadoYosysCmp
-from bfasst.paths import DESIGNS_PATH, NINJA_BUILD_PATH, FLOWS_PATH
+from bfasst.paths import BFASST_DESIGNS, BFASST_FLOWS, NINJA_BUILD_PATH
 
 
 class TestVivadoYosysImplFlow(unittest.TestCase):
@@ -18,7 +18,7 @@ class TestVivadoYosysImplFlow(unittest.TestCase):
         # overwrite the build file so it is not appended to incorrectly
         create_build_file()
 
-        cls.flow = VivadoYosysCmp(DESIGNS_PATH / "byu/alu")
+        cls.flow = VivadoYosysCmp(BFASST_DESIGNS / "byu/alu")
         cls.flow.create_tool_build_dirs()
         cls.flow.create_rule_snippets()
         cls.flow.create_build_snippets()
@@ -34,7 +34,7 @@ class TestVivadoYosysImplFlow(unittest.TestCase):
         self.assertIn("rule fasm_to_netlist", ninja_rules)
 
     def test_get_top_level_flow_path(self):
-        self.assertEqual(self.flow.get_top_level_flow_path(), FLOWS_PATH / "vivado_yosys_cmp.py")
+        self.assertEqual(self.flow.get_top_level_flow_path(), BFASST_FLOWS / "vivado_yosys_cmp.py")
 
 
 if __name__ == "__main__":

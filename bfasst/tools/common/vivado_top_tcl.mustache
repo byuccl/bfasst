@@ -1,5 +1,10 @@
 if { [ catch {
 
+# Common 17-3647: Unable to remove temp directory used during build.
+# Not sure if it happens from J Drive or running 150+ concurrent vivado processes.
+# Also, Vivado blocks downgrading to warning, so for now suppress.
+set_msg_config -suppress -id {Common 17-3647}
+
 {{#tcl_sources}}
 source {{.}}
 {{/tcl_sources}}

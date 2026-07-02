@@ -1,8 +1,8 @@
 """Run the OpenTitan flow with the Vivado toolchain."""
 
 from bfasst.flows.flow import Flow
+from bfasst.paths import BFASST_BUILD, BFASST_FLOWS
 from bfasst.tools.impl.vivado_impl import VivadoImpl
-from bfasst.paths import FLOWS_PATH, BUILD_PATH
 from bfasst.tools.synth.vivado_synth import VivadoSynth
 
 
@@ -21,11 +21,13 @@ class OpenTitan(Flow):
 
         self.vivado_synth_tool = VivadoSynth(self, design, synth_options)
         self.vivado_synth_tool.synth_build["tcl_sources"] = [
-            str(BUILD_PATH / "opentitan/vivado_synth/lowrisc_systems_chip_earlgrey_cw310_0.1.tcl"),
+            str(
+                BFASST_BUILD / "opentitan/vivado_synth/lowrisc_systems_chip_earlgrey_cw310_0.1.tcl"
+            ),
             self.vivado_synth_tool.outputs_str["reports_tcl"],
         ]
         self.vivado_synth_tool.deps.append(
-            BUILD_PATH / "opentitan/vivado_synth/lowrisc_systems_chip_earlgrey_cw310_0.1.tcl"
+            BFASST_BUILD / "opentitan/vivado_synth/lowrisc_systems_chip_earlgrey_cw310_0.1.tcl"
         )
         self.vivado_impl_tool = VivadoImpl(
             self,
@@ -40,4 +42,4 @@ class OpenTitan(Flow):
         self.vivado_impl_tool.create_build_snippets()
 
     def get_top_level_flow_path(self):
-        return FLOWS_PATH / "opentitan.py"
+        return BFASST_FLOWS / "opentitan.py"

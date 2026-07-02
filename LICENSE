@@ -1,3 +1,7 @@
+Note that some designs files have their own license, contained in their directories. 
+Third-party tools also may have their own license files. 
+For BFASST code and unless otherwise specified, the license is Apache 2.0, provided below for your reference:
+
                                  Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/

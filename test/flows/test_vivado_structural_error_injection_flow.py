@@ -6,12 +6,10 @@
 import unittest
 
 from bfasst.flows.flow_utils import create_build_file
-from bfasst.flows.vivado_structural_error_injection import VivadoStructuralErrorInjection
-from bfasst.paths import (
-    DESIGNS_PATH,
-    NINJA_BUILD_PATH,
-    FLOWS_PATH,
+from bfasst.flows.vivado_structural_error_injection import (
+    VivadoStructuralErrorInjection,
 )
+from bfasst.paths import BFASST_DESIGNS, BFASST_FLOWS, NINJA_BUILD_PATH
 
 
 class TestVivadoStructuralErrorInjection(unittest.TestCase):
@@ -22,7 +20,7 @@ class TestVivadoStructuralErrorInjection(unittest.TestCase):
         # overwrite the build file so it is not appended to incorrectly
         create_build_file()
 
-        cls.flow = VivadoStructuralErrorInjection(DESIGNS_PATH / "byu/alu")
+        cls.flow = VivadoStructuralErrorInjection(BFASST_DESIGNS / "byu/alu")
         cls.flow.create_rule_snippets()
         cls.flow.create_build_snippets()
 
@@ -43,7 +41,7 @@ class TestVivadoStructuralErrorInjection(unittest.TestCase):
     def test_get_top_level_flow_path(self):
         self.assertEqual(
             self.flow.get_top_level_flow_path(),
-            FLOWS_PATH / "vivado_structural_error_injection.py",
+            BFASST_FLOWS / "vivado_structural_error_injection.py",
         )
 
 

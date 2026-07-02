@@ -7,7 +7,7 @@ import unittest
 
 from bfasst.flows.flow_utils import create_build_file
 from bfasst.flows.vivado_conformal import VivadoConformal
-from bfasst.paths import DESIGNS_PATH, NINJA_BUILD_PATH, FLOWS_PATH
+from bfasst.paths import BFASST_DESIGNS, BFASST_FLOWS, NINJA_BUILD_PATH
 
 
 class TestVivadoConformalFlow(unittest.TestCase):
@@ -18,7 +18,7 @@ class TestVivadoConformalFlow(unittest.TestCase):
         # overwrite the build file so it is not appended to incorrectly
         create_build_file()
 
-        cls.flow = VivadoConformal(DESIGNS_PATH / "byu/alu")
+        cls.flow = VivadoConformal(BFASST_DESIGNS / "byu/alu")
         cls.flow.create_rule_snippets()
         cls.flow.create_build_snippets()
 
@@ -33,7 +33,7 @@ class TestVivadoConformalFlow(unittest.TestCase):
         self.assertIn("rule conformal", ninja_rules)
 
     def test_get_top_level_flow_path(self):
-        self.assertEqual(self.flow.get_top_level_flow_path(), FLOWS_PATH / "vivado_conformal.py")
+        self.assertEqual(self.flow.get_top_level_flow_path(), BFASST_FLOWS / "vivado_conformal.py")
 
 
 if __name__ == "__main__":

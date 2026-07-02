@@ -7,7 +7,7 @@ import unittest
 
 from bfasst.flows.flow_utils import create_build_file
 from bfasst.flows.vivado import Vivado
-from bfasst.paths import DESIGNS_PATH, NINJA_BUILD_PATH, FLOWS_PATH
+from bfasst.paths import BFASST_DESIGNS, BFASST_FLOWS, NINJA_BUILD_PATH
 
 
 class TestVivadoFlow(unittest.TestCase):
@@ -18,7 +18,7 @@ class TestVivadoFlow(unittest.TestCase):
         # overwrite the build file so it is not appended to incorrectly
         create_build_file()
 
-        cls.flow = Vivado(DESIGNS_PATH / "byu/alu")
+        cls.flow = Vivado(BFASST_DESIGNS / "byu/alu")
         cls.flow.create_rule_snippets()
         cls.flow.create_build_snippets()
 
@@ -39,7 +39,7 @@ class TestVivadoFlow(unittest.TestCase):
         self.assertTrue((self.flow.vivado_impl_tool.build_path / "impl.json").exists())
 
     def test_get_top_level_flow_path(self):
-        self.assertEqual(self.flow.get_top_level_flow_path(), FLOWS_PATH / "vivado.py")
+        self.assertEqual(self.flow.get_top_level_flow_path(), BFASST_FLOWS / "vivado.py")
 
 
 if __name__ == "__main__":

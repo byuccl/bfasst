@@ -1,1 +1,5 @@
 top: spmv
+
+clocks:
+  - name: clk
+    period: 10.0
