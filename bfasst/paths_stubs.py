@@ -59,6 +59,7 @@ if TYPE_CHECKING:
     RAND_SOC_PATH: Path = Path()
     RAPIDWRIGHT_PATH: Path = Path()
     REV_BIT_TOOLS: Path = Path()
+    RW_ENABLE_EDIF_BINARY_CACHING: Path = Path()
     RW_QUIET_MESSAGE: Path = Path()
     STRUCTURAL_TOOLS: Path = Path()
     SYNPLIFY_PRJ_TEMPLATE: Path = Path()
@@ -73,4 +74,4 @@ if TYPE_CHECKING:
     YOSYS_SYNTH_SCRIPT_TEMPLATE: Path = Path()
     YOSYS_TIMEOUT: Path = Path()
     YOSYS_TOOLS: Path = Path()
-    _JAVA_OPTIONS: Path = Path()
+    _SILENT_JAVA_OPTIONS: Path = Path()

@@ -58,6 +58,7 @@ if TYPE_CHECKING:
     RAND_SOC_PATH: str = ""
     RAPIDWRIGHT_PATH: str = ""
     REV_BIT_TOOLS: str = ""
+    RW_ENABLE_EDIF_BINARY_CACHING: str = ""
     RW_QUIET_MESSAGE: str = ""
     STRUCTURAL_TOOLS: str = ""
     SYNPLIFY_PRJ_TEMPLATE: str = ""
@@ -72,4 +73,4 @@ if TYPE_CHECKING:
     YOSYS_SYNTH_SCRIPT_TEMPLATE: str = ""
     YOSYS_TIMEOUT: str = ""
     YOSYS_TOOLS: str = ""
-    _JAVA_OPTIONS: str = ""
+    _SILENT_JAVA_OPTIONS: str = ""

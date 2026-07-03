@@ -338,6 +338,3 @@ if __name__ == "__main__":
         (args.logging_level, args.log_name),
     )
     comparator.run()
-    # except StructuralCompareError as err:
-    #     logging.error("Structural comparison failed: %s", err)
-    #     exit(0)
