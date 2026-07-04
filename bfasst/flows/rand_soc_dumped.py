@@ -23,7 +23,7 @@ class RandSocDumped(FlowNoDesign):
 
         # Get configuration of random SoC creator
         if randsoc_config_path is None:
-            randsoc_config_path = RAND_SOC_PATH / "default_config.yaml"
+            randsoc_config_path = RAND_SOC_PATH / "configs" / "default.yaml"
         else:
             randsoc_config_path = BFASST_ROOT / randsoc_config_path
         assert randsoc_config_path.exists(), f"Config file {randsoc_config_path} does not exist"
