@@ -3,7 +3,7 @@
 import pathlib
 
 from bfasst import config
-from bfasst.paths import BFASST_UTILS_PATH, COMMON_TOOLS_PATH
+from bfasst.paths import BFASST_COMMON_TOOLS, BFASST_UTILS
 from bfasst.tools.impl.impl_tool import ImplTool
 from bfasst.utils.general import ensure_tuple, json_write_if_changed
 
@@ -13,7 +13,7 @@ class VivadoImpl(ImplTool):
 
     _my_dir_path = pathlib.Path(__file__).parent
     template_tuples = [
-        (COMMON_TOOLS_PATH / "vivado_top_tcl.mustache", "run.tcl"),
+        (BFASST_COMMON_TOOLS / "vivado_top_tcl.mustache", "run.tcl"),
         (_my_dir_path / "vivado_impl_run.tcl.mustache", "impl.tcl"),
         (_my_dir_path / "vivado_impl_setup.tcl.mustache", "setup.tcl"),
         (_my_dir_path / "vivado_impl_reports.tcl.mustache", "reports.tcl"),
@@ -73,15 +73,16 @@ class VivadoImpl(ImplTool):
             "phys_opt_design": self.phys_opt_design,
             "tcl_sources": tcl_sources,
             "inputs": self.inputs_str,
+            "cwd": self.build_path,
         }
         if impl_options:
             self.impl_build.update(impl_options)
 
         self._init_outputs()
-        self.rule_snippet_path = COMMON_TOOLS_PATH / "vivado_rules.ninja.mustache"
+        self.rule_snippet_path = BFASST_COMMON_TOOLS / "vivado_rules.ninja.mustache"
         self.rules_render_dict = {
-            "vivado_path": config.VIVADO_BIN_PATH,
-            "utils_path": BFASST_UTILS_PATH,
+            "vivado_path": config.VIVADO,
+            "utils_path": BFASST_UTILS,
         }
 
     def create_build_snippets(self):
@@ -101,7 +102,7 @@ class VivadoImpl(ImplTool):
                 "impl_library": self._my_dir_path,
                 "cwd": self.build_path,
                 "outputs": self.outputs_str,
-                "common_tools_path": str(COMMON_TOOLS_PATH),
+                "common_tools_path": str(BFASST_COMMON_TOOLS),
                 "inputs": self.inputs_str,
                 "tcl_sources": [str(i) for i in self.impl_build["tcl_sources"]],
             },
@@ -126,9 +127,3 @@ class VivadoImpl(ImplTool):
     def add_ninja_deps(self, deps):
         """Add dependencies to the master ninja file that would cause it to rebuild if modified."""
         self._add_ninja_deps_default(deps, __file__)
-        for dep in self._my_dir_path.glob("*.mustache"):
-            if "vivado" in dep.name:
-                deps.append(dep)
-        for tcl in self.impl_build["tcl_sources"]:
-            deps.append(tcl)
-        deps.append(self.synth_edf)

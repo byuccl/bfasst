@@ -1,4 +1,5 @@
 build {{outputs.impl_verilog }} {{outputs.impl_edf}} {{outputs.impl_dcp}} {{outputs.bitstream }} {{outputs.utilization}}: vivado {{outputs.run_tcl}} {{inputs.synth_edf}} | {{#inputs.xdc}} {{ . }} {{/inputs.xdc}} {{#outputs.clock_crank_tcl}} {{.}} {{/outputs.clock_crank_tcl}} {{outputs.setup_tcl}} {{outputs.impl_tcl}} {{outputs.reports_tcl}}
     journal = {{outputs.journal}}
     log = {{outputs.log}}
+    cwd = {{cwd}}
 

@@ -1,7 +1,7 @@
 """Narrows down fastest clock rate for a design"""
 
 from bfasst.flows.flow import Flow
-from bfasst.paths import FLOWS_PATH
+from bfasst.paths import BFASST_FLOWS
 from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.tools.synth.vivado_synth import VivadoSynth
 
@@ -45,4 +45,4 @@ class ClockCrank(Flow):
             self.vivado_impl_tool.create_build_snippets()
 
     def get_top_level_flow_path(self):
-        return FLOWS_PATH / "clock_crank.py"
+        return BFASST_FLOWS / "clock_crank.py"

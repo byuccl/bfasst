@@ -1,32 +1,32 @@
 designs:
-  - base/aes128
-  - base/amber
-  - base/atahost
-  # - base/bubblesort
-  - base/counter
-  - base/cpu8080
-  - base/des3_area
-  - base/des3_perf
-  # - base/dfadd
-  # - base/dsu3
-  - base/fm_3d_core
-  # - base/jpegencode
-  # - base/leon3s
-  # - base/mctrl
-  - base/md5_pipelined
-  - base/mips_16
-  - base/msp430_vhdl
-  - base/natalius_8bit_risc
-  - base/neo430
-  - base/pic
-  - base/pid
-  - base/pid_simple
-  - base/potato
-  # - base/simon_core
-  - base/sudoku
-  # - base/uart2spi
-  - base/vga
-  - base/wb_lcd
+  - ooc/aes128
+  - ooc/amber
+  - ooc/atahost
+  - ooc/bubblesort
+  - ooc/counter
+  - byu/counter
+  - ooc/cpu8080
+  - ooc/des3_area
+  - ooc/des3_perf
+  - ooc/dsu3
+  - ooc/fm_3d_core
+  - ooc/jpegencode
+  - ooc/leon3s
+  - ooc/mctrl
+  - ooc/md5_pipelined
+  - ooc/mips_16
+  - ooc/msp430_vhdl
+  - ooc/natalius_8bit_risc
+  - ooc/neo430
+  - ooc/pic
+  - ooc/pid
+  - ooc/pid_simple
+  - ooc/potato
+  - ooc/simon_core
+  - ooc/sudoku
+  - ooc/uart2spi
+  - ooc/vga
+  - ooc/wb_lcd
 
 
 

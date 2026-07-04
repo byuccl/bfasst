@@ -1,3 +1,8 @@
+set fsm_cells [get_cells -hier -filter {FSM_ENCODED_STATES != ""}]
+foreach cell $fsm_cells {
+    set_property FSM_ENCODED_STATES "" $cell
+}
+
 write_edif -force {{ outputs.synth_edf }}
 write_checkpoint -force -file {{ outputs.synth_dcp }}
 write_verilog -force -file {{ outputs.verilog }}

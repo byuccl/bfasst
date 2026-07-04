@@ -6,12 +6,7 @@ Uses RapidWright
 import logging
 from typing import Optional
 
-import bfasst.utils.rw_helpers as rw
-from bfasst import jpype_jvm
-from bfasst.utils.phys_netlist import PhysNetlistTransformError
-
-# pylint: disable=wrong-import-position,wrong-import-order,import-error
-jpype_jvm.start()
+import rapidwright as _
 from com.xilinx.rapidwright.design import Cell, Unisim
 from com.xilinx.rapidwright.edif import (
     EDIFCell,
@@ -20,7 +15,8 @@ from com.xilinx.rapidwright.edif import (
     EDIFNetlist,
 )
 
-# pylint: enable=wrong-import-position,wrong-import-order,import-error
+import bfasst.utils.rw_helpers as rw
+from bfasst.utils.phys_netlist import PhysNetlistTransformError
 
 
 class LUTRAMTransformer:

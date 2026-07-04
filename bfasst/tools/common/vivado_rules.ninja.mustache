@@ -1,10 +1,10 @@
 rule vivado
-    command = cd $cwd && {{ vivado_path }} -mode batch -journal $journal -log $log -source $in > /dev/null
+    command = cd $cwd && $$VIVADO_BIN -mode batch -journal $journal -log $log -source $in > /dev/null 2>&1
     description = vivado $in
 
 {{#in_context}}
 rule vivado_ioparse
-    command = python {{ bfasst_path }}/bfasst/utils/vivado_ioparse.py <$in >$out
+    command = python $${BFASST_UTILS}/vivado_ioparse.py <$in >$out
     description = vivado_ioparse <$in >$out
     
 {{/in_context}}

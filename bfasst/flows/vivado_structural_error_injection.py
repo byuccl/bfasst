@@ -4,7 +4,7 @@ import random
 
 from bfasst.flows.flow import Flow
 from bfasst.flows.vivado_phys_netlist import VivadoPhysNetlist
-from bfasst.paths import FLOWS_PATH
+from bfasst.paths import BFASST_FLOWS
 from bfasst.tools.compare.structural.structural import Structural
 from bfasst.tools.impl.vivado_impl import VivadoImpl
 from bfasst.tools.rev_bit.xray import Xray
@@ -87,7 +87,7 @@ class VivadoStructuralErrorInjection(Flow):
                 ).create_build_snippets()
 
     def get_top_level_flow_path(self) -> str:
-        return FLOWS_PATH / "vivado_structural_error_injection.py"
+        return BFASST_FLOWS / "vivado_structural_error_injection.py"
 
     def post_execute(self):
         """Remove all error injection and comparison artifacts for errors successfully detected
