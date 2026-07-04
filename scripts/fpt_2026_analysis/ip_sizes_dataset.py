@@ -35,8 +35,11 @@ def main() -> None:
 
     rows = collect_ip_sizes(args.build_dir, machine=args.machine)
     if not rows:
-        print(f"No IP-size data found under {args.build_dir} "
-              "(no utilization_hier.txt reports yet?)", file=sys.stderr)
+        print(
+            f"No IP-size data found under {args.build_dir} "
+            "(no utilization_hier.txt reports yet?)",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     args.out_dir.mkdir(parents=True, exist_ok=True)

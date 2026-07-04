@@ -50,16 +50,18 @@ def load_csv(rows: list[dict]) -> tuple[list[str], list[dict]]:
         if r["wns_ns"] is None:
             continue
         designs.append(f"{r['machine']}/d{r['seed']}")
-        data.append({
-            "wns": r["wns_ns"],
-            "tns": r["tns_ns"],
-            "failing_endpoints": r["failing_endpoints"],
-            "total_endpoints": r["total_endpoints"],
-            "logic_levels": r["logic_levels"],
-            "max_logic_levels": r["max_logic_levels"],
-            "data_path_delay": r["data_path_delay_ns"],
-            "clk_period": r["clk_period_ns"],
-        })
+        data.append(
+            {
+                "wns": r["wns_ns"],
+                "tns": r["tns_ns"],
+                "failing_endpoints": r["failing_endpoints"],
+                "total_endpoints": r["total_endpoints"],
+                "logic_levels": r["logic_levels"],
+                "max_logic_levels": r["max_logic_levels"],
+                "data_path_delay": r["data_path_delay_ns"],
+                "clk_period": r["clk_period_ns"],
+            }
+        )
     return designs, data
 
 
@@ -170,20 +172,30 @@ def plot_timing(data: list[dict], out_dir: Path) -> None:
         if len(periods):
             target_mhz = 1000.0 / float(np.median(periods))
             ax.axvline(target_mhz, color="black", linewidth=1, linestyle="--")
-            ax.text(target_mhz, ax.get_ylim()[1] * 0.92,
-                    f" target {target_mhz:.0f} MHz", fontsize=8, color="black")
+            ax.text(
+                target_mhz,
+                ax.get_ylim()[1] * 0.92,
+                f" target {target_mhz:.0f} MHz",
+                fontsize=8,
+                color="black",
+            )
         # Anchor the Fmax axis at 0 so the slow/failing tail reads on an absolute scale.
         ax.set_xlim(left=0)
 
     # --- TNS (negative tail clipped) ---
     with figure(out_dir / "timing_tns.pdf") as (_fig, ax):
-        _hist(ax, [d["tns"] for d in data], "#9c755f", "TNS Distribution",
-              "TNS (ns)", clip="lower")
+        _hist(ax, [d["tns"] for d in data], "#9c755f", "TNS Distribution", "TNS (ns)", clip="lower")
 
     # --- Failing endpoints (upper tail clipped) ---
     with figure(out_dir / "timing_failing_endpoints.pdf") as (_fig, ax):
-        _hist(ax, [d["failing_endpoints"] for d in data], "#f28e2b",
-              "Failing Timing Endpoints", "Count", clip="upper")
+        _hist(
+            ax,
+            [d["failing_endpoints"] for d in data],
+            "#f28e2b",
+            "Failing Timing Endpoints",
+            "Count",
+            clip="upper",
+        )
 
     # --- Max logic depth across the design (from logic-level distribution) ---
     # The deepest combinational path regardless of slack. A handful of pathological
@@ -196,24 +208,41 @@ def plot_timing(data: list[dict], out_dir: Path) -> None:
     max_ll = [d.get("max_logic_levels") for d in data if d.get("max_logic_levels") is not None]
     if max_ll:
         with figure(out_dir / "timing_logic_levels.pdf") as (_fig, ax):
-            _hist(ax, max_ll, "#59a14f", "Max Logic Depth", "Logic levels",
-                  integer=True, hi=LOGIC_DEPTH_MAX)
+            _hist(
+                ax,
+                max_ll,
+                "#59a14f",
+                "Max Logic Depth",
+                "Logic levels",
+                integer=True,
+                hi=LOGIC_DEPTH_MAX,
+            )
     else:
-        print("  No max-logic-level data (run report_logic_levels first); "
-              "skipping logic-depth plot")
+        print(
+            "  No max-logic-level data (run report_logic_levels first); "
+            "skipping logic-depth plot"
+        )
 
     # --- Data path delay (upper tail clipped) ---
     with figure(out_dir / "timing_data_path_delay.pdf") as (_fig, ax):
-        _hist(ax, [d["data_path_delay"] for d in data], "#76b7b2",
-              "Worst-Case Data Path Delay", "Delay (ns)", clip="upper")
+        _hist(
+            ax,
+            [d["data_path_delay"] for d in data],
+            "#76b7b2",
+            "Worst-Case Data Path Delay",
+            "Delay (ns)",
+            clip="upper",
+        )
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Analyze RandSoC Vivado timing reports.")
     src = parser.add_mutually_exclusive_group(required=True)
     src.add_argument(
-        "build_dir", type=Path, nargs="?",
-        help="Root rand_soc build directory (parse raw reports directly)"
+        "build_dir",
+        type=Path,
+        nargs="?",
+        help="Root rand_soc build directory (parse raw reports directly)",
     )
     src.add_argument(
         "--csv", type=Path, help="Joined dataset CSV to plot from (e.g. output/dataset.csv)"

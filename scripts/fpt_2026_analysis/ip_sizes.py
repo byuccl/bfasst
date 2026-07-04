@@ -24,8 +24,7 @@ from plot_utils import figure
 
 # Auto-inserted connectivity glue and SoC scaffolding -- excluded by default so
 # the plot shows the functional IP pool. Pass --all to include them.
-GLUE = {"slice_and_concat", "axis_dwidth_converter", "axis_broadcaster",
-        "axis_combiner", "reduce"}
+GLUE = {"slice_and_concat", "axis_dwidth_converter", "axis_broadcaster", "axis_combiner", "reduce"}
 INFRA = {"intc", "reset", "clk_wiz", "axi", "axi_legacy", "jtag_axi"}
 
 # Synthetic metrics: a sum over several raw hierarchical-report columns. The
@@ -70,16 +69,29 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("csv", type=Path, nargs="+", help="One or more ip_sizes.csv files")
     parser.add_argument("--out-dir", type=Path, default=Path("output"))
-    parser.add_argument("--metric", default="total_luts", choices=sorted(METRIC_LABELS),
-                        help="Resource to plot (default: total_luts)")
-    parser.add_argument("--min-count", type=int, default=20,
-                        help="Drop IP types with fewer than this many instances (default: 20)")
-    parser.add_argument("--all", action="store_true",
-                        help="Include glue/scaffolding IPs (slice/concat, converters, intc, ...)")
-    parser.add_argument("--types",
-                        help="Comma-separated IP types to include explicitly (overrides the "
-                             "default filtering and --min-count). Matches exact or by suffix, "
-                             "so 'quad_spi' selects axi_quad_spi. Output gets a '_subset' suffix.")
+    parser.add_argument(
+        "--metric",
+        default="total_luts",
+        choices=sorted(METRIC_LABELS),
+        help="Resource to plot (default: total_luts)",
+    )
+    parser.add_argument(
+        "--min-count",
+        type=int,
+        default=20,
+        help="Drop IP types with fewer than this many instances (default: 20)",
+    )
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help="Include glue/scaffolding IPs (slice/concat, converters, intc, ...)",
+    )
+    parser.add_argument(
+        "--types",
+        help="Comma-separated IP types to include explicitly (overrides the "
+        "default filtering and --min-count). Matches exact or by suffix, "
+        "so 'quad_spi' selects axi_quad_spi. Output gets a '_subset' suffix.",
+    )
     args = parser.parse_args()
 
     by_type = load(args.csv, args.metric)
@@ -106,10 +118,7 @@ def main() -> None:
         out_suffix = "_subset"
     else:
         excluded = set() if args.all else (GLUE | INFRA)
-        types = {
-            t: v for t, v in by_type.items()
-            if t not in excluded and len(v) >= args.min_count
-        }
+        types = {t: v for t, v in by_type.items() if t not in excluded and len(v) >= args.min_count}
     if not types:
         print("No IP types passed the filters", file=sys.stderr)
         sys.exit(1)

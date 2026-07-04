@@ -20,11 +20,15 @@ from parsers import COLUMNS
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--raw-dir", type=Path, default=Path("output/raw"),
+        "--raw-dir",
+        type=Path,
+        default=Path("output/raw"),
         help="Directory of per-machine CSVs to join (default: output/raw)",
     )
     parser.add_argument(
-        "--out", type=Path, default=Path("output/dataset.csv"),
+        "--out",
+        type=Path,
+        default=Path("output/dataset.csv"),
         help="Path for the merged CSV (default: output/dataset.csv)",
     )
     args = parser.parse_args()

@@ -41,7 +41,7 @@ def parse_utilization(path: Path, keys=None) -> dict[str, float] | None:
     """
     text = path.read_text()
     result = {}
-    for key in (keys if keys is not None else RESOURCES):
+    for key in keys if keys is not None else RESOURCES:
         label, zero_section = RESOURCES[key]
         pattern = (
             rf"\|\s*{re.escape(label)}\s*\|\s*[\d,]+\s*\|[^|]*\|[^|]*\|[^|]*\|\s*([\d.]+)\s*\|"
@@ -60,7 +60,14 @@ def parse_utilization(path: Path, keys=None) -> dict[str, float] | None:
 # Columns in `report_utilization -hierarchical` (utilization_hier.txt), in order
 # after the Instance and Module name columns.
 HIER_RESOURCE_COLUMNS = [
-    "total_luts", "logic_luts", "lutrams", "srls", "ffs", "ramb36", "ramb18", "dsp",
+    "total_luts",
+    "logic_luts",
+    "lutrams",
+    "srls",
+    "ffs",
+    "ramb36",
+    "ramb18",
+    "dsp",
 ]
 
 # A top-level RandSoC IP wrapper instance: the design.tcl wraps each generated IP
@@ -88,7 +95,7 @@ def parse_utilization_hier(path: Path) -> list[dict]:
         if not m:
             continue
         try:
-            vals = [int(c) for c in cells[2:2 + len(HIER_RESOURCE_COLUMNS)]]
+            vals = [int(c) for c in cells[2 : 2 + len(HIER_RESOURCE_COLUMNS)]]
         except ValueError:
             continue
         ip = {"ip_index": int(m.group(1)), "ip_type": m.group(2)}
@@ -196,7 +203,7 @@ def parse_logic_levels(path: Path) -> int | None:
             continue
         # Data row: per-level path counts follow the clock name and requirement.
         try:
-            counts = [int(c) for c in cells[2:2 + len(levels)]]
+            counts = [int(c) for c in cells[2 : 2 + len(levels)]]
         except ValueError:
             continue
         for lvl, cnt in zip(levels, counts):
@@ -294,21 +301,43 @@ def parse_runtime(synth_log: Path, impl_log: Path) -> dict | None:
 # --------------------------------------------------------------------------- #
 
 COLUMNS = [
-    "machine", "seed",
-    "lut_util_pct", "ff_util_pct", "slice_util_pct", "bram_util_pct", "dsp_util_pct", "io_util_pct",
-    "synth_lut_util_pct", "synth_ff_util_pct", "synth_bram_util_pct", "synth_dsp_util_pct",
-    "wns_ns", "tns_ns", "failing_endpoints", "total_endpoints",
-    "logic_levels", "max_logic_levels", "data_path_delay_ns", "clk_period_ns",
-    "congestion_north_pct", "congestion_south_pct", "congestion_east_pct",
-    "congestion_west_pct", "congestion_max_pct", "has_congestion_hotspot",
-    "synth_elapsed_s", "opt_elapsed_s", "place_elapsed_s",
-    "route_elapsed_s", "impl_elapsed_s", "total_elapsed_s",
+    "machine",
+    "seed",
+    "lut_util_pct",
+    "ff_util_pct",
+    "slice_util_pct",
+    "bram_util_pct",
+    "dsp_util_pct",
+    "io_util_pct",
+    "synth_lut_util_pct",
+    "synth_ff_util_pct",
+    "synth_bram_util_pct",
+    "synth_dsp_util_pct",
+    "wns_ns",
+    "tns_ns",
+    "failing_endpoints",
+    "total_endpoints",
+    "logic_levels",
+    "max_logic_levels",
+    "data_path_delay_ns",
+    "clk_period_ns",
+    "congestion_north_pct",
+    "congestion_south_pct",
+    "congestion_east_pct",
+    "congestion_west_pct",
+    "congestion_max_pct",
+    "has_congestion_hotspot",
+    "synth_elapsed_s",
+    "opt_elapsed_s",
+    "place_elapsed_s",
+    "route_elapsed_s",
+    "impl_elapsed_s",
+    "total_elapsed_s",
 ]
 
 # Per-column type converters used by read_dataset_csv to turn CSV strings back
 # into typed values (empty string -> None).
-_INT_COLUMNS = {"seed", "failing_endpoints", "total_endpoints", "logic_levels",
-                "max_logic_levels"}
+_INT_COLUMNS = {"seed", "failing_endpoints", "total_endpoints", "logic_levels", "max_logic_levels"}
 _BOOL_COLUMNS = {"has_congestion_hotspot"}
 _STR_COLUMNS = {"machine"}
 
@@ -334,46 +363,65 @@ def collect_all(build_dir: Path, machine: str = "") -> list[dict]:
         impl_util_path = design_dir / "vivado_impl" / "utilization.txt"
         util = parse_utilization(impl_util_path) if impl_util_path.exists() else None
         if util:
-            row["lut_util_pct"]   = util.get("LUT")
-            row["ff_util_pct"]    = util.get("FF")
+            row["lut_util_pct"] = util.get("LUT")
+            row["ff_util_pct"] = util.get("FF")
             row["slice_util_pct"] = util.get("SLICE")
-            row["bram_util_pct"]  = util.get("BRAM")
-            row["dsp_util_pct"]   = util.get("DSP")
-            row["io_util_pct"]    = util.get("IO")
+            row["bram_util_pct"] = util.get("BRAM")
+            row["dsp_util_pct"] = util.get("DSP")
+            row["io_util_pct"] = util.get("IO")
         else:
-            for k in ("lut_util_pct", "ff_util_pct", "slice_util_pct",
-                      "bram_util_pct", "dsp_util_pct", "io_util_pct"):
+            for k in (
+                "lut_util_pct",
+                "ff_util_pct",
+                "slice_util_pct",
+                "bram_util_pct",
+                "dsp_util_pct",
+                "io_util_pct",
+            ):
                 row[k] = None
 
         # --- Post-synthesis utilization ---
         synth_util_path = design_dir / "vivado_synth" / "synth_utilization.txt"
         synth_util = (
             parse_utilization(synth_util_path, keys=SYNTH_RESOURCES)
-            if synth_util_path.exists() else None
+            if synth_util_path.exists()
+            else None
         )
         if synth_util:
-            row["synth_lut_util_pct"]  = synth_util.get("LUT")
-            row["synth_ff_util_pct"]   = synth_util.get("FF")
+            row["synth_lut_util_pct"] = synth_util.get("LUT")
+            row["synth_ff_util_pct"] = synth_util.get("FF")
             row["synth_bram_util_pct"] = synth_util.get("BRAM")
-            row["synth_dsp_util_pct"]  = synth_util.get("DSP")
+            row["synth_dsp_util_pct"] = synth_util.get("DSP")
         else:
-            for k in ("synth_lut_util_pct", "synth_ff_util_pct", "synth_bram_util_pct", "synth_dsp_util_pct"):
+            for k in (
+                "synth_lut_util_pct",
+                "synth_ff_util_pct",
+                "synth_bram_util_pct",
+                "synth_dsp_util_pct",
+            ):
                 row[k] = None
 
         # --- Timing ---
         timing_path = design_dir / "vivado_impl" / "timing_summary.txt"
         timing = parse_timing(timing_path) if timing_path.exists() else None
         if timing:
-            row["wns_ns"]              = timing.get("wns")
-            row["tns_ns"]              = timing.get("tns")
-            row["failing_endpoints"]   = timing.get("failing_endpoints")
-            row["total_endpoints"]     = timing.get("total_endpoints")
-            row["logic_levels"]        = timing.get("logic_levels")
-            row["data_path_delay_ns"]  = timing.get("data_path_delay")
-            row["clk_period_ns"]       = timing.get("clk_period")
+            row["wns_ns"] = timing.get("wns")
+            row["tns_ns"] = timing.get("tns")
+            row["failing_endpoints"] = timing.get("failing_endpoints")
+            row["total_endpoints"] = timing.get("total_endpoints")
+            row["logic_levels"] = timing.get("logic_levels")
+            row["data_path_delay_ns"] = timing.get("data_path_delay")
+            row["clk_period_ns"] = timing.get("clk_period")
         else:
-            for k in ("wns_ns", "tns_ns", "failing_endpoints", "total_endpoints",
-                      "logic_levels", "data_path_delay_ns", "clk_period_ns"):
+            for k in (
+                "wns_ns",
+                "tns_ns",
+                "failing_endpoints",
+                "total_endpoints",
+                "logic_levels",
+                "data_path_delay_ns",
+                "clk_period_ns",
+            ):
                 row[k] = None
 
         # --- Max logic depth (separate logic-level distribution report) ---
@@ -386,15 +434,21 @@ def collect_all(build_dir: Path, machine: str = "") -> list[dict]:
         impl_log = design_dir / "vivado_impl" / "vivado.log"
         congestion = parse_congestion(impl_log) if impl_log.exists() else None
         if congestion:
-            row["congestion_north_pct"]   = congestion.get("North")
-            row["congestion_south_pct"]   = congestion.get("South")
-            row["congestion_east_pct"]    = congestion.get("East")
-            row["congestion_west_pct"]    = congestion.get("West")
-            row["congestion_max_pct"]     = congestion.get("max")
+            row["congestion_north_pct"] = congestion.get("North")
+            row["congestion_south_pct"] = congestion.get("South")
+            row["congestion_east_pct"] = congestion.get("East")
+            row["congestion_west_pct"] = congestion.get("West")
+            row["congestion_max_pct"] = congestion.get("max")
             row["has_congestion_hotspot"] = congestion.get("has_congested_region")
         else:
-            for k in ("congestion_north_pct", "congestion_south_pct", "congestion_east_pct",
-                      "congestion_west_pct", "congestion_max_pct", "has_congestion_hotspot"):
+            for k in (
+                "congestion_north_pct",
+                "congestion_south_pct",
+                "congestion_east_pct",
+                "congestion_west_pct",
+                "congestion_max_pct",
+                "has_congestion_hotspot",
+            ):
                 row[k] = None
 
         # --- Runtime ---
@@ -404,14 +458,20 @@ def collect_all(build_dir: Path, machine: str = "") -> list[dict]:
         )
         if runtime:
             row["synth_elapsed_s"] = runtime.get("synth")
-            row["opt_elapsed_s"]   = runtime.get("opt")
+            row["opt_elapsed_s"] = runtime.get("opt")
             row["place_elapsed_s"] = runtime.get("place")
             row["route_elapsed_s"] = runtime.get("route")
-            row["impl_elapsed_s"]  = runtime.get("impl")
+            row["impl_elapsed_s"] = runtime.get("impl")
             row["total_elapsed_s"] = runtime.get("total")
         else:
-            for k in ("synth_elapsed_s", "opt_elapsed_s", "place_elapsed_s",
-                      "route_elapsed_s", "impl_elapsed_s", "total_elapsed_s"):
+            for k in (
+                "synth_elapsed_s",
+                "opt_elapsed_s",
+                "place_elapsed_s",
+                "route_elapsed_s",
+                "impl_elapsed_s",
+                "total_elapsed_s",
+            ):
                 row[k] = None
 
         rows.append(row)
@@ -458,8 +518,10 @@ def collect_ip_sizes(build_dir: Path, machine: str = "") -> list[dict]:
             designs += 1
         for ip in ips:
             rows.append({"machine": machine, "seed": seed, **ip})
-    print(f"Collected {len(rows)} IP instances from {designs} designs "
-          f"({missing} without a hierarchical report)")
+    print(
+        f"Collected {len(rows)} IP instances from {designs} designs "
+        f"({missing} without a hierarchical report)"
+    )
     return rows
 
 

@@ -20,7 +20,7 @@ PHASES = ["synth", "opt", "place", "route"]
 PHASE_LABELS = {"synth": "Synthesis", "opt": "Opt", "place": "Place", "route": "Route"}
 PHASE_COLORS = {
     "synth": "#4e79a7",
-    "opt":   "#f28e2b",
+    "opt": "#f28e2b",
     "place": "#59a14f",
     "route": "#e15759",
 }
@@ -56,12 +56,17 @@ def load_csv(rows: list[dict]) -> tuple[list[str], list[dict]]:
         labels.append(f"{r['machine']}/d{r['seed']}")
         # Phase totals default to 0 when a phase is absent, matching the
         # build-dir path's dict.get(phase, 0) usage in the plotting code.
-        data.append({
-            "synth": r["synth_elapsed_s"] or 0.0, "opt": r["opt_elapsed_s"] or 0.0,
-            "place": r["place_elapsed_s"] or 0.0, "route": r["route_elapsed_s"] or 0.0,
-            "impl": r["impl_elapsed_s"], "total": r["total_elapsed_s"],
-            "slice": r["slice_util_pct"],
-        })
+        data.append(
+            {
+                "synth": r["synth_elapsed_s"] or 0.0,
+                "opt": r["opt_elapsed_s"] or 0.0,
+                "place": r["place_elapsed_s"] or 0.0,
+                "route": r["route_elapsed_s"] or 0.0,
+                "impl": r["impl_elapsed_s"],
+                "total": r["total_elapsed_s"],
+                "slice": r["slice_util_pct"],
+            }
+        )
     return labels, data
 
 
@@ -101,8 +106,12 @@ def plot_runtime(labels: list[str], data: list[dict], out_dir: Path) -> None:
         for phase in PHASES:
             vals = np.array([d.get(phase, 0) for d in sorted_data])
             ax1.fill_between(
-                x, bottoms, bottoms + vals,
-                color=PHASE_COLORS[phase], label=PHASE_LABELS[phase], linewidth=0,
+                x,
+                bottoms,
+                bottoms + vals,
+                color=PHASE_COLORS[phase],
+                label=PHASE_LABELS[phase],
+                linewidth=0,
             )
             bottoms += vals
         ax1.set_xlim(0, max(n - 1, 1))
@@ -113,8 +122,14 @@ def plot_runtime(labels: list[str], data: list[dict], out_dir: Path) -> None:
 
     # --- Histogram of total time (clipped to p99 for readability) ---
     with figure(out_dir / "runtime_distribution.pdf") as (_fig, ax2):
-        ax2.hist(total_vals, bins=30, range=(float(total_vals.min()), p99),
-                 color="#76b7b2", edgecolor="white", linewidth=0.5)
+        ax2.hist(
+            total_vals,
+            bins=30,
+            range=(float(total_vals.min()), p99),
+            color="#76b7b2",
+            edgecolor="white",
+            linewidth=0.5,
+        )
         ax2.set_xlim(float(total_vals.min()), p99)
         ax2.set_xlabel("Total elapsed time (s)")
         ax2.set_ylabel("Number of designs")
@@ -123,8 +138,13 @@ def plot_runtime(labels: list[str], data: list[dict], out_dir: Path) -> None:
 
         median_total = float(np.median(total_vals))
         ax2.axvline(median_total, color="gray", linestyle="--", linewidth=1)
-        ax2.text(median_total + (p99 * 0.01), ax2.get_ylim()[1] * 0.9,
-                 f"median={median_total:.0f}s", fontsize=9, color="gray")
+        ax2.text(
+            median_total + (p99 * 0.01),
+            ax2.get_ylim()[1] * 0.9,
+            f"median={median_total:.0f}s",
+            fontsize=9,
+            color="gray",
+        )
 
 
 def plot_size_vs_runtime(data: list[dict], out_dir: Path, log: bool = False) -> None:
@@ -150,7 +170,10 @@ def plot_size_vs_runtime(data: list[dict], out_dir: Path, log: bool = False) -> 
         n_drop = int((~mask).sum())
         x, y = x[mask], y[mask]
         r = float(np.corrcoef(np.log10(x), np.log10(y))[0, 1]) if len(x) > 1 else float("nan")
-        out_path, label = out_dir / "runtime_size_vs_runtime_loglog.pdf", "Size vs runtime (log-log)"
+        out_path, label = (
+            out_dir / "runtime_size_vs_runtime_loglog.pdf",
+            "Size vs runtime (log-log)",
+        )
         r_label, xlabel = "log-log Pearson r", "Occupied slices"
         drop_note = f"{n_drop} designs with zero size/runtime not shown" if n_drop else ""
     else:
@@ -163,8 +186,7 @@ def plot_size_vs_runtime(data: list[dict], out_dir: Path, log: bool = False) -> 
         r_label, xlabel = "Pearson r", "Slice utilization (%)"
         drop_note = f"{n_drop} designs > {p99:.0f}s not shown" if n_drop else ""
 
-    print(f"  {label}: {r_label} = {r:.2f}, n={len(x)}"
-          + (f"; {drop_note}" if drop_note else ""))
+    print(f"  {label}: {r_label} = {r:.2f}, n={len(x)}" + (f"; {drop_note}" if drop_note else ""))
     with figure(out_path) as (_fig, ax):
         ax.scatter(x, y, s=8, alpha=0.4, color="#4e79a7", edgecolor="none")
         ax.set_xlabel(xlabel)
@@ -186,8 +208,12 @@ def _ternary_gridlines(ax, verts: np.ndarray, levels=(0.2, 0.4, 0.6, 0.8)) -> No
     for i in range(3):
         j, k = (i + 1) % 3, (i + 2) % 3
         for t in levels:
-            b1 = np.zeros(3); b1[i] = t; b1[j] = 1 - t
-            b2 = np.zeros(3); b2[i] = t; b2[k] = 1 - t
+            b1 = np.zeros(3)
+            b1[i] = t
+            b1[j] = 1 - t
+            b2 = np.zeros(3)
+            b2[i] = t
+            b2[k] = 1 - t
             (x1, y1), (x2, y2) = b1 @ verts, b2 @ verts
             ax.plot([x1, x2], [y1, y2], color="0.85", linewidth=0.6, zorder=0)
 
@@ -220,12 +246,29 @@ def _ternary_axes(ax, verts: np.ndarray, colors, levels=(0.2, 0.4, 0.6, 0.8)) ->
     # Axis titles centred along each edge, rotated to follow it. The numeric
     # ticks already convey the direction each phase's share increases.
     h = verts[2][1]
-    ax.text(0.5, -0.11, "Opt share (%)", ha="center", va="top",
-            fontsize=9, color=c_opt)
-    ax.text(0.80, h / 2 + 0.05, "Place share (%)", ha="center", va="center",
-            rotation=-60, rotation_mode="anchor", fontsize=9, color=c_place)
-    ax.text(0.20, h / 2 + 0.05, "Route share (%)", ha="center", va="center",
-            rotation=60, rotation_mode="anchor", fontsize=9, color=c_route)
+    ax.text(0.5, -0.11, "Opt share (%)", ha="center", va="top", fontsize=9, color=c_opt)
+    ax.text(
+        0.80,
+        h / 2 + 0.05,
+        "Place share (%)",
+        ha="center",
+        va="center",
+        rotation=-60,
+        rotation_mode="anchor",
+        fontsize=9,
+        color=c_place,
+    )
+    ax.text(
+        0.20,
+        h / 2 + 0.05,
+        "Route share (%)",
+        ha="center",
+        va="center",
+        rotation=60,
+        rotation_mode="anchor",
+        fontsize=9,
+        color=c_route,
+    )
 
 
 def plot_phase_mix(data: list[dict], out_dir: Path) -> None:
@@ -254,26 +297,61 @@ def plot_phase_mix(data: list[dict], out_dir: Path) -> None:
     xy = _ternary_xy(fracs, verts)
 
     with figure(
-        out_dir / "runtime_phase_mix.pdf", figsize=(7, 6.5),
+        out_dir / "runtime_phase_mix.pdf",
+        figsize=(7, 6.5),
         savefig_kw=dict(bbox_inches="tight"),
     ) as (fig, ax):
         _ternary_gridlines(ax, verts)
-        _ternary_axes(ax, verts,
-                      (PHASE_COLORS["opt"], PHASE_COLORS["place"], PHASE_COLORS["route"]))
+        _ternary_axes(
+            ax, verts, (PHASE_COLORS["opt"], PHASE_COLORS["place"], PHASE_COLORS["route"])
+        )
         outline = np.vstack([verts, verts[0]])
         ax.plot(outline[:, 0], outline[:, 1], color="black", linewidth=1.2, zorder=1)
 
-        sc = ax.scatter(xy[:, 0], xy[:, 1], c=totals, cmap="viridis",
-                        norm=LogNorm(), s=9, alpha=0.5, edgecolor="none", zorder=2)
+        sc = ax.scatter(
+            xy[:, 0],
+            xy[:, 1],
+            c=totals,
+            cmap="viridis",
+            norm=LogNorm(),
+            s=9,
+            alpha=0.5,
+            edgecolor="none",
+            zorder=2,
+        )
         cbar = fig.colorbar(sc, ax=ax, shrink=0.7, pad=0.02)
         cbar.set_label("Total runtime (s)")
 
-        ax.text(0.0, -0.04, "Opt", ha="center", va="top",
-                fontsize=12, fontweight="bold", color=PHASE_COLORS["opt"])
-        ax.text(1.0, -0.04, "Place", ha="center", va="top",
-                fontsize=12, fontweight="bold", color=PHASE_COLORS["place"])
-        ax.text(0.5, np.sqrt(3) / 2 + 0.03, "Route", ha="center", va="bottom",
-                fontsize=12, fontweight="bold", color=PHASE_COLORS["route"])
+        ax.text(
+            0.0,
+            -0.04,
+            "Opt",
+            ha="center",
+            va="top",
+            fontsize=12,
+            fontweight="bold",
+            color=PHASE_COLORS["opt"],
+        )
+        ax.text(
+            1.0,
+            -0.04,
+            "Place",
+            ha="center",
+            va="top",
+            fontsize=12,
+            fontweight="bold",
+            color=PHASE_COLORS["place"],
+        )
+        ax.text(
+            0.5,
+            np.sqrt(3) / 2 + 0.03,
+            "Route",
+            ha="center",
+            va="bottom",
+            fontsize=12,
+            fontweight="bold",
+            color=PHASE_COLORS["route"],
+        )
 
         ax.set_aspect("equal")
         ax.axis("off")
@@ -283,8 +361,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Analyze RandSoC Vivado runtimes.")
     src = parser.add_mutually_exclusive_group(required=True)
     src.add_argument(
-        "build_dir", type=Path, nargs="?",
-        help="Root rand_soc build directory (parse raw logs directly)"
+        "build_dir",
+        type=Path,
+        nargs="?",
+        help="Root rand_soc build directory (parse raw logs directly)",
     )
     src.add_argument(
         "--csv", type=Path, help="Joined dataset CSV to plot from (e.g. output/dataset.csv)"

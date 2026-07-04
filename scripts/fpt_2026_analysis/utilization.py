@@ -44,8 +44,12 @@ def load_csv(rows: list[dict]) -> tuple[list[str], list[dict]]:
     designs, data = [], []
     for r in rows:
         vals = {
-            "LUT": r["lut_util_pct"], "FF": r["ff_util_pct"], "SLICE": r["slice_util_pct"],
-            "BRAM": r["bram_util_pct"], "DSP": r["dsp_util_pct"], "IO": r["io_util_pct"],
+            "LUT": r["lut_util_pct"],
+            "FF": r["ff_util_pct"],
+            "SLICE": r["slice_util_pct"],
+            "BRAM": r["bram_util_pct"],
+            "DSP": r["dsp_util_pct"],
+            "IO": r["io_util_pct"],
         }
         if any(v is None for v in vals.values()):
             continue
@@ -101,8 +105,10 @@ def plot_radar(data: list[dict], out_dir: Path) -> None:
     shown_indices = list(dict.fromkeys(extreme_idx.values()))
 
     with figure(
-        out_dir / "utilization_radar.pdf", figsize=(7, 7),
-        subplot_kw=dict(polar=True), savefig_kw=dict(bbox_inches="tight"),
+        out_dir / "utilization_radar.pdf",
+        figsize=(7, 7),
+        subplot_kw=dict(polar=True),
+        savefig_kw=dict(bbox_inches="tight"),
     ) as (_fig, ax):
         ax.set_xticks(angles[:-1])
         ax.set_xticklabels(keys, fontsize=12)
@@ -126,8 +132,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Analyze RandSoC Vivado utilization reports.")
     src = parser.add_mutually_exclusive_group(required=True)
     src.add_argument(
-        "build_dir", type=Path, nargs="?",
-        help="Root rand_soc build directory (parse raw reports directly)"
+        "build_dir",
+        type=Path,
+        nargs="?",
+        help="Root rand_soc build directory (parse raw reports directly)",
     )
     src.add_argument(
         "--csv", type=Path, help="Joined dataset CSV to plot from (e.g. output/dataset.csv)"

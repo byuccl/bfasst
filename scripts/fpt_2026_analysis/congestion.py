@@ -34,14 +34,16 @@ def load_csv(rows: list[dict]) -> tuple[list[str], list[dict]]:
         if r["congestion_max_pct"] is None:
             continue
         designs.append(f"{r['machine']}/d{r['seed']}")
-        data.append({
-            "North": r["congestion_north_pct"],
-            "South": r["congestion_south_pct"],
-            "East": r["congestion_east_pct"],
-            "West": r["congestion_west_pct"],
-            "max": r["congestion_max_pct"],
-            "has_congested_region": bool(r["has_congestion_hotspot"]),
-        })
+        data.append(
+            {
+                "North": r["congestion_north_pct"],
+                "South": r["congestion_south_pct"],
+                "East": r["congestion_east_pct"],
+                "West": r["congestion_west_pct"],
+                "max": r["congestion_max_pct"],
+                "has_congested_region": bool(r["has_congestion_hotspot"]),
+            }
+        )
     return designs, data
 
 
@@ -66,8 +68,8 @@ def plot_congestion(data: list[dict], out_dir: Path) -> None:
     dir_colors = {
         "North": "#4e79a7",
         "South": "#f28e2b",
-        "East":  "#e15759",
-        "West":  "#59a14f",
+        "East": "#e15759",
+        "West": "#59a14f",
     }
 
     # --- Box plots per direction ---
@@ -96,8 +98,9 @@ def plot_congestion(data: list[dict], out_dir: Path) -> None:
     with figure(out_dir / "congestion_hotspots.pdf") as (_fig, ax3):
         hotspot = sum(1 for d in data if d["has_congested_region"])
         clean = len(data) - hotspot
-        ax3.bar(["Clean", "Hotspot"], [clean, hotspot],
-                color=["#4e79a7", "#e15759"], edgecolor="white")
+        ax3.bar(
+            ["Clean", "Hotspot"], [clean, hotspot], color=["#4e79a7", "#e15759"], edgecolor="white"
+        )
         ax3.bar_label(ax3.containers[0], padding=3)
         ax3.set_ylabel("Number of designs")
 
@@ -108,8 +111,10 @@ def main() -> None:
     )
     src = parser.add_mutually_exclusive_group(required=True)
     src.add_argument(
-        "build_dir", type=Path, nargs="?",
-        help="Root rand_soc build directory (parse raw logs directly)"
+        "build_dir",
+        type=Path,
+        nargs="?",
+        help="Root rand_soc build directory (parse raw logs directly)",
     )
     src.add_argument(
         "--csv", type=Path, help="Joined dataset CSV to plot from (e.g. output/dataset.csv)"
