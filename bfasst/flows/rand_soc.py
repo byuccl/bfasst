@@ -5,7 +5,7 @@ import pathlib
 from bfasst.flows.flow import FlowNoDesign
 from bfasst.paths import BFASST_ROOT, RAND_SOC_PATH
 from bfasst.tools.design_create.rand_soc import RandSoC
-from bfasst.tools.impl.vivado_impl import VivadoImpl
+from bfasst.tools.impl.vivado_impl import IMPL_REPORTS, VivadoImpl
 from bfasst.tools.synth.vivado_synth import VivadoSynth
 
 
@@ -13,7 +13,12 @@ class RandSoc(FlowNoDesign):
     """Flow to create random soc block designs in Vivado"""
 
     def __init__(
-        self, num_designs=1, part=None, randsoc_config_path=None, start_seed=0, clock_period=None
+        self,
+        num_designs=1,
+        part=None,
+        randsoc_config_path=None,
+        start_seed=0,
+        clock_period=None,
     ):
         # pylint: disable=duplicate-code
         super().__init__()
@@ -58,6 +63,7 @@ class RandSoc(FlowNoDesign):
                 design_tcl.parent,
                 synth_edf=synth_tool.outputs["synth_edf"],
                 constraints_files=tuple(constraints),
+                extra_reports=IMPL_REPORTS,
             )
 
     def create_build_snippets(self):

@@ -5,7 +5,7 @@ import pathlib
 from bfasst.flows.flow import FlowNoDesign
 from bfasst.paths import BFASST_ROOT, RAND_SOC_PATH
 from bfasst.tools.design_create.rand_soc import RandSoC
-from bfasst.tools.impl.vivado_impl import VivadoImpl
+from bfasst.tools.impl.vivado_impl import IMPL_REPORTS, VivadoImpl
 from bfasst.tools.synth.vivado_synth import VivadoSynth
 from bfasst.tools.transform.randsoc_dump import RandsocDump
 
@@ -48,6 +48,7 @@ class RandSocDumped(FlowNoDesign):
                 design_tcl.parent,
                 synth_edf=synth_tool.outputs["synth_edf"],
                 constraints_files=(synth_tool.outputs["synth_constraints"], contraints_tcl),
+                extra_reports=IMPL_REPORTS,
             )
             RandsocDump(
                 self,

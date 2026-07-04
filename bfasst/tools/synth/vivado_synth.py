@@ -3,9 +3,14 @@
 import pathlib
 
 from bfasst import config
-from bfasst.paths import BFASST_COMMON_TOOLS, BFASST_UTILS
+from bfasst.paths import BFASST_COMMON_TOOLS, BFASST_RESOURCES, BFASST_UTILS
 from bfasst.tools.synth.synth_tool import SynthTool
-from bfasst.utils.general import json_write_if_changed
+from bfasst.utils.general import ensure_tuple, json_write_if_changed
+
+# Optional synthesis-report tcls bundled in resources/vivado/. Pass any subset (or
+# your own scripts) to VivadoSynth via extra_reports; they are sourced after the
+# standard reports while the synthesized design is still open.
+SYNTH_REPORTS = [BFASST_RESOURCES / "vivado" / name for name in ("synth_utilization_report.tcl",)]
 
 
 class VivadoSynth(SynthTool):
@@ -20,10 +25,15 @@ class VivadoSynth(SynthTool):
     ]
 
     def __init__(
-        self, flow, design_path, synth_options="", opt_design=False, ooc=False
+        self, flow, design_path, synth_options="", opt_design=False, ooc=False, extra_reports=()
     ):  # pylint: disable=too-many-positional-arguments
         super().__init__(flow, design_path, ooc=ooc)
         self._my_dir_path = pathlib.Path(__file__).parent
+
+        # Extra report tcl scripts to source after the standard reports, while the
+        # synthesized design is still open. Lets callers opt into additional reports
+        # (see resources/vivado/) without changing the default flow.
+        self.extra_reports = [str(r) for r in ensure_tuple(extra_reports)]
         self.build_path = (
             self.build_path.with_name("vivado_ooc_synth")
             if ooc
@@ -55,6 +65,8 @@ class VivadoSynth(SynthTool):
                 self.outputs_str["setup_tcl"],
                 self.outputs_str["synth_tcl"],
                 self.outputs_str["reports_tcl"],
+                # Sourced last (after reports.tcl), while the synthesized design is open.
+                *self.extra_reports,
             ],
         }
         if synth_options:
@@ -94,6 +106,7 @@ class VivadoSynth(SynthTool):
                 "outputs": self.outputs_str,
                 "common_tools_path": str(BFASST_COMMON_TOOLS),
                 "tcl_sources": [str(i) for i in self.synth_build["tcl_sources"]],
+                "extra_reports": self.extra_reports,
             },
         )
 
@@ -108,7 +121,6 @@ class VivadoSynth(SynthTool):
         self.outputs["journal"] = self.build_path / "vivado.jou"
         self.outputs["log"] = self.build_path / "vivado.log"
         self.outputs["verilog"] = self.build_path / "viv_synth.v"
-        self.outputs["synth_utilization"] = self.build_path / "synth_utilization.txt"
 
         if not self.ooc:
             self.outputs["io_report"] = self.build_path / "report_io.txt"
