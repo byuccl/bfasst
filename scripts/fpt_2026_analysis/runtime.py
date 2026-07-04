@@ -1,5 +1,7 @@
 """Analyze Vivado implementation runtimes from Vivado logs for a RandSoC dataset."""
 
+# pylint: disable=duplicate-code
+
 import argparse
 import sys
 from pathlib import Path
@@ -8,6 +10,7 @@ import numpy as np
 from matplotlib.colors import LogNorm
 
 sys.path.insert(0, str(Path(__file__).parent))
+# pylint: disable=wrong-import-position
 from parsers import parse_runtime, read_dataset_csv
 from plot_utils import figure
 
@@ -27,6 +30,7 @@ PHASE_COLORS = {
 
 
 def collect_data(build_dir: Path) -> tuple[list[str], list[dict]]:
+    """Parse synth+impl runtimes from every design_* directory under build_dir."""
     labels, data = [], []
     skipped = 0
     for design_dir in sorted(build_dir.glob("design_*")):
@@ -84,7 +88,8 @@ def print_summary(data: list[dict]) -> None:
             )
 
 
-def plot_runtime(labels: list[str], data: list[dict], out_dir: Path) -> None:
+def plot_runtime(data: list[dict], out_dir: Path) -> None:
+    # pylint: disable=too-many-locals
     """One PDF each: stacked runtime breakdown + histogram of total runtime."""
     # A handful of pathological designs (multi-hour routes) would otherwise
     # compress the whole plot, so cap the y-axis at the 99th percentile of total
@@ -148,6 +153,7 @@ def plot_runtime(labels: list[str], data: list[dict], out_dir: Path) -> None:
 
 
 def plot_size_vs_runtime(data: list[dict], out_dir: Path, log: bool = False) -> None:
+    # pylint: disable=too-many-locals
     """Scatter of design size (slice utilization) vs total runtime.
 
     With ``log=True`` both axes are log-scaled (a power-law relationship shows up
@@ -299,7 +305,7 @@ def plot_phase_mix(data: list[dict], out_dir: Path) -> None:
     with figure(
         out_dir / "runtime_phase_mix.pdf",
         figsize=(7, 6.5),
-        savefig_kw=dict(bbox_inches="tight"),
+        savefig_kw={"bbox_inches": "tight"},
     ) as (fig, ax):
         _ternary_gridlines(ax, verts)
         _ternary_axes(
@@ -358,6 +364,7 @@ def plot_phase_mix(data: list[dict], out_dir: Path) -> None:
 
 
 def main() -> None:
+    """Parse runtime logs (or a joined CSV) and write the runtime plots."""
     parser = argparse.ArgumentParser(description="Analyze RandSoC Vivado runtimes.")
     src = parser.add_mutually_exclusive_group(required=True)
     src.add_argument(
@@ -375,10 +382,10 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.csv:
-        labels, data = load_csv(read_dataset_csv(args.csv))
+        _, data = load_csv(read_dataset_csv(args.csv))
         source = args.csv
     else:
-        labels, data = collect_data(args.build_dir)
+        _, data = collect_data(args.build_dir)
         source = args.build_dir
     if not data:
         print(f"No runtime data found in {source}", file=sys.stderr)
@@ -389,7 +396,7 @@ def main() -> None:
     print()
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    plot_runtime(labels, data, args.out_dir)
+    plot_runtime(data, args.out_dir)
     plot_size_vs_runtime(data, args.out_dir)
     plot_size_vs_runtime(data, args.out_dir, log=True)
     plot_phase_mix(data, args.out_dir)

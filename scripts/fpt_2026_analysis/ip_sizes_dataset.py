@@ -9,16 +9,20 @@ Use ``--machine`` to stamp the originating machine so per-machine CSVs can be
 concatenated without seed collisions.
 """
 
+# pylint: disable=duplicate-code
+
 import argparse
 import sys
 from pathlib import Path
 
 # Import parsers from sibling module (pure stdlib — safe on remote machines)
 sys.path.insert(0, str(Path(__file__).parent))
+# pylint: disable=wrong-import-position
 from parsers import collect_ip_sizes, write_ip_sizes_csv
 
 
 def main() -> None:
+    """Parse a rand_soc build directory into the per-IP sizes CSV."""
     parser = argparse.ArgumentParser(
         description="Collect per-IP resource sizes from hierarchical utilization reports."
     )

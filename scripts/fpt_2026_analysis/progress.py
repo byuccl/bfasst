@@ -58,6 +58,7 @@ def query_machine(host: str, build_dir: str) -> tuple[int, int]:
 
 
 def main() -> None:
+    """Query every configured machine and print a build-progress table."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--machine",

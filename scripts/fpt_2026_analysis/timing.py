@@ -1,5 +1,9 @@
 """Analyze Vivado timing summary reports from a RandSoC dataset."""
 
+# pylint: disable=duplicate-code
+
+from __future__ import annotations
+
 import argparse
 import sys
 from pathlib import Path
@@ -8,6 +12,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
+# pylint: disable=wrong-import-position
 from parsers import parse_logic_levels, parse_timing, read_dataset_csv
 from plot_utils import figure
 
@@ -66,6 +71,7 @@ def load_csv(rows: list[dict]) -> tuple[list[str], list[dict]]:
 
 
 def print_summary(data: list[dict]) -> None:
+    """Print a min/median/mean/max table of the key timing metrics."""
     meeting = sum(1 for d in data if d["wns"] >= 0)
     failing = len(data) - meeting
     print(f"Timing closure: {meeting}/{len(data)} designs meet timing ({failing} failing)\n")
@@ -113,7 +119,7 @@ def _clip_range(vals: np.ndarray, clip: str, k: float = 1.5) -> tuple[float, flo
     return lo, hi, n_out
 
 
-def _hist(ax, raw, color, title, xlabel, clip="upper", integer=False, hi=None):
+def _hist(ax, raw, color, title, xlabel, *, clip="upper", integer=False, hi=None):
     vals = np.array([v for v in raw if v is not None], dtype=float)
     if len(vals) == 0:
         ax.set_visible(False)
@@ -140,6 +146,7 @@ def _hist(ax, raw, color, title, xlabel, clip="upper", integer=False, hi=None):
 
 
 def plot_timing(data: list[dict], out_dir: Path) -> None:
+    # pylint: disable=too-many-locals
     """One PDF each: WNS, Fmax, TNS, failing endpoints, logic levels, data path delay."""
     # --- WNS (pass/fail coloured, negative tail clipped) ---
     with figure(out_dir / "timing_wns.pdf") as (_fig, ax):
@@ -204,7 +211,7 @@ def plot_timing(data: list[dict], out_dir: Path) -> None:
     # at a round LOGIC_DEPTH_MAX instead to show ~99% of the distribution while
     # keeping the median peak readable (the count beyond the cap is reported).
     # Only available once report_logic_levels has populated logic_levels.txt.
-    LOGIC_DEPTH_MAX = 50
+    logic_depth_max = 50
     max_ll = [d.get("max_logic_levels") for d in data if d.get("max_logic_levels") is not None]
     if max_ll:
         with figure(out_dir / "timing_logic_levels.pdf") as (_fig, ax):
@@ -215,7 +222,7 @@ def plot_timing(data: list[dict], out_dir: Path) -> None:
                 "Max Logic Depth",
                 "Logic levels",
                 integer=True,
-                hi=LOGIC_DEPTH_MAX,
+                hi=logic_depth_max,
             )
     else:
         print(
@@ -236,6 +243,7 @@ def plot_timing(data: list[dict], out_dir: Path) -> None:
 
 
 def main() -> None:
+    """Parse timing reports (or a joined CSV) and write the timing plots."""
     parser = argparse.ArgumentParser(description="Analyze RandSoC Vivado timing reports.")
     src = parser.add_mutually_exclusive_group(required=True)
     src.add_argument(
@@ -253,10 +261,10 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.csv:
-        designs, data = load_csv(read_dataset_csv(args.csv))
+        _, data = load_csv(read_dataset_csv(args.csv))
         source = args.csv
     else:
-        designs, data = collect_data(args.build_dir)
+        _, data = collect_data(args.build_dir)
         source = args.build_dir
     if not data:
         print(f"No constrained timing data found in {source}", file=sys.stderr)

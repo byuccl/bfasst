@@ -1,5 +1,7 @@
 """Analyze routing congestion from Vivado implementation logs for a RandSoC dataset."""
 
+# pylint: disable=duplicate-code
+
 import argparse
 import sys
 from pathlib import Path
@@ -7,11 +9,13 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
+# pylint: disable=wrong-import-position
 from parsers import DIRECTIONS, parse_congestion, read_dataset_csv
 from plot_utils import figure
 
 
 def collect_data(build_dir: Path) -> tuple[list[str], list[dict]]:
+    """Parse congestion from every design's vivado_impl/vivado.log under build_dir."""
     logs = sorted(build_dir.glob("*/vivado_impl/vivado.log"))
     designs, data = [], []
     skipped = 0
@@ -89,7 +93,7 @@ def plot_congestion(data: list[dict], out_dir: Path) -> None:
         max_vals = [d["max"] for d in data]
         # Congestion can exceed 100% (Vivado reports routing overuse that way), so
         # the upper bin edge tracks the actual max rather than being capped at 100.
-        bins = np.linspace(min(max_vals) - 1, max(max(max_vals), 100) + 1, 25)
+        bins = np.linspace(min(max_vals) - 1, max(*max_vals, 100) + 1, 25)
         ax2.hist(max_vals, bins=bins, color="#4e79a7", alpha=0.8)
         ax2.set_xlabel("Peak routing segment utilization (%)")
         ax2.set_ylabel("Number of designs")
@@ -106,6 +110,7 @@ def plot_congestion(data: list[dict], out_dir: Path) -> None:
 
 
 def main() -> None:
+    """Parse congestion data (or a joined CSV) and write the congestion plots."""
     parser = argparse.ArgumentParser(
         description="Analyze RandSoC routing congestion from Vivado impl logs."
     )
@@ -125,10 +130,10 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.csv:
-        designs, data = load_csv(read_dataset_csv(args.csv))
+        _, data = load_csv(read_dataset_csv(args.csv))
         source = args.csv
     else:
-        designs, data = collect_data(args.build_dir)
+        _, data = collect_data(args.build_dir)
         source = args.build_dir
     if not data:
         print(f"No congestion data found in {source}", file=sys.stderr)

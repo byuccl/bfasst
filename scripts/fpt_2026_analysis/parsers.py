@@ -8,6 +8,8 @@ machines, which have no numpy/matplotlib installed. The plotting scripts
 ``collect_all`` / ``COLUMNS`` / ``write_csv`` to build the per-machine CSV.
 """
 
+from __future__ import annotations
+
 import csv
 import re
 from pathlib import Path
@@ -343,6 +345,7 @@ _STR_COLUMNS = {"machine"}
 
 
 def collect_all(build_dir: Path, machine: str = "") -> list[dict]:
+    # pylint: disable=too-many-locals,too-many-branches,too-many-statements
     """Parse each fully-completed design_* directory into one row per design.
 
     A design counts as complete only when its implementation DCP

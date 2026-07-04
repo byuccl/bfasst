@@ -20,6 +20,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
+# pylint: disable=wrong-import-position
 from plot_utils import figure
 
 # Auto-inserted connectivity glue and SoC scaffolding -- excluded by default so
@@ -66,6 +67,8 @@ def load(csv_paths: list[Path], metric: str) -> dict[str, list[int]]:
 
 
 def main() -> None:
+    # pylint: disable=too-many-locals
+    """Load the ip_sizes CSV(s), filter IP types, and write the box-plot."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("csv", type=Path, nargs="+", help="One or more ip_sizes.csv files")
     parser.add_argument("--out-dir", type=Path, default=Path("output"))
@@ -139,7 +142,7 @@ def main() -> None:
     # number of types shown.
     height = max(4, 0.45 * len(order) + 1)
     out = args.out_dir / f"ip_sizes_{args.metric}{out_suffix}.pdf"
-    with figure(out, figsize=(8, height), savefig_kw=dict(bbox_inches="tight")) as (_fig, ax):
+    with figure(out, figsize=(8, height), savefig_kw={"bbox_inches": "tight"}) as (_fig, ax):
         ax.boxplot(data, orientation="horizontal", showfliers=False, widths=0.6)
         ax.set_yticklabels(labels)
         ax.set_xlabel(label)
