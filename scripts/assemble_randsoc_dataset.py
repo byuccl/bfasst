@@ -192,6 +192,8 @@ def rsync_design(host: str, source: str, dest: Path, dry_run: bool) -> bool:
 
 
 def main() -> None:
+    # pylint: disable=too-many-locals,too-many-branches
+    """Plan the RandSoC dataset, copy the selected design dirs, and write the manifest."""
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
@@ -262,7 +264,10 @@ def main() -> None:
             if not rsync_design(entry["host"], entry["source"], dest, args.dry_run):
                 # tqdm.write avoids clobbering the active bar.
                 msg = f"  ! rsync failed for {name}"
-                tqdm.write(msg, file=sys.stderr) if tqdm else print(msg, file=sys.stderr)
+                if tqdm:
+                    tqdm.write(msg, file=sys.stderr)
+                else:
+                    print(msg, file=sys.stderr)
                 failures += 1
             if tqdm:
                 progress.update(1)
