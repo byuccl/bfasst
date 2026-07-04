@@ -20,7 +20,7 @@ if {[catch {
 }
 report_design_analysis -congestion -file {{ outputs.congestion }}
 report_power -file {{ outputs.power }}
-report_qor_suggestions -name retarget -report_all_suggestions -file retarget.rpt
+report_qor_suggestions -name retarget -report_all_suggestions -file {{ cwd }}/retarget.rpt
 {{#outputs.bitstream}}
 foreach rule [get_drc_checks] {
     set_property IS_ENABLED false $rule

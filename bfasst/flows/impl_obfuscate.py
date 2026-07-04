@@ -8,14 +8,14 @@ Flow that does the following:
 """
 
 from bfasst.flows.flow import Flow
-from bfasst.tools.synth.vivado_synth import VivadoSynth
-from bfasst.tools.impl.vivado_impl import VivadoImpl
+from bfasst.paths import BFASST_FLOWS
 from bfasst.tools.compare.physcmp.physcmp import PhysCmp
-from bfasst.tools.transform.netlist_obfuscate import NetlistObfuscate
 from bfasst.tools.impl.impl_detailed_reports import ImplDetailedReports
+from bfasst.tools.impl.vivado_impl import VivadoImpl
+from bfasst.tools.synth.vivado_synth import VivadoSynth
 from bfasst.tools.transform.netlist_deobfuscate import NetlistDeobfuscate
+from bfasst.tools.transform.netlist_obfuscate import NetlistObfuscate
 from bfasst.utils.compare.physcmp_data_types import ImplReports
-from bfasst.paths import FLOWS_PATH
 from bfasst.yaml_parser import DesignParser
 
 
@@ -173,4 +173,4 @@ class ImplObfuscate(Flow):
         self.physcmp.create_build_snippets()
 
     def get_top_level_flow_path(self):
-        return FLOWS_PATH / "impl_obfuscate.py"
+        return BFASST_FLOWS / "impl_obfuscate.py"

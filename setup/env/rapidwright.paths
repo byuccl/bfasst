@@ -1,0 +1,5 @@
+# Make sure the correct java binary is available for RapidWright
+export PATH=$JAVA_HOME/bin:$PATH
+
+# Add RapidWright binaries to PATH
+export PATH=$RAPIDWRIGHT_PATH/bin:$PATH

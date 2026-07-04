@@ -37,11 +37,11 @@ jobs:
 
     - name: Environment variables
       run: |
-        echo "BFASST_PATH_FASM2BELS=$(realpath -se ${{ runner.temp }}/../../cache/fasm2bels)" >> $GITHUB_ENV
+        echo "FASM2BELS_PATH=$(realpath -se ${{ runner.temp }}/../../cache/fasm2bels)" >> $GITHUB_ENV
         
     - name: Install external tools
       run: |
-        make env
+        make venv
         make install_cmake
         . .venv/bin/activate && python bfasst/external_tools.py install_test_yaml ${{ matrix.experiment }}
     - name: tests

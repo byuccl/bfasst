@@ -8,13 +8,14 @@
     },
     "python.analysis.extraPaths": [
         "scripts",
-        "third_party/fasm2bels/fasm2bels"
+        "third_party/fasm2bels/fasm2bels",
+        "setup/build/stubs",
+        "third_party/rapidwright/stubs"
     ],
     "git.enableCommitSigning": false,
-    "black-formatter.args": [
-        "--line-length",
-        "100"
-    ],
-    "isort.args":["--profile", "black"]
+    "makefile.configureOnOpen": false,
+    "files.exclude": {
+        "**/.bfasst_installed": true
+    }
 }
 
