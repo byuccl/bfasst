@@ -121,6 +121,7 @@ flows:
   external_tools:
   - vivado
   - wafove
+  - fasm2bels
   - rapidwright
 
 - name: Ic2LseConformal

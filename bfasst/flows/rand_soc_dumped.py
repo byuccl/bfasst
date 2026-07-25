@@ -3,11 +3,11 @@
 import pathlib
 
 from bfasst.flows.flow import FlowNoDesign
+from bfasst.paths import BFASST_ROOT, RAND_SOC_PATH
 from bfasst.tools.design_create.rand_soc import RandSoC
-from bfasst.tools.impl.vivado_impl import VivadoImpl
+from bfasst.tools.impl.vivado_impl import IMPL_REPORTS, VivadoImpl
 from bfasst.tools.synth.vivado_synth import VivadoSynth
 from bfasst.tools.transform.randsoc_dump import RandsocDump
-from bfasst.paths import RAND_SOC_PATH, ROOT_PATH
 
 
 class RandSocDumped(FlowNoDesign):
@@ -23,9 +23,9 @@ class RandSocDumped(FlowNoDesign):
 
         # Get configuration of random SoC creator
         if randsoc_config_path is None:
-            randsoc_config_path = RAND_SOC_PATH / "default_config.yaml"
+            randsoc_config_path = RAND_SOC_PATH / "configs" / "default.yaml"
         else:
-            randsoc_config_path = ROOT_PATH / randsoc_config_path
+            randsoc_config_path = BFASST_ROOT / randsoc_config_path
         assert randsoc_config_path.exists(), f"Config file {randsoc_config_path} does not exist"
 
         # Create all random designs
@@ -48,6 +48,7 @@ class RandSocDumped(FlowNoDesign):
                 design_tcl.parent,
                 synth_edf=synth_tool.outputs["synth_edf"],
                 constraints_files=(synth_tool.outputs["synth_constraints"], contraints_tcl),
+                extra_reports=IMPL_REPORTS,
             )
             RandsocDump(
                 self,

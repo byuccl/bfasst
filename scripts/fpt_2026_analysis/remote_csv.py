@@ -41,6 +41,7 @@ GENERATOR_FILES = ["parsers.py", "dataset.py", "ip_sizes_dataset.py"]
 
 
 def fetch_machine(label: str, host: str, build_dir: str, python: str, out_dir: Path) -> bool:
+    # pylint: disable=too-many-locals
     """Generate the CSVs on one machine and copy them back. Returns True on success.
 
     Returns True when the per-design dataset CSV was fetched; the per-IP ip_sizes
@@ -117,9 +118,8 @@ def fetch_machine(label: str, host: str, build_dir: str, python: str, out_dir: P
         )
         r = subprocess.run(["ssh", host, ip_cmd], capture_output=True, text=True, timeout=1800)
         if r.returncode != 0:
-            out.append(
-                f"    (no ip_sizes: {r.stderr.strip() or r.stdout.strip() or 'no hierarchical reports'})"
-            )
+            reason = r.stderr.strip() or r.stdout.strip() or "no hierarchical reports"
+            out.append(f"    (no ip_sizes: {reason})")
         else:
             for line in r.stdout.splitlines():
                 out.append(f"    {line}")
@@ -150,6 +150,7 @@ def fetch_machine(label: str, host: str, build_dir: str, python: str, out_dir: P
 
 
 def main() -> None:
+    """Fetch per-machine CSVs from all configured build machines in parallel."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--machine",
@@ -171,13 +172,10 @@ def main() -> None:
         machines = []
         for spec in args.machine:
             parts = spec.split(":")
-            if len(parts) == 3:
-                label, host, build_dir = parts
-                python = "python3"
-            elif len(parts) == 4:
-                label, host, build_dir, python = parts
-            else:
+            if len(parts) not in (3, 4):
                 parser.error(f"--machine must be LABEL:HOST:BUILD_DIR[:INTERP], got {spec!r}")
+            label, host, build_dir = parts[:3]
+            python = parts[3] if len(parts) == 4 else "python3"
             machines.append((label, host, build_dir, python))
     else:
         machines = DEFAULT_MACHINES

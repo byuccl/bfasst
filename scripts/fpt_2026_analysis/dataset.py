@@ -6,16 +6,20 @@ to stamp the originating machine on every row so per-machine CSVs can later be
 joined (see ``join_csv.py``) without seed collisions.
 """
 
+# pylint: disable=duplicate-code
+
 import argparse
 import sys
 from pathlib import Path
 
 # Import parsers from sibling module (pure stdlib — safe on remote machines)
 sys.path.insert(0, str(Path(__file__).parent))
+# pylint: disable=wrong-import-position
 from parsers import COLUMNS, collect_all, write_csv
 
 
 def main() -> None:
+    """Parse a rand_soc build directory into the per-design dataset CSV."""
     parser = argparse.ArgumentParser(
         description="Collect all RandSoC per-design metrics into a CSV."
     )

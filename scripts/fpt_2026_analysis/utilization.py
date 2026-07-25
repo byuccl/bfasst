@@ -1,5 +1,7 @@
 """Analyze Vivado utilization reports from a RandSoC dataset."""
 
+# pylint: disable=duplicate-code
+
 import argparse
 import sys
 from pathlib import Path
@@ -9,6 +11,7 @@ import numpy as np
 from matplotlib.ticker import ScalarFormatter
 
 sys.path.insert(0, str(Path(__file__).parent))
+# pylint: disable=wrong-import-position
 from parsers import RESOURCES, parse_utilization, read_dataset_csv
 from plot_utils import figure
 
@@ -44,8 +47,12 @@ def load_csv(rows: list[dict]) -> tuple[list[str], list[dict]]:
     designs, data = [], []
     for r in rows:
         vals = {
-            "LUT": r["lut_util_pct"], "FF": r["ff_util_pct"], "SLICE": r["slice_util_pct"],
-            "BRAM": r["bram_util_pct"], "DSP": r["dsp_util_pct"], "IO": r["io_util_pct"],
+            "LUT": r["lut_util_pct"],
+            "FF": r["ff_util_pct"],
+            "SLICE": r["slice_util_pct"],
+            "BRAM": r["bram_util_pct"],
+            "DSP": r["dsp_util_pct"],
+            "IO": r["io_util_pct"],
         }
         if any(v is None for v in vals.values()):
             continue
@@ -88,21 +95,24 @@ def plot_histograms(data: list[dict], out_dir: Path, log: bool = False) -> None:
 
 
 def plot_radar(data: list[dict], out_dir: Path) -> None:
+    # pylint: disable=too-many-locals
     """Radar chart showing the most extreme design for each resource type."""
     keys = list(RESOURCES.keys())
-    N = len(keys)
-    angles = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
+    n_axes = len(keys)
+    angles = np.linspace(0, 2 * np.pi, n_axes, endpoint=False).tolist()
     angles += angles[:1]  # close polygon
 
     # Find the design index with highest utilization for each resource
-    extreme_idx = {key: max(range(len(data)), key=lambda i: data[i][key]) for key in keys}
+    extreme_idx = {key: max(range(len(data)), key=lambda i, key=key: data[i][key]) for key in keys}
 
     # Deduplicate while preserving first-occurrence order
     shown_indices = list(dict.fromkeys(extreme_idx.values()))
 
     with figure(
-        out_dir / "utilization_radar.pdf", figsize=(7, 7),
-        subplot_kw=dict(polar=True), savefig_kw=dict(bbox_inches="tight"),
+        out_dir / "utilization_radar.pdf",
+        figsize=(7, 7),
+        subplot_kw={"polar": True},
+        savefig_kw={"bbox_inches": "tight"},
     ) as (_fig, ax):
         ax.set_xticks(angles[:-1])
         ax.set_xticklabels(keys, fontsize=12)
@@ -110,7 +120,7 @@ def plot_radar(data: list[dict], out_dir: Path) -> None:
         ax.set_yticks([20, 40, 60, 80, 100])
         ax.set_yticklabels(["20%", "40%", "60%", "80%", "100%"], fontsize=7)
 
-        cmap = plt.cm.tab10
+        cmap = plt.get_cmap("tab10")
         for ci, idx in enumerate(shown_indices):
             d = data[idx]
             vals = [d[k] for k in keys] + [d[keys[0]]]
@@ -123,11 +133,14 @@ def plot_radar(data: list[dict], out_dir: Path) -> None:
 
 
 def main() -> None:
+    """Parse utilization reports (or a joined CSV) and write the utilization plots."""
     parser = argparse.ArgumentParser(description="Analyze RandSoC Vivado utilization reports.")
     src = parser.add_mutually_exclusive_group(required=True)
     src.add_argument(
-        "build_dir", type=Path, nargs="?",
-        help="Root rand_soc build directory (parse raw reports directly)"
+        "build_dir",
+        type=Path,
+        nargs="?",
+        help="Root rand_soc build directory (parse raw reports directly)",
     )
     src.add_argument(
         "--csv", type=Path, help="Joined dataset CSV to plot from (e.g. output/dataset.csv)"
@@ -138,10 +151,10 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.csv:
-        designs, data = load_csv(read_dataset_csv(args.csv))
+        _, data = load_csv(read_dataset_csv(args.csv))
         source = args.csv
     else:
-        designs, data = collect_data(args.build_dir)
+        _, data = collect_data(args.build_dir)
         source = args.build_dir
     if not data:
         print(f"No utilization data found in {source}", file=sys.stderr)

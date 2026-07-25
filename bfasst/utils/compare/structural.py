@@ -12,7 +12,9 @@ from collections import defaultdict
 import spydrnet as sdn
 from bidict import bidict
 
-from bfasst import jpype_jvm
+import rapidwright as _
+from com.xilinx.rapidwright.design import Design
+
 from bfasst.utils import convert_verilog_literal_to_int, get_size, log_with_banner
 from bfasst.utils.compare.structural_helpers import count_num_const, create_cell_props
 from bfasst.utils.sdn_helpers import (
@@ -21,12 +23,6 @@ from bfasst.utils.sdn_helpers import (
     SdnNetlistWrapper,
     SdnPinWrapper,
 )
-
-# pylint: disable=wrong-import-order, wrong-import-position
-jpype_jvm.start()
-from com.xilinx.rapidwright.design import Design
-
-# pylint: enable=wrong-import-order, wrong-import-position
 
 
 class StructuralCompareError(Exception):

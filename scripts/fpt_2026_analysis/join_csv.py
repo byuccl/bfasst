@@ -14,17 +14,23 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
+# pylint: disable=wrong-import-position
 from parsers import COLUMNS
 
 
 def main() -> None:
+    """Concatenate the per-machine CSVs in --raw-dir into one dataset CSV."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--raw-dir", type=Path, default=Path("output/raw"),
+        "--raw-dir",
+        type=Path,
+        default=Path("output/raw"),
         help="Directory of per-machine CSVs to join (default: output/raw)",
     )
     parser.add_argument(
-        "--out", type=Path, default=Path("output/dataset.csv"),
+        "--out",
+        type=Path,
+        default=Path("output/dataset.csv"),
         help="Path for the merged CSV (default: output/dataset.csv)",
     )
     args = parser.parse_args()

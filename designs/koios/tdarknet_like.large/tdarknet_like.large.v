@@ -83314,6 +83314,17 @@ input clk;
 //    $readmemh("./td_fused_top_tdf10_filters_1_rom.dat", ram);
 //end
 
+// VTR Original implementation above.
+// I could not find this initialization rom.dat file anywhere in their repository. Vivado optimizes 
+// everything away because it sees any ROM read always returns zero. - Reilly
+
+// BFASST Generate Random INIT data
+integer i;
+initial begin
+    for (i=0; i < MEM_SIZE; i = i + 1) begin
+        ram[i] = {(i * 32'd1664525 + 32'd1013904223), (i * 32'd1664525 + 32'd1013904223), (i * 32'd1664525 + 32'd1013904223)} & {DWIDTH{1'b1}};
+    end
+end
 
 
 always @(posedge clk)  
@@ -84653,6 +84664,17 @@ input clk;
 //    $readmemh("./td_fused_top_tdf10_l2_filters_1_rom.dat", ram);
 //end
 
+// VTR Original implementation above.
+// I could not find this initialization rom.dat file anywhere in their repository. Vivado optimizes 
+// everything away because it sees any ROM read always returns zero. - Reilly
+
+// BFASST Generate Random INIT data
+integer i;
+initial begin
+    for (i=0; i < MEM_SIZE; i = i + 1) begin
+        ram[i] = {(i * 32'd1664525 + 32'd1013904223), (i * 32'd1664525 + 32'd1013904223), (i * 32'd1664525 + 32'd1013904223)} & {DWIDTH{1'b1}};
+    end
+end
 
 
 always @(posedge clk)  
@@ -107771,6 +107793,17 @@ input clk;
 //    $readmemh("./td_fused_top_tdf12_filters_1_rom.dat", ram);
 //end
 
+// VTR Original implementation above.
+// I could not find this initialization rom.dat file anywhere in their repository. Vivado optimizes 
+// everything away because it sees any ROM read always returns zero. - Reilly
+
+// BFASST Generate Random INIT data
+integer i;
+initial begin
+    for (i=0; i < MEM_SIZE; i = i + 1) begin
+        ram[i] = {(i * 32'd1664525 + 32'd1013904223), (i * 32'd1664525 + 32'd1013904223), (i * 32'd1664525 + 32'd1013904223)} & {DWIDTH{1'b1}};
+    end
+end
 
 
 always @(posedge clk)  
@@ -116944,6 +116977,18 @@ input clk;
 //    $readmemh("./td_fused_top_tdf1_filters_1_rom.dat", ram);
 //end
 
+// VTR Original implementation above.
+// I could not find this initialization rom.dat file anywhere in their repository. Vivado optimizes 
+// everything away because it sees any ROM read always returns zero. - Reilly
+
+// BFASST Generate Random INIT data
+integer i;
+initial begin
+    for (i=0; i < MEM_SIZE; i = i + 1) begin
+        ram[i] = {(i * 32'd1664525 + 32'd1013904223), (i * 32'd1664525 + 32'd1013904223), (i * 32'd1664525 + 32'd1013904223)} & {DWIDTH{1'b1}};
+    end
+end
+
 
 
 always @(posedge clk)  
@@ -125534,6 +125579,18 @@ input clk;
 //initial begin
 //    $readmemh("./td_fused_top_tdf2_filters_1_rom.dat", ram);
 //end
+
+// VTR Original implementation above.
+// I could not find this initialization rom.dat file anywhere in their repository. Vivado optimizes 
+// everything away because it sees any ROM read always returns zero. - Reilly
+
+// BFASST Generate Random INIT data
+integer i;
+initial begin
+    for (i=0; i < MEM_SIZE; i = i + 1) begin
+        ram[i] = {(i * 32'd1664525 + 32'd1013904223), (i * 32'd1664525 + 32'd1013904223), (i * 32'd1664525 + 32'd1013904223)} & {DWIDTH{1'b1}};
+    end
+end
 
 
 
@@ -143664,6 +143721,18 @@ input clk;
 //    $readmemh("./td_fused_top_tdf4_filters_1_rom.dat", ram);
 //end
 
+// VTR Original implementation above.
+// I could not find this initialization rom.dat file anywhere in their repository. Vivado optimizes 
+// everything away because it sees any ROM read always returns zero. - Reilly
+
+// BFASST Generate Random INIT data
+integer i;
+initial begin
+    for (i=0; i < MEM_SIZE; i = i + 1) begin
+        ram[i] = {(i * 32'd1664525 + 32'd1013904223), (i * 32'd1664525 + 32'd1013904223), (i * 32'd1664525 + 32'd1013904223)} & {DWIDTH{1'b1}};
+    end
+end
+
 
 
 always @(posedge clk)  
@@ -145002,6 +145071,18 @@ input clk;
 //initial begin
 //    $readmemh("./td_fused_top_tdf4_l2_filters_1_rom.dat", ram);
 //end
+
+// VTR Original implementation above.
+// I could not find this initialization rom.dat file anywhere in their repository. Vivado optimizes 
+// everything away because it sees any ROM read always returns zero. - Reilly
+
+// BFASST Generate Random INIT data
+integer i;
+initial begin
+    for (i=0; i < MEM_SIZE; i = i + 1) begin
+        ram[i] = {(i * 32'd1664525 + 32'd1013904223), (i * 32'd1664525 + 32'd1013904223), (i * 32'd1664525 + 32'd1013904223)} & {DWIDTH{1'b1}};
+    end
+end
 
 
 
@@ -155016,6 +155097,18 @@ input clk;
 //initial begin
 //    $readmemh("./td_fused_top_tdf5_filters_1_rom.dat", ram);
 //end
+
+// VTR Original implementation above.
+// I could not find this initialization rom.dat file anywhere in their repository. Vivado optimizes 
+// everything away because it sees any ROM read always returns zero. - Reilly
+
+// BFASST Generate Random INIT data
+integer i;
+initial begin
+    for (i=0; i < MEM_SIZE; i = i + 1) begin
+        ram[i] = {(i * 32'd1664525 + 32'd1013904223), (i * 32'd1664525 + 32'd1013904223), (i * 32'd1664525 + 32'd1013904223)} & {DWIDTH{1'b1}};
+    end
+end
 
 
 
@@ -169482,6 +169575,17 @@ input clk;
 //    $readmemh("./td_fused_top_tdf7_filters_1_rom.dat", ram);
 //end
 
+// VTR Original implementation above.
+// I could not find this initialization rom.dat file anywhere in their repository. Vivado optimizes 
+// everything away because it sees any ROM read always returns zero. - Reilly
+
+// BFASST Generate Random INIT data
+integer i;
+initial begin
+    for (i=0; i < MEM_SIZE; i = i + 1) begin
+        ram[i] = {(i * 32'd1664525 + 32'd1013904223), (i * 32'd1664525 + 32'd1013904223), (i * 32'd1664525 + 32'd1013904223)} & {DWIDTH{1'b1}};
+    end
+end
 
 
 always @(posedge clk)  
@@ -170821,6 +170925,17 @@ input clk;
 //    $readmemh("./td_fused_top_tdf7_l2_filters_1_rom.dat", ram);
 //end
 
+// VTR Original implementation above.
+// I could not find this initialization rom.dat file anywhere in their repository. Vivado optimizes 
+// everything away because it sees any ROM read always returns zero. - Reilly
+
+// BFASST Generate Random INIT data
+integer i;
+initial begin
+    for (i=0; i < MEM_SIZE; i = i + 1) begin
+        ram[i] = {(i * 32'd1664525 + 32'd1013904223), (i * 32'd1664525 + 32'd1013904223), (i * 32'd1664525 + 32'd1013904223)} & {DWIDTH{1'b1}};
+    end
+end
 
 
 always @(posedge clk)  
@@ -170840,7 +170955,6 @@ begin
         q1 <= ram[addr1];
     end
 end
-
 
 
 endmodule
@@ -180407,6 +180521,18 @@ input clk;
 //initial begin
 //    $readmemh("./td_fused_top_tdf8_filters_1_rom.dat", ram);
 //end
+
+// VTR Original implementation above.
+// I could not find this initialization rom.dat file anywhere in their repository. Vivado optimizes 
+// everything away because it sees any ROM read always returns zero. - Reilly
+
+// BFASST Generate Random INIT data
+integer i;
+initial begin
+    for (i=0; i < MEM_SIZE; i = i + 1) begin
+        ram[i] = {(i * 32'd1664525 + 32'd1013904223), (i * 32'd1664525 + 32'd1013904223), (i * 32'd1664525 + 32'd1013904223)} & {DWIDTH{1'b1}};
+    end
+end
 
 
 

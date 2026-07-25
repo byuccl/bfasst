@@ -3,9 +3,14 @@
 import pathlib
 
 from bfasst import config
-from bfasst.paths import BFASST_UTILS_PATH, COMMON_TOOLS_PATH
+from bfasst.paths import BFASST_COMMON_TOOLS, BFASST_RESOURCES, BFASST_UTILS
 from bfasst.tools.synth.synth_tool import SynthTool
-from bfasst.utils.general import json_write_if_changed
+from bfasst.utils.general import ensure_tuple, json_write_if_changed
+
+# Optional synthesis-report tcls bundled in resources/vivado/. Pass any subset (or
+# your own scripts) to VivadoSynth via extra_reports; they are sourced after the
+# standard reports while the synthesized design is still open.
+SYNTH_REPORTS = [BFASST_RESOURCES / "vivado" / name for name in ("synth_utilization_report.tcl",)]
 
 
 class VivadoSynth(SynthTool):
@@ -13,17 +18,22 @@ class VivadoSynth(SynthTool):
 
     _my_dir_path = pathlib.Path(__file__).parent
     template_tuples = [
-        (COMMON_TOOLS_PATH / "vivado_top_tcl.mustache", "run.tcl"),
+        (BFASST_COMMON_TOOLS / "vivado_top_tcl.mustache", "run.tcl"),
         (_my_dir_path / "vivado_synth_setup.tcl.mustache", "setup.tcl"),
         (_my_dir_path / "vivado_synth_run.tcl.mustache", "synth.tcl"),
         (_my_dir_path / "vivado_synth_reports.tcl.mustache", "reports.tcl"),
     ]
 
     def __init__(
-        self, flow, design_path, synth_options="", opt_design=False, ooc=False
+        self, flow, design_path, synth_options="", opt_design=False, ooc=False, extra_reports=()
     ):  # pylint: disable=too-many-positional-arguments
         super().__init__(flow, design_path, ooc=ooc)
         self._my_dir_path = pathlib.Path(__file__).parent
+
+        # Extra report tcl scripts to source after the standard reports, while the
+        # synthesized design is still open. Lets callers opt into additional reports
+        # (see resources/vivado/) without changing the default flow.
+        self.extra_reports = [str(r) for r in ensure_tuple(extra_reports)]
         self.build_path = (
             self.build_path.with_name("vivado_ooc_synth")
             if ooc
@@ -49,12 +59,14 @@ class VivadoSynth(SynthTool):
             "io": str(self.build_path / "report_io.txt") if not self.ooc else False,
             "synth_output": str(self.build_path),
             "synth_design": "",
-            "common_tools_path": str(COMMON_TOOLS_PATH),
+            "common_tools_path": str(BFASST_COMMON_TOOLS),
             "outputs": self.outputs_str,
             "tcl_sources": [
                 self.outputs_str["setup_tcl"],
                 self.outputs_str["synth_tcl"],
                 self.outputs_str["reports_tcl"],
+                # Sourced last (after reports.tcl), while the synthesized design is open.
+                *self.extra_reports,
             ],
         }
         if synth_options:
@@ -63,11 +75,11 @@ class VivadoSynth(SynthTool):
             synth_opts = self.synth_build.get("synth_design", "") + " -mode out_of_context"
             self.synth_build["synth_design"] = synth_opts
 
-        self.rule_snippet_path = COMMON_TOOLS_PATH / "vivado_rules.ninja.mustache"
+        self.rule_snippet_path = BFASST_COMMON_TOOLS / "vivado_rules.ninja.mustache"
         self.rules_render_dict = {
-            "vivado_path": config.VIVADO_BIN_PATH,
+            "vivado_path": config.VIVADO,
             "in_context": not self.ooc,
-            "utils_path": BFASST_UTILS_PATH,
+            "utils_path": BFASST_UTILS,
         }
 
     def create_build_snippets(self):
@@ -92,8 +104,9 @@ class VivadoSynth(SynthTool):
                 "other_sources": self.other_sources,
                 "cwd": self.build_path,
                 "outputs": self.outputs_str,
-                "common_tools_path": str(COMMON_TOOLS_PATH),
+                "common_tools_path": str(BFASST_COMMON_TOOLS),
                 "tcl_sources": [str(i) for i in self.synth_build["tcl_sources"]],
+                "extra_reports": self.extra_reports,
             },
         )
 
@@ -108,7 +121,6 @@ class VivadoSynth(SynthTool):
         self.outputs["journal"] = self.build_path / "vivado.jou"
         self.outputs["log"] = self.build_path / "vivado.log"
         self.outputs["verilog"] = self.build_path / "viv_synth.v"
-        self.outputs["synth_utilization"] = self.build_path / "synth_utilization.txt"
 
         if not self.ooc:
             self.outputs["io_report"] = self.build_path / "report_io.txt"
@@ -120,9 +132,6 @@ class VivadoSynth(SynthTool):
     def add_ninja_deps(self, deps):
         """Add dependencies to the master ninja file that would cause it to rebuild if modified"""
         self._add_ninja_deps_default(deps, __file__)
-        for dep in self._my_dir_path.glob("*.mustache"):
-            if "vivado" in dep.name:
-                deps.append(dep)
 
         for dep in self.deps:
             deps.append(dep)

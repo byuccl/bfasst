@@ -1,3 +1,5 @@
+vivado_version: v2024_2
+
 available_ip:
   - class: Accumulator
   - class: AxiCdma
