@@ -8,8 +8,7 @@ directory, renumbering them contiguously as ``design_0000``, ``design_0001``, ..
 
 It also writes a ``dataset.yaml`` manifest in the output directory recording:
   * the bfasst and rand_soc git hashes (hard-coded near the top of this file), and
-  * for every assembled design: the originating machine, the source path, the
-    RandSoC config used, and the seed.
+  * for every assembled design: the RandSoC config used and the seed.
 
 The seed is read from the source directory name (``design_<seed>``). The RandSoC
 config is hard-coded per source directory in ``MACHINES`` below -- update it if a
@@ -25,7 +24,6 @@ source directory was built with a different config.
 #   python scripts/assemble_randsoc_dataset.py
 #       Assemble the complete designs into the hard-coded OUTPUT_DIR.
 #
-#   --max-designs N    Cap the assembled dataset at N designs total.
 #   --dry-run          Show the plan and run rsync in --dry-run mode; do not
 #                      write the manifest.
 #   --manifest-only    (Re)write dataset.yaml only; do not copy design dirs.
@@ -49,7 +47,7 @@ COMPLETE_MARKER = "vivado_impl/impl.dcp"
 # =============================================================================
 # Where to assemble the dataset. The design_NNNN directories and dataset.yaml
 # are written here.
-OUTPUT_DIR = Path("/data/jgoeders/fpt2026_dataset")
+OUTPUT_DIR = Path("/data/neurosub_datasets/8-fpt2026")
 
 # Git hashes the dataset was generated with (recorded in dataset.yaml).
 # Obtain with:
@@ -58,23 +56,48 @@ OUTPUT_DIR = Path("/data/jgoeders/fpt2026_dataset")
 BFASST_GIT_HASH = "fe284fa5c703dedc2bed0780c6740af70644312c"
 RAND_SOC_GIT_HASH = "fe645ed66fdda032d5020ee592fbc8117b776978"
 
+# Hostnames that refer to the local machine. These are accessed directly
+# (no SSH/rsync-over-SSH) to avoid overhead and connection timeouts.
+LOCAL_HOSTS = {"CCL1"}
+
+# Cap on the total number of designs assembled. None means no limit.
+MAX_DESIGNS = 10000
+
 # Source build directories to pull designs from.
 #   (ssh_host, build_dir, randsoc_config)
 # `randsoc_config` is the RandSoC creator config used to generate that build
 # (repo-relative). VERIFY these -- they are inferred from the source paths.
 MACHINES = [
-    ("CCL1", "/data/jgoeders/fpt2026/build/rand_soc",
-     "resources/randsoc/randsoc_configs/fpt_2026.yaml"),
-    ("serenity", "/data/jgoeders/fpt2026/build/rand_soc",
-     "resources/randsoc/randsoc_configs/fpt_2026.yaml"),
-    ("CCL1", "/data/jgoeders/fpt2026_1/build/rand_soc",
-     "resources/randsoc/randsoc_configs/fpt_2026_all.yaml"),
-    ("serenity", "/data/jgoeders/fpt2026_1/build/rand_soc",
-     "resources/randsoc/randsoc_configs/fpt_2026_big.yaml"),
-    ("CCL1", "/data/jgoeders/fpt2026_2/build/rand_soc",
-     "resources/randsoc/randsoc_configs/fpt_2026_all.yaml"),
-    ("serenity", "/data/jgoeders/fpt2026_2/build/rand_soc",
-     "resources/randsoc/randsoc_configs/fpt_2026_all.yaml"),
+    (
+        "CCL1",
+        "/data/jgoeders/fpt2026/build/rand_soc",
+        "resources/randsoc/randsoc_configs/fpt_2026.yaml",
+    ),
+    (
+        "serenity",
+        "/data/jgoeders/fpt2026/build/rand_soc",
+        "resources/randsoc/randsoc_configs/fpt_2026.yaml",
+    ),
+    (
+        "CCL1",
+        "/data/jgoeders/fpt2026_1/build/rand_soc",
+        "resources/randsoc/randsoc_configs/fpt_2026_all.yaml",
+    ),
+    (
+        "serenity",
+        "/data/jgoeders/fpt2026_1/build/rand_soc",
+        "resources/randsoc/randsoc_configs/fpt_2026_big.yaml",
+    ),
+    (
+        "CCL1",
+        "/data/jgoeders/fpt2026_2/build/rand_soc",
+        "resources/randsoc/randsoc_configs/fpt_2026_all.yaml",
+    ),
+    (
+        "serenity",
+        "/data/jgoeders/fpt2026_2/build/rand_soc",
+        "resources/randsoc/randsoc_configs/fpt_2026_all.yaml",
+    ),
 ]
 # =============================================================================
 
@@ -99,15 +122,19 @@ def list_complete_designs(host: str, build_dir: str) -> list[tuple[int, str]]:
 
     Sorted by seed ascending. Seed is parsed from the ``design_<seed>`` name.
     """
-    # List the completion markers, then strip back to the design directory.
-    remote_cmd = (
-        f"cd {build_dir} 2>/dev/null || exit 0; "
-        f"ls -d design_*/{COMPLETE_MARKER} 2>/dev/null"
+    shell_cmd = (
+        f"cd {build_dir} 2>/dev/null || exit 0; " f"ls -d design_*/{COMPLETE_MARKER} 2>/dev/null"
     )
+    if host in LOCAL_HOSTS:
+        cmd = ["bash", "-c", shell_cmd]
+    else:
+        cmd = ["ssh", host, shell_cmd]
     try:
         result = subprocess.run(
-            ["ssh", host, remote_cmd],
-            capture_output=True, text=True, timeout=120,
+            cmd,
+            capture_output=True,
+            text=True,
+            timeout=120,
         )
     except subprocess.TimeoutExpired:
         print(f"  ! {host}: timed out listing {build_dir}", file=sys.stderr)
@@ -140,8 +167,19 @@ def yaml_escape(value: str) -> str:
     return value
 
 
-def write_manifest(path: Path, bfasst_hash: str, rand_soc_hash: str,
-                   plan: list[dict], width: int) -> None:
+def count_ips(design_dir: Path) -> int | None:
+    """Return the number of IPs selected, parsed from log.txt. None if unreadable."""
+    log = design_dir / "log.txt"
+    try:
+        text = log.read_text()
+    except OSError:
+        return None
+    return sum(1 for line in text.splitlines() if " INFO: IP " in line and line.split(" INFO: IP ", 1)[1].split(":")[0].strip().isdigit())
+
+
+def write_manifest(
+    path: Path, bfasst_hash: str, rand_soc_hash: str, plan: list[dict], width: int
+) -> None:
     """Write the dataset.yaml manifest."""
     lines = [
         "# Generated by scripts/assemble_randsoc_dataset.py",
@@ -150,13 +188,14 @@ def write_manifest(path: Path, bfasst_hash: str, rand_soc_hash: str,
         f"num_designs: {len(plan)}",
         "designs:",
     ]
+    output_dir = path.parent
     for entry in plan:
         name = f"design_{entry['index']:0{width}d}"
         lines.append(f"  - name: {name}")
-        lines.append(f"    host: {yaml_escape(entry['host'])}")
-        lines.append(f"    source: {yaml_escape(entry['source'])}")
         lines.append(f"    randsoc_config: {yaml_escape(entry['config'])}")
         lines.append(f"    seed: {entry['seed']}")
+        n = count_ips(output_dir / name)
+        lines.append(f"    num_ips: {n if n is not None else '~'}")
     path.write_text("\n".join(lines) + "\n")
 
 
@@ -166,21 +205,26 @@ def rsync_design(host: str, source: str, dest: Path, dry_run: bool) -> bool:
     if dry_run:
         cmd.append("--dry-run")
     # Trailing slash on source so contents land directly in dest.
-    cmd += [f"{host}:{source}/", f"{dest}/"]
+    src = f"{source}/" if host in LOCAL_HOSTS else f"{host}:{source}/"
+    cmd += [src, f"{dest}/"]
     result = subprocess.run(cmd)
     return result.returncode == 0
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__,
-                                     formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--max-designs", type=int, default=None, metavar="N",
-                        help="Cap the assembled dataset at N designs total")
-    parser.add_argument("--manifest-only", action="store_true",
-                        help="Write dataset.yaml only; do not copy design dirs")
-    parser.add_argument("--dry-run", action="store_true",
-                        help="Show the plan and run rsync in --dry-run mode; "
-                             "do not write the manifest")
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument(
+        "--manifest-only",
+        action="store_true",
+        help="Write dataset.yaml only; do not copy design dirs",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Show the plan and run rsync in --dry-run mode; " "do not write the manifest",
+    )
     args = parser.parse_args()
 
     print(f"bfasst   {BFASST_GIT_HASH}")
@@ -192,12 +236,11 @@ def main() -> None:
         designs = list_complete_designs(host, build_dir)
         print(f"{host:<10} {build_dir:<40} {len(designs):>5} complete")
         for seed, source in designs:
-            plan.append({"host": host, "source": source,
-                         "config": config, "seed": seed})
+            plan.append({"host": host, "source": source, "config": config, "seed": seed})
 
-    if args.max_designs is not None and len(plan) > args.max_designs:
-        print(f"Capping {len(plan)} designs at --max-designs={args.max_designs}")
-        plan = plan[: args.max_designs]
+    if MAX_DESIGNS is not None and len(plan) > MAX_DESIGNS:
+        print(f"Capping {len(plan)} designs at MAX_DESIGNS={MAX_DESIGNS}")
+        plan = plan[:MAX_DESIGNS]
 
     if not plan:
         print("No complete designs found.", file=sys.stderr)
@@ -208,8 +251,10 @@ def main() -> None:
         entry["index"] = new_index
     width = max(4, len(str(len(plan) - 1)))
 
-    print(f"\nAssembling {len(plan)} designs into {OUTPUT_DIR} "
-          f"(design_{0:0{width}d} .. design_{len(plan) - 1:0{width}d})")
+    print(
+        f"\nAssembling {len(plan)} designs into {OUTPUT_DIR} "
+        f"(design_{0:0{width}d} .. design_{len(plan) - 1:0{width}d})"
+    )
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -223,8 +268,10 @@ def main() -> None:
             if tqdm:
                 progress.set_description(name)
             else:
-                print(f"[{entry['index'] + 1}/{len(plan)}] {name} "
-                      f"<- {entry['host']}:{entry['source']}")
+                print(
+                    f"[{entry['index'] + 1}/{len(plan)}] {name} "
+                    f"<- {entry['host']}:{entry['source']}"
+                )
             if not rsync_design(entry["host"], entry["source"], dest, args.dry_run):
                 # tqdm.write avoids clobbering the active bar.
                 msg = f"  ! rsync failed for {name}"
